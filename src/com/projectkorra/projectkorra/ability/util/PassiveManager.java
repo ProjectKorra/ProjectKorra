@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 public class PassiveManager {
 
 	private static final Map<String, CoreAbility> PASSIVES = new HashMap<>();
-	private static final Map<Element, Set<String>> PASSIVES_BY_ELEMENT = new HashMap<>(); // Parent elements INCLUDE subelement passives.
+	private static final Map<PassiveAbility, Class<? extends CoreAbility>> PASSIVE_CLASSES = new HashMap<>();
 
 	public static void registerPassives(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -40,28 +40,15 @@ public class PassiveManager {
 				} else if (!((PassiveAbility) ability).isInstantiable()) {
 					continue;
 				}
-				Class<?> clazz = null;
 				try {
-					clazz = Class.forName(ability.getClass().getName());
+					Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get((PassiveAbility) ability);
+					Constructor<?> constructor = clazz.getConstructor(Player.class);
+					Object object = constructor.newInstance(new Object[] { player });
+					((CoreAbility) object).start();
 				}
-				catch (ClassNotFoundException e) {
+				catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
-				Constructor<?> constructor = null;
-				try {
-					constructor = clazz.getConstructor(Player.class);
-				}
-				catch (NoSuchMethodException | SecurityException e) {
-					e.printStackTrace();
-				}
-				Object object = null;
-				try {
-					object = constructor.newInstance(new Object[] { player });
-				}
-				catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
-				((CoreAbility) object).start();
 			}
 		}
 	}
@@ -94,18 +81,26 @@ public class PassiveManager {
 	}
 
 	public static Set<String> getPassivesForElement(Element element) {
-		if (PASSIVES_BY_ELEMENT.get(element) == null) {
-			return new HashSet<>();
+		Set<String> passives = new HashSet<>();
+		for (CoreAbility passive : PASSIVES.values()) {
+			if (passive.getElement() == element) {
+				passives.add(passive.getName());
+			} else if (passive.getElement() instanceof SubElement) {
+				Element check = ((SubElement)passive.getElement()).getParentElement();
+				if (check == element) {
+					passives.add(passive.getName());
+				}
+			}
 		}
-		return PASSIVES_BY_ELEMENT.get(element);
+		return passives;
 	}
 
 	public static Map<String, CoreAbility> getPassives() {
 		return PASSIVES;
 	}
 
-	public static Map<Element, Set<String>> getPassivesByElement() {
-		return PASSIVES_BY_ELEMENT;
+	public static Map<PassiveAbility, Class<? extends CoreAbility>> getPassiveClasses() {
+		return PASSIVE_CLASSES;
 	}
 
 }

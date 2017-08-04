@@ -101,6 +101,13 @@ public class OctopusForm extends WaterAbility {
 		} else {
 			this.pc = new PhaseChange(player, PhaseChangeType.CUSTOM);
 		}
+		
+		if (bPlayer.isAvatarState()) {
+			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.Damage");
+			this.attackRange = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.AttackRange");
+			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Knockback");
+			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius");
+		}
 		this.time = System.currentTimeMillis();
 		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());

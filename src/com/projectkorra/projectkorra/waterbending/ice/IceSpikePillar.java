@@ -134,6 +134,15 @@ public class IceSpikePillar extends IceAbility {
 		this.damaged = new ArrayList<>();
 
 		this.interval = (long) (1000. / speed);
+		
+		if (bPlayer.isAvatarState()) {
+			this.slowPower = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowPower");
+			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowDuration");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Range");
+			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Height");
+			this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Push"), 0);
+		}
 	}
 
 	/**

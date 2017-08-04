@@ -315,14 +315,7 @@ public class LavaFlow extends LavaAbility {
 				for (double x = -radius; x <= radius; x++) {
 					for (double z = -radius; z <= radius; z++) {
 						Location loc = origin.clone().add(x, 0, z);
-						Block tempBlock_t = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
-						Block tempBlock_b = GeneralMethods.getBottomBlock(loc, upwardFlow, downwardFlow);
-						Block tempBlock = tempBlock_t;
-						if (tempBlock_t.getLocation().distance(player.getLocation()) > tempBlock_b.getLocation().distance(player.getLocation()))
-							tempBlock = tempBlock_b;
-						if (tempBlock == null) {
-							continue;
-						}
+						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 
 						double dSquared = distanceSquaredXZ(tempBlock.getLocation(), origin);
 						if (dSquared < Math.pow(radius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, loc)) {

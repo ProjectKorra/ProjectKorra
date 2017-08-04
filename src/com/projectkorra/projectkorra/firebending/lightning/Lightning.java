@@ -2,9 +2,9 @@ package com.projectkorra.projectkorra.firebending.lightning;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -24,6 +24,7 @@ public class Lightning extends LightningAbility {
 	}
 
 	private static final int POINT_GENERATION = 5;
+	private static List<UUID> paralyzed = new ArrayList<>();
 
 	private boolean charged;
 	private boolean hitWater;
@@ -121,36 +122,28 @@ public class Lightning extends LightningAbility {
 	 * @param lent The LivingEntity that is being damaged
 	 */
 	public void electrocute(LivingEntity lent) {
-		lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
-		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
+		final UUID uuid = lent.getUniqueId();
+		final LivingEntity flent = lent;
+		playLightningbendingSound(lent.getLocation());
+		playLightningbendingSound(player.getLocation());
 		DamageHandler.damageEntity(lent, damage, this);
 
-		if (Math.random() < stunChance) {
-			final Location lentLoc = lent.getLocation();
-			final LivingEntity flent = lent;
-
+		if (Math.random() <= stunChance) {
+			paralyzed.add(uuid);
+			if (!(lent instanceof Player)) {
+				lent.setAI(false);
+			}
 			new BukkitRunnable() {
-				int count = 0;
 
 				@Override
 				public void run() {
-					if (flent.isDead() || (flent instanceof Player && !((Player) flent).isOnline())) {
-						cancel();
-						return;
-					}
-
-					Location tempLoc = lentLoc.clone();
-					Vector tempVel = flent.getVelocity();
-					tempVel.setY(Math.min(0, tempVel.getY()));
-					tempLoc.setY(flent.getLocation().getY());
-					flent.teleport(tempLoc);
-					flent.setVelocity(tempVel);
-					count++;
-					if (count > stunDuration) {
-						cancel();
+					paralyzed.remove(uuid);
+					if (!(flent instanceof Player)) {
+						flent.setAI(true);
 					}
 				}
-			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+				
+			}.runTaskLater(ProjectKorra.plugin, (long) stunDuration);
 		}
 	}
 
@@ -173,6 +166,10 @@ public class Lightning extends LightningAbility {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isParalyzed(Entity e) {
+		return paralyzed.contains(e.getUniqueId());
 	}
 
 	/**
@@ -544,8 +541,8 @@ public class Lightning extends LightningAbility {
 						affectedEntities.add(entity);
 						LivingEntity lent = (LivingEntity) entity;
 						if (lent instanceof Player) {
-							lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
-							player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
+							playLightningbendingSound(lent.getLocation());
+							playLightningbendingSound(player.getLocation());
 							Player p = (Player) lent;
 							Lightning light = getAbility(p, Lightning.class);
 							if (light != null && light.state == State.START) {

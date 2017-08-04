@@ -1,11 +1,8 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,9 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Executor for /bending toggle. Extends {@link PKCommand}.
@@ -83,11 +82,10 @@ public class ToggleCommand extends PKCommand {
 					Commands.isToggledForAll = false;
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						GeneralMethods.sendBrandingMessage(player, ChatColor.GREEN + toggleOnAll);
-						PassiveManager.registerPassives(player); // TODO: This is a temporary fix. Passives currently need to be re-registered in multiple places.
 					}
 					if (!(sender instanceof Player))
 						GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + toggleOnAll);
-					
+
 				} else {
 					Commands.isToggledForAll = true;
 					for (Player player : Bukkit.getOnlinePlayers()) {
@@ -114,7 +112,7 @@ public class ToggleCommand extends PKCommand {
 			} else {
 				help(sender, false);
 			}
-			
+
 		} else if (sender instanceof Player && args.size() == 2 && Element.fromString(args.get(0)) != null && !(Element.fromString(args.get(0)) instanceof SubElement)) {
 			Player target = Bukkit.getPlayer(args.get(1));
 			if (!hasAdminPermission(sender))

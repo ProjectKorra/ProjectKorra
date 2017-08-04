@@ -14,7 +14,6 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.Flight;
 
@@ -50,17 +49,17 @@ public class AirStream extends AirAbility implements ComboAbility {
 			return;
 		}
 
-		this.range = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
-		this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
-		this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+		this.range = getConfig().getDouble("Abilities.Air.AirStream.Range");
+		this.speed = getConfig().getDouble("Abilities.Air.AirStream.Speed");
+		this.cooldown = getConfig().getLong("Abilities.Air.AirStream.Cooldown");
+		this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirStream.EntityHeight");
+		this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirStream.EntityDuration");
 
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.range = AvatarState.getValue(range);
-			this.airStreamMaxEntityHeight = AvatarState.getValue(airStreamMaxEntityHeight);
-			this.airStreamEntityCarryDuration = AvatarState.getValue(airStreamEntityCarryDuration);
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.Range");
+			this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityHeight");
+			this.airStreamEntityCarryDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityDuration");
 		}
 		
 		bPlayer.addCooldown(this);

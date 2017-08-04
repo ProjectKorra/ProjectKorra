@@ -77,7 +77,7 @@ public class EarthPassive {
 			return true;
 		}
 
-		return (TempBlock.isTempBlock(block) && EarthAbility.isEarth(TempBlock.get(block).getBlock().getType())) || EarthAbility.isEarth(block) || EarthAbility.isTransparent(player, block);
+		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType(), true, true, false)) || EarthAbility.isEarthbendable(block.getType(), true, true, false) || EarthAbility.isTransparent(player, block);
 	}
 
 	public static boolean isPassiveSand(Block block) {
@@ -100,19 +100,16 @@ public class EarthPassive {
 	public static void handleMetalPassives() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
 			if (bPlayer != null && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canMetalbend()) {
 				if (player.isSneaking() && !bPlayer.isOnCooldown("MetalPassive")) {
 					Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 					if (block == null) {
 						continue;
 					}
-
 					if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
 						if (block.getData() >= 8) {
 							block = block.getRelative(BlockFace.DOWN);
 						}
-
 						if (block.getData() < 4) {
 							block.setData((byte) (block.getData() + 4));
 							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 10, 1);
@@ -120,7 +117,6 @@ public class EarthPassive {
 							block.setData((byte) (block.getData() - 4));
 							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
 						}
-
 						bPlayer.addCooldown("MetalPassive", 200);
 					}
 				}
@@ -182,7 +178,4 @@ public class EarthPassive {
 		return ConfigManager.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	}
 
-	public static int getSandRunSpeed() {
-		return ConfigManager.getConfig().getInt("Abilities.Earth.Passive.SandRunSpeed");
-	}
 }

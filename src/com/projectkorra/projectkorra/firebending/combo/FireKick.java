@@ -16,7 +16,6 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class FireKick extends FireAbility implements ComboAbility {
 
@@ -28,7 +27,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 	private Location destination;
 	private ArrayList<LivingEntity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
-	
+
 	public FireKick(Player player) {
 		super(player);
 
@@ -38,30 +37,30 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
-			
-		this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireKick.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireKick.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireKick.Cooldown");
-		this.speed = getConfig().getLong("Abilities.Fire.FireCombo.FireKick.Speed");;
-			
+
+		this.damage = getConfig().getDouble("Abilities.Fire.FireKick.Damage");
+		this.range = getConfig().getDouble("Abilities.Fire.FireKick.Range");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireKick.Cooldown");
+		this.speed = getConfig().getLong("Abilities.Fire.FireKick.Speed");
+
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Range");
 		}
 
 		start();
 	}
 
-		@Override
-		public String getName() {
-			return "FireKick";
-		}
+	@Override
+	public String getName() {
+		return "FireKick";
+	}
 
-		@Override
-		public boolean isCollidable() {
-			return true;
-		}
+	@Override
+	public boolean isCollidable() {
+		return true;
+	}
 
 	@Override
 	public void progress() {
@@ -122,7 +121,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 			task.cancel();
 		}
 	}
-	
+
 	@Override
 	public void handleCollision(Collision collision) {
 		if (collision.isRemovingFirst()) {
@@ -158,7 +157,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 		}
 		return locations;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -192,7 +191,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return affectedEntities;
 	}
-	
+
 	public ArrayList<BukkitRunnable> getTasks() {
 		return tasks;
 	}

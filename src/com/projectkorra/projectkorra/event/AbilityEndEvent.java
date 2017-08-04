@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import com.projectkorra.projectkorra.ability.Ability;
 
 public class AbilityEndEvent extends Event {
-	private final HandlerList handlers = new HandlerList();
+	private static final HandlerList HANDLERS = new HandlerList();
 
 	Ability ability;
 
@@ -20,7 +20,10 @@ public class AbilityEndEvent extends Event {
 
 	@Override
 	public HandlerList getHandlers() {
-		return handlers;
+		return HANDLERS;
 	}
 
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 }

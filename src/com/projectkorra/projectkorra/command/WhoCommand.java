@@ -130,8 +130,15 @@ public class WhoCommand extends PKCommand {
 			if (players.isEmpty()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + noPlayersOnline);
 			} else {
+				boolean firstMessage = true;
+				
 				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
-					sender.sendMessage(s);
+					if (firstMessage) {
+						GeneralMethods.sendBrandingMessage(sender, s);
+						firstMessage = false;
+					} else {
+						sender.sendMessage(s);
+					}
 				}
 			}
 		}
@@ -189,7 +196,7 @@ public class WhoCommand extends PKCommand {
 
 		bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null) {
-			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : "") + " - ");
+			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : ""));
 			if (bPlayer.hasElement(Element.AIR)) {
 				if (bPlayer.isElementToggled(Element.AIR)) {
 					sender.sendMessage(Element.AIR.getColor() + "- Airbender");
@@ -211,6 +218,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
+			
 			if (bPlayer.hasElement(Element.WATER)) {
 				if (bPlayer.isElementToggled(Element.WATER)) {
 					sender.sendMessage(Element.WATER.getColor() + "- Waterbender");
@@ -242,6 +250,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
+			
 			if (bPlayer.hasElement(Element.EARTH)) {
 				if (bPlayer.isElementToggled(Element.EARTH)) {
 					sender.sendMessage(Element.EARTH.getColor() + "- Earthbender");
@@ -266,6 +275,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
+			
 			if (bPlayer.hasElement(Element.FIRE)) {
 				if (bPlayer.isElementToggled(Element.FIRE)) {
 					sender.sendMessage(Element.FIRE.getColor() + "- Firebender");
@@ -287,6 +297,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
+			
 			if (bPlayer.hasElement(Element.CHI)) {
 				if (bPlayer.isElementToggled(Element.CHI)) {
 					sender.sendMessage(Element.CHI.getColor() + "- Chiblocker");
@@ -294,6 +305,7 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
 				}
 			}
+			
 			for (Element element : Element.getAddonElements()) {
 				if (bPlayer.hasElement(element)) {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
@@ -343,6 +355,11 @@ public class WhoCommand extends PKCommand {
 
 			if (staff.containsKey(uuid.toString())) {
 				sender.sendMessage(staff.get(uuid.toString()));
+			}
+			
+			if (player_.hasPermission("bending.donor")) {
+				// Requires Servers to define `server-name` in their server.properties file. Example: server-name=My Server
+				sender.sendMessage(Element.AVATAR.getColor() + ProjectKorra.plugin.getServer().getServerName() + " Donor");
 			}
 		}
 

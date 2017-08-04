@@ -73,6 +73,7 @@ public class RemoveCommand extends PKCommand {
 									senderBPlayer.getSubElements().remove(sub);
 								}
 								GeneralMethods.saveElements(senderBPlayer);
+								GeneralMethods.saveSubElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
 
 								GeneralMethods.sendBrandingMessage(sender, e.getColor() + succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()));
@@ -115,7 +116,11 @@ public class RemoveCommand extends PKCommand {
 					GeneralMethods.saveSubElements(bPlayer);
 				} else {
 					bPlayer.getElements().remove(e);
+					for (SubElement sub : SubElement.getSubElements(e)) {
+						bPlayer.getSubElements().remove(sub);
+					}
 					GeneralMethods.saveElements(bPlayer);
+					GeneralMethods.saveSubElements(bPlayer);
 				}
 
 				GeneralMethods.removeUnusableAbilities(player.getName());

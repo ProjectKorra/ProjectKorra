@@ -32,6 +32,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class AirBlast extends AirAbility {
 
@@ -400,9 +401,9 @@ public class AirBlast extends AirAbility {
 		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedLevers.contains(block) && canCoolLava) {
 			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
 				if (block.getData() == 0x0) {
-					block.setType(Material.OBSIDIAN);
+					new TempBlock(block, Material.OBSIDIAN, (byte) 0);
 				} else {
-					block.setType(Material.COBBLESTONE);
+					new TempBlock(block, Material.COBBLESTONE, (byte)0);
 				}
 			}
 			remove();
