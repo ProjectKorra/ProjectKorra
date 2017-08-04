@@ -18,7 +18,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	public FastSwim(Player player) {
 		super(player);
-		
+
 		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
 		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 	}
@@ -34,10 +34,9 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 			return;
 		} else if (bPlayer.getBoundAbility() == null || (bPlayer.getBoundAbility() != null && !bPlayer.getBoundAbility().isSneakAbility())) {
 			if (player.isSneaking() && WaterAbility.isWater(player.getLocation().getBlock())) {
-				player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimSpeed));
-				
+				player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimSpeed));	
 			}
-			else if(!player.isSneaking()) {
+			else if (!player.isSneaking()) {
 				bPlayer.addCooldown(this);
 			}
 		}
