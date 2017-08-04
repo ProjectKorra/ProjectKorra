@@ -40,11 +40,10 @@ public abstract class ElementalAbility extends CoreAbility {
 		return TRANSPARENT_MATERIAL;
 	}
 
-	public static HashSet<Byte> getTransparentMaterialSet() {
-		HashSet<Byte> set = new HashSet<Byte>();
-		for (int i : TRANSPARENT_MATERIAL) {
-			set.add((byte) i);
-		}
+	public static HashSet<Material> getTransparentMaterialSet() {
+		HashSet<Material> set = new HashSet<Material>();
+		for (int i : TRANSPARENT_MATERIAL)
+			set.add(Material.getMaterial(i));
 		return set;
 	}
 
