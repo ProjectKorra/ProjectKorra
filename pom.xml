@@ -70,7 +70,7 @@
       <artifactId>PreciousStones</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/PreciousStones 9.7.1.jar</systemPath>
+      <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
     </dependency>
     <!-- PK RPG -->
     <dependency>
