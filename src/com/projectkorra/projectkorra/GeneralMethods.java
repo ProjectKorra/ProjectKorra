@@ -1132,14 +1132,15 @@ public class GeneralMethods {
 		Location origin = player.getEyeLocation();
 		Vector direction = origin.getDirection();
 
-		HashSet<Byte> trans = new HashSet<Byte>();
-		trans.add((byte) 0);
+		HashSet<Material> trans = new HashSet<Material>();
+		trans.add(Material.AIR);
+		
 
 		if (nonOpaque2 == null) {
 			trans = null;
 		} else {
 			for (int i : nonOpaque2) {
-				trans.add((byte) i);
+				trans.add(Material.getMaterial(i));
 			}
 		}
 
