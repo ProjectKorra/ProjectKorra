@@ -24,16 +24,16 @@ public class ChiPassive {
 		ChiAbility stance = bPlayer.getStance();
 		QuickStrike quickStrike = CoreAbility.getAbility(player, QuickStrike.class);
 		SwiftKick swiftKick = CoreAbility.getAbility(player, SwiftKick.class);
-		double newChance = 0;
+		double newChance = getChance();
 
 		if (stance != null && stance instanceof AcrobatStance) {
-			newChance = getChance() + ((AcrobatStance) stance).getChiBlockBoost();
+			newChance += ((AcrobatStance) stance).getChiBlockBoost();
 		}
 
 		if (quickStrike != null) {
-			newChance = getChance() + quickStrike.getBlockChance();
+			newChance += quickStrike.getBlockChance();
 		} else if (swiftKick != null) {
-			newChance = getChance() + swiftKick.getBlockChance();
+			newChance += swiftKick.getBlockChance();
 		}
 
 		if (Math.random() > newChance / 100.0) {

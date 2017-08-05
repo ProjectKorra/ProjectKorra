@@ -904,41 +904,42 @@ public class PKListener implements Listener {
 			Suffocate.remove((Player) entity);
 		}
 		
-		if (entity instanceof Player) {
-			if (source instanceof Player) { // This is the player hitting someone.
-				Player sourcePlayer = (Player) source;
-				Player targetPlayer = (Player) entity;
-				BendingPlayer sourceBPlayer = BendingPlayer.getBendingPlayer(sourcePlayer);
-				if (sourceBPlayer == null) {
-					return;
-				}
+		if (source instanceof Player) { // This is the player hitting someone.
+			Player sourcePlayer = (Player) source;
+			BendingPlayer sourceBPlayer = BendingPlayer.getBendingPlayer(sourcePlayer);
+			if (sourceBPlayer == null) {
+				return;
+			}
 
-				String boundAbil = sourceBPlayer.getBoundAbilityName();
-
+			String boundAbil = sourceBPlayer.getBoundAbilityName();
+			if (sourceBPlayer.getBoundAbility() != null && !sourceBPlayer.isOnCooldown(boundAbil)) {
 				if (sourceBPlayer.canBendPassive(Element.CHI)) {
 					if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
 						if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
 							if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
 								if (sourceBPlayer.isElementToggled(Element.CHI) == true) {
 									if (boundAbil.equalsIgnoreCase("Paralyze")) {
-										new Paralyze(sourcePlayer, targetPlayer);
+										new Paralyze(sourcePlayer, entity);
 									} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
-										new QuickStrike(sourcePlayer, targetPlayer);
+										new QuickStrike(sourcePlayer, entity);
 										e.setCancelled(true);
 									} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
-										new SwiftKick(sourcePlayer, targetPlayer);
+										new SwiftKick(sourcePlayer, entity);
 										e.setCancelled(true);
 									} else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
-										new RapidPunch(sourcePlayer, targetPlayer);
+										new RapidPunch(sourcePlayer, entity);
 										e.setCancelled(true);
-									} else {
-										if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {
-											ChiPassive.blockChi(targetPlayer);
-										}
 									}
 								}
 							}
 						}
+					}
+				}
+			} else {
+				if (entity instanceof Player) {
+					Player targetPlayer = (Player) entity;
+					if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {
+						ChiPassive.blockChi(targetPlayer);
 					}
 				}
 			}
@@ -1009,15 +1010,17 @@ public class PKListener implements Listener {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			final UUID uuid = player.getUniqueId();
-			RIGHT_CLICK_INTERACT.add(uuid);
-
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					RIGHT_CLICK_INTERACT.remove(uuid);
-				}
-			}.runTaskLater(plugin, 5);
+			if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
+				final UUID uuid = player.getUniqueId();
+				RIGHT_CLICK_INTERACT.add(uuid);
+	
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						RIGHT_CLICK_INTERACT.remove(uuid);
+					}
+				}.runTaskLater(plugin, 5);
+			}
 
 			if (event.getHand() == EquipmentSlot.HAND) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
