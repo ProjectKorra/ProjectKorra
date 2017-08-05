@@ -180,7 +180,7 @@ public class IceBlast extends IceAbility {
 
 		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		if (target == null) {
-			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
+			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
 		} else {
 			destination = target.getEyeLocation();
 		}

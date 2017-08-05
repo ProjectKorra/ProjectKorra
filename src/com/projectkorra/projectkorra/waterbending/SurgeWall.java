@@ -237,7 +237,7 @@ public class SurgeWall extends WaterAbility {
 				}
 
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location targetLoc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
+				Location targetLoc = GeneralMethods.getTargetedLocation(player, (int) range, Material.WATER, Material.STATIONARY_WATER, Material.ICE);
 				location = targetLoc.clone();
 				Vector eyeDir = player.getEyeLocation().getDirection();
 				Vector vector;

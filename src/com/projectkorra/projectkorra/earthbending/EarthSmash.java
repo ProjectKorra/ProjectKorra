@@ -513,7 +513,7 @@ public class EarthSmash extends EarthAbility {
 			return null;
 		}
 
-		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, grabRange, GeneralMethods.NON_OPAQUE), 1);
+		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, grabRange, getTransparentMaterials()), 1);
 		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (reqState == null || smash.state == reqState) {
 				for (Block block : blocks) {

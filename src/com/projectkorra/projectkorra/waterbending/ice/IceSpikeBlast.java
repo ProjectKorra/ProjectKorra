@@ -246,7 +246,7 @@ public class IceSpikeBlast extends IceAbility {
 
 		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range);
 		if (target == null) {
-			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
+			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
 		} else {
 			destination = target.getEyeLocation();
 		}
@@ -370,7 +370,6 @@ public class IceSpikeBlast extends IceAbility {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private static void waterBottle(Player player) {
 		long range = getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
 
@@ -383,7 +382,7 @@ public class IceSpikeBlast extends IceAbility {
 				Location destination;
 
 				if (target == null) {
-					destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
+					destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
 				} else {
 					destination = GeneralMethods.getPointOnLine(player.getEyeLocation(), target.getEyeLocation(), range);
 				}

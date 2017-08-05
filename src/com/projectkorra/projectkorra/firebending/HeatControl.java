@@ -142,7 +142,6 @@ public class HeatControl extends FireAbility {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void progress() {
 
@@ -180,8 +179,8 @@ public class HeatControl extends FireAbility {
 			}
 
 			Set<Material> blocks = new HashSet<>();
-			for (int material : GeneralMethods.NON_OPAQUE) {
-				blocks.add(Material.getMaterial(material));
+			for (Material material : getTransparentMaterials()) {
+				blocks.add(material);
 			}
 
 			for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation(), extinguishRadius)) {
