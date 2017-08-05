@@ -40,23 +40,23 @@ public class Element {
 
 	private static final HashMap<String, Element> ALL_ELEMENTS = new HashMap<>(); // Must be initialized first
 
-	public static final Element AIR = new Element("Air");
-	public static final Element WATER = new Element("Water");
-	public static final Element EARTH = new Element("Earth");
-	public static final Element FIRE = new Element("Fire");
-	public static final Element CHI = new Element("Chi", ElementType.BLOCKING);
-	public static final Element AVATAR = new Element("Avatar", null);
-	public static final SubElement FLIGHT = new SubElement("Flight", AIR, ElementType.NO_SUFFIX);
-	public static final SubElement SPIRITUAL = new SubElement("Spiritual", AIR, ElementType.NO_SUFFIX);
-	public static final SubElement BLOOD = new SubElement("Blood", WATER);
-	public static final SubElement HEALING = new SubElement("Healing", WATER, ElementType.NO_SUFFIX);
-	public static final SubElement ICE = new SubElement("Ice", WATER);
-	public static final SubElement PLANT = new SubElement("Plant", WATER);
-	public static final SubElement LAVA = new SubElement("Lava", EARTH);
-	public static final SubElement METAL = new SubElement("Metal", EARTH);
-	public static final SubElement SAND = new SubElement("Sand", EARTH);
-	public static final SubElement LIGHTNING = new SubElement("Lightning", FIRE);
-	public static final SubElement COMBUSTION = new SubElement("Combustion", FIRE);
+	public static final Element AIR = new Element("Air", "GRAY", "[Air]");
+	public static final Element WATER = new Element("Water", "AQUA", "[Water]");
+	public static final Element EARTH = new Element("Earth", "GREEN", "[Earth]");
+	public static final Element FIRE = new Element("Fire", "RED", "[Fire]");
+	public static final Element CHI = new Element("Chi", ElementType.BLOCKING, "GOLD", "[Chi]");
+	public static final Element AVATAR = new Element("Avatar", null, "DARK_PURPLE", "[Avatar]");
+	public static final SubElement FLIGHT = new SubElement("Flight", AIR, ElementType.NO_SUFFIX, "DARK_GRAY");
+	public static final SubElement SPIRITUAL = new SubElement("Spiritual", AIR, ElementType.NO_SUFFIX, "DARK_GRAY");
+	public static final SubElement BLOOD = new SubElement("Blood", WATER, "DARK_AQUA");
+	public static final SubElement HEALING = new SubElement("Healing", WATER, ElementType.NO_SUFFIX, "DARK_AQUA");
+	public static final SubElement ICE = new SubElement("Ice", WATER, "DARK_AQUA");
+	public static final SubElement PLANT = new SubElement("Plant", WATER, "DARK_AQUA");
+	public static final SubElement LAVA = new SubElement("Lava", EARTH, "DARK_GREEN");
+	public static final SubElement METAL = new SubElement("Metal", EARTH, "DARK_GREEN");
+	public static final SubElement SAND = new SubElement("Sand", EARTH, "DARK_GREEN");
+	public static final SubElement LIGHTNING = new SubElement("Lightning", FIRE, "DARK_RED");
+	public static final SubElement COMBUSTION = new SubElement("Combustion", FIRE, "DARK_RED");
 
 	private static final Element[] ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI, FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION };
 	private static final Element[] MAIN_ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI };
@@ -72,8 +72,8 @@ public class Element {
 	 * 
 	 * @param name Name of the new Element.
 	 */
-	public Element(String name) {
-		this(name, ElementType.BENDING, ProjectKorra.plugin);
+	public Element(String name, String color, String prefix) {
+		this(name, ElementType.BENDING, ProjectKorra.plugin, color, prefix);
 	}
 
 	/**
@@ -84,8 +84,8 @@ public class Element {
 	 * @param type ElementType specifies if its a regular element or chi style
 	 *            element.
 	 */
-	public Element(String name, ElementType type) {
-		this(name, type, ProjectKorra.plugin);
+	public Element(String name, ElementType type, String color, String prefix) {
+		this(name, type, ProjectKorra.plugin, color, prefix);
 	}
 
 	/**
@@ -96,12 +96,31 @@ public class Element {
 	 * @param type ElementType specifies if its a regular element or chi style
 	 *            element.
 	 * @param plugin The plugin that is adding the element.
+	 * @param color Element's color
+	 * @param prefix Element's prefix
 	 */
-	public Element(String name, ElementType type, Plugin plugin) {
+	public Element(String name, ElementType type, Plugin plugin, String color, String prefix) {
 		this.name = name;
 		this.type = type;
 		this.plugin = plugin;
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
+		if(getElement(name) instanceof SubElement) {
+			String mainName = prefix;
+			if(((ConfigManager.languageConfig.get().getString("Chat.Colors." + mainName + "Sub")) == null)) {
+				ConfigManager.languageConfig.get().options().copyDefaults(true);
+				ConfigManager.languageConfig.get().addDefault(("Chat.Colors." + mainName + "Sub"), color);
+				ConfigManager.languageConfig.save();
+			}
+		}
+		else {
+		   if((ConfigManager.languageConfig.get().getString("Chat.Colors." + name) == null) || (ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name) == null)) {
+		       ConfigManager.languageConfig.get().options().copyDefaults(true);
+		       ConfigManager.languageConfig.get().addDefault("Chat.Colors." + name, color);
+		       ConfigManager.languageConfig.get().addDefault("Chat.Prefixes." + name, prefix);
+		       ConfigManager.languageConfig.save();
+		   }
+		}
+		
 	}
 
 	public String getPrefix() {
@@ -301,8 +320,8 @@ public class Element {
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
 		 */
-		public SubElement(String name, Element parentElement) {
-			this(name, parentElement, ElementType.BENDING, ProjectKorra.plugin);
+		public SubElement(String name, Element parentElement, String color) {
+			this(name, parentElement, ElementType.BENDING, ProjectKorra.plugin, color);
 		}
 
 		/**
@@ -314,8 +333,8 @@ public class Element {
 		 * @param type ElementType specifies if its a regular element or chi
 		 *            style element.
 		 */
-		public SubElement(String name, Element parentElement, ElementType type) {
-			this(name, parentElement, type, ProjectKorra.plugin);
+		public SubElement(String name, Element parentElement, ElementType type, String color) {
+			this(name, parentElement, type, ProjectKorra.plugin, color);
 		}
 
 		/**
@@ -327,9 +346,10 @@ public class Element {
 		 * @param type ElementType specifies if its a regular element or chi
 		 *            style element.
 		 * @param plugin The plugin that is adding the element.
+		 * @param color The Sub Element's color (Use only one color for all your SubElements)
 		 */
-		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin) {
-			super(name, type, plugin);
+		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin, String color) {
+			super(name, type, plugin, color, parentElement.name);
 			this.parentElement = parentElement;
 		}
 

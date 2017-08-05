@@ -639,7 +639,39 @@ public class BendingPlayer {
 	public boolean isToggled() {
 		return this.toggled;
 	}
-
+	/**
+	 * Checks if the {@link BendingPlayer} can bend any element
+	 * @return true if the player can bend an element
+	 */
+	public static boolean isBender(BendingPlayer bPlayer) {
+		try {
+		if(bPlayer.hasElement(Element.FIRE)) {
+			return true;
+		}
+		else if(bPlayer.hasElement(Element.AIR)) {
+			return true;
+		}
+		else if(bPlayer.hasElement(Element.WATER)) {
+			return true;
+		}
+		else if(bPlayer.hasElement(Element.EARTH)) {
+			return true;
+		}
+		else if(bPlayer.hasElement(Element.CHI)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		}
+		catch(NullPointerException ex) {
+			return false;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
 	/**
 	 * Checks if the {@link BendingPlayer} is tremor sensing.
 	 * 

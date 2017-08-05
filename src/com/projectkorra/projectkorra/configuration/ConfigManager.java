@@ -49,16 +49,6 @@ public class ConfigManager {
 
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
-			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
-			config.addDefault("Chat.Colors.Air", "GRAY");
-			config.addDefault("Chat.Colors.AirSub", "DARK_GRAY");
-			config.addDefault("Chat.Colors.Water", "AQUA");
-			config.addDefault("Chat.Colors.WaterSub", "DARK_AQUA");
-			config.addDefault("Chat.Colors.Earth", "GREEN");
-			config.addDefault("Chat.Colors.EarthSub", "DARK_GREEN");
-			config.addDefault("Chat.Colors.Fire", "RED");
-			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
-			config.addDefault("Chat.Colors.Chi", "GOLD");
 			config.addDefault("Chat.Branding.JoinMessage.Enabled", true);
 			config.addDefault("Chat.Branding.AutoAnnouncer.Enabled", true);
 			config.addDefault("Chat.Branding.AutoAnnouncer.Interval", 30);
@@ -68,14 +58,8 @@ public class ConfigManager {
 			config.addDefault("Chat.Branding.ChatPrefix.Prefix", "");
 			config.addDefault("Chat.Branding.ChatPrefix.Suffix", " ");
 
-			config.addDefault("Chat.Prefixes.Air", "[Air]");
-			config.addDefault("Chat.Prefixes.Earth", "[Earth]");
-			config.addDefault("Chat.Prefixes.Fire", "[Fire]");
-			config.addDefault("Chat.Prefixes.Water", "[Water]");
-			config.addDefault("Chat.Prefixes.Chi", "[Chi]");
-			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
-
+			
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the full moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
 			config.addDefault("Extras.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
