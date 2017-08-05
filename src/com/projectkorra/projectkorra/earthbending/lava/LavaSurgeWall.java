@@ -160,7 +160,7 @@ public class LavaSurgeWall extends LavaAbility {
 
 			if (forming) {
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
+				Location loc = GeneralMethods.getTargetedLocation(player, (int) range, Material.WATER, Material.STATIONARY_WATER, Material.ICE);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
@@ -283,12 +283,11 @@ public class LavaSurgeWall extends LavaAbility {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		if (!hasAbility(player, LavaSurgeWall.class)) {
 			new LavaSurgeWave(player);
 			return;
-		} else if (isLavabendable(player, player.getTargetBlock((HashSet<Byte>) null, SURGE_WAVE_RANGE))) {
+		} else if (isLavabendable(player, player.getTargetBlock((HashSet<Material>) null, SURGE_WAVE_RANGE))) {
 			new LavaSurgeWave(player);
 			return;
 		}

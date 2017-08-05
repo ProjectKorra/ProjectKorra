@@ -100,7 +100,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 		if (target != null && target.getLocation().distanceSquared(currentLoc) > 49) {
 			destination = target.getLocation();
 		} else {
-			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
+			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
 		}
 
 		direction = GeneralMethods.getDirection(currentLoc, destination).normalize();
