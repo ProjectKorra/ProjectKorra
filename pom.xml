@@ -16,14 +16,14 @@
   </repositories>
 
   <dependencies>
-    <!-- Spigot API -->
-    <!-- <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/spigot-1.12-R0.1-SNAPSHOT.jar</systemPath>
-    </dependency> -->
+  	<!-- Spigot API -->
+  	<dependency>
+    	<groupId>org.spigotmc</groupId>
+    	<artifactId>Spigot-Server</artifactId>
+    	<version>LATEST</version>
+    	<scope>system</scope>
+    	<systemPath>${project.basedir}/lib/spigot-1.12.1.jar</systemPath>
+    </dependency>
     <!-- Factions -->
     <dependency>
       <groupId>com.massivecraft</groupId>
@@ -70,7 +70,7 @@
       <artifactId>PreciousStones</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/PreciousStones 9.7.1.jar</systemPath>
+      <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
     </dependency>
     <!-- PK RPG -->
     <dependency>
@@ -135,13 +135,6 @@
       <version>LATEST</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
-    </dependency>
-    <dependency>
-    	<groupId>org.spigotmc</groupId>
-    	<artifactId>Spigot-Server</artifactId>
-    	<version>LATEST</version>
-    	<scope>system</scope>
-    	<systemPath>${project.basedir}/lib/spigot-1.12-R0.1-SNAPSHOT.jar</systemPath>
     </dependency>
   </dependencies>
 

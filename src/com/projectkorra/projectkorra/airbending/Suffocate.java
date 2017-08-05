@@ -117,7 +117,7 @@ public class Suffocate extends AirAbility {
 			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
 			List<Entity> entities = new ArrayList<Entity>();
 			for (int i = 0; i < 6; i++) {
-				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterial());
+				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
 				if (entities.contains(player))
 					entities.remove(player);

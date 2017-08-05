@@ -75,7 +75,7 @@ public class WaterArmsFreeze extends IceAbility {
 
 			Vector dir = player.getLocation().getDirection();
 			location = waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
-			direction = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, iceRange, new Integer[] { 8, 9, 79, 174 })).normalize();
+			direction = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, iceRange, Material.WATER, Material.STATIONARY_WATER, Material.ICE, Material.PACKED_ICE)).normalize();
 		} else {
 			return;
 		}

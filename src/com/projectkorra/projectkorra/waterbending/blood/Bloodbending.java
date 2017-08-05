@@ -89,7 +89,7 @@ public class Bloodbending extends BloodAbility {
 			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
 			List<Entity> entities = new CopyOnWriteArrayList<Entity>();
 			for (int i = 0; i < range; i++) {
-				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterial());
+				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
 				if (entities.contains(player))
 					entities.remove(player);
@@ -262,7 +262,7 @@ public class Bloodbending extends BloodAbility {
 				return;
 			}
 
-			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
+			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterials());
 			double distance = 0;
 			if (location.getWorld().equals(target.getWorld())) {
 				distance = location.distance(target.getLocation());

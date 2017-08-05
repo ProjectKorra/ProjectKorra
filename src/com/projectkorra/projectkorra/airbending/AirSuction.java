@@ -73,7 +73,7 @@ public class AirSuction extends AirAbility {
 			origin = player.getEyeLocation();
 		}
 
-		location = GeneralMethods.getTargetedLocation(player, range, GeneralMethods.NON_OPAQUE);
+		location = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
 		direction = GeneralMethods.getDirection(location, origin).normalize();
 		Entity entity = GeneralMethods.getTargetedEntity(player, range);
 
@@ -119,7 +119,7 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), GeneralMethods.NON_OPAQUE);
+		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), getTransparentMaterials());
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {

@@ -136,13 +136,13 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
 
-	public static final Integer[] NON_OPAQUE = { 0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 69, 70, 72, 75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132, 175 };
+	public static final Material[] NON_OPAQUE = { Material.AIR, Material.SAPLING, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.WEB, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.CROPS, Material.LADDER, Material.RAILS, Material.SIGN_POST, Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE_BLOCK, Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.WATER_LILY, Material.NETHER_WART_BLOCK, Material.ENDER_PORTAL, Material.COCOA, Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.FLOWER_POT, Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.DAYLIGHT_DETECTOR, Material.CARPET, Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.WALL_BANNER, Material.DAYLIGHT_DETECTOR_INVERTED,Material.END_ROD, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.BEETROOT_BLOCK, Material.END_GATEWAY };
 	public static final Material[] INTERACTABLE_MATERIALS = { Material.ACACIA_DOOR, Material.ACACIA_FENCE_GATE, Material.ANVIL, Material.BEACON, Material.BED_BLOCK, Material.BIRCH_DOOR, Material.BIRCH_FENCE_GATE, Material.BOAT, Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND, Material.DARK_OAK_DOOR, Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER, Material.ENCHANTMENT_TABLE, Material.ENDER_CHEST, Material.ENDER_PORTAL_FRAME, Material.FENCE_GATE, Material.FURNACE, Material.HOPPER, Material.HOPPER_MINECART, Material.COMMAND_MINECART, Material.JUKEBOX, Material.JUNGLE_DOOR, Material.JUNGLE_FENCE_GATE, Material.LEVER, Material.MINECART, Material.NOTE_BLOCK, Material.SPRUCE_DOOR, Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON, Material.TRAPPED_CHEST, Material.TRAP_DOOR, Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
@@ -1128,18 +1128,18 @@ public class GeneralMethods {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
 
-	public static Location getTargetedLocation(Player player, double originselectrange, Integer... nonOpaque2) {
+	public static Location getTargetedLocation(Player player, double originselectrange, Material... nonOpaque2) {
 		Location origin = player.getEyeLocation();
 		Vector direction = origin.getDirection();
 
-		HashSet<Byte> trans = new HashSet<Byte>();
-		trans.add((byte) 0);
+		HashSet<Material> trans = new HashSet<Material>();
+		trans.add(Material.AIR);
 
 		if (nonOpaque2 == null) {
 			trans = null;
 		} else {
-			for (int i : nonOpaque2) {
-				trans.add((byte) i);
+			for (Material material : nonOpaque2) {
+				trans.add(material);
 			}
 		}
 
@@ -1154,7 +1154,7 @@ public class GeneralMethods {
 	}
 
 	public static Location getTargetedLocation(Player player, int range) {
-		return getTargetedLocation(player, range, 0);
+		return getTargetedLocation(player, range, Material.AIR);
 	}
 
 	public static Block getTopBlock(Location loc, int range) {
@@ -1289,7 +1289,7 @@ public class GeneralMethods {
 		for (double i = 0; i <= max; i++) {
 			loc = location1.clone().add(direction.clone().multiply(i));
 			Material type = loc.getBlock().getType();
-			if (type != Material.AIR && !(Arrays.asList(ElementalAbility.getTransparentMaterialSet()).contains(type.getId()) || ElementalAbility.isWater(loc.getBlock()))) {
+			if (type != Material.AIR && !(Arrays.asList(ElementalAbility.getTransparentMaterialSet()).contains(type)) || ElementalAbility.isWater(loc.getBlock())) {
 				return true;
 			}
 		}
@@ -1537,7 +1537,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isSolid(Block block) {
-		return !Arrays.asList(NON_OPAQUE).contains(block.getTypeId());
+		return !Arrays.asList(NON_OPAQUE).contains(block.getType());
 	}
 
 	/** Checks if an entity is Undead **/
