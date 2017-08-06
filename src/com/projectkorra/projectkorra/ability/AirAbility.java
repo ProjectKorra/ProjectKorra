@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Suffocate;
@@ -138,8 +139,16 @@ public abstract class AirAbility extends ElementalAbility {
 		if (getConfig().getBoolean("Properties.Air.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
+
+			Sound sound = Sound.ENTITY_CREEPER_HURT;
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound")), volume, pitch);
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound"));
+			} catch (IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Air.Sound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
 		}
 	}
 
