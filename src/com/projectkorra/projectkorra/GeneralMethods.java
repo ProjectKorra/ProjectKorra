@@ -1289,7 +1289,7 @@ public class GeneralMethods {
 		for (double i = 0; i <= max; i++) {
 			loc = location1.clone().add(direction.clone().multiply(i));
 			Material type = loc.getBlock().getType();
-			if (type != Material.AIR && !(Arrays.asList(ElementalAbility.getTransparentMaterialSet()).contains(type)) || ElementalAbility.isWater(loc.getBlock())) {
+			if (type != Material.AIR && !(ElementalAbility.getTransparentMaterialSet().contains(type) || ElementalAbility.isWater(loc.getBlock()))) {
 				return true;
 			}
 		}

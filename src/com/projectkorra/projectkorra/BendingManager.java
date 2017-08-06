@@ -10,12 +10,14 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.chiblocking.combo.Immobilize;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
+import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.rpg.RPGMethods;
 
 public class BendingManager implements Runnable {
@@ -110,9 +112,15 @@ public class BendingManager implements Runnable {
 			handleDayNight();
 			Flight.handle();
 			RevertChecker.revertAirBlocks();
-			Immobilize.handleParalysis();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
+			for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+				if (MetalClips.isControlled(player)) {
+					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
+				} else if (Bloodbending.isBloodbent(player)) {
+					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
+				}
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();

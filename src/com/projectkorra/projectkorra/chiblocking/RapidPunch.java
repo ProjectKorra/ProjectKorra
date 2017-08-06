@@ -20,6 +20,7 @@ public class RapidPunch extends ChiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private int numPunches;
+	private long interval, last = 0;
 	private Entity target;
 
 	public RapidPunch(Player sourceplayer, Entity targetentity) {
@@ -31,6 +32,7 @@ public class RapidPunch extends ChiAbility {
 		this.damage = getConfig().getDouble("Abilities.Chi.RapidPunch.Damage");
 		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
+		this.interval = getConfig().getLong("Abilities.Chi.RapidPunch.Interval");
 		this.target = targetentity;
 		bPlayer.addCooldown(this);
 		start();
@@ -43,20 +45,22 @@ public class RapidPunch extends ChiAbility {
 			return;
 		}
 
-		LivingEntity lt = (LivingEntity) target;
-		DamageHandler.damageEntity(target, damage, this);
-
-		if (target instanceof Player) {
-			if (ChiPassive.willChiBlock(player, (Player) target)) {
-				ChiPassive.blockChi((Player) target);
+		if (System.currentTimeMillis() >= last + interval) {
+			LivingEntity lt = (LivingEntity) target;
+			DamageHandler.damageEntity(target, damage, this);
+	
+			if (target instanceof Player) {
+				if (ChiPassive.willChiBlock(player, (Player) target)) {
+					ChiPassive.blockChi((Player) target);
+				}
+				if (Suffocate.isChannelingSphere((Player) target)) {
+					Suffocate.remove((Player) target);
+				}
 			}
-			if (Suffocate.isChannelingSphere((Player) target)) {
-				Suffocate.remove((Player) target);
-			}
+	
+			lt.setNoDamageTicks(0);
+			numPunches++;
 		}
-
-		lt.setNoDamageTicks(0);
-		numPunches++;
 	}
 
 	@Override
