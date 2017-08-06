@@ -8,9 +8,13 @@
 
 ProjectKorra is a place for members across the Minecraft and Bending Communities to come together and interact. ProjectKorra is one of the biggest Minecraft and Avatar/Korra related communities around and is still growing rapidly. Our goal is to bridge the two communities, providing users with a way to implement aspects of the hit television shows "Avatar: The Last Airbender" and "The Legend of Korra" into Minecraft.
 
+## Contributing
+
+We are always eager to see active developers in the community making pull requests to ProjectKorra and invite you to do so. We just ask that all incoming pull requests be made to the `wip` branch and that you try your best to adhere to our pull request template. If you find yourself contributing a lot and want to get more involved with the plugins community you may want to consider joining our development team [here](http://projectkorra.com/join-the-team/). 
+
 ## Downloads
 
-You can find the latest recommended build on the official [Projectkorra Downloads Page](http://projectkorra.com/resources/categories/official-plugin-releases.2/).
+You can find the latest recommended build on the official [Projectkorra Downloads Page](http://projectkorra.com/downloads/).
 
 Additionally, you can find the latest BETA builds in the resources section of the ProjectKorra forum, or you can use the Downloads page to download the latest. Stability of BETA builds are never promised, but usually anything pushed to the BETA Build section of the forum is at least runnable.
 

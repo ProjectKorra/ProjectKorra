@@ -1,9 +1,17 @@
-Links to Appropriate Issue Reports Addressed in this Pull Request:
-- One
-- Two
-- Three
+Fill in whatever sections apply, feel free to remove any others. :thumbsup:
 
-Release Notes for this Pull Request:
-- One
-- Two
-- Three
+## Additions
+* Adds 1.
+    > * Link to GitHub Issue(s) / Trello Card(s) if applicable.
+
+## Fixes
+* Fixes 2
+    > * Link to GitHub Issue(s) / Trello Card(s) if applicable.
+
+## Removals
+* Removes 3.
+    > * Link to GitHub Issue(s) / Trello Card(s) if applicable.
+
+## Misc. Changes
+* Changes 4 to 5.
+    > * Link to GitHub Issue(s) / Trello Card(s) if applicable.

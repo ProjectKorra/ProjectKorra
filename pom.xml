@@ -4,7 +4,7 @@
 
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>1.8.5</version>
+  <version>1.8.6</version>
   <packaging>jar</packaging>
   <name>ProjectKorra</name>
 
@@ -16,14 +16,14 @@
   </repositories>
 
   <dependencies>
-    <!-- Spigot API -->
-    <!-- <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/spigot-1.12-R0.1-SNAPSHOT.jar</systemPath>
-    </dependency> -->
+  	<!-- Spigot API -->
+  	<dependency>
+    	<groupId>org.spigotmc</groupId>
+    	<artifactId>Spigot-Server</artifactId>
+    	<version>LATEST</version>
+    	<scope>system</scope>
+    	<systemPath>${project.basedir}/lib/spigot-1.12.1.jar</systemPath>
+    </dependency>
     <!-- Factions -->
     <dependency>
       <groupId>com.massivecraft</groupId>
@@ -70,7 +70,7 @@
       <artifactId>PreciousStones</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/PreciousStones 9.7.1.jar</systemPath>
+      <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
     </dependency>
     <!-- PK RPG -->
     <dependency>
@@ -136,13 +136,6 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
     </dependency>
-    <dependency>
-    	<groupId>org.spigotmc</groupId>
-    	<artifactId>Spigot-Server</artifactId>
-    	<version>LATEST</version>
-    	<scope>system</scope>
-    	<systemPath>${project.basedir}/lib/spigot-1.12-R0.1-SNAPSHOT.jar</systemPath>
-    </dependency>
   </dependencies>
 
   <build>
@@ -165,8 +158,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
 	  <plugin>

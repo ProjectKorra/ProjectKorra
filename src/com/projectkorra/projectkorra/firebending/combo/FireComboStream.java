@@ -92,7 +92,7 @@ public class FireComboStream extends BukkitRunnable  {
 			return;
 		} else if (collides && checkCollisionCounter % checkCollisionDelay == 0) {
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
-				if (entity instanceof LivingEntity && !entity.equals(coreAbility.getPlayer())) {
+				if (entity instanceof LivingEntity && !entity.equals(coreAbility.getPlayer()) && !entity.isDead()) {
 					collision((LivingEntity) entity, direction, coreAbility);
 				}
 			}

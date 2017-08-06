@@ -1,16 +1,15 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 public class RapidPunch extends ChiAbility {
 
@@ -18,10 +17,10 @@ public class RapidPunch extends ChiAbility {
 	private double damage;
 	@Attribute("Hits")
 	private int punches;
-	private int distance;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private int numPunches;
+	private long interval, last = 0;
 	private Entity target;
 
 	public RapidPunch(Player sourceplayer, Entity targetentity) {
@@ -29,36 +28,39 @@ public class RapidPunch extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
+		
 		this.damage = getConfig().getDouble("Abilities.Chi.RapidPunch.Damage");
 		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
-		this.distance = getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
 		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
-		this.target = GeneralMethods.getTargetedEntity(player, distance);
+		this.interval = getConfig().getLong("Abilities.Chi.RapidPunch.Interval");
+		this.target = targetentity;
+		bPlayer.addCooldown(this);
 		start();
 	}
 
 	@Override
 	public void progress() {
 		if (numPunches >= punches || target == null || !(target instanceof LivingEntity)) {
-			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
 
-		LivingEntity lt = (LivingEntity) target;
-		DamageHandler.damageEntity(target, damage, this);
-
-		if (target instanceof Player) {
-			if (ChiPassive.willChiBlock(player, (Player) target)) {
-				ChiPassive.blockChi((Player) target);
+		if (System.currentTimeMillis() >= last + interval) {
+			LivingEntity lt = (LivingEntity) target;
+			DamageHandler.damageEntity(target, damage, this);
+	
+			if (target instanceof Player) {
+				if (ChiPassive.willChiBlock(player, (Player) target)) {
+					ChiPassive.blockChi((Player) target);
+				}
+				if (Suffocate.isChannelingSphere((Player) target)) {
+					Suffocate.remove((Player) target);
+				}
 			}
-			if (Suffocate.isChannelingSphere((Player) target)) {
-				Suffocate.remove((Player) target);
-			}
+	
+			lt.setNoDamageTicks(0);
+			numPunches++;
 		}
-
-		lt.setNoDamageTicks(0);
-		numPunches++;
 	}
 
 	@Override
@@ -100,14 +102,6 @@ public class RapidPunch extends ChiAbility {
 
 	public void setPunches(int punches) {
 		this.punches = punches;
-	}
-
-	public int getDistance() {
-		return distance;
-	}
-
-	public void setDistance(int distance) {
-		this.distance = distance;
 	}
 
 	public int getNumPunches() {

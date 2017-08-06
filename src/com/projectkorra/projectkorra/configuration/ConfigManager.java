@@ -554,7 +554,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandSound.Sound", "BLOCK_SAND_BREAK");
 			config.addDefault("Properties.Earth.SandSound.Volume", 1);
 			config.addDefault("Properties.Earth.SandSound.Pitch", 1);
-			config.addDefault("Properties.Earth.LavaSound.Sound", "LIQUID_LAVA");
+			config.addDefault("Properties.Earth.LavaSound.Sound", "BLOCK_LAVA_AMBIENT");
 			config.addDefault("Properties.Earth.LavaSound.Volume", 1);
 			config.addDefault("Properties.Earth.LavaSound.Pitch", 1);
 
@@ -1399,9 +1399,9 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Chi.RapidPunch.Enabled", true);
 			config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);
-			config.addDefault("Abilities.Chi.RapidPunch.Distance", 3);
 			config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 6000);
 			config.addDefault("Abilities.Chi.RapidPunch.Punches", 3);
+			config.addDefault("Abilities.Chi.RapidPunch.Interval", 500);
 
 			config.addDefault("Abilities.Chi.Smokescreen.Enabled", true);
 			config.addDefault("Abilities.Chi.Smokescreen.Cooldown", 25000);
