@@ -23,7 +23,6 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.chiblocking.Paralyze;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
@@ -619,7 +618,7 @@ public class BendingPlayer {
 	}
 
 	public boolean isParalyzed() {
-		return Paralyze.isParalyzed(player);
+		return player.hasMetadata("movement:stop");
 	}
 
 	/**
