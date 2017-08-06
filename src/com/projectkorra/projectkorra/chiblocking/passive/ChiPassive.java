@@ -63,7 +63,7 @@ public class ChiPassive {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				ActionBar.sendActionBar(ChatColor.GOLD + "* Chiblocked *", player);
+				ActionBar.sendActionBar(Element.CHI.getColor() + "* Chiblocked *", player);
 				if (System.currentTimeMillis() >= start + getDuration()) {
 					bPlayer.unblockChi();
 					cancel();
