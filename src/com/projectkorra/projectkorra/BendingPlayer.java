@@ -645,32 +645,16 @@ public class BendingPlayer {
 	 */
 	public static boolean isBender(BendingPlayer bPlayer) {
 		try {
-		if(bPlayer.hasElement(Element.FIRE)) {
-			return true;
-		}
-		else if(bPlayer.hasElement(Element.AIR)) {
-			return true;
-		}
-		else if(bPlayer.hasElement(Element.WATER)) {
-			return true;
-		}
-		else if(bPlayer.hasElement(Element.EARTH)) {
-			return true;
-		}
-		else if(bPlayer.hasElement(Element.CHI)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-		}
-		catch(NullPointerException ex) {
-			return false;
+			if(bPlayer.getElements() != null) {
+				if(!bPlayer.getElements().isEmpty()) {
+				return true;
+				}
+			}
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
-			return false;
 		}
+		return false;
 	}
 	/**
 	 * Checks if the {@link BendingPlayer} is tremor sensing.
