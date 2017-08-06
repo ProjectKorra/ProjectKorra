@@ -1401,6 +1401,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);
 			config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 6000);
 			config.addDefault("Abilities.Chi.RapidPunch.Punches", 3);
+			config.addDefault("Abilities.Chi.RapidPunch.Interval", 500);
 
 			config.addDefault("Abilities.Chi.Smokescreen.Enabled", true);
 			config.addDefault("Abilities.Chi.Smokescreen.Cooldown", 25000);

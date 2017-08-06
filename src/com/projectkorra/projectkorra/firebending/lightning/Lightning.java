@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.firebending.lightning;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -12,10 +11,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class Lightning extends LightningAbility {
 
@@ -24,7 +25,6 @@ public class Lightning extends LightningAbility {
 	}
 
 	private static final int POINT_GENERATION = 5;
-	private static List<UUID> paralyzed = new ArrayList<>();
 
 	private boolean charged;
 	private boolean hitWater;
@@ -122,28 +122,13 @@ public class Lightning extends LightningAbility {
 	 * @param lent The LivingEntity that is being damaged
 	 */
 	public void electrocute(LivingEntity lent) {
-		final UUID uuid = lent.getUniqueId();
-		final LivingEntity flent = lent;
 		playLightningbendingSound(lent.getLocation());
 		playLightningbendingSound(player.getLocation());
 		DamageHandler.damageEntity(lent, damage, this);
 
 		if (Math.random() <= stunChance) {
-			paralyzed.add(uuid);
-			if (!(lent instanceof Player)) {
-				lent.setAI(false);
-			}
-			new BukkitRunnable() {
-
-				@Override
-				public void run() {
-					paralyzed.remove(uuid);
-					if (!(flent instanceof Player)) {
-						flent.setAI(true);
-					}
-				}
-				
-			}.runTaskLater(ProjectKorra.plugin, (long) stunDuration);
+			MovementHandler mh = new MovementHandler(lent);
+			mh.stop((long) stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
 		}
 	}
 
@@ -166,10 +151,6 @@ public class Lightning extends LightningAbility {
 			}
 		}
 		return false;
-	}
-	
-	public static boolean isParalyzed(Entity e) {
-		return paralyzed.contains(e.getUniqueId());
 	}
 
 	/**

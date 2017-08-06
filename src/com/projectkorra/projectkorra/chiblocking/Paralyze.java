@@ -1,22 +1,20 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class Paralyze extends ChiAbility {
-
-	private static final Map<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -49,34 +47,18 @@ public class Paralyze extends ChiAbility {
 	}
 
 	private static void paralyze(Entity entity) {
-		ENTITIES.put(entity, System.currentTimeMillis());
 		if (entity instanceof Creature) {
 			((Creature) entity).setTarget(null);
 		}
-
+		
 		if (entity instanceof Player) {
 			if (Suffocate.isChannelingSphere((Player) entity)) {
 				Suffocate.remove((Player) entity);
 			}
-		}
-	}
-
-	//TODO change paralyze to use Spigot metadata rather than checking this class
-	public static boolean isParalyzed(Entity entity) {
-		if (entity instanceof Player) {
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer((Player) entity);
-			if (bPlayer != null && bPlayer.isAvatarState()) {
-				return false;
-			}
-		}
-		if (ENTITIES.containsKey(entity)) {
-			if (System.currentTimeMillis() < ENTITIES.get(entity) + getDuration()) {
-				return true;
-			}
-			ENTITIES.remove(entity);
-		}
-		return false;
-
+		} 
+		MovementHandler mh = new MovementHandler((LivingEntity) entity);
+		mh.stop(getDuration()/1000*20, Element.CHI.getColor() + "* Paralyzed *");
+		entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
 	}
 
 	@Override
@@ -114,10 +96,6 @@ public class Paralyze extends ChiAbility {
 
 	public void setTarget(Entity target) {
 		this.target = target;
-	}
-
-	public static Map<Entity, Long> getEntities() {
-		return ENTITIES;
 	}
 
 }
