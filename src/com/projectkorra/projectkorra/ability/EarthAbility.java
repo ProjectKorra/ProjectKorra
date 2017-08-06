@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
@@ -499,7 +500,15 @@ public abstract class EarthAbility extends ElementalAbility {
 			float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound")), volume, pitch);
+			Sound sound = Sound.ENTITY_GHAST_SHOOT;
+			
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound"));
+			} catch (IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Earth.EarthSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
 		}
 	}
 
@@ -508,7 +517,15 @@ public abstract class EarthAbility extends ElementalAbility {
 			float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound")), volume, pitch);
+			Sound sound = Sound.ENTITY_IRONGOLEM_HURT;
+			
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound"));
+			} catch (IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MetalSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
 		}
 	}
 
@@ -517,7 +534,15 @@ public abstract class EarthAbility extends ElementalAbility {
 			float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound")), volume, pitch);
+			Sound sound = Sound.BLOCK_SAND_BREAK;
+			
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound"));
+			} catch (IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Earth.SandSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
 		}
 	}
 	public static void playLavabendingSound(Location loc) {
@@ -525,7 +550,15 @@ public abstract class EarthAbility extends ElementalAbility {
 			float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound")), volume, pitch);
+			Sound sound = Sound.BLOCK_LAVA_AMBIENT;
+			
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound"));
+			} catch (IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Earth.LavaSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
 		}
 	}
 
