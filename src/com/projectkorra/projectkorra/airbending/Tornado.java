@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.Flight;
@@ -127,6 +129,13 @@ public class Tornado extends AirAbility {
 						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
 						if (entity instanceof Player) {
+							BendingPlayer bPlayer = BendingPlayer.getBendingPlayer((Player)entity);
+							if(bPlayer.canBend(CoreAbility.getAbility(AirSpout.class))) {
+								if(CoreAbility.getPlayers(AirSpout.class).contains((Player) entity)) {
+									this.remove();
+									return;
+								}
+								}
 							vy = 0.05 * playerPushFactor;
 						}
 
