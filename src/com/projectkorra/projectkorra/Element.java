@@ -71,9 +71,22 @@ public class Element {
 	 * Elements.
 	 * 
 	 * @param name Name of the new Element.
+	 * @param color Color of the new Element.
+	 * @param prefix Prefix of the new Element.
 	 */
 	public Element(String name, ChatColor color, String prefix) {
 		this(name, ElementType.BENDING, ProjectKorra.plugin, color, prefix);
+	}
+	/**
+	 * To be used when creating a new Element. Do not use for comparing
+	 * Elements. This method is deprecated, use 
+	 * {@code Element(String name, ChatColor color, String prefix)}
+	 * 
+	 * @param name Name of the new Element.
+	 */
+	@Deprecated
+	public Element(String name) {
+		this(name, ElementType.BENDING, ProjectKorra.plugin);
 	}
 
 	/**
@@ -83,11 +96,27 @@ public class Element {
 	 * @param name Name of the new Element.
 	 * @param type ElementType specifies if its a regular element or chi style
 	 *            element.
+	 * @param color Color of the new Element.
+	 * @param prefix Prefix of the new Element.
 	 */
 	public Element(String name, ElementType type, ChatColor color, String prefix) {
 		this(name, type, ProjectKorra.plugin, color, prefix);
 	}
-
+	
+	/**
+	 * To be used when creating a new Element. Do not use for comparing
+	 * Elements. This method is deprecated, use 
+	 * {@code Element(String name, ElementType type, ChatColor color, String prefix)}
+	 * 
+	 * @param name Name of the new Element.
+	 * @param type ElementType specifies if its a regular element or chi style
+	 *            element.
+	 */
+	@Deprecated
+	public Element(String name, ElementType type) {
+		this(name, type, ProjectKorra.plugin);
+	}
+	
 	/**
 	 * To be used when creating a new Element. Do not use for comparing
 	 * Elements.
@@ -122,6 +151,24 @@ public class Element {
 		}
 		
 	}
+	
+	/**
+	 * To be used when creating a new Element. Do not use for comparing
+	 * Elements. This method is deprecated.
+	 * 
+	 * @param name Name of the new Element.
+	 * @param type ElementType specifies if its a regular element or chi style
+	 *            element.
+	 * @param plugin The plugin that is adding the element.
+	 */
+	@Deprecated
+	public Element(String name, ElementType type, Plugin plugin) {
+		this.name = name;
+		this.type = type;
+		this.plugin = plugin;
+		ALL_ELEMENTS.put(name.toLowerCase(), this);
+	}
+
 
 	public String getPrefix() {
 		String name_ = name;
@@ -315,26 +362,55 @@ public class Element {
 
 		/**
 		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements.
+		 * SubElements. Only use one color for all your SubElements.
 		 * 
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
+		 * @param color Color of the new SubElement.
 		 */
 		public SubElement(String name, Element parentElement, ChatColor color) {
 			this(name, parentElement, ElementType.BENDING, ProjectKorra.plugin, color);
 		}
+		
+		/**
+		 * To be used when creating a new SubElement. Do not use for comparing
+		 * SubElements. This method is Deprecated, use
+		 * {@code SubElement(String name, Element parentElement, ChatColor color)}
+		 * 
+		 * @param name Name of the new SubElement.
+		 * @param parentElement ParentElement of the SubElement.
+		 */
+		@Deprecated
+		public SubElement(String name, Element parentElement) {
+			this(name, parentElement, ElementType.BENDING, ProjectKorra.plugin);
+		}
 
 		/**
 		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements.
+		 * SubElements. Only use one color for all your SubElements.
+		 * 
+		 * @param name Name of the new SubElement.
+		 * @param parentElement ParentElement of the SubElement.
+		 * @param type ElementType specifies if its a regular element or chi
+		 *            style element.
+		 * @param color The color of the SubElement.
+		 */
+		public SubElement(String name, Element parentElement, ElementType type, ChatColor color) {
+			this(name, parentElement, type, ProjectKorra.plugin, color);
+		}
+		
+		/**
+		 * To be used when creating a new SubElement. Do not use for comparing
+		 * SubElements. This Method is Deprecated, Use:
+		 * {@code SubElement(String name, Element parentElement, ElementType type, ChatColor color)}
 		 * 
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
 		 * @param type ElementType specifies if its a regular element or chi
 		 *            style element.
 		 */
-		public SubElement(String name, Element parentElement, ElementType type, ChatColor color) {
-			this(name, parentElement, type, ProjectKorra.plugin, color);
+		public SubElement(String name, Element parentElement, ElementType type) {
+			this(name, parentElement, type, ProjectKorra.plugin);
 		}
 
 		/**
@@ -350,6 +426,21 @@ public class Element {
 		 */
 		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin, ChatColor color) {
 			super(name, type, plugin, color, parentElement.name);
+			this.parentElement = parentElement;
+		}
+		
+		/**
+		 * To be used when creating a new SubElement. Do not use for comparing
+		 * SubElements. This Method is deprecated.
+		 * 
+		 * @param name Name of the new SubElement.
+		 * @param parentElement ParentElement of the SubElement.
+		 * @param type ElementType specifies if its a regular element or chi
+		 *            style element.
+		 * @param plugin The plugin that is adding the element.
+		 */
+		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin) {
+			super(name, type, plugin);
 			this.parentElement = parentElement;
 		}
 
