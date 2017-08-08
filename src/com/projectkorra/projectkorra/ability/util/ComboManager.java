@@ -22,8 +22,7 @@ import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletLeftC
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletRightClick;
 
 public class ComboManager {
-
-	private static final long CLEANUP_DELAY = 20 * 600;
+	private static final long CLEANUP_DELAY = 20 * 60;
 	private static final Map<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
 	private static final HashMap<String, ComboAbilityInfo> COMBO_ABILITIES = new HashMap<>();
 	private static final HashMap<String, String> AUTHORS = new HashMap<>();
@@ -57,6 +56,7 @@ public class ComboManager {
 		if (abilityName == null) {
 			return;
 		}
+		
 		AbilityInformation info = new AbilityInformation(abilityName, type, System.currentTimeMillis());
 		addRecentAbility(player, info);
 
@@ -74,8 +74,7 @@ public class ComboManager {
 					Class<?> clazz = (Class<?>) comboAbil.getComboType();
 					try {
 						ReflectionHandler.instantiateObject(clazz, player);
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				} else {
@@ -104,6 +103,7 @@ public class ComboManager {
 		} else {
 			list = new ArrayList<AbilityInformation>();
 		}
+		
 		list.add(info);
 		RECENTLY_USED.put(name, list);
 	}
@@ -140,10 +140,12 @@ public class ComboManager {
 					break;
 				}
 			}
+			
 			if (isValid) {
 				return customAbility;
 			}
 		}
+		
 		return null;
 	}
 
@@ -175,6 +177,7 @@ public class ComboManager {
 		for (int i = 0; i < amount; i++) {
 			tempList.add(0, list.get(list.size() - 1 - i));
 		}
+		
 		return tempList;
 	}
 
@@ -196,10 +199,12 @@ public class ComboManager {
 			if (abilElement instanceof SubElement) {
 				abilElement = ((SubElement) abilElement).getParentElement();
 			}
+			
 			if (abilElement == element) {
 				list.add(comboab);
 			}
 		}
+		
 		Collections.sort(list);
 		return list;
 	}
