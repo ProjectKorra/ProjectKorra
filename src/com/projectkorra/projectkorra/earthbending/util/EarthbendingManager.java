@@ -10,7 +10,6 @@ import com.projectkorra.projectkorra.util.RevertChecker;
 import org.bukkit.Bukkit;
 
 public class EarthbendingManager implements Runnable {
-
 	public ProjectKorra plugin;
 
 	public EarthbendingManager(ProjectKorra plugin) {
@@ -19,7 +18,6 @@ public class EarthbendingManager implements Runnable {
 
 	public void run() {
 		DensityShift.revertSands();
-		//EarthPassive.handleMetalPassives();
 		RevertChecker.revertEarthBlocks();
 		Shockwave.progressAll();
 		Tremorsense.manage(Bukkit.getServer());
