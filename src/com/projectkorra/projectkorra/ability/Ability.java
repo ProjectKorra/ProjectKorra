@@ -14,8 +14,6 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.waterbending.TorrentWave;
-import com.projectkorra.projectkorra.waterbending.passive.WaterPassive;
-
 /**
  * The Ability interface defines the set of methods that any CoreAbility,
  * AddonAbility, ComboAbility, or MultiAbility should implement.
@@ -23,7 +21,6 @@ import com.projectkorra.projectkorra.waterbending.passive.WaterPassive;
  * methods, but most will need to be specified by each Ability individually.
  */
 public interface Ability {
-
 	/**
 	 * Causes the ability to be updated.
 	 */
@@ -155,5 +152,4 @@ public interface Ability {
 	 * @see BendingPlayer#canBend(CoreAbility)
 	 */
 	public Location getLocation();
-
 }

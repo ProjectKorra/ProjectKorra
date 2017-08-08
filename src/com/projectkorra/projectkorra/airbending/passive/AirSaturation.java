@@ -5,17 +5,19 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirSaturation extends AirAbility implements PassiveAbility {
-
 	public AirSaturation(Player player) {
 		super(player);
 	}
 
-	@Override
-	public void progress() {
-
+	public static double getExhaustionFactor() {
+		return ConfigManager.getConfig().getDouble("Abilities.Air.Passive.Factor");
 	}
+
+	@Override
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {
@@ -39,12 +41,11 @@ public class AirSaturation extends AirAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player.getLocation();
 	}
 
 	@Override
 	public boolean isInstantiable() {
 		return false;
 	}
-
 }
