@@ -20,7 +20,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class DensityShift extends EarthAbility implements PassiveAbility {
-
 	private static final Map<Block, Long> SAND_BLOCKS = new ConcurrentHashMap<>();
 	private static final Map<Block, MaterialData> SAND_ID_ENTITIES = new ConcurrentHashMap<>();
 	
@@ -53,6 +52,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 					} else {
 						block.setType(Material.SAND);
 					}
+					
 					if (!SAND_BLOCKS.containsKey(block)) {
 						SAND_ID_ENTITIES.put(block, type);
 						SAND_BLOCKS.put(block, System.currentTimeMillis());
@@ -71,6 +71,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 						} else {
 							affectedBlock.setType(Material.SAND);
 						}
+						
 						if (!SAND_BLOCKS.containsKey(affectedBlock)) {
 							SAND_ID_ENTITIES.put(affectedBlock, type);
 							SAND_BLOCKS.put(affectedBlock, System.currentTimeMillis());
@@ -78,6 +79,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 					}
 				}
 			}
+			
 			return true;
 		}
 
@@ -133,9 +135,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	}
 	
 	@Override
-	public void progress() {
-
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {
