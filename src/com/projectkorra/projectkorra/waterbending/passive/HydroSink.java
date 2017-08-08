@@ -38,9 +38,7 @@ public class HydroSink extends WaterAbility implements PassiveAbility {
 	}
 
 	@Override
-	public void progress() {
-
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {
@@ -71,5 +69,4 @@ public class HydroSink extends WaterAbility implements PassiveAbility {
 	public boolean isInstantiable() {
 		return false;
 	}
-
 }
