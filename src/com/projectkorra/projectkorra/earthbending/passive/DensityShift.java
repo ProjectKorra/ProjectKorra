@@ -90,7 +90,6 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		return SAND_BLOCKS.containsKey(block);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void revertSand(Block block) {
 		MaterialData materialdata = SAND_ID_ENTITIES.get(block);
 		SAND_ID_ENTITIES.remove(block);
@@ -159,7 +158,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player.getLocation();
 	}
 
 	@Override
