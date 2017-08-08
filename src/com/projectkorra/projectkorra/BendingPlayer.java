@@ -310,16 +310,16 @@ public class BendingPlayer {
 				return false;
 			}
 			if (GeneralMethods.hasSpirits()) {
-				if (GeneralMethods.hasSpirits()) {
-					SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
-					if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
-						return false;
-					}
-
-					if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
-						return false;
-					}
+				
+				SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
+				if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
+					return false;
 				}
+
+				if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
+					return false;
+				}
+				
 			}
 		}
 		return true;
