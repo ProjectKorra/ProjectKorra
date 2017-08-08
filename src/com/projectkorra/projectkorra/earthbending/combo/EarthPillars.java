@@ -28,8 +28,7 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
-public class EarthPillars extends EarthAbility implements ComboAbility{
-	
+public class EarthPillars extends EarthAbility implements ComboAbility {
 	public double radius, damage, power, fallThreshold;
 	public boolean damaging, stun;
 	public long stunDuration;
@@ -55,6 +54,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility{
 				affect((LivingEntity)e);
 			}
 		}
+		
 		bPlayer.addCooldown(this);
 		start();
 	}
@@ -102,6 +102,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility{
 		if (bPlayer == null) {
 			return;
 		}
+		
 		bPlayer.blockChi();
 		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
 		
@@ -127,6 +128,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility{
 				if (!lent.isDead()) {
 					lent.setVelocity(new Vector(0, power, 0));
 				}
+				
 				removal.add(abil);
 			}
 		}
