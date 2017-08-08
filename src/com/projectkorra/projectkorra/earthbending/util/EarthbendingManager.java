@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
-import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.RevertChecker;
 
 import org.bukkit.Bukkit;
@@ -18,7 +18,7 @@ public class EarthbendingManager implements Runnable {
 	}
 
 	public void run() {
-		EarthPassive.revertSands();
+		DensityShift.revertSands();
 		//EarthPassive.handleMetalPassives();
 		RevertChecker.revertEarthBlocks();
 		Shockwave.progressAll();

@@ -15,7 +15,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -98,8 +98,8 @@ public class EarthBlast extends EarthAbility {
 
 	@SuppressWarnings("deprecation")
 	private void focusBlock() {
-		if (EarthPassive.isPassiveSand(sourceBlock)) {
-			EarthPassive.revertSand(sourceBlock);
+		if (DensityShift.isPassiveSand(sourceBlock)) {
+			DensityShift.revertSand(sourceBlock);
 		}
 
 		sourceData = sourceBlock.getData();

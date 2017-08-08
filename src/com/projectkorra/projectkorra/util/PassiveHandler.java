@@ -8,9 +8,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.airbending.passive.AirPassive;
 import com.projectkorra.projectkorra.airbending.passive.AirSaturation;
-import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiSaturation;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -39,8 +37,8 @@ public class PassiveHandler {
 		if (!CoreAbility.getAbility(AirSaturation.class).isEnabled() && !CoreAbility.getAbility(ChiSaturation.class).isEnabled()) {
 			return;
 		}
-		double air = AirPassive.getExhaustionFactor();
-		double chi = ChiPassive.getExhaustionFactor();
+		double air = AirSaturation.getExhaustionFactor();
+		double chi = ChiSaturation.getExhaustionFactor();
 
 		if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
 			return;

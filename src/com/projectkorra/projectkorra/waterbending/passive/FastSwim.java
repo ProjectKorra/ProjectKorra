@@ -41,6 +41,10 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 			}
 		}
 	}
+	
+	public static double getSwimSpeed() {
+		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
+	}
 
 	@Override
 	public boolean isSneakAbility() {

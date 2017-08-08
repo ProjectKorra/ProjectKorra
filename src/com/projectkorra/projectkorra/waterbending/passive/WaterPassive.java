@@ -1,36 +1,9 @@
 package com.projectkorra.projectkorra.waterbending.passive;
 
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.TempBlock;
-
 public class WaterPassive {
 
-	public static boolean applyNoFall(Player player) {
-		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
-			return false;
-		}
-		Block block = player.getLocation().getBlock();
-		Block fallBlock = block.getRelative(BlockFace.DOWN);
-		if (TempBlock.isTempBlock(fallBlock) && (fallBlock.getType().equals(Material.ICE))) {
-			return true;
-		} else if (WaterAbility.isWaterbendable(player, null, block) && !WaterAbility.isPlant(block)) {
-			return true;
-		} else if (fallBlock.getType() == Material.AIR) {
-			return true;
-		} else if ((WaterAbility.isWaterbendable(player, null, fallBlock) && !WaterAbility.isPlant(fallBlock)) || fallBlock.getType() == Material.SNOW_BLOCK) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
+	/*
+	 * Hydro Sink is now managed in HydroSink.java
 	 * Fast Swim is now managed in FastSwim.java
 	 */
 	/*
@@ -56,8 +29,4 @@ public class WaterPassive {
 	 * player.setVelocity(player.getEyeLocation().getDirection().clone().
 	 * normalize().multiply(swimSpeed)); } } } } }
 	 */
-
-	public static double getSwimSpeed() {
-		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
-	}
 }

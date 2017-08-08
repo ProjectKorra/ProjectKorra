@@ -176,8 +176,7 @@ import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
-import com.projectkorra.projectkorra.waterbending.passive.Hydrosink;
-import com.projectkorra.projectkorra.waterbending.passive.WaterPassive;
+import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 import com.projectkorra.rpg.RPGMethods;
 
 public class PKListener implements Listener {
@@ -240,8 +239,8 @@ public class PKListener implements Listener {
 			EarthAbility.removeRevertIndex(block);
 		} else if (TempBlock.isTempBlock(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
-		} else if (EarthPassive.isPassiveSand(block)) {
-			EarthPassive.revertSand(block);
+		} else if (DensityShift.isPassiveSand(block)) {
+			DensityShift.revertSand(block);
 		}
 	}
 
@@ -796,15 +795,15 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
-				if (WaterPassive.applyNoFall(player)) {
+			if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(HydroSink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(HydroSink.class))) {
+				if (HydroSink.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
-				if (EarthPassive.softenLanding(player)) {
+				if (DensityShift.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
@@ -812,7 +811,7 @@ public class PKListener implements Listener {
 
 			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
 				double initdamage = event.getDamage();
-				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
+				double newdamage = event.getDamage() * Acrobatics.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
 				event.setDamage(finaldamage);
 				if (finaldamage <= 0.4)
