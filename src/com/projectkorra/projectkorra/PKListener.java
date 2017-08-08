@@ -1638,6 +1638,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
 		Player player = event.getPlayer();
+		if(Tornado.getBentPlayers().contains(player)) {
+			event.setCancelled(true);
+		}
 		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
 			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
 		}

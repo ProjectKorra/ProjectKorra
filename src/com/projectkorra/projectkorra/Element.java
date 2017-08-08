@@ -40,23 +40,23 @@ public class Element {
 
 	private static final HashMap<String, Element> ALL_ELEMENTS = new HashMap<>(); // Must be initialized first
 
-	public static final Element AIR = new Element("Air");
-	public static final Element WATER = new Element("Water");
-	public static final Element EARTH = new Element("Earth");
-	public static final Element FIRE = new Element("Fire");
-	public static final Element CHI = new Element("Chi", ElementType.BLOCKING);
-	public static final Element AVATAR = new Element("Avatar", null);
-	public static final SubElement FLIGHT = new SubElement("Flight", AIR, ElementType.NO_SUFFIX);
-	public static final SubElement SPIRITUAL = new SubElement("Spiritual", AIR, ElementType.NO_SUFFIX);
-	public static final SubElement BLOOD = new SubElement("Blood", WATER);
-	public static final SubElement HEALING = new SubElement("Healing", WATER, ElementType.NO_SUFFIX);
-	public static final SubElement ICE = new SubElement("Ice", WATER);
-	public static final SubElement PLANT = new SubElement("Plant", WATER);
-	public static final SubElement LAVA = new SubElement("Lava", EARTH);
-	public static final SubElement METAL = new SubElement("Metal", EARTH);
-	public static final SubElement SAND = new SubElement("Sand", EARTH);
-	public static final SubElement LIGHTNING = new SubElement("Lightning", FIRE);
-	public static final SubElement COMBUSTION = new SubElement("Combustion", FIRE);
+	public static final Element AIR = new Element("Air", ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.Air")), ConfigManager.languageConfig.get().getString("Chat.Prefixes.Air"));
+	public static final Element WATER = new Element("Water", ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.Water")), ConfigManager.languageConfig.get().getString("Chat.Prefixes.Water"));
+	public static final Element EARTH = new Element("Earth", ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.Earth")), ConfigManager.languageConfig.get().getString("Chat.Prefixes.Earth"));
+	public static final Element FIRE = new Element("Fire", ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.Fire")), ConfigManager.languageConfig.get().getString("Chat.Prefixes.Fire"));
+	public static final Element CHI = new Element("Chi", ElementType.BLOCKING, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.Chi")), ConfigManager.languageConfig.get().getString("Chat.Prefixes.Chi"));
+	public static final Element AVATAR = new Element("Avatar", null, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.Avatar")), ConfigManager.languageConfig.get().getString("Chat.Prefixes.Avatar"));
+	public static final SubElement FLIGHT = new SubElement("Flight", AIR, ElementType.NO_SUFFIX, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.AirSub")));
+	public static final SubElement SPIRITUAL = new SubElement("Spiritual", AIR, ElementType.NO_SUFFIX, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.AirSub")));
+	public static final SubElement BLOOD = new SubElement("Blood", WATER, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.WaterSub")));
+	public static final SubElement HEALING = new SubElement("Healing", WATER, ElementType.NO_SUFFIX, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.WaterSub")));
+	public static final SubElement ICE = new SubElement("Ice", WATER, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.WaterSub")));
+	public static final SubElement PLANT = new SubElement("Plant", WATER, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.WaterSub")));
+	public static final SubElement LAVA = new SubElement("Lava", EARTH, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.EarthSub")));
+	public static final SubElement METAL = new SubElement("Metal", EARTH, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.EarthSub")));
+	public static final SubElement SAND = new SubElement("Sand", EARTH, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.EarthSub")));
+	public static final SubElement LIGHTNING = new SubElement("Lightning", FIRE, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.FireSub")));
+	public static final SubElement COMBUSTION = new SubElement("Combustion", FIRE, ChatColor.getByChar(ConfigManager.languageConfig.get().getString("Chat.Colors.FireSub")));
 
 	private static final Element[] ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI, FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION };
 	private static final Element[] MAIN_ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI };
@@ -71,7 +71,19 @@ public class Element {
 	 * Elements.
 	 * 
 	 * @param name Name of the new Element.
+	 * @param color Color of the new Element.
+	 * @param prefix Prefix of the new Element.
 	 */
+	public Element(String name, ChatColor color, String prefix) {
+		this(name, ElementType.BENDING, ProjectKorra.plugin, color, prefix);
+	}
+	/**
+	 * This method is deprecated, use 
+	 * {@code Element(String name, ChatColor color, String prefix)}
+	 * 
+	 * @param name Name of the new Element.
+	 */
+	@Deprecated
 	public Element(String name) {
 		this(name, ElementType.BENDING, ProjectKorra.plugin);
 	}
@@ -83,11 +95,26 @@ public class Element {
 	 * @param name Name of the new Element.
 	 * @param type ElementType specifies if its a regular element or chi style
 	 *            element.
+	 * @param color Color of the new Element.
+	 * @param prefix Prefix of the new Element.
 	 */
+	public Element(String name, ElementType type, ChatColor color, String prefix) {
+		this(name, type, ProjectKorra.plugin, color, prefix);
+	}
+	
+	/**
+	 * This method is deprecated, use 
+	 * {@code Element(String name, ElementType type, ChatColor color, String prefix)}
+	 * 
+	 * @param name Name of the new Element.
+	 * @param type ElementType specifies if its a regular element or chi style
+	 *            element.
+	 */
+	@Deprecated
 	public Element(String name, ElementType type) {
 		this(name, type, ProjectKorra.plugin);
 	}
-
+	
 	/**
 	 * To be used when creating a new Element. Do not use for comparing
 	 * Elements.
@@ -96,13 +123,49 @@ public class Element {
 	 * @param type ElementType specifies if its a regular element or chi style
 	 *            element.
 	 * @param plugin The plugin that is adding the element.
+	 * @param color Element's color
+	 * @param prefix Element's prefix
 	 */
+	public Element(String name, ElementType type, Plugin plugin, ChatColor color, String prefix) {
+		this.name = name;
+		this.type = type;
+		this.plugin = plugin;
+		ALL_ELEMENTS.put(name.toLowerCase(), this);
+		if(getElement(name) instanceof SubElement) {
+			String mainName = prefix;
+			if(((ConfigManager.languageConfig.get().getString("Chat.Colors." + mainName + "Sub")) == null)) {
+				ConfigManager.languageConfig.get().options().copyDefaults(true);
+				ConfigManager.languageConfig.get().addDefault(("Chat.Colors." + mainName + "Sub"), color.name());
+				ConfigManager.languageConfig.save();
+			}
+		}
+		else {
+		   if((ConfigManager.languageConfig.get().getString("Chat.Colors." + name) == null) || (ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name) == null)) {
+		       ConfigManager.languageConfig.get().options().copyDefaults(true);
+		       ConfigManager.languageConfig.get().addDefault("Chat.Colors." + name, color.name());
+		       ConfigManager.languageConfig.get().addDefault("Chat.Prefixes." + name, prefix);
+		       ConfigManager.languageConfig.save();
+		   }
+		}
+		
+	}
+	
+	/**
+	 * This method is deprecated.
+	 * 
+	 * @param name Name of the new Element.
+	 * @param type ElementType specifies if its a regular element or chi style
+	 *            element.
+	 * @param plugin The plugin that is adding the element.
+	 */
+	@Deprecated
 	public Element(String name, ElementType type, Plugin plugin) {
 		this.name = name;
 		this.type = type;
 		this.plugin = plugin;
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
 	}
+
 
 	public String getPrefix() {
 		String name_ = name;
@@ -296,24 +359,53 @@ public class Element {
 
 		/**
 		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements.
+		 * SubElements. Only use one color for all your SubElements.
+		 * 
+		 * @param name Name of the new SubElement.
+		 * @param parentElement ParentElement of the SubElement.
+		 * @param color Color of the new SubElement.
+		 */
+		public SubElement(String name, Element parentElement, ChatColor color) {
+			this(name, parentElement, ElementType.BENDING, ProjectKorra.plugin, color);
+		}
+		
+		/**
+		 * 
+		 * This method is Deprecated, use
+		 * {@code SubElement(String name, Element parentElement, ChatColor color)}
 		 * 
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
 		 */
+		@Deprecated
 		public SubElement(String name, Element parentElement) {
 			this(name, parentElement, ElementType.BENDING, ProjectKorra.plugin);
 		}
 
 		/**
 		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements.
+		 * SubElements. Only use one color for all your SubElements.
+		 * 
+		 * @param name Name of the new SubElement.
+		 * @param parentElement ParentElement of the SubElement.
+		 * @param type ElementType specifies if its a regular element or chi
+		 *            style element.
+		 * @param color The color of the SubElement.
+		 */
+		public SubElement(String name, Element parentElement, ElementType type, ChatColor color) {
+			this(name, parentElement, type, ProjectKorra.plugin, color);
+		}
+		
+		/**
+		 * This Method is Deprecated, Use:
+		 * {@code SubElement(String name, Element parentElement, ElementType type, ChatColor color)}
 		 * 
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
 		 * @param type ElementType specifies if its a regular element or chi
 		 *            style element.
 		 */
+		@Deprecated
 		public SubElement(String name, Element parentElement, ElementType type) {
 			this(name, parentElement, type, ProjectKorra.plugin);
 		}
@@ -327,7 +419,23 @@ public class Element {
 		 * @param type ElementType specifies if its a regular element or chi
 		 *            style element.
 		 * @param plugin The plugin that is adding the element.
+		 * @param color The Sub Element's color (Use only one color for all your SubElements)
 		 */
+		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin, ChatColor color) {
+			super(name, type, plugin, color, parentElement.name);
+			this.parentElement = parentElement;
+		}
+		
+		/**
+		 * This Method is deprecated.
+		 * 
+		 * @param name Name of the new SubElement.
+		 * @param parentElement ParentElement of the SubElement.
+		 * @param type ElementType specifies if its a regular element or chi
+		 *            style element.
+		 * @param plugin The plugin that is adding the element.
+		 */
+		@Deprecated
 		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin) {
 			super(name, type, plugin);
 			this.parentElement = parentElement;

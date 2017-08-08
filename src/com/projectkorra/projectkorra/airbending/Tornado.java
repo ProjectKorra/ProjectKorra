@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.Flight;
@@ -12,7 +14,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +44,8 @@ public class Tornado extends AirAbility {
 	private Location origin;
 	private Random random;
 	private Map<Integer, Integer> angles;
+	private Player target;
+	private static List<Player> tornadoPlayers = new ArrayList<Player>();
 
 	public Tornado(Player player) {
 		super(player);
@@ -92,6 +98,8 @@ public class Tornado extends AirAbility {
 	public void remove() {
 		super.remove();
 		flight.remove();
+		target.setAllowFlight(false);
+		Tornado.tornadoPlayers.remove(target);
 		player.setAllowFlight(couldFly);
 	}
 
@@ -127,6 +135,16 @@ public class Tornado extends AirAbility {
 						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
 						if (entity instanceof Player) {
+							BendingPlayer bPlayer = BendingPlayer.getBendingPlayer((Player)entity);
+							if(bPlayer.canBend(CoreAbility.getAbility(AirSpout.class))) {
+								if(CoreAbility.getPlayers(AirSpout.class).contains((Player) entity)) {
+									CoreAbility.getAbility((Player) entity, AirSpout.class).remove();
+									this.target = (Player) entity;
+									this.target.setAllowFlight(true);
+									Tornado.tornadoPlayers.add(target);
+									return;
+								}
+								}
 							vy = 0.05 * playerPushFactor;
 						}
 
@@ -218,6 +236,10 @@ public class Tornado extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	public static List<Player> getBentPlayers() {
+		return tornadoPlayers;
 	}
 
 	@Override

@@ -638,7 +638,19 @@ public class BendingPlayer {
 	public boolean isToggled() {
 		return this.toggled;
 	}
-
+	/**
+	 * Checks if the {@link BendingPlayer} can bend any element
+	 * @return true if the player can bend an element
+	 */
+	public boolean isBender() {
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(this.player);
+			if(bPlayer.getElements() != null) {
+				if(!bPlayer.getElements().isEmpty()) {
+				return true;
+				}
+			}
+		return false;
+	}
 	/**
 	 * Checks if the {@link BendingPlayer} is tremor sensing.
 	 * 
