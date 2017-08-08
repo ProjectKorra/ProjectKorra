@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireKick extends FireAbility implements ComboAbility {
 
@@ -180,12 +181,17 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new FireKick(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> fireKick = new ArrayList<>();
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		return fireKick;
 	}
 
 	public ArrayList<LivingEntity> getAffectedEntities() {
@@ -198,5 +204,10 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 	public void setTasks(ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "FireBlast > FireBlast > (Hold sneak) > FireBlast";
 	}
 }

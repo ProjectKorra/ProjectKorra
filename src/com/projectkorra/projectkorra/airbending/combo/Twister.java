@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.ClickType;
 
 public class Twister extends AirAbility implements ComboAbility {
 
@@ -180,11 +181,21 @@ public class Twister extends AirAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new Twister(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> twister = new ArrayList<>();
+		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
+		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_UP));
+		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
+		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
+		return twister;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)";
 	}
 }

@@ -121,6 +121,7 @@ import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.RaiseEarthWall;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
+import com.projectkorra.projectkorra.earthbending.combo.EarthPillars;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow.AbilityType;
 import com.projectkorra.projectkorra.earthbending.lava.LavaSurge;
@@ -826,7 +827,11 @@ public class PKListener implements Listener {
 			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
-				new Shockwave(player, true);
+				if (bPlayer.getBoundAbilityName().equalsIgnoreCase("Shockwave")) {
+					new Shockwave(player, true);
+				} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("Catapult")) {
+					new EarthPillars(player, true);
+				}
 			}
 
 			if (event.isCancelled())
@@ -1217,7 +1222,9 @@ public class PKListener implements Listener {
 		else {
 			if (bPlayer != null) {
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-					PassiveHandler.checkExhaustionPassives(player);
+					if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getY() != event.getFrom().getY() || event.getTo().getZ() != event.getFrom().getZ()) {
+						PassiveHandler.checkExhaustionPassives(player);
+					}
 				}
 			}
 		}
@@ -1313,8 +1320,10 @@ public class PKListener implements Listener {
 		}
 
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player)) {
-			event.setCancelled(true);
-			return;
+			if (!player.isSneaking()) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 
 		if (!player.isSneaking()) {
