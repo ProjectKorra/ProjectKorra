@@ -21,7 +21,6 @@ import com.projectkorra.projectkorra.waterbending.TorrentWave;
  * methods, but most will need to be specified by each Ability individually.
  */
 public interface Ability {
-
 	/**
 	 * Causes the ability to be updated.
 	 */
@@ -153,5 +152,4 @@ public interface Ability {
 	 * @see BendingPlayer#canBend(CoreAbility)
 	 */
 	public Location getLocation();
-
 }
