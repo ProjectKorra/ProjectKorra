@@ -78,8 +78,7 @@ public class Element {
 		this(name, ElementType.BENDING, ProjectKorra.plugin, color, prefix);
 	}
 	/**
-	 * To be used when creating a new Element. Do not use for comparing
-	 * Elements. This method is deprecated, use 
+	 * This method is deprecated, use 
 	 * {@code Element(String name, ChatColor color, String prefix)}
 	 * 
 	 * @param name Name of the new Element.
@@ -104,8 +103,7 @@ public class Element {
 	}
 	
 	/**
-	 * To be used when creating a new Element. Do not use for comparing
-	 * Elements. This method is deprecated, use 
+	 * This method is deprecated, use 
 	 * {@code Element(String name, ElementType type, ChatColor color, String prefix)}
 	 * 
 	 * @param name Name of the new Element.
@@ -153,8 +151,7 @@ public class Element {
 	}
 	
 	/**
-	 * To be used when creating a new Element. Do not use for comparing
-	 * Elements. This method is deprecated.
+	 * This method is deprecated.
 	 * 
 	 * @param name Name of the new Element.
 	 * @param type ElementType specifies if its a regular element or chi style
@@ -373,8 +370,8 @@ public class Element {
 		}
 		
 		/**
-		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements. This method is Deprecated, use
+		 * 
+		 * This method is Deprecated, use
 		 * {@code SubElement(String name, Element parentElement, ChatColor color)}
 		 * 
 		 * @param name Name of the new SubElement.
@@ -400,8 +397,7 @@ public class Element {
 		}
 		
 		/**
-		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements. This Method is Deprecated, Use:
+		 * This Method is Deprecated, Use:
 		 * {@code SubElement(String name, Element parentElement, ElementType type, ChatColor color)}
 		 * 
 		 * @param name Name of the new SubElement.
@@ -409,6 +405,7 @@ public class Element {
 		 * @param type ElementType specifies if its a regular element or chi
 		 *            style element.
 		 */
+		@Deprecated
 		public SubElement(String name, Element parentElement, ElementType type) {
 			this(name, parentElement, type, ProjectKorra.plugin);
 		}
@@ -430,8 +427,7 @@ public class Element {
 		}
 		
 		/**
-		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements. This Method is deprecated.
+		 * This Method is deprecated.
 		 * 
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
@@ -439,6 +435,7 @@ public class Element {
 		 *            style element.
 		 * @param plugin The plugin that is adding the element.
 		 */
+		@Deprecated
 		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin) {
 			super(name, type, plugin);
 			this.parentElement = parentElement;
