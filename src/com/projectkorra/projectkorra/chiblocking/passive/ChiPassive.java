@@ -17,7 +17,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ActionBar;
 
 public class ChiPassive {
-
 	public static boolean willChiBlock(Player attacker, Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -44,6 +43,7 @@ public class ChiPassive {
 		} else if (bPlayer.isChiBlocked()) {
 			return false;
 		}
+		
 		return true;
 	}
 
@@ -56,6 +56,7 @@ public class ChiPassive {
 		if (bPlayer == null) {
 			return;
 		}
+		
 		bPlayer.blockChi();
 		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
 		
@@ -83,5 +84,4 @@ public class ChiPassive {
 	public static long getTicks() {
 		return (getDuration() / 1000) * 20;
 	}
-
 }
