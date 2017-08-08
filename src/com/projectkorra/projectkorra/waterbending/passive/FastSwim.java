@@ -67,7 +67,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player.getLocation();
 	}
 
 	@Override
