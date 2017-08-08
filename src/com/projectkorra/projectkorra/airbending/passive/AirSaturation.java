@@ -41,7 +41,7 @@ public class AirSaturation extends AirAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player.getLocation();
 	}
 
 	@Override
