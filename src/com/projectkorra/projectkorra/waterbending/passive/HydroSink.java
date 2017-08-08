@@ -13,7 +13,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class HydroSink extends WaterAbility implements PassiveAbility {
-
 	public HydroSink(Player player) {
 		super(player);
 	}
@@ -22,6 +21,7 @@ public class HydroSink extends WaterAbility implements PassiveAbility {
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
 		}
+		
 		Block block = player.getLocation().getBlock();
 		Block fallBlock = block.getRelative(BlockFace.DOWN);
 		if (TempBlock.isTempBlock(fallBlock) && (fallBlock.getType().equals(Material.ICE))) {
@@ -33,6 +33,7 @@ public class HydroSink extends WaterAbility implements PassiveAbility {
 		} else if ((WaterAbility.isWaterbendable(player, null, fallBlock) && !WaterAbility.isPlant(fallBlock)) || fallBlock.getType() == Material.SNOW_BLOCK) {
 			return true;
 		}
+		
 		return false;
 	}
 
