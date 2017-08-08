@@ -349,6 +349,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Shockwave.DeathMessage", "{victim} was blown away by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
 			config.addDefault("Abilities.Earth.Tremorsense.Instructions", "Simply left click while on an earthbendable block.");
+			config.addDefault("Abilities.Earth.Combo.EarthPillars.Description", "Send players and entities flying into the air and possibly stunning them by raising pillars of earth under their feet, dealing damage initally as well. This combo can also be used by falling from high off the ground and landing while on the Catapult ability");
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Description", "DensityShift is a passive ability which allows earthbenders to make a firm landing negating all fall damage on any earthbendable surface.");
 			config.addDefault("Abilities.Earth.Passive.FerroControl.Description", "FerroControl is a passive ability which allows metalbenders to simply open and close iron doors by sneaking.");
 
@@ -1213,6 +1214,16 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.Radius", 5);
 			config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
+			
+			config.addDefault("Abilities.Earth.EarthPillars.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 7000);
+			config.addDefault("Abilities.Earth.EarthPillars.Radius", 7);
+			config.addDefault("Abilities.Earth.EarthPillars.Power", 0.7);
+			config.addDefault("Abilities.Earth.EarthPillars.Damage.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
+			config.addDefault("Abilities.Earth.EarthPillars.Stun.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 3.5);
+			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
 
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);
 			config.addDefault("Abilities.Fire.Blaze.Arc", 14);

@@ -137,6 +137,7 @@ permissions:
       bending.ability.LavaFlow: true
       bending.ability.EarthSmash: true
       bending.ability.SandSpout: true
+      bending.ability.EarthCombo: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.
@@ -153,6 +154,7 @@ permissions:
       bending.ability.Lightning: true
       bending.ability.WallOfFire: true
       bending.ability.Combustion: true
+      bending.ability.FireManipulation: true
       bending.ability.FireCombo: true
       bending.message.daymessage: true
       bending.fire.passive: true
@@ -187,31 +189,36 @@ permissions:
     default: false
     description: Grants access to all AirCombos.
     children:
-        bending.ability.AirSweep: true
-        bending.ability.AirStream: true
-        bending.ability.Twister: true
+      bending.ability.AirSweep: true
+      bending.ability.AirStream: true
+      bending.ability.Twister: true
   bending.ability.WaterCombo:
     default: false
     description: Grants access to all WaterCombos.
     children:
-        bending.ability.IceWave: true
-        bending.ability.IceBullet: true
-        bending.ability.IceBulletLeftClick: true
-        bending.ability.IceBulletRightClick: true
+      bending.ability.IceWave: true
+      bending.ability.IceBullet: true
+      bending.ability.IceBulletLeftClick: true
+      bending.ability.IceBulletRightClick: true
+  bending.ability.EarthCombo:
+    default: false
+    description: Grants access to all EarthCombos.
+    children:
+      bending.ability.EarthPillars: true
   bending.ability.FireCombo:
     default: false
     description: Grants access to all FireCombos.
     children:
-        bending.ability.FireKick: true
-        bending.ability.FireSpin: true
-        bending.ability.JetBlast: true
-        bending.ability.JetBlaze: true
-        bending.ability.FireWheel: true
+      bending.ability.FireKick: true
+      bending.ability.FireSpin: true
+      bending.ability.JetBlast: true
+      bending.ability.JetBlaze: true
+      bending.ability.FireWheel: true
   bending.ability.ChiCombo:
     default: false
     description: Grants access to all ChiCombos.
     children:
-        bending.ability.Immobilize: true
+      bending.ability.Immobilize: true
   bending.air.passive:
     default:  false
     description: Grants access to all air passives.

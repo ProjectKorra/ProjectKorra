@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 
@@ -112,11 +113,19 @@ public class IceWave extends IceAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new IceWave(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> iceWave = new ArrayList<>();
+		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
+		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
+		return iceWave;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "Create a WaterSpout Wave > PhaseChange (Left Click)";
 	}
 }

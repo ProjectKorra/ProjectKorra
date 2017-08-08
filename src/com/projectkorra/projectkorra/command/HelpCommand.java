@@ -147,7 +147,7 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(color + ability.getDescription());
 				
 				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+					sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
 				}
 				
 				AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
@@ -163,7 +163,7 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(color + ability.getDescription());
 				
 				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+					sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
 				}
 			}
 		} else if (Arrays.asList(Commands.airaliases).contains(arg)) {
@@ -173,7 +173,7 @@ public class HelpCommand extends PKCommand {
 			sender.sendMessage(Element.WATER.getColor() + water.replace("/b help WaterCombos", Element.WATER.getSubColor() + "/b h WaterCombos" + Element.WATER.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.earthaliases).contains(arg)) {
-			sender.sendMessage(Element.EARTH.getColor() + earth);
+			sender.sendMessage(Element.EARTH.getColor() + earth.replace("/b help EarthCombos", Element.EARTH.getSubColor() + "/b h EarthCombos" + Element.EARTH.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.firealiases).contains(arg)) {
 			sender.sendMessage(Element.FIRE.getColor() + fire.replace("/b h FireCombos", Element.FIRE.getSubColor() + "/b h FireCombos" + Element.FIRE.getColor()));
@@ -193,7 +193,7 @@ public class HelpCommand extends PKCommand {
 						sender.sendMessage(color + ability.getDescription());
 						
 						if (!ability.getInstructions().isEmpty()) {
-							sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+							sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
 						}
 						
 						AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
@@ -202,7 +202,7 @@ public class HelpCommand extends PKCommand {
 					} else {
 						sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Combo)");
 						sender.sendMessage(color + ComboManager.getDescriptions().get(combo));
-						sender.sendMessage(ChatColor.GOLD + usage + ComboManager.getInstructions().get(combo));
+						sender.sendMessage(ChatColor.WHITE + usage + ComboManager.getInstructions().get(combo));
 					}
 
 					return;

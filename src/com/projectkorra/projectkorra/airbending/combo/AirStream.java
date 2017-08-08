@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirStream extends AirAbility implements ComboAbility {
@@ -202,12 +203,16 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new AirStream(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> airStream = new ArrayList<>();
+		airStream.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
+		airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
+		airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
+		return airStream;
 	}
 	
 	public Location getOrigin() {
@@ -300,5 +305,10 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)";
 	}
 }
