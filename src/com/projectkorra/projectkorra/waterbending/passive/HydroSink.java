@@ -62,7 +62,7 @@ public class HydroSink extends WaterAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player.getLocation();
 	}
 
 	@Override
