@@ -27,7 +27,6 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		super(player);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean softenLanding(Player player) {
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
@@ -101,8 +100,6 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		}
 	}
 
-
-
 	public static void revertSands() {
 		for (Block block : SAND_BLOCKS.keySet()) {
 			if (System.currentTimeMillis() >= SAND_BLOCKS.get(block) + getDuration()) {
@@ -165,5 +162,4 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	public boolean isInstantiable() {
 		return false;
 	}
-
 }
