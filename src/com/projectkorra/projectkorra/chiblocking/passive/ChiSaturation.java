@@ -8,7 +8,6 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class ChiSaturation extends ChiAbility implements PassiveAbility {
-
 	public ChiSaturation(Player player) {
 		super(player);
 	}
@@ -18,9 +17,7 @@ public class ChiSaturation extends ChiAbility implements PassiveAbility {
 	}
 
 	@Override
-	public void progress() {
-
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {
@@ -51,5 +48,4 @@ public class ChiSaturation extends ChiAbility implements PassiveAbility {
 	public boolean isInstantiable() {
 		return false;
 	}
-
 }
