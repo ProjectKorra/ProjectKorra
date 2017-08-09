@@ -579,6 +579,15 @@ public class BendingPlayer {
 	public boolean isBloodbent() {
 		return Bloodbending.isBloodbent(player);
 	}
+	
+	/**
+	 * Checks to see if the {@link BendingPlayer} is a bender.
+	 * 
+	 * @return true If the player is a bender.
+	 */
+	public boolean isBender() {
+		return !elements.isEmpty();
+	}
 
 	/**
 	 * Checks to see if the {@link BendingPlayer} is chi blocked.
