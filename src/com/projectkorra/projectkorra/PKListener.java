@@ -1441,7 +1441,6 @@ public class PKListener implements Listener {
 		ItemStack off = event.getOffHandItem();
 		if (main.getType() == Material.AIR && (off == null || off.getType() == Material.AIR)) {
 			ComboManager.addComboAbility(player, ClickType.OFFHAND_TRIGGER);
-			player.sendMessage("Offhand triggered");
 		}
 	}
 
