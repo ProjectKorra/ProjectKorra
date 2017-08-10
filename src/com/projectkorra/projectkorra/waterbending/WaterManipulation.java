@@ -217,7 +217,7 @@ public class WaterManipulation extends WaterAbility {
 				if (displacing) {
 					Block targetBlock = player.getTargetBlock((HashSet<Material>) null, dispelRange);
 					direction = GeneralMethods.getDirection(location, targetBlock.getLocation()).normalize();
-					if (!location.getBlock().equals(targetBlock.getLocation())) {
+					if (!location.getBlock().equals(targetBlock)) {
 						location = location.clone().add(direction);
 
 						block = location.getBlock();
@@ -516,7 +516,7 @@ public class WaterManipulation extends WaterAbility {
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
 			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
-				manip.redirect(player, getTargetLocation(player, manip.selectRange));
+				manip.redirect(player, getTargetLocation(player, manip.range));
 			}
 		}
 	}

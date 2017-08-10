@@ -116,7 +116,6 @@ public class FireComboStream extends BukkitRunnable  {
 			if (!fireKick.getAffectedEntities().contains(entity)) {
 				fireKick.getAffectedEntities().add(entity);
 				DamageHandler.damageEntity(entity, damage, coreAbility);
-				coreAbility.remove();
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("FireSpin")) {
 			FireSpin fireSpin = (FireSpin) CoreAbility.getAbility(player, FireSpin.class);
@@ -131,7 +130,6 @@ public class FireComboStream extends BukkitRunnable  {
 				double newKnockback = bPlayer.isAvatarState() ? knockback + 0.5 : knockback;
 				DamageHandler.damageEntity(entity, damage, coreAbility);
 				entity.setVelocity(direction.normalize().multiply(newKnockback));
-				coreAbility.remove();
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("JetBlaze")) {
 			JetBlaze jetBlaze = (JetBlaze) CoreAbility.getAbility(player, JetBlaze.class);
