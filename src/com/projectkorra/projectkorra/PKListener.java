@@ -51,7 +51,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -64,6 +63,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -225,7 +225,6 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
-			SurgeWall.thaw(block);
 			event.setCancelled(true);
 		} else if (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) {
 			event.setCancelled(true);
@@ -352,6 +351,22 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
+			return;
+		}
+		
+		if (TempBlock.isTempBlock(event.getBlock())) {
+			TempBlock tb = TempBlock.get(event.getBlock());
+			tb.revertBlock();
+			event.getBlock().setType(event.getItemInHand().getType());
+			if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+				if (event.getItemInHand().getAmount() <= 0) {
+					event.getItemInHand().setType(Material.AIR);
+					event.getItemInHand().setAmount(1);
+				} else {
+					event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
+				}
+			}
+			return;
 		}
 	}
 
@@ -674,13 +689,11 @@ public class PKListener implements Listener {
 				break;
 			}
 		}
-
-		if (event.getSlotType() == SlotType.ARMOR && CoreAbility.hasAbility((Player) event.getWhoClicked(), EarthArmor.class)) {
-			event.setCancelled(true);
-		}
-
-		if (event.getSlotType() == SlotType.ARMOR && TempArmor.hasTempArmor((Player) event.getWhoClicked())) {
-			event.setCancelled(true);
+		
+		for (int i = 0; i < 4; i++) {
+			if (event.getSlot() == i && TempArmor.hasTempArmor((Player) event.getWhoClicked())) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -811,6 +824,7 @@ public class PKListener implements Listener {
 			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
 				EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
+				event.setCancelled(true);
 			}
 		}
 	}
@@ -1415,6 +1429,21 @@ public class PKListener implements Listener {
 			}
 		}
 	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerSwapItems(PlayerSwapHandItemsEvent event) {
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return;
+		}
+		
+		ItemStack main = event.getMainHandItem();
+		ItemStack off = event.getOffHandItem();
+		if (main.getType() == Material.AIR && (off == null || off.getType() == Material.AIR)) {
+			ComboManager.addComboAbility(player, ClickType.OFFHAND_TRIGGER);
+		}
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSwing(PlayerAnimationEvent event) {
@@ -1431,7 +1460,6 @@ public class PKListener implements Listener {
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
 				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
-
 			} else {
 				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
 			}

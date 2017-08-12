@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class SurgeWall extends WaterAbility {
 	private ArrayList<Location> locations;
 	private Vector firstDirection;
 	private Vector targetDirection;
+	private Map<Block, Material> oldTemps;
 
 	public SurgeWall(Player player) {
 		super(player);
@@ -56,6 +58,7 @@ public class SurgeWall extends WaterAbility {
 		this.range = getConfig().getDouble(RANGE_CONFIG);
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 		this.locations = new ArrayList<>();
+		this.oldTemps = new HashMap<>();
 
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null && !wave.isProgressing()) {
@@ -161,7 +164,6 @@ public class SurgeWall extends WaterAbility {
 		location = sourceBlock.getLocation();
 	}
 
-	@SuppressWarnings("deprecation")
 	public void moveWater() {
 		if (sourceBlock != null) {
 			targetDestination = player.getTargetBlock(getTransparentMaterialSet(), (int) range).getLocation();
@@ -309,6 +311,10 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private void addWallBlock(Block block) {
+		if (TempBlock.isTempBlock(block)) {
+			oldTemps.put(block, block.getType());
+		}
+		
 		if (frozen) {
 			new TempBlock(block, Material.ICE, (byte) 0);
 		} else {
@@ -334,21 +340,36 @@ public class SurgeWall extends WaterAbility {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
-					TempBlock.revertBlock(block, Material.AIR);
+					if (oldTemps.containsKey(block)) {
+						TempBlock tb = TempBlock.get(block);
+						tb.setType(oldTemps.get(block));
+					} else {
+						TempBlock.revertBlock(block, Material.AIR);
+					}
 				}
 				AFFECTED_BLOCKS.remove(block);
 			}
 		}
 	}
 
-	private static void finalRemoveWater(Block block) {
+	private void finalRemoveWater(Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				TempBlock.revertBlock(block, Material.AIR);
+				if (oldTemps.containsKey(block)) {
+					TempBlock tb = TempBlock.get(block);
+					tb.setType(oldTemps.get(block));
+				} else {
+					TempBlock.revertBlock(block, Material.AIR);
+				}
 				AFFECTED_BLOCKS.remove(block);
 			}
 			if (WALL_BLOCKS.containsKey(block)) {
-				TempBlock.revertBlock(block, Material.AIR);
+				if (oldTemps.containsKey(block)) {
+					TempBlock tb = TempBlock.get(block);
+					tb.setType(oldTemps.get(block));
+				} else {
+					TempBlock.revertBlock(block, Material.AIR);
+				}
 				WALL_BLOCKS.remove(block);
 			}
 		}
@@ -427,10 +448,6 @@ public class SurgeWall extends WaterAbility {
 			AFFECTED_BLOCKS.remove(block);
 			WALL_BLOCKS.remove(block);
 		}
-	}
-
-	public static void thaw(Block block) {
-		finalRemoveWater(block);
 	}
 
 	public static boolean wasBrokenFor(Player player, Block block) {

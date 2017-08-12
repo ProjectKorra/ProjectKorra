@@ -126,9 +126,22 @@ public class EarthBlast extends EarthAbility {
 	private Location getTargetLocation() {
 		Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		Location location;
+		Material[] trans = new Material[getTransparentMaterials().length + getEarthbendableBlocks().size()];
+		int i = 0;
+		for (int j = 0; j < getTransparentMaterials().length; j++) {
+			trans[j] = getTransparentMaterials()[j];
+			i++;
+		}
+		for (int j = 0; j < getEarthbendableBlocks().size(); j++) {
+			try {
+				trans[i] = Material.valueOf(getEarthbendableBlocks().get(j));
+			} catch (IllegalArgumentException e) {
+				continue;
+			}
+		}
 
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(player, range);
+			location = GeneralMethods.getTargetedLocation(player, range, trans);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
