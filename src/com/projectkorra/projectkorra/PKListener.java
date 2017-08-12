@@ -366,6 +366,7 @@ public class PKListener implements Listener {
 					event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
 				}
 			}
+			return;
 		}
 	}
 

@@ -255,8 +255,7 @@ public class WaterArmsWhip extends WaterAbility {
 					break;
 				}
 
-				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
-				WaterArms.getBlockRevertTimes().put(l2.getBlock(), System.currentTimeMillis() + 10);
+				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8).setRevertTime(120);
 
 				if (i == activeLength) {
 					Location l3 = null;
@@ -268,8 +267,7 @@ public class WaterArmsWhip extends WaterAbility {
 
 					end = l3.clone();
 					if (canPlaceBlock(l3.getBlock())) {
-						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3);
-						WaterArms.getBlockRevertTimes().put(l3.getBlock(), System.currentTimeMillis() + 10);
+						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3).setRevertTime(60);
 						performAction(l3);
 					} else {
 						if (!l3.getBlock().getType().equals(Material.BARRIER)) {
@@ -378,7 +376,11 @@ public class WaterArmsWhip extends WaterAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && grappleRespectRegions) {
 				return;
 			}
+			
 			Vector vector = player.getLocation().toVector().subtract(location.toVector());
+			if (!GeneralMethods.isSolid(location.clone().add(vector).multiply(1).getBlock())) {
+				return;
+			}
 			player.setVelocity(vector.multiply(-0.25));
 			player.setFallDistance(0);
 		}

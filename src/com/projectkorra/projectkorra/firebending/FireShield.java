@@ -30,6 +30,7 @@ public class FireShield extends FireAbility {
 	private double fireTicks;
 	private Location location;
 	private Random random;
+	private int increment = 20;
 
 	public FireShield(Player player) {
 		this(player, false);
@@ -100,20 +101,27 @@ public class FireShield extends FireAbility {
 		if (shield) {
 			location = player.getEyeLocation().clone();
 
-			for (double theta = 0; theta < 180; theta += 10) {
-				for (double phi = 0; phi < 360; phi += 10) {
+			for (double theta = 0; theta < 180; theta += increment) {
+				for (double phi = 0; phi < 360; phi += increment) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
 
 					Location display = location.clone().add(radius/1.5 * Math.cos(rphi) * Math.sin(rtheta), radius/1.5 * Math.cos(rtheta), radius/1.5 * Math.sin(rphi) * Math.sin(rtheta));
-					if (random.nextInt(3) == 0) {
+					if (random.nextInt(6) == 0) {
 						ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
 					}
-					ParticleEffect.FLAME.display(display, 0, 0, 0, 0, 1);
+					if (random.nextInt(4) == 0) {
+						ParticleEffect.FLAME.display(display, 0.1f, 0.1f, 0.1f, 0.013f, 1);
+					}
 					if (random.nextInt(7) == 0) {
 						playFirebendingSound(display);
 					}
 				}
+			}
+			
+			increment += 20;
+			if (increment >= 70) {
+				increment = 20;
 			}
 
 			for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
@@ -139,14 +147,15 @@ public class FireShield extends FireAbility {
 			location = player.getEyeLocation().clone();
 			Vector direction = location.getDirection();
 			location = location.clone().add(direction.multiply(radius));
+			ParticleEffect.FLAME.display(location, 0.2f, 0.2f, 0.2f, 0.023f, 3);
 
 			for (double theta = 0; theta < 360; theta += 20) {
 				Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, discRadius/1.5);
 				Location display = location.clone().add(vector);
-				if (random.nextInt(3) == 0) {
+				if (random.nextInt(6) == 0) {
 					ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
 				}
-				ParticleEffect.FLAME.display(display, 0, 0.4f, 0, 0, 3);
+				ParticleEffect.FLAME.display(display, 0.3f, 0.2f, 0.3f, 0.023f, 2);
 				if (random.nextInt(4) == 0) {
 					playFirebendingSound(display);
 				}
