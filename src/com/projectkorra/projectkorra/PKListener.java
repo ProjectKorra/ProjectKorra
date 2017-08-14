@@ -1281,6 +1281,12 @@ public class PKListener implements Listener {
 		MultiAbilityManager.remove(player);
 		AirFlight.remove(player);
 		JUMPS.remove(player);
+		
+		for(CoreAbility ca : CoreAbility.getAbilities()) {
+			if(CoreAbility.getAbility(event.getPlayer(), ca.getClass()) != null) {
+				CoreAbility.getAbility(event.getPlayer(), ca.getClass()).remove();
+			}
+		}
 	}
 
 	@SuppressWarnings("deprecation")
