@@ -15,13 +15,12 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class EarthBlast extends EarthAbility {
-
 	private boolean isProgressing;
 	private boolean isAtDestination;
 	private boolean isSettingUp;
@@ -98,8 +97,8 @@ public class EarthBlast extends EarthAbility {
 
 	@SuppressWarnings("deprecation")
 	private void focusBlock() {
-		if (EarthPassive.isPassiveSand(sourceBlock)) {
-			EarthPassive.revertSand(sourceBlock);
+		if (DensityShift.isPassiveSand(sourceBlock)) {
+			DensityShift.revertSand(sourceBlock);
 		}
 
 		sourceData = sourceBlock.getData();
@@ -127,12 +126,26 @@ public class EarthBlast extends EarthAbility {
 	private Location getTargetLocation() {
 		Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		Location location;
+		Material[] trans = new Material[getTransparentMaterials().length + getEarthbendableBlocks().size()];
+		int i = 0;
+		for (int j = 0; j < getTransparentMaterials().length; j++) {
+			trans[j] = getTransparentMaterials()[j];
+			i++;
+		}
+		for (int j = 0; j < getEarthbendableBlocks().size(); j++) {
+			try {
+				trans[i] = Material.valueOf(getEarthbendableBlocks().get(j));
+			} catch (IllegalArgumentException e) {
+				continue;
+			}
+		}
 
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(player, range);
+			location = GeneralMethods.getTargetedLocation(player, range, trans);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
+		
 		return location;
 	}
 
@@ -156,9 +169,11 @@ public class EarthBlast extends EarthAbility {
 		}
 
 		checkForCollision();
+		
 		if (block.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
 			return false;
 		}
+		
 		sourceBlock = block;
 		focusBlock();
 		return true;
@@ -203,6 +218,7 @@ public class EarthBlast extends EarthAbility {
 				if (!isProgressing) {
 					return;
 				}
+				
 				if (sourceBlock.getY() == firstDestination.getBlockY()) {
 					isSettingUp = false;
 				}
@@ -250,6 +266,7 @@ public class EarthBlast extends EarthAbility {
 					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 						continue;
 					}
+					
 					if (entity instanceof LivingEntity && (entity.getEntityId() != player.getEntityId() || canHitSelf)) {
 						AirAbility.breakBreathbendingHold(entity);
 
@@ -261,6 +278,7 @@ public class EarthBlast extends EarthAbility {
 						if (isMetal(sourceBlock) && bPlayer.canMetalbend()) {
 							damage = getMetalAugment(damage);
 						}
+						
 						DamageHandler.damageEntity(entity, damage, this);
 						isProgressing = false;
 					}
@@ -279,10 +297,11 @@ public class EarthBlast extends EarthAbility {
 					}
 
 					moveEarthBlock(sourceBlock, block);
-
+					
 					if (block.getType() == Material.SAND) {
 						block.setType(Material.SANDSTONE);
 					}
+					
 					if (block.getType() == Material.GRAVEL) {
 						block.setType(Material.STONE);
 					}
@@ -308,6 +327,7 @@ public class EarthBlast extends EarthAbility {
 					isAtDestination = true;
 					isProgressing = false;
 				}
+				
 				return;
 			}
 		}
@@ -382,6 +402,7 @@ public class EarthBlast extends EarthAbility {
 			} else {
 				sourceBlock.breakNaturally();
 			}
+			
 			sourceBlock.setType(currentType);
 		}
 	}
@@ -401,6 +422,7 @@ public class EarthBlast extends EarthAbility {
 				}
 			}
 		}
+		
 		return broke;
 	}
 
@@ -413,6 +435,7 @@ public class EarthBlast extends EarthAbility {
 				}
 			}
 		}
+		
 		return list;
 	}
 
@@ -422,6 +445,7 @@ public class EarthBlast extends EarthAbility {
 				return blast;
 			}
 		}
+		
 		return null;
 	}
 
@@ -478,6 +502,7 @@ public class EarthBlast extends EarthAbility {
 		if (earthBlast != null) {
 			bPlayer.addCooldown(earthBlast);
 		}
+		
 		redirectTargettedBlasts(player, ignore);
 	}
 
@@ -655,5 +680,4 @@ public class EarthBlast extends EarthAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-
 }

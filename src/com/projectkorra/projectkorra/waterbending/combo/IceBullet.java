@@ -361,12 +361,16 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new IceBullet(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> iceBullet = new ArrayList<>();
+		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
+		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
+		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
+		return iceBullet;
 	}
 	
 	@Override
@@ -535,5 +539,10 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast";
 	}
 }

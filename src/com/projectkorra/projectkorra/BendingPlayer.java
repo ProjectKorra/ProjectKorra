@@ -310,16 +310,16 @@ public class BendingPlayer {
 				return false;
 			}
 			if (GeneralMethods.hasSpirits()) {
-				if (GeneralMethods.hasSpirits()) {
-					SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
-					if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
-						return false;
-					}
-
-					if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
-						return false;
-					}
+				
+				SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
+				if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
+					return false;
 				}
+
+				if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
+					return false;
+				}
+				
 			}
 		}
 		return true;
@@ -579,6 +579,15 @@ public class BendingPlayer {
 	public boolean isBloodbent() {
 		return Bloodbending.isBloodbent(player);
 	}
+	
+	/**
+	 * Checks to see if the {@link BendingPlayer} is a bender.
+	 * 
+	 * @return true If the player is a bender.
+	 */
+	public boolean isBender() {
+		return !elements.isEmpty();
+	}
 
 	/**
 	 * Checks to see if the {@link BendingPlayer} is chi blocked.
@@ -822,7 +831,7 @@ public class BendingPlayer {
 	public static Map<UUID, BendingPlayer> getPlayers() {
 		return PLAYERS;
 	}
-	
+
 	
 	/**
 	 * Gets the bukkit player object {@link BendingPlayer}.

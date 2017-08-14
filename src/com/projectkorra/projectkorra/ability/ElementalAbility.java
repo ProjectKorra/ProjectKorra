@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -31,6 +32,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public boolean isTransparent(Block block) {
 		return isTransparent(player, getName(), block);
+	}
+	
+	public List<String> getEarthbendableBlocks() {
+		return getConfig().getStringList("Properties.Earth.EarthBlocks");
 	}
 
 	public static Material[] getTransparentMaterials() {

@@ -757,6 +757,8 @@ public abstract class CoreAbility implements Ability {
 		}
 		if (this instanceof PassiveAbility) {
 			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + getName() + ".Description");
+		} else if (this instanceof ComboAbility) {
+			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Combo." + getName() + ".Description");
 		}
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Description");
 	}

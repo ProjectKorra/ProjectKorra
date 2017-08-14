@@ -41,9 +41,8 @@ public class Paralyze extends ChiAbility {
 			}
 			paralyze(target);
 			bPlayer.addCooldown(this);
-		} else {
-			remove();
 		}
+		remove();
 	}
 
 	private static void paralyze(Entity entity) {

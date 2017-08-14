@@ -12,7 +12,6 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public class FastSwim extends WaterAbility implements PassiveAbility {
-	
 	private long cooldown;
 	private double swimSpeed;
 
@@ -28,6 +27,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
+		
 		if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, EarthArmor.class)) {
 			return;
 		} else if (CoreAbility.hasAbility(player, WaterArms.class)) {
@@ -35,11 +35,14 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		} else if (bPlayer.getBoundAbility() == null || (bPlayer.getBoundAbility() != null && !bPlayer.getBoundAbility().isSneakAbility())) {
 			if (player.isSneaking() && WaterAbility.isWater(player.getLocation().getBlock())) {
 				player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimSpeed));	
-			}
-			else if (!player.isSneaking()) {
+			} else if (!player.isSneaking()) {
 				bPlayer.addCooldown(this);
 			}
 		}
+	}
+	
+	public static double getSwimSpeed() {
+		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 	}
 
 	@Override
@@ -64,12 +67,11 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player.getLocation();
 	}
 
 	@Override
 	public boolean isInstantiable() {
 		return true;
 	}
-
 }

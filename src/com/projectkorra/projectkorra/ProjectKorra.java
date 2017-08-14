@@ -62,10 +62,7 @@ public class ProjectKorra extends JavaPlugin {
 		collisionManager = new CollisionManager();
 		collisionInitializer = new CollisionInitializer(collisionManager);
 		CoreAbility.registerAbilities();
-		collisionInitializer.initializeDefaultCollisions(); // must be called
-															// after abilities
-															// have been
-															// registered
+		collisionInitializer.initializeDefaultCollisions();
 		collisionManager.startCollisionDetection();
 
 		Preset.loadExternalPresets();
@@ -76,7 +73,7 @@ public class ProjectKorra extends JavaPlugin {
 		DBConnection.db = getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
-		if (DBConnection.isOpen() == false) {
+		if (!DBConnection.isOpen()) {
 			// Message is logged by DBConnection
 			return;
 		}
@@ -169,7 +166,7 @@ public class ProjectKorra extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		GeneralMethods.stopBending();
-		if (DBConnection.isOpen != false) {
+		if (DBConnection.isOpen) {
 			DBConnection.sql.close();
 		}
 	}
