@@ -813,7 +813,15 @@ public class BendingPlayer {
 	private static FileConfiguration getConfig() {
 		return ConfigManager.getConfig();
 	}
-
+	/**
+	 * Gets the Bukkit player object of the {@link BendingPlayer}.
+	 * 
+	 * @return the player
+	 */
+	public Player getBukkitPlayer() {
+		return this.player;
+	}
+	
 	/**
 	 * Gets the map of {@link BendingPlayer}s.
 	 * 
