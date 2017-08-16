@@ -110,6 +110,8 @@ public class BendingPlayer {
 	 * @param cooldown The cooldown time
 	 */
 	public void addCooldown(String ability, long cooldown) {
+		if(cooldown <= 0)
+			return;
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
