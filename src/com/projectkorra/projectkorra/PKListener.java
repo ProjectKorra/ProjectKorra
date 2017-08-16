@@ -67,8 +67,6 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Door;
-import org.bukkit.material.TrapDoor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -831,7 +829,6 @@ public class PKListener implements Listener {
 			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
 				EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
-				event.setCancelled(true);
 			}
 		}
 	}
