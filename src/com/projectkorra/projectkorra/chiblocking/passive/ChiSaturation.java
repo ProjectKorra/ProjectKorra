@@ -48,4 +48,9 @@ public class ChiSaturation extends ChiAbility implements PassiveAbility {
 	public boolean isInstantiable() {
 		return false;
 	}
+
+	@Override
+	public boolean isProgressable() {
+		return false;
+	}
 }

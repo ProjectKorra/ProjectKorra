@@ -1216,13 +1216,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
 			
 			config.addDefault("Abilities.Earth.EarthPillars.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 7000);
-			config.addDefault("Abilities.Earth.EarthPillars.Radius", 7);
-			config.addDefault("Abilities.Earth.EarthPillars.Power", 0.7);
+			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 8000);
+			config.addDefault("Abilities.Earth.EarthPillars.Radius", 9);
+			config.addDefault("Abilities.Earth.EarthPillars.Power", 1.2);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
 			config.addDefault("Abilities.Earth.EarthPillars.Stun.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 3.5);
+			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 3700);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
 
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);

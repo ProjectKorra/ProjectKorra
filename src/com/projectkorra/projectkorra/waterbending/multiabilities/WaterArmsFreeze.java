@@ -122,8 +122,7 @@ public class WaterArmsFreeze extends IceAbility {
 
 	private void progressIce() {
 		ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 0.05, 5);
-		new TempBlock(location.getBlock(), Material.ICE, (byte) 0);
-		WaterArms.getBlockRevertTimes().put(location.getBlock(), System.currentTimeMillis() + 10L);
+		new TempBlock(location.getBlock(), Material.ICE, (byte) 0).setRevertTime(200);
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {

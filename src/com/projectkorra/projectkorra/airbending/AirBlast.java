@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -303,19 +302,18 @@ public class AirBlast extends AirAbility {
 				continue;
 			}
 
-			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
-			if (Arrays.asList(doorTypes).contains(block.getType()) && canOpenDoors) {
-				if (block.getData() >= 8) {
+			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.TRAP_DOOR };
+			if (Arrays.asList(doorTypes).contains(block.getType()) && !affectedLevers.contains(block) && canOpenDoors) {
+				if (block.getData() >= 8 && block.getType() != Material.TRAP_DOOR) {
 					block = block.getRelative(BlockFace.DOWN);
 				}
 
-				if (block.getData() < 4) {
-					block.setData((byte) (block.getData() + 4));
-					block.getWorld().playSound(block.getLocation(), Sound.BLOCK_WOODEN_DOOR_CLOSE, 10, 1);
-				} else {
-					block.setData((byte) (block.getData() - 4));
-					block.getWorld().playSound(block.getLocation(), Sound.BLOCK_WOODEN_DOOR_OPEN, 10, 1);
-				}
+				block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
+				boolean open = (block.getData() & 0x4) == 0x4;
+				boolean tDoor = block.getType() == Material.TRAP_DOOR;
+				String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (open ? "OPEN" : "CLOSE");
+				block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
+				affectedLevers.add(block);
 			}
 			if ((block.getType() == Material.LEVER) && !affectedLevers.contains(block) && canFlickLevers) {
 				Lever lever = new Lever(Material.LEVER, block.getData());
@@ -333,69 +331,73 @@ public class AirBlast extends AirAbility {
 				affectedLevers.add(block);
 			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedLevers.contains(block) && canPressButtons) {
 				final Button button = new Button(Material.STONE_BUTTON, block.getData());
-				button.setPowered(!button.isPowered());
-				block.setData(button.getData());
-
-				Block supportBlock = block.getRelative(button.getAttachedFace());
-				if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-					BlockState initialSupportState = supportBlock.getState();
-					BlockState supportState = supportBlock.getState();
-					supportState.setType(Material.AIR);
-					supportState.update(true, false);
-					initialSupportState.update(true);
-				}
-
-				final Block btBlock = block;
-				new BukkitRunnable() {
-					public void run() {
-						button.setPowered(!button.isPowered());
-						btBlock.setData(button.getData());
-
-						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
-						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-							BlockState initialSupportState = supportBlock.getState();
-							BlockState supportState = supportBlock.getState();
-							supportState.setType(Material.AIR);
-							supportState.update(true, false);
-							initialSupportState.update(true);
-						}
+				if (!button.isPowered()) {
+					button.setPowered(!button.isPowered());
+					block.setData(button.getData());
+	
+					Block supportBlock = block.getRelative(button.getAttachedFace());
+					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+						BlockState initialSupportState = supportBlock.getState();
+						BlockState supportState = supportBlock.getState();
+						supportState.setType(Material.AIR);
+						supportState.update(true, false);
+						initialSupportState.update(true);
 					}
-				}.runTaskLater(ProjectKorra.plugin, 10);
-
-				affectedLevers.add(block);
+	
+					final Block btBlock = block;
+					new BukkitRunnable() {
+						public void run() {
+							button.setPowered(!button.isPowered());
+							btBlock.setData(button.getData());
+	
+							Block supportBlock = btBlock.getRelative(button.getAttachedFace());
+							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+								BlockState initialSupportState = supportBlock.getState();
+								BlockState supportState = supportBlock.getState();
+								supportState.setType(Material.AIR);
+								supportState.update(true, false);
+								initialSupportState.update(true);
+							}
+						}
+					}.runTaskLater(ProjectKorra.plugin, 10);
+	
+					affectedLevers.add(block);
+				}
 			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedLevers.contains(block) && canPressButtons) {
 				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
-				button.setPowered(!button.isPowered());
-				block.setData(button.getData());
-
-				Block supportBlock = block.getRelative(button.getAttachedFace());
-				if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-					BlockState initialSupportState = supportBlock.getState();
-					BlockState supportState = supportBlock.getState();
-					supportState.setType(Material.AIR);
-					supportState.update(true, false);
-					initialSupportState.update(true);
-				}
-
-				final Block btBlock = block;
-
-				new BukkitRunnable() {
-					public void run() {
-						button.setPowered(!button.isPowered());
-						btBlock.setData(button.getData());
-
-						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
-						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-							BlockState initialSupportState = supportBlock.getState();
-							BlockState supportState = supportBlock.getState();
-							supportState.setType(Material.AIR);
-							supportState.update(true, false);
-							initialSupportState.update(true);
-						}
+				if (!button.isPowered()) {
+					button.setPowered(!button.isPowered());
+					block.setData(button.getData());
+	
+					Block supportBlock = block.getRelative(button.getAttachedFace());
+					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+						BlockState initialSupportState = supportBlock.getState();
+						BlockState supportState = supportBlock.getState();
+						supportState.setType(Material.AIR);
+						supportState.update(true, false);
+						initialSupportState.update(true);
 					}
-				}.runTaskLater(ProjectKorra.plugin, 15);
-
-				affectedLevers.add(block);
+	
+					final Block btBlock = block;
+	
+					new BukkitRunnable() {
+						public void run() {
+							button.setPowered(!button.isPowered());
+							btBlock.setData(button.getData());
+	
+							Block supportBlock = btBlock.getRelative(button.getAttachedFace());
+							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+								BlockState initialSupportState = supportBlock.getState();
+								BlockState supportState = supportBlock.getState();
+								supportState.setType(Material.AIR);
+								supportState.update(true, false);
+								initialSupportState.update(true);
+							}
+						}
+					}.runTaskLater(ProjectKorra.plugin, 15);
+	
+					affectedLevers.add(block);
+				}
 			}
 		}
 		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedLevers.contains(block) && canCoolLava) {

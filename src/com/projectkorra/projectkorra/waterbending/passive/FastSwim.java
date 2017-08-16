@@ -17,13 +17,6 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	public FastSwim(Player player) {
 		super(player);
-
-		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
-		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
-	}
-
-	@Override
-	public void progress() {
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
@@ -32,12 +25,25 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 			return;
 		} else if (CoreAbility.hasAbility(player, WaterArms.class)) {
 			return;
-		} else if (bPlayer.getBoundAbility() == null || (bPlayer.getBoundAbility() != null && !bPlayer.getBoundAbility().isSneakAbility())) {
+		}
+
+		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
+		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
+		
+		start();
+	}
+
+	@Override
+	public void progress() {
+		if (bPlayer.getBoundAbility() == null || (bPlayer.getBoundAbility() != null && !bPlayer.getBoundAbility().isSneakAbility())) {
 			if (player.isSneaking() && WaterAbility.isWater(player.getLocation().getBlock())) {
 				player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimSpeed));	
 			} else if (!player.isSneaking()) {
 				bPlayer.addCooldown(this);
+				remove();
 			}
+		} else {
+			remove();
 		}
 	}
 	
@@ -72,6 +78,11 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	@Override
 	public boolean isInstantiable() {
+		return true;
+	}
+	
+	@Override
+	public boolean isProgressable() {
 		return true;
 	}
 }

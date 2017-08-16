@@ -13,7 +13,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -51,7 +50,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -64,10 +62,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Door;
+import org.bukkit.material.TrapDoor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -151,6 +152,7 @@ import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
+import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
@@ -176,6 +178,7 @@ import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
+import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 import com.projectkorra.rpg.RPGMethods;
 
@@ -225,7 +228,6 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
-			SurgeWall.thaw(block);
 			event.setCancelled(true);
 		} else if (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) {
 			event.setCancelled(true);
@@ -352,7 +354,23 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
+			return;
 		}
+		
+		if (TempBlock.isTempBlock(event.getBlock())) {
+			TempBlock tb = TempBlock.get(event.getBlock());
+			tb.revertBlock();
+			event.getBlock().setType(event.getItemInHand().getType());
+			if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+				if (event.getItemInHand().getAmount() <= 0) {
+					event.getItemInHand().setType(Material.AIR);
+					event.getItemInHand().setAmount(1);
+				} else {
+					event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
+				}
+			}
+			return;
+		} 
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -674,13 +692,11 @@ public class PKListener implements Listener {
 				break;
 			}
 		}
-
-		if (event.getSlotType() == SlotType.ARMOR && CoreAbility.hasAbility((Player) event.getWhoClicked(), EarthArmor.class)) {
-			event.setCancelled(true);
-		}
-
-		if (event.getSlotType() == SlotType.ARMOR && TempArmor.hasTempArmor((Player) event.getWhoClicked())) {
-			event.setCancelled(true);
+		
+		for (int i = 0; i < 4; i++) {
+			if (event.getSlot() == i && TempArmor.hasTempArmor((Player) event.getWhoClicked())) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -750,6 +766,8 @@ public class PKListener implements Listener {
 
 			if (bPlayer == null) {
 				return;
+			} else if (bPlayer.isChiBlocked()) {
+				return;
 			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
@@ -759,31 +777,33 @@ public class PKListener implements Listener {
 					new EarthPillars(player, true);
 				}
 			}
-
-
-			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
-				new AirBurst(player, true);
-				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
-					event.setDamage(0D);
-					event.setCancelled(true);
+			
+			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL) {
+				if (bPlayer.getBoundAbilityName().equalsIgnoreCase("AirBurst")) {
+					new AirBurst(player, true);
 				}
 			}
 
-			if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(HydroSink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(HydroSink.class))) {
+			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(GracefulDescent.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(GracefulDescent.class)) && CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
+				event.setDamage(0D);
+				event.setCancelled(true);
+			}
+
+			if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(HydroSink.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(HydroSink.class)) && CoreAbility.getAbility(HydroSink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(HydroSink.class))) {
 				if (HydroSink.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
+			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(DensityShift.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(DensityShift.class)) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
 				if (DensityShift.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
+			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(Acrobatics.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(Acrobatics.class)) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
 				double initdamage = event.getDamage();
 				double newdamage = event.getDamage() * Acrobatics.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
@@ -799,7 +819,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (bPlayer.canBendPassive(Element.FIRE) && bPlayer.hasElement(Element.FIRE) && bPlayer.canUsePassive(Element.FIRE) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
+			if (bPlayer.canBendPassive(CoreAbility.getAbility(HeatControl.class)) && bPlayer.hasElement(Element.FIRE) && bPlayer.canUsePassive(CoreAbility.getAbility(HeatControl.class)) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 				event.setCancelled(!HeatControl.canBurn(player));
 			}
 
@@ -847,7 +867,7 @@ public class PKListener implements Listener {
 
 			if (sourceBPlayer.getBoundAbility() != null) {
 				if (!sourceBPlayer.isOnCooldown(boundAbil)) {
-					if (sourceBPlayer.canBendPassive(Element.CHI)) {
+					if (sourceBPlayer.canBendPassive(sourceBPlayer.getBoundAbility())) {
 						if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
 							if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
 								if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
@@ -1119,14 +1139,18 @@ public class PKListener implements Listener {
 			}
 		} else {
 			if (bPlayer != null) {
-				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-					if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getY() != event.getFrom().getY() || event.getTo().getZ() != event.getFrom().getZ()) {
+				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getY() != event.getFrom().getY() || event.getTo().getZ() != event.getFrom().getZ()) {
+					if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
 						PassiveHandler.checkExhaustionPassives(player);
 					}
 				}
+				
+				if (event.getTo().getBlock() != event.getFrom().getBlock()) {
+					FirePassive.handle(player);
+				}
 			}
 		}
-
+		
 		if (event.getTo().getY() > event.getFrom().getY()) {
 			if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
 				int current = player.getStatistic(Statistic.JUMP);
@@ -1192,7 +1216,6 @@ public class PKListener implements Listener {
 		JUMPS.remove(player);
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
@@ -1225,45 +1248,29 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
-
+		
+		if (bPlayer.isChiBlocked()) {
+			event.setCancelled(true);
+			return;
+		}
+		
 		if (!player.isSneaking()) {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
-
-		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("FerroControl")) {
-			if (event.isSneaking()) {
-				Block block = player.getTargetBlock((HashSet<Material>) null, 5);
-				if (block != null) {
-					if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
-						if (block.getData() >= 8) {
-							block = block.getRelative(BlockFace.DOWN);
-						}
-						
-						if (block.getData() < 4) {
-							block.setData((byte) (block.getData() + 4));
-							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 10, 1);
-						} else {
-							block.setData((byte) (block.getData() - 4));
-							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
-						}
-						
-						bPlayer.addCooldown("FerroControl", 200);
-					}
-				}
-
-			}
+		
+		if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
+			new FerroControl(player);
+		} else if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FastSwim.class))) {
+			new FastSwim(player);
 		}
 
 		AirScooter.check(player);
+		
 
 		CoreAbility coreAbil = bPlayer.getBoundAbility();
 		String abil = bPlayer.getBoundAbilityName();
 		if (coreAbil == null) {
-			return;
-		}
-
-		if (bPlayer.isChiBlocked()) {
-			event.setCancelled(true);
+			
 			return;
 		}
 
@@ -1368,9 +1375,10 @@ public class PKListener implements Listener {
 						} else {
 							new MetalClips(player, 1);
 						}
-					} 
+					}
 				}
 
+				
 			}
 
 			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
@@ -1415,6 +1423,21 @@ public class PKListener implements Listener {
 			}
 		}
 	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerSwapItems(PlayerSwapHandItemsEvent event) {
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return;
+		}
+		
+		ItemStack main = event.getMainHandItem();
+		ItemStack off = event.getOffHandItem();
+		if (main.getType() == Material.AIR && (off == null || off.getType() == Material.AIR)) {
+			ComboManager.addComboAbility(player, ClickType.OFFHAND_TRIGGER);
+		}
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSwing(PlayerAnimationEvent event) {
@@ -1431,7 +1454,6 @@ public class PKListener implements Listener {
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
 				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
-
 			} else {
 				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
 			}

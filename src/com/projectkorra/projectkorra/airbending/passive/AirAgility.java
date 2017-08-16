@@ -50,12 +50,11 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 		// Jump Buff
 		jumpActivate = true;
 		if (player.hasPotionEffect(PotionEffectType.JUMP)) {
-			for (PotionEffect potion : player.getActivePotionEffects()) {
-				if (potion.getType() == PotionEffectType.JUMP) {
-					if (potion.getAmplifier() > jumpPower - 1) {
-						jumpActivate = false;
-					}
-				}
+			PotionEffect potion = player.getPotionEffect(PotionEffectType.JUMP);
+			if (potion.getAmplifier() > jumpPower - 1) {
+				jumpActivate = false;
+			} else {
+				player.removePotionEffect(PotionEffectType.JUMP);
 			}
 		}
 		if (jumpActivate) {
@@ -65,12 +64,11 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 		// Speed Buff
 		speedActivate = true;
 		if (player.hasPotionEffect(PotionEffectType.SPEED)) {
-			for (PotionEffect potion : player.getActivePotionEffects()) {
-				if (potion.getType() == PotionEffectType.SPEED) {
-					if (potion.getAmplifier() > speedPower - 1) {
-						speedActivate = false;
-					}
-				}
+			PotionEffect potion = player.getPotionEffect(PotionEffectType.SPEED);
+			if (potion.getAmplifier() > speedPower - 1) {
+				speedActivate = false;
+			} else {
+				player.removePotionEffect(PotionEffectType.SPEED);
 			}
 		}
 		if (speedActivate) {
@@ -100,11 +98,16 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player != null ? player.getLocation() : null;
 	}
 
 	@Override
 	public boolean isInstantiable() {
+		return false;
+	}
+	
+	@Override
+	public boolean isProgressable() {
 		return true;
 	}
 

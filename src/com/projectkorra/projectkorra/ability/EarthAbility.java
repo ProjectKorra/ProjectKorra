@@ -298,7 +298,6 @@ public abstract class EarthAbility extends ElementalAbility {
 	 * @param range the maximum block selection range.
 	 * @return a valid Earth source block, or null if one could not be found.
 	 */
-	@SuppressWarnings("deprecation")
 	public static Block getEarthSourceBlock(Player player, String abilityName, double range) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
@@ -411,7 +410,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.EarthSub"));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static Block getTargetEarthBlock(Player player, int range) {
 		return player.getTargetBlock(getTransparentMaterialSet(), range);
 	}
