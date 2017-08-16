@@ -138,7 +138,6 @@ public class EarthBlast extends EarthAbility {
 			} catch (IllegalArgumentException e) {
 				continue;
 			}
-			i++;
 		}
 
 		if (target == null) {
