@@ -824,7 +824,6 @@ public class PKListener implements Listener {
 			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
 				EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
-				event.setCancelled(true);
 			}
 		}
 	}
