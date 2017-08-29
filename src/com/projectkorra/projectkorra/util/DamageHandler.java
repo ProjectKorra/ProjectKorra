@@ -28,6 +28,9 @@ public class DamageHandler {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void damageEntity(Entity entity, Player source, double damage, Ability ability, boolean ignoreArmor) {
+		if(!(entity instanceof LivingEntity))
+			return;
+		
 		if (TempArmor.hasTempArmor((LivingEntity) entity)) {
 			ignoreArmor = true;
 		}

@@ -448,7 +448,7 @@ public class PKListener implements Listener {
 			FireDamageTimer.dealFlameDamage(entity);
 		}
 		
-		if (TempArmor.hasTempArmor((LivingEntity)entity)) {
+		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity)entity)) {
 			event.setDamage(DamageModifier.ARMOR, 0);
 		}
 
@@ -786,6 +786,7 @@ public class PKListener implements Listener {
 				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
 					event.setDamage(0D);
 					event.setCancelled(true);
+					return;
 				}
 			}
 
@@ -793,6 +794,7 @@ public class PKListener implements Listener {
 				if (WaterPassive.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
+					return;
 				}
 			}
 
@@ -800,6 +802,7 @@ public class PKListener implements Listener {
 				if (EarthPassive.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
+					return;
 				}
 			}
 
@@ -808,14 +811,17 @@ public class PKListener implements Listener {
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
 				event.setDamage(finaldamage);
-				if (finaldamage <= 0.4)
+				if (finaldamage <= 0.4) {
 					event.setCancelled(true);
+					return;
+				}
 			}
 
 			if (event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
 				if (source == player) {
 					event.setCancelled(true);
+					return;
 				}
 			}
 
