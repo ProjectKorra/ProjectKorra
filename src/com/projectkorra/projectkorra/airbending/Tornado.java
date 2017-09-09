@@ -127,6 +127,13 @@ public class Tornado extends AirAbility {
 						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
 						if (entity instanceof Player) {
+							Player trg = (Player) entity;
+							BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(trg);
+							if(bPlayer.canBend(CoreAbility.getAbility(AirSpout.class))) {
+								if(CoreAbility.getPlayers(AirSpout.class).contains(trg)) {
+									CoreAbility.getAbility(trg, AirSpout.class).remove();
+								}
+								}
 							vy = 0.05 * playerPushFactor;
 						}
 
