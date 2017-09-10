@@ -44,8 +44,6 @@ public class Tornado extends AirAbility {
 	private Location origin;
 	private Random random;
 	private Map<Integer, Integer> angles;
-	private Player target;
-	private static List<Player> tornadoPlayers = new ArrayList<Player>();
 
 	public Tornado(Player player) {
 		super(player);
@@ -98,8 +96,6 @@ public class Tornado extends AirAbility {
 	public void remove() {
 		super.remove();
 		flight.remove();
-		target.setAllowFlight(false);
-		Tornado.tornadoPlayers.remove(target);
 		player.setAllowFlight(couldFly);
 	}
 
@@ -233,10 +229,6 @@ public class Tornado extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	public static List<Player> getBentPlayers() {
-		return tornadoPlayers;
 	}
 
 	@Override
