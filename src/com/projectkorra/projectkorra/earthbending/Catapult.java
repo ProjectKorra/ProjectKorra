@@ -30,6 +30,7 @@ public class Catapult extends EarthAbility {
 	private Vector up;
 	private double angle;
 	private boolean cancelWithAngle;
+	private boolean coverDistance;
 
 	public Catapult(Player player, boolean sneak) {
 		super(player);
@@ -53,6 +54,7 @@ public class Catapult extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
 		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Catapult.Angle"));
 		this.cancelWithAngle = getConfig().getBoolean("Abilities.Earth.Catapult.CancelWithAngle");
+		this.coverDistance = getConfig().getBoolean("Abilities.Earth.Catapult.CoverDistance");
 		this.activationHandled = false;
 		this.stage = 1;
 		this.stageStart = System.currentTimeMillis();
@@ -116,12 +118,23 @@ public class Catapult extends EarthAbility {
 				remove();
 				return;
 			}
-			direction = up;
+			if (!coverDistance) {
+				direction = up;
+			}
 		}
 		
 		Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
 		this.target = tar;
 		Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
+		
+		if (coverDistance) {
+			double oldY = apply.getY();
+			apply = apply.multiply(stage*3).setY(oldY);
+			if (apply.getY() < 1.4) {
+				apply.setY(1.4);
+			}
+		}
+		
 		player.setVelocity(apply);
 		moveEarth(apply, direction);
 		remove();
