@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Button;
+import org.bukkit.material.Door;
 import org.bukkit.material.Lever;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -308,12 +309,7 @@ public class AirBlast extends AirAbility {
 					block = block.getRelative(BlockFace.DOWN);
 				}
 
-				block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
-				boolean open = (block.getData() & 0x4) == 0x4;
-				boolean tDoor = block.getType() == Material.TRAP_DOOR;
-				String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (open ? "OPEN" : "CLOSE");
-				block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
-				affectedLevers.add(block);
+				handleDoorMechanics(block);
 			}
 			if ((block.getType() == Material.LEVER) && !affectedLevers.contains(block) && canFlickLevers) {
 				Lever lever = new Lever(Material.LEVER, block.getData());
@@ -452,6 +448,42 @@ public class AirBlast extends AirAbility {
 			}
 		}
 		return removed;
+	}
+	
+	private void handleDoorMechanics(Block block) {
+		boolean tDoor = false;
+		boolean open = (block.getData() & 0x4) == 0x4;
+		
+		if (block.getType() != Material.TRAP_DOOR) {
+			Door door = (Door) block.getState().getData();
+			BlockFace face = door.getFacing();
+			Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), player.getLocation().getBlock().getLocation());
+			double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
+			
+			for (int i = 0; i < 3; i++) {
+				if (i == 1) continue;
+				BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
+				
+				if (bf == face) {
+					if (open) return;
+				} else if (bf.getOppositeFace() == face) {
+					if (!open) return;
+				}
+			}
+		} else {
+			tDoor = true;
+			
+			if (origin.getY() < block.getY()) {
+				if (!open) return;
+			} else {
+				if (open) return;
+			}
+		}
+		
+		block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
+		String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
+		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
+		affectedLevers.add(block);
 	}
 
 	@Override

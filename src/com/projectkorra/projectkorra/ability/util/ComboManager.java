@@ -75,7 +75,7 @@ public class ComboManager {
 			return;
 		}
 		
-		if (comboAbil.getRequirments() != null) {
+		if (!comboAbil.getRequirments().isEmpty()) {
 			for (Class<? extends CoreAbility> clazz : comboAbil.getRequirments()) {
 				if (!CoreAbility.hasAbility(player, clazz)) {
 					return;

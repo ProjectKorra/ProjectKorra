@@ -1222,7 +1222,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
 			config.addDefault("Abilities.Earth.EarthPillars.Stun.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 3700);
+			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 2500);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
 
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);
