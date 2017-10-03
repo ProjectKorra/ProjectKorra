@@ -69,4 +69,10 @@ public class HydroSink extends WaterAbility implements PassiveAbility {
 	public boolean isInstantiable() {
 		return false;
 	}
+	
+
+	@Override
+	public boolean isProgressable() {
+		return false;
+	}
 }

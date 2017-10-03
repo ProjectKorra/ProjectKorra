@@ -446,7 +446,7 @@ public class WaterManipulation extends WaterAbility {
 		if (target == null) {
 			location = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
 		} else {
-			location = ((LivingEntity) target).getEyeLocation();
+			location = target.getLocation();
 		}
 		return location;
 	}

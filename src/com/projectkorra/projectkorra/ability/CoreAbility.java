@@ -135,7 +135,7 @@ public abstract class CoreAbility implements Ability {
 	 * @see #isStarted()
 	 * @see #isRemoved()
 	 */
-	public final void start() {
+	public void start() {
 		if (player == null) {
 			return;
 		}
@@ -212,16 +212,13 @@ public abstract class CoreAbility implements Ability {
 		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (CoreAbility abil : setAbils) {
 				if (abil instanceof PassiveAbility) {
-					BendingPlayer bPlayer = abil.getBendingPlayer();
-					if (bPlayer == null || !abil.getPlayer().isOnline()) {
-						abil.remove();
-						continue;
-					} else if (!bPlayer.canBendPassive(abil.getElement())) { // Check for if the passive should be removed
-						abil.remove();
-						continue;
-					} else if (!bPlayer.canUsePassive(abil.getElement())) { // Check for if the passive should be prevented from happening, but not remove it
+					if (!((PassiveAbility)abil).isProgressable()) {
 						continue;
 					}
+				}
+				if (abil.getPlayer().isDead() || !abil.getPlayer().isOnline()) {
+					abil.remove();
+					continue;
 				}
 				try {
 					abil.progress();

@@ -239,7 +239,8 @@ public class BendingPlayer {
 		return canBend(ability, false, true);
 	}
 
-	public boolean canBendPassive(Element element) {
+	public boolean canBendPassive(CoreAbility ability) {
+		Element element = ability.getElement();
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
 		}
@@ -258,12 +259,15 @@ public class BendingPlayer {
 		return true;
 	}
 
-	public boolean canUsePassive(Element element) {
+	public boolean canUsePassive(CoreAbility ability) {
+		Element element = ability.getElement();
 		if (!isToggled() || !isElementToggled(element)) {
 			return false;
 		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
+			return false;
+		} else if (isOnCooldown(ability)) {
 			return false;
 		}
 		return true;
