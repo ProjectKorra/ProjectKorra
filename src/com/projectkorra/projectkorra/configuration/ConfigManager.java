@@ -520,6 +520,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.Sound.Volume", 1);
 			config.addDefault("Properties.Air.Sound.Pitch", 2);
 
+			config.addDefault("Properties.Water.DynamicSourcing", true);
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
