@@ -116,6 +116,9 @@ public abstract class Database {
 	 */
 	public ResultSet readQuery(String query) {
 		try {
+                        if(connection == null || connection.isClosed()) {
+                            open();
+                        }
 			PreparedStatement stmt = connection.prepareStatement(query);
 			ResultSet rs = stmt.executeQuery();
 
@@ -135,6 +138,9 @@ public abstract class Database {
 	 */
 	public boolean tableExists(String table) {
 		try {
+                        if(connection == null || connection.isClosed()) {
+                            open();
+                        }
 			DatabaseMetaData dmd = connection.getMetaData();
 			ResultSet rs = dmd.getTables(null, null, table, null);
 
@@ -148,6 +154,9 @@ public abstract class Database {
 
 	private synchronized void doQuery(final String query) {
 		try {
+                        if(connection == null || connection.isClosed()) {
+                            open();
+                        }
 			PreparedStatement stmt = connection.prepareStatement(query);
 			stmt.execute();
 			stmt.close();

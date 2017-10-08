@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -55,6 +56,11 @@ public class BlockSource {
 
 		CoreAbility coreAbil = bPlayer.getBoundAbility();
 		if (coreAbil == null) {
+			return;
+		}
+
+		// No need to put information in the Map if dynamic sourcing is disabled
+		if (!ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing")) {
 			return;
 		}
 
@@ -122,7 +128,6 @@ public class BlockSource {
 	 * @return a valid bendable block, or null if none was found.
 	 */
 	public static BlockSourceInformation getBlockSourceInformation(Player player, BlockSourceType sourceType, ClickType clickType) {
-
 		if (!playerSources.containsKey(player)) {
 			return null;
 		} else if (!playerSources.get(player).containsKey(sourceType)) {
@@ -254,17 +259,22 @@ public class BlockSource {
 				sourceBlock = null;
 			}
 		}
-		if (allowWater && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
-		}
-		if (allowIce && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.ICE, clickType);
-		}
-		if (allowPlant && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
-		}
-		if (allowSnow && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
+		boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing");
+		if (dynamic && sourceBlock == null) {
+			if (allowWater && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
+			}
+			if (allowIce && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.ICE, clickType);
+			}
+			if (allowPlant && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
+			}
+			if (allowSnow && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
+			}
+		} else {
+			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
 		}
 		if (sourceBlock != null && !sourceBlock.getType().equals(Material.AIR) && (WaterAbility.isWater(sourceBlock) || WaterAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || WaterAbility.isIce(sourceBlock))) {
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {

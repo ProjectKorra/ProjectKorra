@@ -199,37 +199,12 @@ public class PhaseChange extends IceAbility {
 		double[] vars = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
 		for (int i = 0; i < 3; i++) {
 			if (vars[i] != 0) {
-				faces.add(getBlockFaceFromValue(i, vars[i]));
+				faces.add(GeneralMethods.getBlockFaceFromValue(i, vars[i]));
 			} else {
 				continue;
 			}
 		}
 		return faces;
-	}
-
-	private BlockFace getBlockFaceFromValue(int xyz, double value) {
-		switch (xyz) {
-			case 0:
-				if (value > 0) {
-					return BlockFace.EAST;
-				} else if (value < 0) {
-					return BlockFace.WEST;
-				}
-			case 1:
-				if (value > 0) {
-					return BlockFace.UP;
-				} else if (value < 0) {
-					return BlockFace.DOWN;
-				}
-			case 2:
-				if (value > 0) {
-					return BlockFace.SOUTH;
-				} else if (value < 0) {
-					return BlockFace.NORTH;
-				}
-			default:
-				return null;
-		}
 	}
 
 	public ArrayList<Block> getBlocksToFreeze(Location center, int radius) {
