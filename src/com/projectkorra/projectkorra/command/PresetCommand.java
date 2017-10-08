@@ -60,7 +60,6 @@ public class PresetCommand extends PKCommand {
 		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Preset.CantEditBinds");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
 		if (!isPlayer(sender) || !correctLength(sender, args.size(), 1, 3)) {

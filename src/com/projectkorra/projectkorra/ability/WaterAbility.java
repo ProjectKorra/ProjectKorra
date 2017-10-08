@@ -209,7 +209,6 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @param plantbending true if the player can bend plants.
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
-	@SuppressWarnings("deprecation")
 	public static Block getWaterSourceBlock(Player player, double range, boolean plantbending) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();

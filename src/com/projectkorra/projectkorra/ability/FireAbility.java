@@ -241,6 +241,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * 
 	 * @param location The Location
 	 */
+	@SuppressWarnings("deprecation")
 	public static void revertTempFire(Location location) {
 		if (!TEMP_FIRE.containsKey(location)) {
 			return;

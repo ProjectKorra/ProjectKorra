@@ -9,8 +9,10 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 
 public class AttributeModifier {
 	
+	@SuppressWarnings("unused")
 	private String name;
 	private double modifier = 1.0D;
+	@SuppressWarnings("unused")
 	private Plugin plugin;
 	private AttributeModifierType type;
 	
