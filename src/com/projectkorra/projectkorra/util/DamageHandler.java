@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 
+@SuppressWarnings("deprecation")
 public class DamageHandler {
 
 	/**
@@ -26,7 +27,6 @@ public class DamageHandler {
 	 * @param entity The entity that is receiving the damage
 	 * @param damage The amount of damage to deal
 	 */
-	@SuppressWarnings("deprecation")
 	public static void damageEntity(Entity entity, Player source, double damage, Ability ability, boolean ignoreArmor) {
 		if (TempArmor.hasTempArmor((LivingEntity) entity)) {
 			ignoreArmor = true;
