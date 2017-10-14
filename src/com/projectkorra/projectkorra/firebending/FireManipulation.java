@@ -167,6 +167,12 @@ public class FireManipulation extends FireAbility {
 				remove();
 				return;
 			}
+			if (GeneralMethods.isSolid(shotPoint.getBlock())) {
+				bPlayer.addCooldown(this);
+				remove();
+				return;
+			}
+			
 			ParticleEffect.FLAME.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles);
 			ParticleEffect.SMOKE.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles / 2);
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(shotPoint, 2)) {
