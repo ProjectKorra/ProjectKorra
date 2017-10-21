@@ -61,7 +61,7 @@ public class EarthTunnel extends EarthAbility {
 		}
 		this.angle = 0;
 
-		if (!bPlayer.canBend(this) || !EarthAbility.isEarthbendable(player, block)) {
+		if (!bPlayer.canBend(this) || (!EarthAbility.isEarthbendable(player, block) && !EarthAbility.isTransparent(player, "EarthTunnel", block))) {
 			return;
 		}
 		if (bPlayer.isAvatarState()) {

@@ -21,7 +21,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -289,7 +288,7 @@ public class HeatControl extends FireAbility {
 		} else if (bPlayer.getBoundAbilityName().equals("HeatControl") || hasAbility(player, FireJet.class)) {
 			player.setFireTicks(-1);
 			return false;
-		} else if (player.getFireTicks() > 80 && bPlayer.canBendPassive(Element.FIRE)) {
+		} else if (player.getFireTicks() > 80 && bPlayer.canBendPassive(getAbility(HeatControl.class))) {
 			player.setFireTicks(80);
 		}
 		return true;

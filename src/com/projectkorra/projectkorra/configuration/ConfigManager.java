@@ -400,7 +400,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.HighJump.Description", "HighJump gives the Chiblocker the ability to leap into the air. This ability is used for mobility, and is often used to dodge incoming attacks.");
 			config.addDefault("Abilities.Chi.HighJump.Instructions", "To use, simply left click while standing on the ground.");
 			config.addDefault("Abilities.Chi.Smokescreen.Description", "Smokescreen, if used correctly, can serve as a defensive and offensive ability for Chiblockers. When used, a smoke bomb is fired which will blind anyone within a small radius of the explosion, allowing you to either get away, or move in for the kill.");
-			config.addDefault("Abiltiies.Chi.Smokescreen.Instructions", "Left click and a smoke bomb will be fired in the direction you're looking.");
+			config.addDefault("Abilities.Chi.Smokescreen.Instructions", "Left click and a smoke bomb will be fired in the direction you're looking.");
 			config.addDefault("Abilities.Chi.WarriorStance.Description", "WariorStance is an advanced chiblocker technique that gives the chiblocker increased damage but makes them a tad more vulnerable. This ability is useful when finishing off weak targets.");
 			config.addDefault("Abilities.Chi.WarriorStance.Instructions", "Left click to activate the warrior stance mode. Additionally, left click to disable it.");
 			config.addDefault("Abilities.Chi.Paralyze.Description", "Paralyzes the target, making them unable to do anything for a short period of time as they will be paralyzed where they're stood. ");
@@ -520,6 +520,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.Sound.Volume", 1);
 			config.addDefault("Properties.Air.Sound.Pitch", 2);
 
+			config.addDefault("Properties.Water.DynamicSourcing", true);
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
@@ -1216,13 +1217,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
 			
 			config.addDefault("Abilities.Earth.EarthPillars.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 7000);
-			config.addDefault("Abilities.Earth.EarthPillars.Radius", 7);
-			config.addDefault("Abilities.Earth.EarthPillars.Power", 0.7);
+			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 8000);
+			config.addDefault("Abilities.Earth.EarthPillars.Radius", 9);
+			config.addDefault("Abilities.Earth.EarthPillars.Power", 1.2);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
 			config.addDefault("Abilities.Earth.EarthPillars.Stun.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 3.5);
+			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 2500);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
 
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);

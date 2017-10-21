@@ -47,4 +47,8 @@ public class GracefulDescent extends AirAbility implements PassiveAbility {
 		return false;
 	}
 
+	@Override
+	public boolean isProgressable() {
+		return false;
+	}
 }

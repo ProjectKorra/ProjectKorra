@@ -30,8 +30,6 @@ import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
-import com.projectkorra.spirits.SpiritElement;
-import com.projectkorra.spirits.SpiritPlayer;
 
 /**
  * Class that presents a player and stores all bending information about the
@@ -109,6 +107,8 @@ public class BendingPlayer {
 	 * @param cooldown The cooldown time
 	 */
 	public void addCooldown(String ability, long cooldown) {
+		if(cooldown <= 0)
+			return;
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		
@@ -241,7 +241,8 @@ public class BendingPlayer {
 		return canBend(ability, false, true);
 	}
 
-	public boolean canBendPassive(Element element) {
+	public boolean canBendPassive(CoreAbility ability) {
+		Element element = ability.getElement();
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
 		}
@@ -261,12 +262,15 @@ public class BendingPlayer {
 		return true;
 	}
 
-	public boolean canUsePassive(Element element) {
+	public boolean canUsePassive(CoreAbility ability) {
+		Element element = ability.getElement();
 		if (!isToggled() || !isElementToggled(element)) {
 			return false;
 		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
+			return false;
+		} else if (isOnCooldown(ability)) {
 			return false;
 		}
 		
@@ -316,18 +320,6 @@ public class BendingPlayer {
 			
 			if (!hasSubElement(subElement)) {
 				return false;
-			}
-			
-			if (GeneralMethods.hasSpirits()) {
-				SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
-				
-				if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
-					return false;
-				}
-
-				if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
-					return false;
-				}
 			}
 		}
 		

@@ -705,6 +705,44 @@ public class GeneralMethods {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * This gets the BlockFace in the specified dimension of a
+	 * certain value
+	 * @param xyz 0 for x, 1 for y, 2 for z
+	 * @param value vector value for which direction to check
+	 * @return BlockFace for block in specified dimension and value
+	 */
+	public static BlockFace getBlockFaceFromValue(int xyz, double value) {
+		switch (xyz) {
+			case 0:
+				if (value > 0) {
+					return BlockFace.EAST;
+				} else if (value < 0) {
+					return BlockFace.WEST;
+				} else {
+					return BlockFace.SELF;
+				}
+			case 1:
+				if (value > 0) {
+					return BlockFace.UP;
+				} else if (value < 0) {
+					return BlockFace.DOWN;
+				} else {
+					return BlockFace.SELF;
+				}
+			case 2:
+				if (value > 0) {
+					return BlockFace.SOUTH;
+				} else if (value < 0) {
+					return BlockFace.NORTH;
+				} else {
+					return BlockFace.SELF;
+				}
+			default:
+				return null;
+		}
+	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
 		List<Block> blocks = new ArrayList<Block>();
@@ -1089,7 +1127,6 @@ public class GeneralMethods {
 		return null;
 	}
 
-	@SuppressWarnings("unused")
 	public static Entity getTargetedEntity(Player player, double range, List<Entity> avoid) {
 		double longestr = range + 1;
 		Entity target = null;
@@ -1112,13 +1149,8 @@ public class GeneralMethods {
 			}
 		}
 		if (target != null) {
-			List<Block> blocklist = new ArrayList<Block>();
-			blocklist = GeneralMethods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
-			for (Block isAir : blocklist) {
-				if (GeneralMethods.isObstructed(origin, target.getLocation())) {
-					target = null;
-					break;
-				}
+			if (GeneralMethods.isObstructed(origin, target.getLocation())) {
+				target = null;
 			}
 		}
 		return target;

@@ -111,7 +111,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 			@Override
 			public void run() {
 				ActionBar.sendActionBar(Element.EARTH.getColor() + "* Stunned *", player);
-				if (System.currentTimeMillis() >= start + stunDuration*1000) {
+				if (System.currentTimeMillis() >= start + stunDuration) {
 					bPlayer.unblockChi();
 					cancel();
 				}
