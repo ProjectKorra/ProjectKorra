@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Tremorsense extends EarthAbility {
 
+	@Deprecated
 	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<Block, Player>();
 
 	private byte lightThreshold;
@@ -24,6 +25,7 @@ public class Tremorsense extends EarthAbility {
 	private int radius;
 	private long cooldown;
 	private Block block;
+	private int stickyRange;
 
 	public Tremorsense(Player player, boolean clicked) {
 		super(player);
@@ -49,6 +51,7 @@ public class Tremorsense extends EarthAbility {
 		this.radius = getConfig().getInt("Abilities.Earth.Tremorsense.Radius");
 		this.lightThreshold = (byte) getConfig().getInt("Abilities.Earth.Tremorsense.LightThreshold");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Tremorsense.Cooldown");
+		this.stickyRange = getConfig().getInt("Abilities.Earth.Tremorsense.StickyRange");
 	}
 
 	private void activate() {
@@ -106,7 +109,14 @@ public class Tremorsense extends EarthAbility {
 			remove();
 			return;
 		} else if (!isBendable) {
-			revertGlowBlock();
+			if (stickyRange > 0) {
+				if (standBlock.getLocation().distanceSquared(block.getLocation()) > stickyRange * stickyRange) {
+					revertGlowBlock();
+				}
+			} else {
+				revertGlowBlock();
+			}
+			
 			return;
 		}
 	}
@@ -153,6 +163,8 @@ public class Tremorsense extends EarthAbility {
 		return false;
 	}
 
+	@Deprecated
+	/**No longer used; will be removed in the next version.*/
 	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
 	}

@@ -1215,6 +1215,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.Radius", 5);
 			config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
+			config.addDefault("Abilities.Earth.Tremorsense.StickyRange", 3);
 			
 			config.addDefault("Abilities.Earth.EarthPillars.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 8000);

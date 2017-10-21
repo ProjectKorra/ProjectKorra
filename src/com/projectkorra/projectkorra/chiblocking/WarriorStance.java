@@ -61,10 +61,12 @@ public class WarriorStance extends ChiAbility {
 		super.remove();
 		bPlayer.addCooldown(this);
 		bPlayer.setStance(null);
-		GeneralMethods.displayMovePreview(player);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
-		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-		player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+		if (player != null) {
+			GeneralMethods.displayMovePreview(player);
+			player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+			player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+			player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+		}
 	}
 
 	@Override
