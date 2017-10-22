@@ -660,6 +660,9 @@ public class GeneralMethods {
 	
 	public static void displayMovePreview(Player player, int slot) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return;
+		}
 		String displayedMessage = bPlayer.getAbilities().get(slot);
 		CoreAbility ability = CoreAbility.getAbility(displayedMessage);
 		

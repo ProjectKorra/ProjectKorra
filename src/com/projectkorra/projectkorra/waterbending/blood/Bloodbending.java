@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.waterbending.blood;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,9 +94,9 @@ public class Bloodbending extends BloodAbility {
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
 				if (entities.contains(player))
 					entities.remove(player);
-				for (Entity e : entities) {
-					if (!(e instanceof LivingEntity)) {
-						entities.remove(e);
+				for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
+					if (!(iterator.next() instanceof LivingEntity)) {
+						iterator.remove();
 					}
 				}
 				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
