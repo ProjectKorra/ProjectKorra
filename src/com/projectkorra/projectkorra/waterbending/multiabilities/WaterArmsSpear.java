@@ -180,6 +180,10 @@ public class WaterArmsSpear extends WaterAbility {
 					return;
 				}
 			}
+			
+			if (!canPlaceBlock(location.getBlock())) {
+				return;
+			}
 
 			new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 			getIceBlocks().put(location.getBlock(), System.currentTimeMillis() + 600L);
@@ -188,9 +192,6 @@ public class WaterArmsSpear extends WaterAbility {
 			location = location.add(direction.clone().multiply(1));
 			spearLocations.add(location.clone());
 
-			if (!canPlaceBlock(location.getBlock())) {
-				return;
-			}
 			distanceTravelled++;
 		}
 	}
