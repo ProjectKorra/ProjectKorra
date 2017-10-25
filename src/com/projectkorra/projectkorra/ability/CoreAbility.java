@@ -107,7 +107,7 @@ public abstract class CoreAbility implements Ability {
 	 * @see #start()
 	 */
 	public CoreAbility(Player player) {
-		if (player == null) {
+		if (player == null || !isEnabled()) {
 			return;
 		}
 
@@ -136,7 +136,7 @@ public abstract class CoreAbility implements Ability {
 	 * @see #isRemoved()
 	 */
 	public void start() {
-		if (player == null) {
+		if (player == null || !isEnabled()) {
 			return;
 		}
 		AbilityStartEvent event = new AbilityStartEvent(this);
@@ -215,8 +215,16 @@ public abstract class CoreAbility implements Ability {
 					if (!((PassiveAbility)abil).isProgressable()) {
 						continue;
 					}
+					
+					if (abil.getPlayer().isDead()) {
+						continue;
+					}
+				} else if (abil.getPlayer().isDead()) {
+					abil.remove();
+					continue;
 				}
-				if (abil.getPlayer().isDead() || !abil.getPlayer().isOnline()) {
+				
+				if (!abil.getPlayer().isOnline()) {
 					abil.remove();
 					continue;
 				}

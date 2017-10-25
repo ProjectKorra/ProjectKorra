@@ -33,7 +33,7 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		if (!player.isSprinting()) {
+		if (!player.isSprinting() || !bPlayer.canUsePassive(this) || !bPlayer.canBendPassive(this)) {
 			return;
 		}
 
@@ -103,7 +103,7 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 
 	@Override
 	public boolean isInstantiable() {
-		return false;
+		return true;
 	}
 	
 	@Override

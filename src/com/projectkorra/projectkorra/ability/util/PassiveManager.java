@@ -39,7 +39,7 @@ public class PassiveManager {
 					 */
 				}
 				
-				if (((PassiveAbility) ability).isInstantiable()) {
+				if (!((PassiveAbility) ability).isInstantiable()) {
 					continue;
 				}
 				
