@@ -1267,6 +1267,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
 
+			config.addDefault("Abilities.Fire.FireManipulation.Enabled", true);
+			
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Cooldown", 12000);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Range", 50);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Damage", 2);
