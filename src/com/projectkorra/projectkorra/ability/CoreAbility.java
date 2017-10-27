@@ -216,18 +216,20 @@ public abstract class CoreAbility implements Ability {
 						continue;
 					}
 					
-					if (abil.getPlayer().isDead()) {
+					if (!abil.getPlayer().isOnline()) { //This has to be before isDead as isDead
+						abil.remove();                  //will return true if they are offline 
+						continue;
+					} else if (abil.getPlayer().isDead()) {
 						continue;
 					}
 				} else if (abil.getPlayer().isDead()) {
 					abil.remove();
 					continue;
-				}
-				
-				if (!abil.getPlayer().isOnline()) {
+				} else if (!abil.getPlayer().isOnline()) {
 					abil.remove();
 					continue;
 				}
+				
 				try {
 					abil.progress();
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
