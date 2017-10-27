@@ -79,7 +79,7 @@ public class ConfigManager {
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the full moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
 			config.addDefault("Extras.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
-			config.addDefault("Extras.Fire.DayMessage", "You feel the strength of the rising sun empowering your firebending.");
+			config.addDefault("Extras.Fire.DayMessage", "You feel the strength of the rising sun empower your firebending.");
 
 			config.addDefault("Commands.NoPermission", "You do not have permission to do that.");
 			config.addDefault("Commands.MustBePlayer", "You must be a player to perform this action.");
@@ -141,7 +141,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
 			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
 
-			config.addDefault("Commands.PermaRemove.Description", "This command will permanently remove the Bending of the targeted <Player>. Once removed, a player may only receive Bending again if this command is run on them again. This command is typically reserved for administrators.");
+			config.addDefault("Commands.PermaRemove.Description", "This command will permanently remove the bending of the targeted <Player>. Once removed, a player may only receive bending again if this command is run on them again. This command is typically reserved for administrators.");
 			config.addDefault("Commands.PermaRemove.PlayerOffline", "That player is not online.");
 			config.addDefault("Commands.PermaRemove.Restored", "Your bending has been restored.");
 			config.addDefault("Commands.PermaRemove.RestoredConfirm", "You have restored the bending of {target}.");
@@ -314,7 +314,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Combo.IceWave.Description", "PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
 			config.addDefault("Abilities.Water.Combo.IceWave.DeathMessage", "{victim} was frozen solid by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.Passive.FastSwim.Description", "FastSwim is a passive ability for waterbenders allowing them to travel quickly through the water. Simple hold shift while underwater to propel yourself forward.");
-			config.addDefault("Abilities.Water.Passive.Hydrosink.Description", "Hydrosink is a passive ability for waterbenders enabling them to softly land on any waterbendable surface, cancelling all damage.");
+			config.addDefault("Abilities.Water.Passive.HydroSink.Description", "Hydrosink is a passive ability for waterbenders enabling them to softly land on any waterbendable surface, cancelling all damage.");
 
 			config.addDefault("Commands.Help.Elements.Earth", "Earth is the element of substance. Earthbenders share many of the same fundamental techniques as Waterbenders, but their domain is quite different and more readily accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns of rock straight up from the earth or drill their way through the mountain. They can also launch themselves through the air using pillars of rock, and will not hurt themselves assuming they land on something they can bend. The more skilled Earthbenders can even bend metal.");
 			config.addDefault("Abilities.Earth.Catapult.Description", "Catapult is an advanced earthbending ability that allows you to forcefully push yourself using earth, reaching great heights. This technique is best used when travelling, but it can also be used to quickly escape a battle.");
@@ -761,6 +761,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
+			config.addDefault("Abilities.Air.AirShield.Duration", 0);
 			config.addDefault("Abilities.Air.AirShield.Radius", 7);
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
@@ -768,6 +769,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 			config.addDefault("Abilities.Air.AirSpout.Cooldown", 0);
+			config.addDefault("Abilities.Air.AirSpout.Duration", 0);
 			config.addDefault("Abilities.Air.AirSpout.Height", 16);
 			config.addDefault("Abilities.Air.AirSpout.Interval", 100);
 
@@ -823,6 +825,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.Tornado.Enabled", true);
 			config.addDefault("Abilities.Air.Tornado.Cooldown", 0);
+			config.addDefault("Abilities.Air.Tornado.Duration", 0);
 			config.addDefault("Abilities.Air.Tornado.Radius", 10);
 			config.addDefault("Abilities.Air.Tornado.Height", 20);
 			config.addDefault("Abilities.Air.Tornado.Range", 25);
