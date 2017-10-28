@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
@@ -34,11 +35,11 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		if (!player.isSprinting()) {
+		if (!player.isSprinting() || !bPlayer.canUsePassive(this) || !bPlayer.canBendPassive(this)) {
 			return;
 		}
 
-		if (CoreAbility.hasAbility(player, AirAgility.class)) {
+		if (CoreAbility.hasAbility(player, AirAgility.class) && bPlayer.canBendPassive(CoreAbility.getAbility(AirAbility.class))) {
 			AirAgility airAgility = CoreAbility.getAbility(player, AirAgility.class);
 			if (airAgility.getJumpPower() > jumpPower) {
 				jumpPower = airAgility.getJumpPower();
@@ -109,12 +110,12 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public boolean isInstantiable() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isProgressable() {
-		return false;
+		return true;
 	}
 
 	public int getJumpPower() {

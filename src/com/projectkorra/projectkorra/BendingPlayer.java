@@ -242,6 +242,7 @@ public class BendingPlayer {
 	}
 
 	public boolean canBendPassive(CoreAbility ability) {
+		if (ability == null) return false; //If the passive is disabled
 		Element element = ability.getElement();
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
