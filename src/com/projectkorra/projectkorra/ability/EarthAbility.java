@@ -25,7 +25,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
-import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
@@ -152,8 +152,8 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 
 			Block affectedblock = location.clone().add(norm).getBlock();
-			if (EarthPassive.isPassiveSand(block)) {
-				EarthPassive.revertSand(block);
+			if (DensityShift.isPassiveSand(block)) {
+				DensityShift.revertSand(block);
 			}
 			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
 				TempBlock.get(affectedblock).revertBlock();
@@ -204,8 +204,8 @@ public abstract class EarthAbility extends ElementalAbility {
 						}
 						break;
 					}
-					if (EarthPassive.isPassiveSand(affectedblock)) {
-						EarthPassive.revertSand(affectedblock);
+					if (DensityShift.isPassiveSand(affectedblock)) {
+						DensityShift.revertSand(affectedblock);
 					}
 					if (block == null) {
 						for (Block checkblock : blocks) {
@@ -298,7 +298,6 @@ public abstract class EarthAbility extends ElementalAbility {
 	 * @param range the maximum block selection range.
 	 * @return a valid Earth source block, or null if one could not be found.
 	 */
-	@SuppressWarnings("deprecation")
 	public static Block getEarthSourceBlock(Player player, String abilityName, double range) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
@@ -411,7 +410,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.EarthSub"));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static Block getTargetEarthBlock(Player player, int range) {
 		return player.getTargetBlock(getTransparentMaterialSet(), range);
 	}
@@ -670,7 +668,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void stopBending() {
-		EarthPassive.removeAll();
+		DensityShift.removeAll();
 
 		if (isEarthRevertOn()) {
 			removeAllEarthbendedBlocks();

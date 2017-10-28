@@ -180,17 +180,18 @@ public class WaterArmsSpear extends WaterAbility {
 					return;
 				}
 			}
+			
+			if (!canPlaceBlock(location.getBlock())) {
+				return;
+			}
 
 			new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 			getIceBlocks().put(location.getBlock(), System.currentTimeMillis() + 600L);
-			Vector direction = GeneralMethods.getDirection(initLocation, GeneralMethods.getTargetedLocation(player, spearRange, Material.WATER, Material.STATIONARY_WATER, Material.ICE, Material.PACKED_ICE)).normalize();
+			Vector direction = GeneralMethods.getDirection(initLocation, GeneralMethods.getTargetedLocation(player, spearRange, getTransparentMaterials())).normalize();
 
 			location = location.add(direction.clone().multiply(1));
 			spearLocations.add(location.clone());
 
-			if (!canPlaceBlock(location.getBlock())) {
-				return;
-			}
 			distanceTravelled++;
 		}
 	}

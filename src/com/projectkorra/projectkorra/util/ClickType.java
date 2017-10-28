@@ -13,12 +13,12 @@ public enum ClickType {
 	 */
 	LEFT_CLICK,
 	/**
-	 * For any instance of right clicking that isn't with an entity or a block
-	 * (Right clicking air will not work).
+	 * Player has left clicked and hit an entity.
 	 */
 	LEFT_CLICK_ENTITY,
 	/**
-	 * Player has left clicked and hit an entity.
+	 * For any instance of right clicking that isn't with an entity or a block
+	 * (Right clicking air will not work).
 	 */
 	RIGHT_CLICK,
 	/**
@@ -36,5 +36,9 @@ public enum ClickType {
 	/**
 	 * The shift key being released.
 	 */
-	SHIFT_UP;
+	SHIFT_UP,
+	/**
+	 * The item swap hand key was pressed
+	 */
+	OFFHAND_TRIGGER;
 }

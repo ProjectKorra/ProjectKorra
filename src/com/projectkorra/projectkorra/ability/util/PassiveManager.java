@@ -25,7 +25,7 @@ public class PassiveManager {
 		if (bPlayer == null) {
 			return;
 		}
-		for (CoreAbility ability : CoreAbility.getAbilities()) {
+		for (CoreAbility ability : PASSIVES.values()) {
 			if (ability instanceof PassiveAbility) {
 				if (!hasPassive(player, ability)) {
 					continue;
@@ -37,16 +37,18 @@ public class PassiveManager {
 					 * here. This just enables the passive to be displayed in /b
 					 * d [element]passive
 					 */
-				} else if (!((PassiveAbility) ability).isInstantiable()) {
+				}
+				
+				if (((PassiveAbility) ability).isInstantiable()) {
 					continue;
 				}
+				
 				try {
 					Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get((PassiveAbility) ability);
 					Constructor<?> constructor = clazz.getConstructor(Player.class);
-					Object object = constructor.newInstance(new Object[] { player });
+					Object object = constructor.newInstance(player);
 					((CoreAbility) object).start();
-				}
-				catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
 			}
@@ -70,7 +72,7 @@ public class PassiveManager {
 			return false;
 		} else if (!passive.isEnabled()) {
 			return false;
-		} else if (!bPlayer.canBendPassive(passive.getElement())) {
+		} else if (!bPlayer.canBendPassive(passive)) {
 			return false;
 		} else if (!bPlayer.isToggled()) {
 			return false;

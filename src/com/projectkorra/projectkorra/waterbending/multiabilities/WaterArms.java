@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra.waterbending.multiabilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,7 +34,6 @@ public class WaterArms extends WaterAbility {
 		RIGHT, LEFT;
 	}
 
-	private static final Map<Block, Long> BLOCK_REVERT_TIMES = new ConcurrentHashMap<Block, Long>();
 	private static final Integer[] UNBREAKABLES = { 7, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
 
 	private boolean cooldownLeft;
@@ -61,6 +58,8 @@ public class WaterArms extends WaterAbility {
 	private World world;
 	private String sneakMsg;
 	private Arm activeArm;
+	private List<Block> right, left;
+	private List<TempBlock> external;
 
 	public WaterArms(Player player) {
 		super(player);
@@ -85,6 +84,9 @@ public class WaterArms extends WaterAbility {
 		this.lastClickTime = 0;
 		this.world = player.getWorld();
 		this.activeArm = Arm.RIGHT;
+		this.right = new ArrayList<>();
+		this.left = new ArrayList<>();
+		this.external = new ArrayList<>();
 
 		WaterArms oldArms = getAbility(player, WaterArms.class);
 
@@ -184,6 +186,16 @@ public class WaterArms extends WaterAbility {
 		selectedSlot = player.getInventory().getHeldItemSlot();
 		displayRightArm();
 		displayLeftArm();
+		
+		if (!external.isEmpty()) {
+			for (int i = external.size()-1; i >= 0; i--) {
+				TempBlock tb = external.get(i);
+				if (!left.contains(tb.getBlock()) && !right.contains(tb.getBlock())) {
+					tb.setType(Material.AIR);
+					external.remove(i);
+				}
+			}
+		}
 
 		if (lightningEnabled) {
 			checkIfZapped();
@@ -191,7 +203,7 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!isTransparent(player, block) && !(isWater(block) && TempBlock.isTempBlock(block))) {
+		if (!isTransparent(player, block) && !((isWater(block) || isIce(block)) && TempBlock.isTempBlock(block))) {
 			return false;
 		}
 		return true;
@@ -204,6 +216,7 @@ public class WaterArms extends WaterAbility {
 	 * @return false If arm cannot be fully displayed
 	 */
 	public boolean displayRightArm() {
+		List<Block> newBlocks = new ArrayList<>();
 		if (rightArmConsumed) {
 			return false;
 		}
@@ -214,17 +227,17 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))) {
-			new TempBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
-			BLOCK_REVERT_TIMES.put(r1.getBlock(), System.currentTimeMillis() + 1);
+			newBlocks.add(r1.getBlock());
+			addBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
 		}
 
 		Location r2 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
 		if (!canPlaceBlock(r2.getBlock())) {
 			return false;
 		}
-
-		new TempBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
-		BLOCK_REVERT_TIMES.put(r2.getBlock(), 0L);
+		
+		newBlocks.add(r2.getBlock());
+		addBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 
 		for (int j = 0; j <= initLength; j++) {
 			Location r3 = r2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
@@ -234,15 +247,16 @@ public class WaterArms extends WaterAbility {
 				}
 				return false;
 			}
-
+			newBlocks.add(r3.getBlock());
 			if (j >= 1 && selectedSlot == freezeSlot && bPlayer.canIcebend()) {
-				new TempBlock(r3.getBlock(), Material.ICE, (byte) 0);
-				BLOCK_REVERT_TIMES.put(r3.getBlock(), 0L);
+				addBlock(r3.getBlock(), Material.ICE, (byte) 0);
 			} else {
-				new TempBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8);
-				BLOCK_REVERT_TIMES.put(r3.getBlock(), 0L);
+				addBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 			}
 		}
+		
+		right.clear();
+		right.addAll(newBlocks);
 
 		return true;
 	}
@@ -254,6 +268,7 @@ public class WaterArms extends WaterAbility {
 	 * @return false If the arm cannot be fully displayed.
 	 */
 	public boolean displayLeftArm() {
+		List<Block> newBlocks = new ArrayList<>();
 		if (leftArmConsumed) {
 			return false;
 		}
@@ -264,17 +279,18 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))) {
-			new TempBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
-			BLOCK_REVERT_TIMES.put(l1.getBlock(), 0L);
+			newBlocks.add(l1.getBlock());
+			addBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
+			
 		}
 
 		Location l2 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
 		if (!canPlaceBlock(l2.getBlock())) {
 			return false;
 		}
-
-		new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
-		BLOCK_REVERT_TIMES.put(l2.getBlock(), System.currentTimeMillis() + 1);
+		
+		newBlocks.add(l2.getBlock());
+		addBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 
 		for (int j = 0; j <= initLength; j++) {
 			Location l3 = l2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
@@ -284,17 +300,34 @@ public class WaterArms extends WaterAbility {
 				}
 				return false;
 			}
-
+			
+			newBlocks.add(l3.getBlock());
 			if (j >= 1 && selectedSlot == freezeSlot && bPlayer.canIcebend()) {
-				new TempBlock(l3.getBlock(), Material.ICE, (byte) 0);
-				BLOCK_REVERT_TIMES.put(l3.getBlock(), System.currentTimeMillis() + 1);
+				addBlock(l3.getBlock(), Material.ICE, (byte) 0);
 			} else {
-				new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 8);
-				BLOCK_REVERT_TIMES.put(l3.getBlock(), System.currentTimeMillis() + 1);
+				addBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte)8);
 			}
+			
 		}
+		
+		left.clear();
+		left.addAll(newBlocks);
 
 		return true;
+	}
+	
+	private void addBlock(Block b, Material m, byte i) {
+		if (TempBlock.isTempBlock(b)) {
+			TempBlock tb = TempBlock.get(b);
+			if ((left.contains(b) || right.contains(b)) && !external.contains(tb)) {
+				tb.setRevertTime(60);
+			} else {
+				external.add(tb);
+			}
+			tb.setType(m, i);
+		} else {
+			new TempBlock(b, m, i).setRevertTime(60);
+		}
 	}
 
 	/**
@@ -338,16 +371,6 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private static void progressRevert(boolean ignoreTime) {
-		for (Block block : BLOCK_REVERT_TIMES.keySet()) {
-			long time = BLOCK_REVERT_TIMES.get(block);
-			if (System.currentTimeMillis() > time || ignoreTime) {
-				if (TempBlock.isTempBlock(block)) {
-					TempBlock.revertBlock(block, Material.AIR);
-				}
-				BLOCK_REVERT_TIMES.remove(block);
-			}
-		}
-
 		for (Block block : WaterArmsSpear.getIceBlocks().keySet()) {
 			long time = WaterArmsSpear.getIceBlocks().get(block);
 			if (System.currentTimeMillis() > time || ignoreTime) {
@@ -360,9 +383,11 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private void checkIfZapped() {
+		List<Block> blocks = new ArrayList<>(right);
+		blocks.addAll(left);
 		for (Lightning lightning : getAbilities(Lightning.class)) {
 			for (Lightning.Arc arc : lightning.getArcs()) {
-				for (Block arm : BLOCK_REVERT_TIMES.keySet()) {
+				for (Block arm : blocks) {
 					for (Location loc : arc.getPoints()) {
 						if (arm.getLocation().getWorld().equals(loc.getWorld()) && loc.distance(arm.getLocation()) <= 2.5) {
 							for (Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
@@ -423,7 +448,6 @@ public class WaterArms extends WaterAbility {
 
 	public static void removeAllCleanup() {
 		progressRevert(true);
-		BLOCK_REVERT_TIMES.clear();
 		WaterArmsSpear.getIceBlocks().clear();
 		WaterArmsWhip.removeAllCleanup();
 	}
@@ -725,10 +749,6 @@ public class WaterArms extends WaterAbility {
 
 	public void setSneakMsg(String sneakMsg) {
 		this.sneakMsg = sneakMsg;
-	}
-
-	public static Map<Block, Long> getBlockRevertTimes() {
-		return BLOCK_REVERT_TIMES;
 	}
 
 	public static Integer[] getUnbreakables() {

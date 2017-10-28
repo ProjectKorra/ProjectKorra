@@ -174,10 +174,7 @@ public class IceSpikeBlast extends IceAbility {
 			if (block.equals(sourceBlock)) {
 				return;
 			}
-
-			if (source != null) {
-				source.revertBlock();
-			}
+			
 			source = null;
 
 			if (isTransparent(player, block) && !block.isLiquid()) {
@@ -213,6 +210,7 @@ public class IceSpikeBlast extends IceAbility {
 
 			sourceBlock = block;
 			source = new TempBlock(sourceBlock, Material.ICE, data);
+			source.setRevertTime(140);
 		} else if (prepared) {
 			if (sourceBlock != null)
 				playFocusWaterEffect(sourceBlock);
