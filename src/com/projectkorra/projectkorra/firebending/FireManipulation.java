@@ -14,6 +14,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -167,6 +168,12 @@ public class FireManipulation extends FireAbility {
 				remove();
 				return;
 			}
+			if (GeneralMethods.isSolid(shotPoint.getBlock())) {
+				bPlayer.addCooldown(this);
+				remove();
+				return;
+			}
+			
 			ParticleEffect.FLAME.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles);
 			ParticleEffect.SMOKE.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles / 2);
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(shotPoint, 2)) {
