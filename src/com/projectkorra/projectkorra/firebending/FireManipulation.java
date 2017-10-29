@@ -186,10 +186,6 @@ public class FireManipulation extends FireAbility {
 			}
 		}
 	}
-	
-	public boolean isEnabled() {
-		return ConfigManager.getConfig().getBoolean("Abilities.Fire.FireManipulation.Enabled");
-	}
 
 	@Override
 	public boolean isSneakAbility() {
