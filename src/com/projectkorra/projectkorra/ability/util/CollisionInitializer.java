@@ -154,6 +154,8 @@ public class CollisionInitializer {
 		collisionManager.addCollision(new Collision(airShield, airStream, false, true));
 
 		collisionManager.addCollision(new Collision(airShield, airSwipe, false, false));
+		collisionManager.addCollision(new Collision(airShield, airSweep, false, false));
+
 		for (CoreAbility comboAbil : comboAbils) {
 			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
 		}
