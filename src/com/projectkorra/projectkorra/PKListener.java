@@ -470,7 +470,7 @@ public class PKListener implements Listener {
 			FireDamageTimer.dealFlameDamage(entity);
 		}
 		
-		if (TempArmor.hasTempArmor((LivingEntity)entity)) {
+		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity)entity)) {
 			event.setDamage(DamageModifier.ARMOR, 0);
 		}
 
