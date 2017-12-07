@@ -339,7 +339,7 @@ public class MetalClips extends MetalAbility {
 					Item iron = (Item) entity;
 
 					if (Arrays.asList(METAL_ITEMS).contains(iron.getItemStack().getType())) {
-						iron.setVelocity(vector.normalize().multiply(magnetPower));
+						iron.setVelocity(vector.normalize().multiply(magnetPower).add(new Vector(0, 0.2, 0)));
 					}
 				}
 			}
