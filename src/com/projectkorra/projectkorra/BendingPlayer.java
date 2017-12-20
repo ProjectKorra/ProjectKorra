@@ -110,6 +110,8 @@ public class BendingPlayer {
 	 * @param cooldown The cooldown time
 	 */
 	public void addCooldown(String ability, long cooldown) {
+		if(cooldown <= 0)
+			return;
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
@@ -244,7 +246,7 @@ public class BendingPlayer {
 
 		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 
-		if (element == null || player == null) {
+		if (element == null || player == null || player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		} else if (!player.hasPermission("bending." + element.getName() + ".passive")) {
 			return false;
@@ -252,12 +254,12 @@ public class BendingPlayer {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
-		}
+		} 
 		return true;
 	}
 
 	public boolean canUsePassive(Element element) {
-		if (!isToggled() || !isElementToggled(element)) {
+		if (!isToggled() || !isElementToggled(element) || player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
@@ -813,7 +815,15 @@ public class BendingPlayer {
 	private static FileConfiguration getConfig() {
 		return ConfigManager.getConfig();
 	}
-
+	/**
+	 * Gets the Bukkit player object of the {@link BendingPlayer}.
+	 * 
+	 * @return the player
+	 */
+	public Player getBukkitPlayer() {
+		return this.player;
+	}
+	
 	/**
 	 * Gets the map of {@link BendingPlayer}s.
 	 * 

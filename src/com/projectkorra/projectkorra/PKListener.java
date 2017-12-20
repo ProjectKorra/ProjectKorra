@@ -195,9 +195,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+
 
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -248,9 +246,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockFlowTo(BlockFromToEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 		Block toblock = event.getToBlock();
 		Block fromblock = event.getBlock();
 		if (ElementalAbility.isLava(fromblock)) {
@@ -271,9 +267,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockForm(BlockFormEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 		if (TempBlock.isTempBlock(event.getBlock())) {
 			event.setCancelled(true);
 		}
@@ -305,17 +299,12 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockMeltEvent(BlockFadeEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
-
+		
 		Block block = event.getBlock();
 		if (block.getType() == Material.FIRE) {
 			return;
@@ -343,10 +332,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
-
+		
 		Block block = event.getBlock();
 
 		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
@@ -361,9 +347,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 		Player player = event.getPlayer();
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
@@ -404,9 +388,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityChangeBlockEvent(EntityChangeBlockEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
@@ -423,9 +405,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityCombust(EntityCombustEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		Block block = entity.getLocation().getBlock();
@@ -455,9 +435,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageEvent(EntityDamageEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 
@@ -561,9 +539,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		for (Block block : event.blockList()) {
 			EarthBlast blast = EarthBlast.getBlastFromSource(block);
@@ -588,9 +564,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityExplodeEvent(EntityExplodeEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (entity != null) {
@@ -602,9 +576,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityInteractEvent(EntityInteractEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
@@ -614,9 +586,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityProjectileLaunchEvent(ProjectileLaunchEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
@@ -626,9 +596,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityShootBowEvent(EntityShootBowEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
@@ -638,9 +606,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntitySlimeSplitEvent(SlimeSplitEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
@@ -648,11 +614,9 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntitySuffocatedByTempBlocks(EntityDamageEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		if (event.getCause() == DamageCause.SUFFOCATION) {
 			if (TempBlock.isTempBlock(event.getEntity().getLocation().add(0, 1, 0).getBlock())) {
@@ -663,9 +627,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTarget(EntityTargetEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity)) {
@@ -675,10 +637,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTargetLiving(EntityTargetLivingEntityEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
-
+		
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity)) {
 			event.setCancelled(true);
@@ -687,9 +646,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTeleportEvent(EntityTeleportEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity) || MetalClips.isControlled((LivingEntity)entity)) {
@@ -729,9 +686,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		for (MetalClips clips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (clips.getTargetEntity() != null && clips.getTargetEntity().getEntityId() == event.getWhoClicked().getEntityId()) {
@@ -773,9 +728,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -812,7 +765,7 @@ public class PKListener implements Listener {
 		event.setFormat(format);
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDamage(EntityDamageEvent event) {
 
 		if (event.getEntity() instanceof Player) {
@@ -827,14 +780,13 @@ public class PKListener implements Listener {
 				new Shockwave(player, true);
 			}
 
-			if (event.isCancelled())
-				return;
 
 			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
 				new AirBurst(player, true);
 				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
 					event.setDamage(0D);
 					event.setCancelled(true);
+					return;
 				}
 			}
 
@@ -842,6 +794,7 @@ public class PKListener implements Listener {
 				if (WaterPassive.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
+					return;
 				}
 			}
 
@@ -849,6 +802,7 @@ public class PKListener implements Listener {
 				if (EarthPassive.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
+					return;
 				}
 			}
 
@@ -857,14 +811,17 @@ public class PKListener implements Listener {
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
 				event.setDamage(finaldamage);
-				if (finaldamage <= 0.4)
+				if (finaldamage <= 0.4) {
 					event.setCancelled(true);
+					return;
+				}
 			}
 
 			if (event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
 				if (source == player) {
 					event.setCancelled(true);
+					return;
 				}
 			}
 
@@ -884,11 +841,9 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
-		if (e.isCancelled()) {
-			return;
-		}
+		
 
 		Entity source = e.getDamager();
 		Entity entity = e.getEntity();
@@ -1017,9 +972,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerInteraction(PlayerInteractEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
@@ -1057,9 +1010,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -1081,10 +1032,9 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerItemDamage(PlayerItemDamageEvent event) {
-		if (event.isCancelled())
-			return;
+		
 
 		if (TempArmor.hasTempArmor(event.getPlayer())) {
 			TempArmor armor = TempArmor.getTempArmor(event.getPlayer());
@@ -1136,11 +1086,9 @@ public class PKListener implements Listener {
 		PassiveManager.registerPassives(event.getPlayer());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerKick(PlayerKickEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		AirFlight.remove(event.getPlayer());
 		JUMPS.remove(event.getPlayer());
@@ -1148,9 +1096,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -1289,7 +1235,7 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		if (event.isCancelled() || bPlayer == null) {
+		if (bPlayer == null) {
 			return;
 		}
 
@@ -1502,9 +1448,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSwing(PlayerAnimationEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -1725,9 +1669,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		
 
 		Player player = event.getPlayer();
 		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
