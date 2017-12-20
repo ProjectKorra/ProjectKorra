@@ -1,19 +1,18 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -39,7 +38,7 @@ public class BlockSource {
 	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 	// The player should never need to grab source blocks from farther than this.
 	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.SelectRange");
-	//private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
+	// private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
 
 	/**
 	 * Updates all of the player's sources.
@@ -56,11 +55,6 @@ public class BlockSource {
 
 		CoreAbility coreAbil = bPlayer.getBoundAbility();
 		if (coreAbil == null) {
-			return;
-		}
-
-		// No need to put information in the Map if dynamic sourcing is disabled
-		if (!ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing")) {
 			return;
 		}
 
