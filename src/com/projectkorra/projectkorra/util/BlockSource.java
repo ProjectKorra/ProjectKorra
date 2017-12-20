@@ -308,8 +308,8 @@ public class BlockSource {
 	 */
 	public static Block getEarthSourceBlock(Player player, double range, ClickType clickType, boolean allowNearbySubstitute) {
 		Block sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
-
-		if (sourceBlock == null && allowNearbySubstitute) {
+		boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Earth.DynamicSourcing");
+		if (dynamic && sourceBlock == null && allowNearbySubstitute) {
 			BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
 
 			if (blockInfo == null) {
@@ -325,6 +325,8 @@ public class BlockSource {
 			if (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > range || !EarthAbility.isEarthbendable(player, sourceBlock)) {
 				return null;
 			}
+		} else {
+			sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
 		}
 		return sourceBlock;
 	}
