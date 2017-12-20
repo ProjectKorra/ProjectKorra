@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class JetBlast extends FireAbility implements ComboAbility {
@@ -46,12 +47,20 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new JetBlast(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> jetBlast = new ArrayList<>();
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
+		return jetBlast;
 	}
 
 	@Override
@@ -110,6 +119,11 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet";
 	}
 
 }

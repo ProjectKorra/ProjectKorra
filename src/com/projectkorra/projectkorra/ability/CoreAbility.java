@@ -107,7 +107,7 @@ public abstract class CoreAbility implements Ability {
 	 * @see #start()
 	 */
 	public CoreAbility(Player player) {
-		if (player == null) {
+		if (player == null || !isEnabled()) {
 			return;
 		}
 
@@ -135,8 +135,8 @@ public abstract class CoreAbility implements Ability {
 	 * @see #isStarted()
 	 * @see #isRemoved()
 	 */
-	public final void start() {
-		if (player == null) {
+	public void start() {
+		if (player == null || !isEnabled()) {
 			return;
 		}
 		AbilityStartEvent event = new AbilityStartEvent(this);
@@ -212,17 +212,24 @@ public abstract class CoreAbility implements Ability {
 		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (CoreAbility abil : setAbils) {
 				if (abil instanceof PassiveAbility) {
-					BendingPlayer bPlayer = abil.getBendingPlayer();
-					if (bPlayer == null || !abil.getPlayer().isOnline()) {
-						abil.remove();
-						continue;
-					} else if (!bPlayer.canBendPassive(abil.getElement())) { // Check for if the passive should be removed
-						abil.remove();
-						continue;
-					} else if (!bPlayer.canUsePassive(abil.getElement())) { // Check for if the passive should be prevented from happening, but not remove it
+					if (!((PassiveAbility)abil).isProgressable()) {
 						continue;
 					}
+					
+					if (!abil.getPlayer().isOnline()) { //This has to be before isDead as isDead
+						abil.remove();                  //will return true if they are offline 
+						continue;
+					} else if (abil.getPlayer().isDead()) {
+						continue;
+					}
+				} else if (abil.getPlayer().isDead()) {
+					abil.remove();
+					continue;
+				} else if (!abil.getPlayer().isOnline()) {
+					abil.remove();
+					continue;
 				}
+				
 				try {
 					abil.progress();
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
@@ -757,6 +764,8 @@ public abstract class CoreAbility implements Ability {
 		}
 		if (this instanceof PassiveAbility) {
 			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + getName() + ".Description");
+		} else if (this instanceof ComboAbility) {
+			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Combo." + getName() + ".Description");
 		}
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Description");
 	}

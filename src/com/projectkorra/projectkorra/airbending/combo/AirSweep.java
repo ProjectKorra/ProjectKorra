@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class AirSweep extends AirAbility implements ComboAbility {
@@ -237,12 +238,17 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new AirSweep(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> airSweep = new ArrayList<>();
+		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
+		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
+		airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFT_DOWN));
+		airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFT_CLICK));
+		return airSweep;
 	}
 	
 	public Location getOrigin() {
@@ -327,5 +333,10 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 	public void setTasks(ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)";
 	}
 }

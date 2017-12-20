@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -80,12 +81,17 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new FireWheel(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
+		return fireWheel;
 	}
 
 	@Override
@@ -95,7 +101,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(location, 2, 4);
+		Block topBlock = GeneralMethods.getTopBlock(location, height);
 		if (topBlock.getType().equals(Material.SNOW)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
@@ -108,6 +114,9 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		} else if (ElementalAbility.isPlant(topBlock)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
+		} else if (topBlock.getType() == Material.AIR) {
+			remove();
+			return;
 		}
 		location.setY(topBlock.getY() + height);
 
@@ -161,5 +170,10 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return affectedEntities;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift";
 	}
 }

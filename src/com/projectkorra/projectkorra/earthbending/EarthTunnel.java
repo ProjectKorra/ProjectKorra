@@ -30,7 +30,7 @@ public class EarthTunnel extends EarthAbility {
 	private double range;
 	private double radiusIncrement;
 	private boolean revert;
- 	private boolean dropLootIfNotRevert;
+	private boolean dropLootIfNotRevert;
 	private Block block;
 	private Location origin;
 	private Location location;
@@ -48,7 +48,7 @@ public class EarthTunnel extends EarthAbility {
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
-		
+
 		this.time = System.currentTimeMillis();
 
 		this.location = player.getEyeLocation().clone();
@@ -61,7 +61,7 @@ public class EarthTunnel extends EarthAbility {
 		}
 		this.angle = 0;
 
-		if (!bPlayer.canBend(this) || !EarthAbility.isEarthbendable(player, block)) {
+		if (!bPlayer.canBend(this) || (!EarthAbility.isEarthbendable(player, block) && !EarthAbility.isTransparent(player, "EarthTunnel", block))) {
 			return;
 		}
 		if (bPlayer.isAvatarState()) {
@@ -69,7 +69,7 @@ public class EarthTunnel extends EarthAbility {
 		}
 
 		this.radiusIncrement = radius;
-		
+
 		start();
 	}
 
