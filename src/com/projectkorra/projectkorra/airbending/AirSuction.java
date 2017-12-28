@@ -1,13 +1,20 @@
 package com.projectkorra.projectkorra.airbending;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -25,7 +32,9 @@ public class AirSuction extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
-
+	private static Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.TRAP_DOOR };
+	private List<Block> affectedDoors = new ArrayList<>();
+	
 	private boolean hasOtherOrigin;
 	private int ticks;
 	private int particleCount;
@@ -119,7 +128,15 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), getTransparentMaterials());
+		Material[] ignore = new Material[getTransparentMaterials().length + doorTypes.length];
+		for (int i = 0; i < ignore.length; i++) {
+			if (i < getTransparentMaterials().length) {
+				ignore[i] = getTransparentMaterials()[i];
+			} else  {
+				ignore[i] = doorTypes[i - getTransparentMaterials().length];
+			}
+		}
+		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), ignore);
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
@@ -136,13 +153,53 @@ public class AirSuction extends AirAbility {
 		}
 		double speedFactor = speed * (ProjectKorra.time_step / 1000.);
 		location = location.add(direction.clone().multiply(speedFactor));
+		
+		if (Arrays.asList(doorTypes).contains(location.getBlock().getType()) && !affectedDoors.contains(location.getBlock())) {
+			handleDoorMechanics(location.getBlock());
+		}
+	}
+	
+	private void handleDoorMechanics(Block block) {
+		boolean tDoor = false;
+		boolean open = (block.getData() & 0x4) == 0x4;
+		
+		if (block.getType() != Material.TRAP_DOOR) {
+			Door door = (Door) block.getState().getData();
+			BlockFace face = door.getFacing();
+			Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), player.getLocation().getBlock().getLocation());
+			double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
+			
+			for (int i = 0; i < 3; i++) {
+				if (i == 1) continue;
+				BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
+				
+				if (bf == face) {
+					if (!open) return;
+				} else if (bf.getOppositeFace() == face) {
+					if (open) return;
+				}
+			}
+		} else {
+			tDoor = true;
+			
+			if (origin.getY() < block.getY()) {
+				if (open) return;
+			} else {
+				if (!open) return;
+			}
+		}
+		
+		block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
+		String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
+		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
+		affectedDoors.add(block);
 	}
 
 	private Location getLocation(Location origin, Vector direction) {
 		Location location = origin.clone();
 		for (double i = 1; i <= range; i++) {
 			location = origin.clone().add(direction.clone().multiply(i));
-			if (!isTransparent(location.getBlock()) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			if ((!isTransparent(location.getBlock()) && !Arrays.asList(doorTypes).contains(location.getBlock().getType())) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 				return origin.clone().add(direction.clone().multiply(i - 1));
 			}
 		}
