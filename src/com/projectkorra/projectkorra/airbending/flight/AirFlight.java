@@ -91,12 +91,14 @@ public class AirFlight extends FlightAbility {
 				player.setVelocity(new Vector(0, 0, 0));
 				player.setAllowFlight(true);
 				player.setFlying(true);
+				player.setFlySpeed(0);
 			}
 		} else {
 			if (HOVERING.containsKey(playername)) {
 				PlayerFlyData pfd = HOVERING.get(playername);
 				player.setAllowFlight(pfd.canFly());
 				player.setFlying(pfd.isFlying());
+				player.setFlySpeed(0.1f);
 				HOVERING.remove(playername);
 			}
 		}
