@@ -78,8 +78,8 @@ permissions:
       bending.ability.Suffocate: true
       bending.ability.Tornado: true
       bending.ability.AirCombo: true
+      bending.ability.Flight: true
       bending.air.passive: true
-      bending.air.flight: true
   bending.water:
     default: true
     description: Grants access to most waterbending abilities.
