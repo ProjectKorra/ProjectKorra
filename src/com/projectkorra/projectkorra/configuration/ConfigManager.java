@@ -141,6 +141,13 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
 			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
 
+			config.addDefault("Commands.Stats.InvalidLookup", "Invalid lookup argument.");
+			config.addDefault("Commands.Stats.InvalidSearchType", "Invalid search type.");
+			config.addDefault("Commands.Stats.InvalidStatistic", "Invalid statistic.");
+			config.addDefault("Commands.Stats.InvalidPlayer", "Player '%player%' not found.");
+
+			config.addDefault("Commands.Stats.Description", "This command manages statistics. View your own, another player's statistics along with the server leaderboard.");
+
 			config.addDefault("Commands.PermaRemove.Description", "This command will permanently remove the bending of the targeted <Player>. Once removed, a player may only receive bending again if this command is run on them again. This command is typically reserved for administrators.");
 			config.addDefault("Commands.PermaRemove.PlayerOffline", "That player is not online.");
 			config.addDefault("Commands.PermaRemove.Restored", "Your bending has been restored.");
@@ -231,7 +238,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Add.Other.AlreadyHasElement", "{target} already has that element!");
 			config.addDefault("Commands.Add.Other.AlreadyHasSubElement", "{target} already has that subelement!");
 			config.addDefault("Commands.Add.Other.AlreadyHasAllElements", "{target} already has all elements!");
-			
+
 			config.addDefault("DeathMessages.Enabled", true);
 			config.addDefault("DeathMessages.Default", "{victim} was slain by {attacker}'s {ability}");
 
@@ -396,7 +403,7 @@ public class ConfigManager {
 
 			config.addDefault("Commands.Help.Elements.Chi", "Chiblockers focus on bare handed combat, utilizing their agility and speed to stop any bender right in their path. Although they lack the ability to bend any of the other elements, they are great in combat, and a serious threat to any bender. Chiblocking was first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the Equalists in The Legend of Korra.\nChiblockers can chain their abilities into combos, type /b help ChiCombos for more information.");
 			config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes.");
-			config.addDefault("Abilities.Chi.AcrobatStance.Instructions",  "To use, simply left click to activate this stance. Left click once more to deactivate it.");
+			config.addDefault("Abilities.Chi.AcrobatStance.Instructions", "To use, simply left click to activate this stance. Left click once more to deactivate it.");
 			config.addDefault("Abilities.Chi.HighJump.Description", "HighJump gives the Chiblocker the ability to leap into the air. This ability is used for mobility, and is often used to dodge incoming attacks.");
 			config.addDefault("Abilities.Chi.HighJump.Instructions", "To use, simply left click while standing on the ground.");
 			config.addDefault("Abilities.Chi.Smokescreen.Description", "Smokescreen, if used correctly, can serve as a defensive and offensive ability for Chiblockers. When used, a smoke bomb is fired which will blind anyone within a small radius of the explosion, allowing you to either get away, or move in for the kill.");
@@ -538,6 +545,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.IceSound.Volume", 1);
 			config.addDefault("Properties.Water.IceSound.Pitch", 1);
 
+			config.addDefault("Properties.Earth.DynamicSourcing", true);
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);
 			config.addDefault("Properties.Earth.RevertCheckTime", 300000);
@@ -574,7 +582,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
 			config.addDefault("Properties.Fire.LightningSound.Volume", 1);
 			config.addDefault("Properties.Fire.LightningSound.Pitch", 0);
-			
+
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
 			ArrayList<String> disabledWorlds = new ArrayList<String>();
@@ -844,14 +852,14 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Twister.Cooldown", 10000);
 			config.addDefault("Abilities.Air.Twister.DegreesPerParticle", 7);
 			config.addDefault("Abilities.Air.Twister.HeightPerParticle", 1.25);
-			
+
 			config.addDefault("Abilities.Air.AirStream.Enabled", true);
 			config.addDefault("Abilities.Air.AirStream.Speed", 0.5);
 			config.addDefault("Abilities.Air.AirStream.Range", 40);
 			config.addDefault("Abilities.Air.AirStream.EntityDuration", 4000);
 			config.addDefault("Abilities.Air.AirStream.EntityHeight", 14);
 			config.addDefault("Abilities.Air.AirStream.Cooldown", 7000);
-			
+
 			config.addDefault("Abilities.Air.AirSweep.Enabled", true);
 			config.addDefault("Abilities.Air.AirSweep.Speed", 1.4);
 			config.addDefault("Abilities.Air.AirSweep.Range", 14);
@@ -992,7 +1000,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled", false);
 			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown", 200);
-			
+
 			config.addDefault("Abilities.Water.WaterArms.Whip.MaxLength", 12);
 			config.addDefault("Abilities.Water.WaterArms.Whip.MaxLengthWeak", 8);
 
@@ -1034,7 +1042,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterBubble.Speed", 0.5);
 			config.addDefault("Abilities.Water.WaterBubble.ClickDuration", 2000L);
 			config.addDefault("Abilities.Water.WaterBubble.MustStartAboveWater", false);
-			
+
 			config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
 			config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
 			config.addDefault("Abilities.Water.WaterManipulation.Range", 25);
@@ -1069,7 +1077,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceWave.ThawRadius", 10);
 			config.addDefault("Abilities.Water.IceWave.RevertSphere", true);
 			config.addDefault("Abilities.Water.IceWave.RevertSphereTime", 30000L);
-			
+
 			config.addDefault("Abilities.Water.IceBullet.Enabled", true);
 			config.addDefault("Abilities.Water.IceBullet.Damage", 2);
 			config.addDefault("Abilities.Water.IceBullet.Radius", 2.5);
@@ -1219,7 +1227,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
 			config.addDefault("Abilities.Earth.Tremorsense.StickyRange", 3);
-			
+
 			config.addDefault("Abilities.Earth.EarthPillars.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 8000);
 			config.addDefault("Abilities.Earth.EarthPillars.Radius", 9);
@@ -1284,13 +1292,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
 
 			config.addDefault("Abilities.Fire.FireManipulation.Enabled", true);
-			
+
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Cooldown", 12000);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Range", 50);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Damage", 2);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Speed", 0.75);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Particles", 50);
-			
+
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Range", 4);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Damage", 1);
@@ -1357,14 +1365,14 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireKick.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireKick.Speed", 1);
-			
+
 			config.addDefault("Abilities.Fire.FireSpin.Enabled", true);
 			config.addDefault("Abilities.Fire.FireSpin.Range", 7);
 			config.addDefault("Abilities.Fire.FireSpin.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireSpin.Knockback", 3.0);
 			config.addDefault("Abilities.Fire.FireSpin.Cooldown", 5000);
 			config.addDefault("Abilities.Fire.FireSpin.Speed", 0.3);
-			
+
 			config.addDefault("Abilities.Fire.FireWheel.Enabled", true);
 			config.addDefault("Abilities.Fire.FireWheel.Range", 20.0);
 			config.addDefault("Abilities.Fire.FireWheel.Damage", 4.0);
@@ -1373,12 +1381,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireWheel.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.FireWheel.Height", 2);
 			config.addDefault("Abilities.Fire.FireWheel.Radius", 1.0);
-			
+
 			config.addDefault("Abilities.Fire.JetBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.JetBlast.Speed", 1.2);
 			config.addDefault("Abilities.Fire.JetBlast.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.JetBlast.Duration", 5000);
-			
+
 			config.addDefault("Abilities.Fire.JetBlaze.Enabled", true);
 			config.addDefault("Abilities.Fire.JetBlaze.Speed", 1.1);
 			config.addDefault("Abilities.Fire.JetBlaze.Damage", 4);

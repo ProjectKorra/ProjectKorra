@@ -339,7 +339,7 @@ public class MetalClips extends MetalAbility {
 					Item iron = (Item) entity;
 
 					if (Arrays.asList(METAL_ITEMS).contains(iron.getItemStack().getType())) {
-						iron.setVelocity(vector.normalize().multiply(magnetPower));
+						iron.setVelocity(vector.normalize().multiply(magnetPower).add(new Vector(0, 0.2, 0)));
 					}
 				}
 			}
@@ -435,7 +435,7 @@ public class MetalClips extends MetalAbility {
 							}
 						} else {
 							DamageHandler.damageEntity(e, player, damage, this);
-							dropIngots(e.getLocation());
+							dropIngots(e.getLocation(), ii.getItemStack().getAmount());
 							remove();
 						}
 
@@ -450,7 +450,11 @@ public class MetalClips extends MetalAbility {
 	}
 	
 	public void dropIngots(Location loc) {
-		Item i = player.getWorld().dropItem(loc, new ItemStack(Material.IRON_INGOT, metalClipsCount == 0 ? 1 : metalClipsCount));
+		dropIngots(loc, metalClipsCount == 0 ? 1 : metalClipsCount);
+	}
+
+	public void dropIngots(Location loc, int amount) {
+		Item i = player.getWorld().dropItem(loc, new ItemStack(Material.IRON_INGOT, amount));
 		i.setPickupDelay(61);
 	}
 

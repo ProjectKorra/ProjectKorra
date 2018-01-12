@@ -142,7 +142,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
 
-	public static final Material[] NON_OPAQUE = { Material.AIR, Material.SAPLING, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.WEB, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.CROPS, Material.LADDER, Material.RAILS, Material.SIGN_POST, Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE_BLOCK, Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.WATER_LILY, Material.NETHER_WART_BLOCK, Material.ENDER_PORTAL, Material.COCOA, Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.FLOWER_POT, Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.DAYLIGHT_DETECTOR, Material.CARPET, Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.WALL_BANNER, Material.DAYLIGHT_DETECTOR_INVERTED,Material.END_ROD, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.BEETROOT_BLOCK, Material.END_GATEWAY };
+	public static final Material[] NON_OPAQUE = { Material.AIR, Material.SAPLING, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.WEB, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.CROPS, Material.LADDER, Material.RAILS, Material.SIGN_POST, Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE_BLOCK, Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.WATER_LILY, Material.NETHER_WART_BLOCK, Material.ENDER_PORTAL, Material.COCOA, Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.FLOWER_POT, Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.DAYLIGHT_DETECTOR, Material.CARPET, Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.WALL_BANNER, Material.DAYLIGHT_DETECTOR_INVERTED, Material.END_ROD, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.BEETROOT_BLOCK, Material.END_GATEWAY };
 	public static final Material[] INTERACTABLE_MATERIALS = { Material.ACACIA_DOOR, Material.ACACIA_FENCE_GATE, Material.ANVIL, Material.BEACON, Material.BED_BLOCK, Material.BIRCH_DOOR, Material.BIRCH_FENCE_GATE, Material.BOAT, Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND, Material.DARK_OAK_DOOR, Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER, Material.ENCHANTMENT_TABLE, Material.ENDER_CHEST, Material.ENDER_PORTAL_FRAME, Material.FENCE_GATE, Material.FURNACE, Material.HOPPER, Material.HOPPER_MINECART, Material.COMMAND_MINECART, Material.JUKEBOX, Material.JUNGLE_DOOR, Material.JUNGLE_FENCE_GATE, Material.LEVER, Material.MINECART, Material.NOTE_BLOCK, Material.SPRUCE_DOOR, Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON, Material.TRAPPED_CHEST, Material.TRAP_DOOR, Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
@@ -296,7 +296,7 @@ public class GeneralMethods {
 			public void run() {
 				createBendingPlayerAsynchronously(uuid, player); // "async"
 			}
-			
+
 		}.runTask(ProjectKorra.plugin);
 	}
 
@@ -304,8 +304,7 @@ public class GeneralMethods {
 		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + 
-				    uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
+				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
 				new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
 				ProjectKorra.log.info("Created new BendingPlayer for " + player);
 			} else {
@@ -534,90 +533,40 @@ public class GeneralMethods {
 	}
 
 	public static void displayColoredParticle(Location loc, ParticleEffect type, String hexVal, float xOffset, float yOffset, float zOffset) {
-		int R = 0;
-		int G = 0;
-		int B = 0;
-
+		int r = 0;
+		int g = 0;
+		int b = 0;
 		if (hexVal.length() <= 6) {
-			R = Integer.valueOf(hexVal.substring(0, 2), 16);
-			G = Integer.valueOf(hexVal.substring(2, 4), 16);
-			B = Integer.valueOf(hexVal.substring(4, 6), 16);
-			if (R <= 0) {
-				R = 1;
-			}
+			r = Integer.valueOf(hexVal.substring(0, 2), 16).intValue();
+			g = Integer.valueOf(hexVal.substring(2, 4), 16).intValue();
+			b = Integer.valueOf(hexVal.substring(4, 6), 16).intValue();
 		} else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
-			R = Integer.valueOf(hexVal.substring(1, 3), 16);
-			G = Integer.valueOf(hexVal.substring(3, 5), 16);
-			B = Integer.valueOf(hexVal.substring(5, 7), 16);
-			if (R <= 0) {
-				R = 1;
-			}
+			r = Integer.valueOf(hexVal.substring(1, 3), 16).intValue();
+			g = Integer.valueOf(hexVal.substring(3, 5), 16).intValue();
+			b = Integer.valueOf(hexVal.substring(5, 7), 16).intValue();
 		}
-
-		loc.setX(loc.getX() + Math.random() * (xOffset / 2 - -(xOffset / 2)));
-		loc.setY(loc.getY() + Math.random() * (yOffset / 2 - -(yOffset / 2)));
-		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
-
-		if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE) {
-			ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 255.0);
-		} else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL) {
-			ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
-		} else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT) {
-			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
-		} else {
-			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 255.0D);
+		float red = r / 255.0F;
+		float green = g / 255.0F;
+		float blue = b / 255.0F;
+		if (red <= 0) {
+			red = 1 / 255.0F;
 		}
+		loc.setX(loc.getX() + Math.random() * xOffset);
+		loc.setY(loc.getY() + Math.random() * yOffset);
+		loc.setZ(loc.getZ() + Math.random() * zOffset);
+
+		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
+			type = ParticleEffect.RED_DUST;
+		}
+		type.display(red, green, blue, 1F, 0, loc, 255.0);
 	}
 
 	public static void displayColoredParticle(Location loc, String hexVal) {
-		int R = 0;
-		int G = 0;
-		int B = 0;
-
-		if (hexVal.length() <= 6) {
-			R = Integer.valueOf(hexVal.substring(0, 2), 16);
-			G = Integer.valueOf(hexVal.substring(2, 4), 16);
-			B = Integer.valueOf(hexVal.substring(4, 6), 16);
-			if (R <= 0) {
-				R = 1;
-			}
-		} else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
-			R = Integer.valueOf(hexVal.substring(1, 3), 16);
-			G = Integer.valueOf(hexVal.substring(3, 5), 16);
-			B = Integer.valueOf(hexVal.substring(5, 7), 16);
-			if (R <= 0) {
-				R = 1;
-			}
-		}
-		ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 257D);
+		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, 0, 0, 0);
 	}
 
 	public static void displayColoredParticle(Location loc, String hexVal, float xOffset, float yOffset, float zOffset) {
-		int R = 0;
-		int G = 0;
-		int B = 0;
-
-		if (hexVal.length() <= 6) {
-			R = Integer.valueOf(hexVal.substring(0, 2), 16);
-			G = Integer.valueOf(hexVal.substring(2, 4), 16);
-			B = Integer.valueOf(hexVal.substring(4, 6), 16);
-			if (R <= 0) {
-				R = 1;
-			}
-		} else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
-			R = Integer.valueOf(hexVal.substring(1, 3), 16);
-			G = Integer.valueOf(hexVal.substring(3, 5), 16);
-			B = Integer.valueOf(hexVal.substring(5, 7), 16);
-			if (R <= 0) {
-				R = 1;
-			}
-		}
-
-		loc.setX(loc.getX() + Math.random() * (xOffset / 2 - -(xOffset / 2)));
-		loc.setY(loc.getY() + Math.random() * (yOffset / 2 - -(yOffset / 2)));
-		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
-
-		ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 257D);
+		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, xOffset, yOffset, zOffset);
 	}
 
 	public static void displayParticleVector(Location loc, ParticleEffect type, float xTrans, float yTrans, float zTrans) {
@@ -657,7 +606,7 @@ public class GeneralMethods {
 	public static void displayMovePreview(Player player) {
 		displayMovePreview(player, player.getInventory().getHeldItemSlot() + 1);
 	}
-	
+
 	public static void displayMovePreview(Player player, int slot) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -665,7 +614,7 @@ public class GeneralMethods {
 		}
 		String displayedMessage = bPlayer.getAbilities().get(slot);
 		CoreAbility ability = CoreAbility.getAbility(displayedMessage);
-		
+
 		if (ability != null && bPlayer != null) {
 			if (bPlayer.isOnCooldown(ability)) {
 				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
@@ -708,10 +657,10 @@ public class GeneralMethods {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * This gets the BlockFace in the specified dimension of a
-	 * certain value
+	 * This gets the BlockFace in the specified dimension of a certain value
+	 * 
 	 * @param xyz 0 for x, 1 for y, 2 for z
 	 * @param value vector value for which direction to check
 	 * @return BlockFace for block in specified dimension and value
@@ -1137,7 +1086,7 @@ public class GeneralMethods {
 		Vector direction = player.getEyeLocation().getDirection().normalize();
 		for (Entity entity : origin.getWorld().getEntities()) {
 			if (entity instanceof Player) {
-				if (((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+				if (((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
 					continue;
 				}
 			}
@@ -1670,7 +1619,7 @@ public class GeneralMethods {
 		DBConnection.user = ConfigManager.defaultConfig.get().getString("Storage.MySQL.user");
 		DBConnection.init();
 
-		if (!DBConnection.isOpen()) {
+		if (!DBConnection.isOpen) {
 			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
 			stopPlugin();
 		}
@@ -1682,13 +1631,13 @@ public class GeneralMethods {
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
 	}
-	
+
 	public static void reloadAddonPlugins() {
-		for (int i = CoreAbility.getAddonPlugins().size()-1; i > -1; i--) {
+		for (int i = CoreAbility.getAddonPlugins().size() - 1; i > -1; i--) {
 			String entry = CoreAbility.getAddonPlugins().get(i);
 			String[] split = entry.split("::");
 			if (Bukkit.getServer().getPluginManager().isPluginEnabled(split[0])) {
-				CoreAbility.registerPluginAbilities((JavaPlugin)Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
+				CoreAbility.registerPluginAbilities((JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
 			} else {
 				CoreAbility.getAddonPlugins().remove(i);
 			}
@@ -1951,7 +1900,7 @@ public class GeneralMethods {
 				elements.append(element.getName() + ",");
 			}
 		}
-		
+
 		if (elements.length() == 0) {
 			elements.append("NULL");
 		}
@@ -2009,11 +1958,11 @@ public class GeneralMethods {
 				subs.append(element.getName() + ",");
 			}
 		}
-		
+
 		if (subs.length() == 0) {
 			subs.append("NULL");
 		}
-		
+
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
 	}
 
@@ -2082,10 +2031,11 @@ public class GeneralMethods {
 		ChatColor color;
 		try {
 			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		} catch (IllegalArgumentException exception) {
+		}
+		catch (IllegalArgumentException exception) {
 			color = ChatColor.GOLD;
 		}
-		
+
 		String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
