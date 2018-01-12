@@ -148,7 +148,7 @@ public class WaterReturn extends WaterAbility {
 		if (inventory.contains(Material.POTION)) {
 			ItemStack item = inventory.getItem(inventory.first(Material.POTION));
 			PotionMeta meta = (PotionMeta) item.getItemMeta();
-			return meta.getBasePotionData().getType() == PotionType.WATER);
+			return meta.getBasePotionData().getType() == PotionType.WATER;
 		}
 		return false;
 	}
