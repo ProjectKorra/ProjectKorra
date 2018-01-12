@@ -176,6 +176,7 @@ public class WaterReturn extends WaterAbility {
 		}
 
 		ItemStack item = inventory.getItem(index);
+		if (item == null) return false;
 		if (item.getAmount() == 1) {
 			inventory.setItem(index, new ItemStack(Material.GLASS_BOTTLE));
 		} else {
