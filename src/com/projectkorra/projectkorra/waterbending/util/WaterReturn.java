@@ -148,42 +148,38 @@ public class WaterReturn extends WaterAbility {
 		if (inventory.contains(Material.POTION)) {
 			ItemStack item = inventory.getItem(inventory.first(Material.POTION));
 			PotionMeta meta = (PotionMeta) item.getItemMeta();
-			return meta.getBasePotionData().getType().equals(PotionType.WATER);
+			return meta.getBasePotionData().getType() == PotionType.WATER);
 		}
 		return false;
 	}
 
-	public static void emptyWaterBottle(Player player) {
+	public static boolean emptyWaterBottle(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		int index = inventory.first(Material.POTION);
-
-		//Check that the first one found is actually a WATER bottle. We aren't implementing potion bending just yet ;)
-		if (index != -1 && !((PotionMeta) inventory.getItem(index).getItemMeta()).getBasePotionData().getType().equals(PotionType.WATER)) {
-			for (int i = 0; i < inventory.getSize(); i++) {
-				if (inventory.getItem(i).getType() == Material.POTION) {
-					PotionMeta meta = (PotionMeta) inventory.getItem(i).getItemMeta();
-					if (meta.getBasePotionData().getType().equals(PotionType.WATER)) {
-						index = i;
-						break;
-					}
-				}
-			}
+		
+		if (index == -1) {
+			return false;
 		}
 
-		if (index != -1) {
-			ItemStack item = inventory.getItem(index);
-			if (item.getAmount() == 1) {
-				inventory.setItem(index, new ItemStack(Material.GLASS_BOTTLE));
-			} else {
-				item.setAmount(item.getAmount() - 1);
-				inventory.setItem(index, item);
-				HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.GLASS_BOTTLE));
+		ItemStack item = inventory.getItem(index);
+		
+		//item could have been changed after inventory.first(Material.POTION) called
+		if (item == null || ((PotionMeta)item.getItemMeta()).getBasePotionData().getType() != PotionType.WATER) {
+		return false;
+		}
+		
+		if (item.getAmount() == 1) {
+			inventory.setItem(index, new ItemStack(Material.GLASS_BOTTLE));
+		} else {
+			item.setAmount(item.getAmount() - 1);
+			inventory.setItem(index, item);
+			HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.GLASS_BOTTLE));
 
-				for (int left : leftover.keySet()) {
-					player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(left));
-				}
+			for (int left : leftover.keySet()) {
+				player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(left));
 			}
 		}
+		return true;
 	}
 
 	public long getTime() {

@@ -198,7 +198,7 @@ public class PresetCommand extends PKCommand {
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
 			int limit = GeneralMethods.getMaxPresets(player);
 
-			if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
+			if (Preset.presets.get(player.getUniqueId()) != null && Preset.presets.get(player.getUniqueId()).size() >= limit) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.reachedMax);
 				return;
 			} else if (Preset.presetExists(player, name)) {

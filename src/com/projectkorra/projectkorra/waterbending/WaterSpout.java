@@ -248,8 +248,10 @@ public class WaterSpout extends WaterAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
 				return -1;
 			}
+			
+			TempBlock tempblock = TempBlock.get(blocki);
 
-			if (!blocks.contains(blocki)) {
+			if (TempBlock.get(blocki) == null || !blocks.contains(TempBlock.get(blocki))) {
 				if (isWater(blocki)) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock();
