@@ -36,7 +36,7 @@ public class StatsCommand extends PKCommand {
 	private String invalidPlayer;
 
 	public StatsCommand() {
-		super("stats", "/bending stats <get/leaderboard> <ability/elemenet/all> <statistic> [player/page]", ConfigManager.languageConfig.get().getString("Commands.Stats.Description"), new String[] { "statistics", "stats" });
+		super("stats", "/bending stats <get/leaderboard> <ability/element/all> <statistic> [player/page]", ConfigManager.languageConfig.get().getString("Commands.Stats.Description"), new String[] { "statistics", "stats" });
 
 		this.invalidLookup = ConfigManager.languageConfig.get().getString("Commands.Stats.InvalidLookup");
 		this.invalidSearchType = ConfigManager.languageConfig.get().getString("Commands.Stats.InvalidSearchType");
