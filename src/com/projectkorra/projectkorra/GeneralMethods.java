@@ -1593,7 +1593,7 @@ public class GeneralMethods {
 			sender.sendMessage(ChatColor.RED + "Reload event cancelled");
 			return;
 		}
-		if (DBConnection.isOpen) {
+		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
 		}
 		GeneralMethods.stopBending();
@@ -1612,14 +1612,9 @@ public class GeneralMethods {
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
 		ProjectKorra.collisionManager.startCollisionDetection();
 
-		DBConnection.host = ConfigManager.defaultConfig.get().getString("Storage.MySQL.host");
-		DBConnection.port = ConfigManager.defaultConfig.get().getInt("Storage.MySQL.port");
-		DBConnection.pass = ConfigManager.defaultConfig.get().getString("Storage.MySQL.pass");
-		DBConnection.db = ConfigManager.defaultConfig.get().getString("Storage.MySQL.db");
-		DBConnection.user = ConfigManager.defaultConfig.get().getString("Storage.MySQL.user");
 		DBConnection.init();
 
-		if (!DBConnection.isOpen) {
+		if (!DBConnection.isOpen()) {
 			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
 			stopPlugin();
 		}

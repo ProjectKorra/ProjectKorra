@@ -5,19 +5,25 @@ import java.sql.SQLException;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class DBConnection {
 
 	public static Database sql;
 
-	public static String host;
-	public static int port;
-	public static String db;
-	public static String user;
-	public static String pass;
-	public static boolean isOpen = false;
+	private static String host;
+	private static int port;
+	private static String db;
+	private static String user;
+	private static String pass;
+	private static boolean isOpen = false;
 
 	public static void init() {
+		DBConnection.host = ConfigManager.getConfig().getString("Storage.MySQL.host");
+		DBConnection.port = ConfigManager.getConfig().getInt("Storage.MySQL.port");
+		DBConnection.pass = ConfigManager.getConfig().getString("Storage.MySQL.pass");
+		DBConnection.db = ConfigManager.getConfig().getString("Storage.MySQL.db");
+		DBConnection.user = ConfigManager.getConfig().getString("Storage.MySQL.user");
 		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
 			sql = new MySQL(ProjectKorra.log, "Establishing MySQL Connection...", host, port, user, pass, db);
 			if (((MySQL) sql).open() == null) {
@@ -89,5 +95,9 @@ public class DBConnection {
 				sql.modifyQuery(query, false);
 			}
 		}
+	}
+
+	public static boolean isOpen() {
+		return isOpen;
 	}
 }

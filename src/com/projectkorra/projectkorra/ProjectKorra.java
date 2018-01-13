@@ -69,13 +69,8 @@ public class ProjectKorra extends JavaPlugin {
 
 		Preset.loadExternalPresets();
 
-		DBConnection.host = getConfig().getString("Storage.MySQL.host");
-		DBConnection.port = getConfig().getInt("Storage.MySQL.port");
-		DBConnection.pass = getConfig().getString("Storage.MySQL.pass");
-		DBConnection.db = getConfig().getString("Storage.MySQL.db");
-		DBConnection.user = getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
-		if (!DBConnection.isOpen) {
+		if (!DBConnection.isOpen()) {
 			// Message is logged by DBConnection
 			return;
 		}
@@ -168,7 +163,7 @@ public class ProjectKorra extends JavaPlugin {
 		for (Player player : getServer().getOnlinePlayers()) {
 			statistics.save(player.getUniqueId(), false);
 		}
-		if (DBConnection.isOpen) {
+		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
 		}
 	}
