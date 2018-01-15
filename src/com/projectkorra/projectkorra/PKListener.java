@@ -228,7 +228,7 @@ public class PKListener implements Listener {
 			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			event.setCancelled(true);
-		} else if (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) {
+		} else if (Illumination.isIlluminationTorch(block)) {
 			event.setCancelled(true);
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
@@ -257,8 +257,9 @@ public class PKListener implements Listener {
 			}
 
 			if (!event.isCancelled()) {
-				if (TempBlock.isTempBlock(toblock) && Illumination.getBlocks().containsKey(TempBlock.get(toblock))) {
-					toblock.setType(Material.AIR);
+				if (Illumination.isIlluminationTorch(block)) {
+					TempBlock temp = TempBlock.get(block);
+					if (temp != null) temp.revertBlock();
 				}
 			}
 		}
@@ -309,7 +310,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		event.setCancelled(TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block)));
+		event.setCancelled(Illumination.isIlluminationTorch(block));
 		if (!event.isCancelled()) {
 			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
 		}
@@ -339,7 +340,7 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
 
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.isIlluminationTorch(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 			event.setCancelled(true);
 		}
 
