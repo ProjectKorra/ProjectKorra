@@ -180,6 +180,14 @@ public class Illumination extends FireAbility {
 		this.block = block;
 	}
 
+	/**
+	 *@deprecated In favor of Illumination#isIlluminationTorch(block).
+	 *This method may be removed in the future, but regardless should only be used for purposes
+	 *other than checking if a block is a torch created by Illumination.
+	 
+	 *@return A map of TempBlocks created by Illumination
+	 */
+	@Deprecated
 	public static Map<TempBlock, Player> getBlocks() {
 		return BLOCKS;
 	}
@@ -190,12 +198,13 @@ public class Illumination extends FireAbility {
 	 * @param block The block being tested
 	 */
 	public static boolean isIlluminationTorch(Block block) {
-		for (TempBlock b : BLOCKS.keySet()) {
-			if (b.getBlock().equals(block)) {
-				return true;
-			}
+		if (block == null || block.getType() != Material.TORCH) {
+			return false;
 		}
-		return false;
+		
+		TempBlock temp = TempBlock.get(block);
+		
+		return temp != null && BLOCKS.containsKey(temp);
 	}
 
 	public void setCooldown(long cooldown) {
