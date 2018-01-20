@@ -202,6 +202,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Choose.Description", "This command will allow the user to choose a single element for themselves or <Player> if specified. This command can only be used once per player unless they have permission to rechoose their element.");
 			config.addDefault("Commands.Choose.InvalidElement", "That is not a valid element.");
 			config.addDefault("Commands.Choose.PlayerNotFound", "Could not find player.");
+			config.addDefault("Commands.Choose.OnCooldown", "You must wait %cooldown% before changing your element.");
 			config.addDefault("Commands.Choose.SuccessfullyChosenCFW", "You are now a {element}.");
 			config.addDefault("Commands.Choose.SuccessfullyChosenAE", "You are now an {element}.");
 			config.addDefault("Commands.Choose.Other.SuccessfullyChosenCFW", "{target} is now a {element}.");
@@ -502,6 +503,7 @@ public class ConfigManager {
 			config.addDefault("Properties.GlobalCooldown", 500);
 			config.addDefault("Properties.TogglePassivesWithAllBending", true);
 			config.addDefault("Properties.SeaLevel", 62);
+			config.addDefault("Properties.ChooseCooldown", 0L);
 
 			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 			config.addDefault("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock", false);
