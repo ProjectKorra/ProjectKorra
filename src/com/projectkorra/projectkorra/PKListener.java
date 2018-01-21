@@ -257,8 +257,8 @@ public class PKListener implements Listener {
 			}
 
 			if (!event.isCancelled()) {
-				if (Illumination.isIlluminationTorch(block)) {
-					TempBlock temp = TempBlock.get(block);
+				if (Illumination.isIlluminationTorch(toblock)) {
+					TempBlock temp = TempBlock.get(toblock);
 					if (temp != null) temp.revertBlock();
 				}
 			}
