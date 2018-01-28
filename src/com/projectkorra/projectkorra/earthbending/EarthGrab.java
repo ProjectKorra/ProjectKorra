@@ -49,6 +49,10 @@ public class EarthGrab extends EarthAbility {
 			return;
 		}
 		
+		if (bPlayer.isOnCooldown(this)) {
+			return;
+		}
+		
 		setFields();
 		Entity e = GeneralMethods.getTargetedEntity(player, targetRange);
 		if (!(e instanceof LivingEntity)) {
