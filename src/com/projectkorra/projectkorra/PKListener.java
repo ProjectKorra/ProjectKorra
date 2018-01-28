@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -54,7 +55,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -192,7 +193,7 @@ public class PKListener implements Listener {
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-
+	
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
@@ -468,6 +469,11 @@ public class PKListener implements Listener {
 			if (bPlayer == null) {
 				return;
 			}
+			
+			if (CoreAbility.hasAbility(player, EarthGrab.class)) {
+				EarthGrab abil = CoreAbility.getAbility(player, EarthGrab.class);
+				abil.remove();
+			}
 
 			if (bPlayer.isElementToggled(Element.FIRE)) {
 				return;
@@ -496,6 +502,11 @@ public class PKListener implements Listener {
 			}
 
 			armor.revert();
+		}
+		
+		LivingEntity entity = event.getEntity();
+		if (entity.hasMetadata("earthgrab:trap")) {
+			event.getDrops().clear();
 		}
 
 		CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
@@ -840,8 +851,11 @@ public class PKListener implements Listener {
 		}
 
 		if (MovementHandler.isStopped(e.getDamager())) {
-			e.setCancelled(true);
-			return;
+			CoreAbility ability = (CoreAbility) e.getDamager().getMetadata("movement:stop").get(0).value();
+			if (!(ability instanceof EarthGrab)) {
+				e.setCancelled(true);
+				return;
+			}
 		}
 
 		if (entity instanceof Player) {
@@ -995,16 +1009,29 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+	public void onPlayerInteractEntity(PlayerInteractAtEntityEvent event) {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
 		}
+		
+		if (event.getRightClicked().hasMetadata("earthgrab:trap")) {
+			EarthGrab eg = (EarthGrab) event.getRightClicked().getMetadata("earthgrab:trap").get(0).value();
+			eg.damageTrap();
+			event.setCancelled(true);
+			return;
+		}
+		
+		if (event.getRightClicked().hasMetadata("temparmorstand")) {
+			event.setCancelled(true);
+			return;
+		}
 
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
+			return;
 		}
 
 		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters") && event.getHand().equals(EquipmentSlot.HAND)) {
@@ -1373,6 +1400,8 @@ public class PKListener implements Listener {
 						} else {
 							new MetalClips(player, 1);
 						}
+					} else if (abil.equalsIgnoreCase("EarthGrab")) {
+						new EarthGrab(player);
 					}
 				}
 
@@ -1460,9 +1489,17 @@ public class PKListener implements Listener {
 		if (Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 			return;
-		} else if ((Bloodbending.isBloodbent(player) && !bPlayer.getBoundAbilityName().equalsIgnoreCase("AvatarState")) || MovementHandler.isStopped(player)) {
+		} else if ((Bloodbending.isBloodbent(player) && !bPlayer.getBoundAbilityName().equalsIgnoreCase("AvatarState"))) {
 			event.setCancelled(true);
 			return;
+		} else if (MovementHandler.isStopped(player)) {
+			if (player.hasMetadata("movement:stop")) {
+				CoreAbility abil = (CoreAbility) player.getMetadata("movement:stop").get(0).value();
+				if (!(abil instanceof EarthGrab)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
 		} else if (bPlayer.isChiBlocked()) {
 			event.setCancelled(true);
 			return;
@@ -1564,8 +1601,6 @@ public class PKListener implements Listener {
 						if (armor != null && armor.isFormed()) {
 							armor.click();
 						}
-					} else if (abil.equalsIgnoreCase("EarthGrab")) {
-						new EarthGrab(player);
 					} else if (abil.equalsIgnoreCase("Tremorsense")) {
 						new Tremorsense(player, true);
 					} else if (abil.equalsIgnoreCase("MetalClips")) {

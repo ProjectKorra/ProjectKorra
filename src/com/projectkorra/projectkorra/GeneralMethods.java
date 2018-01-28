@@ -120,10 +120,12 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
 import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
 import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
@@ -2110,6 +2112,8 @@ public class GeneralMethods {
 		Flight.removeAll();
 		TempBlock.removeAll();
 		TempArmor.revertAll();
+		TempArmorStand.removeAll();
+		MovementHandler.resetAll();
 		MultiAbilityManager.removeAll();
 		if (!INVINCIBLE.isEmpty()) {
 			INVINCIBLE.clear();
