@@ -322,6 +322,14 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
+	 * @return a list of "fake" instances for each ability that was loaded by
+	 *         {@link #registerAbilities()}
+	 */
+	public static ArrayList<CoreAbility> getAbilitiesByName() {
+		return new ArrayList<CoreAbility>(ABILITIES_BY_NAME.values());
+	}
+
+	/**
 	 * Returns a Collection of all of the player created instances for a
 	 * specific type of CoreAbility.
 	 * 

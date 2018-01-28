@@ -102,6 +102,7 @@ public class Commands {
 		new PresetCommand();
 		new ReloadCommand();
 		new RemoveCommand();
+		new StatsCommand();
 		new ToggleCommand();
 		new VersionCommand();
 		new WhoCommand();
