@@ -1,5 +1,14 @@
 package com.projectkorra.projectkorra.command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -8,16 +17,8 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import com.projectkorra.projectkorra.util.TimeUtil;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Executor for /bending choose. Extends {@link PKCommand}.
@@ -26,20 +27,24 @@ public class ChooseCommand extends PKCommand {
 
 	private String invalidElement;
 	private String playerNotFound;
+	private String onCooldown;
 	private String chosenCFW;
 	private String chosenAE;
 	private String chosenOtherCFW;
 	private String chosenOtherAE;
+	private long cooldown;
 
 	public ChooseCommand() {
 		super("choose", "/bending choose <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
 
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Choose.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Choose.InvalidElement");
+		this.onCooldown = ConfigManager.languageConfig.get().getString("Commands.Choose.OnCooldown");
 		this.chosenCFW = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosenCFW");
 		this.chosenAE = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosenAE");
 		this.chosenOtherCFW = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosenCFW");
 		this.chosenOtherAE = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosenAE");
+		this.cooldown = ConfigManager.defaultConfig.get().getLong("Properties.ChooseCooldown");
 	}
 
 	@Override
@@ -60,7 +65,6 @@ public class ChooseCommand extends PKCommand {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 				return;
 			}
-
 			if (!bPlayer.getElements().isEmpty() && !sender.hasPermission("bending.command.rechoose")) {
 				GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
 				return;
@@ -81,7 +85,12 @@ public class ChooseCommand extends PKCommand {
 				if (!hasPermission(sender, element)) {
 					return;
 				}
+				if (bPlayer.isOnCooldown("ChooseElement") && !sender.hasPermission("bending.admin.choose")) {
+					GeneralMethods.sendBrandingMessage(sender, onCooldown.replace("%cooldown%", TimeUtil.formatTime(bPlayer.getCooldown("ChooseElement") - System.currentTimeMillis())));
+					return;
+				}
 				add(sender, (Player) sender, targetElement);
+				bPlayer.addCooldown("ChooseElement", cooldown);
 				return;
 			} else {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + invalidElement);

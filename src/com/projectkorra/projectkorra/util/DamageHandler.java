@@ -1,12 +1,6 @@
 package com.projectkorra.projectkorra.util;
 
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
-
-import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
-import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
+import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -15,6 +9,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
+import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
+
+import fr.neatmonster.nocheatplus.checks.CheckType;
+import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
 public class DamageHandler {
 
@@ -61,12 +64,14 @@ public class DamageHandler {
 				}
 
 				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, DamageCause.CUSTOM, damage);
+				double prevHealth = ((LivingEntity) entity).getHealth();
 				((LivingEntity) entity).damage(damage, source);
+				double nextHealth = ((LivingEntity) entity).getHealth();
 				entity.setLastDamageCause(finalEvent);
 				if (ignoreArmor) {
-				    if (finalEvent.isApplicable(DamageModifier.ARMOR)) {
-				        finalEvent.setDamage(DamageModifier.ARMOR, 0);
-				    }
+					if (finalEvent.isApplicable(DamageModifier.ARMOR)) {
+						finalEvent.setDamage(DamageModifier.ARMOR, 0);
+					}
 				}
 
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
@@ -76,6 +81,11 @@ public class DamageHandler {
 					NCPExemptionManager.unexempt(source, CheckType.FIGHT_SPEED);
 					NCPExemptionManager.unexempt(source, CheckType.COMBINED_IMPROBABLE);
 					NCPExemptionManager.unexempt(source, CheckType.FIGHT_SELFHIT);
+				}
+
+				if (entity instanceof Player && prevHealth != nextHealth) {
+					DecimalFormat format = new DecimalFormat("#");
+					StatisticsMethods.addStatisticAbility(source.getUniqueId(), CoreAbility.getAbility(ability.getName()), Statistic.DAMAGE, Long.valueOf(format.format(damage)));
 				}
 			}
 		}
