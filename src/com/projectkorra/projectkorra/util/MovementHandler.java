@@ -63,7 +63,7 @@ public class MovementHandler {
 	
 				@Override
 				public void run() {
-					allowMove();
+					reset();
 				}
 				
 			};
@@ -117,7 +117,16 @@ public class MovementHandler {
 		runnable = null;
 	}
 	
-	private void allowMove() {
+	/**
+	 *	Resets any stopped movements and runs the {@link ResetTask} if able.
+	 */
+	public void reset() {
+		if (runnable != null) {
+			runnable.cancel();
+		}
+		if (msg != null) {
+			msg.cancel();
+		}
 		if (!(entity instanceof Player)) {
 			entity.setAI(true);
 		}
@@ -127,19 +136,6 @@ public class MovementHandler {
 		if (entity.hasMetadata("movement:stop")) {
 			entity.removeMetadata("movement:stop", ProjectKorra.plugin);
 		}
-	}
-	
-	/**
-	 * Runs the reseting runnable if not scheduled
-	 */
-	public void reset() {
-		if (runnable != null) {
-			runnable.cancel();
-		}
-		if (msg != null) {
-			msg.cancel();
-		}
-		allowMove();
 	}
 	
 	public CoreAbility getAbility() {
@@ -164,16 +160,30 @@ public class MovementHandler {
 		public void run();
 	}
 	
+	/**
+	 * Checks if the entity is stopped by an instance of MovementHandler
+	 * @param entity the entity in question of being stopped
+	 * @return false if not stopped by an instance of MovementHandler
+	 */
 	public static boolean isStopped(Entity entity) {
 		return entity.hasMetadata("movement:stop");
 	}
 	
+	/**
+	 * Resets all instances of MovementHandler
+	 */
 	public static void resetAll() {
 		for (MovementHandler handler : handlers) {
 			handler.reset();
 		}
 	}
 	
+	/**
+	 * Using an entity and ability, the MovementHandler associated with both will be found.
+	 * @param entity the entity in question of being stopped
+	 * @param ability the ability in question of doing the stopping
+	 * @return null if no MovementHandler instance with entity and ability found.
+	 */
 	public static MovementHandler getFromEntityAndAbility(Entity entity, CoreAbility ability) {
 		for (MovementHandler handler : handlers) {
 			if (handler.getEntity().getEntityId() == entity.getEntityId() && handler.getAbility().equals(ability)) {

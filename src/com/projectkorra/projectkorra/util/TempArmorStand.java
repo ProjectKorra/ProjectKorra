@@ -10,7 +10,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import com.projectkorra.projectkorra.ProjectKorra;
 
 /**
- * Object to represent an armorstand that is not used for normal functionality
+ * Object to represent an ArmorStand that is not used for normal functionality
  * @author Simplicitee
  *
  */
@@ -29,6 +29,9 @@ public class TempArmorStand {
 		return stand;
 	}
 	
+	/**
+	 * Removes all instances of TempArmorStands and the associated ArmorStands
+	 */
 	public static void removeAll() {
 		for (TempArmorStand temp : tempStands) {
 			temp.getArmorStand().remove();
