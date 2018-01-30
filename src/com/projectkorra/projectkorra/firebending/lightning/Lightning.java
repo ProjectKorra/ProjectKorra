@@ -127,8 +127,8 @@ public class Lightning extends LightningAbility {
 		DamageHandler.damageEntity(lent, damage, this);
 
 		if (Math.random() <= stunChance) {
-			MovementHandler mh = new MovementHandler(lent);
-			mh.stop((long) stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
+			MovementHandler mh = new MovementHandler(lent, this);
+			mh.stopWithDuration((long) stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
 		}
 	}
 
