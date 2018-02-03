@@ -1,9 +1,13 @@
 package com.projectkorra.projectkorra;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,6 +33,7 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 
 /**
@@ -56,7 +61,7 @@ public class BendingPlayer {
 	private ArrayList<Element> elements;
 	private ArrayList<SubElement> subelements;
 	private HashMap<Integer, String> abilities;
-	private Map<String, Long> cooldowns;
+	private Map<String, Cooldown> cooldowns;
 	private Map<Element, Boolean> toggledElements;
 
 	/**
@@ -80,7 +85,7 @@ public class BendingPlayer {
 		this.tremorSense = true;
 		this.illumination = true;
 		this.chiBlocked = false;
-		this.cooldowns = new ConcurrentHashMap<String, Long>();
+		this.cooldowns = loadCooldowns();
 		this.toggledElements = new ConcurrentHashMap<Element, Boolean>();
 		for (Element e : Element.getAllElements()) {
 			if (!e.equals(Element.AVATAR)) {
@@ -92,12 +97,24 @@ public class BendingPlayer {
 		GeneralMethods.loadBendingPlayer(this);
 	}
 
+	public void addCooldown(Ability ability, long cooldown, boolean database) {
+		addCooldown(ability.getName(), cooldown, database);
+	}
+
+	public void addCooldown(Ability ability, boolean database) {
+		addCooldown(ability.getName(), ability.getCooldown(), database);
+	}
+
 	public void addCooldown(Ability ability, long cooldown) {
-		addCooldown(ability.getName(), cooldown);
+		addCooldown(ability, cooldown, false);
 	}
 
 	public void addCooldown(Ability ability) {
-		addCooldown(ability, ability.getCooldown());
+		addCooldown(ability, false);
+	}
+
+	public void addCooldown(String ability, long cooldown) {
+		addCooldown(ability, cooldown, false);
 	}
 
 	/**
@@ -106,15 +123,16 @@ public class BendingPlayer {
 	 * 
 	 * @param ability Name of the ability
 	 * @param cooldown The cooldown time
+	 * @param database If the value should be saved to the database
 	 */
-	public void addCooldown(String ability, long cooldown) {
+	public void addCooldown(String ability, long cooldown, boolean database) {
 		if (cooldown <= 0)
 			return;
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
-			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
+			this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
 
 			Player player = event.getPlayer();
 
@@ -128,6 +146,40 @@ public class BendingPlayer {
 			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
 				GeneralMethods.displayMovePreview(player);
 			}
+		}
+	}
+
+	public Map<String, Cooldown> loadCooldowns() {
+		Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
+		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'")) {
+			if (rs.next()) {
+				ResultSetMetaData metadata = rs.getMetaData();
+				for (int i = 1; i < metadata.getColumnCount() + 1; i++) {
+					String name = metadata.getColumnName(i);
+					long cooldown = rs.getLong(i);
+					cooldowns.put(name, new Cooldown(cooldown, true));
+				}
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return cooldowns;
+	}
+
+	public void saveCooldowns() {
+		DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'", false);
+		DBConnection.sql.modifyQuery("INSERT INTO pk_cooldowns (uuid) VALUES ('" + uuid.toString() + "')", false);
+		for (Entry<String, Cooldown> entry : cooldowns.entrySet()) {
+			String name = entry.getKey();
+			Cooldown cooldown = entry.getValue();
+			if (!cooldown.isDatabase()) {
+				continue;
+			}
+			if (!DBConnection.sql.columnExists("pk_cooldowns", name)) {
+				DBConnection.sql.modifyQuery("ALTER TABLE pk_cooldowns ADD " + name + " BIGINT", false);
+			}
+			DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET '" + name + "' = " + cooldown.getCooldown() + " WHERE uuid = '" + uuid.toString() + "'", false);
 		}
 	}
 
@@ -210,7 +262,7 @@ public class BendingPlayer {
 		}
 
 		if (!ignoreCooldowns && cooldowns.containsKey(name)) {
-			if (cooldowns.get(name) + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+			if (cooldowns.get(name).getCooldown() + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
 				return false;
 			}
 
@@ -511,7 +563,7 @@ public class BendingPlayer {
 	 */
 	public long getCooldown(String ability) {
 		if (cooldowns.containsKey(ability)) {
-			return cooldowns.get(ability);
+			return cooldowns.get(ability).getCooldown();
 		}
 
 		return -1;
@@ -522,7 +574,7 @@ public class BendingPlayer {
 	 * 
 	 * @return map of cooldowns
 	 */
-	public Map<String, Long> getCooldowns() {
+	public Map<String, Cooldown> getCooldowns() {
 		return cooldowns;
 	}
 
@@ -689,7 +741,7 @@ public class BendingPlayer {
 	 */
 	public boolean isOnCooldown(String ability) {
 		if (this.cooldowns.containsKey(ability)) {
-			return System.currentTimeMillis() < cooldowns.get(ability);
+			return System.currentTimeMillis() < cooldowns.get(ability).getCooldown();
 		}
 
 		return false;
