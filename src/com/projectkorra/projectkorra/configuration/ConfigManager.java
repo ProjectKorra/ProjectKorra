@@ -268,8 +268,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.Description", "AirSwipe is the most commonly used damage ability in an airbender's arsenal. An arc of air will flow from you towards the direction you're facing, cutting and pushing back anything in its path. This ability will extinguish fires, cool lava, and cut things like grass, mushrooms, and flowers.");
 			config.addDefault("Abilities.Air.AirSwipe.Instructions", "\n" + "(Uncharged) Simply left click to send an air swipe out that will damage targets that it comes into contact with." + "\n" + "(Charged) Hold sneak until particles appear, then release sneak to send a more powerful air swipe out that damages entity's that it comes into contact with.");
 			config.addDefault("Abilities.Air.AirSwipe.DeathMessage", "{victim} was struck by {attacker}'s {ability}");
-			config.addDefault("Abilities.Air.Flight.Description", "Flight is one of the most advanced airbending abilities there is. It's used to escape from players or mobs or to confuse your enemy by flying around them, making you extremely hard to hit.");
-			config.addDefault("Abilities.Air.Flight.Instructions", "\n" + "(Fly) Jump in the air and hold sneak to fly in the direction that you're looking." + "\n" + "(Hover) While flying with this ability, left click to hover in the air. Left click again to disable hovering");
+			config.addDefault("Abilities.Air.Flight.Description", "Fly through the air as Zaheer and Guru Laghima did! This multiability allows for three modes of flight: soaring, gliding, and levitating. You can also right-click another player while flying to have them become your passenger! When flying at fast speeds, flying past nearby enemies will damage them for half your speed and knock them in the direction you're heading!");
+			config.addDefault("Abilities.Air.Flight.Instructions", "\n- (To start flying, jump and left-click)\n- (Soar) Left-Click to change flying speeds.\n- (Glide) Normal minecraft gliding. Slowing down or speeding up in this mode will affect the Soar speed.\n- (Levitate) Basically minecraft flying, allowing players to fly around for building purposes or a more controlled 'hovering'.\n- (Ending) Being in this mode sets any gliding and flight back the the state they were before using the ability.");
 			config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. Although it is difficult to perform, it's extremely deadly once the ability starts, making it difficult for enemies to escape.");
 			config.addDefault("Abilities.Air.Suffocate.Instructions", "Hold sneak while looking at a target to begin suffocating them. If the target goes out of range, you get damaged, or you release sneak, the ability will cancel.");
 			config.addDefault("Abilities.Air.Suffocate.DeathMessage", "{victim} was asphyxiated by {attacker}'s {ability}");
@@ -809,11 +809,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.StepSize", 4);
 
 			config.addDefault("Abilities.Air.Flight.Enabled", true);
-			config.addDefault("Abilities.Air.Flight.HoverEnabled", true);
-			config.addDefault("Abilities.Air.Flight.Cooldown", 5000);
-			config.addDefault("Abilities.Air.Flight.Speed", 1);
-			config.addDefault("Abilities.Air.Flight.MaxHits", 4);
-			config.addDefault("Abilities.Air.Flight.MaxDuration", 0);
+			config.addDefault("Abilities.Air.Flight.Cooldown", 0);
+			config.addDefault("Abilities.Air.Flight.BaseSpeed", 1.2);
 
 			config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 500);

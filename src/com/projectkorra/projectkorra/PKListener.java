@@ -16,7 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -46,6 +45,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -94,7 +94,7 @@ import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
-import com.projectkorra.projectkorra.airbending.flight.AirFlight;
+import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
@@ -155,6 +155,7 @@ import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -779,6 +780,11 @@ public class PKListener implements Listener {
 			} else if (bPlayer.isChiBlocked()) {
 				return;
 			}
+			
+			if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+				FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
+				fma.cancel("damage potential");
+			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
 				if (bPlayer.getBoundAbilityName().equalsIgnoreCase("Shockwave")) {
@@ -1042,6 +1048,17 @@ public class PKListener implements Listener {
 			if (instance != null && instance.charged) {
 				instance.click();
 				event.setCancelled(true);
+				return;
+			}
+		}
+		
+		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+			if (!FlightMultiAbility.getFlyingPlayers().contains(event.getRightClicked().getUniqueId())) {
+				if (event.getRightClicked() instanceof Player) {
+					Player target = (Player) event.getRightClicked();
+					ActionBar.sendActionBar(ChatColor.AQUA + "You have been picked up by " + ChatColor.WHITE + event.getPlayer().getName(), target);
+					event.getPlayer().addPassenger(event.getRightClicked());
+				}
 			}
 		}
 	}
@@ -1101,7 +1118,6 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerKick(PlayerKickEvent event) {
-		AirFlight.remove(event.getPlayer());
 		JUMPS.remove(event.getPlayer());
 	}
 
@@ -1147,16 +1163,6 @@ public class PKListener implements Listener {
 			} else if (distance1 > distance2 || distance1 < distance2) {
 				if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
 					player.setVelocity(Bloodbending.getBloodbendingVector(player));
-					return;
-				}
-			}
-		} else if (AirFlight.isFlying(player)) {
-			if (AirFlight.isHovering(player)) {
-				Location loc = event.getFrom();
-				Location toLoc = event.getTo();
-
-				if (loc.getX() != toLoc.getX() || loc.getY() != toLoc.getY() || loc.getZ() != toLoc.getZ()) {
-					event.setCancelled(true);
 					return;
 				}
 			}
@@ -1235,7 +1241,6 @@ public class PKListener implements Listener {
 		}
 
 		MultiAbilityManager.remove(player);
-		AirFlight.remove(player);
 		JUMPS.remove(player);
 
 		for (CoreAbility ca : CoreAbility.getAbilities()) {
@@ -1323,12 +1328,6 @@ public class PKListener implements Listener {
 						new AirShield(player);
 					} else if (abil.equalsIgnoreCase("Suffocate")) {
 						new Suffocate(player);
-					} else if (abil.equalsIgnoreCase("Flight")) {
-						if (player.isSneaking() || !bPlayer.canUseFlight()) {
-							return;
-						}
-
-						new AirFlight(player);
 					}
 				}
 			}
@@ -1540,17 +1539,8 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("AirSwipe")) {
 						new AirSwipe(player);
 					} else if (abil.equalsIgnoreCase("Flight")) {
-						if (!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled") || !bPlayer.canUseFlight()) {
-							return;
-						}
-
-						if (AirFlight.isFlying(event.getPlayer())) {
-							if (AirFlight.isHovering(event.getPlayer())) {
-								AirFlight.setHovering(event.getPlayer(), false);
-							} else {
-								AirFlight.setHovering(event.getPlayer(), true);
-							}
-						}
+						new FlightMultiAbility(player);
+						return;
 					}
 				}
 			}
@@ -1688,6 +1678,8 @@ public class PKListener implements Listener {
 			abil = MultiAbilityManager.getBoundMultiAbility(player);
 			if (abil.equalsIgnoreCase("WaterArms")) {
 				new WaterArms(player);
+			} else if (abil.equalsIgnoreCase("Flight")) {
+				new FlightMultiAbility(player);
 			}
 		}
 	}
@@ -1697,6 +1689,27 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
 			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
+			return;
+		}
+		
+		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+			if (player.isFlying()) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerToggleGlide(EntityToggleGlideEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+		Player player = (Player) event.getEntity();
+		
+		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+			if (player.isGliding()) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 	}
 
