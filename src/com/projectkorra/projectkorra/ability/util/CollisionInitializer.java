@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.combo.AirStream;
 import com.projectkorra.projectkorra.airbending.combo.AirSweep;
-import com.projectkorra.projectkorra.airbending.flight.AirFlight;
+import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.earthbending.Catapult;
 import com.projectkorra.projectkorra.earthbending.Collapse;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
@@ -80,7 +80,6 @@ public class CollisionInitializer {
 	public void initializeDefaultCollisions() {
 		CoreAbility airBlast = CoreAbility.getAbility(AirBlast.class);
 		CoreAbility airBurst = CoreAbility.getAbility(AirBurst.class);
-		CoreAbility airFlight = CoreAbility.getAbility(AirFlight.class);
 		CoreAbility airScooter = CoreAbility.getAbility(AirScooter.class);
 		CoreAbility airShield = CoreAbility.getAbility(AirShield.class);
 		CoreAbility airSpout = CoreAbility.getAbility(AirSpout.class);
@@ -88,6 +87,7 @@ public class CollisionInitializer {
 		CoreAbility airSuction = CoreAbility.getAbility(AirSuction.class);
 		CoreAbility airSweep = CoreAbility.getAbility(AirSweep.class);
 		CoreAbility airSwipe = CoreAbility.getAbility(AirSwipe.class);
+		CoreAbility flight = CoreAbility.getAbility(FlightMultiAbility.class);
 		CoreAbility suffocate = CoreAbility.getAbility(Suffocate.class);
 		CoreAbility tornado = CoreAbility.getAbility(Tornado.class);
 
