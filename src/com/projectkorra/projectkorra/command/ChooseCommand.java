@@ -86,11 +86,11 @@ public class ChooseCommand extends PKCommand {
 					return;
 				}
 				if (bPlayer.isOnCooldown("ChooseElement") && !sender.hasPermission("bending.admin.choose")) {
-					GeneralMethods.sendBrandingMessage(sender, onCooldown.replace("%cooldown%", TimeUtil.formatTime(bPlayer.getCooldown("ChooseElement") - System.currentTimeMillis())));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + onCooldown.replace("%cooldown%", TimeUtil.formatTime(bPlayer.getCooldown("ChooseElement") - System.currentTimeMillis())));
 					return;
 				}
 				add(sender, (Player) sender, targetElement);
-				bPlayer.addCooldown("ChooseElement", cooldown);
+				bPlayer.addCooldown("ChooseElement", cooldown, true);
 				return;
 			} else {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + invalidElement);
