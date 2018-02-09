@@ -220,7 +220,7 @@ public abstract class ElementalAbility extends CoreAbility {
 		}
 		
 		String event = EventManager.marker.get(world);
-		return event != null && event.equalsIgnoreCase("LunarEclipse");
+		return event != null && event.equalsIgnoreCase("SozinsComet");
 	}
 
 	public static boolean isTransparent(Player player, Block block) {
