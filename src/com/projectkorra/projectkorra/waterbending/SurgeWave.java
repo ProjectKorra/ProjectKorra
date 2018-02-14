@@ -380,6 +380,14 @@ public class SurgeWave extends WaterAbility {
 		}
 	}
 
+	/**Determine if the block should be prevented from melting (because of being an ice block made by SurgeWave)
+	  *
+	  *@deprecated In favor of SurgeWave#preventMelting(Block). "thaw" is self-contradicted in SurgeWave- SurgeWave#thaw() and SurgeWave#thaw(Block) will only work if canThaw() is false.
+	  *
+	  *@return true = shouldn't be prevented from melting, false = should be prevented from melting
+	  */
+	
+	@Deprecated
 	public static boolean canThaw(Block block) {
 		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.frozenBlocks.containsKey(block)) {
@@ -387,6 +395,18 @@ public class SurgeWave extends WaterAbility {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	  *@return If the block should be prevented from melting
+	  */
+	public static boolean preventMelting(Block block) {
+		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
+			if (surgeWave.frozenBlocks.containsKey(block)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void removeAllCleanup() {

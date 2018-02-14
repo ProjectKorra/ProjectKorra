@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
 
 public class TempBlock {
 
@@ -32,11 +33,18 @@ public class TempBlock {
 	private long revertTime;
 	private boolean inRevertQueue;
 	private RevertTask revertTask = null;
+	private boolean preventPhysics;
+	/**Ability that created this tempblock*/
+	private Class<? extends Ability> ability;
 
+	/**@deprecated preventPhysics and ability have not been fully implemented throughout the code yet*/
+	@Deprecated
 	@SuppressWarnings("deprecation")
-	public TempBlock(Block block, Material newtype, byte newdata) {
+	public TempBlock(Block block, Material newtype, byte newdata, boolean preventPhysics, Class<? extends Ability> ability) {
 		this.block = block;
 		this.newdata = newdata;
+		this.preventPhysics = preventPhysics;
+		this.ability = ability;
 //		this.newtype = newtype;
 		if (instances.containsKey(block)) {
 			TempBlock temp = instances.get(block);
@@ -59,11 +67,19 @@ public class TempBlock {
 		if (state.getType() == Material.FIRE)
 			state.setType(Material.AIR);
 	}
+	
+	/**@deprecated preventPhysics and ability has not been fully implemented throughout the code yet*/
+	@Deprecated
+	public TempBlock(Block block, Material newtype, byte newdata, boolean preventPhysics) {
+		this(block, newtype, newdata, preventPhysics, null);
+	}
+	
+	public TempBlock(Block block, Material newtype, byte newdata) {
+		this(block, newtype, newdata, true, null);
+	}
 
 	public static TempBlock get(Block block) {
-		if (isTempBlock(block))
-			return instances.get(block);
-		return null;
+		return instances.get(block);
 	}
 
 	public static boolean isTempBlock(Block block) {
@@ -112,6 +128,30 @@ public class TempBlock {
 
 	public Block getBlock() {
 		return block;
+	}
+	
+	
+	/**This method has not been fully implemented yet, and may require significant code changes.
+	  *@return Whether or not physics should be prevented (melting, dropping as an item, etc)
+	  *@deprecated As of now, physics is not prevented by checking this method in PKListener,
+	  *but by checking many different moves with different method names to see if any of them
+	  *specify to prevent certain physics.
+	  */
+	
+	//remove deprecation when this has been properly added in PKListener and everywhere else needed
+	@Deprecated
+	public boolean preventPhysics() {
+		return preventPhysics;
+	}
+	
+	/**Gets the ability that created this tempblock
+	  *@return The ability that created this tempblock, or null if no ability set this tempblock
+	  *@deprecated Most abilities have not used this format yet.
+	  */
+	//remove deprecation when this is a requirement to make a tempblock
+	@Deprecated
+	public Class<? extends Ability> getAbility() {
+		return ability;
 	}
 
 	public Location getLocation() {
