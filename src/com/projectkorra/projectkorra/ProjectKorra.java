@@ -162,6 +162,10 @@ public class ProjectKorra extends JavaPlugin {
 		GeneralMethods.stopBending();
 		for (Player player : getServer().getOnlinePlayers()) {
 			statistics.save(player.getUniqueId(), false);
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			if (bPlayer != null) {
+				bPlayer.saveCooldowns();
+			}
 		}
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();

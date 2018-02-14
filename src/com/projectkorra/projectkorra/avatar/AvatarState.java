@@ -62,7 +62,7 @@ public class AvatarState extends AvatarAbility {
 		playAvatarSound(player.getLocation());
 
 		start();
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown(this, true);
 		if (duration != 0) {
 			START_TIMES.put(player.getName(), System.currentTimeMillis());
 			GLOBAL_COOLDOWNS.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
