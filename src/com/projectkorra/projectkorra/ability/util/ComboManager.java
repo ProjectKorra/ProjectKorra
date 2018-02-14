@@ -3,9 +3,7 @@ package com.projectkorra.projectkorra.ability.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
@@ -18,12 +16,11 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.combo.EarthDomeOthers;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletLeftClick;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletRightClick;
-import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 20 * 60;
@@ -37,10 +34,6 @@ public class ComboManager {
 		COMBO_ABILITIES.clear();
 		DESCRIPTIONS.clear();
 		INSTRUCTIONS.clear();
-		
-		if (ConfigManager.getConfig().getBoolean("Abilities.Water.IceWave.Enabled")) {
-			addRequirement(CoreAbility.getAbility(IceWave.class), WaterSpoutWave.class);
-		}
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.IceBullet.Enabled")) {
 			ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<>();
@@ -49,6 +42,13 @@ public class ComboManager {
 			ArrayList<AbilityInformation> iceBulletRight = new ArrayList<>();
 			iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK_BLOCK));
 			COMBO_ABILITIES.put("IceBulletRightClick", new ComboAbilityInfo("IceBulletRightClick", iceBulletRight, IceBulletRightClick.class));
+		}
+		
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthDome.Enabled")) {
+			ArrayList<AbilityInformation> earthDomeOthers = new ArrayList<>();
+			earthDomeOthers.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
+			earthDomeOthers.add(new AbilityInformation("Shockwave", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("EarthDomeOthers", new ComboAbilityInfo("EarthDomeOthers", earthDomeOthers, EarthDomeOthers.class));
 		}
 
 		startCleanupTask();
@@ -73,14 +73,6 @@ public class ComboManager {
 			return;
 		} else if (!player.hasPermission("bending.ability." + comboAbil.getName())) {
 			return;
-		}
-		
-		if (!comboAbil.getRequirments().isEmpty()) {
-			for (Class<? extends CoreAbility> clazz : comboAbil.getRequirments()) {
-				if (!CoreAbility.hasAbility(player, clazz)) {
-					return;
-				}
-			}
 		}
 
 		new BukkitRunnable() {
@@ -253,12 +245,6 @@ public class ComboManager {
 	public static HashMap<String, String> getInstructions() {
 		return INSTRUCTIONS;
 	}
-	
-	public static void addRequirement(CoreAbility ability, Class<? extends CoreAbility> clazz) {
-		if (ability instanceof ComboAbility) {
-			COMBO_ABILITIES.get(ability.getName()).addRequirement(clazz);
-		}
-	}
 
 	/**
 	 * Contains information on an ability used in a combo.
@@ -336,13 +322,11 @@ public class ComboManager {
 		private String name;
 		private ArrayList<AbilityInformation> abilities;
 		private Object comboType;
-		private Set<Class<? extends CoreAbility>> required;
 		
 		public ComboAbilityInfo(String name, ArrayList<AbilityInformation> abilities, Object comboType) {
 			this.name = name;
 			this.abilities = abilities;
 			this.comboType = comboType;
-			this.required = new HashSet<>();
 		}
 
 		public ArrayList<AbilityInformation> getAbilities() {
@@ -367,14 +351,6 @@ public class ComboManager {
 
 		public void setName(String name) {
 			this.name = name;
-		}
-		
-		public Set<Class<? extends CoreAbility>> getRequirments() {
-			return required;
-		}
-		
-		public void addRequirement(Class<? extends CoreAbility> clazz) {
-			required.add(clazz);
 		}
 
 		@Override

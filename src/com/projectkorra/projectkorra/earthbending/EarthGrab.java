@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 import com.projectkorra.projectkorra.util.TempArmorStand;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthGrab extends EarthAbility {
 	
@@ -127,6 +128,7 @@ public class EarthGrab extends EarthAbility {
 			trap.setHelmet(new ItemStack(m));
 			trap.setHealth(trapHP);
 			trap.setMetadata("earthgrab:trap", new FixedMetadataValue(ProjectKorra.plugin, this));
+			new TempBlock(target.getLocation().clone().subtract(0, 1, 0).getBlock(), target.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte)0);
 			mHandler = new MovementHandler(target, this);
 			mHandler.stop(Element.EARTH.getColor() + "* Trapped *");
 			playEarthbendingSound(target.getLocation());
