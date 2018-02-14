@@ -1051,15 +1051,25 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
-		
-		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
-			if (!FlightMultiAbility.getFlyingPlayers().contains(event.getRightClicked().getUniqueId())) {
-				if (event.getRightClicked() instanceof Player) {
-					Player target = (Player) event.getRightClicked();
-					ActionBar.sendActionBar(ChatColor.AQUA + "You have been picked up by " + ChatColor.WHITE + event.getPlayer().getName(), target);
-					event.getPlayer().addPassenger(event.getRightClicked());
+		if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
+			if (event.getRightClicked() instanceof Player) {
+				Player target = (Player) event.getRightClicked();
+				if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+					FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
+					fma.requestCarry(target);
+					final UUID uuid = player.getUniqueId();
+					RIGHT_CLICK_INTERACT.add(uuid);
+
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							RIGHT_CLICK_INTERACT.remove(uuid);
+						}
+					}.runTaskLater(plugin, 5);
+				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
+					FlightMultiAbility.acceptCarryRequest(player, target);
 				}
-			}
+			} 
 		}
 	}
 
