@@ -424,7 +424,9 @@ public class AirBlast extends AirAbility {
 		}
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
-			affect(entity);
+			if(!GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())){
+				affect(entity);
+			}
 		}
 
 		advanceLocation();

@@ -154,7 +154,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 				// Set the timer to remove the ability
 				time = System.currentTimeMillis();
 			}
-			if (!entity.equals(player) && !affectedEntities.contains(entity)) {
+			if (!entity.equals(player) && !affectedEntities.contains(entity) && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				affectedEntities.add(entity);
 				if (entity instanceof Player) {
 					flights.add(new Flight((Player) entity, player));
