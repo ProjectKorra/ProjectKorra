@@ -226,7 +226,7 @@ public class AirSuction extends AirAbility {
 		}
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
-			if (entity.getEntityId() != player.getEntityId() || hasOtherOrigin) {
+			if ((entity.getEntityId() != player.getEntityId() && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) || hasOtherOrigin) {
 				Vector velocity = entity.getVelocity();
 				double max = speed;
 				double factor = pushFactor;

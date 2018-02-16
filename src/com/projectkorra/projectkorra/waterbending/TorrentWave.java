@@ -143,7 +143,7 @@ public class TorrentWave extends WaterAbility {
 
 				for (Entity entity : indexList) {
 					if (!affectedEntities.contains(entity)) {
-						if (entity.getLocation().distanceSquared(location) <= 4) {
+						if (entity.getLocation().distanceSquared(location) <= 4 && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 							affectedEntities.add(entity);
 							affect(entity);
 						}
