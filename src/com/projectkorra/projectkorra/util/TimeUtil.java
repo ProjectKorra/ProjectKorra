@@ -30,7 +30,7 @@ public class TimeUtil {
 		if (minutes > 0) {
 			formatted += String.valueOf(minutes) + "m ";
 		}
-		if (seconds > 0) {
+		if (seconds >= 0) {
 			formatted += String.valueOf(seconds) + "s";
 		}
 		return formatted;

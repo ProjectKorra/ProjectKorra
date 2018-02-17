@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -134,44 +135,49 @@ public class StatsCommand extends PKCommand {
 
 	public List<String> getLeaderboard(CommandSender sender, Object object, Statistic statistic, int page) {
 		List<String> messages = new ArrayList<>();
-		List<UUID> uuids = pullUUIDs(statistic, object);
-		int maxPage = (uuids.size() / 10) + 1;
-		page = page > maxPage ? maxPage : page;
-		String statName = statistic.name().substring(0, 1).toUpperCase() + statistic.name().substring(1).toLowerCase();
-		String title = "%object% " + statName + " Leaderboard";
-		if (object instanceof CoreAbility) {
-			CoreAbility ability = (CoreAbility) object;
-			title = title.replace("%object%", ability.getName());
-		} else if (object instanceof Element) {
-			Element element = (Element) object;
-			title = title.replace("%object%", element.getName());
-		} else {
-			title = title.replace("%object%", "Total");
-		}
-		GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', "&8- &f" + title + " &8- [&7" + page + "/" + maxPage + "&8]"));
-		int minIndex = (1 * page) - 1;
-		int maxIndex = minIndex + 10;
-		try {
-			uuids.get(minIndex);
-		}
-		catch (IndexOutOfBoundsException e) {
-			messages.add("&7No statistics found.");
-			return messages;
-		}
-		for (int index = minIndex; index < maxIndex; index++) {
-			if (index < 0 || index >= uuids.size()) {
-				break;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				List<UUID> uuids = pullUUIDs(statistic, object);
+				int maxPage = (uuids.size() / 10) + 1;
+				int p = page > maxPage ? maxPage : page;
+				String statName = statistic.name().substring(0, 1).toUpperCase() + statistic.name().substring(1).toLowerCase();
+				String title = "%object% " + statName + " Leaderboard";
+				if (object instanceof CoreAbility) {
+					CoreAbility ability = (CoreAbility) object;
+					title = title.replace("%object%", ability.getName());
+				} else if (object instanceof Element) {
+					Element element = (Element) object;
+					title = title.replace("%object%", element.getName());
+				} else {
+					title = title.replace("%object%", "Total");
+				}
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', "&8- &f" + title + " &8- [&7" + p + "/" + maxPage + "&8]"));
+				int minIndex = (10 * p) - 1;
+				int maxIndex = minIndex + 10;
+				try {
+					uuids.get(minIndex);
+				}
+				catch (IndexOutOfBoundsException e) {
+					messages.add("&7No statistics found.");
+					return;
+				}
+				for (int index = minIndex; index < maxIndex; index++) {
+					if (index < 0 || index >= uuids.size()) {
+						break;
+					}
+					UUID uuid = uuids.get(index);
+					long value = 0;
+					if (object == null) {
+						value = StatisticsMethods.getStatisticTotal(uuid, statistic);
+					} else {
+						value = StatisticsMethods.getStatistic(uuid, object, statistic);
+					}
+					OfflinePlayer oPlayer = ProjectKorra.plugin.getServer().getOfflinePlayer(uuid);
+					messages.add("&7" + (index + 1) + ") &e" + oPlayer.getName() + " &f" + value);
+				}
 			}
-			UUID uuid = uuids.get(index);
-			long value = 0;
-			if (object == null) {
-				value = StatisticsMethods.getStatisticTotal(uuid, statistic);
-			} else {
-				value = StatisticsMethods.getStatistic(uuid, object, statistic);
-			}
-			OfflinePlayer oPlayer = ProjectKorra.plugin.getServer().getOfflinePlayer(uuid);
-			messages.add("&7" + (index + 1) + ") &e" + oPlayer.getName() + " &f" + value);
-		}
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 		return messages;
 	}
 
