@@ -14,7 +14,7 @@ import java.util.List;
 public class InvincibleCommand extends PKCommand {
 
 	public InvincibleCommand() {
-		super("invincible", "/bending invincible", ConfigManager.languageConfig.get().getString("Commands.Invincible.Description"), new String[] { "invincible", "inv" });
+		super("invincible", "/bending invincible", ConfigManager.languageConfig.get().getString("Commands.Invincible.Description"), new String[] { "invincible", "inv", "i" });
 
 	}
 

@@ -312,6 +312,8 @@ public class BendingPlayer {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
+		} else if (player.getGameMode() == GameMode.SPECTATOR) {
+			return false;
 		}
 
 		return true;

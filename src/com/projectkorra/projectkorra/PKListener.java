@@ -53,6 +53,7 @@ import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -230,14 +231,15 @@ public class PKListener implements Listener {
 			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			event.setCancelled(true);
-		} else if (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) {
+		} else if (Illumination.isIlluminationTorch(block)) {
 			event.setCancelled(true);
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
 			event.setCancelled(true);
-		} else if (EarthAbility.getMovedEarth().containsKey(block)) {
+		}  else if (EarthAbility.getMovedEarth().containsKey(block)) {
 			EarthAbility.removeRevertIndex(block);
 		} else if (TempBlock.isTempBlock(block)) {
+			event.setCancelled(true);
 			TempBlock.revertBlock(block, Material.AIR);
 		} else if (DensityShift.isPassiveSand(block)) {
 			DensityShift.revertSand(block);
@@ -259,7 +261,7 @@ public class PKListener implements Listener {
 			}
 
 			if (!event.isCancelled()) {
-				if (TempBlock.isTempBlock(toblock) && Illumination.getBlocks().containsKey(TempBlock.get(toblock))) {
+				if (Illumination.isIlluminationTorch(toblock)) {
 					toblock.setType(Material.AIR);
 				}
 			}
@@ -311,7 +313,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		event.setCancelled(TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block)));
+		event.setCancelled(Illumination.isIlluminationTorch(block));
 		if (!event.isCancelled()) {
 			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
 		}
@@ -341,7 +343,7 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
 
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.isIlluminationTorch(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 			event.setCancelled(true);
 		}
 
@@ -729,6 +731,16 @@ public class PKListener implements Listener {
 					BENDING_PLAYER_DEATH.remove(player);
 				}
 			}.runTaskLater(ProjectKorra.plugin, 20);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+		Block block = event.getBlockClicked().getRelative(event.getBlockFace());
+		
+		if (Illumination.isIlluminationTorch(block)) {
+			Player player = Illumination.getBlocks().get(TempBlock.get(block));
+			CoreAbility.getAbility(player, Illumination.class).remove();
 		}
 	}
 
