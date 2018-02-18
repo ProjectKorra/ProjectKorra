@@ -130,7 +130,7 @@ permissions:
       bending.ability.Extraction: true
       bending.ability.MetalClips: true
       bending.earth.passive: true
-      bending.earth.metalbending: false
+      bending.earth.metalbending: true
       bending.earth.lavabending: true
       bending.earth.sandbending: true
       bending.ability.LavaSurge: true

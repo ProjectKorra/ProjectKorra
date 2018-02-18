@@ -60,7 +60,7 @@ public class Extraction extends MetalAbility {
 						type = Material.NETHERRACK;
 						break;
 					default:
-						break;
+						return;
 				}
 
 				if (type != null) {
