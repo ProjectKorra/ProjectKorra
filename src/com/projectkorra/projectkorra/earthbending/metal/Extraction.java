@@ -37,11 +37,10 @@ public class Extraction extends MetalAbility {
 		if (originBlock == null) {
 			return;
 		}
-		
-		Material material = originBlock.getType();
-		
+
 		if (!GeneralMethods.isRegionProtectedFromBuild(this, originBlock.getLocation())) {
-			if (EarthAbility.isMetalbendable(player, material)) {
+			if (EarthAbility.isEarthbendable(player, "Extraction", originBlock)) {
+				Material material = originBlock.getType();
 				Material type = null;
 
 				switch (material) {

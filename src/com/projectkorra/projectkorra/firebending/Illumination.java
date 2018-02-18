@@ -190,12 +190,13 @@ public class Illumination extends FireAbility {
 	 * @param block The block being tested
 	 */
 	public static boolean isIlluminationTorch(Block block) {
-		for (TempBlock b : BLOCKS.keySet()) {
-			if (b.getBlock().equals(block)) {
-				return true;
-			}
+		TempBlock tempBlock = TempBlock.get(block);
+
+		if (tempBlock == null || block.getType() != Material.TORCH || !BLOCKS.containsKey(tempBlock)) {
+			return false;
 		}
-		return false;
+
+		return true;
 	}
 
 	public void setCooldown(long cooldown) {

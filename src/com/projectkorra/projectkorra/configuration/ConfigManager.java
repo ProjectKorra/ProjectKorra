@@ -83,7 +83,6 @@ public class ConfigManager {
 
 			config.addDefault("Commands.NoPermission", "You do not have permission to do that.");
 			config.addDefault("Commands.MustBePlayer", "You must be a player to perform this action.");
-			config.addDefault("Commands.GeneralHelpLines", helpLines);
 
 			config.addDefault("Commands.Who.Description", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.");
 			config.addDefault("Commands.Who.NoPlayersOnline", "There is no one online.");
@@ -158,13 +157,6 @@ public class ConfigManager {
 			config.addDefault("Commands.Invincible.Description", "This command will make you immune to all bending damage. Once you use this command, you will stay invincible until you log off or use this command again.");
 			config.addDefault("Commands.Invincible.ToggledOn", "You are now invincible to all bending damage and effects. Use this command again to disable this.");
 			config.addDefault("Commands.Invincible.ToggledOff", "You are no longer invincible to all bending damage and effects.");
-
-			config.addDefault("Commands.Import.Description", "This command will import your old bendingPlayers.yml from the Bending plugin. It will generate a convert.yml file to convert the data to be used with this plugin. You can delete the file once the complete message is displayed. This command should only be used ONCE.");
-			config.addDefault("Commands.Import.Disabled", "Import has been disabled in the config!");
-			config.addDefault("Commands.Import.PreparingData", "Preparing Data for import.");
-			config.addDefault("Commands.Import.ImportStarted", "Import of data started. Do NOT stop / reload your server.");
-			config.addDefault("Commands.Import.DebugWarning", "Console will print out all of the players that are imported if debug mode is enabled as they import.");
-			config.addDefault("Commands.Import.DataQueuedUp", "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
 
 			config.addDefault("Commands.Help.Description", "This command provides information on how to use other commands in ProjectKorra.");
 			config.addDefault("Commands.Help.Required", "Required");
@@ -439,13 +431,10 @@ public class ConfigManager {
 			earthBlocks.add("GRAVEL");
 			earthBlocks.add("CLAY");
 			earthBlocks.add("COAL_ORE");
-			earthBlocks.add("IRON_ORE");
-			earthBlocks.add("GOLD_ORE");
 			earthBlocks.add("REDSTONE_ORE");
 			earthBlocks.add("LAPIS_ORE");
 			earthBlocks.add("DIAMOND_ORE");
 			earthBlocks.add("NETHERRACK");
-			earthBlocks.add("QUARTZ_ORE");
 			earthBlocks.add("COBBLESTONE");
 			earthBlocks.add("STEP");
 			earthBlocks.add("GRASS_PATH");
@@ -495,7 +484,6 @@ public class ConfigManager {
 			snowBlocks.add("SNOW");
 
 			config.addDefault("Properties.BendingPreview", true);
-			config.addDefault("Properties.ImportEnabled", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
 			config.addDefault("Properties.BendingAffectFallingSand.TNT", true);

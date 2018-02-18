@@ -1,18 +1,17 @@
 package com.projectkorra.projectkorra.command;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class Commands {
 
@@ -53,14 +52,13 @@ public class Commands {
 	/*
 	 * Passive Aliases
 	 */
-
 	public static String[] passivealiases = { "airpassive", "ap", "airpassives", "airbendingpassives", "chipassive", "cp", "chipassives", "chiblockingpassives", "chiblockerpassives", "earthpassive", "ep", "earthpassives", "earthbendingpassives", "firepassive", "fp", "firepassives", "firebendingpassives", "waterpassive", "wp", "waterpassives", "waterbendingpassives" };
 
 	/*
 	 * Subelement Aliases
 	 */
-
 	public static String[] subelementaliases = { "flight", "fl", "spiritualprojection", "sp", "spiritual", "bloodbending", "bb", "healing", "heal", "icebending", "ice", "ib", "plantbending", "plant", "metalbending", "mb", "metal", "lavabending", "lb", "lava", "sandbending", "sb", "sand", "combustionbending", "combustion", "cb", "lightningbending", "lightning" };
+
 	//Air
 	public static String[] flightaliases = { "flight", "fl" };
 	public static String[] spiritualprojectionaliases = { "spiritualprojection", "sp", "spiritual" };
@@ -83,10 +81,12 @@ public class Commands {
 	//Miscellaneous
 	public static String[] commandaliases = { "b", "pk", "projectkorra", "bending", "mtla", "tla", "korra", "bend" };
 
-	private List<String> help;
-
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
+
+		/**
+		 * Set of all of the Classes which extend Command
+		 */
 		new AddCommand();
 		new BindCommand();
 		new CheckCommand();
@@ -96,7 +96,6 @@ public class Commands {
 		new DebugCommand();
 		new DisplayCommand();
 		new HelpCommand();
-		new ImportCommand();
 		new InvincibleCommand();
 		new PermaremoveCommand();
 		new PresetCommand();
@@ -107,36 +106,25 @@ public class Commands {
 		new VersionCommand();
 		new WhoCommand();
 
-		help = ConfigManager.languageConfig.get().getStringList("Commands.GeneralHelpLines");
-
-		/**
-		 * Set of all of the Classes which extend Command
-		 */
-
-		CommandExecutor exe;
-
-		exe = new CommandExecutor() {
+		CommandExecutor exe = new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
+				if (Arrays.asList(commandaliases).contains(label.toLowerCase())) {
+					if (args.length > 0) {
+						List<String> sendingArgs = Arrays.asList(args).subList(1, args.length);
+						for (PKCommand command : PKCommand.instances.values()) {
+							if (Arrays.asList(command.getAliases()).contains(args[0].toLowerCase())) {
+								command.execute(s, sendingArgs);
+								return true;
+							}
+						}
+					}
 
-				if (args.length == 0 && Arrays.asList(commandaliases).contains(label.toLowerCase())) {
-					for (String line : help)
-						s.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
+					PKCommand.instances.get("help").execute(s, new ArrayList<String>());
 					return true;
 				}
 
-				List<String> sendingArgs = Arrays.asList(args).subList(1, args.length);
-				for (PKCommand command : PKCommand.instances.values()) {
-					if (Arrays.asList(command.getAliases()).contains(args[0].toLowerCase())) {
-						command.execute(s, sendingArgs);
-						return true;
-					}
-				}
-
-				for (String line : help)
-					s.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
-
-				return true;
+				return false;
 			}
 		};
 		projectkorra.setExecutor(exe);
