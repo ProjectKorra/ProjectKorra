@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 public class FastSwim extends WaterAbility implements PassiveAbility {
 	private long cooldown;
 	private double swimSpeed;
+	private long duration;
 
 	public FastSwim(Player player) {
 		super(player);
@@ -23,6 +24,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
 		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
+		this.duration = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Duration");
 	}
 
 	@Override
@@ -34,6 +36,10 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		
 		if (bPlayer.getBoundAbility() == null || (bPlayer.getBoundAbility() != null && !bPlayer.getBoundAbility().isSneakAbility())) {
 			if (player.isSneaking() && WaterAbility.isWater(player.getLocation().getBlock()) && !bPlayer.isOnCooldown(this)) {
+				if(duration != 0 && System.currentTimeMillis() > getStartTime() + duration) {
+					bPlayer.addCooldown(this);
+					return;
+				}
 				player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimSpeed));	
 			} else if (!player.isSneaking()) {
 				bPlayer.addCooldown(this);

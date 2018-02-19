@@ -68,7 +68,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.grappled = false;
 		this.grabbed = false;
 		this.grappleRespectRegions = getConfig().getBoolean("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions");
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
 		this.whipLength = getConfig().getInt("Abilities.Water.WaterArms.Whip.MaxLength");
 		this.whipLengthWeak = getConfig().getInt("Abilities.Water.WaterArms.Whip.MaxLengthWeak");
 		this.whipLengthNight = getConfig().getInt("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal");
@@ -80,10 +80,32 @@ public class WaterArmsWhip extends WaterAbility {
 		this.activeLength = initLength;
 		this.whipSpeed = 2;
 		this.holdTime = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.HoldTime");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
 		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
 
+		switch (ability) {
+
+		case PULL:
+
+			getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Pull");
+			break;
+		case PUNCH:
+
+			getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Punch");
+			break;
+		case GRAPPLE:
+
+			getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grapple");
+			break;
+		case GRAB:
+
+			this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grab");
+			break;
+		default:
+			
+			this.usageCooldown = 200;
+
+		}
 		WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
 		if (waw != null) {
 			if (waw.grabbed) {

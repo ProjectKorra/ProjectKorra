@@ -22,9 +22,11 @@ public class FireShield extends FireAbility {
 
 	private boolean shield;
 	private boolean ignite;
-	private long duration;
+	private long discDuration;
+	private long shieldDuration;
 	private long interval;
-	private long cooldown;
+	private long discCooldown;
+	private long shieldCooldown;
 	private double radius;
 	private double discRadius;
 	private double fireTicks;
@@ -41,10 +43,12 @@ public class FireShield extends FireAbility {
 
 		this.shield = shield;
 		this.ignite = true;
-		this.cooldown = shield ? 0 : getConfig().getLong("Abilities.Fire.FireShield.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Fire.FireShield.Duration");
-		this.radius = getConfig().getDouble("Abilities.Fire.FireShield.Radius");
-		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
+		this.discCooldown = getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown");
+		this.discDuration = getConfig().getLong("Abilities.Fire.FireShield.Disc.Duration");
+		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius");
+		this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown");
+		this.shieldDuration = getConfig().getLong("Abilities.Fire.FireShield.Shield.Duration");
+		this.radius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireShield.FireTicks");
 		this.random = new Random();
 
@@ -90,10 +94,10 @@ public class FireShield extends FireAbility {
 		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
 			return;
-		} else if (!player.isSneaking() && shield) {
+		} else if ((!player.isSneaking() && shield) || (System.currentTimeMillis() > getStartTime() + shieldDuration && shield)) {
 			remove();
 			return;
-		} else if (System.currentTimeMillis() > getStartTime() + duration && !shield) {
+		} else if (System.currentTimeMillis() > getStartTime() + discDuration && !shield) {
 			remove();
 			return;
 		}
@@ -188,7 +192,7 @@ public class FireShield extends FireAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return shield ? shieldCooldown : discCooldown;
 	}
 
 	@Override
@@ -223,11 +227,15 @@ public class FireShield extends FireAbility {
 	}
 
 	public long getDuration() {
-		return duration;
+		return shield ? shieldDuration : discDuration;
 	}
 
-	public void setDuration(long duration) {
-		this.duration = duration;
+	public void setDiscDuration(long duration) {
+		this.discDuration = duration;
+	}
+
+	public void setShieldDuration(long duration) {
+		this.shieldDuration = duration;
 	}
 
 	public long getInterval() {
@@ -262,8 +270,12 @@ public class FireShield extends FireAbility {
 		this.fireTicks = fireTicks;
 	}
 
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
+	public void setDiscCooldown(long cooldown) {
+		this.discCooldown = cooldown;
+	}
+	
+	public void setShieldCooldown(long cooldown) {
+		this.shieldCooldown = cooldown;
 	}
 
 }

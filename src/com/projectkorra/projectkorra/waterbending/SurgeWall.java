@@ -39,6 +39,7 @@ public class SurgeWall extends WaterAbility {
 	private long time;
 	private long interval;
 	private long cooldown;
+	private long duration;
 	private double radius;
 	private double range;
 	private Block sourceBlock;
@@ -55,6 +56,7 @@ public class SurgeWall extends WaterAbility {
 
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
 		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Water.Surge.Wall.Duration");
 		this.range = getConfig().getDouble(RANGE_CONFIG);
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 		this.locations = new ArrayList<>();
@@ -213,6 +215,10 @@ public class SurgeWall extends WaterAbility {
 	@Override
 	public void progress() {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			remove();
+			return;
+		} else if (duration != 0 && System.currentTimeMillis() > getStartTime() + duration) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}

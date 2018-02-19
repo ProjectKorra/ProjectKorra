@@ -25,6 +25,7 @@ public class AirScooter extends AirAbility {
 	private double radius;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	private long duration;
 	private double maxHeightFromGround;
 	private Block floorblock;
 	private Random random;
@@ -50,6 +51,7 @@ public class AirScooter extends AirAbility {
 		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");
 		this.radius = getConfig().getDouble("Abilities.Air.AirScooter.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Air.AirScooter.Duration");
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
@@ -102,6 +104,10 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void progress() {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			remove();
+			return;
+		} else if (duration != 0 && System.currentTimeMillis() > getStartTime() + duration) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
