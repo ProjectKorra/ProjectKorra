@@ -127,6 +127,7 @@ import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TimeUtil;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -610,6 +611,10 @@ public class GeneralMethods {
 	}
 
 	public static void displayMovePreview(Player player, int slot) {
+		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+			return;
+		}
+		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -619,7 +624,8 @@ public class GeneralMethods {
 
 		if (ability != null && bPlayer != null) {
 			if (bPlayer.isOnCooldown(ability)) {
-				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
+				long cooldown = bPlayer.getCooldown(ability.getName()) - System.currentTimeMillis();
+				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName() + "" + ability.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
 			} else {
 				if (bPlayer.getStance() instanceof AcrobatStance && ability.getName().equals("AcrobatStance") || bPlayer.getStance() instanceof WarriorStance && ability.getName().equals("WarriorStance")) {
 					displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();

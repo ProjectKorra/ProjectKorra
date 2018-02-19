@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
-public class EarthDome extends EarthAbility{
+public class EarthDome extends EarthAbility {
 	
 	public Location center;
 	public double radius;

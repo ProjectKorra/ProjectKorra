@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -165,7 +166,9 @@ public class AirSwipe extends AirAbility {
 							elements.remove(direction);
 						}
 						if (isLava(block)) {
-							if (block.getData() == 0x0) {
+							if (LavaFlow.isLavaFlowBlock(block)) {
+								LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
+							} else if (block.getData() == 0x0) {
 								new TempBlock(block, Material.OBSIDIAN, (byte) 0);
 							} else {
 								new TempBlock(block, Material.COBBLESTONE, (byte)0);

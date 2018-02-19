@@ -13,16 +13,19 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FlightAbility;
 import com.projectkorra.projectkorra.ability.MultiAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfoSub;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FlightMultiAbility extends FlightAbility implements MultiAbility{
@@ -139,8 +142,17 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 				requestTime.remove(player.getUniqueId());
 				player.sendMessage(ChatColor.RED + "Requested player no longer found, cancelling request!");
 			} else {
-				if (requestTime.get(player.getUniqueId()) + 20000 > System.currentTimeMillis()) {
-					ActionBar.sendActionBar(ChatColor.WHITE + player.getName() + ChatColor.GREEN + " has requested to carry you, right-click them to accept!", p2);
+				if (requestTime.get(player.getUniqueId()) + 15000 > System.currentTimeMillis()) {
+					long start = System.currentTimeMillis();
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							ActionBar.sendActionBar(ChatColor.WHITE + player.getName() + ChatColor.GREEN + " has requested to carry you, right-click them to accept!", p2);
+							if (System.currentTimeMillis() >= start + 300) {
+								cancel();
+							}
+						}
+					}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 				} else {
 					requestedMap.remove(player.getUniqueId());
 					requestTime.remove(player.getUniqueId());
@@ -151,11 +163,9 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 		switch (player.getInventory().getHeldItemSlot()) {
 		case 0:
 			mode = FlightMode.SOAR;
-			ActionBar.sendActionBar(ChatColor.AQUA + "Flight speed: " + speed(), player);
 			break;
 		case 1:
 			mode = FlightMode.GLIDE;
-			ActionBar.sendActionBar(ChatColor.AQUA + "Flight speed: " + speed(), player);
 			checkMultiplier();
 			break;
 		case 2:
@@ -302,10 +312,33 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 		} else if (speed >= 0) {
 			multiplier = baseSpeed;
 		}
+
+		long start = System.currentTimeMillis();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				ActionBar.sendActionBar(ChatColor.AQUA + "Flight speed: " + speed(), player);
+				if (System.currentTimeMillis() >= start + 1000) {
+					cancel();
+				}
+			}
+		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 	}
 	
 	public void cancel(String reason) {
-		ActionBar.sendActionBar(ChatColor.RED + "FLIGHT CANCELLED BY: " + reason, player);
+		if (!MovementHandler.isStopped(player) && !bPlayer.isChiBlocked()) {
+			long start = System.currentTimeMillis();
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					ActionBar.sendActionBar(ChatColor.RED + "* Flight cancelled due to " + reason + " *", player);
+					if (System.currentTimeMillis() >= start + 1000) {
+						cancel();
+					}
+				}
+			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+		}
+
 		remove();
 	}
 	

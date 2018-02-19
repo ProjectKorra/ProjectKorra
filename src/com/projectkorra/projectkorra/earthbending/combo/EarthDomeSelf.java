@@ -11,7 +11,7 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class EarthDomeSelf extends EarthAbility implements ComboAbility{
+public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 
 	public EarthDomeSelf(Player player) {
 		super(player);

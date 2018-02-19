@@ -235,7 +235,9 @@ public class PKListener implements Listener {
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
 			event.setCancelled(true);
-		}  else if (EarthAbility.getMovedEarth().containsKey(block)) {
+		}  else if (LavaFlow.isLavaFlowBlock(block)) {
+			LavaFlow.removeBlock(block);
+		} else if (EarthAbility.getMovedEarth().containsKey(block)) {
 			EarthAbility.removeRevertIndex(block);
 		} else if (TempBlock.isTempBlock(block)) {
 			event.setCancelled(true);
@@ -794,7 +796,7 @@ public class PKListener implements Listener {
 
 			if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 				FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
-				fma.cancel("damage potential");
+				fma.cancel("taking damage");
 			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
@@ -1239,6 +1241,8 @@ public class PKListener implements Listener {
 
 		ProjectKorra.statistics.store(player.getUniqueId());
 		if (bPlayer != null) {
+			bPlayer.saveCooldowns();
+
 			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
 				TOGGLED_OUT.remove(player.getUniqueId());
 			}
@@ -1461,11 +1465,7 @@ public class PKListener implements Listener {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		int slot = event.getNewSlot() + 1;
 
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
-			if (bPlayer != null && bPlayer.getAbilities() != null) {
-				GeneralMethods.displayMovePreview(player, slot);
-			}
-		} else {
+		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
 			WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 			if (waterArms != null) {
 				waterArms.displayBoundMsg(event.getNewSlot() + 1);
