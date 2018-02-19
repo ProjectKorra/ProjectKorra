@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
@@ -59,7 +58,7 @@ public class EarthDome extends EarthAbility{
 	}
 	
 	private Block getAppropriateBlock(Block block) {
-		if (!GeneralMethods.isSolid(block.getRelative(BlockFace.UP))) {
+		if (!GeneralMethods.isSolid(block.getRelative(BlockFace.UP)) && GeneralMethods.isSolid(block)) {
 			return block;
 		}
 		Block top = GeneralMethods.getTopBlock(block.getLocation(), 2);
@@ -73,8 +72,8 @@ public class EarthDome extends EarthAbility{
 	    List<Location> result = new ArrayList<>();
 	    interval = Math.toRadians(Math.abs(interval));
 	    for (double theta = 0; theta < 2 * Math.PI; theta += interval) {
-	        double x = Math.cos(theta) * (radius+0.1);
-	        double z = Math.sin(theta) * (radius+0.1);
+	        double x = Math.cos(theta) * (radius+(Math.random()/3.1));
+	        double z = Math.sin(theta) * (radius+(Math.random()/3.1));
 	        result.add(center.clone().add(x, 0, z));
 	    }
 	    return result;
