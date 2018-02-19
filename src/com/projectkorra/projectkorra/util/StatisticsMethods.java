@@ -1,15 +1,10 @@
 package com.projectkorra.projectkorra.util;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.UUID;
-
-import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.storage.DBConnection;
 
 public class StatisticsMethods {
 
@@ -69,11 +64,7 @@ public class StatisticsMethods {
 			CoreAbility ability = CoreAbility.getAbility(abilName);
 			if (ability == null) {
 				continue;
-			} else if (!ability.getElement().equals(element)) {
-				continue;
-			}
-			// If the ID for this statistic and ability do not equal statId, then it must be a different statistic type
-			else if (getId(statistic.getStatisticName(ability)) != statId) {
+			} else if (ability.getElement() != element) {
 				continue;
 			}
 			long value = getStatisticAbility(uuid, ability, statistic);
@@ -99,10 +90,6 @@ public class StatisticsMethods {
 			String abilName = getAbilityName(statId);
 			CoreAbility ability = CoreAbility.getAbility(abilName);
 			if (ability == null) {
-				continue;
-			}
-			// If the ID for this statistic and ability do not equal statId, then it must be a different statistic type
-			else if (getId(statistic.getStatisticName(ability)) != statId) {
 				continue;
 			}
 			long value = getStatisticAbility(uuid, ability, statistic);
@@ -151,18 +138,6 @@ public class StatisticsMethods {
 	 *         return -1.
 	 */
 	public static int getId(String statName) {
-		if (!ProjectKorra.statistics.getKeysByName().containsKey(statName)) {
-			DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'")) {
-				if (rs.next()) {
-					ProjectKorra.statistics.getKeysByName().put(rs.getString("statName"), rs.getInt("id"));
-					ProjectKorra.statistics.getKeysById().put(rs.getInt("id"), rs.getString("statName"));
-				}
-			}
-			catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
 		return ProjectKorra.statistics.getKeysByName().containsKey(statName) ? ProjectKorra.statistics.getKeysByName().get(statName) : -1;
 	}
 

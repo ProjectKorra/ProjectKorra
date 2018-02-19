@@ -3,13 +3,11 @@ package com.projectkorra.projectkorra.util;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -37,11 +35,6 @@ public class StatisticsManager implements Runnable {
 	 * HashMap which contains all statistic IDs by name.
 	 */
 	private final Map<Integer, String> KEYS_BY_ID = new HashMap<>();
-	/**
-	 * HashMap which contains all UUIDs of players who have recently logged out
-	 * to have their stats saved.
-	 */
-	private final Set<UUID> STORAGE = new HashSet<>();
 	private final int INTERVAL = 5;
 
 	public StatisticsManager() {
@@ -180,11 +173,9 @@ public class StatisticsManager implements Runnable {
 		// If the player is offline, create a new temporary Map from the database
 		if (!STATISTICS.containsKey(uuid)) {
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = '" + uuid.toString() + "'")) {
-				while (rs.next()) {
-					int statId = rs.getInt("statId");
-					long statValue = rs.getLong("statValue");
-					map.put(statId, statValue);
-				}
+				int statId = rs.getInt("statId");
+				long statValue = rs.getLong("statValue");
+				map.put(statId, statValue);
 			}
 			catch (SQLException e) {
 				e.printStackTrace();
@@ -194,20 +185,14 @@ public class StatisticsManager implements Runnable {
 		return STATISTICS.get(uuid);
 	}
 
-	public void store(UUID uuid) {
-		STORAGE.add(uuid);
-	}
-
 	@Override
 	public void run() {
-		for (UUID uuid : STORAGE) {
-			// Confirm that the player is offline
-			Player player = ProjectKorra.plugin.getServer().getPlayer(uuid);
-			if (player == null) {
-				save(uuid, true);
+		for (UUID uuid : STATISTICS.keySet()) {
+			OfflinePlayer oPlayer = ProjectKorra.plugin.getServer().getOfflinePlayer(uuid);
+			if (!oPlayer.isOnline()) {
+				save(oPlayer.getUniqueId(), true);
 			}
 		}
-		STORAGE.clear();
 	}
 
 	public Map<String, Integer> getKeysByName() {

@@ -1,13 +1,10 @@
 package com.projectkorra.projectkorra.airbending.flight;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -27,9 +24,6 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 	
-	public static Map<UUID, UUID> requestedMap = new HashMap<>();
-	public static Map<UUID, Long> requestTime = new HashMap<>();
-	
 	private static Set<UUID> flying = new HashSet<>();
 	private boolean canFly, hadFly, hadGlide;
 	
@@ -39,15 +33,11 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 	
 	public double speed = 1, baseSpeed, slowSpeed, fastSpeed, multiplier;
 	public FlightMode mode = FlightMode.SOAR;
-	public long prevCheck = 0, duration;
+	public long prevCheck = 0;
 	public Vector prevDir;
 
 	public FlightMultiAbility(Player player) {
 		super(player);
-		
-		if (bPlayer.isOnCooldown(this)) {
-			return;
-		}
 		
 		FlightMultiAbility f = getAbility(player, FlightMultiAbility.class);
 		if (f != null) {
@@ -85,7 +75,6 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 		hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		prevDir = player.getEyeLocation().getDirection().clone();
-		duration = getConfig().getLong("Abilities.Air.Flight.Duration");
 		baseSpeed = getConfig().getDouble("Abilities.Air.Flight.BaseSpeed");
 		slowSpeed = baseSpeed/2;
 		fastSpeed = baseSpeed*2;
@@ -125,29 +114,6 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			return;
 		}
 		
-		if (duration > 0) {
-			if (System.currentTimeMillis() >= duration + getStartTime()) {
-				remove();
-				return;
-			}
-		}
-		
-		if (requestedMap.containsKey(player.getUniqueId())) {
-			Player p2 = Bukkit.getPlayer(requestedMap.get(player.getUniqueId()));
-			if (p2 == null) {
-				requestedMap.remove(player.getUniqueId());
-				requestTime.remove(player.getUniqueId());
-				player.sendMessage(ChatColor.RED + "Requested player no longer found, cancelling request!");
-			} else {
-				if (requestTime.get(player.getUniqueId()) + 20000 > System.currentTimeMillis()) {
-					ActionBar.sendActionBar(ChatColor.WHITE + player.getName() + ChatColor.GREEN + " has requested to carry you, right-click them to accept!", p2);
-				} else {
-					requestedMap.remove(player.getUniqueId());
-					requestTime.remove(player.getUniqueId());
-				}
-			}
-		}
-		
 		switch (player.getInventory().getHeldItemSlot()) {
 		case 0:
 			mode = FlightMode.SOAR;
@@ -176,6 +142,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			if (speed > baseSpeed) {
 				if (prevDir.angle(player.getEyeLocation().getDirection()) > 45 || prevDir.angle(player.getEyeLocation().getDirection()) < -45) {
 					multiplier = 1;
+					ActionBar.sendActionBar(ChatColor.AQUA + "Flight Speed: " + ChatColor.GREEN + "NORMAL", player);
 				}
 				
 				prevDir = player.getEyeLocation().getDirection().clone();
@@ -183,7 +150,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			
 			particles();
 			
-			if (speed > baseSpeed) {
+			if (speed >= baseSpeed) {
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), speed)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId() && !player.getPassengers().contains(e)) {
 						LivingEntity le = (LivingEntity) e;
@@ -246,30 +213,6 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 		}
 	}
 	
-	public void requestCarry(Player p2) {
-		if (mode != FlightMode.LEVITATE) {
-			player.sendMessage(ChatColor.RED + "Can only request to carry when levitating!");
-			return;
-		}
-		if (!player.getPassengers().isEmpty()) {
-			player.sendMessage(ChatColor.RED + "You already have a passenger!");
-			return;
-		}
-		if (flying.contains(p2.getUniqueId())) {
-			player.sendMessage(ChatColor.RED + "Cannot request to carry an already flying player!");
-			return;
-		}
-		if (requestedMap.containsKey(player.getUniqueId())) {
-			if (requestedMap.get(player.getUniqueId()).equals(p2.getUniqueId())) {
-				player.sendMessage(ChatColor.RED + "Already requested to carry that player!");
-				return;
-			}
-		}
-		requestedMap.put(player.getUniqueId(), p2.getUniqueId());
-		requestTime.put(player.getUniqueId(), System.currentTimeMillis());
-		player.sendMessage(ChatColor.GREEN + "Requested to carry " + ChatColor.WHITE + p2.getName());
-	}
-	
 	@Override
 	public void remove() {
 		super.remove();
@@ -311,22 +254,5 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 	
 	public static Set<UUID> getFlyingPlayers() {
 		return flying;
-	}
-	
-	public static void acceptCarryRequest(Player requested, Player requester) {
-		if (!requestedCarry(requested, requester)) {
-			return;
-		}
-		requester.sendMessage(ChatColor.WHITE + requested.getName() + ChatColor.GREEN + " has accepted your carry request!");
-		requestedMap.remove(requester.getUniqueId());
-		requestTime.remove(requester.getUniqueId());
-		requester.addPassenger(requested);
-	}
-	
-	public static boolean requestedCarry(Player requested, Player requester) {
-		if (requestedMap.containsKey(requester.getUniqueId())) {
-			return requestedMap.get(requester.getUniqueId()).equals(requested.getUniqueId());
-		}
-		return false;
 	}
 }

@@ -149,7 +149,6 @@ public class OctopusForm extends WaterAbility {
 				block.setType(Material.WATER);
 				block.setData(FULL);
 				OctopusForm form = new OctopusForm(player);
-				form.setSourceBlock(block);
 				form.form();
 
 				if (form.formed || form.forming || form.settingUp) {

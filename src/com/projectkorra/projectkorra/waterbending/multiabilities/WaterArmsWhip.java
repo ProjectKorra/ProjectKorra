@@ -376,7 +376,7 @@ public class WaterArmsWhip extends WaterAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && grappleRespectRegions) {
 				return;
 			}
-
+			
 			Vector vector = player.getLocation().toVector().subtract(location.toVector());
 			if (!GeneralMethods.isSolid(location.clone().add(vector).multiply(1).getBlock())) {
 				return;
@@ -411,7 +411,7 @@ public class WaterArmsWhip extends WaterAbility {
 			if (hasDamaged) {
 				waterArms.setMaxPunches(waterArms.getMaxPunches() - 1);
 			}
-
+			
 			waterArms.setMaxUses(waterArms.getMaxUses() - 1);
 		}
 	}
