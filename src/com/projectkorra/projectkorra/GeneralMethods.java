@@ -611,6 +611,10 @@ public class GeneralMethods {
 	}
 
 	public static void displayMovePreview(Player player, int slot) {
+		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+			return;
+		}
+		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;

@@ -1459,24 +1459,20 @@ public class PKListener implements Listener {
 		}
 	}
 
-//	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-//	public void onPlayerSlotChange(PlayerItemHeldEvent event) {
-//		Player player = event.getPlayer();
-//		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-//		int slot = event.getNewSlot() + 1;
-//
-//		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
-//			if (bPlayer != null && bPlayer.getAbilities() != null) {
-//				GeneralMethods.displayMovePreview(player, slot);
-//			}
-//		} else {
-//			WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
-//			if (waterArms != null) {
-//				waterArms.displayBoundMsg(event.getNewSlot() + 1);
-//				return;
-//			}
-//		}
-//	}
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerSlotChange(PlayerItemHeldEvent event) {
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		int slot = event.getNewSlot() + 1;
+
+		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+			WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
+			if (waterArms != null) {
+				waterArms.displayBoundMsg(event.getNewSlot() + 1);
+				return;
+			}
+		}
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSwapItems(PlayerSwapHandItemsEvent event) {
