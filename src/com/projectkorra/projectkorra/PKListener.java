@@ -156,7 +156,6 @@ import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -196,7 +195,7 @@ public class PKListener implements Listener {
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
@@ -466,7 +465,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			FireDamageTimer.dealFlameDamage(entity);
 		}
-		
+
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			event.setDamage(DamageModifier.ARMOR, 0);
 		}
@@ -477,7 +476,7 @@ public class PKListener implements Listener {
 			if (bPlayer == null) {
 				return;
 			}
-			
+
 			if (CoreAbility.hasAbility(player, EarthGrab.class)) {
 				EarthGrab abil = CoreAbility.getAbility(player, EarthGrab.class);
 				abil.remove();
@@ -511,7 +510,7 @@ public class PKListener implements Listener {
 
 			armor.revert();
 		}
-		
+
 		LivingEntity entity = event.getEntity();
 		if (entity.hasMetadata("earthgrab:trap")) {
 			event.getDrops().clear();
@@ -794,7 +793,7 @@ public class PKListener implements Listener {
 			} else if (bPlayer.isChiBlocked()) {
 				return;
 			}
-			
+
 			if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 				FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
 				fma.cancel("damage potential");
@@ -1039,14 +1038,14 @@ public class PKListener implements Listener {
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
 		}
-		
+
 		if (event.getRightClicked().hasMetadata("earthgrab:trap")) {
 			EarthGrab eg = (EarthGrab) event.getRightClicked().getMetadata("earthgrab:trap").get(0).value();
 			eg.damageTrap();
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (event.getRightClicked().hasMetadata("temparmorstand")) {
 			event.setCancelled(true);
 			return;
@@ -1065,13 +1064,23 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
-		
-		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
-			if (!FlightMultiAbility.getFlyingPlayers().contains(event.getRightClicked().getUniqueId())) {
-				if (event.getRightClicked() instanceof Player) {
-					Player target = (Player) event.getRightClicked();
-					ActionBar.sendActionBar(ChatColor.AQUA + "You have been picked up by " + ChatColor.WHITE + event.getPlayer().getName(), target);
-					event.getPlayer().addPassenger(event.getRightClicked());
+		if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
+			if (event.getRightClicked() instanceof Player) {
+				Player target = (Player) event.getRightClicked();
+				if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+					FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
+					fma.requestCarry(target);
+					final UUID uuid = player.getUniqueId();
+					RIGHT_CLICK_INTERACT.add(uuid);
+
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							RIGHT_CLICK_INTERACT.remove(uuid);
+						}
+					}.runTaskLater(plugin, 5);
+				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
+					FlightMultiAbility.acceptCarryRequest(player, target);
 				}
 			}
 		}
@@ -1230,9 +1239,10 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
+		ProjectKorra.statistics.store(player.getUniqueId());
 		if (bPlayer != null) {
 			bPlayer.saveCooldowns();
-			
+
 			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
 				TOGGLED_OUT.remove(player.getUniqueId());
 			}
@@ -1707,7 +1717,7 @@ public class PKListener implements Listener {
 			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
 			return;
 		}
-		
+
 		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 			if (player.isFlying()) {
 				event.setCancelled(true);
@@ -1715,12 +1725,13 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerToggleGlide(EntityToggleGlideEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Player))
+			return;
 		Player player = (Player) event.getEntity();
-		
+
 		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 			if (player.isGliding()) {
 				event.setCancelled(true);

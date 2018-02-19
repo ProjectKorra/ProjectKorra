@@ -25,7 +25,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
@@ -113,7 +112,7 @@ public class AirBlast extends AirAbility {
 		this.location = location.clone();
 
 		setFields();
-		
+
 		this.affectedLevers = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 		//prevent the airburst related airblasts from triggering doors/levers/buttons
@@ -125,7 +124,7 @@ public class AirBlast extends AirAbility {
 			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
 			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
 		}
-		
+
 		this.pushFactor *= modifiedPushFactor;
 
 		start();
@@ -250,7 +249,7 @@ public class AirBlast extends AirAbility {
 
 			GeneralMethods.setVelocity(entity, velocity);
 			if (source != null) {
-				new HorizontalVelocityTracker(entity, player, 200l, CoreAbility.getAbility("AirBurst"));
+				new HorizontalVelocityTracker(entity, player, 200l, source);
 			} else {
 				new HorizontalVelocityTracker(entity, player, 200l, this);
 			}
@@ -266,7 +265,7 @@ public class AirBlast extends AirAbility {
 			breakBreathbendingHold(entity);
 
 			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
-				DamageHandler.damageEntity((LivingEntity) entity, damage, CoreAbility.getAbility("AirBurst"));
+				DamageHandler.damageEntity((LivingEntity) entity, damage, source);
 				affectedEntities.add(entity);
 			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
 				DamageHandler.damageEntity((LivingEntity) entity, damage, this);
@@ -331,7 +330,7 @@ public class AirBlast extends AirAbility {
 				if (!button.isPowered()) {
 					button.setPowered(!button.isPowered());
 					block.setData(button.getData());
-	
+
 					Block supportBlock = block.getRelative(button.getAttachedFace());
 					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 						BlockState initialSupportState = supportBlock.getState();
@@ -340,13 +339,13 @@ public class AirBlast extends AirAbility {
 						supportState.update(true, false);
 						initialSupportState.update(true);
 					}
-	
+
 					final Block btBlock = block;
 					new BukkitRunnable() {
 						public void run() {
 							button.setPowered(!button.isPowered());
 							btBlock.setData(button.getData());
-	
+
 							Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 								BlockState initialSupportState = supportBlock.getState();
@@ -357,7 +356,7 @@ public class AirBlast extends AirAbility {
 							}
 						}
 					}.runTaskLater(ProjectKorra.plugin, 10);
-	
+
 					affectedLevers.add(block);
 				}
 			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedLevers.contains(block) && canPressButtons) {
@@ -365,7 +364,7 @@ public class AirBlast extends AirAbility {
 				if (!button.isPowered()) {
 					button.setPowered(!button.isPowered());
 					block.setData(button.getData());
-	
+
 					Block supportBlock = block.getRelative(button.getAttachedFace());
 					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 						BlockState initialSupportState = supportBlock.getState();
@@ -374,14 +373,14 @@ public class AirBlast extends AirAbility {
 						supportState.update(true, false);
 						initialSupportState.update(true);
 					}
-	
+
 					final Block btBlock = block;
-	
+
 					new BukkitRunnable() {
 						public void run() {
 							button.setPowered(!button.isPowered());
 							btBlock.setData(button.getData());
-	
+
 							Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 								BlockState initialSupportState = supportBlock.getState();
@@ -392,7 +391,7 @@ public class AirBlast extends AirAbility {
 							}
 						}
 					}.runTaskLater(ProjectKorra.plugin, 15);
-	
+
 					affectedLevers.add(block);
 				}
 			}
@@ -404,7 +403,7 @@ public class AirBlast extends AirAbility {
 				} else if (block.getData() == 0x0) {
 					new TempBlock(block, Material.OBSIDIAN, (byte) 0);
 				} else {
-					new TempBlock(block, Material.COBBLESTONE, (byte)0);
+					new TempBlock(block, Material.COBBLESTONE, (byte) 0);
 				}
 			}
 			remove();
@@ -452,37 +451,42 @@ public class AirBlast extends AirAbility {
 		}
 		return removed;
 	}
-	
+
 	private void handleDoorMechanics(Block block) {
 		boolean tDoor = false;
 		boolean open = (block.getData() & 0x4) == 0x4;
-		
+
 		if (block.getType() != Material.TRAP_DOOR) {
 			Door door = (Door) block.getState().getData();
 			BlockFace face = door.getFacing();
 			Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), player.getLocation().getBlock().getLocation());
 			double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
-			
+
 			for (int i = 0; i < 3; i++) {
-				if (i == 1) continue;
+				if (i == 1)
+					continue;
 				BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
-				
+
 				if (bf == face) {
-					if (open) return;
+					if (open)
+						return;
 				} else if (bf.getOppositeFace() == face) {
-					if (!open) return;
+					if (!open)
+						return;
 				}
 			}
 		} else {
 			tDoor = true;
-			
+
 			if (origin.getY() < block.getY()) {
-				if (!open) return;
+				if (!open)
+					return;
 			} else {
-				if (open) return;
+				if (open)
+					return;
 			}
 		}
-		
+
 		block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
 		String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
 		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);

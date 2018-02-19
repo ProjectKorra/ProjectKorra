@@ -17,7 +17,6 @@ import java.util.UUID;
 public class AvatarState extends AvatarAbility {
 
 	private static final HashMap<String, Long> START_TIMES = new HashMap<>();
-	//private static final HashMap<UUID, Long> GLOBAL_COOLDOWNS = new HashMap<UUID, Long>();
 
 	private boolean regenEnabled;
 	private boolean speedEnabled;
@@ -43,9 +42,6 @@ public class AvatarState extends AvatarAbility {
 		} else if (bPlayer.isOnCooldown(this)) {
 			return;
 		} 
-//		else if (GLOBAL_COOLDOWNS.containsKey(player.getUniqueId())) {
-//			return;
-//		}
 
 		this.regenEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled");
 		this.speedEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled");
@@ -66,14 +62,7 @@ public class AvatarState extends AvatarAbility {
 		bPlayer.addCooldown(this, true);
 		if (duration != 0) {
 			START_TIMES.put(player.getName(), System.currentTimeMillis());
-			//GLOBAL_COOLDOWNS.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
 			final UUID id = player.getUniqueId();
-			//Bukkit.getScheduler().runTaskLaterAsynchronously(ProjectKorra.plugin, new Runnable() {
-			//	@Override
-			//	public void run() {
-			//		GLOBAL_COOLDOWNS.remove(id);
-			//	}
-			//}, cooldown / 50);
 		}
 	}
 
