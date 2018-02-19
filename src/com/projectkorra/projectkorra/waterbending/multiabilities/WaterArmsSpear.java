@@ -52,7 +52,7 @@ public class WaterArmsSpear extends WaterAbility {
 		super(player);
 		this.canFreeze = freeze;
 
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
 		this.spearDamageEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
 		this.spearLength = getConfig().getInt("Abilities.Water.WaterArms.Spear.Length");
 		this.spearRange = getConfig().getInt("Abilities.Water.WaterArms.Spear.Range");
@@ -64,7 +64,7 @@ public class WaterArmsSpear extends WaterAbility {
 		this.spearDuration = getConfig().getLong("Abilities.Water.WaterArms.Spear.Duration");
 		this.spearDurationNight = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
 		this.spearDurationFullMoon = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
+		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Spear");
 		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
 		this.spearLocations = new ArrayList<>();
 

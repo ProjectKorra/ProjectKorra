@@ -45,6 +45,7 @@ public class OctopusForm extends WaterAbility {
 	private long interval;
 	private long cooldown;
 	private double attackRange;
+	private long usageCooldown;
 	private double knockback;
 	private double radius;
 	private double startAngle;
@@ -89,6 +90,7 @@ public class OctopusForm extends WaterAbility {
 		this.damage = getConfig().getInt("Abilities.Water.OctopusForm.Damage");
 		this.interval = getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
 		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
+		this.usageCooldown = getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown");
 		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
 		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
@@ -173,9 +175,10 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void attack() {
-		if (!formed) {
+		if (!formed || bPlayer.isOnCooldown("OctopusAttack")) {
 			return;
 		}
+		bPlayer.addCooldown("OctopusAttack", usageCooldown);
 		double tentacleAngle = (new Vector(1, 0, 0)).angle(player.getEyeLocation().getDirection()) + angleIncrement / 2;
 
 		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += angleIncrement) {

@@ -21,6 +21,7 @@ public class AirBurst extends AirAbility {
 	private float playerFallDistance;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
+	private long cooldown;
 	private double fallThreshold;
 	@Attribute(Attribute.POWER)
 	private double pushFactor;
@@ -48,6 +49,7 @@ public class AirBurst extends AirAbility {
 		this.isCharged = false;
 		this.playerFallDistance = player.getFallDistance();
 		this.chargeTime = getConfig().getLong("Abilities.Air.AirBurst.ChargeTime");
+		this.cooldown = getConfig().getLong("Abilities.Air.AirBurst.Cooldown");
 		this.fallThreshold = getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold");
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBurst.PushFactor");
 		this.damage = getConfig().getDouble("Abilities.Air.AirBurst.Damage");
@@ -67,7 +69,7 @@ public class AirBurst extends AirAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
+		if (!bPlayer.canBend(this)) {
 			remove();
 			return;
 		}
@@ -75,6 +77,7 @@ public class AirBurst extends AirAbility {
 		if (isFallBurst) {
 			if (playerFallDistance >= fallThreshold) {
 				fallBurst();
+				bPlayer.addCooldown(this);
 			}
 			remove();
 			return;
@@ -86,6 +89,7 @@ public class AirBurst extends AirAbility {
 
 		if (!player.isSneaking()) {
 			if (isCharged) {
+				bPlayer.addCooldown(this);
 				sphereBurst();
 				remove();
 				return;
@@ -218,7 +222,7 @@ public class AirBurst extends AirAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override

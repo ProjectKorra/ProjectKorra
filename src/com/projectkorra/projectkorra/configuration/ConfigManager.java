@@ -748,6 +748,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
 			config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
 			config.addDefault("Abilities.Air.AirBurst.Damage", 0);
+			config.addDefault("Abilities.Air.AirBurst.Cooldown", 0);
 			config.addDefault("Abilities.Air.AirBurst.SneakParticles", 10);
 			config.addDefault("Abilities.Air.AirBurst.ParticlePercentage", 50);
 			config.addDefault("Abilities.Air.AirBurst.AnglePhi", 10);
@@ -758,6 +759,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.Interval", 100);
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);
 			config.addDefault("Abilities.Air.AirScooter.Cooldown", 7000);
+			config.addDefault("Abilities.Air.AirScooter.Duration", 0);
 			config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
@@ -858,6 +860,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Water.Passive.FastSwim.Enabled", true);
 			config.addDefault("Abilities.Water.Passive.FastSwim.Cooldown", 0);
+			config.addDefault("Abilities.Water.Passive.FastSwim.Duration", 0);
 			config.addDefault("Abilities.Water.Passive.FastSwim.SpeedFactor", 0.7);
 			config.addDefault("Abilities.Water.Passive.Hydrosink.Enabled", true);
 
@@ -920,6 +923,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.OctopusForm.Knockback", 1.75);
 			config.addDefault("Abilities.Water.OctopusForm.FormDelay", 40);
 			config.addDefault("Abilities.Water.OctopusForm.Cooldown", 0);
+			config.addDefault("Abilities.Water.OctopusForm.UsageCooldown", 0);
 			config.addDefault("Abilities.Water.OctopusForm.AngleIncrement", 45);
 
 			config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
@@ -945,6 +949,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Wall.Range", 5);
 			config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
 			config.addDefault("Abilities.Water.Surge.Wall.Cooldown", 0);
+			config.addDefault("Abilities.Water.Surge.Wall.Duration", 0);
 			config.addDefault("Abilities.Water.Surge.Wall.Interval", 30);
 			config.addDefault("Abilities.Water.Surge.Wave.IceRevertTime", 60000);
 
@@ -987,8 +992,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Damage", Double.valueOf(10.0));
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.KillUser", false);
 
-			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled", false);
-			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown", 200);
+			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled", false);
+			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Pull", 200);
+			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Punch", 200);
+			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grapple", 200);
+			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grab", 200);
+			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Freeze", 200);
+			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Spear", 200);
 
 			config.addDefault("Abilities.Water.WaterArms.Whip.MaxLength", 12);
 			config.addDefault("Abilities.Water.WaterArms.Whip.MaxLengthWeak", 8);
@@ -1304,10 +1314,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Particles", 12);
 
 			config.addDefault("Abilities.Fire.FireShield.Enabled", true);
-			config.addDefault("Abilities.Fire.FireShield.Radius", 3);
-			config.addDefault("Abilities.Fire.FireShield.DiscRadius", 1.5);
-			config.addDefault("Abilities.Fire.FireShield.Duration", 1000);
-			config.addDefault("Abilities.Fire.FireShield.Cooldown", 500);
+			config.addDefault("Abilities.Fire.FireShield.Shield.Radius", 3);
+			config.addDefault("Abilities.Fire.FireShield.Shield.Duration", 0);
+			config.addDefault("Abilities.Fire.FireShield.Shield.Cooldown", 0);
+			config.addDefault("Abilities.Fire.FireShield.Disc.Radius", 1.5);
+			config.addDefault("Abilities.Fire.FireShield.Disc.Duration", 1000);
+			config.addDefault("Abilities.Fire.FireShield.Disc.Cooldown", 500);
 			config.addDefault("Abilities.Fire.FireShield.Interval", 100);
 			config.addDefault("Abilities.Fire.FireShield.FireTicks", 2);
 

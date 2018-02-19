@@ -44,10 +44,11 @@ public class AirSpout extends AirAbility {
 
 		this.angle = 0;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSpout.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Air.AirSpout.Duration");
 		this.animTime = System.currentTimeMillis();
 		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
 		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
-		this.duration = getConfig().getLong("Abilities.Air.AirSpout.Duration");
+		
 		
 		double heightRemoveThreshold = 2;
 		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
@@ -122,7 +123,12 @@ public class AirSpout extends AirAbility {
 		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBinds(this) || !bPlayer.canBind(this)) {
 			remove();
 			return;
-		} 
+		} else if (duration != 0 && System.currentTimeMillis() > getStartTime() + duration) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
+		}
+
 		double heightRemoveThreshold = 2;
 		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
 			bPlayer.addCooldown(this);
