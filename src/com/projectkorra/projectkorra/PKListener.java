@@ -53,6 +53,7 @@ import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -155,7 +156,6 @@ import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -195,7 +195,7 @@ public class PKListener implements Listener {
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
@@ -230,14 +230,15 @@ public class PKListener implements Listener {
 			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			event.setCancelled(true);
-		} else if (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) {
+		} else if (Illumination.isIlluminationTorch(block)) {
 			event.setCancelled(true);
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
 			event.setCancelled(true);
-		} else if (EarthAbility.getMovedEarth().containsKey(block)) {
+		}  else if (EarthAbility.getMovedEarth().containsKey(block)) {
 			EarthAbility.removeRevertIndex(block);
 		} else if (TempBlock.isTempBlock(block)) {
+			event.setCancelled(true);
 			TempBlock.revertBlock(block, Material.AIR);
 		} else if (DensityShift.isPassiveSand(block)) {
 			DensityShift.revertSand(block);
@@ -259,7 +260,7 @@ public class PKListener implements Listener {
 			}
 
 			if (!event.isCancelled()) {
-				if (TempBlock.isTempBlock(toblock) && Illumination.getBlocks().containsKey(TempBlock.get(toblock))) {
+				if (Illumination.isIlluminationTorch(toblock)) {
 					toblock.setType(Material.AIR);
 				}
 			}
@@ -311,7 +312,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		event.setCancelled(TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block)));
+		event.setCancelled(Illumination.isIlluminationTorch(block));
 		if (!event.isCancelled()) {
 			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
 		}
@@ -341,7 +342,7 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
 
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.isIlluminationTorch(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 			event.setCancelled(true);
 		}
 
@@ -462,7 +463,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			FireDamageTimer.dealFlameDamage(entity);
 		}
-		
+
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			event.setDamage(DamageModifier.ARMOR, 0);
 		}
@@ -473,7 +474,7 @@ public class PKListener implements Listener {
 			if (bPlayer == null) {
 				return;
 			}
-			
+
 			if (CoreAbility.hasAbility(player, EarthGrab.class)) {
 				EarthGrab abil = CoreAbility.getAbility(player, EarthGrab.class);
 				abil.remove();
@@ -507,7 +508,7 @@ public class PKListener implements Listener {
 
 			armor.revert();
 		}
-		
+
 		LivingEntity entity = event.getEntity();
 		if (entity.hasMetadata("earthgrab:trap")) {
 			event.getDrops().clear();
@@ -732,6 +733,16 @@ public class PKListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+		Block block = event.getBlockClicked().getRelative(event.getBlockFace());
+		
+		if (Illumination.isIlluminationTorch(block)) {
+			Player player = Illumination.getBlocks().get(TempBlock.get(block));
+			CoreAbility.getAbility(player, Illumination.class).remove();
+		}
+	}
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
@@ -780,7 +791,7 @@ public class PKListener implements Listener {
 			} else if (bPlayer.isChiBlocked()) {
 				return;
 			}
-			
+
 			if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 				FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
 				fma.cancel("damage potential");
@@ -1025,14 +1036,14 @@ public class PKListener implements Listener {
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
 		}
-		
+
 		if (event.getRightClicked().hasMetadata("earthgrab:trap")) {
 			EarthGrab eg = (EarthGrab) event.getRightClicked().getMetadata("earthgrab:trap").get(0).value();
 			eg.damageTrap();
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (event.getRightClicked().hasMetadata("temparmorstand")) {
 			event.setCancelled(true);
 			return;
@@ -1069,7 +1080,7 @@ public class PKListener implements Listener {
 				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
 					FlightMultiAbility.acceptCarryRequest(player, target);
 				}
-			} 
+			}
 		}
 	}
 
@@ -1226,6 +1237,7 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
+		ProjectKorra.statistics.store(player.getUniqueId());
 		if (bPlayer != null) {
 			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
 				TOGGLED_OUT.remove(player.getUniqueId());
@@ -1701,7 +1713,7 @@ public class PKListener implements Listener {
 			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
 			return;
 		}
-		
+
 		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 			if (player.isFlying()) {
 				event.setCancelled(true);
@@ -1709,12 +1721,13 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerToggleGlide(EntityToggleGlideEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Player))
+			return;
 		Player player = (Player) event.getEntity();
-		
+
 		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 			if (player.isGliding()) {
 				event.setCancelled(true);

@@ -1012,11 +1012,11 @@ public class GeneralMethods {
 
 	public static int getMaxPresets(Player player) {
 		if (player.isOp()) {
-			return 500;
+			return 100;
 		}
 		int cap = 0;
-		for (int i = 0; i <= 500; i++) {
-			if (player.hasPermission("bending.command.presets.create." + i)) {
+		for (int i = 0; i <= 10; i++) {
+			if (player.hasPermission("bending.command.preset.create." + i)) {
 				cap = i;
 			}
 		}

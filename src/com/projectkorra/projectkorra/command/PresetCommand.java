@@ -60,7 +60,6 @@ public class PresetCommand extends PKCommand {
 		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Preset.CantEditBinds");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
 		if (!isPlayer(sender) || !correctLength(sender, args.size(), 1, 3)) {
@@ -81,6 +80,8 @@ public class PresetCommand extends PKCommand {
 		//bending preset list
 		if (args.size() == 1) {
 			if (Arrays.asList(listaliases).contains(args.get(0)) && hasPermission(sender, "list")) {
+				boolean firstMessage = true;
+
 				List<Preset> presets = Preset.presets.get(player.getUniqueId());
 				List<String> presetNames = new ArrayList<String>();
 
@@ -93,7 +94,15 @@ public class PresetCommand extends PKCommand {
 					presetNames.add(preset.getName());
 				}
 
-				sender.sendMessage(ChatColor.GREEN + "Presets: " + ChatColor.DARK_AQUA + presetNames.toString());
+				for (String s : getPage(presetNames, ChatColor.GOLD + "Presets: ", 1, false)) {
+					if (firstMessage) {
+						GeneralMethods.sendBrandingMessage(sender, s);
+						firstMessage = false;
+					} else {
+						sender.sendMessage(ChatColor.YELLOW + s);
+					}
+				}
+
 				return;
 			} else {
 				help(sender, false);
@@ -110,14 +119,20 @@ public class PresetCommand extends PKCommand {
 
 			Preset preset = Preset.getPreset(player, name);
 			preset.delete();
-			sender.sendMessage(ChatColor.GREEN + this.deletePreset.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.deletePreset.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));
 			return;
 		} else if (Arrays.asList(bindaliases).contains(args.get(0)) && hasPermission(sender, "bind")) { //bending preset bind name
 			if (args.size() < 3) {
 				boolean boundAll = false;
 				if (Preset.presetExists(player, name)) {
 					Preset preset = Preset.getPreset(player, name);
+
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + bound.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));
 					boundAll = Preset.bindPreset(player, preset);
+
+					if (!boundAll) {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+					}
 				} else if (Preset.externalPresetExists(name) && hasPermission(sender, "bind.external")) {
 					boundAll = Preset.bindExternalPreset(player, name);
 				} else if (!Preset.externalPresetExists(name) && hasPermission(sender, "bind.external")) {
@@ -131,10 +146,6 @@ public class PresetCommand extends PKCommand {
 					return;
 				}
 
-				sender.sendMessage(ChatColor.GREEN + bound.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN));
-				if (!boundAll) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
-				}
 			} else if (hasPermission(sender, "bind.external.assign") && Preset.externalPresetExists(name)) {
 				if (!Preset.externalPresetExists(name)) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noPresetNameExternal);
@@ -198,7 +209,7 @@ public class PresetCommand extends PKCommand {
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
 			int limit = GeneralMethods.getMaxPresets(player);
 
-			if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
+			if (Preset.presets.get(player.getUniqueId()) != null && Preset.presets.get(player.getUniqueId()).size() >= limit) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.reachedMax);
 				return;
 			} else if (Preset.presetExists(player, name)) {

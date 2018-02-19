@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
@@ -357,12 +358,18 @@ public class HeatControl extends FireAbility {
 
 		Block b = lava.get(randy.nextInt(lava.size()));
 
+		Material tempRevertMaterial = Material.STONE;
+
+		if (Integer.parseInt(PackageType.getServerVersion().split("_")[1]) > 9) {
+			tempRevertMaterial = Material.valueOf("MAGMA");
+		} 
+
 		final TempBlock tempBlock;
 		if (TempBlock.isTempBlock(b)) {
 			tempBlock = TempBlock.get(b);
-			tempBlock.setType(Material.MAGMA, (byte) 0);
+			tempBlock.setType(tempRevertMaterial, (byte) 0);
 		} else {
-			tempBlock = new TempBlock(b, Material.MAGMA, (byte) 0);
+			tempBlock = new TempBlock(b, tempRevertMaterial, (byte) 0);
 		}
 
 		new BukkitRunnable() {
