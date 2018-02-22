@@ -529,6 +529,9 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == player.getEntityId()) {
 			return;
 		}
+		if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+			return;
+		}
 		double x, z, vx, vz, mag;
 		double angle = 50;
 		angle = Math.toRadians(angle);

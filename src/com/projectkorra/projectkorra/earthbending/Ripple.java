@@ -267,6 +267,9 @@ public class Ripple extends EarthAbility {
 	}
 
 	private void affect(Entity entity) {
+        	if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+            		return;
+        	}
 		if (entity instanceof LivingEntity) {
 			DamageHandler.damageEntity(entity, damage, this);
 		}

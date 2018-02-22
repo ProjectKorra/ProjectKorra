@@ -310,6 +310,9 @@ public class WaterArmsWhip extends WaterAbility {
 					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
 					}
+					if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+						continue;
+					}
 					Vector vector = endOfArm.toVector().subtract(entity.getLocation().toVector());
 					entity.setVelocity(vector.multiply(pullMultiplier));
 				}
@@ -319,7 +322,9 @@ public class WaterArmsWhip extends WaterAbility {
 					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
 					}
-
+                    			if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+                    				continue;
+					}
 					Vector vector = entity.getLocation().toVector().subtract(endOfArm.toVector());
 					entity.setVelocity(vector.multiply(0.15));
 					if (entity instanceof LivingEntity) {
@@ -337,6 +342,9 @@ public class WaterArmsWhip extends WaterAbility {
 				if (grabbedEntity == null) {
 					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !GRABBED_ENTITIES.containsKey(entity)) {
+							if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+								continue;
+							}
 							GRABBED_ENTITIES.put((LivingEntity) entity, this);
 							grabbedEntity = (LivingEntity) entity;
 							grabbed = true;

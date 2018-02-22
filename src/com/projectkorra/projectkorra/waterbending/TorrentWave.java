@@ -144,6 +144,9 @@ public class TorrentWave extends WaterAbility {
 				for (Entity entity : indexList) {
 					if (!affectedEntities.contains(entity)) {
 						if (entity.getLocation().distanceSquared(location) <= 4) {
+							if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+								continue;
+							}
 							affectedEntities.add(entity);
 							affect(entity);
 						}
