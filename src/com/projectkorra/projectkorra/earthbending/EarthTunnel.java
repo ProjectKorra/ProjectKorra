@@ -64,6 +64,9 @@ public class EarthTunnel extends EarthAbility {
 		if (!bPlayer.canBend(this) || (!EarthAbility.isEarthbendable(player, block) && !EarthAbility.isTransparent(player, "EarthTunnel", block))) {
 			return;
 		}
+                if(GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())){
+                    return;
+                }
 		if (bPlayer.isAvatarState()) {
 			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
 		}
@@ -115,7 +118,13 @@ public class EarthTunnel extends EarthAbility {
 					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle, radius);
 					block = location.clone().add(direction.clone().normalize().multiply(depth)).add(vec).getBlock();
 				}
-
+				
+                                if(GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())){
+                                    bPlayer.addCooldown(this);
+                                    remove();
+                                    return;
+                                }
+				
 				if (revert) {
 					if (getMovedEarth().containsKey(block)) {
 						block.setType(Material.AIR);
