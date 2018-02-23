@@ -928,7 +928,7 @@ public class GeneralMethods {
 			Entity e = entityIterator.next();
 			if (e.getWorld().equals(location.getWorld()) && e.getLocation().distanceSquared(location) > radius * radius) {
 				entityIterator.remove();
-			} else if (e instanceof Player && ((Player) e).getGameMode().equals(GameMode.SPECTATOR)) {
+			} else if (e instanceof Player && (((Player) e).isDead() || ((Player) e).getGameMode().equals(GameMode.SPECTATOR))) {
 				entityIterator.remove();
 			}
 		}
@@ -1094,7 +1094,7 @@ public class GeneralMethods {
 		Vector direction = player.getEyeLocation().getDirection().normalize();
 		for (Entity entity : origin.getWorld().getEntities()) {
 			if (entity instanceof Player) {
-				if (((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
+				if (((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
 					continue;
 				}
 			}
