@@ -14,7 +14,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
@@ -96,6 +95,10 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			remove();
+			return;
+		}
 		if (location.distanceSquared(origin) > range * range) {
 			remove();
 			return;
@@ -111,10 +114,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		} else if (topBlock.getType() == Material.FIRE) {
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
-		} else if (ElementalAbility.isPlant(topBlock)) {
-			topBlock.breakNaturally();
-			topBlock = topBlock.getRelative(BlockFace.DOWN);
-		} else if (topBlock.getType() == Material.AIR) {
+		}  else if (topBlock.getType() == Material.AIR) {
 			remove();
 			return;
 		}
