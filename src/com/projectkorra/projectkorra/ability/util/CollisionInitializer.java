@@ -131,8 +131,8 @@ public class CollisionInitializer {
 		CoreAbility waterSpout = CoreAbility.getAbility(WaterSpout.class);
 		CoreAbility waterSpoutWave = CoreAbility.getAbility(WaterSpoutWave.class);
 
-		CoreAbility[] smallAbils = { airSwipe, earthBlast, waterManipulation, iceBlast, iceSpikeBlast, fireBlast, combustion, blazeArc };
-		CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		CoreAbility[] smallAbils = { airBlast, airSuction, airStream, suffocate, blazeArc };
+		CoreAbility[] largeAbils = { earthSmash, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet, airSwipe, earthBlast, waterManipulation, iceBlast, iceSpikeBlast, fireBlast, combustion, lightning };
 		CoreAbility[] comboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
 		CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, iceBlast, iceSpikeBlast, fireBlast, fireBlastCharged, earthSmash, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
 
@@ -148,26 +148,31 @@ public class CollisionInitializer {
 		for (CoreAbility removeSpoutAbil : removeSpoutAbils) {
 			addRemoveSpoutAbility(removeSpoutAbil);
 		}
-
+		
+		//AirShield
 		collisionManager.addCollision(new Collision(airShield, airBlast, false, true));
 		collisionManager.addCollision(new Collision(airShield, airSuction, false, true));
 		collisionManager.addCollision(new Collision(airShield, airStream, false, true));
-
+		collisionManager.addCollision(new Collision(airShield, fireWheel, false, false));
 		collisionManager.addCollision(new Collision(airShield, airSwipe, false, false));
+		collisionManager.addCollision(new Collision(airShield, fireBlast, false, true));
+		collisionManager.addCollision(new Collision(airShield, fireBlastCharged, false, false));
+		collisionManager.addCollision(new Collision(airShield, waterManipulation, false, false));
+		collisionManager.addCollision(new Collision(airShield, fireBurst, false, true));
+		collisionManager.addCollision(new Collision(airShield, airBurst, false, true));
+		collisionManager.addCollision(new Collision(airShield, earthSmash, false, false));
 		collisionManager.addCollision(new Collision(airShield, airSweep, false, false));
-
-		for (CoreAbility comboAbil : comboAbils) {
-			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
-		}
-
+		
+		//FireShield
 		collisionManager.addCollision(new Collision(fireShield, airBlast, false, true));
 		collisionManager.addCollision(new Collision(fireShield, airSuction, false, true));
 		collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));
-		collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, true));
+		collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, false));
 		collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
-		collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
-		collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
-		
+		collisionManager.addCollision(new Collision(fireShield, earthBlast, false, false));
+		collisionManager.addCollision(new Collision(fireShield, airSweep, false, false));
+	
+		//FireManipulation
 		collisionManager.addCollision(new Collision(fireManipulation, airBlast, false, true));
 		collisionManager.addCollision(new Collision(fireManipulation, airSuction, false, true));
 		collisionManager.addCollision(new Collision(fireManipulation, fireBlast, false, true));
@@ -175,6 +180,15 @@ public class CollisionInitializer {
 		collisionManager.addCollision(new Collision(fireManipulation, waterManipulation, false, true));
 		collisionManager.addCollision(new Collision(fireManipulation, earthBlast, false, true));
 		collisionManager.addCollision(new Collision(fireManipulation, airSweep, false, true));
+		
+
+		for (CoreAbility comboAbil : comboAbils) {
+
+
+		}
+
+		
+		
 	}
 
 	/**
