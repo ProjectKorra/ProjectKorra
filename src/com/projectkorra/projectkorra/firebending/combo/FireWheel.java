@@ -96,6 +96,10 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			remove();
+			return;
+		}
 		if (location.distanceSquared(origin) > range * range) {
 			remove();
 			return;
@@ -110,9 +114,6 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			remove();
 			return;
 		} else if (topBlock.getType() == Material.FIRE) {
-			topBlock = topBlock.getRelative(BlockFace.DOWN);
-		} else if (ElementalAbility.isPlant(topBlock)) {
-			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		} else if (topBlock.getType() == Material.AIR) {
 			remove();
