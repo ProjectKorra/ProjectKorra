@@ -124,13 +124,6 @@ public class FlightHandler {
 			ABILITIES.remove(player.getUniqueId());
 			if (INSTANCES.containsKey(player.getUniqueId())) {
 				wipeInstance(player);
-				// Flight flight = INSTANCES.get(player.getUniqueId());
-				// player.setAllowFlight(flight.couldFly);
-				// player.setFlying(flight.wasFlying);
-				// if (CLEANUP.contains(flight)) {
-				// CLEANUP.remove(flight);
-				// }
-				// INSTANCES.remove(player.getUniqueId());
 			}
 		}
 	}
