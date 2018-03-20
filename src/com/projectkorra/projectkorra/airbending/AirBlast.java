@@ -31,7 +31,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class AirBlast extends AirAbility {
@@ -115,7 +114,7 @@ public class AirBlast extends AirAbility {
 
 		this.affectedLevers = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
-		//prevent the airburst related airblasts from triggering doors/levers/buttons
+		// prevent the airburst related airblasts from triggering doors/levers/buttons
 		this.canOpenDoors = false;
 		this.canPressButtons = false;
 		this.canFlickLevers = false;
@@ -255,7 +254,7 @@ public class AirBlast extends AirAbility {
 			}
 
 			if (!isUser && entity instanceof Player) {
-				new Flight((Player) entity, player);
+				ProjectKorra.flightHandler.createInstance((Player) entity, player, 5000L, getName());
 			}
 			if (entity.getFireTicks() > 0) {
 				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
@@ -411,10 +410,7 @@ public class AirBlast extends AirAbility {
 		}
 
 		/*
-		 * If a player presses shift and AirBlasts straight down then the
-		 * AirBlast's location gets messed up and reading the distance returns
-		 * Double.NaN. If we don't remove this instance then the AirBlast will
-		 * never be removed.
+		 * If a player presses shift and AirBlasts straight down then the AirBlast's location gets messed up and reading the distance returns Double.NaN. If we don't remove this instance then the AirBlast will never be removed.
 		 */
 		double dist = 0;
 		if (location.getWorld().equals(origin.getWorld())) {
@@ -434,8 +430,7 @@ public class AirBlast extends AirAbility {
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
 	 */
 	@Deprecated
 	public static boolean removeAirBlastsAroundPoint(Location location, double radius) {
