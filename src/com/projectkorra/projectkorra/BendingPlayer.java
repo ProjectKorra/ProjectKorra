@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,13 +151,11 @@ public class BendingPlayer {
 	public Map<String, Cooldown> loadCooldowns() {
 		Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
 		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'")) {
-			if (rs.next()) {
-				ResultSetMetaData metadata = rs.getMetaData();
-				for (int i = 1; i < metadata.getColumnCount() + 1; i++) {
-					String name = metadata.getColumnName(i);
-					long cooldown = rs.getLong(i);
-					cooldowns.put(name, new Cooldown(cooldown, true));
-				}
+			while (rs.next()) {
+				int cooldownId = rs.getInt("cooldown_id");
+				long value = rs.getLong("value");
+				String name = ProjectKorra.cooldowns.getCooldownName(cooldownId);
+				cooldowns.put(name, new Cooldown(value, true));
 			}
 		}
 		catch (SQLException e) {
@@ -169,17 +166,20 @@ public class BendingPlayer {
 
 	public void saveCooldowns() {
 		DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'", false);
-		DBConnection.sql.modifyQuery("INSERT INTO pk_cooldowns (uuid) VALUES ('" + uuid.toString() + "')", false);
 		for (Entry<String, Cooldown> entry : cooldowns.entrySet()) {
 			String name = entry.getKey();
 			Cooldown cooldown = entry.getValue();
-			if (!cooldown.isDatabase()) {
-				continue;
+			int cooldownId = ProjectKorra.cooldowns.getCooldownId(name, false);
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
+				if (rs.next()) {
+					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
+				} else {
+					DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
+				}
 			}
-			if (!DBConnection.sql.columnExists("pk_cooldowns", name)) {
-				DBConnection.sql.modifyQuery("ALTER TABLE pk_cooldowns ADD " + name + " BIGINT", false);
+			catch (SQLException e) {
+				e.printStackTrace();
 			}
-			DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET '" + name + "' = " + cooldown.getCooldown() + " WHERE uuid = '" + uuid.toString() + "'", false);
 		}
 	}
 
