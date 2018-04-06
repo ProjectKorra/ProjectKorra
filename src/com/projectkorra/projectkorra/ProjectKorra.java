@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.Metrics;
 import com.projectkorra.projectkorra.util.RevertChecker;
@@ -40,6 +41,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static CollisionManager collisionManager;
 	public static CollisionInitializer collisionInitializer;
 	public static StatisticsManager statistics;
+	public static DBCooldownManager cooldowns;
 	public static FlightHandler flightHandler;
 	public static long time_step = 1;
 	public Updater updater;
@@ -50,8 +52,11 @@ public class ProjectKorra extends JavaPlugin {
 		ProjectKorra.log = this.getLogger();
 
 		/*
-		 * try { File logFolder = new File(getDataFolder(), "Logs"); if (!logFolder.exists()) { logFolder.mkdirs(); } handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log"); log.getParent().addHandler(handler); } catch
-		 * (SecurityException | IOException e) { e.printStackTrace(); }
+		 * try { File logFolder = new File(getDataFolder(), "Logs"); if
+		 * (!logFolder.exists()) { logFolder.mkdirs(); } handler = new
+		 * PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
+		 * log.getParent().addHandler(handler); } catch (SecurityException |
+		 * IOException e) { e.printStackTrace(); }
 		 */
 
 		new ConfigManager();
@@ -75,6 +80,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		statistics = new StatisticsManager();
+		cooldowns = new DBCooldownManager();
 		flightHandler = new FlightHandler();
 
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
