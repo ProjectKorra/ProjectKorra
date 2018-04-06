@@ -25,7 +25,6 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction extends AirAbility {
@@ -34,7 +33,7 @@ public class AirSuction extends AirAbility {
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 	private static Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.TRAP_DOOR };
 	private List<Block> affectedDoors = new ArrayList<>();
-	
+
 	private boolean hasOtherOrigin;
 	private int ticks;
 	private int particleCount;
@@ -132,7 +131,7 @@ public class AirSuction extends AirAbility {
 		for (int i = 0; i < ignore.length; i++) {
 			if (i < getTransparentMaterials().length) {
 				ignore[i] = getTransparentMaterials()[i];
-			} else  {
+			} else {
 				ignore[i] = doorTypes[i - getTransparentMaterials().length];
 			}
 		}
@@ -153,42 +152,47 @@ public class AirSuction extends AirAbility {
 		}
 		double speedFactor = speed * (ProjectKorra.time_step / 1000.);
 		location = location.add(direction.clone().multiply(speedFactor));
-		
+
 		if (Arrays.asList(doorTypes).contains(location.getBlock().getType()) && !affectedDoors.contains(location.getBlock())) {
 			handleDoorMechanics(location.getBlock());
 		}
 	}
-	
+
 	private void handleDoorMechanics(Block block) {
 		boolean tDoor = false;
 		boolean open = (block.getData() & 0x4) == 0x4;
-		
+
 		if (block.getType() != Material.TRAP_DOOR) {
 			Door door = (Door) block.getState().getData();
 			BlockFace face = door.getFacing();
 			Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), player.getLocation().getBlock().getLocation());
 			double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
-			
+
 			for (int i = 0; i < 3; i++) {
-				if (i == 1) continue;
+				if (i == 1)
+					continue;
 				BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
-				
+
 				if (bf == face) {
-					if (!open) return;
+					if (!open)
+						return;
 				} else if (bf.getOppositeFace() == face) {
-					if (open) return;
+					if (open)
+						return;
 				}
 			}
 		} else {
 			tDoor = true;
-			
+
 			if (origin.getY() < block.getY()) {
-				if (open) return;
+				if (open)
+					return;
 			} else {
-				if (!open) return;
+				if (!open)
+					return;
 			}
 		}
-		
+
 		block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
 		String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
 		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
@@ -263,7 +267,7 @@ public class AirSuction extends AirAbility {
 				new HorizontalVelocityTracker(entity, player, 200l, this);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof Player) {
-					new Flight((Player) entity, player);
+					ProjectKorra.flightHandler.createInstance((Player) entity, player, 5000L, getName());
 				}
 
 				if (entity.getFireTicks() > 0) {
@@ -278,8 +282,7 @@ public class AirSuction extends AirAbility {
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
 	 */
 	@Deprecated
 	public static boolean removeAirSuctionsAroundPoint(Location location, double radius) {

@@ -1,18 +1,15 @@
 package com.projectkorra.projectkorra.avatar;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.HashMap;
+import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
-import java.util.UUID;
+import com.projectkorra.projectkorra.ability.AvatarAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AvatarState extends AvatarAbility {
 
@@ -41,7 +38,7 @@ public class AvatarState extends AvatarAbility {
 			return;
 		} else if (bPlayer.isOnCooldown(this)) {
 			return;
-		} 
+		}
 
 		this.regenEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled");
 		this.speedEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled");
@@ -55,7 +52,6 @@ public class AvatarState extends AvatarAbility {
 		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");
 		this.factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
 
-		new Flight(player);
 		playAvatarSound(player.getLocation());
 
 		start();

@@ -93,13 +93,19 @@ public class StatsCommand extends PKCommand {
 			int page = 1;
 			try {
 				page = Integer.parseInt(args.get(3));
+			} catch (IndexOutOfBoundsException | NumberFormatException e) {
 			}
-			catch (IndexOutOfBoundsException | NumberFormatException e) {
-			}
-			List<String> messages = getLeaderboard(sender, object, statistic, page);
-			for (String message : messages) {
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-			}
+			Object o = object;
+			int p = page;
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					List<String> messages = getLeaderboard(sender, o, statistic, p);
+					for (String message : messages) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+					}
+				}
+			}.runTaskAsynchronously(ProjectKorra.plugin);
 		}
 	}
 
@@ -134,50 +140,45 @@ public class StatsCommand extends PKCommand {
 	}
 
 	public List<String> getLeaderboard(CommandSender sender, Object object, Statistic statistic, int page) {
-		List<String> messages = new ArrayList<>();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				List<UUID> uuids = pullUUIDs(statistic, object);
-				int maxPage = (uuids.size() / 10) + 1;
-				int p = page > maxPage ? maxPage : page;
-				String statName = statistic.name().substring(0, 1).toUpperCase() + statistic.name().substring(1).toLowerCase();
-				String title = "%object% " + statName + " Leaderboard";
-				if (object instanceof CoreAbility) {
-					CoreAbility ability = (CoreAbility) object;
-					title = title.replace("%object%", ability.getName());
-				} else if (object instanceof Element) {
-					Element element = (Element) object;
-					title = title.replace("%object%", element.getName());
-				} else {
-					title = title.replace("%object%", "Total");
-				}
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', "&8- &f" + title + " &8- [&7" + p + "/" + maxPage + "&8]"));
-				int minIndex = (10 * p) - 1;
-				int maxIndex = minIndex + 10;
-				try {
-					uuids.get(minIndex);
-				}
-				catch (IndexOutOfBoundsException e) {
-					messages.add("&7No statistics found.");
-					return;
-				}
-				for (int index = minIndex; index < maxIndex; index++) {
-					if (index < 0 || index >= uuids.size()) {
-						break;
-					}
-					UUID uuid = uuids.get(index);
-					long value = 0;
-					if (object == null) {
-						value = StatisticsMethods.getStatisticTotal(uuid, statistic);
-					} else {
-						value = StatisticsMethods.getStatistic(uuid, object, statistic);
-					}
-					OfflinePlayer oPlayer = ProjectKorra.plugin.getServer().getOfflinePlayer(uuid);
-					messages.add("&7" + (index + 1) + ") &e" + oPlayer.getName() + " &f" + value);
-				}
+		final List<String> messages = new ArrayList<>();
+		List<UUID> uuids = pullUUIDs(statistic, object);
+		int maxPage = (uuids.size() / 10) + 1;
+		int p = page > maxPage ? maxPage : page;
+		p = p < 1 ? 1 : p;
+		String statName = statistic.name().substring(0, 1).toUpperCase() + statistic.name().substring(1).toLowerCase();
+		String title = "%object% " + statName + " Leaderboard";
+		if (object instanceof CoreAbility) {
+			CoreAbility ability = (CoreAbility) object;
+			title = title.replace("%object%", ability.getName());
+		} else if (object instanceof Element) {
+			Element element = (Element) object;
+			title = title.replace("%object%", element.getName());
+		} else {
+			title = title.replace("%object%", "Total");
+		}
+		GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', "&8- &f" + title + " &8- [&7" + p + "/" + maxPage + "&8]"));
+		int maxIndex = (10 * p) - 1;
+		int minIndex = maxIndex - 9;
+		try {
+			uuids.get(minIndex);
+		} catch (IndexOutOfBoundsException e) {
+			messages.add("&7No statistics found.");
+			return messages;
+		}
+		for (int index = minIndex; index < maxIndex; index++) {
+			if (index < 0 || index >= uuids.size()) {
+				break;
 			}
-		}.runTaskAsynchronously(ProjectKorra.plugin);
+			UUID uuid = uuids.get(index);
+			long value = 0;
+			if (object == null) {
+				value = StatisticsMethods.getStatisticTotal(uuid, statistic);
+			} else {
+				value = StatisticsMethods.getStatistic(uuid, object, statistic);
+			}
+			OfflinePlayer oPlayer = ProjectKorra.plugin.getServer().getOfflinePlayer(uuid);
+			messages.add("&7" + (index + 1) + ") &e" + oPlayer.getName() + " &f" + value);
+		}
 		return messages;
 	}
 
@@ -200,8 +201,7 @@ public class StatsCommand extends PKCommand {
 					}
 				}
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		for (Player player : ProjectKorra.plugin.getServer().getOnlinePlayers()) {

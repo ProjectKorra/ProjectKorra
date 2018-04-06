@@ -119,7 +119,6 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
-import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
@@ -145,8 +144,18 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
 
-	public static final Material[] NON_OPAQUE = { Material.AIR, Material.SAPLING, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.WEB, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.CROPS, Material.LADDER, Material.RAILS, Material.SIGN_POST, Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE_BLOCK, Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.WATER_LILY, Material.NETHER_STALK, Material.ENDER_PORTAL, Material.COCOA, Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.FLOWER_POT, Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.DAYLIGHT_DETECTOR, Material.CARPET, Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.WALL_BANNER, Material.DAYLIGHT_DETECTOR_INVERTED, Material.END_ROD, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.BEETROOT_BLOCK, Material.END_GATEWAY };
-	public static final Material[] INTERACTABLE_MATERIALS = { Material.ACACIA_DOOR, Material.ACACIA_FENCE_GATE, Material.ANVIL, Material.BEACON, Material.BED_BLOCK, Material.BIRCH_DOOR, Material.BIRCH_FENCE_GATE, Material.BOAT, Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND, Material.DARK_OAK_DOOR, Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER, Material.ENCHANTMENT_TABLE, Material.ENDER_CHEST, Material.ENDER_PORTAL_FRAME, Material.FENCE_GATE, Material.FURNACE, Material.HOPPER, Material.HOPPER_MINECART, Material.COMMAND_MINECART, Material.JUKEBOX, Material.JUNGLE_DOOR, Material.JUNGLE_FENCE_GATE, Material.LEVER, Material.MINECART, Material.NOTE_BLOCK, Material.SPRUCE_DOOR, Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON, Material.TRAPPED_CHEST, Material.TRAP_DOOR, Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
+	public static final Material[] NON_OPAQUE = { Material.AIR, Material.SAPLING, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.WEB,
+	        Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.CROPS, Material.LADDER,
+	        Material.RAILS, Material.SIGN_POST, Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE_BLOCK,
+	        Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.WATER_LILY, Material.NETHER_STALK, Material.ENDER_PORTAL, Material.COCOA,
+	        Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.FLOWER_POT, Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON,
+	        Material.DAYLIGHT_DETECTOR, Material.CARPET, Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.WALL_BANNER, Material.DAYLIGHT_DETECTOR_INVERTED, Material.END_ROD, Material.CHORUS_PLANT, Material.CHORUS_FLOWER,
+	        Material.BEETROOT_BLOCK, Material.END_GATEWAY };
+	public static final Material[] INTERACTABLE_MATERIALS = { Material.ACACIA_DOOR, Material.ACACIA_FENCE_GATE, Material.ANVIL, Material.BEACON, Material.BED_BLOCK, Material.BIRCH_DOOR, Material.BIRCH_FENCE_GATE, Material.BOAT,
+	        Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND, Material.DARK_OAK_DOOR, Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER,
+	        Material.ENCHANTMENT_TABLE, Material.ENDER_CHEST, Material.ENDER_PORTAL_FRAME, Material.FENCE_GATE, Material.FURNACE, Material.HOPPER, Material.HOPPER_MINECART, Material.COMMAND_MINECART, Material.JUKEBOX, Material.JUNGLE_DOOR,
+	        Material.JUNGLE_FENCE_GATE, Material.LEVER, Material.MINECART, Material.NOTE_BLOCK, Material.SPRUCE_DOOR, Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON, Material.TRAPPED_CHEST, Material.TRAP_DOOR, Material.WOOD_BUTTON,
+	        Material.WOOD_DOOR, Material.WORKBENCH };
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
 	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
@@ -162,17 +171,16 @@ public class GeneralMethods {
 		try {
 			getAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
 			setAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Checks to see if an AbilityExists. Uses method
-	 * {@link #getAbility(String)} to check if it exists.
+	 * Checks to see if an AbilityExists. Uses method {@link #getAbility(String)} to check if it exists.
 	 * 
-	 * @param string Ability Name
+	 * @param string
+	 *            Ability Name
 	 * @return true if ability exists
 	 */
 	public static boolean abilityExists(String string) {
@@ -182,8 +190,10 @@ public class GeneralMethods {
 	/**
 	 * Binds a Ability to the hotbar slot that the player is on.
 	 * 
-	 * @param player The player to bind to
-	 * @param ability The ability name to Bind
+	 * @param player
+	 *            The player to bind to
+	 * @param ability
+	 *            The ability name to Bind
 	 * @see #bindAbility(Player, String, int)
 	 */
 	public static void bindAbility(Player player, String ability) {
@@ -194,7 +204,8 @@ public class GeneralMethods {
 	/**
 	 * Binds a Ability to a specific hotbar slot.
 	 * 
-	 * @param player The player to bind to
+	 * @param player
+	 *            The player to bind to
 	 * @param ability
 	 * @param slot
 	 * @see #bindAbility(Player, String)
@@ -214,19 +225,16 @@ public class GeneralMethods {
 		bPlayer.getAbilities().put(slot, ability);
 
 		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+			GeneralMethods.sendBrandingMessage(player,
+			        coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
 		}
 		saveAbility(bPlayer, slot, ability);
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
 	 * <p>
-	 * Cycles through a list of ability names to check if any instances of the
-	 * abilities exist at a specific location. If an instance of the ability is
-	 * found then it will be removed, with the exception FireShield, and
-	 * AirShield.
+	 * Cycles through a list of ability names to check if any instances of the abilities exist at a specific location. If an instance of the ability is found then it will be removed, with the exception FireShield, and AirShield.
 	 */
 	@Deprecated
 	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius) {
@@ -255,17 +263,17 @@ public class GeneralMethods {
 			} else if (ability.equalsIgnoreCase("AirSpout")) {
 				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("Twister")) {
-				//hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
+				// hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirStream")) {
-				//hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
+				// hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirSweep")) {
-				//hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
+				// hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireKick")) {
-				//hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
+				// hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireSpin")) {
-				//hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
+				// hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireWheel")) {
-				//hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
+				// hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
 			}
 		}
 		return hasBlocked;
@@ -274,7 +282,8 @@ public class GeneralMethods {
 	/**
 	 * Breaks a block and sets it to {@link Material#AIR AIR}.
 	 * 
-	 * @param block The block to break
+	 * @param block
+	 *            The block to break
 	 */
 	public static void breakBlock(Block block) {
 		block.breakNaturally(new ItemStack(Material.AIR));
@@ -285,11 +294,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Creates a {@link BendingPlayer} with the data from the database. This
-	 * runs when a player logs in.
+	 * Creates a {@link BendingPlayer} with the data from the database. This runs when a player logs in.
 	 * 
-	 * @param uuid The UUID of the player
-	 * @param player The player name
+	 * @param uuid
+	 *            The UUID of the player
+	 * @param player
+	 *            The player name
 	 * @throws SQLException
 	 */
 	public static void createBendingPlayer(final UUID uuid, final String player) {
@@ -307,7 +317,8 @@ public class GeneralMethods {
 		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
+				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player
+				        + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
 				new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
 				ProjectKorra.log.info("Created new BendingPlayer for " + player);
 			} else {
@@ -344,12 +355,8 @@ public class GeneralMethods {
 						}
 						if (hasAddon) {
 							/*
-							 * Because plugins which depend on ProjectKorra
-							 * would be loaded after ProjectKorra, addon
-							 * elements would = null. To work around this, we
-							 * keep trying to load in the elements from the
-							 * database until it successfully loads everything
-							 * in, or it times out.
+							 * Because plugins which depend on ProjectKorra would be loaded after ProjectKorra, addon elements would = null. To work around this, we keep trying to load in the elements from the database until it successfully
+							 * loads everything in, or it times out.
 							 */
 							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
 							final long startTime = System.currentTimeMillis();
@@ -386,7 +393,8 @@ public class GeneralMethods {
 					if (subelement.equals("-")) {
 						Player playero = Bukkit.getPlayer(uuid);
 						for (SubElement sub : Element.getAllSubElements()) {
-							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
+							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending()))
+							        && elements.contains(sub.getParentElement())) {
 								subelements.add(sub);
 								shouldSave = true && playero != null;
 							}
@@ -466,7 +474,7 @@ public class GeneralMethods {
 					@Override
 					public void run() {
 						if (abilitiesClone.isEmpty()) {
-							//All abilities loaded.
+							// All abilities loaded.
 							cancel();
 						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
 							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
@@ -502,25 +510,26 @@ public class GeneralMethods {
 					}
 				}.runTask(ProjectKorra.plugin);
 			}
-		}
-		catch (SQLException ex) {
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	/**
-	 * Deserializes the configuration file "bendingPlayers.yml" of the old
-	 * BendingPlugin and creates a converted.yml ready for conversion.
+	 * Deserializes the configuration file "bendingPlayers.yml" of the old BendingPlugin and creates a converted.yml ready for conversion.
 	 * 
-	 * @throws IOException If the "bendingPlayers.yml" file is not found
+	 * @throws IOException
+	 *             If the "bendingPlayers.yml" file is not found
 	 */
 	public static void deserializeFile() {
 		File readFile = new File(".", "bendingPlayers.yml");
 		File writeFile = new File(".", "converted.yml");
 		if (readFile.exists()) {
-			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile)); BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile));
+			        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
+			        DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
+			        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -528,8 +537,7 @@ public class GeneralMethods {
 						writer.write(line + "\n");
 					}
 				}
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -558,7 +566,8 @@ public class GeneralMethods {
 		loc.setY(loc.getY() + Math.random() * yOffset);
 		loc.setZ(loc.getZ() + Math.random() * zOffset);
 
-		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
+		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT
+		        && type != ParticleEffect.MOB_SPELL_AMBIENT) {
 			type = ParticleEffect.RED_DUST;
 		}
 		type.display(red, green, blue, 1F, 0, loc, 255.0);
@@ -597,8 +606,10 @@ public class GeneralMethods {
 	/**
 	 * Drops a {@code Collection<ItemStack>} of items on a specified block.
 	 * 
-	 * @param block The block to drop items on.
-	 * @param items The items to drop.
+	 * @param block
+	 *            The block to drop items on.
+	 * @param items
+	 *            The items to drop.
 	 */
 	public static void dropItems(Block block, Collection<ItemStack> items) {
 		for (ItemStack item : items) {
@@ -614,7 +625,7 @@ public class GeneralMethods {
 		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
 			return;
 		}
-		
+
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -645,10 +656,9 @@ public class GeneralMethods {
 		try {
 			Object entityplayer = ActionBar.getHandle.invoke(player);
 			Object hearts = getAbsorption.invoke(entityplayer);
-			//player.sendMessage(hearts.toString());
+			// player.sendMessage(hearts.toString());
 			return (float) hearts;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
@@ -659,9 +669,8 @@ public class GeneralMethods {
 		try {
 			Object entityplayer = ActionBar.getHandle.invoke(player);
 			setAbsorption.invoke(entityplayer, hearts);
-			//player.sendMessage(hearts.toString());
-		}
-		catch (Exception e) {
+			// player.sendMessage(hearts.toString());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -669,45 +678,47 @@ public class GeneralMethods {
 	/**
 	 * This gets the BlockFace in the specified dimension of a certain value
 	 * 
-	 * @param xyz 0 for x, 1 for y, 2 for z
-	 * @param value vector value for which direction to check
+	 * @param xyz
+	 *            0 for x, 1 for y, 2 for z
+	 * @param value
+	 *            vector value for which direction to check
 	 * @return BlockFace for block in specified dimension and value
 	 */
 	public static BlockFace getBlockFaceFromValue(int xyz, double value) {
 		switch (xyz) {
-			case 0:
-				if (value > 0) {
-					return BlockFace.EAST;
-				} else if (value < 0) {
-					return BlockFace.WEST;
-				} else {
-					return BlockFace.SELF;
-				}
-			case 1:
-				if (value > 0) {
-					return BlockFace.UP;
-				} else if (value < 0) {
-					return BlockFace.DOWN;
-				} else {
-					return BlockFace.SELF;
-				}
-			case 2:
-				if (value > 0) {
-					return BlockFace.SOUTH;
-				} else if (value < 0) {
-					return BlockFace.NORTH;
-				} else {
-					return BlockFace.SELF;
-				}
-			default:
-				return null;
+		case 0:
+			if (value > 0) {
+				return BlockFace.EAST;
+			} else if (value < 0) {
+				return BlockFace.WEST;
+			} else {
+				return BlockFace.SELF;
+			}
+		case 1:
+			if (value > 0) {
+				return BlockFace.UP;
+			} else if (value < 0) {
+				return BlockFace.DOWN;
+			} else {
+				return BlockFace.SELF;
+			}
+		case 2:
+			if (value > 0) {
+				return BlockFace.SOUTH;
+			} else if (value < 0) {
+				return BlockFace.NORTH;
+			} else {
+				return BlockFace.SELF;
+			}
+		default:
+			return null;
 		}
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
 		List<Block> blocks = new ArrayList<Block>();
 
-		//Next we will name each coordinate
+		// Next we will name each coordinate
 		int x1 = ploc.getBlockX();
 		int y1 = ploc.getBlockY();
 		int z1 = ploc.getBlockZ();
@@ -716,20 +727,20 @@ public class GeneralMethods {
 		int y2 = tloc.getBlockY();
 		int z2 = tloc.getBlockZ();
 
-		//Then we create the following integers
+		// Then we create the following integers
 		int xMin, yMin, zMin;
 		int xMax, yMax, zMax;
 		int x, y, z;
 
-		//Now we need to make sure xMin is always lower then xMax
-		if (x1 > x2) { //If x1 is a higher number then x2
+		// Now we need to make sure xMin is always lower then xMax
+		if (x1 > x2) { // If x1 is a higher number then x2
 			xMin = x2;
 			xMax = x1;
 		} else {
 			xMin = x1;
 			xMax = x2;
 		}
-		//Same with Y
+		// Same with Y
 		if (y1 > y2) {
 			yMin = y2;
 			yMax = y1;
@@ -738,7 +749,7 @@ public class GeneralMethods {
 			yMax = y2;
 		}
 
-		//And Z
+		// And Z
 		if (z1 > z2) {
 			zMin = z2;
 			zMax = z1;
@@ -747,7 +758,7 @@ public class GeneralMethods {
 			zMax = z2;
 		}
 
-		//Now it's time for the loop
+		// Now it's time for the loop
 		for (x = xMin; x <= xMax; x++) {
 			for (y = yMin; y <= yMax; y++) {
 				for (z = zMin; z <= zMax; z++) {
@@ -757,17 +768,17 @@ public class GeneralMethods {
 			}
 		}
 
-		//And last but not least, we return with the list
+		// And last but not least, we return with the list
 		return blocks;
 	}
 
 	/**
-	 * Gets a {@code List<Blocks>} within the specified radius around the
-	 * specified location.
+	 * Gets a {@code List<Blocks>} within the specified radius around the specified location.
 	 * 
-	 * @param location The base location
-	 * @param radius The block radius from location to include within the list
-	 *            of blocks
+	 * @param location
+	 *            The base location
+	 * @param radius
+	 *            The block radius from location to include within the list of blocks
 	 * @return The list of Blocks
 	 */
 	public static List<Block> getBlocksAroundPoint(Location location, double radius) {
@@ -882,10 +893,14 @@ public class GeneralMethods {
 	/**
 	 * Gets a {@code Collection<ItemStack>} of item drops from a single block.
 	 * 
-	 * @param block The single block
-	 * @param type The Material type to change the block into
-	 * @param data The block data to change the block into
-	 * @param breakitem Unused
+	 * @param block
+	 *            The single block
+	 * @param type
+	 *            The Material type to change the block into
+	 * @param data
+	 *            The block data to change the block into
+	 * @param breakitem
+	 *            Unused
 	 * @return The item drops fromt the specified block
 	 */
 	public static Collection<ItemStack> getDrops(Block block, Material type, byte data, ItemStack breakitem) {
@@ -898,11 +913,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Gets a {@code List<Entity>} of entities around a specified radius from
-	 * the specified area
+	 * Gets a {@code List<Entity>} of entities around a specified radius from the specified area
 	 * 
-	 * @param location The base location
-	 * @param radius The radius of blocks to look for entities from the location
+	 * @param location
+	 *            The base location
+	 * @param radius
+	 *            The radius of blocks to look for entities from the location
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(Location location, double radius) {
@@ -942,8 +958,10 @@ public class GeneralMethods {
 
 	/**
 	 * 
-	 * @param one One location being tested
-	 * @param two Another location being tested
+	 * @param one
+	 *            One location being tested
+	 * @param two
+	 *            Another location being tested
 	 * @return The horizontal distance between two locations
 	 */
 	public static double getHorizontalDistance(Location one, Location two) {
@@ -957,22 +975,22 @@ public class GeneralMethods {
 		BlockFace face = getCardinalDirection(vector);
 
 		switch (face) {
-			case SOUTH:
-				return 7;
-			case SOUTH_WEST:
-				return 6;
-			case WEST:
-				return 3;
-			case NORTH_WEST:
-				return 0;
-			case NORTH:
-				return 1;
-			case NORTH_EAST:
-				return 2;
-			case EAST:
-				return 5;
-			case SOUTH_EAST:
-				return 8;
+		case SOUTH:
+			return 7;
+		case SOUTH_WEST:
+			return 6;
+		case WEST:
+			return 3;
+		case NORTH_WEST:
+			return 0;
+		case NORTH:
+			return 1;
+		case NORTH_EAST:
+			return 2;
+		case EAST:
+			return 5;
+		case SOUTH_EAST:
+			return 8;
 		}
 		return 4;
 	}
@@ -985,10 +1003,10 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Returns the last ability used by a player. Also checks if a combo was
-	 * used.
+	 * Returns the last ability used by a player. Also checks if a combo was used.
 	 * 
-	 * @param player The player to check
+	 * @param player
+	 *            The player to check
 	 * @return name of last ability used
 	 */
 	public static String getLastUsedAbility(Player player, boolean checkCombos) {
@@ -1004,11 +1022,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Gets a location with a specified distance away from the left side of a
-	 * location.
+	 * Gets a location with a specified distance away from the left side of a location.
 	 * 
-	 * @param location The origin location
-	 * @param distance The distance to the left
+	 * @param location
+	 *            The origin location
+	 * @param distance
+	 *            The distance to the left
 	 * @return the location of the distance to the left
 	 */
 	public static Location getLeftSide(Location location, double distance) {
@@ -1054,11 +1073,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Returns a location with a specified distance away from the right side of
-	 * a location.
+	 * Returns a location with a specified distance away from the right side of a location.
 	 * 
-	 * @param location The origin location
-	 * @param distance The distance to the right
+	 * @param location
+	 *            The origin location
+	 * @param distance
+	 *            The distance to the right
 	 * @return the location of the distance to the right
 	 */
 	public static Location getRightSide(Location location, double distance) {
@@ -1102,7 +1122,8 @@ public class GeneralMethods {
 				continue;
 			}
 			if (entity.getWorld().equals(origin.getWorld())) {
-				if (entity.getLocation().distanceSquared(origin) < longestr * longestr && getDistanceFromLine(direction, origin, entity.getLocation()) < 2 && (entity instanceof LivingEntity) && entity.getEntityId() != player.getEntityId() && entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
+				if (entity.getLocation().distanceSquared(origin) < longestr * longestr && getDistanceFromLine(direction, origin, entity.getLocation()) < 2 && (entity instanceof LivingEntity) && entity.getEntityId() != player.getEntityId()
+				        && entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
 					target = entity;
 					longestr = entity.getLocation().distance(origin);
 				}
@@ -1154,13 +1175,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Returns the top block based around loc. PositiveY is the maximum amount
-	 * of distance it will check upward. Similarly, negativeY is for downward.
+	 * Returns the top block based around loc. PositiveY is the maximum amount of distance it will check upward. Similarly, negativeY is for downward.
 	 */
 	public static Block getTopBlock(Location loc, int positiveY, int negativeY) {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
-		//Only one of these while statements will go
+		// Only one of these while statements will go
 		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			Block tempBlock = loc.clone().add(0, y, 0).getBlock();
@@ -1183,7 +1203,7 @@ public class GeneralMethods {
 	public static Block getBottomBlock(Location loc, int positiveY, int negativeY) {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
-		//Only one of these while statements will go
+		// Only one of these while statements will go
 		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			Block tempblock = loc.clone().add(0, y, 0).getBlock();
@@ -1289,12 +1309,8 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * isRegionProtectedFromBuild is one of the most server intensive methods in
-	 * the plugin. It uses a blockCache that keeps track of recent blocks that
-	 * may have already been checked. Abilities like TremorSense call this
-	 * ability 5 times per tick even though it only needs to check a single
-	 * block, instead of doing all 5 of those checks this method will now look
-	 * in the map first.
+	 * isRegionProtectedFromBuild is one of the most server intensive methods in the plugin. It uses a blockCache that keeps track of recent blocks that may have already been checked. Abilities like TremorSense call this ability 5 times per
+	 * tick even though it only needs to check a single block, instead of doing all 5 of those checks this method will now look in the map first.
 	 */
 	public static boolean isRegionProtectedFromBuild(Player player, String ability, Location loc) {
 		if (!BLOCK_CACHE.containsKey(player.getName())) {
@@ -1448,8 +1464,7 @@ public class GeneralMethods {
 						if (((status == TownBlockStatus.ENEMY) && TownyWarConfig.isAllowingAttacks())) {
 							try {
 								TownyWar.callAttackCellEvent(twn, player, location.getBlock(), worldCoord);
-							}
-							catch (Exception e) {
+							} catch (Exception e) {
 								TownyMessaging.sendErrorMsg(player, e.getMessage());
 							}
 							return true;
@@ -1463,8 +1478,7 @@ public class GeneralMethods {
 							TownyMessaging.sendErrorMsg(player, cache.getBlockErrMsg());
 						}
 					}
-				}
-				catch (Exception e1) {
+				} catch (Exception e1) {
 					TownyMessaging.sendErrorMsg(player, TownySettings.getLangString("msg_err_not_configured"));
 				}
 			}
@@ -1504,17 +1518,17 @@ public class GeneralMethods {
 					if (!kp.isAdminMode()) {
 						if (land.getOwner().equals("SafeZone")) {
 							return true;
-						} else if (kp.getKingdom() == null) { //If the player isn't in a kingdom but it's claimed land
+						} else if (kp.getKingdom() == null) { // If the player isn't in a kingdom but it's claimed land
 							return true;
 						} else {
 							Kingdom kingdom = kp.getKingdom();
 							String kingdomName = kingdom.getKingdomName();
-							if (!kingdomName.equals(land.getOwner())) //If the player's kingdom doesn't match
+							if (!kingdomName.equals(land.getOwner())) // If the player's kingdom doesn't match
 							{
 								return true;
 							}
 
-							//If it's within the nexus area, test for higher permission
+							// If it's within the nexus area, test for higher permission
 							if (land.getStructure() != null && land.getStructure().getType() == StructureType.NEXUS) {
 								if (!kp.getRank().isHigherOrEqualTo(kingdom.getPermissionsInfo().getBuildInNexus())) {
 									return true;
@@ -1534,11 +1548,15 @@ public class GeneralMethods {
 
 	/** Checks if an entity is Undead **/
 	public static boolean isUndead(Entity entity) {
-		return entity != null && (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE);
+		return entity != null
+		        && (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE
+		                || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE);
 	}
 
 	public static boolean isWeapon(Material mat) {
-		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE || mat == Material.GOLD_AXE || mat == Material.GOLD_HOE || mat == Material.GOLD_SWORD || mat == Material.GOLD_PICKAXE || mat == Material.GOLD_SPADE);
+		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE
+		        || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE
+		        || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE || mat == Material.GOLD_AXE || mat == Material.GOLD_HOE || mat == Material.GOLD_SWORD || mat == Material.GOLD_PICKAXE || mat == Material.GOLD_SPADE);
 	}
 
 	public static void loadBendingPlayer(BendingPlayer pl) {
@@ -1830,15 +1848,13 @@ public class GeneralMethods {
 							} else if (obj instanceof Map) {
 								writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?, ?>) obj).size());
 							}
-						}
-						catch (Exception e) {
+						} catch (Exception e) {
 
 						}
 					}
 				}
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -1862,7 +1878,7 @@ public class GeneralMethods {
 		if (event.isCancelled()) {
 			return;
 		}
-		//Temp code to block modifications of binds, Should be replaced when bind event is added.
+		// Temp code to block modifications of binds, Should be replaced when bind event is added.
 		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID()))) {
 			return;
 		}
@@ -2034,12 +2050,12 @@ public class GeneralMethods {
 		ChatColor color;
 		try {
 			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		}
-		catch (IllegalArgumentException exception) {
+		} catch (IllegalArgumentException exception) {
 			color = ChatColor.GOLD;
 		}
 
-		String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra"
+		        + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
 		} else {
@@ -2048,9 +2064,7 @@ public class GeneralMethods {
 			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra!\n" + color + "Click for more info.").create()));
 
 			/*
-			 * The commented code below does not work due to an issue with
-			 * Spigot. In the mean time, we'll have to use this incredibly
-			 * 'hacky' method to force the colour on the new line.
+			 * The commented code below does not work due to an issue with Spigot. In the mean time, we'll have to use this incredibly 'hacky' method to force the colour on the new line.
 			 */
 			String lastColor = "";
 			String newMessage = "";
@@ -2059,7 +2073,7 @@ public class GeneralMethods {
 				if (c.equalsIgnoreCase("§")) {
 					lastColor = "§" + message.split("")[i + 1];
 					newMessage = newMessage + c;
-				} else if (c.equalsIgnoreCase(" ")) { //Add color every word
+				} else if (c.equalsIgnoreCase(" ")) { // Add color every word
 					newMessage = newMessage + " " + lastColor;
 				} else {
 					newMessage = newMessage + c;
@@ -2069,12 +2083,8 @@ public class GeneralMethods {
 			TextComponent messageComponent = new TextComponent(newMessage);
 			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
 			/*
-			 * boolean prefixSent = false; for (String msg :
-			 * message.split("\n")) { if (!prefixSent) { TextComponent
-			 * messageComponent = new TextComponent(msg); ((Player)
-			 * sender).spigot().sendMessage(new TextComponent(prefixComponent,
-			 * messageComponent)); prefixSent = true; } else {
-			 * sender.sendMessage(msg); } }
+			 * boolean prefixSent = false; for (String msg : message.split("\n")) { if (!prefixSent) { TextComponent messageComponent = new TextComponent(msg); ((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent,
+			 * messageComponent)); prefixSent = true; } else { sender.sendMessage(msg); } }
 			 */
 
 		}
@@ -2110,7 +2120,6 @@ public class GeneralMethods {
 		WaterAbility.stopBending();
 		FireAbility.stopBending();
 
-		Flight.removeAll();
 		TempBlock.removeAll();
 		TempArmor.revertAll();
 		TempArmorStand.removeAll();
@@ -2143,8 +2152,7 @@ public class GeneralMethods {
 			pw.flush();
 			pw.close();
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

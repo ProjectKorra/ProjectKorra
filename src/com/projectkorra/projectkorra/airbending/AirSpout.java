@@ -10,10 +10,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.Flight;
 
 public class AirSpout extends AirAbility {
 
@@ -48,14 +48,13 @@ public class AirSpout extends AirAbility {
 		this.animTime = System.currentTimeMillis();
 		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
 		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
-		
-		
+
 		double heightRemoveThreshold = 2;
 		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
 			return;
 		}
 
-		new Flight(player);
+		ProjectKorra.flightHandler.createInstance(player, getName());
 
 		if (bPlayer.isAvatarState()) {
 			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
@@ -65,8 +64,7 @@ public class AirSpout extends AirAbility {
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
 	 */
 	@Deprecated
 	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
@@ -136,7 +134,6 @@ public class AirSpout extends AirAbility {
 			return;
 		}
 
-
 		Block eyeBlock = player.getEyeLocation().getBlock();
 		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
 			remove();
@@ -158,14 +155,14 @@ public class AirSpout extends AirAbility {
 				allowFlight();
 			}
 			rotateAirColumn(block);
-		} else {	
+		} else {
 			remove();
 		}
 	}
 
 	public void remove() {
 		super.remove();
-		removeFlight();
+		ProjectKorra.flightHandler.removeInstance(player, getName());
 	}
 
 	private void removeFlight() {

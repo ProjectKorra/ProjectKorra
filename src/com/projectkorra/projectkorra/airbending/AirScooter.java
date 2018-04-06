@@ -11,10 +11,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.Flight;
 
 public class AirScooter extends AirAbility {
 
@@ -31,8 +31,6 @@ public class AirScooter extends AirAbility {
 	private Random random;
 	private ArrayList<Double> angles;
 
-	private boolean canFly;
-	private boolean hadFly;
 	private double phi = 0;
 
 	public AirScooter(Player player) {
@@ -55,10 +53,8 @@ public class AirScooter extends AirAbility {
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
-		canFly = player.getAllowFlight();
-		hadFly = player.isFlying();
 
-		new Flight(player);
+		ProjectKorra.flightHandler.createInstance(player, getName());
 		player.setAllowFlight(true);
 		player.setFlying(true);
 
@@ -75,7 +71,8 @@ public class AirScooter extends AirAbility {
 	/**
 	 * Checks if player has an instance already and removes if they do.
 	 * 
-	 * @param player The player to check
+	 * @param player
+	 *            The player to check
 	 * @return false If player doesn't have an instance
 	 */
 	public static boolean check(Player player) {
@@ -87,8 +84,7 @@ public class AirScooter extends AirAbility {
 	}
 
 	/*
-	 * Looks for a block under the player and sets "floorBlock" to a block under
-	 * the player if it within the maximum height
+	 * Looks for a block under the player and sets "floorBlock" to a block under the player if it within the maximum height
 	 */
 	private void getFloor() {
 		floorblock = null;
@@ -137,8 +133,7 @@ public class AirScooter extends AirAbility {
 			spinScooter();
 		}
 		/*
-		 * Checks for how far the ground is away from the player it elevates or
-		 * lowers the player based on their distance from the ground.
+		 * Checks for how far the ground is away from the player it elevates or lowers the player based on their distance from the ground.
 		 */
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
 		double dx = Math.abs(distance - 2.4);
@@ -149,7 +144,7 @@ public class AirScooter extends AirAbility {
 		} else {
 			velocity.setY(0);
 		}
-		
+
 		Vector v = velocity.clone().setY(0);
 		Block b = floorblock.getLocation().clone().add(v.multiply(1.2)).getBlock();
 		if (!GeneralMethods.isSolid(b) && !b.isLiquid()) {
@@ -180,14 +175,12 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		player.setAllowFlight(canFly);
-		player.setFlying(hadFly);
+		ProjectKorra.flightHandler.removeInstance(player, getName());
 		bPlayer.addCooldown(this);
 	}
 
 	/*
-	 * The particles used for AirScooter phi = how many rings of particles the
-	 * sphere has. theta = how dense the rings are. r = Radius of the sphere
+	 * The particles used for AirScooter phi = how many rings of particles the sphere has. theta = how dense the rings are. r = Radius of the sphere
 	 */
 	private void spinScooter() {
 		Location origin = player.getLocation();

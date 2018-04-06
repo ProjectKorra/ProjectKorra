@@ -14,7 +14,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.ActionBar;
-import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
@@ -110,7 +109,6 @@ public class BendingManager implements Runnable {
 			CoreAbility.progressAll();
 			TempPotionEffect.progressAll();
 			handleDayNight();
-			Flight.handle();
 			RevertChecker.revertAirBlocks();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
@@ -123,8 +121,7 @@ public class BendingManager implements Runnable {
 					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

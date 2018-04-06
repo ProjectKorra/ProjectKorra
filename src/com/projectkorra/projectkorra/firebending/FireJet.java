@@ -1,9 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,7 +8,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireJet extends FireAbility {
 
@@ -58,7 +58,7 @@ public class FireJet extends FireAbility {
 				block.setType(Material.FIRE);
 			}
 
-			new Flight(player);
+			ProjectKorra.flightHandler.createInstance(player, getName());
 			player.setAllowFlight(true);
 			time = System.currentTimeMillis();
 
@@ -94,6 +94,12 @@ public class FireJet extends FireAbility {
 			player.setVelocity(velocity);
 			player.setFallDistance(0);
 		}
+	}
+
+	@Override
+	public void remove() {
+		super.remove();
+		ProjectKorra.flightHandler.removeInstance(player, getName());
 	}
 
 	@Override

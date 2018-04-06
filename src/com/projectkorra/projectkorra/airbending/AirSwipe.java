@@ -25,7 +25,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class AirSwipe extends AirAbility {
@@ -115,8 +114,7 @@ public class AirSwipe extends AirAbility {
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
 	 */
 	@Deprecated
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
@@ -171,7 +169,7 @@ public class AirSwipe extends AirAbility {
 							} else if (block.getData() == 0x0) {
 								new TempBlock(block, Material.OBSIDIAN, (byte) 0);
 							} else {
-								new TempBlock(block, Material.COBBLESTONE, (byte)0);
+								new TempBlock(block, Material.COBBLESTONE, (byte) 0);
 							}
 						}
 					} else {
@@ -219,7 +217,7 @@ public class AirSwipe extends AirAbility {
 							affectedEntities.add(entity);
 						}
 						if (entity instanceof Player) {
-							new Flight((Player) entity, player);
+							ProjectKorra.flightHandler.createInstance((Player) entity, player, 5000L, getName());
 						}
 						breakBreathbendingHold(entity);
 						if (elements.containsKey(fDirection)) {
