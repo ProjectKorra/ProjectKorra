@@ -183,22 +183,6 @@ public class BendingPlayer {
 		}
 	}
 
-	//	public void saveCooldowns() {
-	//		DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'", false);
-	//		DBConnection.sql.modifyQuery("INSERT INTO pk_cooldowns (uuid) VALUES ('" + uuid.toString() + "')", false);
-	//		for (Entry<String, Cooldown> entry : cooldowns.entrySet()) {
-	//			String name = entry.getKey();
-	//			Cooldown cooldown = entry.getValue();
-	//			if (!cooldown.isDatabase()) {
-	//				continue;
-	//			}
-	//			if (!DBConnection.sql.columnExists("pk_cooldowns", name)) {
-	//				DBConnection.sql.modifyQuery("ALTER TABLE pk_cooldowns ADD " + name + " BIGINT", false);
-	//			}
-	//			DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET '" + name + "' = " + cooldown.getCooldown() + " WHERE uuid = '" + uuid.toString() + "'", false);
-	//		}
-	//	}
-
 	/**
 	 * Adds an element to the {@link BendingPlayer}'s known list.
 	 * 
