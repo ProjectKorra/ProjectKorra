@@ -94,7 +94,8 @@ public class FireShield extends FireAbility {
 		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
 			return;
-		} else if ((!player.isSneaking() && shield) || (System.currentTimeMillis() > getStartTime() + shieldDuration && shield)) {
+		} else if ((!player.isSneaking() && shield) || (shieldDuration != 0 && System.currentTimeMillis() > getStartTime() + shieldDuration && shield)) {
+			
 			remove();
 			return;
 		} else if (System.currentTimeMillis() > getStartTime() + discDuration && !shield) {
@@ -140,7 +141,7 @@ public class FireShield extends FireAbility {
 					continue;
 				} else if (entity instanceof LivingEntity) { 
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
-						entity.setFireTicks(120);
+						entity.setFireTicks((int) (fireTicks * 20));
 						new FireDamageTimer(entity, player);
 					}
 				} else if (entity instanceof Projectile) {
@@ -176,6 +177,7 @@ public class FireShield extends FireAbility {
 				} else if (entity instanceof Projectile) {
 					entity.remove();
 				}
+				
 			}
 		}
 	}
