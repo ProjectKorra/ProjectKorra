@@ -96,6 +96,10 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || GeneralMethods.isRegionProtectedFromBuild(player, location)) {
+			remove();
+			return;
+		}
 		if (location.distanceSquared(origin) > range * range) {
 			remove();
 			return;
