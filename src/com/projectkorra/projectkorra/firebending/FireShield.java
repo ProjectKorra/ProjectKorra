@@ -29,7 +29,8 @@ public class FireShield extends FireAbility {
 	private long shieldCooldown;
 	private double radius;
 	private double discRadius;
-	private double fireTicks;
+	private double discFireTicks;
+	private double shieldFireTicks;
 	private Location location;
 	private Random random;
 	private int increment = 20;
@@ -46,10 +47,11 @@ public class FireShield extends FireAbility {
 		this.discCooldown = getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown");
 		this.discDuration = getConfig().getLong("Abilities.Fire.FireShield.Disc.Duration");
 		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius");
+		this.discFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Disc.FireTicks");
 		this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown");
 		this.shieldDuration = getConfig().getLong("Abilities.Fire.FireShield.Shield.Duration");
 		this.radius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireShield.FireTicks");
+		this.shieldFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Shield.FireTicks");
 		this.random = new Random();
 
 		if (hasAbility(player, FireShield.class) || bPlayer.isOnCooldown("FireShield")) {
@@ -94,7 +96,7 @@ public class FireShield extends FireAbility {
 		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
 			return;
-		} else if ((!player.isSneaking() && shield) || (System.currentTimeMillis() > getStartTime() + shieldDuration && shield)) {
+		} else if ((!player.isSneaking() && shield) || (System.currentTimeMillis() > getStartTime() + shieldDuration && shield && shieldDuration > 0)) {
 			remove();
 			return;
 		} else if (System.currentTimeMillis() > getStartTime() + discDuration && !shield) {
@@ -140,7 +142,7 @@ public class FireShield extends FireAbility {
 					continue;
 				} else if (entity instanceof LivingEntity) { 
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
-						entity.setFireTicks(120);
+						entity.setFireTicks((int)(shieldFireTicks*20));
 						new FireDamageTimer(entity, player);
 					}
 				} else if (entity instanceof Projectile) {
@@ -170,7 +172,7 @@ public class FireShield extends FireAbility {
 					continue;
 				} else if (entity instanceof LivingEntity) { 
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
-						entity.setFireTicks((int) (fireTicks * 20));
+						entity.setFireTicks((int)(discFireTicks*20));
 						new FireDamageTimer(entity, player);
 					}
 				} else if (entity instanceof Projectile) {
@@ -262,12 +264,16 @@ public class FireShield extends FireAbility {
 		this.discRadius = discRadius;
 	}
 
-	public double getFireTicks() {
-		return fireTicks;
+	public double getFireTicks(boolean shield) {
+		return shield ? shieldFireTicks : discFireTicks;
 	}
 
-	public void setFireTicks(double fireTicks) {
-		this.fireTicks = fireTicks;
+	public void setFireTicks(double fireTicks, boolean shield) {
+		if (shield) {
+			this.shieldFireTicks = fireTicks;
+		} else {
+			this.discFireTicks = fireTicks;
+		}
 	}
 
 	public void setDiscCooldown(long cooldown) {

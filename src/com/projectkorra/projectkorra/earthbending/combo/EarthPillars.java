@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		super(player);
 		setFields(fall);
 		
-		if (!bPlayer.canBendIgnoreBinds(this)) {
+		if (!bPlayer.canBendIgnoreBinds(this) || !isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
 			return;
 		}
 		
@@ -49,7 +50,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		}
 		
 		for (Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), radius)) {
-			if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
+			if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId() && isEarthbendable(e.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
 				ParticleEffect.BLOCK_DUST.display(new BlockData(e.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte)0), 1f, 0.1f, 1f, 0, 6, e.getLocation(), 255);
 				affect((LivingEntity)e);
 			}
@@ -65,7 +66,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		this.power = getConfig().getDouble("Abilities.Earth.EarthPillars.Power");
 		this.damaging = getConfig().getBoolean("Abilities.Earth.EarthPillars.Damage.Enabled");
 		this.stun = getConfig().getBoolean("Abilities.Earth.EarthPillars.Stun.Enabled");
-		this.stunDuration = getConfig().getLong("Abilities.EarthPillars.Stun.Duration");
+		this.stunDuration = getConfig().getLong("Abilities.Earth.EarthPillars.Stun.Duration");
 		this.entities = new HashMap<>();
 		
 		if (fall) {
@@ -79,10 +80,6 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	}
 	
 	public void affect(LivingEntity lent) {
-		if (damaging) {
-			DamageHandler.damageEntity(lent, damage, this);
-		}
-		
 		if (stun) {
 			if (lent instanceof Player) {
 				stun((Player)lent);
@@ -110,6 +107,10 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
+				if (!player.isOnline()) {
+					bPlayer.unblockChi();
+					cancel();
+				}
 				ActionBar.sendActionBar(Element.EARTH.getColor() + "* Stunned *", player);
 				if (System.currentTimeMillis() >= start + stunDuration) {
 					bPlayer.unblockChi();
@@ -123,10 +124,17 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	public void progress() {
 		List<RaiseEarth> removal = new ArrayList<>();
 		for (RaiseEarth abil : entities.keySet()) {
-			if (abil.isRemoved()) {
+			if (abil.isRemoved() && abil.isStarted()) {
 				LivingEntity lent = entities.get(abil);
 				if (!lent.isDead()) {
+					if (lent instanceof Player && !((Player)lent).isOnline()) {
+						continue;
+					}
+					
 					lent.setVelocity(new Vector(0, power, 0));
+				}
+				if (damaging) {
+					DamageHandler.damageEntity(lent, damage, this);
 				}
 				
 				removal.add(abil);
