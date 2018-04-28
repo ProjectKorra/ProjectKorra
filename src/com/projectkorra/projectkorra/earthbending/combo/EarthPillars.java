@@ -127,7 +127,9 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 			if (abil.isRemoved() && abil.isStarted()) {
 				LivingEntity lent = entities.get(abil);
 				if (!lent.isDead()) {
-					if (lent instanceof Player && !((Player)lent).isOnline()) continue;
+					if (lent instanceof Player && !((Player)lent).isOnline()) {
+						continue;
+					}
 					
 					lent.setVelocity(new Vector(0, power, 0));
 				}
