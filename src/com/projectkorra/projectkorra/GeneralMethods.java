@@ -292,6 +292,36 @@ public class GeneralMethods {
 	public static boolean canView(Player player, String ability) {
 		return player.hasPermission("bending.ability." + ability);
 	}
+	
+	/**
+	 * Checks if there is a diagonal wall in front of the location in the given direction,
+	 * in any 2 dimensions and all 3
+	 * @param location spot to check
+	 * @param direction which way to check
+	 * @return true if diagonal wall is found
+	 */
+	public static boolean checkDiagonalWall(Location location, Vector direction) {
+		boolean[] xyzsolid = {false, false, false};
+		for (int i = 0; i < 3; i++) {
+			double value;
+			if (i == 0) {
+				value = direction.getX();
+			} else if (i == 1) {
+				value = direction.getY();
+			} else {
+				value = direction.getZ();
+			}
+			BlockFace face = GeneralMethods.getBlockFaceFromValue(i, value);
+			if (face == null) {
+				continue;
+			}
+			xyzsolid[i] = location.getBlock().getRelative(face).getType().isSolid();
+		}
+		boolean a = xyzsolid[0] && xyzsolid[2];
+		boolean b = xyzsolid[0] && xyzsolid[1];
+		boolean c = xyzsolid[1] && xyzsolid[2];
+		return (a || b || c || (a && b));
+	}
 
 	/**
 	 * Creates a {@link BendingPlayer} with the data from the database. This runs when a player logs in.
