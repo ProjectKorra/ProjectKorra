@@ -112,26 +112,7 @@ public class FireBlast extends FireAbility {
 			ParticleEffect.FLAME.display(location, 0.275F, 0.275F, 0.275F, 0, 6);
 			ParticleEffect.SMOKE.display(location, 0.3F, 0.3F, 0.3F, 0, 3);
 		}
-		boolean[] xyzsolid = {false, false, false};
-		for (int i = 0; i < 3; i++) {
-			double value;
-			if (i == 0) {
-				value = direction.getX();
-			} else if (i == 1) {
-				value = direction.getY();
-			} else {
-				value = direction.getZ();
-			}
-			BlockFace face = GeneralMethods.getBlockFaceFromValue(i, value);
-			if (face == null) {
-				continue;
-			}
-			xyzsolid[i] = location.getBlock().getRelative(face).getType().isSolid();
-		}
-		boolean a = xyzsolid[0] && xyzsolid[2];
-		boolean b = xyzsolid[0] && xyzsolid[1];
-		boolean c = xyzsolid[1] && xyzsolid[2];
-		if (a || b || c || (a && b)) {
+		if (GeneralMethods.checkDiagonalWall(location, direction)) {
 			remove();
 			return;
 		}
