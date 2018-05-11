@@ -1,12 +1,17 @@
 package com.projectkorra.projectkorra.util;
 
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -26,126 +31,131 @@ import javax.xml.parsers.ParserConfigurationException;
  * <li>{@link #updateAvailable()} to check if theres an update</li>
  * </ul>
  * </p>
- * 
- * @author Jacklin213
  *
+ * @author Jacklin213
  */
 public class Updater {
 
-	private URL url;
-	private URLConnection urlc;
-	private Document document;
-	private String currentVersion;
-	private Plugin plugin;
-	private String pluginName;
+    private URL url;
+    private URLConnection urlc;
+    private String updateVersion;
+    private String currentVersion;
+    private Plugin plugin;
+    private boolean checkUpdateOnStartup;
+    private String pluginName;
 
-	/**
-	 * Creates a new instance of Updater. This constructor should only be called
-	 * inside of {@code plugin.onEnable()} or called after the plugin is loaded.
-	 * <br>
-	 * <br>
-	 * This constructor should NEVER be called to initiate a field. If called to
-	 * initiate a field, Updater will throw NullPointerExceptions
-	 * 
-	 * @param plugin Plugin to check updates for
-	 * @param URL RSS feed URL link to check for updates on.
-	 */
-	public Updater(Plugin plugin, String URL) {
-		this.plugin = plugin;
-		try {
-			url = new URL(URL);
-			urlc = url.openConnection();
-			urlc.setRequestProperty("User-Agent", ""); // Must be used or face 403
-			urlc.setConnectTimeout(30000); // 30 second time out, throws SocketTimeoutException
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(urlc.getInputStream());
-		}
-		catch (IOException e) {
-			plugin.getLogger().info("Could not connect to ProjectKorra.com to check for updates");
-		}
-		catch (SAXException | ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		this.currentVersion = plugin.getDescription().getVersion();
-		this.pluginName = plugin.getDescription().getName();
-	}
+    /**
+     * Creates a new instance of Updater. This constructor should only be called
+     * inside of {@code plugin.onEnable()} or called after the plugin is loaded.
+     * <br>
+     * <br>
+     * This constructor should NEVER be called to initiate a field. If called to
+     * initiate a field, Updater will throw NullPointerExceptions
+     *
+     * @param plugin               Plugin to check updates for
+     * @param URL                  RSS feed URL link to check for updates on.
+     * @param checkUpdateOnStartup Whether the plugin should check for updates when the server starts or not. Defined
+     *                            in the config
+     */
+    public Updater(Plugin plugin, String URL, boolean checkUpdateOnStartup) {
+        this.plugin = plugin;
+        this.checkUpdateOnStartup = checkUpdateOnStartup;
+        runAsync(plugin, () -> {
+            try {
+                if (checkUpdateOnStartup)
+                    plugin.getLogger().info("Checking for updates...!");
+                url = new URL(URL);
+                urlc = url.openConnection();
+                urlc.setRequestProperty("User-Agent", "Mozilla/5.0"); // Must be used or face 403
+                urlc.setConnectTimeout(30000); // 30 second time out, throws SocketTimeoutException
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlc.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.contains("<h3>Version ")) {
+                            line = line.trim();
+                            updateVersion = line.split("<h3>Version ")[1];
+                            updateVersion = updateVersion.substring(0, updateVersion.length() - 5);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                plugin.getLogger().info("Could not connect to ProjectKorra.com");
+            }
+            if (checkUpdateOnStartup)
+                checkUpdate();
+            else
+                plugin.getLogger().info("Update checking disabled - Use command to manually check for updates");
+        });
+        this.currentVersion = plugin.getDescription().getVersion();
+        this.pluginName = plugin.getDescription().getName();
+    }
 
-	/**
-	 * Logs and update message in console. Displays different messages dependent
-	 * on {@link #updateAvailable()}
-	 * 
-	 */
-	public void checkUpdate() {
-		if (getUpdateVersion() == null) {
-			return;
-		} else if (updateAvailable()) {
-			plugin.getLogger().info("===================[Update Available]===================");
-			plugin.getLogger().info("You are running version " + getCurrentVersion());
-			plugin.getLogger().info("The latest version avaliable is " + getUpdateVersion());
-		} else {
-			plugin.getLogger().info("You are running the latest version of " + pluginName);
-		}
-	}
+    private void runAsync(Plugin plugin, Runnable run) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, run);
+    }
 
-	/**
-	 * Gets latest plugin version.
-	 * 
-	 * @return Latest plugin version, or null if it cannot connect
-	 */
-	public String getUpdateVersion() {
-		if (document != null) {
-			Node latestFile = document.getElementsByTagName("item").item(0);
-			NodeList children = latestFile.getChildNodes();
+    /**
+     * Logs and update message in console. Displays different messages dependent
+     * on {@link #updateAvailable()}
+     */
+    public void checkUpdate() {
+        if (!checkUpdateOnStartup)
+            return;
+        if (getUpdateVersion() == null) {
+            plugin.getLogger().info("Something went wrong while trying to retrieve the latest version.");
+            return;
+        }
+        if (updateAvailable()) {
+            plugin.getLogger().info("===================[Update Available]===================");
+            plugin.getLogger().info("You are running version " + getCurrentVersion());
+            plugin.getLogger().info("The latest version available is " + getUpdateVersion());
+        } else {
+            plugin.getLogger().info("You are running the latest version of " + pluginName);
+        }
+    }
 
-			String version = children.item(1).getTextContent();
-			return version.toUpperCase();
-		}
-		return null;
-	}
+    /**
+     * Gets latest plugin version.
+     *
+     * @return Latest plugin version, or null if it cannot connect
+     */
+    public String getUpdateVersion() {
+        return updateVersion;
+    }
 
-	/**
-	 * Checks to see if an update is available.
-	 * 
-	 * @return true If there is an update
-	 */
-	public boolean updateAvailable() {
-		String updateVersion = getUpdateVersion();
-		if (updateVersion == null) {
-			return false;
-		}
-		int currentNumber = Integer.parseInt(currentVersion.substring(0, 5).replaceAll("\\.", ""));
-		int updateNumber = Integer.parseInt(updateVersion.substring(0, 5).replaceAll("\\.", ""));
-		if (updateNumber == currentNumber) {
-			if (currentVersion.contains("BETA") && updateVersion.contains("BETA")) {
-				int currentBeta = Integer.parseInt(currentVersion.substring(currentVersion.lastIndexOf(" ") + 1));
-				int updateBeta = Integer.parseInt(updateVersion.substring(updateVersion.lastIndexOf(" ") + 1));
-				if (currentBeta == updateBeta || currentBeta > updateBeta) {
-					return false;
-				}
-			} else if (!currentVersion.contains("BETA") && updateVersion.contains("BETA")) {
-				return false;
-			}
-		} else if (currentVersion.equalsIgnoreCase(updateVersion) || currentNumber > updateNumber) {
-			return false;
-		}
-		return true;
-	}
+    /**
+     * Checks to see if an update is available.
+     * <b>Note: </b> This method does <i>not</i> check the newest version in real time. It checks using the latest version number retrieved upon startup.
+     *
+     * @return true If there is an update
+     */
+    public boolean updateAvailable() {
+        String updateVersion = getUpdateVersion();
+        if (updateVersion == null)
+            return false;
+        int currentNumber = Integer.parseInt(currentVersion.replaceAll("[^\\d]", ""));
+        int updateNumber = Integer.parseInt(updateVersion.replaceAll("[^\\d]", ""));
+        return currentNumber < updateNumber;
+    }
 
-	/**
-	 * Gets the connected URL object.
-	 * 
-	 * @return The URL object
-	 */
-	public URL getUrl() {
-		return url;
-	}
+    /**
+     * Gets the connected URL object.
+     *
+     * @return The URL object
+     */
+    public URL getUrl() {
+        return url;
+    }
 
-	/**
-	 * Gets the current plugin version from the plugin.yml.
-	 * 
-	 * @return The current plugin version
-	 */
-	public String getCurrentVersion() {
-		return currentVersion;
-	}
+    /**
+     * Gets the current plugin version from the plugin.yml.
+     *
+     * @return The current plugin version
+     */
+    public String getCurrentVersion() {
+        return currentVersion;
+    }
 
 }
