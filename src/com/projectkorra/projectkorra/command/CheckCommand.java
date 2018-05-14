@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.entity.ProjectileHitEvent;
 
 import java.util.List;
 
@@ -35,7 +36,9 @@ public class CheckCommand extends PKCommand {
 			help(sender, false);
 			return;
 		}
-		if (ProjectKorra.plugin.updater.updateAvailable()) {
+		if (!ProjectKorra.plugin.updater.isEnabled()) {
+			sender.sendMessage(ChatColor.YELLOW + "The update checker has been disabled in the config. Please enable it in order to use this command.");
+		} else if (ProjectKorra.plugin.updater.updateAvailable()) {
 			sender.sendMessage(ChatColor.GREEN + this.newVersionAvailable.replace("ProjectKorra", ChatColor.GOLD + "ProjectKorra" + ChatColor.GREEN));
 			sender.sendMessage(ChatColor.YELLOW + this.curVersion.replace("{version}", ChatColor.RED + ProjectKorra.plugin.updater.getCurrentVersion() + ChatColor.YELLOW));
 			sender.sendMessage(ChatColor.YELLOW + this.newVersion.replace("{version}", ChatColor.GOLD + ProjectKorra.plugin.updater.getUpdateVersion() + ChatColor.YELLOW));
