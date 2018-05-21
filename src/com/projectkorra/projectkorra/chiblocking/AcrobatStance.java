@@ -31,12 +31,10 @@ public class AcrobatStance extends ChiAbility {
 
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {
+			stance.remove();
 			if (stance instanceof AcrobatStance) {
-				stance.remove();
+				bPlayer.setStance(null);
 				return;
-			}
-			if (stance instanceof WarriorStance) {
-				stance.remove();
 			}
 		}
 		start();
