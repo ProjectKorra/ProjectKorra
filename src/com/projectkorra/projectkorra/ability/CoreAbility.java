@@ -570,7 +570,10 @@ public abstract class CoreAbility implements Ability {
 	public static void registerPluginAbilities(JavaPlugin plugin, String packageBase) {
 		AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, packageBase);
 		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
-		ADDON_PLUGINS.add(plugin.getName() + "::" + packageBase);
+		String entry = plugin.getName() + "::" + packageBase;
+		if (!ADDON_PLUGINS.contains(entry)) {
+			ADDON_PLUGINS.add(entry);
+		}
 		
 		for (CoreAbility coreAbil : loadedAbilities) {
 			if (!coreAbil.isEnabled()) {
