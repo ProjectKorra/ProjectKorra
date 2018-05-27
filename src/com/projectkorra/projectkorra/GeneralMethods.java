@@ -668,7 +668,7 @@ public class GeneralMethods {
 				long cooldown = bPlayer.getCooldown(ability.getName()) - System.currentTimeMillis();
 				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName() + "" + ability.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
 			} else {
-				if (bPlayer.getStance() instanceof AcrobatStance && ability.getName().equals("AcrobatStance") || bPlayer.getStance() instanceof WarriorStance && ability.getName().equals("WarriorStance")) {
+				if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(ability.getName())) {
 					displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();
 				} else {
 					displayedMessage = ability.getElement().getColor() + ability.getName();

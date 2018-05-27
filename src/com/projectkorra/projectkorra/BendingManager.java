@@ -112,15 +112,6 @@ public class BendingManager implements Runnable {
 			RevertChecker.revertAirBlocks();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
-			for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-				GeneralMethods.displayMovePreview(player);
-
-				if (MetalClips.isControlled(player)) {
-					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
-				} else if (Bloodbending.isBloodbent(player)) {
-					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
-				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
