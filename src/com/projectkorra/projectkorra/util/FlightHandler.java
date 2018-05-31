@@ -119,11 +119,11 @@ public class FlightHandler {
 	public void removeInstance(Player player, String identifier) {
 		if (ABILITIES.containsKey(player.getUniqueId())) {
 			ABILITIES.get(player.getUniqueId()).remove(identifier);
-		}
-		if (ABILITIES.get(player.getUniqueId()).isEmpty()) {
-			ABILITIES.remove(player.getUniqueId());
-			if (INSTANCES.containsKey(player.getUniqueId())) {
-				wipeInstance(player);
+			if (ABILITIES.get(player.getUniqueId()).isEmpty()) {
+				ABILITIES.remove(player.getUniqueId());
+				if (INSTANCES.containsKey(player.getUniqueId())) {
+					wipeInstance(player);
+				}
 			}
 		}
 	}

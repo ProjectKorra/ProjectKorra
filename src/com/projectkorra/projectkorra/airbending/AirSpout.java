@@ -38,7 +38,6 @@ public class AirSpout extends AirAbility {
 		}
 
 		if (!bPlayer.canBend(this)) {
-			remove();
 			return;
 		}
 
