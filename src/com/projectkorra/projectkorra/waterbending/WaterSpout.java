@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -30,6 +31,10 @@ public class WaterSpout extends WaterAbility {
 	private int angle;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
+	private long cooldown;
+	private long duration;
+	private long startTime;
 	private double rotation;
 	private double height;
 	private double maxHeight;
@@ -48,8 +53,11 @@ public class WaterSpout extends WaterAbility {
 		this.canBendOnPackedIce = getConfig().getStringList("Properties.Water.IceBlocks").contains(Material.PACKED_ICE.toString());
 		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
+		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Cooldown");
 		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
 		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
+		this.duration = getConfig().getLong("Abilities.Water.WaterSpout.Duration");
+		this.startTime = System.currentTimeMillis();
 
 		maxHeight = getNightFactor(height);
 		WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
@@ -115,6 +123,10 @@ public class WaterSpout extends WaterAbility {
 		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.startTime + this.duration) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
 		} else {
 			blocks.clear();
 			player.setFallDistance(0);
@@ -133,6 +145,7 @@ public class WaterSpout extends WaterAbility {
 				location = base.getLocation();
 				double heightRemoveThreshold = 2;
 				if (!isWithinMaxSpoutHeight(location, heightRemoveThreshold)) {
+					bPlayer.addCooldown(this);
 					remove();
 					return;
 				}
@@ -155,6 +168,7 @@ public class WaterSpout extends WaterAbility {
 					player.setFlying(true);
 				}
 			} else {
+				bPlayer.addCooldown(this);
 				remove();
 				return;
 			}
@@ -319,7 +333,7 @@ public class WaterSpout extends WaterAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return this.cooldown;
 	}
 
 	@Override

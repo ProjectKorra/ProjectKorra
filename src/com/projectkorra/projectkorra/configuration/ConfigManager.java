@@ -924,6 +924,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.OctopusForm.Knockback", 1.75);
 			config.addDefault("Abilities.Water.OctopusForm.FormDelay", 40);
 			config.addDefault("Abilities.Water.OctopusForm.Cooldown", 0);
+			config.addDefault("Abilities.Water.OctopusForm.Duration", 0);
 			config.addDefault("Abilities.Water.OctopusForm.UsageCooldown", 0);
 			config.addDefault("Abilities.Water.OctopusForm.AngleIncrement", 45);
 
@@ -1055,6 +1056,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
 			config.addDefault("Abilities.Water.WaterSpout.Cooldown", 0);
+			config.addDefault("Abilities.Water.WaterSpout.Duration", 0);
 			config.addDefault("Abilities.Water.WaterSpout.Height", 16);
 			config.addDefault("Abilities.Water.WaterSpout.Interval", 50);
 			config.addDefault("Abilities.Water.WaterSpout.BlockSpiral", true);
