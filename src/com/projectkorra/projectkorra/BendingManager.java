@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -112,6 +113,14 @@ public class BendingManager implements Runnable {
 			RevertChecker.revertAirBlocks();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
+			
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				if (Bloodbending.isBloodbent(player)) {
+					ActionBar.sendActionBar(SubElement.BLOOD.getColor() + "* Bloodbent *", player);
+				} else if (MetalClips.isControlled(player)) {
+					ActionBar.sendActionBar(SubElement.METAL.getColor() + "* MetalClipped *", player);
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

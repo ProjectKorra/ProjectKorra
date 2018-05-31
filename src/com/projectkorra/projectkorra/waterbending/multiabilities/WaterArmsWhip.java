@@ -271,8 +271,12 @@ public class WaterArmsWhip extends WaterAbility {
 					reverting = true;
 					break;
 				}
-
-				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8).setRevertTime(500/i);
+				
+				if (TempBlock.isTempBlock(l2.getBlock())) {
+					TempBlock.get(l2.getBlock()).setRevertTime(40);
+				} else {
+					new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8).setRevertTime(40);
+				}
 
 				if (i == activeLength) {
 					Location l3 = null;
@@ -284,7 +288,11 @@ public class WaterArmsWhip extends WaterAbility {
 
 					end = l3.clone();
 					if (canPlaceBlock(l3.getBlock())) {
-						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3).setRevertTime(500/i);
+						if (TempBlock.isTempBlock(l2.getBlock())) {
+							TempBlock.get(l2.getBlock()).setRevertTime(40);
+						} else {
+							new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 3).setRevertTime(40);
+						}
 						performAction(l3);
 					} else {
 						if (!l3.getBlock().getType().equals(Material.BARRIER)) {

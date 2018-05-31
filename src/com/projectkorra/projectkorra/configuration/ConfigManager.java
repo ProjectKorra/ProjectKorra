@@ -681,7 +681,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Height", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed", 0.75);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Radius", 1.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.Height", 6);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.Width", 6);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.Duration", 8000);
@@ -1393,7 +1392,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireWheel.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireWheel.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.FireWheel.Height", 2);
-			config.addDefault("Abilities.Fire.FireWheel.Radius", 1.0);
 
 			config.addDefault("Abilities.Fire.JetBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.JetBlast.Speed", 1.2);

@@ -46,8 +46,8 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Range");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireKick.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireKick.Range");
 		}
 
 		start();
