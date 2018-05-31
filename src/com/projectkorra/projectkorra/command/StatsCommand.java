@@ -93,7 +93,8 @@ public class StatsCommand extends PKCommand {
 			int page = 1;
 			try {
 				page = Integer.parseInt(args.get(3));
-			} catch (IndexOutOfBoundsException | NumberFormatException e) {
+			}
+			catch (IndexOutOfBoundsException | NumberFormatException e) {
 			}
 			Object o = object;
 			int p = page;
@@ -119,8 +120,7 @@ public class StatsCommand extends PKCommand {
 	}
 
 	public String getTarget(Object object, Statistic statistic, Player target) {
-		String statName = statistic.name().substring(0, 1).toUpperCase() + statistic.name().substring(1).toLowerCase();
-		String message = "&8- &f%object% " + statName + " &e%player%: " + "&f%value%";
+		String message = "&8- &f%object% " + statistic.getDisplayName() + " &e%player%: " + "&f%value%";
 		long value = 0;
 		if (object == null) {
 			value = StatisticsMethods.getStatisticTotal(target.getUniqueId(), statistic);
@@ -145,8 +145,7 @@ public class StatsCommand extends PKCommand {
 		int maxPage = (uuids.size() / 10) + 1;
 		int p = page > maxPage ? maxPage : page;
 		p = p < 1 ? 1 : p;
-		String statName = statistic.name().substring(0, 1).toUpperCase() + statistic.name().substring(1).toLowerCase();
-		String title = "%object% " + statName + " Leaderboard";
+		String title = "%object% " + statistic.getDisplayName() + " Leaderboard";
 		if (object instanceof CoreAbility) {
 			CoreAbility ability = (CoreAbility) object;
 			title = title.replace("%object%", ability.getName());
@@ -161,7 +160,8 @@ public class StatsCommand extends PKCommand {
 		int minIndex = maxIndex - 9;
 		try {
 			uuids.get(minIndex);
-		} catch (IndexOutOfBoundsException e) {
+		}
+		catch (IndexOutOfBoundsException e) {
 			messages.add("&7No statistics found.");
 			return messages;
 		}
@@ -201,7 +201,8 @@ public class StatsCommand extends PKCommand {
 					}
 				}
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		for (Player player : ProjectKorra.plugin.getServer().getOnlinePlayers()) {
