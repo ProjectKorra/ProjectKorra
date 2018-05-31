@@ -86,23 +86,18 @@ public class WaterArmsWhip extends WaterAbility {
 		switch (ability) {
 
 		case PULL:
-
-			getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Pull");
+			this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Pull");
 			break;
 		case PUNCH:
-
-			getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Punch");
+			this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Punch");
 			break;
 		case GRAPPLE:
-
-			getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grapple");
+			this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grapple");
 			break;
 		case GRAB:
-
 			this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grab");
 			break;
 		default:
-			
 			this.usageCooldown = 200;
 
 		}
@@ -276,8 +271,12 @@ public class WaterArmsWhip extends WaterAbility {
 					reverting = true;
 					break;
 				}
-
-				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8).setRevertTime(120);
+				
+				if (TempBlock.isTempBlock(l2.getBlock())) {
+					TempBlock.get(l2.getBlock()).setRevertTime(40);
+				} else {
+					new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8).setRevertTime(40);
+				}
 
 				if (i == activeLength) {
 					Location l3 = null;
@@ -289,7 +288,11 @@ public class WaterArmsWhip extends WaterAbility {
 
 					end = l3.clone();
 					if (canPlaceBlock(l3.getBlock())) {
-						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3).setRevertTime(60);
+						if (TempBlock.isTempBlock(l2.getBlock())) {
+							TempBlock.get(l2.getBlock()).setRevertTime(40);
+						} else {
+							new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 3).setRevertTime(40);
+						}
 						performAction(l3);
 					} else {
 						if (!l3.getBlock().getType().equals(Material.BARRIER)) {
@@ -400,9 +403,6 @@ public class WaterArmsWhip extends WaterAbility {
 			}
 
 			Vector vector = player.getLocation().toVector().subtract(location.toVector());
-			if (!GeneralMethods.isSolid(location.clone().add(vector).multiply(1).getBlock())) {
-				return;
-			}
 			player.setVelocity(vector.multiply(-0.25));
 			player.setFallDistance(0);
 		}

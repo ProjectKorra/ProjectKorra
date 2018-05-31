@@ -50,7 +50,6 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
 		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
-		this.radius = getConfig().getDouble("Abilities.Fire.FireWheel.Radius");
 		
 		bPlayer.addCooldown(this);
 		origin = player.getLocation();
@@ -73,8 +72,10 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
 			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Radius");
+			
 		}
+		
+		this.radius = height - 1;
 		
 		start();
 	}
@@ -105,7 +106,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(location, height);
+		Block topBlock = GeneralMethods.getTopBlock(location, height + 2);
 		if (topBlock.getType().equals(Material.SNOW)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);

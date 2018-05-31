@@ -56,7 +56,10 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 			}
 		}
 		
-		bPlayer.addCooldown(this);
+		if (entities.isEmpty()) {
+			return;
+		}
+		
 		start();
 	}
 	
@@ -146,6 +149,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		}
 		
 		if (entities.isEmpty()) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
