@@ -58,7 +58,7 @@ public class WhoCommand extends PKCommand {
 				try {
 
 					// Create a URL for the desired page
-					URLConnection url = new URL("http://www.projectkorra.com/staff.txt").openConnection();
+					URLConnection url = new URL("https://projectkorra.com/staff.txt").openConnection();
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 
 					// Read all the text returned by the server
@@ -131,7 +131,7 @@ public class WhoCommand extends PKCommand {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + noPlayersOnline);
 			} else {
 				boolean firstMessage = true;
-				
+
 				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					if (firstMessage) {
 						GeneralMethods.sendBrandingMessage(sender, s);
@@ -218,7 +218,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
-			
+
 			if (bPlayer.hasElement(Element.WATER)) {
 				if (bPlayer.isElementToggled(Element.WATER)) {
 					sender.sendMessage(Element.WATER.getColor() + "- Waterbender");
@@ -250,7 +250,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
-			
+
 			if (bPlayer.hasElement(Element.EARTH)) {
 				if (bPlayer.isElementToggled(Element.EARTH)) {
 					sender.sendMessage(Element.EARTH.getColor() + "- Earthbender");
@@ -275,7 +275,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
-			
+
 			if (bPlayer.hasElement(Element.FIRE)) {
 				if (bPlayer.isElementToggled(Element.FIRE)) {
 					sender.sendMessage(Element.FIRE.getColor() + "- Firebender");
@@ -297,7 +297,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
-			
+
 			if (bPlayer.hasElement(Element.CHI)) {
 				if (bPlayer.isElementToggled(Element.CHI)) {
 					sender.sendMessage(Element.CHI.getColor() + "- Chiblocker");
@@ -305,7 +305,7 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
 				}
 			}
-			
+
 			for (Element element : Element.getAddonElements()) {
 				if (bPlayer.hasElement(element)) {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
@@ -356,7 +356,7 @@ public class WhoCommand extends PKCommand {
 			if (staff.containsKey(uuid.toString())) {
 				sender.sendMessage(staff.get(uuid.toString()));
 			}
-			
+
 			if (player.getPlayer() != null && player.getPlayer().hasPermission("bending.donor")) {
 				// Requires Servers to define `server-name` in their server.properties file. Example: server-name=My Server
 				sender.sendMessage(Element.AVATAR.getColor() + ProjectKorra.plugin.getServer().getServerName() + " Donor");
