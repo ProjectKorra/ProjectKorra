@@ -10,8 +10,7 @@ import java.net.URLConnection;
 
 /**
  * Updater class that takes an rss feed and checks for updates there <br>
- * <s>Will only work on xenforo rss feeds</s> Outdated: RSS feeds no longer
- * available. Gets the version from the page itself and parse it.
+ * Will only work on xenforo rss feeds
  * <p>
  * Methods to look for in this class:
  * <ul>
@@ -23,7 +22,7 @@ import java.net.URLConnection;
  * </ul>
  * </p>
  *
- * @author Jacklin213, updated by StrangeOne101
+ * @author Jacklin213
  */
 public class Updater {
 
@@ -59,23 +58,20 @@ public class Updater {
                     urlc = url.openConnection();
                     urlc.setRequestProperty("User-Agent", "Mozilla/5.0"); // Must be used or face 403
                     urlc.setConnectTimeout(30000); // 30 second time out, throws SocketTimeoutException
-
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlc.getInputStream()))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            //The characters allowed in the version are any digit, full stops, spaces, or "for MC x.x.x+"
-                            //Then we are just parsing it from the line that states the version
-                            if (line.toLowerCase().matches(".*<span class=\"u-muted\">[0-9\\. formcr+]{1,23}<\\/span>.*")) {
+                            if (line.contains("<h3>Version ")) {
                                 line = line.trim();
-                                updateVersion = line.split("<span class=\"u-muted\">")[1].split("<\\/span>")[0];
-                                break;
+                                updateVersion = line.split("<h3>Version ")[1];
+                                updateVersion = updateVersion.substring(0, updateVersion.length() - 5);
                             }
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } catch (IOException e) {
-                    plugin.getLogger().info("Could not connect to projectkorra.com");
+                    plugin.getLogger().info("Could not connect to ProjectKorra.com");
                 }
                 checkUpdate();
             });
@@ -128,12 +124,9 @@ public class Updater {
         String updateVersion = getUpdateVersion();
         if (updateVersion == null)
             return false;
-        String numericUpdateVersion  = updateVersion.split(" ")[0]; //Only take the left half if there is words in it too
-        String numericCurrentVersion  = currentVersion.split(" ")[0];
-        int currentNumber = Integer.parseInt(numericCurrentVersion.replaceAll("[^\\d]", "")); //Replace points. So version is
-        int updateNumber = Integer.parseInt(numericUpdateVersion.replaceAll("[^\\d]", ""));   //just 186 instead of 1.8.6, etc
-
-        return currentNumber < updateNumber || currentVersion.hashCode() != updateVersion.hashCode(); //If the numeric versions are the same, check if the version string is different
+        int currentNumber = Integer.parseInt(currentVersion.replaceAll("[^\\d]", ""));
+        int updateNumber = Integer.parseInt(updateVersion.replaceAll("[^\\d]", ""));
+        return currentNumber < updateNumber;
     }
 
     /**
