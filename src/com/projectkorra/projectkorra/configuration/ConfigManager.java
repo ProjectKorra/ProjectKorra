@@ -606,6 +606,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Range", 24);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle", true);
@@ -615,7 +617,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Range", 16);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.Range", 60);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityHeight", 21);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityDuration", 6000);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityDuration", 20000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Damage", 6);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Range", 21);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Knockback", 4);
@@ -677,7 +679,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireSpin.Range", 9);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Damage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Range", 13);
+			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Range", 35);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Height", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed", 0.75);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks", 4);
@@ -1010,7 +1012,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Whip.Pull.Multiplier", 0.15);
 
 			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.PunchDamage", 0.5);
-			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.MaxLength", 6);
+			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.MaxLength", 8);
 			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal", 11);
 			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon", 13);
 
