@@ -68,7 +68,7 @@ public class ProjectKorra extends JavaPlugin {
         new ConfigManager();
         new GeneralMethods(this);
         boolean checkUpdateOnStartup = ConfigManager.getConfig().getBoolean("Properties.UpdateChecker");
-        updater = new Updater(this, "http://projectkorra.com/forum/resources/projectkorra-core.1/", checkUpdateOnStartup);
+        updater = new Updater(this, "https://projectkorra.com/forum/resources/projectkorra-core.1/", checkUpdateOnStartup);
         new Commands(this);
         new MultiAbilityManager();
         new ComboManager();
