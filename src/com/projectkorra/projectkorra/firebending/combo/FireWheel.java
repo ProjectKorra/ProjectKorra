@@ -30,7 +30,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	private long cooldown;
 	private double range;
 	private int height;
-	private int radius;
+	private double radius;
 	private double speed;
 	private double fireTicks;
 	private double damage;
@@ -52,6 +52,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
 		
 		bPlayer.addCooldown(this);
+		origin = player.getLocation();
 		affectedEntities = new ArrayList<LivingEntity>();
 
 		if (GeneralMethods.getTopBlock(player.getLocation(), 3, 3) == null) {
@@ -71,10 +72,10 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
 			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
+			
 		}
 		
 		this.radius = height - 1;
-		origin = player.getLocation().clone().add(0, radius, 0);
 		
 		start();
 	}
@@ -105,7 +106,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(location, radius, radius + 2);
+		Block topBlock = GeneralMethods.getTopBlock(location, height + 2);
 		if (topBlock.getType().equals(Material.SNOW)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
@@ -119,9 +120,6 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		} else if (topBlock.getType() == Material.AIR) {
-			remove();
-			return;
-		} else if (GeneralMethods.isSolid(topBlock.getRelative(BlockFace.UP)) || isWater(topBlock.getRelative(BlockFace.UP))) {
 			remove();
 			return;
 		}
