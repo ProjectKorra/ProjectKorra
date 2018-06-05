@@ -2,10 +2,8 @@ package com.projectkorra.projectkorra.util;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -19,15 +17,14 @@ public class FlightHandler {
 	 * A Map containing all Flight instances.
 	 */
 	private final Map<UUID, Flight> INSTANCES = new HashMap<>();
-	private final Map<UUID, Set<String>> ABILITIES = new HashMap<>();
 	/**
 	 * A PriorityQueue containing all Flight instances which have a specified
 	 * duration. This is used to reduce the number of iterations when cleaning
 	 * up dead instances.
 	 */
-	private final PriorityQueue<Flight> CLEANUP = new PriorityQueue<>(100, new Comparator<Flight>() {
+	private final PriorityQueue<FlightAbility> CLEANUP = new PriorityQueue<>(100, new Comparator<FlightAbility>() {
 		@Override
-		public int compare(Flight f1, Flight f2) {
+		public int compare(FlightAbility f1, FlightAbility f2) {
 			return (int) (f1.duration - f2.duration);
 		}
 	});
@@ -91,18 +88,23 @@ public class FlightHandler {
 	 * @return a new Flight instance
 	 */
 	public Flight createInstance(Player player, Player source, long duration, String identifier) {
-		if (!ABILITIES.containsKey(player.getUniqueId())) {
-			ABILITIES.put(player.getUniqueId(), new HashSet<>());
-		}
-		ABILITIES.get(player.getUniqueId()).add(identifier);
 		if (INSTANCES.containsKey(player.getUniqueId())) {
+			Flight flight = INSTANCES.get(player.getUniqueId());
+			FlightAbility ability = new FlightAbility(player, identifier, duration);
+			if (duration != Flight.PERMANENT) {
+				CLEANUP.add(ability);
+			}
+			flight.abilities.put(identifier, ability);
 			return INSTANCES.get(player.getUniqueId());
 		}
-		Flight flight = new Flight(player, source, duration);
-		if (flight.duration != Flight.PERMANENT) {
-			CLEANUP.add(flight);
+		Flight flight = new Flight(player, source);
+		FlightAbility ability = new FlightAbility(player, identifier, duration);
+		if (duration != Flight.PERMANENT) {
+			CLEANUP.add(ability);
 		}
+		flight.abilities.put(identifier, ability);
 		INSTANCES.put(player.getUniqueId(), flight);
+		System.out.println("Create " + player.getName() + " " + flight.toString());
 		return flight;
 	}
 
@@ -117,13 +119,13 @@ public class FlightHandler {
 	 * @param identifier The ability using Flight
 	 */
 	public void removeInstance(Player player, String identifier) {
-		if (ABILITIES.containsKey(player.getUniqueId())) {
-			ABILITIES.get(player.getUniqueId()).remove(identifier);
-			if (ABILITIES.get(player.getUniqueId()).isEmpty()) {
-				ABILITIES.remove(player.getUniqueId());
-				if (INSTANCES.containsKey(player.getUniqueId())) {
-					wipeInstance(player);
-				}
+		if (INSTANCES.containsKey(player.getUniqueId())) {
+			Flight flight = INSTANCES.get(player.getUniqueId());
+			if (flight.abilities.containsKey(identifier)) {
+				flight.abilities.remove(identifier);
+			}
+			if (flight.abilities.isEmpty()) {
+				wipeInstance(player);
 			}
 		}
 	}
@@ -138,9 +140,8 @@ public class FlightHandler {
 		Flight flight = INSTANCES.get(player.getUniqueId());
 		player.setAllowFlight(flight.couldFly);
 		player.setFlying(flight.wasFlying);
-		ABILITIES.remove(player.getUniqueId());
+		flight.abilities.values().forEach(ability -> CLEANUP.remove(ability));
 		INSTANCES.remove(player.getUniqueId());
-		CLEANUP.remove(flight);
 	}
 
 	/**
@@ -162,10 +163,10 @@ public class FlightHandler {
 			public void run() {
 				long currentTime = System.currentTimeMillis();
 				while (!CLEANUP.isEmpty()) {
-					Flight flight = CLEANUP.peek();
-					if (currentTime >= flight.startTime + flight.duration) {
+					FlightAbility ability = CLEANUP.peek();
+					if (currentTime >= ability.startTime + ability.duration) {
 						CLEANUP.poll();
-						wipeInstance(flight.player);
+						removeInstance(ability.player, ability.identifier);
 					} else {
 						break;
 					}
@@ -182,16 +183,14 @@ public class FlightHandler {
 		private Player source;
 		private boolean couldFly;
 		private boolean wasFlying;
-		private long duration;
-		private long startTime;
+		private Map<String, FlightAbility> abilities;
 
-		public Flight(Player player, Player source, long duration) {
+		public Flight(Player player, Player source) {
 			this.player = player;
 			this.source = source;
 			this.couldFly = player.getAllowFlight();
 			this.wasFlying = player.isFlying();
-			this.duration = duration;
-			this.startTime = System.currentTimeMillis();
+			this.abilities = new HashMap<>();
 		}
 
 		public Player getPlayer() {
@@ -202,6 +201,31 @@ public class FlightHandler {
 			return source;
 		}
 
+		@Override
+		public String toString() {
+			return "Flight{player=" + player.getName() + ",source=" + (source != null ? source.getName() : "null") + ",couldFly=" + couldFly + ",wasFlying=" + wasFlying + ",abilities=" + abilities + "}";
+		}
+
+	}
+
+	public static class FlightAbility {
+
+		private Player player;
+		private String identifier;
+		private long duration;
+		private long startTime;
+
+		public FlightAbility(Player player, String identifier, long duration) {
+			this.player = player;
+			this.identifier = identifier;
+			this.duration = duration;
+			this.startTime = System.currentTimeMillis();
+		}
+
+		@Override
+		public String toString() {
+			return "FlightAbility{player=" + player.getName() + ",identifier=" + identifier + ",duration=" + duration + ",startTime=" + startTime + "}";
+		}
 	}
 
 }
