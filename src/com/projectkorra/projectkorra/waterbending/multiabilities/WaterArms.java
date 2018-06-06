@@ -201,7 +201,7 @@ public class WaterArms extends WaterAbility {
 			}
 		}
 		
-		return isWaterbendable(block) || isWater(block) || block.getType() == Material.AIR;
+		return isIce(block) || isWater(block) || block.getType() == Material.AIR;
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))) {
-			addBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
+			addBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
 			newBlocks.add(r1.getBlock());
 		}
 
@@ -234,15 +234,12 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 		
-		addBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+		addBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
 		newBlocks.add(r2.getBlock());
 
 		for (int j = 1; j <= initLength; j++) {
 			Location r3 = r2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
 			if (!canPlaceBlock(r3.getBlock()) || !canPlaceBlock(r2.getBlock()) || !canPlaceBlock(r1.getBlock())) {
-				if (selectedSlot == freezeSlot && r3.getBlock().getType().equals(Material.ICE)) {
-					continue;
-				}
 				right.clear();
 				right.addAll(newBlocks);
 				return false;
@@ -250,9 +247,9 @@ public class WaterArms extends WaterAbility {
 			
 			newBlocks.add(r3.getBlock());
 			if (j >= 1 && selectedSlot == freezeSlot && bPlayer.canIcebend()) {
-				addBlock(r3.getBlock(), Material.ICE, (byte) 0);
+				addBlock(r3.getBlock(), Material.ICE, (byte) 0, 100);
 			} else {
-				addBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+				addBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
 			}
 		}
 		
@@ -281,7 +278,7 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))) {
-			addBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
+			addBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
 			newBlocks.add(l1.getBlock());
 		}
 
@@ -292,15 +289,12 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 		
-		addBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+		addBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
 		newBlocks.add(l2.getBlock());
 
 		for (int j = 1; j <= initLength; j++) {
 			Location l3 = l2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
 			if (!canPlaceBlock(l3.getBlock()) || !canPlaceBlock(l2.getBlock()) || !canPlaceBlock(l1.getBlock())) {
-				if (selectedSlot == freezeSlot && l3.getBlock().getType().equals(Material.ICE)) {
-					continue;
-				}
 				left.clear();
 				left.addAll(newBlocks);
 				return false;
@@ -308,9 +302,9 @@ public class WaterArms extends WaterAbility {
 			
 			newBlocks.add(l3.getBlock());
 			if (j >= 1 && selectedSlot == freezeSlot && bPlayer.canIcebend()) {
-				addBlock(l3.getBlock(), Material.ICE, (byte) 0);
+				addBlock(l3.getBlock(), Material.ICE, (byte) 0, 100);
 			} else {
-				addBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte)8);
+				addBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte)8, 100);
 			}
 		}
 		
@@ -320,17 +314,18 @@ public class WaterArms extends WaterAbility {
 		return true;
 	}
 	
-	private void addBlock(Block b, Material m, byte i) {
+	public void addBlock(Block b, Material m, byte i, long revertTime) {
 		if (TempBlock.isTempBlock(b)) {
 			TempBlock tb = TempBlock.get(b);
 			
 			if (right.contains(b) || left.contains(b)) {
-				tb.setRevertTime(100);
+				tb.setType(m, i);
+				tb.setRevertTime(revertTime);
 			} else {
 				external.add(tb);
 			}
 		} else {
-			new TempBlock(b, m, i).setRevertTime(100);
+			new TempBlock(b, m, i).setRevertTime(revertTime);
 		}
 	}
 
@@ -765,6 +760,14 @@ public class WaterArms extends WaterAbility {
 
 	public void setActiveArm(Arm activeArm) {
 		this.activeArm = activeArm;
+	}
+	
+	public void addToArm(Block block, Arm arm) {
+		if (arm.equals(Arm.LEFT)) {
+			left.add(block);
+		} else {
+			right.add(block);
+		}
 	}
 
 }
