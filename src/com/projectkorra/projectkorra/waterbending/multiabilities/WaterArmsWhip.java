@@ -260,7 +260,7 @@ public class WaterArmsWhip extends WaterAbility {
 				l1 = waterArms.getRightArmEnd().clone();
 			}
 
-			Vector dir = player.getLocation().getDirection().clone();
+			Vector dir = player.getLocation().getDirection();
 			for (int i = 1; i <= activeLength; i++) {
 				Location l2 = l1.clone().add(dir.normalize().multiply(i));
 

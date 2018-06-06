@@ -135,7 +135,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
 		}
 		
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius + 0.5)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
 			if (entity instanceof LivingEntity && !entity.equals(player)) {
 				if (!affectedEntities.contains(entity)) {
 					affectedEntities.add((LivingEntity) entity);
