@@ -59,6 +59,10 @@ public class WaterManipulation extends WaterAbility {
 	private HashSet<Byte> waterTypes;
 
 	public WaterManipulation(Player player) {
+		this(player, prepare(player, getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange")));
+	}
+
+	public WaterManipulation(Player player, Block source) {
 		super(player);
 
 		this.progressing = false;
@@ -80,14 +84,16 @@ public class WaterManipulation extends WaterAbility {
 		this.waterTypes.add((byte) 8);
 		this.waterTypes.add((byte) 9);
 
-		if (prepare()) {
+		if (source != null) {
+			sourceBlock = source;
+			focusBlock();
 			prepared = true;
 			start();
 			time = System.currentTimeMillis();
 		}
 	}
 
-	private void cancelPrevious() {
+	private static void cancelPrevious(Player player) {
 		Collection<WaterManipulation> manips = getAbilities(player, WaterManipulation.class);
 		for (WaterManipulation oldmanip : manips) {
 			if (oldmanip != null && !oldmanip.progressing) {
@@ -162,17 +168,13 @@ public class WaterManipulation extends WaterAbility {
 		}
 	}
 
-	public boolean prepare() {
-		Block block = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
-		cancelPrevious();
-		//block(player);
+	private static Block prepare(Player player, double selectRange) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		if (block != null) {
-			sourceBlock = block;
-			focusBlock();
-			return true;
-		}
-		return false;
+		Block block = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
+		cancelPrevious(player);
+
+		return block;
 	}
 
 	@Override
@@ -472,6 +474,11 @@ public class WaterManipulation extends WaterAbility {
 			}
 		}
 
+		if (redirectTargettedBlasts(player)) {
+			// Don't create a new WaterManipulation if one was redirected.
+			return;
+		}
+
 		if (!handledPrepare && WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
@@ -483,7 +490,7 @@ public class WaterManipulation extends WaterAbility {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
 					TempBlock tb = new TempBlock(block, Material.WATER, (byte) 0);
 
-					WaterManipulation waterManip = new WaterManipulation(player);
+					WaterManipulation waterManip = new WaterManipulation(player, block);
 					waterManip.moveWater();
 					if (!waterManip.progressing) {
 						block.setType(Material.AIR);
@@ -495,10 +502,11 @@ public class WaterManipulation extends WaterAbility {
 				}
 			}
 		}
-		redirectTargettedBlasts(player);
 	}
 
-	private static void redirectTargettedBlasts(Player player) {
+	private static boolean redirectTargettedBlasts(Player player) {
+		boolean redirected = false;
+
 		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
 			if (!manip.progressing) {
 				continue;
@@ -510,6 +518,7 @@ public class WaterManipulation extends WaterAbility {
 
 			if (manip.player.equals(player)) {
 				manip.redirect(player, getTargetLocation(player, manip.range));
+				redirected = true;
 			}
 
 			Location location = player.getEyeLocation();
@@ -517,8 +526,11 @@ public class WaterManipulation extends WaterAbility {
 			Location mloc = manip.location;
 			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.redirect(player, getTargetLocation(player, manip.range));
+				redirected = true;
 			}
 		}
+
+		return redirected;
 	}
 
 	@Override
