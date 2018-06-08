@@ -58,7 +58,6 @@ public class WaterArmsWhip extends WaterAbility {
 	private LivingEntity grabbedEntity;
 	private Location end;
 	private WaterArms waterArms;
-	private Location target;
 
 	public WaterArmsWhip(Player player, Whip ability) {
 		super(player);
@@ -118,7 +117,6 @@ public class WaterArmsWhip extends WaterAbility {
 		}
 
 		getAugments();
-		this.target = GeneralMethods.getTargetedLocation(player, initLength+ Math.sqrt(whipLength * whipLength + 4)).getBlock().getLocation().add(0.5, 0.5, 0.5).add(player.getEyeLocation().getDirection().normalize());
 		createInstance();
 	}
 
@@ -262,10 +260,7 @@ public class WaterArmsWhip extends WaterAbility {
 				l1 = waterArms.getRightArmEnd().clone();
 			}
 			
-			Vector dir = GeneralMethods.getDirection(l1, target);
-			if (Math.ceil(dir.length()) < whipLength) {
-				whipLength = (int) Math.ceil(dir.length());
-			}
+			Vector dir = player.getLocation().getDirection().clone();
 			for (int i = 1; i <= activeLength; i++) {
 				Location l2 = l1.clone().add(dir.normalize().multiply(i));
 
@@ -278,18 +273,21 @@ public class WaterArmsWhip extends WaterAbility {
 					break;
 				}
 				
-				
-				byte b = 8;
-				if (i == activeLength) {
-					end = l2.clone();
-					b = 3;
-					performAction(l2);
-				} else {
-					b = (byte) Math.ceil(8 / (Math.pow(i, 1/3)));
-				}
-				
+				byte b = (byte) Math.ceil(8 / (Math.pow(i, 1/3)));
 				waterArms.addToArm(l2.getBlock(), arm);
 				waterArms.addBlock(l2.getBlock(), Material.STATIONARY_WATER, b, 40);
+				
+				if (i == activeLength) {
+					end = l2.clone();
+					if (arm == Arm.LEFT) {
+						end = GeneralMethods.getRightSide(end, 1);
+					} else {
+						end = GeneralMethods.getLeftSide(end, 1);
+					}
+					waterArms.addToArm(end.getBlock(), arm);
+					waterArms.addBlock(end.getBlock(), Material.STATIONARY_WATER, (byte) 2, 40);
+					performAction(end);
+				}
 			}
 		}
 	}
@@ -323,7 +321,7 @@ public class WaterArmsWhip extends WaterAbility {
 				}
 				break;
 			case GRAPPLE:
-				grapplePlayer(end);
+				grapplePlayer(location);
 				break;
 			case GRAB:
 				if (grabbedEntity == null) {
