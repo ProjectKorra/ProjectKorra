@@ -78,7 +78,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.punchLengthNight = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal");
 		this.punchLengthFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon");
 		this.activeLength = initLength;
-		this.whipSpeed = 2;
+		this.whipSpeed = 1;
 		this.holdTime = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.HoldTime");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
 		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
@@ -265,11 +265,11 @@ public class WaterArmsWhip extends WaterAbility {
 				Location l2 = l1.clone().add(dir.normalize().multiply(i));
 
 				if (!canPlaceBlock(l2.getBlock())) {
-					if (!l2.getBlock().getType().equals(Material.BARRIER)) {
+					if (l2.getBlock().getType() != Material.BARRIER) {
 						grappled = true;
 					}
 					reverting = true;
-					grapplePlayer(l2);
+					performAction(l2);
 					break;
 				}
 				
@@ -284,16 +284,28 @@ public class WaterArmsWhip extends WaterAbility {
 					} else {
 						end = GeneralMethods.getLeftSide(end, 1);
 					}
+					
+					if (!canPlaceBlock(end.getBlock())) {
+						if (end.getBlock().getType() != Material.BARRIER) {
+							grappled = true;
+						}
+						reverting = true;
+						performAction(end);
+						break;
+					}
+					
 					waterArms.addToArm(end.getBlock(), arm);
 					waterArms.addBlock(end.getBlock(), Material.STATIONARY_WATER, (byte) 2, 40);
 					performAction(end);
+				} else {
+					performAction(l2);
 				}
 			}
 		}
 	}
 
 	private void performAction(Location location) {
-		Location endOfArm = waterArms.getLeftArmEnd().clone();
+		Location endOfArm = waterArms.getActiveArmEnd().clone();
 		switch (ability) {
 			case PULL:
 				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
