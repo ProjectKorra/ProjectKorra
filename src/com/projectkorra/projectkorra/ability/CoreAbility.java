@@ -790,35 +790,58 @@ public abstract class CoreAbility implements Ability {
 	 * Changes the player that owns this ability instance. Used for redirection
 	 * and other abilities that change the player object.
 	 * 
-	 * @param player The player who now controls the ability
+	 * @param target The player who now controls the ability
 	 */
-	public void setPlayer(Player player) {
-		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(getClass());
+	public void setPlayer(Player target) {
+		if (target == this.player) {
+			return;
+		}
+
+		Class<? extends CoreAbility> clazz = getClass();
+
+		// The mapping from player UUID to a map of the player's instances.
+		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(clazz);
+
 		if (classMap != null) {
+			// The map of AbilityId to Ability for the current player.
 			Map<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
+
 			if (playerMap != null) {
+				// Remove the ability from the current player's map.
 				playerMap.remove(this.id);
-				if (playerMap.size() == 0) {
+
+				if (playerMap.isEmpty()) {
+					// Remove the player's empty ability map from global instances map.
 					classMap.remove(player.getUniqueId());
 				}
 			}
 
-			if (classMap.size() == 0) {
+			if (classMap.isEmpty()) {
 				INSTANCES_BY_PLAYER.remove(getClass());
 			}
 		}
 
-		if (!INSTANCES_BY_PLAYER.containsKey(this.getClass())) {
-			INSTANCES_BY_PLAYER.put(this.getClass(), new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
+		// Add a new map for the current ability if it doesn't exist in the global map.
+		if (!INSTANCES_BY_PLAYER.containsKey(clazz)) {
+			INSTANCES_BY_PLAYER.put(clazz, new ConcurrentHashMap<>());
 		}
 
-		if (!INSTANCES_BY_PLAYER.get(this.getClass()).containsKey(player.getUniqueId())) {
-			INSTANCES_BY_PLAYER.get(this.getClass()).put(player.getUniqueId(), new ConcurrentHashMap<Integer, CoreAbility>());
+		classMap = INSTANCES_BY_PLAYER.get(clazz);
+
+		// Create an AbilityId to Ability map for the target player if it doesn't exist.
+		if (!classMap.containsKey(target.getUniqueId())) {
+			classMap.put(target.getUniqueId(), new ConcurrentHashMap<>());
 		}
 
-		INSTANCES_BY_PLAYER.get(this.getClass()).get(player.getUniqueId()).put(this.getId(), this);
+		// Add the current instance to the target player's ability map.
+		classMap.get(target.getUniqueId()).put(this.getId(), this);
 
-		this.player = player;
+		this.player = target;
+
+		BendingPlayer newBendingPlayer = BendingPlayer.getBendingPlayer(target);
+		if (newBendingPlayer != null) {
+			this.bPlayer = newBendingPlayer;
+		}
 	}
 
 	/**

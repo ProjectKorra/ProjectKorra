@@ -31,6 +31,7 @@ public class SurgeWall extends WaterAbility {
 	private static final String RANGE_CONFIG = "Abilities.Water.Surge.Wall.Range";
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();
+	public static final List<TempBlock> SOURCE_BLOCKS = new ArrayList<>();
 
 	private boolean progressing;
 	private boolean settingUp;
@@ -63,7 +64,7 @@ public class SurgeWall extends WaterAbility {
 		this.oldTemps = new HashMap<>();
 
 		SurgeWave wave = getAbility(player, SurgeWave.class);
-		if (wave != null && !wave.isProgressing()) {
+		if (wave != null && !wave.isProgressing() && !bPlayer.isOnCooldown("SurgeWave")) {
 			wave.moveWater();
 			return;
 		}
@@ -82,12 +83,13 @@ public class SurgeWall extends WaterAbility {
 				start();
 				time = System.currentTimeMillis();
 			}
-		} else if (prepare()) {
+		} else if (!bPlayer.isOnCooldown("SurgeWall") && prepare()) {
 			start();
 			time = System.currentTimeMillis();
+			return;
 		}
 
-		if (bPlayer.isOnCooldown("SurgeWall")) {
+		if (bPlayer.isOnCooldown("SurgeWave") || player.isSneaking()) {
 			return;
 		} else if (wall == null && WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();
@@ -95,6 +97,7 @@ public class SurgeWall extends WaterAbility {
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 0);
+				SOURCE_BLOCKS.add(tempBlock);
 
 				wave = new SurgeWave(player);
 				wave.setCanHitSelf(false);
@@ -105,6 +108,8 @@ public class SurgeWall extends WaterAbility {
 				} else {
 					WaterReturn.emptyWaterBottle(player);
 				}
+
+				SOURCE_BLOCKS.remove(tempBlock);
 				tempBlock.revertBlock();
 			}
 		}
@@ -405,31 +410,52 @@ public class SurgeWall extends WaterAbility {
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 
+		if (wave != null) {
+			if (wave.isProgressing() && !wave.isFreezing()) {
+				// Freeze the wave.
+				new SurgeWave(player);
+			} else if (wave.isActivateFreeze()) {
+				wave.remove();
+				return;
+			}
+		}
+
 		if (wall == null) {
-			if (wave == null && BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend()) == null && WaterReturn.hasWaterBottle(player)) {
+			Block source = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
+
+			if (wave == null && source == null && WaterReturn.hasWaterBottle(player)) {
 				if (bPlayer.isOnCooldown("SurgeWall")) {
 					return;
 				}
 
 				Location eyeLoc = player.getEyeLocation();
 				Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
+
 				if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 0);
+					SOURCE_BLOCKS.add(tempBlock);
 
 					wall = new SurgeWall(player);
 					wall.moveWater();
+
 					if (!wall.progressing) {
+						SOURCE_BLOCKS.remove(tempBlock);
 						tempBlock.revertBlock();
 						wall.remove();
 					} else {
 						WaterReturn.emptyWaterBottle(player);
 					}
+
+					SOURCE_BLOCKS.remove(tempBlock);
 					tempBlock.revertBlock();
 					return;
 				}
 			}
 
-			wave = new SurgeWave(player);
+			// If SurgeWall isn't being created, then try to source SurgeWave.
+			if (!bPlayer.isOnCooldown("SurgeWave")) {
+				wave = new SurgeWave(player);
+			}
 			return;
 		} else {
 			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, range))) {
