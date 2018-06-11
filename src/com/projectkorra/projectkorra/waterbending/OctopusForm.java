@@ -42,9 +42,12 @@ public class OctopusForm extends WaterAbility {
 	private int stepCounter;
 	private int totalStepCount;
 	private long time;
+	private long startTime;
 	private long interval;
 	private long cooldown;
+	private long duration;
 	private double attackRange;
+	private long usageCooldown;
 	private double knockback;
 	private double radius;
 	private double startAngle;
@@ -89,9 +92,11 @@ public class OctopusForm extends WaterAbility {
 		this.damage = getConfig().getInt("Abilities.Water.OctopusForm.Damage");
 		this.interval = getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
 		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
+		this.usageCooldown = getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown");
 		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
 		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Water.OctopusForm.Duration");
 		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
@@ -109,6 +114,7 @@ public class OctopusForm extends WaterAbility {
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius");
 		}
 		this.time = System.currentTimeMillis();
+		this.startTime = System.currentTimeMillis();
 		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
 		}
@@ -124,18 +130,15 @@ public class OctopusForm extends WaterAbility {
 		if (sourceSelected) {
 			sourceSelected = false;
 			settingUp = true;
-			bPlayer.addCooldown(this);
 		} else if (settingUp) {
 			settingUp = false;
 			forming = true;
 		} else if (forming) {
 			forming = false;
 			formed = true;
-			bPlayer.addCooldown(this);
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		OctopusForm oldForm = getAbility(player, OctopusForm.class);
 
@@ -149,6 +152,7 @@ public class OctopusForm extends WaterAbility {
 				block.setType(Material.WATER);
 				block.setData(FULL);
 				OctopusForm form = new OctopusForm(player);
+				form.setSourceBlock(block);
 				form.form();
 
 				if (form.formed || form.forming || form.settingUp) {
@@ -172,9 +176,10 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void attack() {
-		if (!formed) {
+		if (!formed || bPlayer.isOnCooldown("OctopusAttack")) {
 			return;
 		}
+		bPlayer.addCooldown("OctopusAttack", usageCooldown);
 		double tentacleAngle = (new Vector(1, 0, 0)).angle(player.getEyeLocation().getDirection()) + angleIncrement / 2;
 
 		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += angleIncrement) {
@@ -217,6 +222,10 @@ public class OctopusForm extends WaterAbility {
 			remove();
 			return;
 		} else if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > range * range && sourceSelected) {
+			remove();
+			return;
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.startTime + this.duration) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}

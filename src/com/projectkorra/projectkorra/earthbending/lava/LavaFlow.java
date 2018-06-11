@@ -30,11 +30,8 @@ public class LavaFlow extends LavaAbility {
 	}
 
 	private static final Map<Block, TempBlock> TEMP_LAVA_BLOCKS = new ConcurrentHashMap<>();
-	public static final Map<TempBlock, Block> TEMP_LAVA_BLOCKS_BY_TEMPBLOCK = new ConcurrentHashMap<>();
 	private static final Map<Block, TempBlock> TEMP_LAND_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<TempBlock, Block> TEMP_LAND_BLOCKS_BY_TEMPBLOCK = new ConcurrentHashMap<>();
 	private static final Map<Block, TempBlock> TEMP_AIR_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<TempBlock, Block> TEMP_AIR_BLOCKS_BY_TEMPBLOCK = new ConcurrentHashMap<>();
 
 	private boolean removing;
 	private boolean makeLava;
@@ -279,6 +276,7 @@ public class LavaFlow extends LavaAbility {
 			double delay = makeLava ? clickLavaDelay : clickLandDelay;
 
 			if (makeLava && curTime > clickLavaCleanupDelay) {
+				makeLava = false;
 				removeSlowly();
 				return;
 			} else if (!makeLava && curTime > clickLandCleanupDelay) {
@@ -293,7 +291,7 @@ public class LavaFlow extends LavaAbility {
 						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 						if (!isWater(tempBlock)) {
 							if (tempBlock != null && !isLava(tempBlock) && Math.random() < particleDensity && tempBlock.getLocation().distanceSquared(origin) <= Math.pow(clickLavaRadius, 2)) {
-								if (random.nextInt(3) == 0) {
+								if (random.nextInt(5) == 0) {
 									ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
 								}
 							}
@@ -348,8 +346,8 @@ public class LavaFlow extends LavaAbility {
 									if (random.nextInt(4) == 0) {
 										Block block = loc.getBlock();
 										Block above = block.getRelative(BlockFace.UP);
-										Block above2 = above.getRelative(BlockFace.UP);
-										if (!isWater(block) && !isWater(above) && !isWater(above2)) {
+
+										if ((isEarth(block) || isSand(block) || isMetal(block)) && !isWater(above)) {
 											ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
 										}
 									}
@@ -385,12 +383,10 @@ public class LavaFlow extends LavaAbility {
 				if (isPlant(above) || isSnow(above)) {
 					TempBlock tb = new TempBlock(above, Material.AIR, (byte) 0);
 					TEMP_AIR_BLOCKS.put(above, tb);
-					TEMP_AIR_BLOCKS_BY_TEMPBLOCK.put(tb, above);
 					affectedBlocks.add(tb);
 					if (isPlant(above2) && above2.getType().equals(Material.DOUBLE_PLANT)) {
 						TempBlock tb2 = new TempBlock(above2, Material.AIR, (byte) 0);
 						TEMP_AIR_BLOCKS.put(above2, tb2);
-						TEMP_AIR_BLOCKS_BY_TEMPBLOCK.put(tb2, above2);
 						affectedBlocks.add(tb);
 					}
 				} else
@@ -406,7 +402,6 @@ public class LavaFlow extends LavaAbility {
 			
 			if(tblock!=null) {
 				TEMP_LAVA_BLOCKS.put(block, tblock);
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.put(tblock, block);
 				affectedBlocks.add(tblock);
 
 				if (allowNaturalFlow) {
@@ -427,7 +422,6 @@ public class LavaFlow extends LavaAbility {
 			TempBlock tb = TEMP_LAVA_BLOCKS.get(testBlock);
 			tb.revertBlock();
 			TEMP_LAVA_BLOCKS.remove(testBlock);
-			TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tb);
 			affectedBlocks.remove(tb);
 			return;
 		}
@@ -435,7 +429,35 @@ public class LavaFlow extends LavaAbility {
 		TempBlock tblock = new TempBlock(testBlock, revertMaterial, testBlock.getData());
 		affectedBlocks.add(tblock);
 		TEMP_LAND_BLOCKS.put(testBlock, tblock);
-		TEMP_LAND_BLOCKS_BY_TEMPBLOCK.put(tblock, testBlock);
+	}
+
+	public static boolean isLavaFlowBlock(Block block) {
+		return isLavaFlowBlock(TEMP_AIR_BLOCKS, block) || isLavaFlowBlock(TEMP_LAND_BLOCKS, block) || isLavaFlowBlock(TEMP_LAVA_BLOCKS, block);
+	}
+
+	private static boolean isLavaFlowBlock(Map<Block, TempBlock> map, Block block) {
+		return map.containsKey(block);
+	}
+
+	public static boolean removeBlock(Block block) {
+		return removeBlock(TEMP_AIR_BLOCKS, block) || removeBlock(TEMP_LAND_BLOCKS, block) || removeBlock(TEMP_LAVA_BLOCKS, block);
+	}
+
+	private static boolean removeBlock(Map<Block, TempBlock> map, Block block) {
+		if (map.containsKey(block)) {
+			TempBlock tb = map.get(block);
+			map.remove(block);
+
+			for (LavaFlow lavaflow : CoreAbility.getAbilities(LavaFlow.class)) {
+				lavaflow.getAffectedBlocks().remove(tb);
+			}
+
+			tb.revertBlock();
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -466,34 +488,32 @@ public class LavaFlow extends LavaAbility {
 		for (int i = affectedBlocks.size() - 1; i > -1; i--) {
 			final TempBlock tblock = affectedBlocks.get(i);
 			final boolean isTempAir = TEMP_AIR_BLOCKS.values().contains(tblock);
+			
 			new BukkitRunnable() {
-				@SuppressWarnings("deprecation")
+
 				@Override
 				public void run() {
 					tblock.revertBlock();
+
+					if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
+						affectedBlocks.remove(tblock);
+						TEMP_LAVA_BLOCKS.remove(tblock.getBlock());
+					}
+					if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
+						affectedBlocks.remove(tblock);
+						TEMP_LAND_BLOCKS.remove(tblock.getBlock());
+					}
+					if (TEMP_AIR_BLOCKS.values().contains(tblock)) {
+						affectedBlocks.remove(tblock);
+						TEMP_AIR_BLOCKS.remove(tblock.getBlock());
+					}
+
 					if (isTempAir && tblock.getState().getType() == Material.DOUBLE_PLANT) {
 						tblock.getBlock().getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
 						tblock.getBlock().getRelative(BlockFace.UP).setData((byte) (tblock.getState().getRawData() + 8));
 					}
-
 				}
 			}.runTaskLater(ProjectKorra.plugin, (long) (i / shiftRemoveSpeed));
-
-			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_LAVA_BLOCKS.remove(TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
-			}
-			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_LAND_BLOCKS.remove(TEMP_LAND_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
-			}
-			if (TEMP_AIR_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_AIR_BLOCKS.remove(TEMP_AIR_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_AIR_BLOCKS_BY_TEMPBLOCK.remove(tblock);
-			}
 		}
 
 		for (BukkitRunnable task : tasks) {
@@ -513,13 +533,11 @@ public class LavaFlow extends LavaAbility {
 			tblock.revertBlock();
 			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
-				TEMP_LAVA_BLOCKS.remove(TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
+				TEMP_LAVA_BLOCKS.remove(tblock.getBlock());
 			}
 			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
-				TEMP_LAND_BLOCKS.remove(TEMP_LAND_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAND_BLOCKS_BY_TEMPBLOCK.remove(tblock);
+				TEMP_LAND_BLOCKS.remove(tblock.getBlock());
 			}
 		}
 

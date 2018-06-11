@@ -34,6 +34,7 @@ public class HelpCommand extends PKCommand {
 	private String earth;
 	private String fire;
 	private String chi;
+	private String avatar;
 	private String invalidTopic;
 	private String usage;
 
@@ -49,6 +50,7 @@ public class HelpCommand extends PKCommand {
 		this.earth = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Earth");
 		this.fire = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Fire");
 		this.chi = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Chi");
+		this.avatar = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Avatar");
 		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
 		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
 	}
@@ -147,7 +149,7 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(color + ability.getDescription());
 				
 				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+					sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
 				}
 				
 				AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
@@ -163,23 +165,26 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(color + ability.getDescription());
 				
 				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+					sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
 				}
 			}
 		} else if (Arrays.asList(Commands.airaliases).contains(arg)) {
-			sender.sendMessage(Element.AIR.getColor() + air.replace("/b help AirCombos", Element.AIR.getSubColor() + "/b help AirCombos" + Element.AIR.getColor()));
+			sender.sendMessage(Element.AIR.getColor() + air.replace("/b display Air", Element.AIR.getSubColor() + "/b display Air" + Element.AIR.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.wateraliases).contains(arg)) {
-			sender.sendMessage(Element.WATER.getColor() + water.replace("/b help WaterCombos", Element.WATER.getSubColor() + "/b h WaterCombos" + Element.WATER.getColor()));
+			sender.sendMessage(Element.WATER.getColor() + water.replace("/b display Water", Element.WATER.getSubColor() + "/b display Water" + Element.WATER.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.earthaliases).contains(arg)) {
-			sender.sendMessage(Element.EARTH.getColor() + earth);
+			sender.sendMessage(Element.EARTH.getColor() + earth.replace("/b display Earth", Element.EARTH.getSubColor() + "/b display Earth" + Element.EARTH.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.firealiases).contains(arg)) {
-			sender.sendMessage(Element.FIRE.getColor() + fire.replace("/b h FireCombos", Element.FIRE.getSubColor() + "/b h FireCombos" + Element.FIRE.getColor()));
+			sender.sendMessage(Element.FIRE.getColor() + fire.replace("/b display Fire", Element.FIRE.getSubColor() + "/b display Fire" + Element.FIRE.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.chialiases).contains(arg)) {
-			sender.sendMessage(Element.CHI.getColor() + chi.replace("/b h ChiCombos", Element.CHI.getSubColor() + "/b h ChiCombos" + Element.CHI.getColor()));
+			sender.sendMessage(Element.CHI.getColor() + chi.replace("/b display Chi", Element.CHI.getSubColor() + "/b display Chi" + Element.CHI.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+		} else if (Arrays.asList(Commands.avataraliases).contains(arg)) {
+			sender.sendMessage(Element.AVATAR.getColor() + avatar.replace("/b display Avatar", Element.AVATAR.getSubColor() + "/b display Avatar" + Element.AVATAR.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else {
 			//combos - handled differently because they're stored in CamelCase in ComboManager
@@ -193,7 +198,7 @@ public class HelpCommand extends PKCommand {
 						sender.sendMessage(color + ability.getDescription());
 						
 						if (!ability.getInstructions().isEmpty()) {
-							sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+							sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
 						}
 						
 						AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
@@ -202,7 +207,7 @@ public class HelpCommand extends PKCommand {
 					} else {
 						sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Combo)");
 						sender.sendMessage(color + ComboManager.getDescriptions().get(combo));
-						sender.sendMessage(ChatColor.GOLD + usage + ComboManager.getInstructions().get(combo));
+						sender.sendMessage(ChatColor.WHITE + usage + ComboManager.getInstructions().get(combo));
 					}
 
 					return;

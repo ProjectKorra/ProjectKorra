@@ -1,9 +1,12 @@
 package com.projectkorra.projectkorra;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,9 +32,8 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
-import com.projectkorra.spirits.SpiritElement;
-import com.projectkorra.spirits.SpiritPlayer;
 
 /**
  * Class that presents a player and stores all bending information about the
@@ -58,7 +60,7 @@ public class BendingPlayer {
 	private ArrayList<Element> elements;
 	private ArrayList<SubElement> subelements;
 	private HashMap<Integer, String> abilities;
-	private Map<String, Long> cooldowns;
+	private Map<String, Cooldown> cooldowns;
 	private Map<Element, Boolean> toggledElements;
 
 	/**
@@ -82,8 +84,8 @@ public class BendingPlayer {
 		this.tremorSense = true;
 		this.illumination = true;
 		this.chiBlocked = false;
-		cooldowns = new ConcurrentHashMap<String, Long>();
-		toggledElements = new ConcurrentHashMap<Element, Boolean>();
+		this.cooldowns = loadCooldowns();
+		this.toggledElements = new ConcurrentHashMap<Element, Boolean>();
 		for (Element e : Element.getAllElements()) {
 			if (!e.equals(Element.AVATAR)) {
 				toggledElements.put(e, true);
@@ -94,12 +96,24 @@ public class BendingPlayer {
 		GeneralMethods.loadBendingPlayer(this);
 	}
 
+	public void addCooldown(Ability ability, long cooldown, boolean database) {
+		addCooldown(ability.getName(), cooldown, database);
+	}
+
+	public void addCooldown(Ability ability, boolean database) {
+		addCooldown(ability.getName(), ability.getCooldown(), database);
+	}
+
 	public void addCooldown(Ability ability, long cooldown) {
-		addCooldown(ability.getName(), cooldown);
+		addCooldown(ability, cooldown, false);
 	}
 
 	public void addCooldown(Ability ability) {
-		addCooldown(ability, ability.getCooldown());
+		addCooldown(ability, false);
+	}
+
+	public void addCooldown(String ability, long cooldown) {
+		addCooldown(ability, cooldown, false);
 	}
 
 	/**
@@ -108,12 +122,16 @@ public class BendingPlayer {
 	 * 
 	 * @param ability Name of the ability
 	 * @param cooldown The cooldown time
+	 * @param database If the value should be saved to the database
 	 */
-	public void addCooldown(String ability, long cooldown) {
+	public void addCooldown(String ability, long cooldown, boolean database) {
+		if (cooldown <= 0)
+			return;
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
+
 		if (!event.isCancelled()) {
-			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
+			this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
 
 			Player player = event.getPlayer();
 
@@ -126,6 +144,41 @@ public class BendingPlayer {
 
 			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
 				GeneralMethods.displayMovePreview(player);
+			}
+		}
+	}
+
+	public Map<String, Cooldown> loadCooldowns() {
+		Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
+		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'")) {
+			while (rs.next()) {
+				int cooldownId = rs.getInt("cooldown_id");
+				long value = rs.getLong("value");
+				String name = ProjectKorra.cooldowns.getCooldownName(cooldownId);
+				cooldowns.put(name, new Cooldown(value, true));
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return cooldowns;
+	}
+
+	public void saveCooldowns() {
+		DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'", false);
+		for (Entry<String, Cooldown> entry : cooldowns.entrySet()) {
+			String name = entry.getKey();
+			Cooldown cooldown = entry.getValue();
+			int cooldownId = ProjectKorra.cooldowns.getCooldownId(name, false);
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
+				if (rs.next()) {
+					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
+				} else {
+					DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
+				}
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -170,9 +223,11 @@ public class BendingPlayer {
 				return false;
 			}
 		}
+
 		if (canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) && isToggled()) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -207,9 +262,10 @@ public class BendingPlayer {
 		}
 
 		if (!ignoreCooldowns && cooldowns.containsKey(name)) {
-			if (cooldowns.get(name) + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+			if (cooldowns.get(name).getCooldown() + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
 				return false;
 			}
+
 			cooldowns.remove(name);
 		}
 
@@ -222,6 +278,7 @@ public class BendingPlayer {
 		} else if (ability instanceof WaterAbility && WaterAbility.isLunarEclipse(player.getWorld())) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -237,7 +294,10 @@ public class BendingPlayer {
 		return canBend(ability, false, true);
 	}
 
-	public boolean canBendPassive(Element element) {
+	public boolean canBendPassive(CoreAbility ability) {
+		if (ability == null)
+			return false; //If the passive is disabled
+		Element element = ability.getElement();
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
 		}
@@ -252,18 +312,25 @@ public class BendingPlayer {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
+		} else if (player.getGameMode() == GameMode.SPECTATOR) {
+			return false;
 		}
+
 		return true;
 	}
 
-	public boolean canUsePassive(Element element) {
+	public boolean canUsePassive(CoreAbility ability) {
+		Element element = ability.getElement();
 		if (!isToggled() || !isElementToggled(element)) {
 			return false;
 		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
 			return false;
+		} else if (isOnCooldown(ability)) {
+			return false;
 		}
+
 		return true;
 	}
 
@@ -282,6 +349,7 @@ public class BendingPlayer {
 
 			return true;
 		}
+
 		return false;
 	}
 
@@ -306,22 +374,12 @@ public class BendingPlayer {
 			if (!hasElement(subElement.getParentElement())) {
 				return false;
 			}
+
 			if (!hasSubElement(subElement)) {
 				return false;
 			}
-			if (GeneralMethods.hasSpirits()) {
-				if (GeneralMethods.hasSpirits()) {
-					SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
-					if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
-						return false;
-					}
-
-					if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
-						return false;
-					}
-				}
-			}
 		}
+
 		return true;
 	}
 
@@ -438,6 +496,48 @@ public class BendingPlayer {
 		return this.abilities;
 	}
 
+	public static BendingPlayer getBendingPlayer(OfflinePlayer oPlayer) {
+		if (oPlayer == null) {
+			return null;
+		}
+
+		return BendingPlayer.getPlayers().get(oPlayer.getUniqueId());
+	}
+
+	public static BendingPlayer getBendingPlayer(Player player) {
+		if (player == null) {
+			return null;
+		}
+
+		return getBendingPlayer(player.getName());
+	}
+
+	/**
+	 * Attempts to get a {@link BendingPlayer} from specified player name. this
+	 * method tries to get a {@link Player} object and gets the uuid and then
+	 * calls {@link #getBendingPlayer(UUID)}
+	 * 
+	 * @param playerName The name of the Player
+	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS}
+	 *         contains the player name
+	 * 
+	 * @see #getBendingPlayer(UUID)
+	 */
+	public static BendingPlayer getBendingPlayer(String playerName) {
+		if (playerName == null) {
+			return null;
+		}
+
+		Player player = Bukkit.getPlayer(playerName);
+		OfflinePlayer oPlayer = player != null ? Bukkit.getOfflinePlayer(player.getUniqueId()) : null;
+
+		return getBendingPlayer(oPlayer);
+	}
+
+	private static FileConfiguration getConfig() {
+		return ConfigManager.getConfig();
+	}
+
 	public CoreAbility getBoundAbility() {
 		return CoreAbility.getAbility(getBoundAbilityName());
 	}
@@ -450,6 +550,7 @@ public class BendingPlayer {
 	public String getBoundAbilityName() {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		String name = getAbilities().get(slot);
+
 		return name != null ? name : "";
 	}
 
@@ -464,8 +565,9 @@ public class BendingPlayer {
 	 */
 	public long getCooldown(String ability) {
 		if (cooldowns.containsKey(ability)) {
-			return cooldowns.get(ability);
+			return cooldowns.get(ability).getCooldown();
 		}
+
 		return -1;
 	}
 
@@ -474,7 +576,7 @@ public class BendingPlayer {
 	 * 
 	 * @return map of cooldowns
 	 */
-	public Map<String, Long> getCooldowns() {
+	public Map<String, Cooldown> getCooldowns() {
 		return cooldowns;
 	}
 
@@ -494,6 +596,24 @@ public class BendingPlayer {
 	 */
 	public String getName() {
 		return this.name;
+	}
+
+	/**
+	 * Gets the bukkit Player this {@link BendingPlayer} is wrapping.
+	 * 
+	 * @return Player object this BendingPlayer is wrapping.
+	 */
+	public Player getPlayer() {
+		return player;
+	}
+
+	/**
+	 * Gets the map of {@link BendingPlayer}s.
+	 * 
+	 * @return {@link #PLAYERS}
+	 */
+	public static Map<UUID, BendingPlayer> getPlayers() {
+		return PLAYERS;
 	}
 
 	/**
@@ -569,6 +689,7 @@ public class BendingPlayer {
 		if (sub == null) {
 			return false;
 		}
+
 		return player.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending());
 	}
 
@@ -578,6 +699,15 @@ public class BendingPlayer {
 
 	public boolean isBloodbent() {
 		return Bloodbending.isBloodbent(player);
+	}
+
+	/**
+	 * Checks to see if the {@link BendingPlayer} is a bender.
+	 * 
+	 * @return true If the player is a bender.
+	 */
+	public boolean isBender() {
+		return !elements.isEmpty();
 	}
 
 	/**
@@ -597,6 +727,7 @@ public class BendingPlayer {
 		if (element != null && toggledElements.containsKey(element)) {
 			return toggledElements.get(element);
 		}
+
 		return true;
 	}
 
@@ -612,8 +743,9 @@ public class BendingPlayer {
 	 */
 	public boolean isOnCooldown(String ability) {
 		if (this.cooldowns.containsKey(ability)) {
-			return System.currentTimeMillis() < cooldowns.get(ability);
+			return System.currentTimeMillis() < cooldowns.get(ability).getCooldown();
 		}
+
 		return false;
 	}
 
@@ -696,6 +828,7 @@ public class BendingPlayer {
 	 */
 	public void setAbilities(HashMap<Integer, String> abilities) {
 		this.abilities = abilities;
+
 		for (int i = 1; i <= 9; i++) {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid + "'");
 		}
@@ -751,6 +884,7 @@ public class BendingPlayer {
 		if (element == null) {
 			return;
 		}
+
 		toggledElements.put(element, !toggledElements.get(element));
 		PassiveManager.registerPassives(player);
 	}
@@ -776,50 +910,4 @@ public class BendingPlayer {
 		chiBlocked = false;
 	}
 
-	public static BendingPlayer getBendingPlayer(OfflinePlayer oPlayer) {
-		if (oPlayer == null) {
-			return null;
-		}
-		return BendingPlayer.getPlayers().get(oPlayer.getUniqueId());
-	}
-
-	public static BendingPlayer getBendingPlayer(Player player) {
-		if (player == null) {
-			return null;
-		}
-		return getBendingPlayer(player.getName());
-	}
-
-	/**
-	 * Attempts to get a {@link BendingPlayer} from specified player name. this
-	 * method tries to get a {@link Player} object and gets the uuid and then
-	 * calls {@link #getBendingPlayer(UUID)}
-	 * 
-	 * @param playerName The name of the Player
-	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS}
-	 *         contains the player name
-	 * 
-	 * @see #getBendingPlayer(UUID)
-	 */
-	public static BendingPlayer getBendingPlayer(String playerName) {
-		if (playerName == null) {
-			return null;
-		}
-		Player player = Bukkit.getPlayer(playerName);
-		OfflinePlayer oPlayer = player != null ? Bukkit.getOfflinePlayer(player.getUniqueId()) : null;
-		return getBendingPlayer(oPlayer);
-	}
-
-	private static FileConfiguration getConfig() {
-		return ConfigManager.getConfig();
-	}
-
-	/**
-	 * Gets the map of {@link BendingPlayer}s.
-	 * 
-	 * @return {@link #PLAYERS}
-	 */
-	public static Map<UUID, BendingPlayer> getPlayers() {
-		return PLAYERS;
-	}
 }

@@ -112,6 +112,10 @@ public class FireBlast extends FireAbility {
 			ParticleEffect.FLAME.display(location, 0.275F, 0.275F, 0.275F, 0, 6);
 			ParticleEffect.SMOKE.display(location, 0.3F, 0.3F, 0.3F, 0, 3);
 		}
+		if (GeneralMethods.checkDiagonalWall(location, direction)) {
+			remove();
+			return;
+		}
 		location = location.add(direction.clone().multiply(speedFactor));
 		if (random.nextInt(4) == 0) {
 			playFirebendingSound(location);

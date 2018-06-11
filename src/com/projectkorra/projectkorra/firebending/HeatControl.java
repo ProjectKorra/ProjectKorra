@@ -21,12 +21,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
@@ -289,7 +290,7 @@ public class HeatControl extends FireAbility {
 		} else if (bPlayer.getBoundAbilityName().equals("HeatControl") || hasAbility(player, FireJet.class)) {
 			player.setFireTicks(-1);
 			return false;
-		} else if (player.getFireTicks() > 80 && bPlayer.canBendPassive(Element.FIRE)) {
+		} else if (player.getFireTicks() > 80 && bPlayer.canBendPassive(getAbility(HeatControl.class))) {
 			player.setFireTicks(80);
 		}
 		return true;
@@ -358,12 +359,36 @@ public class HeatControl extends FireAbility {
 
 		Block b = lava.get(randy.nextInt(lava.size()));
 
+		Material tempRevertMaterial = Material.STONE;
+
+		if (Integer.parseInt(PackageType.getServerVersion().split("_")[1]) > 9) {
+			tempRevertMaterial = Material.valueOf("MAGMA");
+		} 
+
 		final TempBlock tempBlock;
 		if (TempBlock.isTempBlock(b)) {
 			tempBlock = TempBlock.get(b);
-			tempBlock.setType(Material.MAGMA, (byte) 0);
+			tempBlock.setType(tempRevertMaterial, (byte) 0);
 		} else {
-			tempBlock = new TempBlock(b, Material.MAGMA, (byte) 0);
+			tempBlock = new TempBlock(b, tempRevertMaterial, (byte) 0);
+		}
+
+		if (LavaFlow.isLavaFlowBlock(tempBlock.getBlock())) {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					if (tempBlock != null) {
+						ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 0.1F, 0.1F, 0.1F, 0.01F, 3);
+						if (randy.nextInt(3) == 0) {
+							tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+						}
+
+						LavaFlow.removeBlock(tempBlock.getBlock());
+					}
+				}
+			}.runTaskLater(ProjectKorra.plugin, 20);
+
+			return;
 		}
 
 		new BukkitRunnable() {

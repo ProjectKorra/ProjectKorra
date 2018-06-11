@@ -30,7 +30,7 @@ public class EarthTunnel extends EarthAbility {
 	private double range;
 	private double radiusIncrement;
 	private boolean revert;
- 	private boolean dropLootIfNotRevert;
+	private boolean dropLootIfNotRevert;
 	private Block block;
 	private Location origin;
 	private Location location;
@@ -48,7 +48,7 @@ public class EarthTunnel extends EarthAbility {
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
-		
+
 		this.time = System.currentTimeMillis();
 
 		this.location = player.getEyeLocation().clone();
@@ -61,15 +61,18 @@ public class EarthTunnel extends EarthAbility {
 		}
 		this.angle = 0;
 
-		if (!bPlayer.canBend(this) || !EarthAbility.isEarthbendable(player, block)) {
+		if (!bPlayer.canBend(this) || (!EarthAbility.isEarthbendable(player, block) && !EarthAbility.isTransparent(player, "EarthTunnel", block))) {
 			return;
 		}
+                if(GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())){
+                    return;
+                }
 		if (bPlayer.isAvatarState()) {
 			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
 		}
 
 		this.radiusIncrement = radius;
-		
+
 		start();
 	}
 
@@ -115,7 +118,13 @@ public class EarthTunnel extends EarthAbility {
 					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle, radius);
 					block = location.clone().add(direction.clone().normalize().multiply(depth)).add(vec).getBlock();
 				}
-
+				
+                                if(GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())){
+                                    bPlayer.addCooldown(this);
+                                    remove();
+                                    return;
+                                }
+				
 				if (revert) {
 					if (getMovedEarth().containsKey(block)) {
 						block.setType(Material.AIR);

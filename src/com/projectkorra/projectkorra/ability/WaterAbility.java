@@ -87,13 +87,13 @@ public abstract class WaterAbility extends ElementalAbility {
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
 	}
-	
+
 	public static boolean isBendableWaterTempBlock(Block block) { // Will need to be done for earth as well.
 		return isBendableWaterTempBlock(TempBlock.get(block));
 	}
-	
+
 	public static boolean isBendableWaterTempBlock(TempBlock tempBlock) {
-		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock);
+		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock);
 	}
 
 	public boolean isIcebendable(Block block) {
@@ -127,7 +127,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	public boolean isWaterbendable(Player player, Block block) {
 		return isWaterbendable(player, null, block);
 	}
-	
+
 	public boolean allowBreakPlants() {
 		return true;
 	}
@@ -209,7 +209,6 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @param plantbending true if the player can bend plants.
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
-	@SuppressWarnings("deprecation")
 	public static Block getWaterSourceBlock(Player player, double range, boolean plantbending) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
@@ -304,15 +303,17 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
-			
+
 			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
-			
+
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			} catch (IllegalArgumentException exception) {
+			}
+			catch (IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
+			finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}
@@ -321,15 +322,17 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
-			
+
 			Sound sound = Sound.BLOCK_GRASS_STEP;
-			
+
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			} catch (IllegalArgumentException exception) {
+			}
+			catch (IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
+			finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}
@@ -338,15 +341,17 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
-			
+
 			Sound sound = Sound.BLOCK_WATER_AMBIENT;
-			
+
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound"));
-			} catch (IllegalArgumentException exception) {
+			}
+			catch (IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.WaterSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
+			finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}

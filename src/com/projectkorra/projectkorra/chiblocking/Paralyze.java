@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
@@ -41,9 +42,8 @@ public class Paralyze extends ChiAbility {
 			}
 			paralyze(target);
 			bPlayer.addCooldown(this);
-		} else {
-			remove();
 		}
+		remove();
 	}
 
 	private static void paralyze(Entity entity) {
@@ -56,8 +56,8 @@ public class Paralyze extends ChiAbility {
 				Suffocate.remove((Player) entity);
 			}
 		} 
-		MovementHandler mh = new MovementHandler((LivingEntity) entity);
-		mh.stop(getDuration()/1000*20, Element.CHI.getColor() + "* Paralyzed *");
+		MovementHandler mh = new MovementHandler((LivingEntity) entity, CoreAbility.getAbility(Paralyze.class));
+		mh.stopWithDuration(getDuration()/1000*20, Element.CHI.getColor() + "* Paralyzed *");
 		entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
 	}
 

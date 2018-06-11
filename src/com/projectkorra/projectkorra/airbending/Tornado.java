@@ -1,10 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,14 +11,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 
 public class Tornado extends AirAbility {
-	
+
 	private long cooldown;
+	private long duration;
 	private int numberOfStreams;
 	private int particleCount;
 	@Attribute(Attribute.SPEED)
@@ -35,16 +36,15 @@ public class Tornado extends AirAbility {
 	private double npcPushFactor;
 	private double currentHeight;
 	private double currentRadius;
-	private boolean couldFly;
-	private Flight flight;
 	private Location origin;
 	private Random random;
 	private Map<Integer, Integer> angles;
 
 	public Tornado(Player player) {
 		super(player);
-		
+
 		this.cooldown = getConfig().getLong("Abilities.Air.Tornado.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Air.Tornado.Duration");
 		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
@@ -68,22 +68,26 @@ public class Tornado extends AirAbility {
 			}
 		}
 
-		
-		this.flight = new Flight(player);
-		this.couldFly = player.getAllowFlight();
+		ProjectKorra.flightHandler.createInstance(player, getName());
 		player.setAllowFlight(true);
 		start();
 	}
 
 	@Override
 	public void progress() {
-		if (player.getEyeLocation().getBlock().isLiquid() || !player.isSneaking() || !bPlayer.canBendIgnoreCooldowns(this)) {
+		if (player.getEyeLocation().getBlock().isLiquid() || !player.isSneaking() || !bPlayer.canBend(this)) {
 			bPlayer.addCooldown(this);
 			remove();
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, origin)) {
 			remove();
 			return;
+		} else if (duration != 0) {
+			if (this.getStartTime() + duration <= System.currentTimeMillis()) {
+				bPlayer.addCooldown(this);
+				remove();
+				return;
+			}
 		}
 		rotateTornado();
 	}
@@ -91,8 +95,7 @@ public class Tornado extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		flight.remove();
-		player.setAllowFlight(couldFly);
+		ProjectKorra.flightHandler.removeInstance(player, getName());
 	}
 
 	private void rotateTornado() {
@@ -165,7 +168,7 @@ public class Tornado extends AirAbility {
 						breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
-							new Flight((Player) entity);
+							ProjectKorra.flightHandler.createInstance((Player) entity, 50L, getName());
 						}
 					}
 				}

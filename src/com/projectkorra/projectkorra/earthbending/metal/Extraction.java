@@ -37,49 +37,46 @@ public class Extraction extends MetalAbility {
 		if (originBlock == null) {
 			return;
 		}
-		
-		Material material = originBlock.getType();
-		
+
 		if (!GeneralMethods.isRegionProtectedFromBuild(this, originBlock.getLocation())) {
-			if (EarthAbility.isMetalbendable(player, material)) {
-				Material type = null;
+			Material material = originBlock.getType();
+			Material type = null;
 
-				switch (material) {
-					case IRON_ORE:
-						originBlock.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount()));
-						type = Material.STONE;
-						break;
-					case GOLD_ORE:
-						originBlock.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount()));
-						type = Material.STONE;
-						break;
-					case QUARTZ_ORE:
-						originBlock.setType(Material.NETHERRACK);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount()));
-						type = Material.NETHERRACK;
-						break;
-					default:
-						break;
-				}
-
-				if (type != null) {
-					/*
-					 * Update the block from Methods.movedearth to Stone
-					 * otherwise players can use RaiseEarth > Extraction >
-					 * Collapse to dupe the material from the block.
-					 */
-					if (getMovedEarth().containsKey(originBlock)) {
-						getMovedEarth().remove(originBlock);
-					}
-				}
-
-				playMetalbendingSound(originBlock.getLocation());
-				start();
-				bPlayer.addCooldown(this);
-				remove();
+			switch (material) {
+				case IRON_ORE:
+					originBlock.setType(Material.STONE);
+					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount()));
+					type = Material.STONE;
+					break;
+				case GOLD_ORE:
+					originBlock.setType(Material.STONE);
+					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount()));
+					type = Material.STONE;
+					break;
+				case QUARTZ_ORE:
+					originBlock.setType(Material.NETHERRACK);
+					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount()));
+					type = Material.NETHERRACK;
+					break;
+				default:
+					return;
 			}
+
+			if (type != null) {
+				/*
+				* Update the block from Methods.movedearth to Stone
+				* otherwise players can use RaiseEarth > Extraction >
+				* Collapse to dupe the material from the block.
+				*/
+				if (getMovedEarth().containsKey(originBlock)) {
+					getMovedEarth().remove(originBlock);
+				}
+			}
+
+			playMetalbendingSound(originBlock.getLocation());
+			start();
+			bPlayer.addCooldown(this);
+			remove();
 		}
 
 	}

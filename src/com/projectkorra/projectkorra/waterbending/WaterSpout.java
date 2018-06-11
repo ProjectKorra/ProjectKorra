@@ -13,9 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -30,13 +31,15 @@ public class WaterSpout extends WaterAbility {
 	private int angle;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
+	private long cooldown;
+	private long duration;
+	private long startTime;
 	private double rotation;
 	private double height;
 	private double maxHeight;
 	private Block base;
 	private TempBlock baseBlock;
-	private boolean canFly;
-	private boolean hadFly;
 
 	public WaterSpout(Player player) {
 		super(player);
@@ -50,11 +53,12 @@ public class WaterSpout extends WaterAbility {
 		this.canBendOnPackedIce = getConfig().getStringList("Properties.Water.IceBlocks").contains(Material.PACKED_ICE.toString());
 		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
+		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Cooldown");
 		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
 		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
+		this.duration = getConfig().getLong("Abilities.Water.WaterSpout.Duration");
+		this.startTime = System.currentTimeMillis();
 
-		hadFly = player.isFlying();
-		canFly = player.getAllowFlight();
 		maxHeight = getNightFactor(height);
 		WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
 		if (spoutWave.isStarted() && !spoutWave.isRemoved()) {
@@ -76,10 +80,9 @@ public class WaterSpout extends WaterAbility {
 		if (!isWithinMaxSpoutHeight(topBlock.getLocation(), heightRemoveThreshold)) {
 			return;
 		}
-
-		new Flight(player);
+		ProjectKorra.flightHandler.createInstance(player, getName());
 		player.setAllowFlight(true);
-		spoutableWaterHeight(player.getLocation()); //Sets base
+		spoutableWaterHeight(player.getLocation()); // Sets base
 		start();
 	}
 
@@ -120,6 +123,10 @@ public class WaterSpout extends WaterAbility {
 		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.startTime + this.duration) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
 		} else {
 			blocks.clear();
 			player.setFallDistance(0);
@@ -138,6 +145,7 @@ public class WaterSpout extends WaterAbility {
 				location = base.getLocation();
 				double heightRemoveThreshold = 2;
 				if (!isWithinMaxSpoutHeight(location, heightRemoveThreshold)) {
+					bPlayer.addCooldown(this);
 					remove();
 					return;
 				}
@@ -156,11 +164,11 @@ public class WaterSpout extends WaterAbility {
 				if (player.getLocation().getBlockY() > block.getY()) {
 					player.setFlying(false);
 				} else {
-					new Flight(player);
 					player.setAllowFlight(true);
 					player.setFlying(true);
 				}
 			} else {
+				bPlayer.addCooldown(this);
 				remove();
 				return;
 			}
@@ -175,8 +183,7 @@ public class WaterSpout extends WaterAbility {
 			AFFECTED_BLOCKS.remove(tb.getBlock());
 			tb.revertBlock();
 		}
-		player.setAllowFlight(canFly);
-		player.setFlying(hadFly);
+		ProjectKorra.flightHandler.removeInstance(player, getName());
 	}
 
 	public void revertBaseBlock() {
@@ -249,7 +256,7 @@ public class WaterSpout extends WaterAbility {
 				return -1;
 			}
 
-			if (!blocks.contains(blocki)) {
+			if (TempBlock.get(blocki) == null || !blocks.contains(TempBlock.get(blocki))) {
 				if (isWater(blocki)) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock();
@@ -292,8 +299,7 @@ public class WaterSpout extends WaterAbility {
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
 	 */
 	@Deprecated
 	public static boolean removeSpouts(Location loc0, double radius, Player sourcePlayer) {
@@ -327,7 +333,7 @@ public class WaterSpout extends WaterAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return this.cooldown;
 	}
 
 	@Override

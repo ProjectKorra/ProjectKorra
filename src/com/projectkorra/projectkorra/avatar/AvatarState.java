@@ -1,23 +1,19 @@
 package com.projectkorra.projectkorra.avatar;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.HashMap;
+import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
-import java.util.UUID;
+import com.projectkorra.projectkorra.ability.AvatarAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AvatarState extends AvatarAbility {
 
 	private static final HashMap<String, Long> START_TIMES = new HashMap<>();
-	private static final HashMap<UUID, Long> GLOBAL_COOLDOWNS = new HashMap<UUID, Long>();
 
 	private boolean regenEnabled;
 	private boolean speedEnabled;
@@ -42,8 +38,6 @@ public class AvatarState extends AvatarAbility {
 			return;
 		} else if (bPlayer.isOnCooldown(this)) {
 			return;
-		} else if (GLOBAL_COOLDOWNS.containsKey(player.getUniqueId())) {
-			return;
 		}
 
 		this.regenEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled");
@@ -58,21 +52,13 @@ public class AvatarState extends AvatarAbility {
 		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");
 		this.factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
 
-		new Flight(player);
 		playAvatarSound(player.getLocation());
 
 		start();
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown(this, true);
 		if (duration != 0) {
 			START_TIMES.put(player.getName(), System.currentTimeMillis());
-			GLOBAL_COOLDOWNS.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
 			final UUID id = player.getUniqueId();
-			Bukkit.getScheduler().runTaskLaterAsynchronously(ProjectKorra.plugin, new Runnable() {
-				@Override
-				public void run() {
-					GLOBAL_COOLDOWNS.remove(id);
-				}
-			}, cooldown / 50);
 		}
 	}
 

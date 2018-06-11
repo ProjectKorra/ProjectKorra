@@ -293,7 +293,6 @@ public class Torrent extends WaterAbility {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean launch() {
 		if (launchedBlocks.isEmpty() && blocks.isEmpty()) {
 			return false;

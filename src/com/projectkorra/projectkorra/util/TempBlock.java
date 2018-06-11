@@ -26,7 +26,7 @@ public class TempBlock {
 	});
 
 	private Block block;
-	private Material newtype;
+//	private Material newtype;
 	private byte newdata;
 	private BlockState state;
 	private long revertTime;
@@ -37,14 +37,14 @@ public class TempBlock {
 	public TempBlock(Block block, Material newtype, byte newdata) {
 		this.block = block;
 		this.newdata = newdata;
-		this.newtype = newtype;
+//		this.newtype = newtype;
 		if (instances.containsKey(block)) {
 			TempBlock temp = instances.get(block);
-			if (newtype != temp.newtype) {
+			if (newtype != temp.block.getType()) {
 				temp.block.setType(newtype);
-				temp.newtype = newtype;
+//				temp.newtype = newtype;
 			}
-			if (newdata != temp.newdata) {
+			if (newdata != temp.block.getData()) {
 				temp.block.setData(newdata);
 				temp.newdata = newdata;
 			}
@@ -164,7 +164,7 @@ public class TempBlock {
 
 	@SuppressWarnings("deprecation")
 	public void setType(Material material, byte data) {
-		newtype = material;
+//		newtype = material;
 		newdata = data;
 		block.setType(material);
 		block.setData(data);

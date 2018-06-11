@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -24,15 +23,14 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.Illumination;
+import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class AirSwipe extends AirAbility {
 
 	// Limiting the entities reduces the risk of crashing
 	private static final int MAX_AFFECTABLE_ENTITIES = 10;
-	private static final Integer[] BREAKABLES = { 6, 31, 32, 37, 38, 39, 40, 59, 81, 83, 106, 175 };
 
 	private boolean charging;
 	private int arc;
@@ -110,6 +108,8 @@ public class AirSwipe extends AirAbility {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage");
 			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Push");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Range");
+			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius");
 		}
 
 		start();
@@ -158,26 +158,21 @@ public class AirSwipe extends AirAbility {
 						if (testblock.getType() == Material.FIRE) {
 							testblock.setType(Material.AIR);
 						}
-						if (isBlockBreakable(testblock)) {
-							GeneralMethods.breakBlock(testblock);
-						}
 					}
 
 					if (block.getType() != Material.AIR) {
-						if (isBlockBreakable(block)) {
-							GeneralMethods.breakBlock(block);
-						}
 						if (block.getType().equals(Material.SNOW)) {
 							continue;
 						} else {
-
 							elements.remove(direction);
 						}
 						if (isLava(block)) {
-							if (block.getData() == 0x0) {
-								block.setType(Material.OBSIDIAN);
+							if (LavaFlow.isLavaFlowBlock(block)) {
+								LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
+							} else if (block.getData() == 0x0) {
+								new TempBlock(block, Material.OBSIDIAN, (byte) 0);
 							} else {
-								block.setType(Material.COBBLESTONE);
+								new TempBlock(block, Material.COBBLESTONE, (byte) 0);
 							}
 						}
 					} else {
@@ -225,7 +220,7 @@ public class AirSwipe extends AirAbility {
 							affectedEntities.add(entity);
 						}
 						if (entity instanceof Player) {
-							new Flight((Player) entity, player);
+							ProjectKorra.flightHandler.createInstance((Player) entity, player, 1000L, getName());
 						}
 						breakBreathbendingHold(entity);
 						if (elements.containsKey(fDirection)) {
@@ -239,15 +234,6 @@ public class AirSwipe extends AirAbility {
 				}
 			}.runTaskLater(ProjectKorra.plugin, i / MAX_AFFECTABLE_ENTITIES);
 		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private boolean isBlockBreakable(Block block) {
-		Integer id = block.getTypeId();
-		if (Arrays.asList(BREAKABLES).contains(id) && !Illumination.getBlocks().containsKey(block)) {
-			return true;
-		}
-		return false;
 	}
 
 	private void launch() {
@@ -386,10 +372,6 @@ public class AirSwipe extends AirAbility {
 
 	public static int getMaxAffectableEntities() {
 		return MAX_AFFECTABLE_ENTITIES;
-	}
-
-	public static Integer[] getBreakables() {
-		return BREAKABLES;
 	}
 
 	public long getMaxChargeTime() {

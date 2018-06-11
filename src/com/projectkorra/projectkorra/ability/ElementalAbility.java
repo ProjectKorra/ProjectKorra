@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -31,6 +32,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public boolean isTransparent(Block block) {
 		return isTransparent(player, getName(), block);
+	}
+	
+	public List<String> getEarthbendableBlocks() {
+		return getConfig().getStringList("Properties.Earth.EarthBlocks");
 	}
 
 	public static Material[] getTransparentMaterials() {
@@ -69,7 +74,8 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isFullMoon(World world) {
 		if (GeneralMethods.hasRPG()) {
-			return EventManager.marker.get(world).equalsIgnoreCase("FullMoon");
+			String event = EventManager.marker.get(world);
+			return event != null && event.equalsIgnoreCase("FullMoon");
 		} else {
 			long days = world.getFullTime() / 24000;
 			long phase = days % 8;
@@ -111,7 +117,8 @@ public abstract class ElementalAbility extends CoreAbility {
 			return false;
 		}
 		
-		return EventManager.marker.get(world).equalsIgnoreCase("LunarEclipse");
+		String event = EventManager.marker.get(world);
+		return event != null && event.equalsIgnoreCase("LunarEclipse");
 	}
 
 	public static boolean isSolarEclipse(World world) {
@@ -119,7 +126,8 @@ public abstract class ElementalAbility extends CoreAbility {
 			return false;
 		}
 		
-		return EventManager.marker.get(world).equalsIgnoreCase("SolarEclipse");
+		String event = EventManager.marker.get(world);
+		return event != null && event.equalsIgnoreCase("SolarEclipse");
 	}
 
 	public static boolean isMeltable(Block block) {
@@ -211,7 +219,8 @@ public abstract class ElementalAbility extends CoreAbility {
 			return false;
 		}
 		
-		return EventManager.marker.get(world).equalsIgnoreCase("SozinsComet");
+		String event = EventManager.marker.get(world);
+		return event != null && event.equalsIgnoreCase("SozinsComet");
 	}
 
 	public static boolean isTransparent(Player player, Block block) {

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
@@ -34,11 +35,11 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		if (!player.isSprinting()) {
+		if (!player.isSprinting() || !bPlayer.canUsePassive(this) || !bPlayer.canBendPassive(this)) {
 			return;
 		}
 
-		if (CoreAbility.hasAbility(player, AirAgility.class)) {
+		if (CoreAbility.hasAbility(player, AirAgility.class) && bPlayer.canBendPassive(CoreAbility.getAbility(AirAbility.class))) {
 			AirAgility airAgility = CoreAbility.getAbility(player, AirAgility.class);
 			if (airAgility.getJumpPower() > jumpPower) {
 				jumpPower = airAgility.getJumpPower();
@@ -47,45 +48,38 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 				speedPower = airAgility.getSpeedPower();
 			}
 		}
-
-		// Jump Buff
-		int jMax = jumpPower;
+		
 		if (hasAbility(player, AcrobatStance.class)) {
 			AcrobatStance stance = getAbility(player, AcrobatStance.class);
-			jMax = Math.max(jMax, stance.getJump());
+			jumpPower = Math.max(jumpPower, stance.getJump());
+			speedPower = Math.max(speedPower, stance.getSpeed());
 		}
+		// Jump Buff
 		jumpActivate = true;
 		if (player.hasPotionEffect(PotionEffectType.JUMP)) {
-			for (PotionEffect potion : player.getActivePotionEffects()) {
-				if (potion.getType() == PotionEffectType.JUMP) {
-					if (potion.getAmplifier() > jMax - 1) {
-						jumpActivate = false;
-					}
-				}
+			PotionEffect potion = player.getPotionEffect(PotionEffectType.JUMP);
+			if (potion.getAmplifier() > jumpPower - 1) {
+				jumpActivate = false;
+			} else {
+				player.removePotionEffect(PotionEffectType.JUMP);
 			}
 		}
 		if (jumpActivate) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, jMax - 1, true, false), false);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, jumpPower - 1, true, false), false);
 		}
 
 		// Speed Buff
-		int sMax = speedPower;
-		if (hasAbility(player, AcrobatStance.class)) {
-			AcrobatStance stance = getAbility(player, AcrobatStance.class);
-			sMax = Math.max(sMax, stance.getJump());
-		}
 		speedActivate = true;
 		if (player.hasPotionEffect(PotionEffectType.SPEED)) {
-			for (PotionEffect potion : player.getActivePotionEffects()) {
-				if (potion.getType() == PotionEffectType.SPEED) {
-					if (potion.getAmplifier() > sMax - 1) {
-						speedActivate = false;
-					}
-				}
+			PotionEffect potion = player.getPotionEffect(PotionEffectType.SPEED);
+			if (potion.getAmplifier() > speedPower - 1) {
+				speedActivate = false;
+			} else {
+				player.removePotionEffect(PotionEffectType.SPEED);
 			}
 		}
 		if (speedActivate) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, sMax - 1, true, false), false);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, speedPower - 1, true, false), false);
 		}
 	}
 
@@ -116,6 +110,11 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public boolean isInstantiable() {
+		return true;
+	}
+
+	@Override
+	public boolean isProgressable() {
 		return true;
 	}
 

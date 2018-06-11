@@ -5,17 +5,19 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class ChiSaturation extends ChiAbility implements PassiveAbility {
-
 	public ChiSaturation(Player player) {
 		super(player);
 	}
 
-	@Override
-	public void progress() {
-
+	public static double getExhaustionFactor() {
+		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.ChiSaturation.ExhaustionFactor");
 	}
+
+	@Override
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {
@@ -39,7 +41,7 @@ public class ChiSaturation extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return player.getLocation();
 	}
 
 	@Override
@@ -47,4 +49,8 @@ public class ChiSaturation extends ChiAbility implements PassiveAbility {
 		return false;
 	}
 
+	@Override
+	public boolean isProgressable() {
+		return false;
+	}
 }

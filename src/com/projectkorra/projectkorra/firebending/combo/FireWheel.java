@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -29,7 +30,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	private long cooldown;
 	private double range;
 	private int height;
-	private double radius;
+	private int radius;
 	private double speed;
 	private double fireTicks;
 	private double damage;
@@ -49,10 +50,8 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
 		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
-		this.radius = getConfig().getDouble("Abilities.Fire.FireWheel.Radius");
 		
 		bPlayer.addCooldown(this);
-		origin = player.getLocation();
 		affectedEntities = new ArrayList<LivingEntity>();
 
 		if (GeneralMethods.getTopBlock(player.getLocation(), 3, 3) == null) {
@@ -72,30 +71,41 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
 			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Radius");
 		}
+		
+		this.radius = height - 1;
+		origin = player.getLocation().clone().add(0, radius, 0);
 		
 		start();
 	}
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return null;
+		return new FireWheel(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
+		return fireWheel;
 	}
 
 	@Override
 	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || GeneralMethods.isRegionProtectedFromBuild(player, location)) {
+			remove();
+			return;
+		}
 		if (location.distanceSquared(origin) > range * range) {
 			remove();
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(location, 2, 4);
+		Block topBlock = GeneralMethods.getTopBlock(location, radius, radius + 2);
 		if (topBlock.getType().equals(Material.SNOW)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
@@ -108,6 +118,12 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		} else if (ElementalAbility.isPlant(topBlock)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
+		} else if (topBlock.getType() == Material.AIR) {
+			remove();
+			return;
+		} else if (GeneralMethods.isSolid(topBlock.getRelative(BlockFace.UP)) || isWater(topBlock.getRelative(BlockFace.UP))) {
+			remove();
+			return;
 		}
 		location.setY(topBlock.getY() + height);
 
@@ -119,7 +135,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
 		}
 		
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius + 0.5)) {
 			if (entity instanceof LivingEntity && !entity.equals(player)) {
 				if (!affectedEntities.contains(entity)) {
 					affectedEntities.add((LivingEntity) entity);
@@ -161,5 +177,10 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return affectedEntities;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift";
 	}
 }

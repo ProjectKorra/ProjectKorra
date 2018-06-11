@@ -10,10 +10,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.Flight;
 
 public class AirSpout extends AirAbility {
 
@@ -22,6 +22,7 @@ public class AirSpout extends AirAbility {
 	private int angle;
 	private long animTime;
 	private long interval;
+	private long duration;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.HEIGHT)
@@ -37,12 +38,12 @@ public class AirSpout extends AirAbility {
 		}
 
 		if (!bPlayer.canBend(this)) {
-			remove();
 			return;
 		}
 
 		this.angle = 0;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSpout.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Air.AirSpout.Duration");
 		this.animTime = System.currentTimeMillis();
 		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
 		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
@@ -52,7 +53,7 @@ public class AirSpout extends AirAbility {
 			return;
 		}
 
-		new Flight(player);
+		ProjectKorra.flightHandler.createInstance(player, getName());
 
 		if (bPlayer.isAvatarState()) {
 			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
@@ -62,8 +63,7 @@ public class AirSpout extends AirAbility {
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
 	 */
 	@Deprecated
 	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
@@ -120,14 +120,18 @@ public class AirSpout extends AirAbility {
 		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBinds(this) || !bPlayer.canBind(this)) {
 			remove();
 			return;
-		}
-
-		double heightRemoveThreshold = 2;
-		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
+		} else if (duration != 0 && System.currentTimeMillis() > getStartTime() + duration) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
 
+		double heightRemoveThreshold = 2;
+		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
+		}
 
 		Block eyeBlock = player.getEyeLocation().getBlock();
 		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
@@ -150,15 +154,14 @@ public class AirSpout extends AirAbility {
 				allowFlight();
 			}
 			rotateAirColumn(block);
-		} else {	
+		} else {
 			remove();
 		}
 	}
 
 	public void remove() {
 		super.remove();
-		removeFlight();
-		bPlayer.addCooldown(this);
+		ProjectKorra.flightHandler.removeInstance(player, getName());
 	}
 
 	private void removeFlight() {

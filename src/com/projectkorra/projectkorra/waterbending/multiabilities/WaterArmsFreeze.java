@@ -35,10 +35,10 @@ public class WaterArmsFreeze extends IceAbility {
 	public WaterArmsFreeze(Player player) {
 		super(player);
 
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
 		this.iceRange = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Range");
 		this.iceDamage = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
+		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Freeze");
 		this.direction = player.getEyeLocation().getDirection();
 
 		createInstance();
@@ -122,8 +122,7 @@ public class WaterArmsFreeze extends IceAbility {
 
 	private void progressIce() {
 		ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 0.05, 5);
-		new TempBlock(location.getBlock(), Material.ICE, (byte) 0);
-		WaterArms.getBlockRevertTimes().put(location.getBlock(), System.currentTimeMillis() + 10L);
+		new TempBlock(location.getBlock(), Material.ICE, (byte) 0).setRevertTime(10);
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {

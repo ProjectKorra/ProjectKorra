@@ -1,10 +1,6 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +8,11 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -38,7 +38,7 @@ public class BlockSource {
 	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 	// The player should never need to grab source blocks from farther than this.
 	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.SelectRange");
-	//private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
+	// private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
 
 	/**
 	 * Updates all of the player's sources.
@@ -122,7 +122,6 @@ public class BlockSource {
 	 * @return a valid bendable block, or null if none was found.
 	 */
 	public static BlockSourceInformation getBlockSourceInformation(Player player, BlockSourceType sourceType, ClickType clickType) {
-
 		if (!playerSources.containsKey(player)) {
 			return null;
 		} else if (!playerSources.get(player).containsKey(sourceType)) {
@@ -254,17 +253,22 @@ public class BlockSource {
 				sourceBlock = null;
 			}
 		}
-		if (allowWater && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
-		}
-		if (allowIce && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.ICE, clickType);
-		}
-		if (allowPlant && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
-		}
-		if (allowSnow && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
+		boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing");
+		if (dynamic && sourceBlock == null) {
+			if (allowWater && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
+			}
+			if (allowIce && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.ICE, clickType);
+			}
+			if (allowPlant && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
+			}
+			if (allowSnow && sourceBlock == null) {
+				sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
+			}
+		} else {
+			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
 		}
 		if (sourceBlock != null && !sourceBlock.getType().equals(Material.AIR) && (WaterAbility.isWater(sourceBlock) || WaterAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || WaterAbility.isIce(sourceBlock))) {
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {
@@ -304,8 +308,8 @@ public class BlockSource {
 	 */
 	public static Block getEarthSourceBlock(Player player, double range, ClickType clickType, boolean allowNearbySubstitute) {
 		Block sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
-
-		if (sourceBlock == null && allowNearbySubstitute) {
+		boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Earth.DynamicSourcing");
+		if (dynamic && sourceBlock == null && allowNearbySubstitute) {
 			BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
 
 			if (blockInfo == null) {
@@ -321,6 +325,8 @@ public class BlockSource {
 			if (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > range || !EarthAbility.isEarthbendable(player, sourceBlock)) {
 				return null;
 			}
+		} else {
+			sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
 		}
 		return sourceBlock;
 	}
