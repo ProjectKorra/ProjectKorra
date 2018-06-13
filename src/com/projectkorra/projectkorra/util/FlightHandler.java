@@ -104,7 +104,6 @@ public class FlightHandler {
 		}
 		flight.abilities.put(identifier, ability);
 		INSTANCES.put(player.getUniqueId(), flight);
-		System.out.println("Create " + player.getName() + " " + flight.toString());
 		return flight;
 	}
 
