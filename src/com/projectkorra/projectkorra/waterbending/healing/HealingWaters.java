@@ -94,7 +94,7 @@ public class HealingWaters extends HealingAbility {
 		}
 		
 		if(duration != 0) {
-			if (System.getCurrentTimeMillis() >= getStartTime() + duration) {
+			if (System.currentTimeMillis() >= getStartTime() + duration) {
 				bPlayer.addCooldown(this);
 				remove();
 				return;
