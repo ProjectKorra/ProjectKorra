@@ -93,10 +93,12 @@ public class HealingWaters extends HealingAbility {
 			return;
 		}
 		
-		if (System.getCurrentTimeMillis() >= getStartTime() + duration) {
-			bPlayer.addCooldown(this);
-			remove();
-			return;
+		if(duration != 0) {
+			if (System.getCurrentTimeMillis() >= getStartTime() + duration) {
+				bPlayer.addCooldown(this);
+				remove();
+				return;
+			}
 		}
 
 		if (!player.isSneaking()) {
