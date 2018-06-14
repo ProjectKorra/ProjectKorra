@@ -31,7 +31,8 @@ public class HealingWaters extends HealingAbility {
 	private long interval;
 	private long chargeTime;
 	private int power;
-	private int duration;
+	private int potDuration;
+	private long duration;
 	private boolean enableParticles;
 
 	// Instance related and predefined variables.
@@ -78,6 +79,7 @@ public class HealingWaters extends HealingAbility {
 		interval = getConfig().getLong("Abilities.Water.HealingWaters.Interval");
 		chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
 		power = getConfig().getInt("Abilities.Water.HealingWaters.Power");
+		potDuration = getConfig().getInt("Abilities.Water.HealingWaters.HealingDuration");
 		duration = getConfig().getInt("Abilities.Water.HealingWaters.Duration");
 		enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
 		hex = "00ffff";
@@ -87,6 +89,12 @@ public class HealingWaters extends HealingAbility {
 	public void progress() {
 
 		if (!bPlayer.canBend(this)) {
+			remove();
+			return;
+		}
+		
+		if (System.getCurrentTimeMillis() >= getStartTime() + duration) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
@@ -202,7 +210,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(Player player) {
 		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation())) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, power));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, potDuration, power));
 			AirAbility.breakBreathbendingHold(player);
 			healing = true;
 			healingSelf = true;
@@ -211,7 +219,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(LivingEntity livingEntity) {
 		if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
-			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, power));
+			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, potDuration, power));
 			AirAbility.breakBreathbendingHold(livingEntity);
 			healing = true;
 			healingSelf = false;
