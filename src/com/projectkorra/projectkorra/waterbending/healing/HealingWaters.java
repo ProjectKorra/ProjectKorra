@@ -80,7 +80,7 @@ public class HealingWaters extends HealingAbility {
 		chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
 		power = getConfig().getInt("Abilities.Water.HealingWaters.Power");
 		potDuration = getConfig().getInt("Abilities.Water.HealingWaters.HealingDuration");
-		duration = getConfig().getInt("Abilities.Water.HealingWaters.Duration");
+		duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
 		enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
 		hex = "00ffff";
 	}
