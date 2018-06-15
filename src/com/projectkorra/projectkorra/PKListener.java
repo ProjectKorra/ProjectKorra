@@ -116,6 +116,7 @@ import com.projectkorra.projectkorra.earthbending.CollapseWall;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthGrab;
+import com.projectkorra.projectkorra.earthbending.EarthGrab.GrabMode;
 import com.projectkorra.projectkorra.earthbending.EarthSmash;
 import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
@@ -1437,7 +1438,7 @@ public class PKListener implements Listener {
 							new MetalClips(player, 1);
 						}
 					} else if (abil.equalsIgnoreCase("EarthGrab")) {
-						new EarthGrab(player);
+						new EarthGrab(player, GrabMode.DRAG);
 					}
 				}
 
@@ -1643,6 +1644,8 @@ public class PKListener implements Listener {
 						new LavaFlow(player, AbilityType.CLICK);
 					} else if (abil.equalsIgnoreCase("EarthSmash")) {
 						new EarthSmash(player, ClickType.LEFT_CLICK);
+					} else if (abil.equalsIgnoreCase("EarthGrab")) {
+						new EarthGrab(player, GrabMode.PROJECTING);
 					}
 				}
 			}
