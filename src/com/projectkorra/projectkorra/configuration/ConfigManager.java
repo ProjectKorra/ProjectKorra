@@ -1140,8 +1140,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthGrab.DragSpeed", 0.8);
 			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 5000);
 			config.addDefault("Abilities.Earth.EarthGrab.Range", 14);
-			config.addDefault("Abilities.Earth.EarthGrab.TrapHitInterval", 700);
-			config.addDefault("Abilities.Earth.EarthGrab.TrapHP", 4);
+			config.addDefault("Abilities.Earth.EarthGrab.TrapHitInterval", 400);
+			config.addDefault("Abilities.Earth.EarthGrab.TrapHP", 3);
 			config.addDefault("Abilities.Earth.EarthGrab.DamageThreshold", 4);
 
 			config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
@@ -1248,8 +1248,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthPillars.Power", 1.2);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
-			config.addDefault("Abilities.Earth.EarthPillars.Stun.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthPillars.Stun.Duration", 2500);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
 
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);

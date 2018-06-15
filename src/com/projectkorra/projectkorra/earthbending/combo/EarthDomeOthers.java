@@ -51,20 +51,25 @@ public class EarthDomeOthers extends EarthAbility {
 		range++;
 		loc.add(direction.normalize());
 		Block top = GeneralMethods.getTopBlock(loc, 2);
-		if (!isEarthbendable(top.getType(), true, true, true)) {
+		
+		while (!isEarthbendable(top)) {
+			if (isTransparent(top)) {
+				top = top.getRelative(BlockFace.DOWN);
+			} else {
+				remove(true);
+				return;
+			}
+		}	
+		
+		if (!isTransparent(top.getRelative(BlockFace.UP))) {
 			remove(true);
 			return;
-		}
-		if (GeneralMethods.isSolid(top.getRelative(BlockFace.UP))) {
-			remove(true);
-			return;
-		}
-		if (loc.getBlock().getY() != top.getY()) {
-			loc.add(0, (top.getY()-loc.getBlockY()), 0);
 		}
 		
-		//ParticleEffect.CRIT.display(loc.clone().add(0, 1, 0), 0.2f, 0, 0.2f, 0.001f, 7);
-		ParticleEffect.BLOCK_DUST.display(new BlockData(loc.getBlock().getType(), (byte)0), 0.2f, 0, 0.2f, 0.001f, 7, loc.clone().add(0, 1, 0), 255);
+		loc.setY(top.getY() + 1);
+		
+		ParticleEffect.CRIT.display(loc, 0.4f, 0, 0.4f, 0.001f, 9);
+		ParticleEffect.BLOCK_DUST.display(new BlockData(loc.getBlock().getRelative(BlockFace.DOWN).getType(), (byte)0), 0.2f, 0.1f, 0.2f, 0.001f, 7, loc, 255);
 		
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2)) {
 			if (!(entity instanceof LivingEntity) || entity.getEntityId() == player.getEntityId()) {
