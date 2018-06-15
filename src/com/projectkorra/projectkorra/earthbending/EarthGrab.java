@@ -163,6 +163,7 @@ public class EarthGrab extends EarthAbility {
 					}
 				}
 				target = (LivingEntity) entity;
+				trappedHP = target.getHealth();
 				mode = GrabMode.TRAP;
 				origin = target.getLocation().clone();
 			}
