@@ -104,8 +104,6 @@ import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
-import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
@@ -337,10 +335,10 @@ public class GeneralMethods {
 
 			@Override
 			public void run() {
-				createBendingPlayerAsynchronously(uuid, player); // "async"
+				createBendingPlayerAsynchronously(uuid, player);
 			}
 
-		}.runTask(ProjectKorra.plugin);
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {

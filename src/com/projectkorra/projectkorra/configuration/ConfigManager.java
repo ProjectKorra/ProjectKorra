@@ -884,7 +884,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
 			config.addDefault("Abilities.Water.HealingWaters.ChargeTime", 1000);
 			config.addDefault("Abilities.Water.HealingWaters.Power", 1);
-			config.addDefault("Abilities.Water.HealingWaters.Duration", 70);
+			config.addDefault("Abilities.Water.HealingWaters.HealingDuration", 70);
+			config.addDefault("Abilities.Water.HealingWaters.Duration", 0);
 			config.addDefault("Abilities.Water.HealingWaters.EnableParticles", true);
 
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
