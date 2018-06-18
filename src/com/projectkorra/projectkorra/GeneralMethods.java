@@ -345,8 +345,11 @@ public class GeneralMethods {
 		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
+				DBConnection.sql.getConnection().setAutoCommit(false); //Disable auto-commit to prevent this query from being run later
 				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player
 				        + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
+				DBConnection.sql.getConnection().commit();              //We commit the query now so if the player connects again, they are definitely in the database next time we check.
+				DBConnection.sql.getConnection().setAutoCommit(true);   //Without doing this, it may not have commited before the check is run again and then we get 2 of the same Primary Keys in the DB
 				new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
 				ProjectKorra.log.info("Created new BendingPlayer for " + player);
 			} else {
