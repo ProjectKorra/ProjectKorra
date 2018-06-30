@@ -1008,6 +1008,12 @@ public class PKListener implements Listener {
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
+				if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters")) {
+					if (CoreAbility.hasAbility(player, HealingWaters.class)) {
+						CoreAbility.getAbility(player, HealingWaters.class).switchMode();
+					}
+				}
+				
 				final UUID uuid = player.getUniqueId();
 				RIGHT_CLICK_INTERACT.add(uuid);
 
@@ -1065,33 +1071,34 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters") && event.getHand().equals(EquipmentSlot.HAND)) {
-			HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
-			if (instance != null && instance.charged) {
-				instance.click();
-				event.setCancelled(true);
-				return;
-			}
-		}
 		if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
 			if (event.getRightClicked() instanceof Player) {
 				Player target = (Player) event.getRightClicked();
 				if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 					FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
 					fma.requestCarry(target);
-					final UUID uuid = player.getUniqueId();
-					RIGHT_CLICK_INTERACT.add(uuid);
-
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							RIGHT_CLICK_INTERACT.remove(uuid);
-						}
-					}.runTaskLater(plugin, 5);
 				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
 					FlightMultiAbility.acceptCarryRequest(player, target);
 				}
 			}
+			
+			if (event.getRightClicked() instanceof LivingEntity) {
+				if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters")) {
+					if (CoreAbility.hasAbility(player, HealingWaters.class)) {
+						CoreAbility.getAbility(player, HealingWaters.class).switchMode();
+					}
+				}
+			}
+			
+			final UUID uuid = player.getUniqueId();
+			RIGHT_CLICK_INTERACT.add(uuid);
+
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					RIGHT_CLICK_INTERACT.remove(uuid);
+				}
+			}.runTaskLater(plugin, 5);
 		}
 	}
 
@@ -1394,9 +1401,7 @@ public class PKListener implements Listener {
 						Torrent.create(player);
 					} else if (abil.equalsIgnoreCase("WaterArms")) {
 						new WaterArms(player);
-					}
-
-					if (abil.equalsIgnoreCase("HealingWaters")) {
+					} else if (abil.equalsIgnoreCase("HealingWaters")) {
 						new HealingWaters(player);
 					}
 				}

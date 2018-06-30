@@ -199,6 +199,14 @@ public class FlightHandler {
 		public Player getSource() {
 			return source;
 		}
+		
+		public boolean getCouldFly() {
+			return couldFly;
+		}
+		
+		public boolean getWasFlying() {
+			return wasFlying;
+		}
 
 		@Override
 		public String toString() {

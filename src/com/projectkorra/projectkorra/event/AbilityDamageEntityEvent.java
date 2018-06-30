@@ -87,6 +87,7 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 		return ability.getPlayer();
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}
