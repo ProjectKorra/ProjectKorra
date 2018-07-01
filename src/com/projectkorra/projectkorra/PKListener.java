@@ -928,7 +928,7 @@ public class PKListener implements Listener {
 					}
 				}
 			} else {
-				if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
+				if (e.getCause() == DamageCause.ENTITY_ATTACK) {
 					if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
 						if (sourceBPlayer.isElementToggled(Element.CHI)) {
 							if (entity instanceof Player) {
