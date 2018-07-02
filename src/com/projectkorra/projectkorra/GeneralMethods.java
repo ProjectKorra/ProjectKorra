@@ -104,8 +104,6 @@ import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
-import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
@@ -337,10 +335,10 @@ public class GeneralMethods {
 
 			@Override
 			public void run() {
-				createBendingPlayerAsynchronously(uuid, player); // "async"
+				createBendingPlayerAsynchronously(uuid, player);
 			}
 
-		}.runTask(ProjectKorra.plugin);
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
@@ -668,7 +666,7 @@ public class GeneralMethods {
 				long cooldown = bPlayer.getCooldown(ability.getName()) - System.currentTimeMillis();
 				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName() + "" + ability.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
 			} else {
-				if (bPlayer.getStance() instanceof AcrobatStance && ability.getName().equals("AcrobatStance") || bPlayer.getStance() instanceof WarriorStance && ability.getName().equals("WarriorStance")) {
+				if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(ability.getName())) {
 					displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();
 				} else {
 					displayedMessage = ability.getElement().getColor() + ability.getName();

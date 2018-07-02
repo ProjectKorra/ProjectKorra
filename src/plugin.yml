@@ -205,6 +205,8 @@ permissions:
     description: Grants access to all EarthCombos.
     children:
       bending.ability.EarthPillars: true
+      bending.ability.EarthDome: true
+      bending.ability.EarthDomeOthers: true
   bending.ability.FireCombo:
     default: false
     description: Grants access to all FireCombos.

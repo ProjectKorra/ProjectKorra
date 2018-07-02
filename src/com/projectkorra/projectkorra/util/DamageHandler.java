@@ -1,7 +1,5 @@
 package com.projectkorra.projectkorra.util;
 
-import java.text.DecimalFormat;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -83,9 +81,11 @@ public class DamageHandler {
 					NCPExemptionManager.unexempt(source, CheckType.FIGHT_SELFHIT);
 				}
 
-				if (entity instanceof Player && prevHealth != nextHealth) {
-					DecimalFormat format = new DecimalFormat("#");
-					StatisticsMethods.addStatisticAbility(source.getUniqueId(), CoreAbility.getAbility(ability.getName()), Statistic.DAMAGE, Long.valueOf(format.format(damage)));
+				if (prevHealth != nextHealth) {
+					if (entity instanceof Player) {
+						StatisticsMethods.addStatisticAbility(source.getUniqueId(), CoreAbility.getAbility(ability.getName()), Statistic.PLAYER_DAMAGE, (long) damage);
+					}
+					StatisticsMethods.addStatisticAbility(source.getUniqueId(), CoreAbility.getAbility(ability.getName()), Statistic.TOTAL_DAMAGE, (long) damage);
 				}
 			}
 		}

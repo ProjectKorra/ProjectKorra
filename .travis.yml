@@ -6,5 +6,4 @@ jdk:
 notifications:
   slack:
     rooms:
-      - projectkorra:h9WFZqQ2o6fuCkI69ko28XgF#general
       - projectkorra:h9WFZqQ2o6fuCkI69ko28XgF#devs

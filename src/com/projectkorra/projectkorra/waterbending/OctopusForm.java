@@ -42,8 +42,10 @@ public class OctopusForm extends WaterAbility {
 	private int stepCounter;
 	private int totalStepCount;
 	private long time;
+	private long startTime;
 	private long interval;
 	private long cooldown;
+	private long duration;
 	private double attackRange;
 	private long usageCooldown;
 	private double knockback;
@@ -94,6 +96,7 @@ public class OctopusForm extends WaterAbility {
 		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
 		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Water.OctopusForm.Duration");
 		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
@@ -111,6 +114,7 @@ public class OctopusForm extends WaterAbility {
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius");
 		}
 		this.time = System.currentTimeMillis();
+		this.startTime = System.currentTimeMillis();
 		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
 		}
@@ -126,18 +130,15 @@ public class OctopusForm extends WaterAbility {
 		if (sourceSelected) {
 			sourceSelected = false;
 			settingUp = true;
-			bPlayer.addCooldown(this);
 		} else if (settingUp) {
 			settingUp = false;
 			forming = true;
 		} else if (forming) {
 			forming = false;
 			formed = true;
-			bPlayer.addCooldown(this);
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		OctopusForm oldForm = getAbility(player, OctopusForm.class);
 
@@ -221,6 +222,10 @@ public class OctopusForm extends WaterAbility {
 			remove();
 			return;
 		} else if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > range * range && sourceSelected) {
+			remove();
+			return;
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.startTime + this.duration) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}

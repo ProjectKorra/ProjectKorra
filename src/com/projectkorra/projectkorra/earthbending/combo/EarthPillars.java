@@ -6,24 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -31,8 +24,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class EarthPillars extends EarthAbility implements ComboAbility {
 	public double radius, damage, power, fallThreshold;
-	public boolean damaging, stun;
-	public long stunDuration;
+	public boolean damaging;
 	public Map<RaiseEarth, LivingEntity> entities;
 
 	public EarthPillars(Player player, boolean fall) {
@@ -56,7 +48,10 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 			}
 		}
 		
-		bPlayer.addCooldown(this);
+		if (entities.isEmpty()) {
+			return;
+		}
+		
 		start();
 	}
 	
@@ -65,59 +60,20 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthPillars.Damage.Value");
 		this.power = getConfig().getDouble("Abilities.Earth.EarthPillars.Power");
 		this.damaging = getConfig().getBoolean("Abilities.Earth.EarthPillars.Damage.Enabled");
-		this.stun = getConfig().getBoolean("Abilities.Earth.EarthPillars.Stun.Enabled");
-		this.stunDuration = getConfig().getLong("Abilities.Earth.EarthPillars.Stun.Duration");
 		this.entities = new HashMap<>();
 		
 		if (fall) {
 			this.fallThreshold = getConfig().getDouble("Abilities.Earth.EarthPillars.FallThreshold");
-			this.stun = false;
 			this.damaging = true;
 			this.damage *= power;
 			this.radius = fallThreshold;
-			this.power += fallThreshold/100;
+			this.power += (player.getFallDistance() > fallThreshold ? player.getFallDistance() : fallThreshold)/100;
 		}
 	}
 	
 	public void affect(LivingEntity lent) {
-		if (stun) {
-			if (lent instanceof Player) {
-				stun((Player)lent);
-			}
-		}
-		
 		RaiseEarth re = new RaiseEarth(player, lent.getLocation().clone().subtract(0, 1, 0), 3);
 		entities.put(re, lent);
-	}
-	
-	public void stun(Player player) {
-		if (Suffocate.isChannelingSphere(player)) {
-			Suffocate.remove(player);
-		}
-
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			return;
-		}
-		
-		bPlayer.blockChi();
-		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
-		
-		long start = System.currentTimeMillis();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				if (!player.isOnline()) {
-					bPlayer.unblockChi();
-					cancel();
-				}
-				ActionBar.sendActionBar(Element.EARTH.getColor() + "* Stunned *", player);
-				if (System.currentTimeMillis() >= start + stunDuration) {
-					bPlayer.unblockChi();
-					cancel();
-				}
-			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 	}
 
 	@Override
@@ -146,6 +102,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		}
 		
 		if (entities.isEmpty()) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
