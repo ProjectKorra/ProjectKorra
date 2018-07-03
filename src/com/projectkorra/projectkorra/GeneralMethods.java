@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.projectkorra.projectkorra.ability.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -85,13 +86,6 @@ import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.AddonAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
@@ -1716,6 +1710,15 @@ public class GeneralMethods {
 			}
 		}
 		bPlayer.setAbilities(finalAbilities);
+
+		// remove unusable passives
+		for (CoreAbility coreAbility : CoreAbility.getAbilitiesByInstances()) {
+			if (!(coreAbility instanceof PassiveAbility))
+				continue;
+			if (PassiveManager.hasPassive(bPlayer.getPlayer(), coreAbility))
+				continue;
+			coreAbility.remove();
+		}
 	}
 
 	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator, double degrees) {
