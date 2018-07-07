@@ -1713,10 +1713,12 @@ public class GeneralMethods {
 
 		// remove unusable passives
 		for (CoreAbility coreAbility : CoreAbility.getAbilitiesByInstances()) {
-			if (!(coreAbility instanceof PassiveAbility))
+			if (!(coreAbility instanceof PassiveAbility)) {
 				continue;
-			if (PassiveManager.hasPassive(bPlayer.getPlayer(), coreAbility))
+			} else if (PassiveManager.hasPassive(bPlayer.getPlayer(), coreAbility)) {
 				continue;
+			}
+
 			coreAbility.remove();
 		}
 	}
