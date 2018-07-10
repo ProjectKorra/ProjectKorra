@@ -905,7 +905,7 @@ public class PKListener implements Listener {
 			if (sourceBPlayer.getBoundAbility() != null) {
 				if (!sourceBPlayer.isOnCooldown(boundAbil)) {
 					if (sourceBPlayer.canBendPassive(sourceBPlayer.getBoundAbility())) {
-						if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+						if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
 							if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
 								if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
 									if (sourceBPlayer.isElementToggled(Element.CHI)) {
@@ -928,7 +928,7 @@ public class PKListener implements Listener {
 					}
 				}
 			} else {
-				if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+				if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
 					if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
 						if (sourceBPlayer.isElementToggled(Element.CHI)) {
 							if (entity instanceof Player) {
