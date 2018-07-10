@@ -1776,5 +1776,5 @@ public class PKListener implements Listener {
 
 	public static Map<Player, Integer> getJumpStatistics() {
 		return JUMPS;
-}
+	}
 }
