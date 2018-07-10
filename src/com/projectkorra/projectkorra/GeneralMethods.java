@@ -1702,25 +1702,33 @@ public class GeneralMethods {
 			return;
 		}
 
+		// Remove all active instances of abilities that will become unusable. We need to do this prior to filtering binds in case the player has a MultiAbility running.
+		for (CoreAbility coreAbility : CoreAbility.getAbilities()) {
+			CoreAbility playerAbility = CoreAbility.getAbility(bPlayer.getPlayer(), coreAbility.getClass());
+			if (playerAbility != null) {
+				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(bPlayer.getPlayer(), playerAbility)) {
+					// The player will be able to keep using the given PassiveAbility.
+					continue;
+				} else if (bPlayer.canBend(playerAbility)) {
+					// The player will still be able to use this given Ability, do not end it.
+					continue;
+				}
+
+				playerAbility.remove();
+			}
+		}
+
+		// Remove all bound abilities that will become unusable.
 		HashMap<Integer, String> slots = bPlayer.getAbilities();
 		HashMap<Integer, String> finalAbilities = new HashMap<Integer, String>();
 		for (int i : slots.keySet()) {
 			if (bPlayer.canBind(CoreAbility.getAbility(slots.get(i)))) {
+				// The player will still be able to use this given Ability, do not remove it from their binds.
 				finalAbilities.put(i, slots.get(i));
 			}
 		}
+
 		bPlayer.setAbilities(finalAbilities);
-
-		// remove unusable passives
-		for (CoreAbility coreAbility : CoreAbility.getAbilitiesByInstances()) {
-			if (!(coreAbility instanceof PassiveAbility)) {
-				continue;
-			} else if (PassiveManager.hasPassive(bPlayer.getPlayer(), coreAbility)) {
-				continue;
-			}
-
-			coreAbility.remove();
-		}
 	}
 
 	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator, double degrees) {
