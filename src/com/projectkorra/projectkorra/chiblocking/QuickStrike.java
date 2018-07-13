@@ -36,14 +36,18 @@ public class QuickStrike extends ChiAbility {
 	@Override
 	public void progress() {
 		if (bPlayer.isOnCooldown(this)) {
+			remove();
 			return;
 		}
+
 		if (target == null) {
 			remove();
 			return;
 		}
-		DamageHandler.damageEntity(target, damage, this);
+
 		bPlayer.addCooldown(this);
+		DamageHandler.damageEntity(target, damage, this);
+
 		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
 			ChiPassive.blockChi((Player) target);
 		}
