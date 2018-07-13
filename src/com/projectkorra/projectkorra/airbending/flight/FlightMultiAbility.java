@@ -29,19 +29,18 @@ import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.FlightHandler.Flight;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 	
+	public static final String ID = "FlightMultiAbility";
 	public static Map<UUID, UUID> requestedMap = new HashMap<>();
 	public static Map<UUID, Long> requestTime = new HashMap<>();
 	
 	private static Set<UUID> flying = new HashSet<>();
 	private boolean hadGlide;
-	private Flight flight;
 	
 	private static enum FlightMode {
 		SOAR, GLIDE, LEVITATE, ENDING;
@@ -105,7 +104,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 		}
 		
 		MultiAbilityManager.bindMultiAbility(player, "Flight");
-		flight = ProjectKorra.flightHandler.createInstance(player, "FlightMultiAbility");
+		ProjectKorra.flightHandler.createInstance(player, ID);
 		hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		prevDir = player.getEyeLocation().getDirection().clone();
@@ -242,9 +241,9 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			player.setAllowFlight(true);
 			player.setFlying(true);
 		} else if (mode == FlightMode.ENDING) {
-			player.setGliding(hadGlide);
-			player.setAllowFlight(flight.getCouldFly());
-			player.setFlying(flight.getWasFlying());
+			player.setGliding(false);
+			player.setAllowFlight(false);
+			player.setFlying(false);
 		}
 		
 		if (isWater(player.getEyeLocation().clone().getBlock().getType())) {
@@ -317,7 +316,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 		if (player.isOnline() && !player.isDead()) {
 			player.eject();
 		}
-		ProjectKorra.flightHandler.removeInstance(player, "FlightMultiAbility");
+		ProjectKorra.flightHandler.removeInstance(player, ID);
 		player.setGliding(hadGlide);
 	}
 
