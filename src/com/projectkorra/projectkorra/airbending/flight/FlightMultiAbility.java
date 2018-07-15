@@ -148,11 +148,6 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			return;
 		}
 		
-		if (!bPlayer.hasElement(Element.AIR)) {
-			remove();
-			return;
-		}
-		
 		if (duration > 0) {
 			if (System.currentTimeMillis() >= duration + getStartTime()) {
 				remove();
