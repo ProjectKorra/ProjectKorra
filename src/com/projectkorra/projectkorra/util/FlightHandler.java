@@ -40,10 +40,9 @@ public class FlightHandler {
 	 * 
 	 * @param player The flying player
 	 * @param identifier The ability using Flight
-	 * @return a new Flight instance
 	 */
-	public Flight createInstance(Player player, String identifier) {
-		return createInstance(player, Flight.PERMANENT, identifier);
+	public void createInstance(Player player, String identifier) {
+		createInstance(player, Flight.PERMANENT, identifier);
 	}
 
 	/**
@@ -56,10 +55,9 @@ public class FlightHandler {
 	 * @param player The flying player
 	 * @param source The source player
 	 * @param identifier The ability using Flight
-	 * @return a new Flight instance
 	 */
-	public Flight createInstance(Player player, Player source, String identifier) {
-		return createInstance(player, source, Flight.PERMANENT, identifier);
+	public void createInstance(Player player, Player source, String identifier) {
+		createInstance(player, source, Flight.PERMANENT, identifier);
 	}
 
 	/**
@@ -69,10 +67,9 @@ public class FlightHandler {
 	 * @param player The flying player
 	 * @param duration Flight duration
 	 * @param identifier The ability using Flight
-	 * @return a new Flight instance
 	 */
-	public Flight createInstance(Player player, long duration, String identifier) {
-		return createInstance(player, null, duration, identifier);
+	public void createInstance(Player player, long duration, String identifier) {
+		createInstance(player, null, duration, identifier);
 	}
 
 	/**
@@ -85,9 +82,8 @@ public class FlightHandler {
 	 * @param source The source player
 	 * @param duration Flight duration
 	 * @param identifier The ability using Flight
-	 * @return a new Flight instance
 	 */
-	public Flight createInstance(Player player, Player source, long duration, String identifier) {
+	public void createInstance(Player player, Player source, long duration, String identifier) {
 		if (INSTANCES.containsKey(player.getUniqueId())) {
 			Flight flight = INSTANCES.get(player.getUniqueId());
 			FlightAbility ability = new FlightAbility(player, identifier, duration);
@@ -95,7 +91,6 @@ public class FlightHandler {
 				CLEANUP.add(ability);
 			}
 			flight.abilities.put(identifier, ability);
-			return INSTANCES.get(player.getUniqueId());
 		}
 		Flight flight = new Flight(player, source);
 		FlightAbility ability = new FlightAbility(player, identifier, duration);
@@ -104,7 +99,6 @@ public class FlightHandler {
 		}
 		flight.abilities.put(identifier, ability);
 		INSTANCES.put(player.getUniqueId(), flight);
-		return flight;
 	}
 
 	/**

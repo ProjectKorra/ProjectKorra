@@ -25,6 +25,7 @@ public class AbilityProgressEvent extends Event {
 		return ability;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}

@@ -19,22 +19,28 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FlightAbility;
 import com.projectkorra.projectkorra.ability.MultiAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfoSub;
+import com.projectkorra.projectkorra.airbending.AirScooter;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 	
+	public static final String ID = "FlightMultiAbility";
 	public static Map<UUID, UUID> requestedMap = new HashMap<>();
 	public static Map<UUID, Long> requestTime = new HashMap<>();
 	
 	private static Set<UUID> flying = new HashSet<>();
-	private boolean canFly, hadFly, hadGlide;
+	private boolean hadGlide;
 	
 	private static enum FlightMode {
 		SOAR, GLIDE, LEVITATE, ENDING;
@@ -82,9 +88,23 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			return;
 		}
 		
+		CoreAbility abil = null;
+		if (hasAbility(player, AirSpout.class)) {
+			abil = getAbility(player, AirSpout.class);
+		} else if (hasAbility(player, WaterSpout.class)) {
+			abil = getAbility(player, WaterSpout.class);
+		} else if (hasAbility(player, FireJet.class)) {
+			abil = getAbility(player, FireJet.class);
+		} else if (hasAbility(player, AirScooter.class)) {
+			abil = getAbility(player, AirScooter.class);
+		}
+		
+		if (abil != null) {
+			abil.remove();
+		}
+		
 		MultiAbilityManager.bindMultiAbility(player, "Flight");
-		hadFly = player.isFlying();
-		canFly = player.getAllowFlight();
+		ProjectKorra.flightHandler.createInstance(player, ID);
 		hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		prevDir = player.getEyeLocation().getDirection().clone();
@@ -196,9 +216,11 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			if (speed > baseSpeed) {
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), speed)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId() && !player.getPassengers().contains(e)) {
-						LivingEntity le = (LivingEntity) e;
-						DamageHandler.damageEntity(le, speed/2, this);
-						le.setVelocity(player.getVelocity().clone().multiply(2/3));
+						if (!GeneralMethods.isRegionProtectedFromBuild(player, e.getLocation())) {
+							LivingEntity le = (LivingEntity) e;
+							DamageHandler.damageEntity(le, speed/2, this);
+							le.setVelocity(player.getVelocity().clone().multiply(2/3));
+						}
 					}
 				}
 			}
@@ -214,9 +236,9 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 			player.setAllowFlight(true);
 			player.setFlying(true);
 		} else if (mode == FlightMode.ENDING) {
-			player.setGliding(hadGlide);
-			player.setAllowFlight(canFly);
-			player.setFlying(hadFly);
+			player.setGliding(false);
+			player.setAllowFlight(false);
+			player.setFlying(false);
 		}
 		
 		if (isWater(player.getEyeLocation().clone().getBlock().getType())) {
@@ -289,8 +311,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility{
 		if (player.isOnline() && !player.isDead()) {
 			player.eject();
 		}
-		player.setAllowFlight(canFly);
-		player.setFlying(hadFly);
+		ProjectKorra.flightHandler.removeInstance(player, ID);
 		player.setGliding(hadGlide);
 	}
 

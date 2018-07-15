@@ -27,6 +27,7 @@ public class AbilityStartEvent extends Event implements Cancellable {
 		return ability;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}

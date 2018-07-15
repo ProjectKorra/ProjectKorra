@@ -18,7 +18,6 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.FlightHandler.Flight;
 
 public class AirStream extends AirAbility implements ComboAbility {
 	private long cooldown;
@@ -35,7 +34,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
-	private Set<Flight> flights;
+	private Set<Player> flights;
 
 	public AirStream(Player player) {
 		super(player);
@@ -159,7 +158,9 @@ public class AirStream extends AirAbility implements ComboAbility {
 			if (!entity.equals(player) && !affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				if (entity instanceof Player) {
-					flights.add(ProjectKorra.flightHandler.createInstance((Player) entity, player, getName()));
+					Player ep = (Player) entity;
+					ProjectKorra.flightHandler.createInstance(ep, player, getName());
+					flights.add(ep);
 				}
 			}
 		}
@@ -177,9 +178,10 @@ public class AirStream extends AirAbility implements ComboAbility {
 		for (BukkitRunnable task : tasks) {
 			task.cancel();
 		}
-		for (Flight flight : flights) {
-			ProjectKorra.flightHandler.removeInstance(flight.getPlayer(), getName());
+		for (Player flyer : flights) {
+			ProjectKorra.flightHandler.removeInstance(flyer, getName());
 		}
+		flights.clear();
 	}
 
 	@Override
@@ -300,7 +302,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 		this.tasks = tasks;
 	}
 
-	public Set<Flight> getFlights() {
+	public Set<Player> getFlights() {
 		return flights;
 	}
 
