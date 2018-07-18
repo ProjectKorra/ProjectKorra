@@ -12,8 +12,10 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSpout extends AirAbility {
 
@@ -31,10 +33,18 @@ public class AirSpout extends AirAbility {
 	public AirSpout(Player player) {
 		super(player);
 
-		AirSpout spout = getAbility(player, AirSpout.class);
+		CoreAbility spout = null;
+		if (hasAbility(player, AirSpout.class)) {
+			spout = getAbility(player, AirSpout.class);
+		} else if (hasAbility(player, WaterSpout.class)) {
+			spout = getAbility(player, WaterSpout.class);
+		}
+		
 		if (spout != null) {
 			spout.remove();
-			return;
+			if (spout instanceof AirSpout) {
+				return;
+			}
 		}
 
 		if (!bPlayer.canBend(this)) {
