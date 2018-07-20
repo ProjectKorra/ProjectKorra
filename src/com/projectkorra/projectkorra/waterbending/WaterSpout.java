@@ -14,8 +14,10 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -44,10 +46,18 @@ public class WaterSpout extends WaterAbility {
 	public WaterSpout(Player player) {
 		super(player);
 
-		WaterSpout oldSpout = getAbility(player, WaterSpout.class);
-		if (oldSpout != null) {
-			oldSpout.remove();
-			return;
+		CoreAbility spout = null;
+		if (hasAbility(player, AirSpout.class)) {
+			spout = getAbility(player, AirSpout.class);
+		} else if (hasAbility(player, WaterSpout.class)) {
+			spout = getAbility(player, WaterSpout.class);
+		}
+		
+		if (spout != null) {
+			spout.remove();
+			if (spout instanceof WaterSpout) {
+				return;
+			}
 		}
 
 		this.canBendOnPackedIce = getConfig().getStringList("Properties.Water.IceBlocks").contains(Material.PACKED_ICE.toString());

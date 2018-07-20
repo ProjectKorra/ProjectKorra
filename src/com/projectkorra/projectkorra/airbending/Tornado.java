@@ -167,8 +167,8 @@ public class Tornado extends AirAbility {
 
 						breakBreathbendingHold(entity);
 
-						if (entity instanceof Player) {
-							ProjectKorra.flightHandler.createInstance((Player) entity, 50L, getName());
+						if (entity instanceof Player && entity.getEntityId() != player.getEntityId()) {
+							ProjectKorra.flightHandler.createInstance((Player) entity, 50, getName());
 						}
 					}
 				}
