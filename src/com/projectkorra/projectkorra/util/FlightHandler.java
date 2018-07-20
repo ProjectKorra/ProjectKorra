@@ -87,18 +87,22 @@ public class FlightHandler {
 		if (INSTANCES.containsKey(player.getUniqueId())) {
 			Flight flight = INSTANCES.get(player.getUniqueId());
 			FlightAbility ability = new FlightAbility(player, identifier, duration);
+			if (CLEANUP.contains(ability)) {
+				CLEANUP.remove(ability);
+			}
 			if (duration != Flight.PERMANENT) {
 				CLEANUP.add(ability);
 			}
 			flight.abilities.put(identifier, ability);
+		} else {
+			Flight flight = new Flight(player, source);
+			FlightAbility ability = new FlightAbility(player, identifier, duration);
+			if (duration != Flight.PERMANENT) {
+				CLEANUP.add(ability);
+			}
+			flight.abilities.put(identifier, ability);
+			INSTANCES.put(player.getUniqueId(), flight);
 		}
-		Flight flight = new Flight(player, source);
-		FlightAbility ability = new FlightAbility(player, identifier, duration);
-		if (duration != Flight.PERMANENT) {
-			CLEANUP.add(ability);
-		}
-		flight.abilities.put(identifier, ability);
-		INSTANCES.put(player.getUniqueId(), flight);
 	}
 
 	/**
@@ -198,7 +202,6 @@ public class FlightHandler {
 		public String toString() {
 			return "Flight{player=" + player.getName() + ",source=" + (source != null ? source.getName() : "null") + ",couldFly=" + couldFly + ",wasFlying=" + wasFlying + ",abilities=" + abilities + "}";
 		}
-
 	}
 
 	public static class FlightAbility {
@@ -218,6 +221,21 @@ public class FlightHandler {
 		@Override
 		public String toString() {
 			return "FlightAbility{player=" + player.getName() + ",identifier=" + identifier + ",duration=" + duration + ",startTime=" + startTime + "}";
+		}
+
+		@Override
+		public boolean equals(Object object) {
+			if (object instanceof FlightAbility) {
+				FlightAbility flight = (FlightAbility) object;
+				return flight.player.getUniqueId().equals(player.getUniqueId()) && flight.identifier.equals(identifier);
+			} else {
+				return false;
+			}
+		}
+		
+		@Override
+		public int hashCode() {
+			return identifier.hashCode();
 		}
 	}
 
