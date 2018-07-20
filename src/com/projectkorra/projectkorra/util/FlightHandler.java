@@ -87,9 +87,6 @@ public class FlightHandler {
 		if (INSTANCES.containsKey(player.getUniqueId())) {
 			Flight flight = INSTANCES.get(player.getUniqueId());
 			FlightAbility ability = new FlightAbility(player, identifier, duration);
-			if (CLEANUP.contains(ability)) {
-				CLEANUP.remove(ability);
-			}
 			if (duration != Flight.PERMANENT) {
 				CLEANUP.add(ability);
 			}
@@ -221,21 +218,6 @@ public class FlightHandler {
 		@Override
 		public String toString() {
 			return "FlightAbility{player=" + player.getName() + ",identifier=" + identifier + ",duration=" + duration + ",startTime=" + startTime + "}";
-		}
-
-		@Override
-		public boolean equals(Object object) {
-			if (object instanceof FlightAbility) {
-				FlightAbility flight = (FlightAbility) object;
-				return flight.player.getUniqueId().equals(player.getUniqueId()) && flight.identifier.equals(identifier);
-			} else {
-				return false;
-			}
-		}
-		
-		@Override
-		public int hashCode() {
-			return identifier.hashCode();
 		}
 	}
 
