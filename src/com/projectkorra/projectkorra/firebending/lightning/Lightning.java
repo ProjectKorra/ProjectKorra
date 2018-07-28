@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -129,6 +130,10 @@ public class Lightning extends LightningAbility {
 		if (Math.random() <= stunChance) {
 			MovementHandler mh = new MovementHandler(lent, this);
 			mh.stopWithDuration((long) stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
+		}
+		if (lent instanceof Creeper) {
+			Creeper creeperTarget = (Creeper)lent;
+			creeperTarget.setPowered(true);
 		}
 	}
 
