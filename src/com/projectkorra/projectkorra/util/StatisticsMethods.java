@@ -28,6 +28,9 @@ public class StatisticsMethods {
 	 *         {@link StatisticsManager#STATISTICS}.
 	 */
 	public static long getStatisticAbility(UUID uuid, CoreAbility ability, Statistic statistic) {
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			return 0;
+		}
 		int statId = getId(statistic.getStatisticName(ability));
 		return ProjectKorra.statistics.getStatisticCurrent(uuid, statId);
 	}
@@ -45,6 +48,9 @@ public class StatisticsMethods {
 	 *            current statistic value.
 	 */
 	public static void addStatisticAbility(UUID uuid, CoreAbility ability, Statistic statistic, long statDelta) {
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			return;
+		}
 		int statId = getId(statistic.getStatisticName(ability));
 		ProjectKorra.statistics.addStatistic(uuid, statId, statDelta);
 	}
@@ -63,6 +69,9 @@ public class StatisticsMethods {
 	 *         {@link StatisticsManager#STATISTICS}.
 	 */
 	public static long getStatisticElement(UUID uuid, Element element, Statistic statistic) {
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			return 0;
+		}
 		long totalValue = 0;
 		for (int statId : ProjectKorra.statistics.getStatisticsMap(uuid).keySet()) {
 			String abilName = getAbilityName(statId);
@@ -94,6 +103,9 @@ public class StatisticsMethods {
 	 *         {@link StatisticsManager#STATISTICS}.
 	 */
 	public static long getStatisticTotal(UUID uuid, Statistic statistic) {
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			return 0;
+		}
 		long totalValue = 0;
 		for (int statId : ProjectKorra.statistics.getStatisticsMap(uuid).keySet()) {
 			String abilName = getAbilityName(statId);
@@ -132,6 +144,9 @@ public class StatisticsMethods {
 	 *             type {@link CoreAbility} or {@link Element}.
 	 */
 	public static long getStatistic(UUID uuid, Object object, Statistic statistic) throws IllegalArgumentException {
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			return 0;
+		}
 		if (object instanceof CoreAbility) {
 			return getStatisticAbility(uuid, (CoreAbility) object, statistic);
 		} else if (object instanceof Element) {
@@ -151,6 +166,9 @@ public class StatisticsMethods {
 	 *         return -1.
 	 */
 	public static int getId(String statName) {
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			return 0;
+		}
 		if (!ProjectKorra.statistics.getKeysByName().containsKey(statName)) {
 			DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'")) {
@@ -175,6 +193,9 @@ public class StatisticsMethods {
 	 *         {@link String}.
 	 */
 	public static String getAbilityName(int id) {
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			return "";
+		}
 		if (!ProjectKorra.statistics.getKeysById().containsKey(id)) {
 			return "";
 		}

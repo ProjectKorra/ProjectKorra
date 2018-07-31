@@ -487,6 +487,7 @@ public class ConfigManager {
 			snowBlocks.add("SNOW");
 
 			config.addDefault("Properties.UpdateChecker", true);
+			config.addDefault("Properties.Statistics", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
