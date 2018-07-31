@@ -91,14 +91,15 @@ public class FlightHandler {
 				CLEANUP.add(ability);
 			}
 			flight.abilities.put(identifier, ability);
+		} else {
+			Flight flight = new Flight(player, source);
+			FlightAbility ability = new FlightAbility(player, identifier, duration);
+			if (duration != Flight.PERMANENT) {
+				CLEANUP.add(ability);
+			}
+			flight.abilities.put(identifier, ability);
+			INSTANCES.put(player.getUniqueId(), flight);
 		}
-		Flight flight = new Flight(player, source);
-		FlightAbility ability = new FlightAbility(player, identifier, duration);
-		if (duration != Flight.PERMANENT) {
-			CLEANUP.add(ability);
-		}
-		flight.abilities.put(identifier, ability);
-		INSTANCES.put(player.getUniqueId(), flight);
 	}
 
 	/**
@@ -198,7 +199,6 @@ public class FlightHandler {
 		public String toString() {
 			return "Flight{player=" + player.getName() + ",source=" + (source != null ? source.getName() : "null") + ",couldFly=" + couldFly + ",wasFlying=" + wasFlying + ",abilities=" + abilities + "}";
 		}
-
 	}
 
 	public static class FlightAbility {

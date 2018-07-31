@@ -85,11 +85,21 @@ public class ChooseCommand extends PKCommand {
 				if (!hasPermission(sender, element)) {
 					return;
 				}
-				if (bPlayer.isOnCooldown("ChooseElement") && !sender.hasPermission("bending.admin.choose")) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + onCooldown.replace("%cooldown%", TimeUtil.formatTime(bPlayer.getCooldown("ChooseElement") - System.currentTimeMillis())));
+				if (bPlayer.isOnCooldown("ChooseElement")) {
+					if (sender.hasPermission("bending.choose.ignorecooldown") || sender.hasPermission("bending.admin.choose")) {
+						bPlayer.removeCooldown("ChooseElement");
+					} else {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + onCooldown.replace("%cooldown%", TimeUtil.formatTime(bPlayer.getCooldown("ChooseElement") - System.currentTimeMillis())));
+						return;
+					}
+				}
+
+				add(sender, (Player) sender, targetElement);
+
+				if (sender.hasPermission("bending.choose.ignorecooldown") || sender.hasPermission("bending.admin.choose")) {
 					return;
 				}
-				add(sender, (Player) sender, targetElement);
+
 				bPlayer.addCooldown("ChooseElement", cooldown, true);
 				return;
 			} else {
@@ -120,6 +130,14 @@ public class ChooseCommand extends PKCommand {
 			Element targetElement = Element.getElement(element);
 			if (Arrays.asList(Element.getAllElements()).contains(targetElement) && targetElement != Element.AVATAR) {
 				add(sender, target, targetElement);
+
+				if (target.hasPermission("bending.choose.ignorecooldown") || target.hasPermission("bending.admin.choose")) {
+					return;
+				}
+
+				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
+				bPlayer.addCooldown("ChooseElement", cooldown, true);
+
 				return;
 			} else {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + invalidElement);

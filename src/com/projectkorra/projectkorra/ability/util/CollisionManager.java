@@ -190,6 +190,15 @@ public class CollisionManager {
 		if (collision == null || collision.getAbilityFirst() == null || collision.getAbilitySecond() == null) {
 			return;
 		}
+
+		for (int x = 0; x < collisions.size(); x++) {
+			if (collisions.get(x).getAbilityFirst().equals(collision.getAbilityFirst())) {
+				if (collisions.get(x).getAbilitySecond().equals(collision.getAbilitySecond())) {
+					collisions.remove(x);
+				}
+			}
+		}
+
 		collisions.add(collision);
 	}
 
