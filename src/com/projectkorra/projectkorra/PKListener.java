@@ -351,7 +351,8 @@ public class PKListener implements Listener {
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from
 		// updating.
-		if (!event.isCancelled() && (block.getType() == Material.SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN)) && block.getRelative(BlockFace.DOWN).getType() == Material.AIR) {
+		if (!event.isCancelled() && (block.getType() == Material.SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG)
+		        && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN)) && block.getRelative(BlockFace.DOWN).getType() == Material.AIR) {
 			event.setCancelled(true);
 		}
 	}
@@ -530,31 +531,31 @@ public class PKListener implements Listener {
 						ItemStack cooked = drops.get(i);
 						Material material = drops.get(i).getType();
 						switch (material) {
-							case RAW_BEEF:
-								cooked = new ItemStack(Material.COOKED_BEEF, 1);
-								break;
-							case RAW_FISH:
-								ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
-								if (drops.get(i).getDurability() == salmon.getDurability()) {
-									cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
-								} else {
-									cooked = new ItemStack(Material.COOKED_FISH, 1);
-								}
-								break;
-							case RAW_CHICKEN:
-								cooked = new ItemStack(Material.COOKED_CHICKEN, 1);
-								break;
-							case PORK:
-								cooked = new ItemStack(Material.GRILLED_PORK, 1);
-								break;
-							case MUTTON:
-								cooked = new ItemStack(Material.COOKED_MUTTON);
-								break;
-							case RABBIT:
-								cooked = new ItemStack(Material.COOKED_RABBIT);
-								break;
-							default:
-								break;
+						case RAW_BEEF:
+							cooked = new ItemStack(Material.COOKED_BEEF, 1);
+							break;
+						case RAW_FISH:
+							ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
+							if (drops.get(i).getDurability() == salmon.getDurability()) {
+								cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
+							} else {
+								cooked = new ItemStack(Material.COOKED_FISH, 1);
+							}
+							break;
+						case RAW_CHICKEN:
+							cooked = new ItemStack(Material.COOKED_CHICKEN, 1);
+							break;
+						case PORK:
+							cooked = new ItemStack(Material.GRILLED_PORK, 1);
+							break;
+						case MUTTON:
+							cooked = new ItemStack(Material.COOKED_MUTTON);
+							break;
+						case RABBIT:
+							cooked = new ItemStack(Material.COOKED_RABBIT);
+							break;
+						default:
+							break;
 						}
 
 						newDrops.add(cooked);
@@ -820,22 +821,26 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(GracefulDescent.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(GracefulDescent.class)) && CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
+			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(GracefulDescent.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(GracefulDescent.class))
+			        && CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
 				event.setDamage(0D);
 				event.setCancelled(true);
-			} else if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(DensityShift.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(DensityShift.class)) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
+			} else if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(DensityShift.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(DensityShift.class))
+			        && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
 				if (DensityShift.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
-			} else if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(HydroSink.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(HydroSink.class)) && CoreAbility.getAbility(HydroSink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(HydroSink.class))) {
+			} else if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(HydroSink.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(HydroSink.class))
+			        && CoreAbility.getAbility(HydroSink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(HydroSink.class))) {
 				if (HydroSink.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(Acrobatics.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(Acrobatics.class)) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
+			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(CoreAbility.getAbility(Acrobatics.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(Acrobatics.class))
+			        && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
 				double initdamage = event.getDamage();
 				double newdamage = event.getDamage() * Acrobatics.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
@@ -853,7 +858,8 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (bPlayer.canBendPassive(CoreAbility.getAbility(HeatControl.class)) && bPlayer.hasElement(Element.FIRE) && bPlayer.canUsePassive(CoreAbility.getAbility(HeatControl.class)) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
+			if (bPlayer.canBendPassive(CoreAbility.getAbility(HeatControl.class)) && bPlayer.hasElement(Element.FIRE) && bPlayer.canUsePassive(CoreAbility.getAbility(HeatControl.class))
+			        && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 				event.setCancelled(!HeatControl.canBurn(player));
 			}
 
@@ -1114,7 +1120,9 @@ public class PKListener implements Listener {
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 
 		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-		ProjectKorra.statistics.load(player.getUniqueId());
+		if (ProjectKorra.isStatisticsEnabled()) {
+			ProjectKorra.statistics.load(player.getUniqueId());
+		}
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 
 			@Override
@@ -1248,7 +1256,9 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		ProjectKorra.statistics.store(player.getUniqueId());
+		if (ProjectKorra.isStatisticsEnabled()) {
+			ProjectKorra.statistics.store(player.getUniqueId());
+		}
 		if (bPlayer != null) {
 			bPlayer.saveCooldowns();
 

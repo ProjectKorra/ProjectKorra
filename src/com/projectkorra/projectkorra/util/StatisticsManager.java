@@ -45,7 +45,9 @@ public class StatisticsManager implements Runnable {
 	private final int INTERVAL = 5;
 
 	public StatisticsManager() {
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, this, 20 * INTERVAL, 20 * INTERVAL);
+		if (!ProjectKorra.isStatisticsEnabled()) {
+			ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, this, 20 * INTERVAL, 20 * INTERVAL);
+		}
 		setupStatistics();
 	}
 
