@@ -969,7 +969,7 @@ public class PKListener implements Listener {
 			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
 				String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
 				String ability = BENDING_PLAYER_DEATH.get(event.getEntity());
-				String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
+				String tempAbility = ChatColor.stripColor(ability);
 				CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
 				Element element = null;
 				boolean isAvatarAbility = false;
