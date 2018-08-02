@@ -120,6 +120,14 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/worldguard-6.1.jar</systemPath>
     </dependency>
+    <!-- WorldEdit -->
+    <dependency>
+      <groupId>com.sk89q</groupId>
+      <artifactId>worldedit</artifactId>
+      <version>LATEST</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/worldedit-bukkit-6.1.7.3.jar</systemPath>
+    </dependency>
     <!-- Kingdoms -->
     <dependency>
       <groupId>org.kingdoms</groupId>

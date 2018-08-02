@@ -156,6 +156,9 @@ public class AirStream extends AirAbility implements ComboAbility {
 				time = System.currentTimeMillis();
 			}
 			if (!entity.equals(player) && !affectedEntities.contains(entity)) {
+                		if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+                    			continue;
+                		}
 				affectedEntities.add(entity);
 				if (entity instanceof Player) {
 					Player ep = (Player) entity;

@@ -427,6 +427,9 @@ public class AirBlast extends AirAbility {
 		}
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+			if(entity instanceof Player && !GeneralMethods.canPvP(this, (Player)entity)){
+				continue;
+			}
 			affect(entity);
 		}
 

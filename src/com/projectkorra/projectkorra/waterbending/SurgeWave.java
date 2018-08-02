@@ -321,6 +321,9 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
+						if(entity instanceof Player && !GeneralMethods.canPvP(player, (Player)entity)){
+							continue;
+						}
 						Vector dir = direction.clone();
 						dir.setY(dir.getY() * verticalFactor);
 						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(getNightFactor(pushFactor))));

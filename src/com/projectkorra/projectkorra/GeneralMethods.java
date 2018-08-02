@@ -121,8 +121,13 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
+
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -1328,6 +1333,26 @@ public class GeneralMethods {
 			}
 		}
 		return false;
+	}
+
+	public static boolean canPvP(Ability ability, Player target) {
+		return canPvP(ability.getPlayer(), target);
+	}
+	
+	public static boolean canPvP(Player attacker, Player target){
+		boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
+		Plugin wgp = Bukkit.getPluginManager().getPlugin("WorldGuard");
+
+		if (wgp != null && respectWorldGuard && !attacker.hasPermission("worldguard.region.bypass." + attacker.getWorld().getName())) {
+            		if (!attacker.isOnline() || !target.isOnline()) {
+			    return false;
+            		}
+            		WorldGuardPlugin wg = (WorldGuardPlugin) wgp;
+            		RegionManager regionManager = wg.getRegionManager(target.getWorld());
+            		ApplicableRegionSet checkSet = regionManager.getApplicableRegions(target.getLocation());
+            		return checkSet.queryState(wg.wrapPlayer(target), DefaultFlag.PVP) != StateFlag.State.DENY;
+		}
+		return true;
 	}
 
 	/**
