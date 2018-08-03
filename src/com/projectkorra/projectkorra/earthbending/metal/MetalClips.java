@@ -157,6 +157,10 @@ public class MetalClips extends MetalAbility {
 		}
 
 		metalClipsCount = (metalClipsCount < 4) ? metalClipsCount + 1 : 4;
+		
+		for (TempArmor armor : TempArmor.getTempArmorList(targetEntity)) {
+			armor.revert();
+		}
 
 		if (targetEntity instanceof Player) {
 			Player target = (Player) targetEntity;
@@ -169,13 +173,8 @@ public class MetalClips extends MetalAbility {
 			metalArmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
 			ENTITY_CLIPS_COUNT.put(target, metalClipsCount);
 
-			TempArmor armor = TempArmor.getTempArmor(target);
-			if (armor != null)
-				armor.revert();
-
 			new TempArmor(target, this, metalArmor);
 		} else {
-
 			ItemStack[] metalarmor = new ItemStack[4];
 
 			metalarmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : new ItemStack(Material.AIR);
@@ -183,10 +182,6 @@ public class MetalClips extends MetalAbility {
 			metalarmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : new ItemStack(Material.AIR);
 			metalarmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
 			ENTITY_CLIPS_COUNT.put(targetEntity, metalClipsCount);
-
-			TempArmor armor = TempArmor.getTempArmor(targetEntity);
-			if (armor != null)
-				armor.revert();
 
 			new TempArmor(targetEntity, this, metalarmor);
 		}
@@ -202,7 +197,7 @@ public class MetalClips extends MetalAbility {
 			return;
 		}
 
-		TempArmor.getTempArmor(targetEntity).revert();
+		TempArmor.getVisibleTempArmor(targetEntity).revert();
 
 		dropIngots(targetEntity.getLocation());
 		isBeingWorn = false;

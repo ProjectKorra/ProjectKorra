@@ -1,28 +1,29 @@
 package com.projectkorra.projectkorra.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 
 public class TempArmor {
 
-	private static Map<LivingEntity, TempArmor> INSTANCES = new ConcurrentHashMap<LivingEntity, TempArmor>();
+	private static Map<LivingEntity, PriorityQueue<TempArmor>> INSTANCES = new ConcurrentHashMap<>();
+	private static Map<LivingEntity, ItemStack[]> ORIGINAL = new HashMap<>();
 	private static long defaultDuration = 30000L;
 
 	private LivingEntity entity;
 	private long startTime;
 	private long duration;
-	private BukkitTask endTimer;
 	private ItemStack[] oldArmor;
 	private ItemStack[] newArmor;
 	private CoreAbility ability;
@@ -74,7 +75,6 @@ public class TempArmor {
 		this.startTime = System.currentTimeMillis();
 		this.duration = duration;
 		this.ability = ability;
-
 		this.oldArmor = new ItemStack[] { new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR) };
 
 		for (int i = 0; i < 4; i++) {
@@ -82,32 +82,26 @@ public class TempArmor {
 				this.oldArmor[i] = this.entity.getEquipment().getArmorContents()[i].clone();
 			}
 		}
+		
+		if (!INSTANCES.containsKey(entity)) {
+			ORIGINAL.put(entity, oldArmor);
+			PriorityQueue<TempArmor> queue = new PriorityQueue<>(10, new Comparator<TempArmor>() {
 
-		this.newArmor = armorItems.clone();
-
-		ItemStack[] actualArmor = new ItemStack[4];
-		for (int i = 0; i < 4; i++) {
-			if (armorItems[i] == null) {
-				actualArmor[i] = this.oldArmor[i];
-			} else {
-				actualArmor[i] = armorItems[i];
-			}
+				@Override
+				public int compare(TempArmor a, TempArmor b) {
+					long current = System.currentTimeMillis();
+					long remainingA = a.getStartTime() + a.getDuration() - current;
+					long remainingB = b.getStartTime() + b.getDuration() - current;
+					return (int) (remainingA - remainingB);
+				}
+				
+			});
+			
+			INSTANCES.put(entity, queue);
 		}
-
-		this.entity.getEquipment().setArmorContents(actualArmor);
-
-		//This auto reverts the armor after a certain amount of time. We're doing it
-		//this way instead of checking if it should be reverted every tick in a runnable
-		this.endTimer = new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				endTimer = null;
-				revert();
-			}
-		}.runTaskLater(ProjectKorra.plugin, duration / 50);
-
-		INSTANCES.put(entity, this);
+		setArmor(armorItems);
+		
+		INSTANCES.get(entity).add(this);
 	}
 
 	/**
@@ -179,6 +173,20 @@ public class TempArmor {
 
 		this.entity.getEquipment().setArmorContents(actualArmor);
 	}
+	
+	private void updateArmor(TempArmor next) {
+		ItemStack[] armor = next.newArmor;
+		ItemStack[] actualArmor = new ItemStack[4];
+		for (int i = 0; i < 4; i++) {
+			if (armor[i] == null) {
+				actualArmor[i] = next.oldArmor[i];
+			} else {
+				actualArmor[i] = armor[i];
+			}
+		}
+
+		this.entity.getEquipment().setArmorContents(actualArmor);
+	}
 
 	/**
 	 * Sets whether the ability that created the TempArmor should be forcefully
@@ -191,19 +199,49 @@ public class TempArmor {
 		this.removeAbilOnForceRevert = bool;
 	}
 
-	/** Destroys the TempArmor instance and restores the player's old armor. */
+	/** 
+	 * Destroys the TempArmor instance and removes it from the display queue.
+	 * <br><br>
+	 * Will also restore the player's armor to the state it was before any TempArmor instance was started, if the display queue is empty.
+	 */
 	public void revert() {
-		if (this.endTimer != null) {
-			this.endTimer.cancel();
-		}
-
-		this.entity.getEquipment().setArmorContents(this.oldArmor);
-
 		if (this.removeAbilOnForceRevert && this.ability != null && !this.ability.isRemoved()) {
 			this.ability.remove();
 		}
+		
+		PriorityQueue<TempArmor> queue = INSTANCES.get(entity);
+		
+		if (queue.contains(this)) {
+			TempArmor head = queue.peek();
+			if (head.equals(this)) {
+				queue.poll();
+				if (!queue.isEmpty()) {
+					updateArmor(queue.peek());
+				}
+			} else {
+				queue.remove(this);
+			}
+		}
+		
+		if (queue.isEmpty()) {
+			entity.getEquipment().setArmorContents(ORIGINAL.get(entity));
+			INSTANCES.remove(entity);
+			ORIGINAL.remove(entity);
+		}
+	}
 
-		INSTANCES.remove(this.entity);
+	public static void cleanup() {
+		for (LivingEntity entity : INSTANCES.keySet()) {
+			PriorityQueue<TempArmor> queue = INSTANCES.get(entity);
+			while (!queue.isEmpty() ) {
+				TempArmor tarmor = queue.peek();
+				if (System.currentTimeMillis() >= tarmor.getStartTime() + tarmor.getDuration()) {
+					tarmor.revert();
+				} else {
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -211,29 +249,42 @@ public class TempArmor {
 	 * shutdown!</b>
 	 */
 	public static void revertAll() {
-		for (TempArmor armor : INSTANCES.values()) {
-			armor.revert();
+		for (LivingEntity entity : INSTANCES.keySet()) {
+			while (!INSTANCES.get(entity).isEmpty()) {
+				TempArmor armor = INSTANCES.get(entity).poll();
+				armor.revert();
+			}
 		}
 	}
 
 	/**
 	 * Whether the player is currently wearing temporary armor
 	 * 
-	 * @param player The player
-	 * @return If the player has temporary armor on
+	 * @param entity The entity
+	 * @return If the entity has temporary armor on
 	 */
-	public static boolean hasTempArmor(LivingEntity player) {
-		return INSTANCES.containsKey(player);
+	public static boolean hasTempArmor(LivingEntity entity) {
+		return INSTANCES.containsKey(entity) && !INSTANCES.get(entity).isEmpty();
 	}
 
 	/**
 	 * Returns the temporary armor the player is currently wearing
 	 * 
-	 * @param player The player
-	 * @return The TempArmor the player is wearing, or <code>null</code> if they
+	 * @param entity The entity
+	 * @return The TempArmor the entity is wearing, or <code>null</code> if they
 	 *         aren't wearing any.
 	 */
-	public static TempArmor getTempArmor(LivingEntity player) {
-		return INSTANCES.get(player);
+	public static TempArmor getVisibleTempArmor(LivingEntity entity) {
+		if (!TempArmor.hasTempArmor(entity)) {
+			return null;
+		}
+		return INSTANCES.get(entity).peek();
+	}
+	
+	public static List<TempArmor> getTempArmorList(LivingEntity entity) {
+		if (!TempArmor.hasTempArmor(entity)) {
+			return Collections.emptyList();
+		}
+		return new ArrayList<>(INSTANCES.get(entity));
 	}
 }

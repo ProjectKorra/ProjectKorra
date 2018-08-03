@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.RevertChecker;
+import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.rpg.RPGMethods;
@@ -113,6 +114,7 @@ public class BendingManager implements Runnable {
 			RevertChecker.revertAirBlocks();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
+			TempArmor.cleanup();
 			
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (Bloodbending.isBloodbent(player)) {

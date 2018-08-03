@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -501,7 +502,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (TempArmor.hasTempArmor(event.getEntity())) {
-			TempArmor armor = TempArmor.getTempArmor(event.getEntity());
+			TempArmor armor = TempArmor.getVisibleTempArmor(event.getEntity());
 
 			List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
 
@@ -511,12 +512,11 @@ public class PKListener implements Listener {
 				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
 			}
 
-			armor.revert();
-		}
-
-		LivingEntity entity = event.getEntity();
-		if (entity.hasMetadata("earthgrab:trap")) {
-			event.getDrops().clear();
+			List<TempArmor> list = TempArmor.getTempArmorList(event.getEntity());
+			Collections.reverse(list);
+			for (TempArmor tarmor : list) {
+				tarmor.revert();
+			}
 		}
 
 		CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
@@ -671,7 +671,9 @@ public class PKListener implements Listener {
 		}
 
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
-			TempArmor.getTempArmor((LivingEntity) entity).revert();
+			for (TempArmor armor : TempArmor.getTempArmorList((LivingEntity) entity)) {
+				armor.revert();
+			}
 		}
 
 		if (entity instanceof Player) {
@@ -958,7 +960,9 @@ public class PKListener implements Listener {
 
 		if (event.getKeepInventory()) {
 			if (TempArmor.hasTempArmor(event.getEntity())) {
-				TempArmor.getTempArmor(event.getEntity()).revert();
+				for (TempArmor armor : TempArmor.getTempArmorList(event.getEntity())) {
+					armor.revert();
+				}
 			}
 		} else {
 			// Do nothing. TempArmor drops are handled by the EntityDeath event and not
@@ -1104,7 +1108,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerItemDamage(PlayerItemDamageEvent event) {
 		if (TempArmor.hasTempArmor(event.getPlayer())) {
-			TempArmor armor = TempArmor.getTempArmor(event.getPlayer());
+			TempArmor armor = TempArmor.getVisibleTempArmor(event.getPlayer());
 			for (ItemStack i : armor.getNewArmor()) {
 				if (i != null && event.getItem().isSimilar(i)) {
 					event.setCancelled(true);
@@ -1278,7 +1282,9 @@ public class PKListener implements Listener {
 		Preset.unloadPreset(player);
 
 		if (TempArmor.hasTempArmor(player)) {
-			TempArmor.getTempArmor(player).revert();
+			for (TempArmor armor : TempArmor.getTempArmorList(player)) {
+				armor.revert();
+			}
 		}
 
 		if (MetalClips.isControlled(event.getPlayer())) {
