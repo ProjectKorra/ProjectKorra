@@ -512,9 +512,7 @@ public class PKListener implements Listener {
 				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
 			}
 
-			List<TempArmor> list = TempArmor.getTempArmorList(event.getEntity());
-			Collections.reverse(list);
-			for (TempArmor tarmor : list) {
+			for (TempArmor tarmor : TempArmor.getTempArmorList(event.getEntity())) {
 				tarmor.revert();
 			}
 		}
