@@ -37,15 +37,16 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthGrab extends EarthAbility {
 	
-	public LivingEntity target;
-	public long cooldown, lastHit = 0, interval;
-	public double range, targetRange, dragSpeed, trapHP, trappedHP, damageThreshold;
-	public GrabMode mode;
-	public boolean initiated = false;
-	public MovementHandler mHandler;
-	public ArmorStand trap;
-	public Location origin;
-	public Vector direction;
+	private LivingEntity target;
+	private long cooldown, lastHit = 0, interval;
+	private double range, dragSpeed, trapHP, trappedHP, damageThreshold;
+	private GrabMode mode;
+	private boolean initiated = false;
+	private MovementHandler mHandler;
+	private ArmorStand trap;
+	private Location origin;
+	private Vector direction;
+	private TempArmor armor;
 	private Material[] crops = new Material[] {Material.BEETROOT_BLOCK, Material.CARROT, Material.POTATO, Material.SUGAR_CANE_BLOCK, Material.CROPS, Material.MELON_BLOCK, Material.PUMPKIN};
 	
 	public static enum GrabMode {
@@ -75,7 +76,6 @@ public class EarthGrab extends EarthAbility {
 	
 	private void setFields() {
 		range = getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
-		targetRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
 		cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
 		dragSpeed = getConfig().getDouble("Abilities.Earth.EarthGrab.DragSpeed");
 		interval = getConfig().getLong("Abilities.Earth.EarthGrab.TrapHitInterval");
@@ -198,9 +198,8 @@ public class EarthGrab extends EarthAbility {
 				footmeta.setColor(Color.fromRGB(EarthArmor.getColor(m)));
 				feet.setItemMeta(footmeta);
 				
-				ItemStack[] pieces = {feet, legs, new ItemStack(Material.AIR), new ItemStack(Material.AIR)};
-				TempArmor armor = new TempArmor(target, 72000000L, this, pieces);
-				armor.setRemovesAbilityOnForceRevert(true);
+				ItemStack[] pieces = {(target.getEquipment().getArmorContents()[0] == null || target.getEquipment().getArmorContents()[0].getType() == Material.AIR) ? feet : null, (target.getEquipment().getArmorContents()[1] == null || target.getEquipment().getArmorContents()[1].getType() == Material.AIR) ? legs : null, null, null};
+				armor = new TempArmor(target, 36000000L, this, pieces);
 			}
 			
 			playEarthbendingSound(target.getLocation());
@@ -324,8 +323,8 @@ public class EarthGrab extends EarthAbility {
 			bPlayer.addCooldown(this);
 			mHandler.reset();
 			trap.remove();
-			if (TempArmor.hasTempArmor(target)) {
-				TempArmor.getTempArmor(target).revert();
+			if (TempArmor.getTempArmorList(target).contains(armor)) {
+				armor.revert();
 			}
 		}
 		bPlayer.addCooldown(this);

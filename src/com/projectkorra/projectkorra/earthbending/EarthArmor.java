@@ -43,6 +43,7 @@ public class EarthArmor extends EarthAbility {
 	private PotionEffect oldAbsorbtion = null;
 	private float goldHearts;
 	private int maxGoldHearts;
+	private TempArmor armor;
 
 	public EarthArmor(Player player) {
 		super(player);
@@ -121,7 +122,7 @@ public class EarthArmor extends EarthAbility {
 		boots.setItemMeta(metaBottom);
 
 		ItemStack armors[] = { boots, leggings, chestplate, head };
-		TempArmor armor = new TempArmor(player, 72000000L, this, armors); //Duration of 2 hours
+		armor = new TempArmor(player, 72000000L, this, armors); //Duration of 2 hours
 		armor.setRemovesAbilityOnForceRevert(true);
 		formed = true;
 
@@ -278,8 +279,8 @@ public class EarthArmor extends EarthAbility {
 			legsBlock.breakNaturally();
 		}
 
-		if (TempArmor.hasTempArmor(player) && TempArmor.getTempArmor(player).getAbility().equals(this)) {
-			TempArmor.getTempArmor(player).revert();
+		if (TempArmor.getTempArmorList(player).contains(armor)) {
+			armor.revert();
 		}
 
 		player.removePotionEffect(PotionEffectType.ABSORPTION);
