@@ -59,7 +59,7 @@ public class WaterArmsWhip extends WaterAbility {
 	private Location end;
 	private WaterArms waterArms;
 
-	public WaterArmsWhip(Player player, Whip ability) {
+	public WaterArmsWhip(final Player player, final Whip ability) {
 		super(player);
 
 		this.ability = ability;
@@ -68,7 +68,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.grappled = false;
 		this.grabbed = false;
 		this.grappleRespectRegions = getConfig().getBoolean("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions");
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
 		this.whipLength = getConfig().getInt("Abilities.Water.WaterArms.Whip.MaxLength");
 		this.whipLengthWeak = getConfig().getInt("Abilities.Water.WaterArms.Whip.MaxLengthWeak");
 		this.whipLengthNight = getConfig().getInt("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal");
@@ -77,14 +77,31 @@ public class WaterArmsWhip extends WaterAbility {
 		this.punchLength = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.MaxLength");
 		this.punchLengthNight = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal");
 		this.punchLengthFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon");
-		this.activeLength = initLength;
-		this.whipSpeed = 2;
+		this.activeLength = this.initLength;
+		this.whipSpeed = 1;
 		this.holdTime = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.HoldTime");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
 		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
 
-		WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
+		switch (ability) {
+
+			case PULL:
+				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Pull");
+				break;
+			case PUNCH:
+				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Punch");
+				break;
+			case GRAPPLE:
+				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grapple");
+				break;
+			case GRAB:
+				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grab");
+				break;
+			default:
+				this.usageCooldown = 200;
+
+		}
+		final WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
 		if (waw != null) {
 			if (waw.grabbed) {
 				waw.grabbed = false;
@@ -99,48 +116,48 @@ public class WaterArmsWhip extends WaterAbility {
 			}
 		}
 
-		getAugments();
-		createInstance();
+		this.getAugments();
+		this.createInstance();
 	}
 
 	private void getAugments() {
-		if (ability.equals(Whip.PUNCH)) {
-			whipLength = punchLength;
+		if (this.ability.equals(Whip.PUNCH)) {
+			this.whipLength = this.punchLength;
 		}
-		World world = player.getWorld();
+		final World world = this.player.getWorld();
 		if (isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
 				if (isLunarEclipse(world)) {
-					if (ability.equals(Whip.PUNCH)) {
-						whipLength = punchLengthFullMoon;
+					if (this.ability.equals(Whip.PUNCH)) {
+						this.whipLength = this.punchLengthFullMoon;
 					} else {
-						whipLength = whipLengthFullMoon;
+						this.whipLength = this.whipLengthFullMoon;
 					}
 				} else if (isFullMoon(world)) {
-					if (ability.equals(Whip.PUNCH)) {
-						whipLength = punchLengthFullMoon;
+					if (this.ability.equals(Whip.PUNCH)) {
+						this.whipLength = this.punchLengthFullMoon;
 					} else {
-						whipLength = whipLengthFullMoon;
+						this.whipLength = this.whipLengthFullMoon;
 					}
 				} else {
-					if (ability.equals(Whip.PUNCH)) {
-						whipLength = punchLengthNight;
+					if (this.ability.equals(Whip.PUNCH)) {
+						this.whipLength = this.punchLengthNight;
 					} else {
-						whipLength = whipLengthNight;
+						this.whipLength = this.whipLengthNight;
 					}
 				}
 			} else {
 				if (isFullMoon(world)) {
-					if (ability.equals(Whip.PUNCH)) {
-						whipLength = punchLengthFullMoon;
+					if (this.ability.equals(Whip.PUNCH)) {
+						this.whipLength = this.punchLengthFullMoon;
 					} else {
-						whipLength = whipLengthFullMoon;
+						this.whipLength = this.whipLengthFullMoon;
 					}
 				} else {
-					if (ability.equals(Whip.PUNCH)) {
-						whipLength = punchLengthNight;
+					if (this.ability.equals(Whip.PUNCH)) {
+						this.whipLength = this.punchLengthNight;
 					} else {
-						whipLength = whipLengthNight;
+						this.whipLength = this.whipLengthNight;
 					}
 				}
 			}
@@ -148,84 +165,84 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	private void createInstance() {
-		waterArms = getAbility(player, WaterArms.class);
-		if (waterArms != null) {
-			waterArms.switchPreferredArm();
-			arm = waterArms.getActiveArm();
-			time = System.currentTimeMillis() + holdTime;
-			playerHealth = player.getHealth();
+		this.waterArms = getAbility(this.player, WaterArms.class);
+		if (this.waterArms != null) {
+			this.waterArms.switchPreferredArm();
+			this.arm = this.waterArms.getActiveArm();
+			this.time = System.currentTimeMillis() + this.holdTime;
+			this.playerHealth = this.player.getHealth();
 
-			if (arm.equals(Arm.LEFT)) {
-				if (waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT")) {
+			if (this.arm.equals(Arm.LEFT)) {
+				if (this.waterArms.isLeftArmCooldown() || this.bPlayer.isOnCooldown("WaterArms_LEFT")) {
 					return;
 				} else {
-					if (usageCooldownEnabled) {
-						bPlayer.addCooldown("WaterArms_LEFT", usageCooldown);
+					if (this.usageCooldownEnabled) {
+						this.bPlayer.addCooldown("WaterArms_LEFT", this.usageCooldown);
 					}
-					waterArms.setLeftArmCooldown(true);
+					this.waterArms.setLeftArmCooldown(true);
 				}
 			}
 
-			if (arm.equals(Arm.RIGHT)) {
-				if (waterArms.isRightArmCooldown() || bPlayer.isOnCooldown("WaterArms_RIGHT")) {
+			if (this.arm.equals(Arm.RIGHT)) {
+				if (this.waterArms.isRightArmCooldown() || this.bPlayer.isOnCooldown("WaterArms_RIGHT")) {
 					return;
 				} else {
-					if (usageCooldownEnabled) {
-						bPlayer.addCooldown("WaterArms_RIGHT", usageCooldown);
+					if (this.usageCooldownEnabled) {
+						this.bPlayer.addCooldown("WaterArms_RIGHT", this.usageCooldown);
 					}
-					waterArms.setRightArmCooldown(true);
+					this.waterArms.setRightArmCooldown(true);
 				}
 			}
 		} else {
 			return;
 		}
 
-		if (!waterArms.isFullSource()) {
-			whipLength = whipLengthWeak;
+		if (!this.waterArms.isFullSource()) {
+			this.whipLength = this.whipLengthWeak;
 		}
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (!hasAbility(player, WaterArms.class)) {
-			remove();
+		if (!hasAbility(this.player, WaterArms.class)) {
+			this.remove();
 			return;
-		} else if (player.isDead() || !player.isOnline()) {
-			remove();
+		} else if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
 		}
-		if (!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")) {
-			remove();
+		if (!MultiAbilityManager.hasMultiAbilityBound(this.player, "WaterArms")) {
+			this.remove();
 			return;
 		}
 
-		if (activeLength < whipLength && !reverting) {
-			activeLength += whipSpeed;
-		} else if (activeLength > initLength) {
-			if (!grabbed) {
-				activeLength -= whipSpeed;
+		if (this.activeLength < this.whipLength && !this.reverting) {
+			this.activeLength += this.whipSpeed;
+		} else if (this.activeLength > this.initLength) {
+			if (!this.grabbed) {
+				this.activeLength -= this.whipSpeed;
 			}
 		} else {
-			remove();
+			this.remove();
 			return;
 		}
 
-		if (activeLength >= whipLength && !grabbed) {
-			reverting = true;
+		if (this.activeLength >= this.whipLength && !this.grabbed) {
+			this.reverting = true;
 		}
 
-		if (grabbed && (System.currentTimeMillis() > time || playerHealth > player.getHealth())) {
-			grabbed = false;
-			reverting = true;
+		if (this.grabbed && (System.currentTimeMillis() > this.time || this.playerHealth > this.player.getHealth())) {
+			this.grabbed = false;
+			this.reverting = true;
 		}
 
-		useArm();
-		dragEntity(end);
+		this.useArm();
+		this.dragEntity(this.end);
 	}
 
-	private boolean canPlaceBlock(Block block) {
-		if (!isTransparent(player, block) && !(isWater(block) && TempBlock.isTempBlock(block))) {
+	private boolean canPlaceBlock(final Block block) {
+		if (!isTransparent(this.player, block) && !(isWater(block) && TempBlock.isTempBlock(block))) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;
@@ -234,94 +251,99 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	private void useArm() {
-		if (waterArms.canDisplayActiveArm()) {
+		if (this.waterArms.canDisplayActiveArm()) {
 			Location l1 = null;
 
-			if (arm.equals(Arm.LEFT)) {
-				l1 = waterArms.getLeftArmEnd().clone();
+			if (this.arm.equals(Arm.LEFT)) {
+				l1 = this.waterArms.getLeftArmEnd().clone();
 			} else {
-				l1 = waterArms.getRightArmEnd().clone();
+				l1 = this.waterArms.getRightArmEnd().clone();
 			}
 
-			Vector dir = player.getLocation().getDirection();
-			for (int i = 1; i <= activeLength; i++) {
-				Location l2 = l1.clone().add(dir.normalize().multiply(i));
+			final Vector dir = this.player.getLocation().getDirection().clone();
+			for (int i = 1; i <= this.activeLength; i++) {
+				final Location l2 = l1.clone().add(dir.normalize().multiply(i));
 
-				if (!canPlaceBlock(l2.getBlock())) {
-					if (!l2.getBlock().getType().equals(Material.BARRIER)) {
-						grappled = true;
+				if (!this.canPlaceBlock(l2.getBlock())) {
+					if (l2.getBlock().getType() != Material.BARRIER) {
+						this.grappled = true;
 					}
-					reverting = true;
+					this.reverting = true;
+					this.performAction(l2);
 					break;
 				}
 
-				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
-				WaterArms.getBlockRevertTimes().put(l2.getBlock(), System.currentTimeMillis() + 10);
+				final byte b = (byte) Math.ceil(8 / (Math.pow(i, 1 / 3)));
+				this.waterArms.addToArm(l2.getBlock(), this.arm);
+				this.waterArms.addBlock(l2.getBlock(), Material.STATIONARY_WATER, b, 40);
 
-				if (i == activeLength) {
-					Location l3 = null;
-					if (arm.equals(Arm.LEFT)) {
-						l3 = GeneralMethods.getRightSide(l2, 1);
+				if (i == this.activeLength) {
+					this.end = l2.clone();
+					if (this.arm == Arm.LEFT) {
+						this.end = GeneralMethods.getRightSide(this.end, 1);
 					} else {
-						l3 = GeneralMethods.getLeftSide(l2, 1);
+						this.end = GeneralMethods.getLeftSide(this.end, 1);
 					}
 
-					end = l3.clone();
-					if (canPlaceBlock(l3.getBlock())) {
-						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3);
-						WaterArms.getBlockRevertTimes().put(l3.getBlock(), System.currentTimeMillis() + 10);
-						performAction(l3);
-					} else {
-						if (!l3.getBlock().getType().equals(Material.BARRIER)) {
-							grappled = true;
+					if (!this.canPlaceBlock(this.end.getBlock())) {
+						if (this.end.getBlock().getType() != Material.BARRIER) {
+							this.grappled = true;
 						}
-						reverting = true;
+						this.reverting = true;
+						this.performAction(this.end);
+						break;
 					}
+
+					this.waterArms.addToArm(this.end.getBlock(), this.arm);
+					this.waterArms.addBlock(this.end.getBlock(), Material.STATIONARY_WATER, (byte) 2, 40);
+					this.performAction(this.end);
+				} else {
+					this.performAction(l2);
 				}
 			}
 		}
 	}
 
-	private void performAction(Location location) {
-		Location endOfArm = waterArms.getLeftArmEnd().clone();
-		switch (ability) {
+	private void performAction(final Location location) {
+		final Location endOfArm = this.waterArms.getActiveArmEnd().clone();
+		switch (this.ability) {
 			case PULL:
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
+				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
 					}
-					Vector vector = endOfArm.toVector().subtract(entity.getLocation().toVector());
-					entity.setVelocity(vector.multiply(pullMultiplier));
+					final Vector vector = endOfArm.toVector().subtract(entity.getLocation().toVector());
+					entity.setVelocity(vector.multiply(this.pullMultiplier));
 				}
 				break;
 			case PUNCH:
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
+				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
 					}
 
-					Vector vector = entity.getLocation().toVector().subtract(endOfArm.toVector());
+					final Vector vector = entity.getLocation().toVector().subtract(endOfArm.toVector());
 					entity.setVelocity(vector.multiply(0.15));
 					if (entity instanceof LivingEntity) {
-						if (entity.getEntityId() != player.getEntityId()) {
-							hasDamaged = true;
-							DamageHandler.damageEntity(entity, punchDamage, this);
+						if (entity.getEntityId() != this.player.getEntityId()) {
+							this.hasDamaged = true;
+							DamageHandler.damageEntity(entity, this.punchDamage, this);
 						}
 					}
 				}
 				break;
 			case GRAPPLE:
-				grapplePlayer(end);
+				this.grapplePlayer(location);
 				break;
 			case GRAB:
-				if (grabbedEntity == null) {
-					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-						if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !GRABBED_ENTITIES.containsKey(entity)) {
+				if (this.grabbedEntity == null) {
+					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
+						if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && !GRABBED_ENTITIES.containsKey(entity)) {
 							GRABBED_ENTITIES.put((LivingEntity) entity, this);
-							grabbedEntity = (LivingEntity) entity;
-							grabbed = true;
-							reverting = true;
-							waterArms.setActiveArmCooldown(true);
+							this.grabbedEntity = (LivingEntity) entity;
+							this.grabbed = true;
+							this.reverting = true;
+							this.waterArms.setActiveArmCooldown(true);
 							break;
 						}
 					}
@@ -332,23 +354,23 @@ public class WaterArmsWhip extends WaterAbility {
 		}
 	}
 
-	private void dragEntity(Location location) {
-		if (grabbedEntity != null && grabbed) {
-			if (!waterArms.canDisplayActiveArm() || grabbedEntity.isDead()) {
-				grabbed = false;
-				GRABBED_ENTITIES.remove(grabbedEntity);
+	private void dragEntity(final Location location) {
+		if (this.grabbedEntity != null && this.grabbed) {
+			if (!this.waterArms.canDisplayActiveArm() || this.grabbedEntity.isDead()) {
+				this.grabbed = false;
+				GRABBED_ENTITIES.remove(this.grabbedEntity);
 				return;
 			}
-			if (grabbedEntity instanceof Player && hasAbility((Player) grabbedEntity, WaterArmsWhip.class)) {
-				WaterArmsWhip waw = getAbility((Player) grabbedEntity, WaterArmsWhip.class);
+			if (this.grabbedEntity instanceof Player && hasAbility((Player) this.grabbedEntity, WaterArmsWhip.class)) {
+				final WaterArmsWhip waw = getAbility((Player) this.grabbedEntity, WaterArmsWhip.class);
 				if (waw.getAbility().equals(Whip.GRAB)) {
-					grabbed = false;
-					GRABBED_ENTITIES.remove(grabbedEntity);
+					this.grabbed = false;
+					GRABBED_ENTITIES.remove(this.grabbedEntity);
 					return;
 				}
 			}
 
-			Location newLocation = grabbedEntity.getLocation();
+			final Location newLocation = this.grabbedEntity.getLocation();
 			double distance = 0;
 			if (location.getWorld().equals(newLocation.getWorld())) {
 				distance = location.distance(newLocation);
@@ -358,35 +380,36 @@ public class WaterArmsWhip extends WaterAbility {
 			dx = location.getX() - newLocation.getX();
 			dy = location.getY() - newLocation.getY();
 			dz = location.getZ() - newLocation.getZ();
-			Vector vector = new Vector(dx, dy, dz);
+			final Vector vector = new Vector(dx, dy, dz);
 
 			if (distance > 0.5) {
-				grabbedEntity.setVelocity(vector.normalize().multiply(.65));
+				this.grabbedEntity.setVelocity(vector.normalize().multiply(.65));
 			} else {
-				grabbedEntity.setVelocity(new Vector(0, 0, 0));
+				this.grabbedEntity.setVelocity(new Vector(0, 0, 0));
 			}
 
-			grabbedEntity.setFallDistance(0);
-			if (grabbedEntity instanceof Creature) {
-				((Creature) grabbedEntity).setTarget(null);
+			this.grabbedEntity.setFallDistance(0);
+			if (this.grabbedEntity instanceof Creature) {
+				((Creature) this.grabbedEntity).setTarget(null);
 			}
 		}
 	}
 
-	private void grapplePlayer(Location location) {
-		if (reverting && grappled && player != null && end != null && ability.equals(Whip.GRAPPLE)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && grappleRespectRegions) {
+	private void grapplePlayer(final Location location) {
+		if (this.reverting && this.grappled && this.player != null && this.end != null && this.ability.equals(Whip.GRAPPLE)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && this.grappleRespectRegions) {
 				return;
 			}
-			Vector vector = player.getLocation().toVector().subtract(location.toVector());
-			player.setVelocity(vector.multiply(-0.25));
-			player.setFallDistance(0);
+
+			final Vector vector = this.player.getLocation().toVector().subtract(location.toVector());
+			this.player.setVelocity(vector.multiply(-0.25));
+			this.player.setFallDistance(0);
 		}
 	}
 
 	public static void checkValidEntities() {
-		for (LivingEntity livingEnt : GRABBED_ENTITIES.keySet()) {
-			WaterArmsWhip whip = GRABBED_ENTITIES.get(livingEnt);
+		for (final LivingEntity livingEnt : GRABBED_ENTITIES.keySet()) {
+			final WaterArmsWhip whip = GRABBED_ENTITIES.get(livingEnt);
 			if (!whip.isRemoved()) {
 				if (whip.grabbedEntity == null) {
 					GRABBED_ENTITIES.remove(livingEnt);
@@ -400,17 +423,17 @@ public class WaterArmsWhip extends WaterAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (hasAbility(player, WaterArms.class)) {
-			if (arm.equals(Arm.LEFT)) {
-				waterArms.setLeftArmCooldown(false);
+		if (hasAbility(this.player, WaterArms.class)) {
+			if (this.arm.equals(Arm.LEFT)) {
+				this.waterArms.setLeftArmCooldown(false);
 			} else {
-				waterArms.setRightArmCooldown(false);
+				this.waterArms.setRightArmCooldown(false);
 			}
-			if (hasDamaged) {
-				waterArms.setMaxPunches(waterArms.getMaxPunches() - 1);
+			if (this.hasDamaged) {
+				this.waterArms.setMaxPunches(this.waterArms.getMaxPunches() - 1);
 			}
-			
-			waterArms.setMaxUses(waterArms.getMaxUses() - 1);
+
+			this.waterArms.setMaxUses(this.waterArms.getMaxUses() - 1);
 		}
 	}
 
@@ -429,12 +452,12 @@ public class WaterArmsWhip extends WaterAbility {
 
 	@Override
 	public Location getLocation() {
-		return end;
+		return this.end;
 	}
 
 	@Override
 	public long getCooldown() {
-		return usageCooldown;
+		return this.usageCooldown;
 	}
 
 	@Override
@@ -448,218 +471,218 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	public boolean isReverting() {
-		return reverting;
+		return this.reverting;
 	}
 
-	public void setReverting(boolean reverting) {
+	public void setReverting(final boolean reverting) {
 		this.reverting = reverting;
 	}
 
 	public boolean isHasDamaged() {
-		return hasDamaged;
+		return this.hasDamaged;
 	}
 
-	public void setHasDamaged(boolean hasDamaged) {
+	public void setHasDamaged(final boolean hasDamaged) {
 		this.hasDamaged = hasDamaged;
 	}
 
 	public boolean isGrappled() {
-		return grappled;
+		return this.grappled;
 	}
 
-	public void setGrappled(boolean grappled) {
+	public void setGrappled(final boolean grappled) {
 		this.grappled = grappled;
 	}
 
 	public boolean isGrabbed() {
-		return grabbed;
+		return this.grabbed;
 	}
 
-	public void setGrabbed(boolean grabbed) {
+	public void setGrabbed(final boolean grabbed) {
 		this.grabbed = grabbed;
 	}
 
 	public boolean isGrappleRespectRegions() {
-		return grappleRespectRegions;
+		return this.grappleRespectRegions;
 	}
 
-	public void setGrappleRespectRegions(boolean grappleRespectRegions) {
+	public void setGrappleRespectRegions(final boolean grappleRespectRegions) {
 		this.grappleRespectRegions = grappleRespectRegions;
 	}
 
 	public boolean isUsageCooldownEnabled() {
-		return usageCooldownEnabled;
+		return this.usageCooldownEnabled;
 	}
 
-	public void setUsageCooldownEnabled(boolean usageCooldownEnabled) {
+	public void setUsageCooldownEnabled(final boolean usageCooldownEnabled) {
 		this.usageCooldownEnabled = usageCooldownEnabled;
 	}
 
 	public int getWhipLength() {
-		return whipLength;
+		return this.whipLength;
 	}
 
-	public void setWhipLength(int whipLength) {
+	public void setWhipLength(final int whipLength) {
 		this.whipLength = whipLength;
 	}
 
 	public int getWhipLengthWeak() {
-		return whipLengthWeak;
+		return this.whipLengthWeak;
 	}
 
-	public void setWhipLengthWeak(int whipLengthWeak) {
+	public void setWhipLengthWeak(final int whipLengthWeak) {
 		this.whipLengthWeak = whipLengthWeak;
 	}
 
 	public int getWhipLengthNight() {
-		return whipLengthNight;
+		return this.whipLengthNight;
 	}
 
-	public void setWhipLengthNight(int whipLengthNight) {
+	public void setWhipLengthNight(final int whipLengthNight) {
 		this.whipLengthNight = whipLengthNight;
 	}
 
 	public int getWhipLengthFullMoon() {
-		return whipLengthFullMoon;
+		return this.whipLengthFullMoon;
 	}
 
-	public void setWhipLengthFullMoon(int whipLengthFullMoon) {
+	public void setWhipLengthFullMoon(final int whipLengthFullMoon) {
 		this.whipLengthFullMoon = whipLengthFullMoon;
 	}
 
 	public int getInitLength() {
-		return initLength;
+		return this.initLength;
 	}
 
-	public void setInitLength(int initLength) {
+	public void setInitLength(final int initLength) {
 		this.initLength = initLength;
 	}
 
 	public int getPunchLength() {
-		return punchLength;
+		return this.punchLength;
 	}
 
-	public void setPunchLength(int punchLength) {
+	public void setPunchLength(final int punchLength) {
 		this.punchLength = punchLength;
 	}
 
 	public int getPunchLengthNight() {
-		return punchLengthNight;
+		return this.punchLengthNight;
 	}
 
-	public void setPunchLengthNight(int punchLengthNight) {
+	public void setPunchLengthNight(final int punchLengthNight) {
 		this.punchLengthNight = punchLengthNight;
 	}
 
 	public int getPunchLengthFullMoon() {
-		return punchLengthFullMoon;
+		return this.punchLengthFullMoon;
 	}
 
-	public void setPunchLengthFullMoon(int punchLengthFullMoon) {
+	public void setPunchLengthFullMoon(final int punchLengthFullMoon) {
 		this.punchLengthFullMoon = punchLengthFullMoon;
 	}
 
 	public int getActiveLength() {
-		return activeLength;
+		return this.activeLength;
 	}
 
-	public void setActiveLength(int activeLength) {
+	public void setActiveLength(final int activeLength) {
 		this.activeLength = activeLength;
 	}
 
 	public int getWhipSpeed() {
-		return whipSpeed;
+		return this.whipSpeed;
 	}
 
-	public void setWhipSpeed(int whipSpeed) {
+	public void setWhipSpeed(final int whipSpeed) {
 		this.whipSpeed = whipSpeed;
 	}
 
 	public long getHoldTime() {
-		return holdTime;
+		return this.holdTime;
 	}
 
-	public void setHoldTime(long holdTime) {
+	public void setHoldTime(final long holdTime) {
 		this.holdTime = holdTime;
 	}
 
 	public long getUsageCooldown() {
-		return usageCooldown;
+		return this.usageCooldown;
 	}
 
-	public void setUsageCooldown(long usageCooldown) {
+	public void setUsageCooldown(final long usageCooldown) {
 		this.usageCooldown = usageCooldown;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public double getPullMultiplier() {
-		return pullMultiplier;
+		return this.pullMultiplier;
 	}
 
-	public void setPullMultiplier(double pullMultiplier) {
+	public void setPullMultiplier(final double pullMultiplier) {
 		this.pullMultiplier = pullMultiplier;
 	}
 
 	public double getPunchDamage() {
-		return punchDamage;
+		return this.punchDamage;
 	}
 
-	public void setPunchDamage(double punchDamage) {
+	public void setPunchDamage(final double punchDamage) {
 		this.punchDamage = punchDamage;
 	}
 
 	public double getPlayerHealth() {
-		return playerHealth;
+		return this.playerHealth;
 	}
 
-	public void setPlayerHealth(double playerHealth) {
+	public void setPlayerHealth(final double playerHealth) {
 		this.playerHealth = playerHealth;
 	}
 
 	public Arm getArm() {
-		return arm;
+		return this.arm;
 	}
 
-	public void setArm(Arm arm) {
+	public void setArm(final Arm arm) {
 		this.arm = arm;
 	}
 
 	public Whip getAbility() {
-		return ability;
+		return this.ability;
 	}
 
-	public void setAbility(Whip ability) {
+	public void setAbility(final Whip ability) {
 		this.ability = ability;
 	}
 
 	public LivingEntity getGrabbedEntity() {
-		return grabbedEntity;
+		return this.grabbedEntity;
 	}
 
-	public void setGrabbedEntity(LivingEntity grabbedEntity) {
+	public void setGrabbedEntity(final LivingEntity grabbedEntity) {
 		this.grabbedEntity = grabbedEntity;
 	}
 
 	public Location getEnd() {
-		return end;
+		return this.end;
 	}
 
-	public void setEnd(Location end) {
+	public void setEnd(final Location end) {
 		this.end = end;
 	}
 
 	public WaterArms getWaterArms() {
-		return waterArms;
+		return this.waterArms;
 	}
 
-	public void setWaterArms(WaterArms waterArms) {
+	public void setWaterArms(final WaterArms waterArms) {
 		this.waterArms = waterArms;
 	}
 

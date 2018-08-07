@@ -31,21 +31,21 @@ public class Catapult extends EarthAbility {
 	private double angle;
 	private boolean cancelWithAngle;
 
-	public Catapult(Player player, boolean sneak) {
+	public Catapult(final Player player, final boolean sneak) {
 		super(player);
-		setFields();
-		Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+		this.setFields();
+		final Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
 			return;
 		}
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
 		}
 		this.charging = sneak;
-		start();
+		this.start();
 	}
 
 	private void setFields() {
@@ -56,75 +56,75 @@ public class Catapult extends EarthAbility {
 		this.activationHandled = false;
 		this.stage = 1;
 		this.stageStart = System.currentTimeMillis();
-		up = new Vector(0, 1, 0);
+		this.up = new Vector(0, 1, 0);
 	}
 
-	private void moveEarth(Vector apply, Vector direction) {
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, 2)) {
-			if (entity.getEntityId() != player.getEntityId()) {
+	private void moveEarth(final Vector apply, final Vector direction) {
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, 2)) {
+			if (entity.getEntityId() != this.player.getEntityId()) {
 				entity.setVelocity(apply);
 			}
 		}
-		moveEarth(this.origin.clone().subtract(direction), direction, 3, false);
+		this.moveEarth(this.origin.clone().subtract(direction), direction, 3, false);
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			this.remove();
 			return;
 		}
 
-		if (charging) {
-			if (stage == 4 || !player.isSneaking()) {
-				charging = false;
+		if (this.charging) {
+			if (this.stage == 4 || !this.player.isSneaking()) {
+				this.charging = false;
 			} else {
 				if ((System.currentTimeMillis() - this.stageStart) >= ((Math.max(0, this.stageTimeMult * (this.stage - 1))) * 1000)) {
 					this.stage++;
 					this.stageStart = System.currentTimeMillis();
-					Random random = new Random();
-					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte) 0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, player.getLocation(), 257);
-					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte) 0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, player.getLocation().add(0, 0.5, 0), 257);
-					player.getWorld().playEffect(player.getLocation(), Effect.GHAST_SHOOT, 0, 10);
+					final Random random = new Random();
+					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte) 0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, this.player.getLocation(), 257);
+					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte) 0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, this.player.getLocation().add(0, 0.5, 0), 257);
+					this.player.getWorld().playEffect(this.player.getLocation(), Effect.GHAST_SHOOT, 0, 10);
 				}
 			}
 			return;
 		}
-		
-		Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+
+		final Block b = this.player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
-			remove();
+			this.remove();
 			return;
 		}
 
 		Vector direction = null;
 		if (!this.activationHandled) {
-			this.origin = player.getLocation().clone();
-			direction = player.getEyeLocation().getDirection().clone().normalize();
+			this.origin = this.player.getLocation().clone();
+			direction = this.player.getEyeLocation().getDirection().clone().normalize();
 
-			if (!bPlayer.canBend(this)) {
+			if (!this.bPlayer.canBend(this)) {
 				this.activationHandled = true;
-				remove();
+				this.remove();
 				return;
 			}
 			this.activationHandled = true;
-			bPlayer.addCooldown(this);
+			this.bPlayer.addCooldown(this);
 		}
-		
-		if (up.angle(player.getEyeLocation().getDirection()) > angle) {
-			if (cancelWithAngle) {
-				remove();
+
+		if (this.up.angle(this.player.getEyeLocation().getDirection()) > this.angle) {
+			if (this.cancelWithAngle) {
+				this.remove();
 				return;
 			}
-			direction = up;
+			direction = this.up;
 		}
-		
-		Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
+
+		final Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
 		this.target = tar;
-		Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
-		player.setVelocity(apply);
-		moveEarth(apply, direction);
-		remove();
+		final Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
+		this.player.setVelocity(apply);
+		this.moveEarth(apply, direction);
+		this.remove();
 	}
 
 	@Override
@@ -134,15 +134,15 @@ public class Catapult extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		if (player != null) {
-			return player.getLocation();
+		if (this.player != null) {
+			return this.player.getLocation();
 		}
 		return null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -156,22 +156,22 @@ public class Catapult extends EarthAbility {
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public Location getTarget() {
-		return target;
+		return this.target;
 	}
 
-	public void setTarget(Location target) {
+	public void setTarget(final Location target) {
 		this.target = target;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 }

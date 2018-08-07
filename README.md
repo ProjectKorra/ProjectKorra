@@ -34,7 +34,7 @@ You can view the changelogs for the plugin you're running in the thread created 
 
 ## API
 
-There are several ways Developers can hook into the ProjectKorra API. Developers looking to learn how to use our API, a tutorial on creating your own abilities can be found [here](http://projectkorra.com/wiki/index.php?title=Creating_A_ProjectKorra_Ability). Additionally, You can view the [Javadocs](http://projectkorra.com/docs) for more detailed information.
+There are several ways Developers can hook into the ProjectKorra API. Developers looking to learn how to use our API, a tutorial on creating your own abilities can be found [here](https://github.com/ProjectKorra/ProjectKorra/wiki/Creating-an-Addon-Ability). Additionally, You can view the [Javadocs](http://projectkorra.com/docs) for more detailed information.
 
 ## Configuration
 
@@ -42,13 +42,13 @@ The ProjectKorra (Core) configuration will have its own wiki page explaining all
 
 ## Commands / Permissions
 
-An extensive list of the available commands and permissions can be found on the wiki by clicking [here](http://projectkorra.com/wiki/index.php?title=ProjectKorra_(Core)_Commands_and_Permissions)
+An extensive list of the available commands and permissions can be found on the wiki by clicking [here](https://github.com/ProjectKorra/ProjectKorra/wiki/Commands)
 
 ## Bending
 
 Players may choose any of the disciplines below and play. Each discipline has its own page dedicated to it, below is just a brief summary of what each element is capable of doing.
 
-### [Airbending](http://projectkorra.com/wiki/index.php?title=Airbending)
+### [Airbending](https://github.com/ProjectKorra/ProjectKorra/wiki/Airbending)
 
 - Specializes in mobility and defense.
 - The land is an ideal spot for an airbender, despite being able to bend in water as well.
@@ -57,7 +57,7 @@ Players may choose any of the disciplines below and play. Each discipline has it
 - Increases speed, decreasing rate of hunger, and takes no fall damage.
 - Comes with the Flight and SpiritualProjection subelements.
 
-### [Waterbending](http://projectkorra.com/wiki/index.php?title=Waterbending)
+### [Waterbending](https://github.com/ProjectKorra/ProjectKorra/wiki/Waterbending)
 
 - Specializes in maneuverability in and on the water.
 - Oceans are perfect for Waterbenders.
@@ -66,7 +66,7 @@ Players may choose any of the disciplines below and play. Each discipline has it
 - Opens up possibilities in bodies of water that are otherwise closed to the other disciplines.
 - Comes with Bloodbending, Healing, Icebending and Plantbending subelements.
 
-### [Earthbending](http://projectkorra.com/wiki/index.php?title=Earthbending)
+### [Earthbending](https://github.com/ProjectKorra/ProjectKorra/wiki/Earthbending)
 
 - Specializes in manipulating the earth around them.
 - Any area containing land is perfect for an earthbender.
@@ -74,7 +74,7 @@ Players may choose any of the disciplines below and play. Each discipline has it
 - Fundamentally the same as Waterbenders, with a mix of offensive and defensive playstyles.
 - Comes with the Sand, Metal and Lavabending subelements.
 
-### [Firebending](http://projectkorra.com/wiki/index.php?title=Firebending)
+### [Firebending](https://github.com/ProjectKorra/ProjectKorra/wiki/Firebending)
 
 - Very offensive playstyle.
 - Any environment other than water is suitable for Firebenders.
@@ -82,7 +82,7 @@ Players may choose any of the disciplines below and play. Each discipline has it
 - Very little mobility and defense.
 - Comes with the Lightning and Combustion subelements.
 
-### [Chiblocking](http://projectkorra.com/wiki/index.php?title=Chiblocking)
+### [Chiblocking](https://github.com/ProjectKorra/ProjectKorra/wiki/Chiblocking)
 
 - Specializes in bare handed combat.
 - Can block a user's chi, temporarily disabling their bending.

@@ -13,6 +13,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class JetBlaze extends FireAbility implements ComboAbility {
@@ -28,11 +29,11 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 	private ArrayList<LivingEntity> affectedEntities;
 	private ArrayList<FireComboStream> tasks;
 	private long duration;
-	
-	public JetBlaze(Player player) {
+
+	public JetBlaze(final Player player) {
 		super(player);
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
@@ -46,56 +47,64 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		this.speed = getConfig().getDouble("Abilities.Fire.JetBlaze.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.JetBlaze.FireTicks");
-		
-		if (bPlayer.isAvatarState()) {
+
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.Damage");
 			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.FireTicks");
 		}
-		
-		start();
+
+		this.start();
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
-		return null;
+	public Object createNewComboInstance(final Player player) {
+		return new JetBlaze(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		final ArrayList<AbilityInformation> jetBlaze = new ArrayList<>();
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_DOWN));
+		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
+		return jetBlaze;
 	}
 
 	@Override
 	public void progress() {
-		if (firstTime) {
-			if (bPlayer.isOnCooldown("JetBlaze") && !bPlayer.isAvatarState()) {
-				remove();
+		if (this.firstTime) {
+			if (this.bPlayer.isOnCooldown("JetBlaze") && !this.bPlayer.isAvatarState()) {
+				this.remove();
 				return;
 			}
-			bPlayer.addCooldown("JetBlaze", cooldown);
-			firstTime = false;
-		} else if (System.currentTimeMillis() - time > duration) {
-			remove();
+			this.bPlayer.addCooldown("JetBlaze", this.cooldown);
+			this.firstTime = false;
+		} else if (System.currentTimeMillis() - this.time > this.duration) {
+			this.remove();
 			return;
-		} else if (hasAbility(player, FireJet.class)) {
-			direction = player.getVelocity().clone().multiply(-1);
-			FireJet fj = getAbility(player, FireJet.class);
-			fj.setSpeed(speed);
-			fj.setDuration(duration);
+		} else if (hasAbility(this.player, FireJet.class)) {
+			this.direction = this.player.getVelocity().clone().multiply(-1);
+			final FireJet fj = getAbility(this.player, FireJet.class);
+			fj.setSpeed(this.speed);
+			fj.setDuration(this.duration);
 
-			FireComboStream fs = new FireComboStream(player, this, direction, player.getLocation(), 5, 1);
+			final FireComboStream fs = new FireComboStream(this.player, this, this.direction, this.player.getLocation(), 5, 1);
 			fs.setDensity(8);
 			fs.setSpread(1.0F);
 			fs.setUseNewParticles(true);
 			fs.setCollisionRadius(3);
 			fs.setParticleEffect(ParticleEffect.LARGE_SMOKE);
-			fs.setDamage(damage);
-			fs.setFireTicks(fireTicks);
+			fs.setDamage(this.damage);
+			fs.setFireTicks(this.fireTicks);
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
-			tasks.add(fs);
-			if (progressCounter % 4 == 0) {
-				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
+			this.tasks.add(fs);
+			if (this.progressCounter % 4 == 0) {
+				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
 			}
 		}
 	}
@@ -107,7 +116,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -117,15 +126,20 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 
 	@Override
 	public Location getLocation() {
-		return player.getLocation();
+		return this.player.getLocation();
 	}
 
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	public ArrayList<LivingEntity> getAffectedEntities() {
-		return affectedEntities;
+		return this.affectedEntities;
+	}
+
+	@Override
+	public String getInstructions() {
+		return "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet";
 	}
 }

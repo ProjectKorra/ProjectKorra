@@ -20,80 +20,78 @@ public class TempBlock {
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
 	public static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<>(100, new Comparator<TempBlock>() {
 		@Override
-		public int compare(TempBlock t1, TempBlock t2) {
+		public int compare(final TempBlock t1, final TempBlock t2) {
 			return (int) (t1.revertTime - t2.revertTime);
 		}
 	});
 
-	private Block block;
-	private Material newtype;
+	private final Block block;
 	private byte newdata;
 	private BlockState state;
 	private long revertTime;
 	private boolean inRevertQueue;
 	private RevertTask revertTask = null;
 
-	@SuppressWarnings("deprecation")
-	public TempBlock(Block block, Material newtype, byte newdata) {
+	public TempBlock(final Block block, final Material newtype, final byte newdata) {
 		this.block = block;
 		this.newdata = newdata;
-		this.newtype = newtype;
 		if (instances.containsKey(block)) {
-			TempBlock temp = instances.get(block);
-			if (newtype != temp.newtype) {
+			final TempBlock temp = instances.get(block);
+			if (newtype != temp.block.getType()) {
 				temp.block.setType(newtype);
-				temp.newtype = newtype;
 			}
-			if (newdata != temp.newdata) {
+			if (newdata != temp.block.getData()) {
 				temp.block.setData(newdata);
 				temp.newdata = newdata;
 			}
-			state = temp.state;
+			this.state = temp.state;
 			instances.put(block, temp);
 		} else {
-			state = block.getState();
+			this.state = block.getState();
 			instances.put(block, this);
 			block.setType(newtype);
 			block.setData(newdata);
 		}
-		if (state.getType() == Material.FIRE)
-			state.setType(Material.AIR);
+		if (this.state.getType() == Material.FIRE) {
+			this.state.setType(Material.AIR);
+		}
 	}
 
-	public static TempBlock get(Block block) {
-		if (isTempBlock(block))
+	public static TempBlock get(final Block block) {
+		if (isTempBlock(block)) {
 			return instances.get(block);
+		}
 		return null;
 	}
 
-	public static boolean isTempBlock(Block block) {
+	public static boolean isTempBlock(final Block block) {
 		return block != null ? instances.containsKey(block) : false;
 	}
 
-	public static boolean isTouchingTempBlock(Block block) {
-		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
-		for (BlockFace face : faces) {
-			if (instances.containsKey(block.getRelative(face)))
+	public static boolean isTouchingTempBlock(final Block block) {
+		final BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
+		for (final BlockFace face : faces) {
+			if (instances.containsKey(block.getRelative(face))) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	public static void removeAll() {
-		for (Block block : instances.keySet()) {
+		for (final Block block : instances.keySet()) {
 			revertBlock(block, Material.AIR);
 		}
-		for (TempBlock tempblock : REVERT_QUEUE) {
+		for (final TempBlock tempblock : REVERT_QUEUE) {
 			tempblock.revertBlock();
 		}
 	}
 
-	public static void removeBlock(Block block) {
+	public static void removeBlock(final Block block) {
 		instances.remove(block);
 	}
 
-	@SuppressWarnings("deprecation")
-	public static void revertBlock(Block block, Material defaulttype) {
+	public static void revertBlock(final Block block, final Material defaulttype) {
 		if (instances.containsKey(block)) {
 			instances.get(block).revertBlock();
 		} else {
@@ -107,35 +105,34 @@ public class TempBlock {
 				block.setType(defaulttype);
 			}
 		}
-		// block.setType(defaulttype);
 	}
 
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 
 	public Location getLocation() {
-		return block.getLocation();
+		return this.block.getLocation();
 	}
 
 	public BlockState getState() {
-		return state;
+		return this.state;
 	}
-	
+
 	public RevertTask getRevertTask() {
-		return revertTask;
+		return this.revertTask;
 	}
-	
-	public void setRevertTask(RevertTask task) {
+
+	public void setRevertTask(final RevertTask task) {
 		this.revertTask = task;
 	}
 
 	public long getRevertTime() {
-		return revertTime;
+		return this.revertTime;
 	}
 
-	public void setRevertTime(long revertTime) {
-		if (inRevertQueue) {
+	public void setRevertTime(final long revertTime) {
+		if (this.inRevertQueue) {
 			REVERT_QUEUE.remove(this);
 		}
 		this.inRevertQueue = true;
@@ -144,44 +141,40 @@ public class TempBlock {
 	}
 
 	public void revertBlock() {
-		state.update(true);
-		instances.remove(block);
+		this.state.update(true);
+		instances.remove(this.block);
 		if (REVERT_QUEUE.contains(this)) {
 			REVERT_QUEUE.remove(this);
 		}
-		if (revertTask != null) {
-			revertTask.run();
+		if (this.revertTask != null) {
+			this.revertTask.run();
 		}
 	}
 
-	public void setState(BlockState newstate) {
-		state = newstate;
+	public void setState(final BlockState newstate) {
+		this.state = newstate;
 	}
 
-	public void setType(Material material) {
-		setType(material, newdata);
+	public void setType(final Material material) {
+		this.setType(material, this.newdata);
 	}
 
-	@SuppressWarnings("deprecation")
-	public void setType(Material material, byte data) {
-		newtype = material;
-		newdata = data;
-		block.setType(material);
-		block.setData(data);
+	public void setType(final Material material, final byte data) {
+		this.newdata = data;
+		this.block.setType(material);
+		this.block.setData(data);
 	}
 
 	public static void startReversion() {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				long currentTime = System.currentTimeMillis();
+				final long currentTime = System.currentTimeMillis();
 				while (!REVERT_QUEUE.isEmpty()) {
-					TempBlock tempBlock = REVERT_QUEUE.peek();
+					final TempBlock tempBlock = REVERT_QUEUE.peek();
 					if (currentTime >= tempBlock.revertTime) {
 						REVERT_QUEUE.poll();
 						tempBlock.revertBlock();
-						//long finish = System.currentTimeMillis();
-						//Bukkit.broadcastMessage(String.valueOf(finish - currentTime));
 					} else {
 						break;
 					}
@@ -189,7 +182,7 @@ public class TempBlock {
 			}
 		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 	}
-	
+
 	public interface RevertTask {
 		public void run();
 	}

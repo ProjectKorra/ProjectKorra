@@ -10,7 +10,7 @@ public class Information {
 
 	private static int ID = Integer.MIN_VALUE;
 	private String string;
-	private int id;
+	private final int id;
 	private int integer;
 	private long time;
 	private double value;
@@ -23,93 +23,93 @@ public class Information {
 	private Player player;
 
 	public Information() {
-		id = ID++;
+		this.id = ID++;
 		if (ID >= Integer.MAX_VALUE) {
 			ID = Integer.MIN_VALUE;
 		}
 	}
 
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 
 	public byte getData() {
-		return data;
+		return this.data;
 	}
 
 	public double getDouble() {
-		return value;
+		return this.value;
 	}
 
 	public int getID() {
-		return id;
+		return this.id;
 	}
 
 	public int getInteger() {
-		return integer;
+		return this.integer;
 	}
 
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 
 	public BlockState getState() {
-		return state;
+		return this.state;
 	}
 
 	public String getString() {
-		return string;
+		return this.string;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
 	public Material getType() {
-		return type;
+		return this.type;
 	}
 
-	public void setBlock(Block block) {
+	public void setBlock(final Block block) {
 		this.block = block;
 	}
 
-	public void setData(byte data) {
+	public void setData(final byte data) {
 		this.data = data;
 	}
 
-	public void setDouble(double value) {
+	public void setDouble(final double value) {
 		this.value = value;
 	}
 
-	public void setInteger(int integer) {
+	public void setInteger(final int integer) {
 		this.integer = integer;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
-	public void setPlayer(Player player) {
+	public void setPlayer(final Player player) {
 		this.player = player;
 	}
 
-	public void setState(BlockState state) {
+	public void setState(final BlockState state) {
 		this.state = state;
 	}
 
-	public void setString(String string) {
+	public void setString(final String string) {
 		this.string = string;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
-	public void setType(Material type) {
+	public void setType(final Material type) {
 		this.type = type;
 	}
 

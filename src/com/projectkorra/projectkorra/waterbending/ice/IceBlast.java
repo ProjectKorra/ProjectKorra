@@ -1,16 +1,7 @@
 package com.projectkorra.projectkorra.waterbending.ice;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.IceAbility;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempPotionEffect;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,8 +14,17 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Random;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempPotionEffect;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class IceBlast extends IceAbility {
 
@@ -45,7 +45,7 @@ public class IceBlast extends IceAbility {
 	private Location destination;
 	public TempBlock source;
 
-	public IceBlast(Player player) {
+	public IceBlast(final Player player) {
 		super(player);
 
 		this.data = 0;
@@ -56,49 +56,54 @@ public class IceBlast extends IceAbility {
 		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
 		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
 
-		this.damage = getNightFactor(damage, player.getWorld());
+		this.damage = getNightFactor(this.damage, player.getWorld());
 
-		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
+		if (!this.bPlayer.canBend(this) || !this.bPlayer.canIcebend()) {
 			return;
 		}
-		
-		if (bPlayer.isAvatarState()) {
+
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceBlast.Range");
 			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceBlast.Damage");
 		}
 
 		block(player);
-		range = getNightFactor(range, player.getWorld());
-		Block sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, false, true, false, false, false);
+		this.range = getNightFactor(this.range, player.getWorld());
+		final Block sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.SHIFT_DOWN, false, true, false, false, false);
+		final IceBlast oldAbil = getAbility(player, IceBlast.class);
+		if (oldAbil != null) {
+			oldAbil.setSourceBlock(sourceBlock == null ? oldAbil.getSourceBlock() : sourceBlock);
+			return;
+		}
 
 		if (sourceBlock == null) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
 			return;
 		} else {
-			prepare(sourceBlock);
+			this.prepare(sourceBlock);
 		}
 	}
 
-	private void prepare(Block block) {
-		for (IceBlast iceBlast : getAbilities(player, IceBlast.class)) {
+	private void prepare(final Block block) {
+		for (final IceBlast iceBlast : getAbilities(this.player, IceBlast.class)) {
 			if (iceBlast.prepared) {
 				iceBlast.remove();
 			}
 		}
 
-		sourceBlock = block;
-		location = sourceBlock.getLocation();
-		prepared = true;
+		this.sourceBlock = block;
+		this.location = this.sourceBlock.getLocation();
+		this.prepared = true;
 
-		if (getAbilities(player, IceBlast.class).isEmpty()) {
-			start();
+		if (getAbilities(this.player, IceBlast.class).isEmpty()) {
+			this.start();
 		}
 	}
 
-	private static void block(Player player) {
-		for (IceBlast iceBlast : getAbilities(IceBlast.class)) {
+	private static void block(final Player player) {
+		for (final IceBlast iceBlast : getAbilities(IceBlast.class)) {
 			if (!iceBlast.location.getWorld().equals(player.getWorld())) {
 				continue;
 			} else if (!iceBlast.progressing) {
@@ -109,9 +114,9 @@ public class IceBlast extends IceAbility {
 				continue;
 			}
 
-			Location location = player.getEyeLocation();
-			Vector vector = location.getDirection();
-			Location mloc = iceBlast.location;
+			final Location location = player.getEyeLocation();
+			final Vector vector = location.getDirection();
+			final Location mloc = iceBlast.location;
 
 			if (mloc.distanceSquared(location) <= iceBlast.range * iceBlast.range && GeneralMethods.getDistanceFromLine(vector, location, iceBlast.location) < iceBlast.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				iceBlast.remove();
@@ -119,13 +124,13 @@ public class IceBlast extends IceAbility {
 		}
 	}
 
-	public static void activate(Player player) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static void activate(final Player player) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null && bPlayer.isOnCooldown("IceBlast")) {
 			return;
 		}
 
-		for (IceBlast ice : getAbilities(IceBlast.class)) {
+		for (final IceBlast ice : getAbilities(IceBlast.class)) {
 			if (ice.prepared) {
 				ice.throwIce();
 			}
@@ -135,193 +140,193 @@ public class IceBlast extends IceAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (progressing) {
-			if (source != null) {
-				source.revertBlock();
+		if (this.progressing) {
+			if (this.source != null) {
+				this.source.revertBlock();
 			}
-			progressing = false;
+			this.progressing = false;
 		}
 
-		if (player.isOnline()) {
-			if (bPlayer != null) {
-				bPlayer.addCooldown(this);
+		if (this.player.isOnline()) {
+			if (this.bPlayer != null) {
+				this.bPlayer.addCooldown(this);
 			}
 		}
 	}
 
 	private void returnWater() {
-		new WaterReturn(player, sourceBlock);
+		new WaterReturn(this.player, this.sourceBlock);
 	}
 
-	private void affect(LivingEntity entity) {
+	private void affect(final LivingEntity entity) {
 		if (entity instanceof Player) {
-			if (bPlayer.canBeSlowed()) {
-				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
+			if (this.bPlayer.canBeSlowed()) {
+				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 				new TempPotionEffect(entity, effect);
-				bPlayer.slow(10);
-				DamageHandler.damageEntity(entity, damage, this);
+				this.bPlayer.slow(10);
+				DamageHandler.damageEntity(entity, this.damage, this);
 			}
 		} else {
-			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
+			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 			new TempPotionEffect(entity, effect);
-			DamageHandler.damageEntity(entity, damage, this);
+			DamageHandler.damageEntity(entity, this.damage, this);
 		}
 		AirAbility.breakBreathbendingHold(entity);
 
 		for (int x = 0; x < 30; x++) {
-			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .3f, location, 255.0);
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .3f, this.location, 255.0);
 		}
 	}
 
 	private void throwIce() {
-		if (!prepared) {
+		if (!this.prepared) {
 			return;
 		}
 
-		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		final LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(this.player, this.range, new ArrayList<Entity>());
 		if (target == null) {
-			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
+			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, getTransparentMaterials());
 		} else {
-			destination = target.getEyeLocation();
+			this.destination = target.getEyeLocation();
 		}
 
-		location = sourceBlock.getLocation();
-		if (destination.distanceSquared(location) < 1) {
+		this.location = this.sourceBlock.getLocation();
+		if (this.destination.distanceSquared(this.location) < 1) {
 			return;
 		}
 
-		firstDestination = location.clone();
-		if (destination.getY() - location.getY() > 2) {
-			firstDestination.setY(destination.getY() - 1);
+		this.firstDestination = this.location.clone();
+		if (this.destination.getY() - this.location.getY() > 2) {
+			this.firstDestination.setY(this.destination.getY() - 1);
 		} else {
-			firstDestination.add(0, 2, 0);
+			this.firstDestination.add(0, 2, 0);
 		}
 
-		destination = GeneralMethods.getPointOnLine(firstDestination, destination, range);
-		progressing = true;
-		settingUp = true;
-		prepared = false;
-		
-		if (TempBlock.isTempBlock(sourceBlock)) {
-			TempBlock.get(sourceBlock).setType(Material.PACKED_ICE, data);
-			source = TempBlock.get(sourceBlock);
+		this.destination = GeneralMethods.getPointOnLine(this.firstDestination, this.destination, this.range);
+		this.progressing = true;
+		this.settingUp = true;
+		this.prepared = false;
+
+		if (TempBlock.isTempBlock(this.sourceBlock)) {
+			TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE, this.data);
+			this.source = TempBlock.get(this.sourceBlock);
 		} else {
-			new TempBlock(sourceBlock, Material.AIR, (byte) 0);
-			source = new TempBlock(sourceBlock, Material.PACKED_ICE, data);
+			new TempBlock(this.sourceBlock, Material.AIR, (byte) 0);
+			this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE, this.data);
 		}
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBinds(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBinds(this)) {
+			this.remove();
 			return;
 		}
 
-		if (player.getEyeLocation().distanceSquared(location) >= range * range) {
-			if (progressing) {
-				breakParticles(20);
-				remove();
-				returnWater();
+		if (this.player.getEyeLocation().distanceSquared(this.location) >= this.range * this.range) {
+			if (this.progressing) {
+				this.breakParticles(20);
+				this.remove();
+				this.returnWater();
 			} else {
-				breakParticles(20);
-				remove();
+				this.breakParticles(20);
+				this.remove();
 			}
 			return;
 		}
 
-		if (!bPlayer.getBoundAbilityName().equalsIgnoreCase(getName()) && prepared) {
-			remove();
+		if (!this.bPlayer.getBoundAbilityName().equalsIgnoreCase(this.getName()) && this.prepared) {
+			this.remove();
 			return;
 		}
 
-		if (System.currentTimeMillis() < time + interval) {
+		if (System.currentTimeMillis() < this.time + this.interval) {
 			return;
 		}
 
-		time = System.currentTimeMillis();
-		if (progressing) {
+		this.time = System.currentTimeMillis();
+		if (this.progressing) {
 			Vector direction;
-			if (location.getBlockY() == firstDestination.getBlockY()) {
-				settingUp = false;
+			if (this.location.getBlockY() == this.firstDestination.getBlockY()) {
+				this.settingUp = false;
 			}
 
-			if (location.distanceSquared(destination) <= 4) {
-				remove();
-				returnWater();
+			if (this.location.distanceSquared(this.destination) <= 4) {
+				this.remove();
+				this.returnWater();
 				return;
 			}
 
-			if (settingUp) {
-				direction = GeneralMethods.getDirection(location, firstDestination).normalize();
+			if (this.settingUp) {
+				direction = GeneralMethods.getDirection(this.location, this.firstDestination).normalize();
 			} else {
-				direction = GeneralMethods.getDirection(location, destination).normalize();
+				direction = GeneralMethods.getDirection(this.location, this.destination).normalize();
 			}
 
-			location.add(direction);
-			Block block = location.getBlock();
-			if (block.equals(sourceBlock)) {
+			this.location.add(direction);
+			final Block block = this.location.getBlock();
+			if (block.equals(this.sourceBlock)) {
 				return;
 			}
 
-			source.revertBlock();
-			source = null;
+			this.source.revertBlock();
+			this.source = null;
 
-			if (isTransparent(player, block) && !block.isLiquid()) {
+			if (isTransparent(this.player, block) && !block.isLiquid()) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
-				breakParticles(20);
-				remove();
-				returnWater();
+				this.breakParticles(20);
+				this.remove();
+				this.returnWater();
 				return;
 			}
 
-			if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-				remove();
-				returnWater();
+			if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+				this.remove();
+				this.returnWater();
 				return;
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
-				if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
-					affect((LivingEntity) entity);
-					progressing = false;
-					returnWater();
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
+				if (entity.getEntityId() != this.player.getEntityId() && entity instanceof LivingEntity) {
+					this.affect((LivingEntity) entity);
+					this.progressing = false;
+					this.returnWater();
 				}
 			}
 
-			if (!progressing) {
-				remove();
+			if (!this.progressing) {
+				this.remove();
 				return;
 			}
 
-			sourceBlock = block;
-			if (TempBlock.isTempBlock(sourceBlock)) {
-				TempBlock.get(sourceBlock).setType(Material.PACKED_ICE, data);
-				source = TempBlock.get(sourceBlock);
+			this.sourceBlock = block;
+			if (TempBlock.isTempBlock(this.sourceBlock)) {
+				TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE, this.data);
+				this.source = TempBlock.get(this.sourceBlock);
 			} else {
-				source = new TempBlock(sourceBlock, Material.PACKED_ICE, data);
+				this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE, this.data);
 			}
 
 			for (int x = 0; x < 10; x++) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .5f, location, 255.0);
-				ParticleEffect.SNOW_SHOVEL.display(location, (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), 0, 5);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .5f, this.location, 255.0);
+				ParticleEffect.SNOW_SHOVEL.display(this.location, (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), 0, 5);
 			}
 			if ((new Random()).nextInt(4) == 0) {
-				playIcebendingSound(location);
+				playIcebendingSound(this.location);
 			}
-			location = location.add(direction.clone());
-		} else if (prepared) {
-			playFocusWaterEffect(sourceBlock);
+			this.location = this.location.add(direction.clone());
+		} else if (this.prepared) {
+			playFocusWaterEffect(this.sourceBlock);
 		}
 	}
 
-	public void breakParticles(int amount) {
+	public void breakParticles(final int amount) {
 		for (int x = 0; x < amount; x++) {
-			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), 2f, location, 255.0);
-			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), 2f, this.location, 255.0);
+			ParticleEffect.SNOW_SHOVEL.display(this.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
 		}
-		location.getWorld().playSound(location, Sound.BLOCK_GLASS_BREAK, 5, 1.3f);
+		this.location.getWorld().playSound(this.location, Sound.BLOCK_GLASS_BREAK, 5, 1.3f);
 	}
 
 	@Override
@@ -331,17 +336,17 @@ public class IceBlast extends IceAbility {
 
 	@Override
 	public Location getLocation() {
-		if (location != null) {
-			return location;
-		} else if (sourceBlock != null) {
-			return sourceBlock.getLocation();
+		if (this.location != null) {
+			return this.location;
+		} else if (this.sourceBlock != null) {
+			return this.sourceBlock.getLocation();
 		}
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -356,127 +361,127 @@ public class IceBlast extends IceAbility {
 
 	@Override
 	public boolean isCollidable() {
-		return progressing;
+		return this.progressing;
 	}
 
 	@Override
 	public double getCollisionRadius() {
-		return collisionRadius;
+		return this.collisionRadius;
 	}
 
 	public boolean isPrepared() {
-		return prepared;
+		return this.prepared;
 	}
 
-	public void setPrepared(boolean prepared) {
+	public void setPrepared(final boolean prepared) {
 		this.prepared = prepared;
 	}
 
 	public boolean isSettingUp() {
-		return settingUp;
+		return this.settingUp;
 	}
 
-	public void setSettingUp(boolean settingUp) {
+	public void setSettingUp(final boolean settingUp) {
 		this.settingUp = settingUp;
 	}
 
 	public boolean isProgressing() {
-		return progressing;
+		return this.progressing;
 	}
 
-	public void setProgressing(boolean progressing) {
+	public void setProgressing(final boolean progressing) {
 		this.progressing = progressing;
 	}
 
 	public byte getData() {
-		return data;
+		return this.data;
 	}
 
-	public void setData(byte data) {
+	public void setData(final byte data) {
 		this.data = data;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
-	public void setCollisionRadius(double collisionRadius) {
+	public void setCollisionRadius(final double collisionRadius) {
 		this.collisionRadius = collisionRadius;
 	}
 
 	public double getDeflectRange() {
-		return deflectRange;
+		return this.deflectRange;
 	}
 
-	public void setDeflectRange(double deflectRange) {
+	public void setDeflectRange(final double deflectRange) {
 		this.deflectRange = deflectRange;
 	}
 
 	public Block getSourceBlock() {
-		return sourceBlock;
+		return this.sourceBlock;
 	}
 
-	public void setSourceBlock(Block sourceBlock) {
+	public void setSourceBlock(final Block sourceBlock) {
 		this.sourceBlock = sourceBlock;
 	}
 
 	public Location getFirstDestination() {
-		return firstDestination;
+		return this.firstDestination;
 	}
 
-	public void setFirstDestination(Location firstDestination) {
+	public void setFirstDestination(final Location firstDestination) {
 		this.firstDestination = firstDestination;
 	}
 
 	public Location getDestination() {
-		return destination;
+		return this.destination;
 	}
 
-	public void setDestination(Location destination) {
+	public void setDestination(final Location destination) {
 		this.destination = destination;
 	}
 
 	public TempBlock getSource() {
-		return source;
+		return this.source;
 	}
 
-	public void setSource(TempBlock source) {
+	public void setSource(final TempBlock source) {
 		this.source = source;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

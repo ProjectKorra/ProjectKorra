@@ -16,55 +16,55 @@ public class WarriorStance extends ChiAbility {
 	private int strength;
 	private int resistance;
 
-	public WarriorStance(Player player) {
+	public WarriorStance(final Player player) {
 		super(player);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.WarriorStance.Cooldown");
 		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
 		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 
-		ChiAbility stance = bPlayer.getStance();
+		final ChiAbility stance = this.bPlayer.getStance();
 		if (stance != null) {
+			stance.remove();
 			if (stance instanceof WarriorStance) {
-				stance.remove();
+				this.bPlayer.setStance(null);
 				return;
 			}
-			if (stance instanceof AcrobatStance) {
-				stance.remove();
-			}
 		}
-		start();
-		bPlayer.setStance(this);
+		this.start();
+		this.bPlayer.setStance(this);
 		GeneralMethods.displayMovePreview(player);
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBinds(this) || !bPlayer.hasElement(Element.CHI)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBinds(this) || !this.bPlayer.hasElement(Element.CHI)) {
+			this.remove();
 			return;
 		}
 
-		if (!player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, resistance, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, this.resistance, true));
 		}
-		if (!player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, strength, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, this.strength, true));
 		}
 	}
 
 	@Override
 	public void remove() {
 		super.remove();
-		bPlayer.addCooldown(this);
-		bPlayer.setStance(null);
-		GeneralMethods.displayMovePreview(player);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
-		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-		player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+		this.bPlayer.addCooldown(this);
+		this.bPlayer.setStance(null);
+		if (this.player != null) {
+			GeneralMethods.displayMovePreview(this.player);
+			this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+			this.player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+			this.player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+		}
 	}
 
 	@Override
@@ -74,12 +74,12 @@ public class WarriorStance extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -93,18 +93,18 @@ public class WarriorStance extends ChiAbility {
 	}
 
 	public int getStrength() {
-		return strength;
+		return this.strength;
 	}
 
-	public void setStrength(int strength) {
+	public void setStrength(final int strength) {
 		this.strength = strength;
 	}
 
 	public int getResistance() {
-		return resistance;
+		return this.resistance;
 	}
 
-	public void setResistance(int resistance) {
+	public void setResistance(final int resistance) {
 		this.resistance = resistance;
 	}
 

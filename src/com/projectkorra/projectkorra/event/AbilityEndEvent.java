@@ -10,12 +10,12 @@ public class AbilityEndEvent extends Event {
 
 	Ability ability;
 
-	public AbilityEndEvent(Ability ability) {
+	public AbilityEndEvent(final Ability ability) {
 		this.ability = ability;
 	}
 
 	public Ability getAbility() {
-		return ability;
+		return this.ability;
 	}
 
 	@Override

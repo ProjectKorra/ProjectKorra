@@ -8,7 +8,7 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 
 public class GracefulDescent extends AirAbility implements PassiveAbility {
 
-	public GracefulDescent(Player player) {
+	public GracefulDescent(final Player player) {
 		super(player);
 	}
 
@@ -47,4 +47,8 @@ public class GracefulDescent extends AirAbility implements PassiveAbility {
 		return false;
 	}
 
+	@Override
+	public boolean isProgressable() {
+		return false;
+	}
 }

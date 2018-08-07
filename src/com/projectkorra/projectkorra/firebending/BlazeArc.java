@@ -1,8 +1,8 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class BlazeArc extends FireAbility {
 
@@ -32,13 +32,13 @@ public class BlazeArc extends FireAbility {
 	private Location location;
 	private Vector direction;
 
-	public BlazeArc(Player player, Location location, Vector direction, double range) {
+	public BlazeArc(final Player player, final Location location, final Vector direction, final double range) {
 		super(player);
-		this.range = getDayFactor(range);
+		this.range = this.getDayFactor(range);
 		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
-		this.interval = (long) (1000. / speed);
+		this.interval = (long) (1000. / this.speed);
 		this.origin = location.clone();
-		this.location = origin.clone();
+		this.location = this.origin.clone();
 
 		this.direction = direction.clone();
 		this.direction.setY(0);
@@ -46,14 +46,14 @@ public class BlazeArc extends FireAbility {
 		this.location = this.location.clone().add(this.direction);
 
 		this.time = System.currentTimeMillis();
-		start();
+		this.start();
 	}
 
-	private void ignite(Block block) {
+	private void ignite(final Block block) {
 		if (block.getType() != Material.FIRE && block.getType() != Material.AIR) {
 			if (canFireGrief()) {
 				if (isPlant(block) || isSnow(block)) {
-					new PlantRegrowth(player, block);
+					new PlantRegrowth(this.player, block);
 				}
 			} else if (block.getType() != Material.FIRE) {
 				REPLACED_BLOCKS.put(block.getLocation(), block.getState().getData());
@@ -67,35 +67,35 @@ public class BlazeArc extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			this.remove();
 			return;
-		} else if (System.currentTimeMillis() - time >= interval) {
-			location = location.clone().add(direction);
-			time = System.currentTimeMillis();
+		} else if (System.currentTimeMillis() - this.time >= this.interval) {
+			this.location = this.location.clone().add(this.direction);
+			this.time = System.currentTimeMillis();
 
-			Block block = location.getBlock();
+			final Block block = this.location.getBlock();
 			if (block.getType() == Material.FIRE) {
 				return;
 			}
 
-			if (location.distanceSquared(origin) > range * range) {
-				remove();
+			if (this.location.distanceSquared(this.origin) > this.range * this.range) {
+				this.remove();
 				return;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
 				return;
 			}
 
-			if (isIgnitable(player, block)) {
-				ignite(block);
-			} else if (isIgnitable(player, block.getRelative(BlockFace.DOWN))) {
-				ignite(block.getRelative(BlockFace.DOWN));
-				location = block.getRelative(BlockFace.DOWN).getLocation();
-			} else if (isIgnitable(player, block.getRelative(BlockFace.UP))) {
-				ignite(block.getRelative(BlockFace.UP));
-				location = block.getRelative(BlockFace.UP).getLocation();
+			if (isIgnitable(this.player, block)) {
+				this.ignite(block);
+			} else if (isIgnitable(this.player, block.getRelative(BlockFace.DOWN))) {
+				this.ignite(block.getRelative(BlockFace.DOWN));
+				this.location = block.getRelative(BlockFace.DOWN).getLocation();
+			} else if (isIgnitable(this.player, block.getRelative(BlockFace.UP))) {
+				this.ignite(block.getRelative(BlockFace.UP));
+				this.location = block.getRelative(BlockFace.UP).getLocation();
 			} else {
-				remove();
+				this.remove();
 				return;
 			}
 		}
@@ -103,11 +103,11 @@ public class BlazeArc extends FireAbility {
 
 	public static void dissipateAll() {
 		if (DISSIPATE_REMOVE_TIME != 0) {
-			for (Block block : IGNITED_TIMES.keySet()) {
+			for (final Block block : IGNITED_TIMES.keySet()) {
 				if (block.getType() != Material.FIRE) {
 					removeBlock(block);
 				} else {
-					long time = IGNITED_TIMES.get(block);
+					final long time = IGNITED_TIMES.get(block);
 					if (System.currentTimeMillis() > time + DISSIPATE_REMOVE_TIME) {
 						block.setType(Material.AIR);
 						removeBlock(block);
@@ -118,14 +118,14 @@ public class BlazeArc extends FireAbility {
 	}
 
 	public static void handleDissipation() {
-		for (Block block : IGNITED_BLOCKS.keySet()) {
+		for (final Block block : IGNITED_BLOCKS.keySet()) {
 			if (block.getType() != Material.FIRE) {
 				IGNITED_BLOCKS.remove(block);
 			}
 		}
 	}
 
-	public static boolean isIgnitable(Player player, Block block) {
+	public static boolean isIgnitable(final Player player, final Block block) {
 		if (block.getType() == Material.FIRE) {
 			return true;
 		} else if (Arrays.asList(OVERWRITABLE_MATERIALS).contains(block.getType())) {
@@ -134,18 +134,18 @@ public class BlazeArc extends FireAbility {
 			return false;
 		}
 
-		Block belowBlock = block.getRelative(BlockFace.DOWN);
+		final Block belowBlock = block.getRelative(BlockFace.DOWN);
 		return isIgnitable(belowBlock);
 	}
 
 	public static void removeAllCleanup() {
-		for (Block block : IGNITED_BLOCKS.keySet()) {
+		for (final Block block : IGNITED_BLOCKS.keySet()) {
 			removeBlock(block);
 		}
 	}
 
-	public static void removeAroundPoint(Location location, double radius) {
-		for (BlazeArc stream : getAbilities(BlazeArc.class)) {
+	public static void removeAroundPoint(final Location location, final double radius) {
+		for (final BlazeArc stream : getAbilities(BlazeArc.class)) {
 			if (stream.location.getWorld().equals(location.getWorld())) {
 				if (stream.location.distanceSquared(location) <= radius * radius) {
 					stream.remove();
@@ -154,8 +154,7 @@ public class BlazeArc extends FireAbility {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public static void removeBlock(Block block) {
+	public static void removeBlock(final Block block) {
 		if (IGNITED_BLOCKS.containsKey(block)) {
 			IGNITED_BLOCKS.remove(block);
 		}
@@ -176,10 +175,10 @@ public class BlazeArc extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		if (location != null) {
-			return location;
+		if (this.location != null) {
+			return this.location;
 		}
-		return origin;
+		return this.origin;
 	}
 
 	@Override
@@ -198,50 +197,50 @@ public class BlazeArc extends FireAbility {
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public Vector getDirection() {
-		return direction;
+		return this.direction;
 	}
 
-	public void setDirection(Vector direction) {
+	public void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
@@ -265,7 +264,7 @@ public class BlazeArc extends FireAbility {
 		return REPLACED_BLOCKS;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -29,114 +30,129 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	private long cooldown;
 	private double range;
 	private int height;
-	private double radius;
+	private int radius;
 	private double speed;
 	private double fireTicks;
 	private double damage;
 	private ArrayList<LivingEntity> affectedEntities;
 
-	public FireWheel(Player player) {
+	public FireWheel(final Player player) {
 		super(player);
-		
-		if (bPlayer.isOnCooldown("FireWheel") && !bPlayer.isAvatarState()) {
-			remove();
+
+		if (this.bPlayer.isOnCooldown("FireWheel") && !this.bPlayer.isAvatarState()) {
+			this.remove();
 			return;
 		}
-		
+
 		this.damage = getConfig().getDouble("Abilities.Fire.FireWheel.Damage");
 		this.range = getConfig().getDouble("Abilities.Fire.FireWheel.Range");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireWheel.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
 		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
-		this.radius = getConfig().getDouble("Abilities.Fire.FireWheel.Radius");
-		
-		bPlayer.addCooldown(this);
-		origin = player.getLocation();
-		affectedEntities = new ArrayList<LivingEntity>();
+
+		this.bPlayer.addCooldown(this);
+		this.affectedEntities = new ArrayList<LivingEntity>();
 
 		if (GeneralMethods.getTopBlock(player.getLocation(), 3, 3) == null) {
-			remove();
+			this.remove();
 			return;
 		}
 
-		location = player.getLocation().clone();
-		location.setPitch(0);
-		direction = location.getDirection().clone().normalize();
-		direction.setY(0);
-		
-		if (bPlayer.isAvatarState()) {
+		this.location = player.getLocation().clone();
+		this.location.setPitch(0);
+		this.direction = this.location.getDirection().clone().normalize();
+		this.direction.setY(0);
+
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Damage");
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Range");
 			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
 			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Radius");
 		}
-		
-		start();
+
+		this.radius = this.height - 1;
+		this.origin = player.getLocation().clone().add(0, this.radius, 0);
+
+		this.start();
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
-		return null;
+	public Object createNewComboInstance(final Player player) {
+		return new FireWheel(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		final ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
+		return fireWheel;
 	}
 
 	@Override
 	public void progress() {
-		if (location.distanceSquared(origin) > range * range) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this) || GeneralMethods.isRegionProtectedFromBuild(this.player, this.location)) {
+			this.remove();
+			return;
+		}
+		if (this.location.distanceSquared(this.origin) > this.range * this.range) {
+			this.remove();
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(location, 2, 4);
+		Block topBlock = GeneralMethods.getTopBlock(this.location, this.radius, this.radius + 2);
 		if (topBlock.getType().equals(Material.SNOW)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		}
 		if (topBlock == null || isWater(topBlock)) {
-			remove();
+			this.remove();
 			return;
 		} else if (topBlock.getType() == Material.FIRE) {
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		} else if (ElementalAbility.isPlant(topBlock)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
+		} else if (topBlock.getType() == Material.AIR) {
+			this.remove();
+			return;
+		} else if (GeneralMethods.isSolid(topBlock.getRelative(BlockFace.UP)) || isWater(topBlock.getRelative(BlockFace.UP))) {
+			this.remove();
+			return;
 		}
-		location.setY(topBlock.getY() + height);
+		this.location.setY(topBlock.getY() + this.height);
 
 		for (double i = -180; i <= 180; i += 3) {
-			Location tempLoc = location.clone();
-			Vector newDir = direction.clone().multiply(radius * Math.cos(Math.toRadians(i)));
+			final Location tempLoc = this.location.clone();
+			final Vector newDir = this.direction.clone().multiply(this.radius * Math.cos(Math.toRadians(i)));
 			tempLoc.add(newDir);
-			tempLoc.setY(tempLoc.getY() + (radius * Math.sin(Math.toRadians(i))));
+			tempLoc.setY(tempLoc.getY() + (this.radius * Math.sin(Math.toRadians(i))));
 			ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
 		}
-		
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
-			if (entity instanceof LivingEntity && !entity.equals(player)) {
-				if (!affectedEntities.contains(entity)) {
-					affectedEntities.add((LivingEntity) entity);
-					DamageHandler.damageEntity(entity, damage, this);
-					entity.setFireTicks((int) (fireTicks * 20));
-					new FireDamageTimer(entity, player);
+
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius + 0.5)) {
+			if (entity instanceof LivingEntity && !entity.equals(this.player)) {
+				if (!this.affectedEntities.contains(entity)) {
+					this.affectedEntities.add((LivingEntity) entity);
+					DamageHandler.damageEntity(entity, this.damage, this);
+					entity.setFireTicks((int) (this.fireTicks * 20));
+					new FireDamageTimer(entity, this.player);
 				}
 			}
 		}
 
-		location = location.add(direction.clone().multiply(speed));
-		location.getWorld().playSound(location, Sound.BLOCK_FIRE_AMBIENT, 1, 1);
+		this.location = this.location.add(this.direction.clone().multiply(this.speed));
+		this.location.getWorld().playSound(this.location, Sound.BLOCK_FIRE_AMBIENT, 1, 1);
 	}
-	
+
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -146,7 +162,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
@@ -160,6 +176,11 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	}
 
 	public ArrayList<LivingEntity> getAffectedEntities() {
-		return affectedEntities;
+		return this.affectedEntities;
+	}
+
+	@Override
+	public String getInstructions() {
+		return "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift";
 	}
 }

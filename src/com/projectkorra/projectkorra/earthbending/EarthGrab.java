@@ -1,207 +1,332 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
+import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempArmorStand;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthGrab extends EarthAbility {
 
-	private long cooldown;
-	private double lowestDistance;
-	private double selectRange;
-	private int height;
-	private int radius;
+	private LivingEntity target;
+	private long cooldown, lastHit = 0, interval;
+	private double range, dragSpeed, trapHP, trappedHP, damageThreshold;
+	private GrabMode mode;
+	private boolean initiated = false;
+	private MovementHandler mHandler;
+	private ArmorStand trap;
 	private Location origin;
 	private Vector direction;
-	private Entity closestEntity;
-	private Location startLoc;
-	private Location loc;
-	private Vector dir;
-	private Block groundBlock;
-	private Material blockType;
-	private Byte blockByte;
-	private Random random;
+	private TempArmor armor;
+	private final Material[] crops = new Material[] { Material.BEETROOT_BLOCK, Material.CARROT, Material.POTATO, Material.SUGAR_CANE_BLOCK, Material.CROPS, Material.MELON_BLOCK, Material.PUMPKIN };
 
-	public EarthGrab(Player player) {
+	public static enum GrabMode {
+		TRAP, DRAG, PROJECTING;
+	}
+
+	public EarthGrab(final Player player, final GrabMode mode) {
 		super(player);
 
-		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
-		this.height = getConfig().getInt("Abilities.Earth.EarthGrab.Height");
+		if (hasAbility(player, EarthGrab.class)) {
+			getAbility(player, EarthGrab.class).remove();
+			return;
+		}
+
+		if (this.bPlayer.isOnCooldown(this)) {
+			return;
+		}
+
+		if (!this.isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+			return;
+		}
+
+		this.mode = mode;
+		this.setFields();
+		this.start();
+	}
+
+	private void setFields() {
+		this.range = getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
-		this.radius = getConfig().getInt("Abilities.Earth.EarthGrab.Radius");
-		this.origin = player.getEyeLocation();
-		this.direction = origin.getDirection();
-		this.lowestDistance = selectRange + 1;
-		this.closestEntity = null;
-		this.startLoc = player.getLocation();
-		this.loc = player.getLocation();
-		this.dir = player.getLocation().getDirection().clone().normalize().multiply(1.5);
-		this.random = new Random();
-
-		if (!bPlayer.canBend(this)) {
-			return;
-		} else if (player.getLocation().clone().add(0, -1, 0).getBlock().getType().isTransparent()) {
-			return;
-		}
-
-		if (bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height");
-			this.radius = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.EarthGrab.Radius");
-		}
-
-		if (player.isSneaking()) {
-			start();
-		} else {
-			Location targetLocation = GeneralMethods.getTargetedLocation(player, 1);
-			Block block = GeneralMethods.getTopBlock(targetLocation, 1, 1);
-			if (isEarthbendable(block) && block.getWorld().equals(player.getWorld()) && block.getLocation().distance(player.getLocation()) <= 1.6) {
-				earthGrabSelf();
-				remove();
-			}
-		}
-	}
-
-	public void formDome() {
-		if (closestEntity != null) {
-			ArrayList<Block> blocks = new ArrayList<Block>();
-			Location location = closestEntity.getLocation().clone().subtract(0, 1, 0);
-			location.setPitch(0);
-			for (float theta = -180; theta < 180; theta += 1) {
-				Location loc = location.clone();
-				loc.setYaw(theta);
-				Vector dir = loc.getDirection();
-				Block a = GeneralMethods.getTopBlock(loc.add(dir.clone().multiply(radius)), height/2);
-				while (!GeneralMethods.isSolid(a) && !isEarthbendable(a.getType(), true, true, false) && a.getY() > 0 && a.getY() < 256) {
-					a = a.getRelative(BlockFace.DOWN);
-				}
-				if (!blocks.contains(a)) {
-					blocks.add(a);
-					new RaiseEarth(player, a.getLocation(), (int) height);
-				}
-				
-				Block b = GeneralMethods.getTopBlock(loc.add(dir.clone().multiply(1)), height/2);
-				while (!GeneralMethods.isSolid(b) && !isEarthbendable(b.getType(), true, true, false) && b.getY() > 0 && b.getY() < 256) {
-					b = b.getRelative(BlockFace.DOWN);
-				}
-				if (!blocks.contains(b)) {
-					blocks.add(b);
-					new RaiseEarth(player, b.getLocation(), (int) height/2);
-				}
-			}
-
-			bPlayer.addCooldown(this);
-		}
-	}
-
-	public void earthGrabSelf() {
-		closestEntity = player;
-		getGround();
-		ParticleEffect.BLOCK_CRACK.display((ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 1F, 1F, 0.1F, 100, player.getLocation(), 500);
-		formDome();
-	}
-
-	@Override
-	public String getName() {
-		return "EarthGrab";
-	}
-
-	@SuppressWarnings("deprecation")
-	private Block getGround() {
-		Block b = GeneralMethods.getTopBlock(loc, 3);
-		if (isEarthbendable(b)) {
-			blockType = b.getType();
-			blockByte = b.getData();
-			return b;
-		} else {
-			while (!isEarthbendable(b)) {
-				b = b.getRelative(BlockFace.DOWN);
-				if (player.getLocation().getBlockY() - b.getY() > 5) {
-					break;
-				}
-			}
-			if (isEarthbendable(b)) {
-				blockType = b.getType();
-				blockByte = b.getData();
-				return b;
-			}
-		}
-		return null;
+		this.dragSpeed = getConfig().getDouble("Abilities.Earth.EarthGrab.DragSpeed");
+		this.interval = getConfig().getLong("Abilities.Earth.EarthGrab.TrapHitInterval");
+		this.trapHP = getConfig().getDouble("Abilities.Earth.EarthGrab.TrapHP");
+		this.damageThreshold = getConfig().getDouble("Abilities.Earth.EarthGrab.DamageThreshold");
+		this.origin = this.player.getLocation().clone();
+		this.direction = this.player.getLocation().getDirection().setY(0).normalize();
 	}
 
 	@Override
 	public void progress() {
-		groundBlock = getGround();
-		if (groundBlock == null) {
-			remove();
+		if (!this.player.isOnline() || this.player.isDead()) {
+			this.remove();
 			return;
 		}
-		bPlayer.addCooldown(this);
-		dir = dir.clone().normalize().multiply(1.5);
-		dir.setY(0);
-		double distance = loc.getY() - (double) groundBlock.getY();
-		double dx = Math.abs(distance - 2.4);
-		if (distance > 1.75) {
-			dir.setY(-.50 * dx * dx);
-		} else if (distance < 1) {
-			dir.setY(.50 * dx * dx);
-		} else {
-			dir.setY(0);
-		}
-		loc.add(dir);
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return;
-		}
-		if (!player.isSneaking()) {
-			remove();
-			return;
-		}
-		if (loc.getWorld().equals(startLoc.getWorld()) && loc.distance(startLoc) >= selectRange) {
-			remove();
-			return;
-		}
-		if (blockType == null) {
-			return;
-		} else if (blockByte == null) {
-			return;
-		}
-		ParticleEffect.BLOCK_CRACK.display((ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 0.1F, 1F, 0.1F, 100, loc.add(0, -1, 0), 500);
 
-		for (Entity e : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
-			if (e.getEntityId() != player.getEntityId() && e instanceof LivingEntity) {
-				closestEntity = e;
-				formDome();
-				remove();
+		if (this.target != null) {
+			if (this.target instanceof Player) {
+				final Player pt = (Player) this.target;
+				if (!pt.isOnline()) {
+					this.remove();
+					return;
+				}
+			}
+
+			if (this.target.isDead()) {
+				this.remove();
 				return;
 			}
 		}
-		if (random.nextInt(2) == 0) {
-			playEarthbendingSound(loc);
+
+		switch (this.mode) {
+			case PROJECTING:
+				this.project();
+				break;
+			case TRAP:
+				this.trap();
+				break;
+			case DRAG:
+				this.drag();
+				break;
+		}
+	}
+
+	public void project() {
+		this.origin = this.origin.add(this.direction);
+		Block top = GeneralMethods.getTopBlock(this.origin, 2);
+		if (this.origin.distance(this.player.getLocation()) > this.range) {
+			this.remove();
+			return;
 		}
 
+		if (!this.isTransparent(top.getRelative(BlockFace.UP))) {
+			this.remove();
+			return;
+		}
+
+		if (top.getType() == Material.FIRE) {
+			top.setType(Material.AIR);
+		}
+
+		while (!this.isEarthbendable(top)) {
+			if (this.isTransparent(top)) {
+				top = top.getRelative(BlockFace.DOWN);
+			} else {
+				this.remove();
+				return;
+			}
+		}
+
+		if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.origin)) {
+			this.remove();
+			return;
+		}
+
+		this.origin.setY(top.getY() + 1);
+
+		ParticleEffect.BLOCK_DUST.display(new BlockData(this.origin.getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.2f, 0.5f, 0.2f, 0, 27, this.origin, 256);
+		playEarthbendingSound(this.origin);
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, 1)) {
+			if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && this.isEarthbendable(entity.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+				if (entity instanceof Player && BendingPlayer.getBendingPlayer((Player) entity) != null) {
+					if (CoreAbility.hasAbility((Player) entity, AvatarState.class)) {
+						continue;
+					}
+				}
+				this.target = (LivingEntity) entity;
+				this.trappedHP = this.target.getHealth();
+				this.mode = GrabMode.TRAP;
+				this.origin = this.target.getLocation().clone();
+			}
+		}
+	}
+
+	public void trap() {
+		if (!this.initiated) {
+			final Material m = this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
+			final TempArmorStand tas = new TempArmorStand(this.target.getLocation());
+			this.trap = tas.getArmorStand();
+			this.trap.setVisible(false);
+			this.trap.setInvulnerable(false);
+			this.trap.setSmall(true);
+			this.trap.setHelmet(new ItemStack(m));
+			this.trap.setHealth(this.trapHP);
+			this.trap.setMetadata("earthgrab:trap", new FixedMetadataValue(ProjectKorra.plugin, this));
+
+			new TempBlock(this.target.getLocation().clone().subtract(0, 1, 0).getBlock(), this.target.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte) 0);
+
+			this.mHandler = new MovementHandler(this.target, this);
+			this.mHandler.stop(Element.EARTH.getColor() + "* Trapped *");
+
+			if (this.target instanceof Player || this.target instanceof Zombie || this.target instanceof Skeleton) {
+				final ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS);
+				final LeatherArmorMeta legmeta = (LeatherArmorMeta) legs.getItemMeta();
+				legmeta.setColor(Color.fromRGB(EarthArmor.getColor(m)));
+				legs.setItemMeta(legmeta);
+
+				final ItemStack feet = new ItemStack(Material.LEATHER_BOOTS);
+				final LeatherArmorMeta footmeta = (LeatherArmorMeta) feet.getItemMeta();
+				footmeta.setColor(Color.fromRGB(EarthArmor.getColor(m)));
+				feet.setItemMeta(footmeta);
+
+				final ItemStack[] pieces = { (this.target.getEquipment().getArmorContents()[0] == null || this.target.getEquipment().getArmorContents()[0].getType() == Material.AIR) ? feet : null, (this.target.getEquipment().getArmorContents()[1] == null || this.target.getEquipment().getArmorContents()[1].getType() == Material.AIR) ? legs : null, null, null };
+				this.armor = new TempArmor(this.target, 36000000L, this, pieces);
+			}
+
+			playEarthbendingSound(this.target.getLocation());
+			this.initiated = true;
+		}
+
+		ParticleEffect.BLOCK_DUST.display(new BlockData(this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.3f, 0.6f, 0.3f, 0, 36, this.target.getLocation(), 256);
+
+		if (this.trap.getLocation().clone().subtract(0, 0.1, 0).getBlock().getType() != Material.AIR) {
+			this.trap.setGravity(false);
+		} else {
+			this.trap.setGravity(true);
+		}
+
+		if (!this.isEarthbendable(this.target.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+			this.remove();
+			return;
+		}
+
+		if (this.trap.getLocation().distance(this.target.getLocation()) > 2) {
+			this.remove();
+			return;
+		}
+
+		if (this.trappedHP - this.target.getHealth() >= this.damageThreshold) {
+			this.remove();
+			return;
+		}
+
+		if (this.trapHP <= 0) {
+			this.remove();
+			return;
+		}
+
+		if (this.trap.isDead()) {
+			this.remove();
+			return;
+		}
+
+		if (this.player.getLocation().distance(this.target.getLocation()) > this.range) {
+			this.remove();
+			return;
+		}
+
+		if (!GeneralMethods.isSolid(this.target.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+			this.remove();
+			return;
+		}
+
+		if (GeneralMethods.isSolid(this.target.getLocation().getBlock())) {
+			this.remove();
+			return;
+		}
+	}
+
+	public void drag() {
+		if (!this.player.isOnGround()) {
+			return;
+		}
+
+		if (!this.player.isSneaking()) {
+			this.remove();
+			return;
+		}
+
+		if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.player.getLocation())) {
+			this.remove();
+			return;
+		}
+
+		for (final Location l : GeneralMethods.getCircle(this.player.getLocation(), (int) Math.floor(this.range), 2, false, false, 0)) {
+			if (!Arrays.asList(this.crops).contains(l.getBlock().getType())) {
+				continue;
+			}
+
+			final Block b = l.getBlock();
+			if (b.getData() == (byte) 7 || b.getType() == Material.MELON_BLOCK || b.getType() == Material.PUMPKIN) {
+				b.breakNaturally();
+			}
+		}
+
+		final List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.range);
+		if (ents.isEmpty()) {
+			this.remove();
+			return;
+		}
+
+		for (Entity entity : ents) {
+			if (!isEarth(entity.getLocation().clone().subtract(0, 1, 0).getBlock()) && (this.bPlayer.canSandbend() && !isSand(entity.getLocation().clone().subtract(0, 1, 0).getBlock())) && entity.getLocation().clone().subtract(0, 1, 0).getBlock().getType() != Material.SOIL) {
+				continue;
+			}
+
+			if (entity instanceof Arrow) {
+				final Location l = entity.getLocation();
+				entity.remove();
+				entity = l.getWorld().dropItem(l, new ItemStack(Material.ARROW, 1));
+			} else if (!(entity instanceof Item)) {
+				continue;
+			}
+			final Block b = entity.getLocation().getBlock().getRelative(BlockFace.DOWN);
+			entity.setVelocity(GeneralMethods.getDirection(entity.getLocation(), this.player.getLocation()).normalize().multiply(this.dragSpeed));
+			ParticleEffect.BLOCK_CRACK.display(new BlockData(b.getType(), b.getData()), 0, 0, 0, 0, 1, entity.getLocation(), 256);
+			playEarthbendingSound(entity.getLocation());
+		}
+	}
+
+	public void damageTrap() {
+		if (System.currentTimeMillis() >= this.lastHit + this.interval) {
+			this.trapHP -= 1;
+			this.lastHit = System.currentTimeMillis();
+			ParticleEffect.BLOCK_CRACK.display(new BlockData(this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.1f, 0.5f, 0.1f, 0, 17, this.target.getLocation().clone().add(0, 1, 0), 256);
+			playEarthbendingSound(this.target.getLocation());
+		}
 	}
 
 	@Override
-	public Location getLocation() {
-		return origin;
-	}
-
-	@Override
-	public long getCooldown() {
-		return cooldown;
+	public void remove() {
+		super.remove();
+		if (this.mode == GrabMode.TRAP) {
+			this.bPlayer.addCooldown(this);
+			this.mHandler.reset();
+			this.trap.remove();
+			if (TempArmor.getTempArmorList(this.target).contains(this.armor)) {
+				this.armor.revert();
+			}
+		}
+		this.bPlayer.addCooldown(this);
 	}
 
 	@Override
@@ -214,56 +339,30 @@ public class EarthGrab extends EarthAbility {
 		return false;
 	}
 
-	public double getLowestDistance() {
-		return lowestDistance;
+	@Override
+	public long getCooldown() {
+		return this.cooldown;
 	}
 
-	public void setLowestDistance(double lowestDistance) {
-		this.lowestDistance = lowestDistance;
+	@Override
+	public String getName() {
+		return "EarthGrab";
+	}
+
+	@Override
+	public Location getLocation() {
+		return this.target == null ? null : this.target.getLocation();
+	}
+
+	public GrabMode getMode() {
+		return this.mode;
 	}
 
 	public double getRange() {
-		return selectRange;
+		return this.range;
 	}
 
-	public void setRange(double range) {
-		this.selectRange = range;
+	public LivingEntity getTarget() {
+		return this.target;
 	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public Location getOrigin() {
-		return origin;
-	}
-
-	public void setOrigin(Location origin) {
-		this.origin = origin;
-	}
-
-	public Vector getDirection() {
-		return direction;
-	}
-
-	public void setDirection(Vector direction) {
-		this.direction = direction;
-	}
-
-	public Entity getClosestEntity() {
-		return closestEntity;
-	}
-
-	public void setClosestEntity(Entity closestEntity) {
-		this.closestEntity = closestEntity;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-	}
-
 }

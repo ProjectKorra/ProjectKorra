@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 
 public class Shockwave extends EarthAbility {
 
@@ -17,7 +17,7 @@ public class Shockwave extends EarthAbility {
 	private double threshold;
 	private double range;
 
-	public Shockwave(Player player, boolean fall) {
+	public Shockwave(final Player player, final boolean fall) {
 		super(player);
 
 		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
@@ -26,61 +26,61 @@ public class Shockwave extends EarthAbility {
 		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
 		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
 
-		if (bPlayer.isAvatarState()) {
-			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
-			chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
+		if (this.bPlayer.isAvatarState()) {
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
+			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
 		}
 
-		if (!bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
+		if (!this.bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
 			return;
 		}
 
 		if (fall) {
-			fallShockwave();
+			this.fallShockwave();
 			return;
 		}
 
-		start();
+		this.start();
 	}
 
 	public void fallShockwave() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			return;
-		} else if (player.getFallDistance() < threshold || !isEarthbendable(player.getLocation().clone().subtract(0, 1, 0).getBlock())) {
+		} else if (this.player.getFallDistance() < this.threshold || !this.isEarthbendable(this.player.getLocation().clone().subtract(0, 1, 0).getBlock())) {
 			return;
-		} else if (bPlayer.isOnCooldown("Shockwave")) {
+		} else if (this.bPlayer.isOnCooldown("Shockwave")) {
 			return;
 		}
 
-		areaShockwave();
-		bPlayer.addCooldown(this);
-		remove();
+		this.areaShockwave();
+		this.bPlayer.addCooldown(this);
+		this.remove();
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.remove();
 			return;
 		}
 
-		if (System.currentTimeMillis() > getStartTime() + chargeTime && !charged) {
-			charged = true;
+		if (System.currentTimeMillis() > this.getStartTime() + this.chargeTime && !this.charged) {
+			this.charged = true;
 		}
 
-		if (!player.isSneaking()) {
-			if (charged) {
-				areaShockwave();
-				remove();
+		if (!this.player.isSneaking()) {
+			if (this.charged) {
+				this.areaShockwave();
+				this.remove();
 				return;
 			} else {
-				remove();
+				this.remove();
 				return;
 			}
-		} else if (charged) {
-			Location location = player.getEyeLocation();
-			location.getWorld().playEffect(location, Effect.SMOKE, GeneralMethods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
+		} else if (this.charged) {
+			final Location location = this.player.getEyeLocation();
+			location.getWorld().playEffect(location, Effect.SMOKE, GeneralMethods.getIntCardinalDirection(this.player.getEyeLocation().getDirection()), 3);
 		}
 	}
 
@@ -89,24 +89,24 @@ public class Shockwave extends EarthAbility {
 	}
 
 	public void areaShockwave() {
-		double dtheta = 360.0 / (2 * Math.PI * this.range) - 1;
+		final double dtheta = 360.0 / (2 * Math.PI * this.range) - 1;
 		for (double theta = 0; theta < 360; theta += dtheta) {
-			double rtheta = Math.toRadians(theta);
-			Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
-			new Ripple(player, vector.normalize());
+			final double rtheta = Math.toRadians(theta);
+			final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
+			new Ripple(this.player, vector.normalize());
 		}
-		bPlayer.addCooldown(this);
+		this.bPlayer.addCooldown(this);
 	}
 
-	public static void coneShockwave(Player player) {
-		Shockwave shockWave = getAbility(player, Shockwave.class);
+	public static void coneShockwave(final Player player) {
+		final Shockwave shockWave = getAbility(player, Shockwave.class);
 		if (shockWave != null) {
 			if (shockWave.charged) {
-				double dtheta = 360.0 / (2 * Math.PI * shockWave.range) - 1;
+				final double dtheta = 360.0 / (2 * Math.PI * shockWave.range) - 1;
 
 				for (double theta = 0; theta < 360; theta += dtheta) {
-					double rtheta = Math.toRadians(theta);
-					Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
+					final double rtheta = Math.toRadians(theta);
+					final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
 					if (vector.angle(player.getEyeLocation().getDirection()) < shockWave.angle) {
 						new Ripple(player, vector.normalize());
 					}
@@ -124,12 +124,12 @@ public class Shockwave extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -143,46 +143,46 @@ public class Shockwave extends EarthAbility {
 	}
 
 	public boolean isCharged() {
-		return charged;
+		return this.charged;
 	}
 
-	public void setCharged(boolean charged) {
+	public void setCharged(final boolean charged) {
 		this.charged = charged;
 	}
 
 	public long getChargeTime() {
-		return chargeTime;
+		return this.chargeTime;
 	}
 
-	public void setChargeTime(long chargeTime) {
+	public void setChargeTime(final long chargeTime) {
 		this.chargeTime = chargeTime;
 	}
 
 	public double getAngle() {
-		return angle;
+		return this.angle;
 	}
 
-	public void setAngle(double angle) {
+	public void setAngle(final double angle) {
 		this.angle = angle;
 	}
 
 	public double getThreshold() {
-		return threshold;
+		return this.threshold;
 	}
 
-	public void setThreshold(double threshold) {
+	public void setThreshold(final double threshold) {
 		this.threshold = threshold;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

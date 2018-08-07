@@ -1,11 +1,11 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class Blaze extends FireAbility {
 
@@ -14,7 +14,7 @@ public class Blaze extends FireAbility {
 	private double range;
 	private double speed;
 
-	public Blaze(Player player) {
+	public Blaze(final Player player) {
 		super(player);
 
 		this.speed = 2;
@@ -22,18 +22,18 @@ public class Blaze extends FireAbility {
 		this.arc = getConfig().getInt("Abilities.Fire.Blaze.Arc");
 		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Range");
 
-		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeArc")) {
+		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("BlazeArc")) {
 			return;
 		}
 
-		this.range = getDayFactor(range);
-		this.range = AvatarState.getValue(range, player);
-		this.arc = (int) getDayFactor(arc);
-		Location location = player.getLocation();
+		this.range = this.getDayFactor(this.range);
+		this.range = AvatarState.getValue(this.range, player);
+		this.arc = (int) this.getDayFactor(this.arc);
+		final Location location = player.getLocation();
 
-		for (int i = -arc; i <= arc; i += speed) {
-			double angle = Math.toRadians(i);
-			Vector direction = player.getEyeLocation().getDirection().clone();
+		for (int i = -this.arc; i <= this.arc; i += this.speed) {
+			final double angle = Math.toRadians(i);
+			final Vector direction = player.getEyeLocation().getDirection().clone();
 			double x, z, vx, vz;
 
 			x = direction.getX();
@@ -45,12 +45,12 @@ public class Blaze extends FireAbility {
 			direction.setX(vx);
 			direction.setZ(vz);
 
-			new BlazeArc(player, location, direction, range);
+			new BlazeArc(player, location, direction, this.range);
 		}
 
-		start();
-		bPlayer.addCooldown("BlazeArc", cooldown);
-		remove();
+		this.start();
+		this.bPlayer.addCooldown("BlazeArc", this.cooldown);
+		this.remove();
 	}
 
 	@Override
@@ -64,12 +64,12 @@ public class Blaze extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override

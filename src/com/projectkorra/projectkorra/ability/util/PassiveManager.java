@@ -20,12 +20,12 @@ public class PassiveManager {
 	private static final Map<String, CoreAbility> PASSIVES = new HashMap<>();
 	private static final Map<PassiveAbility, Class<? extends CoreAbility>> PASSIVE_CLASSES = new HashMap<>();
 
-	public static void registerPassives(Player player) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static void registerPassives(final Player player) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
 		}
-		for (CoreAbility ability : CoreAbility.getAbilities()) {
+		for (final CoreAbility ability : PASSIVES.values()) {
 			if (ability instanceof PassiveAbility) {
 				if (!hasPassive(player, ability)) {
 					continue;
@@ -37,13 +37,16 @@ public class PassiveManager {
 					 * here. This just enables the passive to be displayed in /b
 					 * d [element]passive
 					 */
-				} else if (!((PassiveAbility) ability).isInstantiable()) {
+				}
+
+				if (!((PassiveAbility) ability).isInstantiable()) {
 					continue;
 				}
+
 				try {
-					Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get((PassiveAbility) ability);
-					Constructor<?> constructor = clazz.getConstructor(Player.class);
-					Object object = constructor.newInstance(new Object[] { player });
+					final Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get(ability);
+					final Constructor<?> constructor = clazz.getConstructor(Player.class);
+					final Object object = constructor.newInstance(player);
 					((CoreAbility) object).start();
 				}
 				catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -53,13 +56,13 @@ public class PassiveManager {
 		}
 	}
 
-	public static boolean hasPassive(Player player, CoreAbility passive) {
+	public static boolean hasPassive(final Player player, final CoreAbility passive) {
 		if (player == null) {
 			return false;
 		} else if (passive == null) {
 			return false;
 		}
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Element element = passive.getElement();
 		if (passive.getElement() instanceof SubElement) {
 			element = ((SubElement) passive.getElement()).getParentElement();
@@ -70,7 +73,7 @@ public class PassiveManager {
 			return false;
 		} else if (!passive.isEnabled()) {
 			return false;
-		} else if (!bPlayer.canBendPassive(passive.getElement())) {
+		} else if (!bPlayer.canBendPassive(passive)) {
 			return false;
 		} else if (!bPlayer.isToggled()) {
 			return false;
@@ -80,13 +83,13 @@ public class PassiveManager {
 		return true;
 	}
 
-	public static Set<String> getPassivesForElement(Element element) {
-		Set<String> passives = new HashSet<>();
-		for (CoreAbility passive : PASSIVES.values()) {
+	public static Set<String> getPassivesForElement(final Element element) {
+		final Set<String> passives = new HashSet<>();
+		for (final CoreAbility passive : PASSIVES.values()) {
 			if (passive.getElement() == element) {
 				passives.add(passive.getName());
 			} else if (passive.getElement() instanceof SubElement) {
-				Element check = ((SubElement)passive.getElement()).getParentElement();
+				final Element check = ((SubElement) passive.getElement()).getParentElement();
 				if (check == element) {
 					passives.add(passive.getName());
 				}

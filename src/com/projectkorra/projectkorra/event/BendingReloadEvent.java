@@ -13,12 +13,13 @@ public class BendingReloadEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled = false;
-	private CommandSender sender;
+	private final CommandSender sender;
 
-	public BendingReloadEvent(CommandSender sender) {
+	public BendingReloadEvent(final CommandSender sender) {
 		this.sender = sender;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}
@@ -31,7 +32,7 @@ public class BendingReloadEvent extends Event implements Cancellable {
 	 * @return Who called the reload
 	 */
 	public CommandSender getSender() {
-		return sender;
+		return this.sender;
 	}
 
 	/**
@@ -39,17 +40,17 @@ public class BendingReloadEvent extends Event implements Cancellable {
 	 */
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	/**
 	 * Sets if the event is cancelled
-	 * 
+	 *
 	 * @param cancel boolean value indicating whether the event is cancelled or
 	 *            not
 	 */
 	@Override
-	public void setCancelled(boolean cancel) {
-		cancelled = cancel;
+	public void setCancelled(final boolean cancel) {
+		this.cancelled = cancel;
 	}
 }

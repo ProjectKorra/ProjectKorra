@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
 
 public abstract class SpiritualAbility extends AirAbility implements SubAbility {
 
-	public SpiritualAbility(Player player) {
+	public SpiritualAbility(final Player player) {
 		super(player);
 	}
 

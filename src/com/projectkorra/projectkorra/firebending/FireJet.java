@@ -1,9 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,7 +8,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireJet extends FireAbility {
 
@@ -22,19 +22,19 @@ public class FireJet extends FireAbility {
 	private double speed;
 	private Random random;
 
-	public FireJet(Player player) {
+	public FireJet(final Player player) {
 		super(player);
 
-		FireJet oldJet = getAbility(player, FireJet.class);
+		final FireJet oldJet = getAbility(player, FireJet.class);
 		if (oldJet != null) {
 			oldJet.remove();
 			return;
-		} else if (bPlayer.isOnCooldown(this)) {
+		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
 		if (hasAbility(player, AirSpout.class)) {
-			AirSpout abil = getAbility(player, AirSpout.class);
+			final AirSpout abil = getAbility(player, AirSpout.class);
 			abil.remove();
 		}
 
@@ -44,11 +44,11 @@ public class FireJet extends FireAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");
 		this.random = new Random();
 
-		this.speed = getDayFactor(speed);
-		Block block = player.getLocation().getBlock();
+		this.speed = this.getDayFactor(this.speed);
+		final Block block = player.getLocation().getBlock();
 
-		if (BlazeArc.isIgnitable(player, block) || block.getType() == Material.AIR || block.getType() == Material.STEP || block.getType() == Material.WOOD_STEP || bPlayer.isAvatarState()) {
-			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(speed));
+		if (BlazeArc.isIgnitable(player, block) || block.getType() == Material.AIR || block.getType() == Material.STEP || block.getType() == Material.WOOD_STEP || this.bPlayer.isAvatarState()) {
+			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (canFireGrief()) {
 				if (block.getType() == Material.AIR) {
 					createTempFire(block.getLocation());
@@ -58,42 +58,48 @@ public class FireJet extends FireAbility {
 				block.setType(Material.FIRE);
 			}
 
-			new Flight(player);
+			ProjectKorra.flightHandler.createInstance(player, this.getName());
 			player.setAllowFlight(true);
-			time = System.currentTimeMillis();
+			this.time = System.currentTimeMillis();
 
-			start();
-			bPlayer.addCooldown(this);
+			this.start();
+			this.bPlayer.addCooldown(this);
 		}
 	}
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
+		if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
-		} else if ((isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration) && (!bPlayer.isAvatarState() || !avatarStateToggled)) {
-			remove();
+		} else if ((isWater(this.player.getLocation().getBlock()) || System.currentTimeMillis() > this.time + this.duration) && (!this.bPlayer.isAvatarState() || !this.avatarStateToggled)) {
+			this.remove();
 			return;
 		} else {
-			if (random.nextInt(2) == 0) {
-				playFirebendingSound(player.getLocation());
+			if (this.random.nextInt(2) == 0) {
+				playFirebendingSound(this.player.getLocation());
 			}
 
-			ParticleEffect.FLAME.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
-			ParticleEffect.SMOKE.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.FLAME.display(this.player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.SMOKE.display(this.player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
 			double timefactor;
 
-			if (bPlayer.isAvatarState() && avatarStateToggled) {
+			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {
 				timefactor = 1;
 			} else {
-				timefactor = 1 - (System.currentTimeMillis() - time) / (2.0 * duration);
+				timefactor = 1 - (System.currentTimeMillis() - this.time) / (2.0 * this.duration);
 			}
 
-			Vector velocity = player.getEyeLocation().getDirection().clone().normalize().multiply(speed * timefactor);
-			player.setVelocity(velocity);
-			player.setFallDistance(0);
+			final Vector velocity = this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed * timefactor);
+			this.player.setVelocity(velocity);
+			this.player.setFallDistance(0);
 		}
+	}
+
+	@Override
+	public void remove() {
+		super.remove();
+		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	@Override
@@ -103,12 +109,12 @@ public class FireJet extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -122,38 +128,38 @@ public class FireJet extends FireAbility {
 	}
 
 	public boolean isAvatarStateToggled() {
-		return avatarStateToggled;
+		return this.avatarStateToggled;
 	}
 
-	public void setAvatarStateToggled(boolean avatarStateToggled) {
+	public void setAvatarStateToggled(final boolean avatarStateToggled) {
 		this.avatarStateToggled = avatarStateToggled;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getDuration() {
-		return duration;
+		return this.duration;
 	}
 
-	public void setDuration(long duration) {
+	public void setDuration(final long duration) {
 		this.duration = duration;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

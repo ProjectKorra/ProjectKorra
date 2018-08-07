@@ -68,34 +68,34 @@ public class CollisionManager {
 
 	private void detectCollisions() {
 		int activeInstanceCount = 0;
-		
-		for (CoreAbility ability : CoreAbility.getAbilitiesByInstances()) {
+
+		for (final CoreAbility ability : CoreAbility.getAbilitiesByInstances()) {
 			if (!(ability instanceof PassiveAbility)) {
 				if (++activeInstanceCount > 1) {
 					break;
 				}
 			}
 		}
-		
+
 		if (activeInstanceCount <= 1) {
 			return;
 		}
-		
-		HashMap<CoreAbility, List<Location>> locationsCache = new HashMap<>();
 
-		for (Collision collision : collisions) {
-			Collection<? extends CoreAbility> instancesFirst = CoreAbility.getAbilities(collision.getAbilityFirst().getClass());
+		final HashMap<CoreAbility, List<Location>> locationsCache = new HashMap<>();
+
+		for (final Collision collision : this.collisions) {
+			final Collection<? extends CoreAbility> instancesFirst = CoreAbility.getAbilities(collision.getAbilityFirst().getClass());
 			if (instancesFirst.isEmpty()) {
 				continue;
 			}
-			Collection<? extends CoreAbility> instancesSecond = CoreAbility.getAbilities(collision.getAbilitySecond().getClass());
+			final Collection<? extends CoreAbility> instancesSecond = CoreAbility.getAbilities(collision.getAbilitySecond().getClass());
 			if (instancesSecond.isEmpty()) {
 				continue;
 			}
-			HashSet<CoreAbility> alreadyCollided = new HashSet<CoreAbility>();
-			double certainNoCollisionDistSquared = Math.pow(certainNoCollisionDistance, 2);
+			final HashSet<CoreAbility> alreadyCollided = new HashSet<CoreAbility>();
+			final double certainNoCollisionDistSquared = Math.pow(this.certainNoCollisionDistance, 2);
 
-			for (CoreAbility abilityFirst : instancesFirst) {
+			for (final CoreAbility abilityFirst : instancesFirst) {
 				if (abilityFirst.getPlayer() == null || alreadyCollided.contains(abilityFirst) || !abilityFirst.isCollidable()) {
 					continue;
 				}
@@ -103,32 +103,32 @@ public class CollisionManager {
 				if (!locationsCache.containsKey(abilityFirst)) {
 					locationsCache.put(abilityFirst, abilityFirst.getLocations());
 				}
-				List<Location> locationsFirst = locationsCache.get(abilityFirst);
+				final List<Location> locationsFirst = locationsCache.get(abilityFirst);
 				if (locationsFirst.isEmpty()) {
 					continue;
 				}
 
-				for (CoreAbility abilitySecond : instancesSecond) {
+				for (final CoreAbility abilitySecond : instancesSecond) {
 					if (abilitySecond.getPlayer() == null || alreadyCollided.contains(abilitySecond) || !abilitySecond.isCollidable()) {
 						continue;
 					} else if (abilityFirst.getPlayer().equals(abilitySecond.getPlayer())) {
 						continue;
-					} 
+					}
 
 					if (!locationsCache.containsKey(abilitySecond)) {
 						locationsCache.put(abilitySecond, abilitySecond.getLocations());
 					}
-					List<Location> locationsSecond = locationsCache.get(abilitySecond);
+					final List<Location> locationsSecond = locationsCache.get(abilitySecond);
 					if (locationsSecond.isEmpty()) {
 						continue;
 					}
 
 					boolean collided = false;
-					boolean certainNoCollision = false; // Used for efficiency
+					boolean certainNoCollision = false; // Used for efficiency.
 					Location locationFirst = null;
 					Location locationSecond = null;
-					double requiredDist = abilityFirst.getCollisionRadius() + abilitySecond.getCollisionRadius();
-					double requiredDistSquared = Math.pow(requiredDist, 2);
+					final double requiredDist = abilityFirst.getCollisionRadius() + abilitySecond.getCollisionRadius();
+					final double requiredDistSquared = Math.pow(requiredDist, 2);
 
 					for (int i = 0; i < locationsFirst.size(); i++) {
 						locationFirst = locationsFirst.get(i);
@@ -144,7 +144,7 @@ public class CollisionManager {
 							if (locationFirst.getWorld() != locationSecond.getWorld()) {
 								continue;
 							}
-							double distSquared = locationFirst.distanceSquared(locationSecond);
+							final double distSquared = locationFirst.distanceSquared(locationSecond);
 							if (distSquared <= requiredDistSquared) {
 								collided = true;
 								break;
@@ -159,16 +159,16 @@ public class CollisionManager {
 					}
 
 					if (collided) {
-						Collision forwardCollision = new Collision(abilityFirst, abilitySecond, collision.isRemovingFirst(), collision.isRemovingSecond(), locationFirst, locationSecond);
-						Collision reverseCollision = new Collision(abilitySecond, abilityFirst, collision.isRemovingSecond(), collision.isRemovingFirst(), locationSecond, locationFirst);
-						AbilityCollisionEvent event = new AbilityCollisionEvent(forwardCollision);
+						final Collision forwardCollision = new Collision(abilityFirst, abilitySecond, collision.isRemovingFirst(), collision.isRemovingSecond(), locationFirst, locationSecond);
+						final Collision reverseCollision = new Collision(abilitySecond, abilityFirst, collision.isRemovingSecond(), collision.isRemovingFirst(), locationSecond, locationFirst);
+						final AbilityCollisionEvent event = new AbilityCollisionEvent(forwardCollision);
 						Bukkit.getServer().getPluginManager().callEvent(event);
 						if (event.isCancelled()) {
 							continue;
 						}
 						abilityFirst.handleCollision(forwardCollision);
 						abilitySecond.handleCollision(reverseCollision);
-						if (!removeMultipleInstances) {
+						if (!this.removeMultipleInstances) {
 							alreadyCollided.add(abilityFirst);
 							alreadyCollided.add(abilitySecond);
 							break;
@@ -183,77 +183,86 @@ public class CollisionManager {
 	 * Adds a "fake" Collision to the CollisionManager so that two abilities can
 	 * be checked for collisions. This Collision only needs to define the
 	 * abilityFirst, abilitySecond, removeFirst, and removeSecond.
-	 * 
+	 *
 	 * @param collision a Collision containing two CoreAbility classes
 	 */
-	public void addCollision(Collision collision) {
+	public void addCollision(final Collision collision) {
 		if (collision == null || collision.getAbilityFirst() == null || collision.getAbilitySecond() == null) {
 			return;
 		}
-		collisions.add(collision);
+
+		for (int x = 0; x < this.collisions.size(); x++) {
+			if (this.collisions.get(x).getAbilityFirst().equals(collision.getAbilityFirst())) {
+				if (this.collisions.get(x).getAbilitySecond().equals(collision.getAbilitySecond())) {
+					this.collisions.remove(x);
+				}
+			}
+		}
+
+		this.collisions.add(collision);
 	}
 
 	/**
 	 * Begins a BukkitRunnable to check for Collisions.
 	 */
 	public void startCollisionDetection() {
-		stopCollisionDetection();
-		detectionRunnable = new BukkitRunnable() {
+		this.stopCollisionDetection();
+		this.detectionRunnable = new BukkitRunnable() {
 			@Override
 			public void run() {
-				detectCollisions();
+				CollisionManager.this.detectCollisions();
 			}
 		};
-		detectionRunnable.runTaskTimer(ProjectKorra.plugin, 0L, detectionDelay);
+		this.detectionRunnable.runTaskTimer(ProjectKorra.plugin, 0L, this.detectionDelay);
 	}
 
 	/**
 	 * Stops the collision detecting BukkitRunnable.
 	 */
 	public void stopCollisionDetection() {
-		if (detectionRunnable != null) {
-			detectionRunnable.cancel();
-			detectionRunnable = null;
+		if (this.detectionRunnable != null) {
+			this.detectionRunnable.cancel();
+			this.detectionRunnable = null;
 		}
 	}
 
 	public boolean isRemoveMultipleInstances() {
-		return removeMultipleInstances;
+		return this.removeMultipleInstances;
 	}
 
-	public void setRemoveMultipleInstances(boolean removeMultipleInstances) {
+	public void setRemoveMultipleInstances(final boolean removeMultipleInstances) {
 		this.removeMultipleInstances = removeMultipleInstances;
 	}
 
 	public long getDetectionDelay() {
-		return detectionDelay;
+		return this.detectionDelay;
 	}
 
-	public void setDetectionDelay(long detectionDelay) {
+	public void setDetectionDelay(final long detectionDelay) {
 		this.detectionDelay = detectionDelay;
 	}
 
 	public double getCertainNoCollisionDistance() {
-		return certainNoCollisionDistance;
+		return this.certainNoCollisionDistance;
 	}
 
-	public void setCertainNoCollisionDistance(double certainNoCollisionDistance) {
+	public void setCertainNoCollisionDistance(final double certainNoCollisionDistance) {
 		this.certainNoCollisionDistance = certainNoCollisionDistance;
 	}
 
 	public ArrayList<Collision> getCollisions() {
-		return collisions;
+		return this.collisions;
 	}
 
-	public void setCollisions(ArrayList<Collision> collisions) {
+	public void setCollisions(final ArrayList<Collision> collisions) {
 		this.collisions = collisions;
 	}
 
 	public BukkitRunnable getDetectionRunnable() {
-		return detectionRunnable;
+		return this.detectionRunnable;
 	}
 
-	public void setDetectionRunnable(BukkitRunnable detectionRunnable) {
+	public void setDetectionRunnable(final BukkitRunnable detectionRunnable) {
 		this.detectionRunnable = detectionRunnable;
 	}
 

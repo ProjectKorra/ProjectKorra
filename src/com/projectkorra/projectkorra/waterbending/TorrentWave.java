@@ -1,9 +1,10 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,11 +13,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class TorrentWave extends WaterAbility {
 
@@ -33,14 +33,14 @@ public class TorrentWave extends WaterAbility {
 	private ArrayList<Entity> affectedEntities;
 	private Map<Integer, ConcurrentHashMap<Integer, Double>> heights;
 
-	public TorrentWave(Player player, double radius) {
+	public TorrentWave(final Player player, final double radius) {
 		this(player, player.getEyeLocation(), radius);
 	}
 
-	public TorrentWave(Player player, Location location, double radius) {
+	public TorrentWave(final Player player, final Location location, final double radius) {
 		super(player);
 
-		if (bPlayer.isOnCooldown("TorrentWave")) {
+		if (this.bPlayer.isOnCooldown("TorrentWave")) {
 			return;
 		}
 
@@ -57,140 +57,140 @@ public class TorrentWave extends WaterAbility {
 		this.blocks = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 
-		this.knockback = getNightFactor(knockback);
-		this.maxRadius = getNightFactor(maxRadius);
+		this.knockback = this.getNightFactor(this.knockback);
+		this.maxRadius = this.getNightFactor(this.maxRadius);
 
-		initializeHeightsMap();
-		start();
-		bPlayer.addCooldown("TorrentWave", cooldown);
+		this.initializeHeightsMap();
+		this.start();
+		this.bPlayer.addCooldown("TorrentWave", this.cooldown);
 	}
 
 	private void initializeHeightsMap() {
-		for (int i = -1; i <= maxHeight; i++) {
-			ConcurrentHashMap<Integer, Double> angles = new ConcurrentHashMap<>();
-			double dtheta = Math.toDegrees(1 / (maxRadius + 2));
+		for (int i = -1; i <= this.maxHeight; i++) {
+			final ConcurrentHashMap<Integer, Double> angles = new ConcurrentHashMap<>();
+			final double dtheta = Math.toDegrees(1 / (this.maxRadius + 2));
 			int j = 0;
 
 			for (double theta = 0; theta < 360; theta += dtheta) {
 				angles.put(j, theta);
 				j++;
 			}
-			heights.put(i, angles);
+			this.heights.put(i, angles);
 		}
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			this.remove();
 			return;
 
 		}
 
-		if (System.currentTimeMillis() > time + interval) {
-			if (radius < maxRadius) {
-				radius += growSpeed;
+		if (System.currentTimeMillis() > this.time + this.interval) {
+			if (this.radius < this.maxRadius) {
+				this.radius += this.growSpeed;
 			} else {
-				remove();
-				returnWater();
+				this.remove();
+				this.returnWater();
 				return;
 			}
-			formBurst();
-			time = System.currentTimeMillis();
+			this.formBurst();
+			this.time = System.currentTimeMillis();
 		}
 	}
 
 	private void formBurst() {
-		for (TempBlock tempBlock : blocks) {
+		for (final TempBlock tempBlock : this.blocks) {
 			tempBlock.revertBlock();
 		}
 
-		blocks.clear();
-		affectedEntities.clear();
+		this.blocks.clear();
+		this.affectedEntities.clear();
 
-		ArrayList<Entity> indexList = new ArrayList<Entity>();
-		indexList.addAll(GeneralMethods.getEntitiesAroundPoint(origin, radius + 2));
-		ArrayList<Block> torrentBlocks = new ArrayList<Block>();
+		final ArrayList<Entity> indexList = new ArrayList<Entity>();
+		indexList.addAll(GeneralMethods.getEntitiesAroundPoint(this.origin, this.radius + 2));
+		final ArrayList<Block> torrentBlocks = new ArrayList<Block>();
 
-		if (indexList.contains(player)) {
-			indexList.remove(player);
+		if (indexList.contains(this.player)) {
+			indexList.remove(this.player);
 		}
 
-		for (int id : heights.keySet()) {
-			ConcurrentHashMap<Integer, Double> angles = heights.get(id);
-			for (int index : angles.keySet()) {
-				double angle = angles.get(index);
-				double theta = Math.toRadians(angle);
-				double dx = Math.cos(theta) * radius;
-				double dy = id;
-				double dz = Math.sin(theta) * radius;
+		for (final int id : this.heights.keySet()) {
+			final ConcurrentHashMap<Integer, Double> angles = this.heights.get(id);
+			for (final int index : angles.keySet()) {
+				final double angle = angles.get(index);
+				final double theta = Math.toRadians(angle);
+				final double dx = Math.cos(theta) * this.radius;
+				final double dy = id;
+				final double dz = Math.sin(theta) * this.radius;
 
-				Location location = origin.clone().add(dx, dy, dz);
-				Block block = location.getBlock();
+				final Location location = this.origin.clone().add(dx, dy, dz);
+				final Block block = location.getBlock();
 
 				if (torrentBlocks.contains(block)) {
 					continue;
 				}
 
-				if (isTransparent(player, block)) {
-					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
-					blocks.add(tempBlock);
+				if (isTransparent(this.player, block)) {
+					final TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
+					this.blocks.add(tempBlock);
 					torrentBlocks.add(block);
 				} else {
 					angles.remove(index);
 					continue;
 				}
 
-				for (Entity entity : indexList) {
-					if (!affectedEntities.contains(entity)) {
+				for (final Entity entity : indexList) {
+					if (!this.affectedEntities.contains(entity)) {
 						if (entity.getLocation().distanceSquared(location) <= 4) {
-							affectedEntities.add(entity);
-							affect(entity);
+							this.affectedEntities.add(entity);
+							this.affect(entity);
 						}
 					}
 				}
 
-				Random random = new Random();
-				for (Block sound : torrentBlocks) {
+				final Random random = new Random();
+				for (final Block sound : torrentBlocks) {
 					if (random.nextInt(50) == 0) {
 						playWaterbendingSound(sound.getLocation());
 					}
 				}
 			}
 			if (angles.isEmpty()) {
-				heights.remove(id);
+				this.heights.remove(id);
 			}
 		}
-		if (heights.isEmpty()) {
-			remove();
+		if (this.heights.isEmpty()) {
+			this.remove();
 		}
 	}
 
-	private void affect(Entity entity) {
-		Vector direction = GeneralMethods.getDirection(origin, entity.getLocation());
+	private void affect(final Entity entity) {
+		final Vector direction = GeneralMethods.getDirection(this.origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
-		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(knockback)));
+		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(this.knockback)));
 	}
 
 	@Override
 	public void remove() {
 		super.remove();
-		for (TempBlock block : blocks) {
+		for (final TempBlock block : this.blocks) {
 			block.revertBlock();
 		}
 	}
 
 	private void returnWater() {
-		Location location = new Location(origin.getWorld(), origin.getX() + radius, origin.getY(), origin.getZ());
-		if (!location.getWorld().equals(player.getWorld())) {
+		final Location location = new Location(this.origin.getWorld(), this.origin.getX() + this.radius, this.origin.getY(), this.origin.getZ());
+		if (!location.getWorld().equals(this.player.getWorld())) {
 			return;
 		}
-		double radiusOffsetSquared = (maxRadius + 5) * (maxRadius + 5);
-		if (location.distanceSquared(player.getLocation()) > radiusOffsetSquared) {
+		final double radiusOffsetSquared = (this.maxRadius + 5) * (this.maxRadius + 5);
+		if (location.distanceSquared(this.player.getLocation()) > radiusOffsetSquared) {
 			return;
 		}
-		new WaterReturn(player, location.getBlock());
+		new WaterReturn(this.player, location.getBlock());
 	}
 
 	@Override
@@ -200,12 +200,12 @@ public class TorrentWave extends WaterAbility {
 
 	@Override
 	public Location getLocation() {
-		return origin;
+		return this.origin;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -220,90 +220,90 @@ public class TorrentWave extends WaterAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (TempBlock tblock : blocks) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final TempBlock tblock : this.blocks) {
 			locations.add(tblock.getLocation());
 		}
 		return locations;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getMaxRadius() {
-		return maxRadius;
+		return this.maxRadius;
 	}
 
-	public void setMaxRadius(double maxRadius) {
+	public void setMaxRadius(final double maxRadius) {
 		this.maxRadius = maxRadius;
 	}
 
 	public double getKnockback() {
-		return knockback;
+		return this.knockback;
 	}
 
-	public void setKnockback(double knockback) {
+	public void setKnockback(final double knockback) {
 		this.knockback = knockback;
 	}
 
 	public double getMaxHeight() {
-		return maxHeight;
+		return this.maxHeight;
 	}
 
-	public void setMaxHeight(double maxHeight) {
+	public void setMaxHeight(final double maxHeight) {
 		this.maxHeight = maxHeight;
 	}
 
 	public double getGrowSpeed() {
-		return growSpeed;
+		return this.growSpeed;
 	}
 
-	public void setGrowSpeed(double growSpeed) {
+	public void setGrowSpeed(final double growSpeed) {
 		this.growSpeed = growSpeed;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public ArrayList<TempBlock> getBlocks() {
-		return blocks;
+		return this.blocks;
 	}
 
 	public ArrayList<Entity> getAffectedEntities() {
-		return affectedEntities;
+		return this.affectedEntities;
 	}
 
 	public Map<Integer, ConcurrentHashMap<Integer, Double>> getHeights() {
-		return heights;
+		return this.heights;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

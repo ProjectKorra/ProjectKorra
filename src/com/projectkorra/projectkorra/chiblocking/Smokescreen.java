@@ -1,9 +1,7 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -13,8 +11,10 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 
 public class Smokescreen extends ChiAbility {
 
@@ -29,31 +29,31 @@ public class Smokescreen extends ChiAbility {
 	@Attribute(Attribute.RADIUS)
 	private double radius;
 
-	public Smokescreen(Player player) {
+	public Smokescreen(final Player player) {
 		super(player);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.Smokescreen.Cooldown");
 		this.duration = getConfig().getInt("Abilities.Chi.Smokescreen.Duration");
 		this.radius = getConfig().getDouble("Abilities.Chi.Smokescreen.Radius");
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		SNOWBALLS.put(player.launchProjectile(Snowball.class).getEntityId(), this);
-		bPlayer.addCooldown(this);
-		remove();
+		SNOWBALLS.put(this.player.launchProjectile(Snowball.class).getEntityId(), this);
+		this.bPlayer.addCooldown(this);
+		this.remove();
 	}
 
-	public static void playEffect(Location loc) {
+	public static void playEffect(final Location loc) {
 		int z = -2;
 		int x = -2;
-		int y = 0;
+		final int y = 0;
 
 		for (int i = 0; i < 125; i++) {
-			Location newLoc = new Location(loc.getWorld(), loc.getX() + x, loc.getY() + y, loc.getZ() + z);
+			final Location newLoc = new Location(loc.getWorld(), loc.getX() + x, loc.getY() + y, loc.getZ() + z);
 			for (int direction = 0; direction < 8; direction++) {
 				loc.getWorld().playEffect(newLoc, Effect.SMOKE, direction);
 			}
@@ -68,25 +68,25 @@ public class Smokescreen extends ChiAbility {
 		}
 	}
 
-	public void applyBlindness(Entity entity) {
+	public void applyBlindness(final Entity entity) {
 		if (entity instanceof Player) {
 			if (Commands.invincible.contains(((Player) entity).getName())) {
 				return;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				return;
 			}
-			Player p = (Player) entity;
-			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration * 20, 2));
+			final Player p = (Player) entity;
+			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, this.duration * 20, 2));
 			BLINDED_TIMES.put(p.getName(), System.currentTimeMillis());
 			BLINDED_TO_ABILITY.put(p.getName(), this);
 		}
 	}
 
-	public static void removeFromHashMap(Entity entity) {
+	public static void removeFromHashMap(final Entity entity) {
 		if (entity instanceof Player) {
-			Player p = (Player) entity;
+			final Player p = (Player) entity;
 			if (BLINDED_TIMES.containsKey(p.getName())) {
-				Smokescreen smokescreen = BLINDED_TO_ABILITY.get(p.getName());
+				final Smokescreen smokescreen = BLINDED_TO_ABILITY.get(p.getName());
 				if (BLINDED_TIMES.get(p.getName()) + smokescreen.duration >= System.currentTimeMillis()) {
 					BLINDED_TIMES.remove(p.getName());
 					BLINDED_TO_ABILITY.remove(p.getName());
@@ -102,12 +102,12 @@ public class Smokescreen extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -120,23 +120,23 @@ public class Smokescreen extends ChiAbility {
 		return false;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
 	public int getDuration() {
-		return duration;
+		return this.duration;
 	}
 
-	public void setDuration(int duration) {
+	public void setDuration(final int duration) {
 		this.duration = duration;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 

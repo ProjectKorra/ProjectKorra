@@ -22,12 +22,11 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 /***
- * Is only here for legacy purposes. All fire combos
- * used to use a form of this stream for all their
- * progress methods. If someone else was reliant on
- * that, they can use this ability instead.
+ * Is only here for legacy purposes. All fire combos used to use a form of this
+ * stream for all their progress methods. If someone else was reliant on that,
+ * they can use this ability instead.
  */
-public class FireComboStream extends BukkitRunnable  {
+public class FireComboStream extends BukkitRunnable {
 	private boolean useNewParticles;
 	private boolean cancelled;
 	private boolean collides;
@@ -37,20 +36,20 @@ public class FireComboStream extends BukkitRunnable  {
 	private int checkCollisionCounter;
 	private float spread;
 	private double collisionRadius;
-	private double speed;
-	private double distance;
+	private final double speed;
+	private final double distance;
 	private double damage;
 	private double fireTicks;
 	private double knockback;
 	ParticleEffect particleEffect;
-	private Player player;
-	private BendingPlayer bPlayer;
-	private CoreAbility coreAbility;
-	private Vector direction;
-	private Location initialLocation;
-	private Location location;
-	
-	public FireComboStream(Player player, CoreAbility coreAbility, Vector direction, Location location, double distance, double speed) {
+	private final Player player;
+	private final BendingPlayer bPlayer;
+	private final CoreAbility coreAbility;
+	private final Vector direction;
+	private final Location initialLocation;
+	private final Location location;
+
+	public FireComboStream(final Player player, final CoreAbility coreAbility, final Vector direction, final Location location, final double distance, final double speed) {
 		this.useNewParticles = false;
 		this.cancelled = false;
 		this.collides = true;
@@ -70,57 +69,61 @@ public class FireComboStream extends BukkitRunnable  {
 		this.location = location.clone();
 		this.distance = distance;
 	}
-	
+
 	@Override
 	public void run() {
-		Block block = location.getBlock();
+		final Block block = this.location.getBlock();
 		if (block.getRelative(BlockFace.UP).getType() != Material.AIR && !ElementalAbility.isPlant(block)) {
-			remove();
+			this.remove();
 			return;
 		}
-		for (int i = 0; i < density; i++) {
-			if (useNewParticles) {
-				particleEffect.display(location, spread, spread, spread, 0, 1);
+		for (int i = 0; i < this.density; i++) {
+			if (this.useNewParticles) {
+				this.particleEffect.display(this.location, this.spread, this.spread, this.spread, 0, 1);
 			} else {
-				location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, 15);
+				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
 		}
 
-		location.add(direction.normalize().multiply(speed));
-		if (initialLocation.distanceSquared(location) > distance * distance) {
-			remove();
+		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
+			this.remove();
 			return;
-		} else if (collides && checkCollisionCounter % checkCollisionDelay == 0) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
-				if (entity instanceof LivingEntity && !entity.equals(coreAbility.getPlayer()) && !entity.isDead()) {
-					collision((LivingEntity) entity, direction, coreAbility);
+		}
+
+		this.location.add(this.direction.normalize().multiply(this.speed));
+		if (this.initialLocation.distanceSquared(this.location) > this.distance * this.distance) {
+			this.remove();
+			return;
+		} else if (this.collides && this.checkCollisionCounter % this.checkCollisionDelay == 0) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
+				if (entity instanceof LivingEntity && !entity.equals(this.coreAbility.getPlayer()) && !entity.isDead()) {
+					this.collision((LivingEntity) entity, this.direction, this.coreAbility);
 				}
 			}
 		}
 
-		checkCollisionCounter++;
-		if (singlePoint) {
-			remove();
+		this.checkCollisionCounter++;
+		if (this.singlePoint) {
+			this.remove();
 		}
 	}
-	
-	public void collision(LivingEntity entity, Vector direction, CoreAbility coreAbility) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", entity.getLocation())) {
+
+	public void collision(final LivingEntity entity, final Vector direction, final CoreAbility coreAbility) {
+		if (GeneralMethods.isRegionProtectedFromBuild(this.player, "Blaze", entity.getLocation())) {
 			return;
 		}
 		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, 0.3f, 0.3f);
 
 		if (coreAbility.getName().equalsIgnoreCase("FireKick")) {
-			FireKick fireKick = CoreAbility.getAbility(player, FireKick.class);
-			
+			final FireKick fireKick = CoreAbility.getAbility(this.player, FireKick.class);
+
 			if (!fireKick.getAffectedEntities().contains(entity)) {
 				fireKick.getAffectedEntities().add(entity);
-				DamageHandler.damageEntity(entity, damage, coreAbility);
-				coreAbility.remove();
+				DamageHandler.damageEntity(entity, this.damage, coreAbility);
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("FireSpin")) {
-			FireSpin fireSpin = (FireSpin) CoreAbility.getAbility(player, FireSpin.class);
-			
+			final FireSpin fireSpin = CoreAbility.getAbility(this.player, FireSpin.class);
+
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(((Player) entity).getName())) {
 					return;
@@ -128,36 +131,35 @@ public class FireComboStream extends BukkitRunnable  {
 			}
 			if (!fireSpin.getAffectedEntities().contains(entity)) {
 				fireSpin.getAffectedEntities().add(entity);
-				double newKnockback = bPlayer.isAvatarState() ? knockback + 0.5 : knockback;
-				DamageHandler.damageEntity(entity, damage, coreAbility);
+				final double newKnockback = this.bPlayer.isAvatarState() ? this.knockback + 0.5 : this.knockback;
+				DamageHandler.damageEntity(entity, this.damage, coreAbility);
 				entity.setVelocity(direction.normalize().multiply(newKnockback));
-				coreAbility.remove();
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("JetBlaze")) {
-			JetBlaze jetBlaze = (JetBlaze) CoreAbility.getAbility(player, JetBlaze.class);
-			
+			final JetBlaze jetBlaze = CoreAbility.getAbility(this.player, JetBlaze.class);
+
 			if (!jetBlaze.getAffectedEntities().contains(entity)) {
 				jetBlaze.getAffectedEntities().add(entity);
-				DamageHandler.damageEntity(entity, damage, coreAbility);
-				entity.setFireTicks((int) (fireTicks * 20));
-				new FireDamageTimer(entity, player);
+				DamageHandler.damageEntity(entity, this.damage, coreAbility);
+				entity.setFireTicks((int) (this.fireTicks * 20));
+				new FireDamageTimer(entity, this.player);
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("FireWheel")) {
-			FireWheel fireWheel = (FireWheel) CoreAbility.getAbility(player, FireWheel.class);
-			
+			final FireWheel fireWheel = CoreAbility.getAbility(this.player, FireWheel.class);
+
 			if (!fireWheel.getAffectedEntities().contains(entity)) {
 				fireWheel.getAffectedEntities().add(entity);
-				DamageHandler.damageEntity(entity, damage, coreAbility);
-				entity.setFireTicks((int) (fireTicks * 20));
-				new FireDamageTimer(entity, player);
+				DamageHandler.damageEntity(entity, this.damage, coreAbility);
+				entity.setFireTicks((int) (this.fireTicks * 20));
+				new FireDamageTimer(entity, this.player);
 				this.remove();
 			}
 		}
 	}
-	
+
 	@Override
 	public void cancel() {
-		remove();
+		this.remove();
 	}
 
 	public Vector getDirection() {
@@ -169,59 +171,59 @@ public class FireComboStream extends BukkitRunnable  {
 	}
 
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	public void remove() {
 		super.cancel();
 		this.cancelled = true;
 	}
-	
+
 	public CoreAbility getAbility() {
-		return coreAbility;
+		return this.coreAbility;
 	}
 
-	public void setCheckCollisionDelay(int delay) {
+	public void setCheckCollisionDelay(final int delay) {
 		this.checkCollisionDelay = delay;
 	}
 
-	public void setCollides(boolean b) {
+	public void setCollides(final boolean b) {
 		this.collides = b;
 	}
 
-	public void setCollisionRadius(double radius) {
+	public void setCollisionRadius(final double radius) {
 		this.collisionRadius = radius;
 	}
 
-	public void setDensity(int density) {
+	public void setDensity(final int density) {
 		this.density = density;
 	}
-	
-	public void setDamage(double damage) {
+
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
-	
-	public void setKnockback(double knockback) {
+
+	public void setKnockback(final double knockback) {
 		this.knockback = knockback;
 	}
-	
-	public void setFireTicks(double fireTicks) {
+
+	public void setFireTicks(final double fireTicks) {
 		this.fireTicks = fireTicks;
 	}
 
-	public void setParticleEffect(ParticleEffect effect) {
+	public void setParticleEffect(final ParticleEffect effect) {
 		this.particleEffect = effect;
 	}
 
-	public void setSinglePoint(boolean b) {
+	public void setSinglePoint(final boolean b) {
 		this.singlePoint = b;
 	}
 
-	public void setSpread(float spread) {
+	public void setSpread(final float spread) {
 		this.spread = spread;
 	}
 
-	public void setUseNewParticles(boolean b) {
-		useNewParticles = b;
+	public void setUseNewParticles(final boolean b) {
+		this.useNewParticles = b;
 	}
 }

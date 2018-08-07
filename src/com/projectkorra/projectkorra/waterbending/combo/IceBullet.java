@@ -37,7 +37,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	public static enum AbilityState {
 		ICE_PILLAR_RISING, ICE_BULLET_FORMING
 	}
-	
+
 	private int leftClicks;
 	private int rightClicks;
 	private double damage;
@@ -58,18 +58,18 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private WaterSourceGrabber waterGrabber;
 	private ArrayList<BukkitRunnable> tasks;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
-	
-	public IceBullet(Player player) {
+
+	public IceBullet(final Player player) {
 		super(player);
-		
+
 		this.time = System.currentTimeMillis();
 		this.tasks = new ArrayList<>();
 		this.affectedBlocks = new ConcurrentHashMap<>();
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
-		
+
 		this.damage = getConfig().getDouble("Abilities.Water.IceBullet.Damage");
 		this.range = getConfig().getDouble("Abilities.Water.IceBullet.Range");
 		this.radius = getConfig().getDouble("Abilities.Water.IceBullet.Radius");
@@ -78,8 +78,8 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		this.maxShots = getConfig().getInt("Abilities.Water.IceBullet.MaxShots");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.IceBullet.AnimationSpeed");
 		this.speed = 1;
-		this.name = getName();
-		
+		this.name = this.getName();
+
 		double aug = getNightFactor(player.getWorld());
 		if (aug > 1) {
 			aug = 1 + (aug - 1) / 3;
@@ -91,15 +91,15 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		this.maxShots *= aug;
 		this.radius *= aug;
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
-			this.shootTime = AvatarState.getValue(shootTime);
-			this.maxShots = AvatarState.getValue(maxShots);
+			this.damage = AvatarState.getValue(this.damage);
+			this.range = AvatarState.getValue(this.range);
+			this.shootTime = AvatarState.getValue(this.shootTime);
+			this.maxShots = AvatarState.getValue(this.maxShots);
 		}
 
-		start();
+		this.start();
 	}
 
 	@Override
@@ -113,16 +113,15 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	}
 
 	@Override
-	public void handleCollision(Collision collision) {
+	public void handleCollision(final Collision collision) {
 		if (collision.isRemovingFirst()) {
-			ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
-			double collisionDistanceSquared = Math.pow(getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
+			final ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
+			final double collisionDistanceSquared = Math.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
 			// Remove all of the streams that are by this specific ourLocation.
-			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with
-			// Collision's detection algorithm.
-			for (BukkitRunnable task : getTasks()) {
+			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with Collision's detection algorithm.
+			for (final BukkitRunnable task : this.getTasks()) {
 				if (task instanceof FireComboStream) {
-					FireComboStream stream = (FireComboStream) task;
+					final FireComboStream stream = (FireComboStream) task;
 					if (stream.getLocation().distanceSquared(collision.getLocationSecond()) > collisionDistanceSquared) {
 						newTasks.add(stream);
 					} else {
@@ -132,16 +131,16 @@ public class IceBullet extends IceAbility implements ComboAbility {
 					newTasks.add(task);
 				}
 			}
-			setTasks(newTasks);
+			this.setTasks(newTasks);
 		}
 	}
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (BukkitRunnable task : getTasks()) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final BukkitRunnable task : this.getTasks()) {
 			if (task instanceof FireComboStream) {
-				FireComboStream stream = (FireComboStream) task;
+				final FireComboStream stream = (FireComboStream) task;
 				locations.add(stream.getLocation());
 			}
 		}
@@ -150,9 +149,9 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	public static class IceBulletLeftClick extends IceBullet {
 
-		public IceBulletLeftClick(Player player) {
+		public IceBulletLeftClick(final Player player) {
 			super(player);
-			setName("IceBulletLeftClick");
+			this.setName("IceBulletLeftClick");
 		}
 
 		@Override
@@ -164,9 +163,9 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	public static class IceBulletRightClick extends IceBullet {
 
-		public IceBulletRightClick(Player player) {
+		public IceBulletRightClick(final Player player) {
 			super(player);
-			setName("IceBulletRightClick");
+			this.setName("IceBulletRightClick");
 		}
 
 		@Override
@@ -177,32 +176,32 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	}
 
 	public void manageShots() {
-		for (int i = 0; i < tasks.size(); i++) {
-			if (((FireComboStream) tasks.get(i)).isCancelled()) {
-				tasks.remove(i);
+		for (int i = 0; i < this.tasks.size(); i++) {
+			if (((FireComboStream) this.tasks.get(i)).isCancelled()) {
+				this.tasks.remove(i);
 				i--;
 			}
 		}
 
-		for (int i = 0; i < tasks.size(); i++) {
-			FireComboStream fstream = (FireComboStream) tasks.get(i);
-			Location loc = fstream.getLocation();
+		for (int i = 0; i < this.tasks.size(); i++) {
+			final FireComboStream fstream = (FireComboStream) this.tasks.get(i);
+			final Location loc = fstream.getLocation();
 
-			if (!isTransparent(player, loc.clone().add(0, 0.2, 0).getBlock())) {
+			if (!isTransparent(this.player, loc.clone().add(0, 0.2, 0).getBlock())) {
 				fstream.remove();
 				return;
 			}
 			if (i % 2 == 0) {
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 1.5)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", entity.getLocation())) {
-						remove();
+				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 1.5)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", entity.getLocation())) {
+						this.remove();
 						return;
 					}
 
-					if (!entity.equals(player)) {
-						if (damage != 0) {
+					if (!entity.equals(this.player)) {
+						if (this.damage != 0) {
 							if (entity instanceof LivingEntity) {
-								DamageHandler.damageEntity(entity, damage, this);
+								DamageHandler.damageEntity(entity, this.damage, this);
 							}
 						}
 					}
@@ -210,54 +209,54 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			}
 		}
 	}
-	
-	public void createBlock(Block block, Material mat) {
-		createBlock(block, mat, (byte) 0);
+
+	public void createBlock(final Block block, final Material mat) {
+		this.createBlock(block, mat, (byte) 0);
 	}
 
-	public void createBlock(Block block, Material mat, byte data) {
-		affectedBlocks.put(block, new TempBlock(block, mat, data));
-	}
-	
-	public void drawWaterCircle(Location loc, double theta, double increment, double radius) {
-		drawWaterCircle(loc, theta, increment, radius, Material.STATIONARY_WATER, (byte) 0);
+	public void createBlock(final Block block, final Material mat, final byte data) {
+		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
 	}
 
-	public void drawWaterCircle(Location loc, double theta, double increment, double radius, Material mat, byte data) {
-		double rotateSpeed = theta;
-		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
+	public void drawWaterCircle(final Location loc, final double theta, final double increment, final double radius) {
+		this.drawWaterCircle(loc, theta, increment, radius, Material.STATIONARY_WATER, (byte) 0);
+	}
+
+	public void drawWaterCircle(final Location loc, final double theta, final double increment, final double radius, final Material mat, final byte data) {
+		final double rotateSpeed = theta;
+		this.direction = GeneralMethods.rotateXZ(this.direction, rotateSpeed);
 
 		for (double i = 0; i < theta; i += increment) {
-			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
+			final Vector dir = GeneralMethods.rotateXZ(this.direction, i - theta / 2).normalize().multiply(radius);
 			dir.setY(0);
-			Block block = loc.clone().add(dir).getBlock();
-			location = block.getLocation();
+			final Block block = loc.clone().add(dir).getBlock();
+			this.location = block.getLocation();
 
-			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
-				createBlock(block, mat, data);
+			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", block.getLocation())) {
+				this.createBlock(block, mat, data);
 			}
 		}
 	}
-	
+
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return;
-		} 
-		
-		if (shots > maxShots || !player.isSneaking()) {
-			remove();
+		if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
 		}
-		
-		if (name.equalsIgnoreCase("IceBulletLeftClick") || name.equalsIgnoreCase("IceBulletRightClick")) {
-			Collection<IceBullet> bullets = CoreAbility.getAbilities(player, IceBullet.class);
+
+		if (this.shots > this.maxShots || !this.player.isSneaking()) {
+			this.remove();
+			return;
+		}
+
+		if (this.name.equalsIgnoreCase("IceBulletLeftClick") || this.name.equalsIgnoreCase("IceBulletRightClick")) {
+			final Collection<IceBullet> bullets = CoreAbility.getAbilities(this.player, IceBullet.class);
 			if (bullets.size() == 0) {
 				return;
 			}
-			for (IceBullet bullet : bullets) {
-				if (name.equalsIgnoreCase("IceBulletLeftClick")) {
+			for (final IceBullet bullet : bullets) {
+				if (this.name.equalsIgnoreCase("IceBulletLeftClick")) {
 					if (bullet.leftClicks <= bullet.rightClicks) {
 						bullet.leftClicks += 1;
 					}
@@ -268,57 +267,56 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			return;
 		}
 
-
-		if (origin == null) {
-			if (bPlayer.isOnCooldown("IceBullet") && !bPlayer.isAvatarState()) {
-				remove();
+		if (this.origin == null) {
+			if (this.bPlayer.isOnCooldown("IceBullet") && !this.bPlayer.isAvatarState()) {
+				this.remove();
 				return;
 			}
 
-			Block waterBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
+			final Block waterBlock = BlockSource.getWaterSourceBlock(this.player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 			if (waterBlock == null) {
-				remove();
+				this.remove();
 				return;
 			}
 
-			time = 0;
-			origin = waterBlock.getLocation();
-			location = origin.clone();
-			state = AbilityState.ICE_BULLET_FORMING;
-			bPlayer.addCooldown("IceBullet", cooldown);
-			direction = new Vector(1, 0, 1);
-			waterGrabber = new WaterSourceGrabber(player, origin.clone());
-		} else if (waterGrabber.getState() == WaterSourceGrabber.AnimationState.FAILED) {
-			remove();
+			this.time = 0;
+			this.origin = waterBlock.getLocation();
+			this.location = this.origin.clone();
+			this.state = AbilityState.ICE_BULLET_FORMING;
+			this.bPlayer.addCooldown("IceBullet", this.cooldown);
+			this.direction = new Vector(1, 0, 1);
+			this.waterGrabber = new WaterSourceGrabber(this.player, this.origin.clone());
+		} else if (this.waterGrabber.getState() == WaterSourceGrabber.AnimationState.FAILED) {
+			this.remove();
 			return;
-		} else if (waterGrabber.getState() == WaterSourceGrabber.AnimationState.FINISHED) {
+		} else if (this.waterGrabber.getState() == WaterSourceGrabber.AnimationState.FINISHED) {
 			if (this.time == 0) {
 				this.time = System.currentTimeMillis();
 			}
 
-			long timeDiff = System.currentTimeMillis() - this.time;
+			final long timeDiff = System.currentTimeMillis() - this.time;
 			if (this.state == AbilityState.ICE_BULLET_FORMING) {
-				if (timeDiff < 1000 * animationSpeed) {
-					double steps = radius * ((timeDiff + 100) / (1000.0 * animationSpeed));
-					revertBlocks();
+				if (timeDiff < 1000 * this.animationSpeed) {
+					final double steps = this.radius * ((timeDiff + 100) / (1000.0 * this.animationSpeed));
+					this.revertBlocks();
 					for (double i = 0; i < steps; i++) {
-						drawWaterCircle(player.getEyeLocation().clone().add(0, i, 0), 360, 5, radius - i);
-						drawWaterCircle(player.getEyeLocation().clone().add(0, -i, 0), 360, 5, radius - i);
+						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, i, 0), 360, 5, this.radius - i);
+						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, -i, 0), 360, 5, this.radius - i);
 					}
-				} else if (timeDiff < 2500 * animationSpeed) {
-					revertBlocks();
-					for (double i = 0; i < radius; i++) {
-						drawWaterCircle(player.getEyeLocation().clone().add(0, i, 0), 360, 5, radius - i, Material.ICE, (byte) 0);
-						drawWaterCircle(player.getEyeLocation().clone().add(0, -i, 0), 360, 5, radius - i, Material.ICE, (byte) 0);
+				} else if (timeDiff < 2500 * this.animationSpeed) {
+					this.revertBlocks();
+					for (double i = 0; i < this.radius; i++) {
+						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, i, 0), 360, 5, this.radius - i, Material.ICE, (byte) 0);
+						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, -i, 0), 360, 5, this.radius - i, Material.ICE, (byte) 0);
 					}
 				}
 
-				if (timeDiff < shootTime) {
-					if (shots < rightClicks + leftClicks) {
-						shots++;
-						Vector vec = player.getEyeLocation().getDirection().normalize();
-						Location loc = player.getEyeLocation().add(vec.clone().multiply(radius + 1.3));
-						FireComboStream fs = new FireComboStream(player, this, vec, loc, range, speed);
+				if (timeDiff < this.shootTime) {
+					if (this.shots < this.rightClicks + this.leftClicks) {
+						this.shots++;
+						final Vector vec = this.player.getEyeLocation().getDirection().normalize();
+						final Location loc = this.player.getEyeLocation().add(vec.clone().multiply(this.radius + 1.3));
+						final FireComboStream fs = new FireComboStream(this.player, this, vec, loc, this.range, this.speed);
 
 						fs.setDensity(10);
 						fs.setSpread(0.1F);
@@ -326,16 +324,16 @@ public class IceBullet extends IceAbility implements ComboAbility {
 						fs.setParticleEffect(ParticleEffect.SNOW_SHOVEL);
 						fs.setCollides(false);
 						fs.runTaskTimer(ProjectKorra.plugin, (0), 1L);
-						tasks.add(fs);
+						this.tasks.add(fs);
 					}
-					manageShots();
+					this.manageShots();
 				} else {
-					remove();
+					this.remove();
 					return;
 				}
 			}
 		} else {
-			waterGrabber.progress();
+			this.waterGrabber.progress();
 		}
 	}
 
@@ -351,189 +349,198 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
-		return null;
+	public Object createNewComboInstance(final Player player) {
+		return new IceBullet(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		final ArrayList<AbilityInformation> iceBullet = new ArrayList<>();
+		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
+		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
+		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
+		return iceBullet;
 	}
-	
+
 	@Override
 	public void remove() {
 		super.remove();
-		for (BukkitRunnable task : tasks) {
+		for (final BukkitRunnable task : this.tasks) {
 			task.cancel();
 		}
-		revertBlocks();
-		if (waterGrabber != null) {
-			waterGrabber.remove();
+		this.revertBlocks();
+		if (this.waterGrabber != null) {
+			this.waterGrabber.remove();
 		}
 
-		bPlayer.addCooldown(this);
+		this.bPlayer.addCooldown(this);
 
 	}
-	
+
 	public void revertBlocks() {
-		Enumeration<Block> keys = affectedBlocks.keys();
+		final Enumeration<Block> keys = this.affectedBlocks.keys();
 		while (keys.hasMoreElements()) {
-			Block block = keys.nextElement();
-			affectedBlocks.get(block).revertBlock();
-			affectedBlocks.remove(block);
+			final Block block = keys.nextElement();
+			this.affectedBlocks.get(block).revertBlock();
+			this.affectedBlocks.remove(block);
 		}
 	}
-	
+
 	public int getLeftClicks() {
-		return leftClicks;
+		return this.leftClicks;
 	}
 
-	public void setLeftClicks(int leftClicks) {
+	public void setLeftClicks(final int leftClicks) {
 		this.leftClicks = leftClicks;
 	}
 
 	public int getRightClicks() {
-		return rightClicks;
+		return this.rightClicks;
 	}
 
-	public void setRightClicks(int rightClicks) {
+	public void setRightClicks(final int rightClicks) {
 		this.rightClicks = rightClicks;
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getShootTime() {
-		return shootTime;
+		return this.shootTime;
 	}
 
-	public void setShootTime(double shootTime) {
+	public void setShootTime(final double shootTime) {
 		this.shootTime = shootTime;
 	}
 
 	public double getShots() {
-		return shots;
+		return this.shots;
 	}
 
-	public void setShots(double shots) {
+	public void setShots(final double shots) {
 		this.shots = shots;
 	}
 
 	public double getMaxShots() {
-		return maxShots;
+		return this.maxShots;
 	}
 
-	public void setMaxShots(double maxShots) {
+	public void setMaxShots(final double maxShots) {
 		this.maxShots = maxShots;
 	}
 
 	public double getAnimationSpeed() {
-		return animationSpeed;
+		return this.animationSpeed;
 	}
 
-	public void setAnimationSpeed(double animationSpeed) {
+	public void setAnimationSpeed(final double animationSpeed) {
 		this.animationSpeed = animationSpeed;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public AbilityState getState() {
-		return state;
+		return this.state;
 	}
 
-	public void setState(AbilityState state) {
+	public void setState(final AbilityState state) {
 		this.state = state;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public Vector getDirection() {
-		return direction;
+		return this.direction;
 	}
 
-	public void setDirection(Vector direction) {
+	public void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
 	public WaterSourceGrabber getWaterGrabber() {
-		return waterGrabber;
+		return this.waterGrabber;
 	}
 
-	public void setWaterGrabber(WaterSourceGrabber waterGrabber) {
+	public void setWaterGrabber(final WaterSourceGrabber waterGrabber) {
 		this.waterGrabber = waterGrabber;
 	}
 
 	public ArrayList<BukkitRunnable> getTasks() {
-		return tasks;
+		return this.tasks;
 	}
 
-	public void setTasks(ArrayList<BukkitRunnable> tasks) {
+	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
 	}
 
 	public Map<Block, TempBlock> getAffectedBlocks() {
-		return affectedBlocks;
+		return this.affectedBlocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
-	
-	public void setName(String name) {
+
+	public void setName(final String name) {
 		this.name = name;
+	}
+
+	@Override
+	public String getInstructions() {
+		return "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast";
 	}
 }

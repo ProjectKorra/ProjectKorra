@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
@@ -20,44 +21,43 @@ public class Paralyze extends ChiAbility {
 	private long cooldown;
 	private Entity target;
 
-	public Paralyze(Player sourceplayer, Entity targetentity) {
+	public Paralyze(final Player sourceplayer, final Entity targetentity) {
 		super(sourceplayer);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 		this.target = targetentity;
 		this.cooldown = getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (bPlayer.canBend(this)) {
-			if (target instanceof Player) {
-				if (Commands.invincible.contains(((Player) target).getName())) {
-					remove();
+		if (this.bPlayer.canBend(this)) {
+			if (this.target instanceof Player) {
+				if (Commands.invincible.contains(((Player) this.target).getName())) {
+					this.remove();
 					return;
 				}
 			}
-			paralyze(target);
-			bPlayer.addCooldown(this);
-		} else {
-			remove();
+			paralyze(this.target);
+			this.bPlayer.addCooldown(this);
 		}
+		this.remove();
 	}
 
-	private static void paralyze(Entity entity) {
+	private static void paralyze(final Entity entity) {
 		if (entity instanceof Creature) {
 			((Creature) entity).setTarget(null);
 		}
-		
+
 		if (entity instanceof Player) {
 			if (Suffocate.isChannelingSphere((Player) entity)) {
 				Suffocate.remove((Player) entity);
 			}
-		} 
-		MovementHandler mh = new MovementHandler((LivingEntity) entity);
-		mh.stop(getDuration()/1000*20, Element.CHI.getColor() + "* Paralyzed *");
+		}
+		final MovementHandler mh = new MovementHandler((LivingEntity) entity, CoreAbility.getAbility(Paralyze.class));
+		mh.stopWithDuration(getDuration() / 1000 * 20, Element.CHI.getColor() + "* Paralyzed *");
 		entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
 	}
 
@@ -68,12 +68,12 @@ public class Paralyze extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return target != null ? target.getLocation() : null;
+		return this.target != null ? this.target.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -91,10 +91,10 @@ public class Paralyze extends ChiAbility {
 	}
 
 	public Entity getTarget() {
-		return target;
+		return this.target;
 	}
 
-	public void setTarget(Entity target) {
+	public void setTarget(final Entity target) {
 		this.target = target;
 	}
 

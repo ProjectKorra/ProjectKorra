@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
 
 public abstract class BloodAbility extends WaterAbility implements SubAbility {
 
-	public BloodAbility(Player player) {
+	public BloodAbility(final Player player) {
 		super(player);
 	}
 

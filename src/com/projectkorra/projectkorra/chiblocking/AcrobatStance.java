@@ -18,9 +18,9 @@ public class AcrobatStance extends ChiAbility {
 	private double chiBlockBoost;
 	private double paralyzeDodgeBoost;
 
-	public AcrobatStance(Player player) {
+	public AcrobatStance(final Player player) {
 		super(player);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.AcrobatStance.Cooldown");
@@ -29,46 +29,44 @@ public class AcrobatStance extends ChiAbility {
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 
-		ChiAbility stance = bPlayer.getStance();
+		final ChiAbility stance = this.bPlayer.getStance();
 		if (stance != null) {
+			stance.remove();
 			if (stance instanceof AcrobatStance) {
-				stance.remove();
+				this.bPlayer.setStance(null);
 				return;
 			}
-			if (stance instanceof WarriorStance) {
-				stance.remove();
-			}
 		}
-		start();
-		bPlayer.setStance(this);
+		this.start();
+		this.bPlayer.setStance(this);
 		GeneralMethods.displayMovePreview(player);
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBinds(this) || !bPlayer.hasElement(Element.CHI)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBinds(this) || !this.bPlayer.hasElement(Element.CHI)) {
+			this.remove();
 			return;
 		}
 
-		if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.SPEED)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, this.speed, true));
 		}
-		if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jump, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.JUMP)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, this.jump, true));
 		}
 	}
 
 	@Override
 	public void remove() {
 		super.remove();
-		bPlayer.addCooldown(this);
-		bPlayer.setStance(null);
-		GeneralMethods.displayMovePreview(player);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
-		player.removePotionEffect(PotionEffectType.SPEED);
-		player.removePotionEffect(PotionEffectType.JUMP);
+		this.bPlayer.addCooldown(this);
+		this.bPlayer.setStance(null);
+		GeneralMethods.displayMovePreview(this.player);
+		this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+		this.player.removePotionEffect(PotionEffectType.SPEED);
+		this.player.removePotionEffect(PotionEffectType.JUMP);
 	}
 
 	@Override
@@ -78,12 +76,12 @@ public class AcrobatStance extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -97,34 +95,34 @@ public class AcrobatStance extends ChiAbility {
 	}
 
 	public int getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(int speed) {
+	public void setSpeed(final int speed) {
 		this.speed = speed;
 	}
 
 	public int getJump() {
-		return jump;
+		return this.jump;
 	}
 
-	public void setJump(int jump) {
+	public void setJump(final int jump) {
 		this.jump = jump;
 	}
 
 	public double getChiBlockBoost() {
-		return chiBlockBoost;
+		return this.chiBlockBoost;
 	}
 
-	public void setChiBlockBoost(double chiBlockBoost) {
+	public void setChiBlockBoost(final double chiBlockBoost) {
 		this.chiBlockBoost = chiBlockBoost;
 	}
 
 	public double getParalyzeDodgeBoost() {
-		return paralyzeDodgeBoost;
+		return this.paralyzeDodgeBoost;
 	}
 
-	public void setParalyzeDodgeBoost(double paralyzeDodgeBoost) {
+	public void setParalyzeDodgeBoost(final double paralyzeDodgeBoost) {
 		this.paralyzeDodgeBoost = paralyzeDodgeBoost;
 	}
 

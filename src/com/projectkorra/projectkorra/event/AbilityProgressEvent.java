@@ -7,7 +7,7 @@ import com.projectkorra.projectkorra.ability.Ability;
 
 /**
  * Called when an ability starts
- * 
+ *
  * @author Philip
  *
  */
@@ -17,14 +17,15 @@ public class AbilityProgressEvent extends Event {
 
 	Ability ability;
 
-	public AbilityProgressEvent(Ability ability) {
+	public AbilityProgressEvent(final Ability ability) {
 		this.ability = ability;
 	}
 
 	public Ability getAbility() {
-		return ability;
+		return this.ability;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}

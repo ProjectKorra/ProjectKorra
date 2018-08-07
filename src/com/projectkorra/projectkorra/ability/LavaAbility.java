@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
 
 public abstract class LavaAbility extends EarthAbility implements SubAbility {
 
-	public LavaAbility(Player player) {
+	public LavaAbility(final Player player) {
 		super(player);
 	}
 

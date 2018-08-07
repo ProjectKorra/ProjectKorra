@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 
 /**
  * A savable association of abilities and hotbar slots, stored per player.
- * 
+ *
  * @author kingbirdy
  *
  */
@@ -42,19 +42,19 @@ public class Preset {
 	static String updateQuery1 = "UPDATE pk_presets SET slot";
 	static String updateQuery2 = " = ? WHERE uuid = ? AND name = ?";
 
-	private UUID uuid;
-	private HashMap<Integer, String> abilities;
-	private String name;
+	private final UUID uuid;
+	private final HashMap<Integer, String> abilities;
+	private final String name;
 
 	/**
 	 * Creates a new {@link Preset}
-	 * 
+	 *
 	 * @param uuid The UUID of the Player who the Preset belongs to
 	 * @param name The name of the Preset
 	 * @param abilities A HashMap of the abilities to be saved in the Preset,
 	 *            keyed to the slot they're bound to
 	 */
-	public Preset(UUID uuid, String name, HashMap<Integer, String> abilities) {
+	public Preset(final UUID uuid, final String name, final HashMap<Integer, String> abilities) {
 		this.uuid = uuid;
 		this.name = name;
 		this.abilities = abilities;
@@ -66,38 +66,40 @@ public class Preset {
 
 	/**
 	 * Unload a Player's Presets from those stored in memory.
-	 * 
+	 *
 	 * @param player The Player who's Presets should be unloaded
 	 */
-	public static void unloadPreset(Player player) {
-		UUID uuid = player.getUniqueId();
+	public static void unloadPreset(final Player player) {
+		final UUID uuid = player.getUniqueId();
 		presets.remove(uuid);
 	}
 
 	/**
 	 * Load a Player's Presets into memory.
-	 * 
+	 *
 	 * @param player The Player who's Presets should be loaded
 	 */
 	public static void loadPresets(final Player player) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				UUID uuid = player.getUniqueId();
-				if (uuid == null)
+				final UUID uuid = player.getUniqueId();
+				if (uuid == null) {
 					return;
+				}
 				try {
-					PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery);
+					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery);
 					ps.setString(1, uuid.toString());
-					ResultSet rs = ps.executeQuery();
+					final ResultSet rs = ps.executeQuery();
 					if (rs.next()) { // Presets exist.
 						int i = 0;
 						do {
-							HashMap<Integer, String> moves = new HashMap<Integer, String>();
+							final HashMap<Integer, String> moves = new HashMap<Integer, String>();
 							for (int total = 1; total <= 9; total++) {
-								String slot = rs.getString("slot" + total);
-								if (slot != null)
+								final String slot = rs.getString("slot" + total);
+								if (slot != null) {
 									moves.put(total, slot);
+								}
 							}
 							new Preset(uuid, rs.getString("name"), moves);
 							i++;
@@ -106,7 +108,7 @@ public class Preset {
 						ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
 					}
 				}
-				catch (SQLException ex) {
+				catch (final SQLException ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -115,32 +117,31 @@ public class Preset {
 
 	/**
 	 * Reload a Player's Presets from those stored in memory.
-	 * 
+	 *
 	 * @param player The Player who's Presets should be unloaded
 	 */
-	public static void reloadPreset(Player player) {
+	public static void reloadPreset(final Player player) {
 		unloadPreset(player);
 		loadPresets(player);
 	}
 
 	/**
 	 * Binds the abilities from a Preset for the given Player.
-	 * 
+	 *
 	 * @param player The Player the Preset should be bound for
 	 * @param name The name of the Preset that should be bound
 	 * @return True if all abilities were successfully bound, or false otherwise
 	 */
-	public static boolean bindPreset(Player player, Preset preset) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean bindPreset(final Player player, final Preset preset) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return false;
 		}
 
-		@SuppressWarnings("unchecked")
-		HashMap<Integer, String> abilities = (HashMap<Integer, String>) preset.abilities.clone();
+		final HashMap<Integer, String> abilities = (HashMap<Integer, String>) preset.abilities.clone();
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
-			CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
 			if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
 				abilities.remove(i);
 				boundAll = false;
@@ -152,17 +153,17 @@ public class Preset {
 
 	/**
 	 * Checks if a Preset with a certain name exists for a given Player.
-	 * 
+	 *
 	 * @param player The player who's Presets should be checked
 	 * @param name The name of the Preset to look for
 	 * @return true if the Preset exists, false otherwise
 	 */
-	public static boolean presetExists(Player player, String name) {
+	public static boolean presetExists(final Player player, final String name) {
 		if (!presets.containsKey(player.getUniqueId())) {
 			return false;
 		}
 		boolean exists = false;
-		for (Preset preset : presets.get(player.getUniqueId())) {
+		for (final Preset preset : presets.get(player.getUniqueId())) {
 			if (preset.name.equalsIgnoreCase(name)) {
 				exists = true;
 			}
@@ -172,16 +173,16 @@ public class Preset {
 
 	/**
 	 * Gets a Preset for the specified Player.
-	 * 
+	 *
 	 * @param Player The Player who's Preset should be gotten
 	 * @param name The name of the Preset to get
 	 * @return The Preset, if it exists, or null otherwise
 	 */
-	public static Preset getPreset(Player player, String name) {
+	public static Preset getPreset(final Player player, final String name) {
 		if (!presets.containsKey(player.getUniqueId())) {
 			return null;
 		}
-		for (Preset preset : presets.get(player.getUniqueId())) {
+		for (final Preset preset : presets.get(player.getUniqueId())) {
 			if (preset.name.equalsIgnoreCase(name)) {
 				return preset;
 			}
@@ -190,18 +191,19 @@ public class Preset {
 	}
 
 	public static void loadExternalPresets() {
-		HashMap<String, ArrayList<String>> presets = new HashMap<String, ArrayList<String>>();
-		for (String name : config.getKeys(false)) {
-			if (!presets.containsKey(name))
+		final HashMap<String, ArrayList<String>> presets = new HashMap<String, ArrayList<String>>();
+		for (final String name : config.getKeys(false)) {
+			if (!presets.containsKey(name)) {
 				if (!config.getStringList(name).isEmpty() && config.getStringList(name).size() <= 9) {
 					presets.put(name.toLowerCase(), (ArrayList<String>) config.getStringList(name));
 				}
+			}
 		}
 		externalPresets = presets;
 	}
 
-	public static boolean externalPresetExists(String name) {
-		for (String preset : externalPresets.keySet()) {
+	public static boolean externalPresetExists(final String name) {
+		for (final String preset : externalPresets.keySet()) {
 			if (name.equalsIgnoreCase(preset)) {
 				return true;
 			}
@@ -211,16 +213,17 @@ public class Preset {
 
 	/**
 	 * Gets the contents of a Preset for the specified Player.
-	 * 
+	 *
 	 * @param player The Player who's Preset should be gotten
 	 * @param name The name of the Preset who's contents should be gotten
 	 * @return HashMap of ability names keyed to hotbar slots, if the Preset
 	 *         exists, or null otherwise
 	 */
-	public static HashMap<Integer, String> getPresetContents(Player player, String name) {
-		if (!presets.containsKey(player.getUniqueId()))
+	public static HashMap<Integer, String> getPresetContents(final Player player, final String name) {
+		if (!presets.containsKey(player.getUniqueId())) {
 			return null;
-		for (Preset preset : presets.get(player.getUniqueId())) {
+		}
+		for (final Preset preset : presets.get(player.getUniqueId())) {
 			if (preset.name.equalsIgnoreCase(name)) {
 				return preset.abilities;
 			}
@@ -228,27 +231,27 @@ public class Preset {
 		return null;
 	}
 
-	public static boolean bindExternalPreset(Player player, String name) {
+	public static boolean bindExternalPreset(final Player player, final String name) {
 		boolean boundAll = true;
 		int slot = 0;
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return false;
 		}
 
-		HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+		final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
 
 		if (externalPresetExists(name.toLowerCase())) {
-			for (String ability : externalPresets.get(name.toLowerCase())) {
+			for (final String ability : externalPresets.get(name.toLowerCase())) {
 				slot++;
-				CoreAbility coreAbil = CoreAbility.getAbility(ability);
+				final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 				if (coreAbil != null) {
 					abilities.put(slot, coreAbil.getName());
 				}
 			}
 
 			for (int i = 1; i <= 9; i++) {
-				CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+				final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
 				if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
 					abilities.remove(i);
 					boundAll = false;
@@ -265,20 +268,20 @@ public class Preset {
 	 */
 	public void delete() {
 		try {
-			PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
-			ps.setString(1, uuid.toString());
-			ps.setString(2, name);
+			final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
+			ps.setString(1, this.uuid.toString());
+			ps.setString(2, this.name);
 			ps.execute();
-			presets.get(uuid).remove(this);
+			presets.get(this.uuid).remove(this);
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Gets the name of the preset.
-	 * 
+	 *
 	 * @return The name of the preset
 	 */
 	public String getName() {
@@ -291,33 +294,33 @@ public class Preset {
 	public void save(final Player player) {
 		try {
 			PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadNameQuery);
-			ps.setString(1, uuid.toString());
-			ps.setString(2, name);
-			ResultSet rs = ps.executeQuery();
-			if (!rs.next()) { //if the preset doesn't exist in the DB, create it
+			ps.setString(1, this.uuid.toString());
+			ps.setString(2, this.name);
+			final ResultSet rs = ps.executeQuery();
+			if (!rs.next()) { // if the preset doesn't exist in the DB, create it.
 				ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
-				ps.setString(1, uuid.toString());
-				ps.setString(2, name);
+				ps.setString(1, this.uuid.toString());
+				ps.setString(2, this.name);
 				ps.execute();
 			}
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
-		for (final Integer i : abilities.keySet()) {
+		for (final Integer i : this.abilities.keySet()) {
 			new BukkitRunnable() {
 				PreparedStatement ps;
 
 				@Override
 				public void run() {
 					try {
-						ps = DBConnection.sql.getConnection().prepareStatement(updateQuery1 + i + updateQuery2);
-						ps.setString(1, abilities.get(i));
-						ps.setString(2, uuid.toString());
-						ps.setString(3, name);
-						ps.execute();
+						this.ps = DBConnection.sql.getConnection().prepareStatement(updateQuery1 + i + updateQuery2);
+						this.ps.setString(1, Preset.this.abilities.get(i));
+						this.ps.setString(2, Preset.this.uuid.toString());
+						this.ps.setString(3, Preset.this.name);
+						this.ps.execute();
 					}
-					catch (SQLException e) {
+					catch (final SQLException e) {
 						e.printStackTrace();
 					}
 				}
@@ -332,7 +335,7 @@ public class Preset {
 					Thread.sleep(1500);
 					reloadPreset(player);
 				}
-				catch (InterruptedException e) {
+				catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 			}

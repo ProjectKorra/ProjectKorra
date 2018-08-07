@@ -1,10 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,14 +11,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 
 public class Tornado extends AirAbility {
-	
-	private long cooldown;
+
+	private final long cooldown;
+	private final long duration;
 	private int numberOfStreams;
 	private int particleCount;
 	@Attribute(Attribute.SPEED)
@@ -35,91 +36,93 @@ public class Tornado extends AirAbility {
 	private double npcPushFactor;
 	private double currentHeight;
 	private double currentRadius;
-	private boolean couldFly;
-	private Flight flight;
 	private Location origin;
-	private Random random;
-	private Map<Integer, Integer> angles;
+	private final Random random;
+	private final Map<Integer, Integer> angles;
 
-	public Tornado(Player player) {
+	public Tornado(final Player player) {
 		super(player);
-		
+
 		this.cooldown = getConfig().getLong("Abilities.Air.Tornado.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Air.Tornado.Duration");
 		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
-		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
-		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
+		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) this.range).getLocation();
+		this.origin.setY(this.origin.getY() - 1.0 / 10.0 * this.currentHeight);
 		this.maxHeight = getConfig().getDouble("Abilities.Air.Tornado.Height");
 		this.playerPushFactor = getConfig().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
 		this.radius = getConfig().getDouble("Abilities.Air.Tornado.Radius");
 		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.NpcPushFactor");
 		this.speed = getConfig().getDouble("Abilities.Air.Tornado.Speed");
-		this.numberOfStreams = (int) (.3 * (double) maxHeight);
+		this.numberOfStreams = (int) (.3 * this.maxHeight);
 		this.currentHeight = 2;
-		this.currentRadius = currentHeight / maxHeight * radius;
+		this.currentRadius = this.currentHeight / this.maxHeight * this.radius;
 		this.random = new Random();
 		this.angles = new ConcurrentHashMap<>();
 
 		int angle = 0;
-		for (int i = 0; i <= maxHeight; i += (int) maxHeight / numberOfStreams) {
-			angles.put(i, angle);
+		for (int i = 0; i <= this.maxHeight; i += (int) this.maxHeight / this.numberOfStreams) {
+			this.angles.put(i, angle);
 			angle += 90;
 			if (angle == 360) {
 				angle = 0;
 			}
 		}
 
-		
-		this.flight = new Flight(player);
-		this.couldFly = player.getAllowFlight();
+		ProjectKorra.flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (player.getEyeLocation().getBlock().isLiquid() || !player.isSneaking() || !bPlayer.canBendIgnoreCooldowns(this)) {
-			bPlayer.addCooldown(this);
-			remove();
+		if (this.player.getEyeLocation().getBlock().isLiquid() || !this.player.isSneaking() || !this.bPlayer.canBend(this)) {
+			this.bPlayer.addCooldown(this);
+			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, origin)) {
-			remove();
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.origin)) {
+			this.remove();
 			return;
+		} else if (this.duration != 0) {
+			if (this.getStartTime() + this.duration <= System.currentTimeMillis()) {
+				this.bPlayer.addCooldown(this);
+				this.remove();
+				return;
+			}
 		}
-		rotateTornado();
+		this.rotateTornado();
 	}
 
 	@Override
 	public void remove() {
 		super.remove();
-		flight.remove();
-		player.setAllowFlight(couldFly);
+		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	private void rotateTornado() {
-		origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
-		double timefactor = currentHeight / maxHeight;
-		currentRadius = timefactor * radius;
+		this.origin = this.player.getTargetBlock((HashSet<Material>) null, (int) this.range).getLocation();
+		final double timefactor = this.currentHeight / this.maxHeight;
+		this.currentRadius = timefactor * this.radius;
 
-		if (origin.getBlock().getType() != Material.AIR && origin.getBlock().getType() != Material.BARRIER) {
-			origin.setY(origin.getY() - 1. / 10. * currentHeight);
+		if (this.origin.getBlock().getType() != Material.AIR && this.origin.getBlock().getType() != Material.BARRIER) {
+			this.origin.setY(this.origin.getY() - 1. / 10. * this.currentHeight);
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, currentHeight)) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, this.currentHeight)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
 				}
-				double y = entity.getLocation().getY();
+				final double y = entity.getLocation().getY();
 				double factor;
-				if (y > origin.getY() && y < origin.getY() + currentHeight) {
-					factor = (y - origin.getY()) / currentHeight;
-					Location testloc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
-					if (testloc.getWorld().equals(entity.getWorld()) && testloc.distance(entity.getLocation()) < currentRadius * factor) {
+				if (y > this.origin.getY() && y < this.origin.getY() + this.currentHeight) {
+					factor = (y - this.origin.getY()) / this.currentHeight;
+					final Location testloc = new Location(this.origin.getWorld(), this.origin.getX(), y, this.origin.getZ());
+					if (testloc.getWorld().equals(entity.getWorld()) && testloc.distance(entity.getLocation()) < this.currentRadius * factor) {
 						double x, z, vx, vz, mag;
 						double angle = 100;
-						double vy = 0.7 * npcPushFactor;
+						double vy = 0.7 * this.npcPushFactor;
 						angle = Math.toRadians(angle);
 
-						x = entity.getLocation().getX() - origin.getX();
-						z = entity.getLocation().getZ() - origin.getZ();
+						x = entity.getLocation().getX() - this.origin.getX();
+						z = entity.getLocation().getZ() - this.origin.getZ();
 
 						mag = Math.sqrt(x * x + z * z);
 
@@ -127,22 +130,22 @@ public class Tornado extends AirAbility {
 						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
 						if (entity instanceof Player) {
-							vy = 0.05 * playerPushFactor;
+							vy = 0.05 * this.playerPushFactor;
 						}
 
-						if (entity.getEntityId() == player.getEntityId()) {
-							Vector direction = player.getEyeLocation().getDirection().clone().normalize();
+						if (entity.getEntityId() == this.player.getEntityId()) {
+							final Vector direction = this.player.getEyeLocation().getDirection().clone().normalize();
 							vx = direction.getX();
 							vz = direction.getZ();
-							Location playerloc = player.getLocation();
-							double py = playerloc.getY();
-							double oy = origin.getY();
-							double dy = py - oy;
+							final Location playerloc = this.player.getLocation();
+							final double py = playerloc.getY();
+							final double oy = this.origin.getY();
+							final double dy = py - oy;
 
-							if (dy >= currentHeight * .95) {
+							if (dy >= this.currentHeight * .95) {
 								vy = 0;
-							} else if (dy >= currentHeight * .85) {
-								vy = 6.0 * (.95 - dy / currentHeight);
+							} else if (dy >= this.currentHeight * .85) {
+								vy = 6.0 * (.95 - dy / this.currentHeight);
 							} else {
 								vy = .6;
 							}
@@ -154,7 +157,7 @@ public class Tornado extends AirAbility {
 							}
 						}
 
-						Vector velocity = entity.getVelocity();
+						final Vector velocity = entity.getVelocity();
 						velocity.setX(vx);
 						velocity.setZ(vz);
 						velocity.setY(vy);
@@ -165,34 +168,34 @@ public class Tornado extends AirAbility {
 						breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
-							new Flight((Player) entity);
+							ProjectKorra.flightHandler.createInstance((Player) entity, 50L, this.getName());
 						}
 					}
 				}
 			}
 
-			for (int i : angles.keySet()) {
+			for (final int i : this.angles.keySet()) {
 				double x, y, z, factor;
-				double angle = (double) angles.get(i);
+				double angle = this.angles.get(i);
 				angle = Math.toRadians(angle);
 
-				y = origin.getY() + timefactor * (double) i;
-				factor = (double) i / currentHeight;
+				y = this.origin.getY() + timefactor * i;
+				factor = i / this.currentHeight;
 
-				x = origin.getX() + timefactor * factor * currentRadius * Math.cos(angle);
-				z = origin.getZ() + timefactor * factor * currentRadius * Math.sin(angle);
+				x = this.origin.getX() + timefactor * factor * this.currentRadius * Math.cos(angle);
+				z = this.origin.getZ() + timefactor * factor * this.currentRadius * Math.sin(angle);
 
-				Location effect = new Location(origin.getWorld(), x, y, z);
+				final Location effect = new Location(this.origin.getWorld(), x, y, z);
 				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
-					playAirbendingParticles(effect, particleCount);
-					if (random.nextInt(20) == 0) {
+					playAirbendingParticles(effect, this.particleCount);
+					if (this.random.nextInt(20) == 0) {
 						playAirbendingSound(effect);
 					}
 				}
-				angles.put(i, angles.get(i) + 25 * (int) speed);
+				this.angles.put(i, this.angles.get(i) + 25 * (int) this.speed);
 			}
 		}
-		currentHeight = currentHeight > maxHeight ? maxHeight : currentHeight + 1;
+		this.currentHeight = this.currentHeight > this.maxHeight ? this.maxHeight : this.currentHeight + 1;
 	}
 
 	@Override
@@ -202,12 +205,12 @@ public class Tornado extends AirAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -222,98 +225,98 @@ public class Tornado extends AirAbility {
 
 	@Override
 	public double getCollisionRadius() {
-		return getRadius();
+		return this.getRadius();
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public int getNumberOfStreams() {
-		return numberOfStreams;
+		return this.numberOfStreams;
 	}
 
-	public void setNumberOfStreams(int numberOfStreams) {
+	public void setNumberOfStreams(final int numberOfStreams) {
 		this.numberOfStreams = numberOfStreams;
 	}
 
 	public int getParticleCount() {
-		return particleCount;
+		return this.particleCount;
 	}
 
-	public void setParticleCount(int particleCount) {
+	public void setParticleCount(final int particleCount) {
 		this.particleCount = particleCount;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public double getMaxHeight() {
-		return maxHeight;
+		return this.maxHeight;
 	}
 
-	public void setMaxHeight(double maxHeight) {
+	public void setMaxHeight(final double maxHeight) {
 		this.maxHeight = maxHeight;
 	}
 
 	public double getPlayerPushFactor() {
-		return playerPushFactor;
+		return this.playerPushFactor;
 	}
 
-	public void setPlayerPushFactor(double playerPushFactor) {
+	public void setPlayerPushFactor(final double playerPushFactor) {
 		this.playerPushFactor = playerPushFactor;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getNpcPushFactor() {
-		return npcPushFactor;
+		return this.npcPushFactor;
 	}
 
-	public void setNpcPushFactor(double npcPushFactor) {
+	public void setNpcPushFactor(final double npcPushFactor) {
 		this.npcPushFactor = npcPushFactor;
 	}
 
 	public double getCurrentHeight() {
-		return currentHeight;
+		return this.currentHeight;
 	}
 
-	public void setCurrentHeight(double currentHeight) {
+	public void setCurrentHeight(final double currentHeight) {
 		this.currentHeight = currentHeight;
 	}
 
 	public double getCurrentRadius() {
-		return currentRadius;
+		return this.currentRadius;
 	}
 
-	public void setCurrentRadius(double currentRadius) {
+	public void setCurrentRadius(final double currentRadius) {
 		this.currentRadius = currentRadius;
 	}
 
 	public Map<Integer, Integer> getAngles() {
-		return angles;
+		return this.angles;
 	}
 }

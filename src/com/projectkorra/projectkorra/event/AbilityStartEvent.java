@@ -8,7 +8,7 @@ import com.projectkorra.projectkorra.ability.Ability;
 
 /**
  * Called when an ability starts
- * 
+ *
  * @author Philip
  *
  */
@@ -19,14 +19,15 @@ public class AbilityStartEvent extends Event implements Cancellable {
 	boolean cancelled = false;
 	Ability ability;
 
-	public AbilityStartEvent(Ability ability) {
+	public AbilityStartEvent(final Ability ability) {
 		this.ability = ability;
 	}
 
 	public Ability getAbility() {
-		return ability;
+		return this.ability;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}
@@ -37,11 +38,11 @@ public class AbilityStartEvent extends Event implements Cancellable {
 
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean cancelled) {
+	public void setCancelled(final boolean cancelled) {
 		this.cancelled = cancelled;
 	}
 

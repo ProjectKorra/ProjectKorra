@@ -6,21 +6,21 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a player binds or unbinds an ability
- * 
+ *
  * @author savior67
  */
 public class BindChangeEvent extends Event {
 
 	private static final HandlerList handlers = new HandlerList();
-	private Player player;
-	private String ability;
-	private int slot; //slot is -1 if it is a multiability
-	private boolean isBinding; //true if the ability is being binded, otherwise false
-	private boolean isMultiAbility; //true if the ability is a multiability
+	private final Player player;
+	private final String ability;
+	private final int slot; // slot is -1 if it is a multiability.
+	private final boolean isBinding; // true if the ability is being binded, otherwise false.
+	private final boolean isMultiAbility; // true if the ability is a multiability.
 	private boolean cancelled;
 
-	//bind event for abilities
-	public BindChangeEvent(Player player, String ability, int slot, boolean isBinding) {
+	// bind event for abilities.
+	public BindChangeEvent(final Player player, final String ability, final int slot, final boolean isBinding) {
 		this.player = player;
 		this.ability = ability;
 		this.slot = slot;
@@ -29,8 +29,8 @@ public class BindChangeEvent extends Event {
 		this.isMultiAbility = false;
 	}
 
-	//used for multi abilities
-	public BindChangeEvent(Player player, String ability, boolean isBinding) {
+	// used for multi abilities.
+	public BindChangeEvent(final Player player, final String ability, final boolean isBinding) {
 		this.player = player;
 		this.ability = ability;
 		this.slot = -1;
@@ -40,7 +40,7 @@ public class BindChangeEvent extends Event {
 	}
 
 	public String getAbility() {
-		return ability;
+		return this.ability;
 	}
 
 	@Override
@@ -53,26 +53,26 @@ public class BindChangeEvent extends Event {
 	}
 
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 
 	public int getSlot() {
-		return slot;
+		return this.slot;
 	}
 
 	public boolean isBinding() {
-		return isBinding;
+		return this.isBinding;
 	}
 
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	public boolean isMultiAbility() {
-		return isMultiAbility;
+		return this.isMultiAbility;
 	}
 
-	public void setCancelled(boolean cancelled) {
+	public void setCancelled(final boolean cancelled) {
 		this.cancelled = cancelled;
 	}
 }

@@ -1,11 +1,11 @@
 package com.projectkorra.projectkorra.configuration;
 
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.io.File;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 /**
  * A config utility class for Project Korra. To get the config itself use
@@ -13,21 +13,21 @@ import java.io.File;
  */
 public class Config {
 
-	private ProjectKorra plugin;
+	private final ProjectKorra plugin;
 
-	private File file;
-	private FileConfiguration config;
+	private final File file;
+	private final FileConfiguration config;
 
 	/**
 	 * Creates a new {@link Config} with the file being the configuration file.
-	 * 
+	 *
 	 * @param file The file to create/load
 	 */
-	public Config(File file) {
+	public Config(final File file) {
 		this.plugin = ProjectKorra.plugin;
-		this.file = new File(plugin.getDataFolder() + File.separator + file);
+		this.file = new File(this.plugin.getDataFolder() + File.separator + file);
 		this.config = YamlConfiguration.loadConfiguration(this.file);
-		reload();
+		this.reload();
 	}
 
 	/**
@@ -36,24 +36,24 @@ public class Config {
 	 * for the config.
 	 */
 	public void create() {
-		if (!file.getParentFile().exists()) {
+		if (!this.file.getParentFile().exists()) {
 			try {
-				file.getParentFile().mkdir();
-				plugin.getLogger().info("Generating new directory for " + file.getName() + "!");
+				this.file.getParentFile().mkdir();
+				this.plugin.getLogger().info("Generating new directory for " + this.file.getName() + "!");
 			}
-			catch (Exception e) {
-				plugin.getLogger().info("Failed to generate directory!");
+			catch (final Exception e) {
+				this.plugin.getLogger().info("Failed to generate directory!");
 				e.printStackTrace();
 			}
 		}
 
-		if (!file.exists()) {
+		if (!this.file.exists()) {
 			try {
-				file.createNewFile();
-				plugin.getLogger().info("Generating new " + file.getName() + "!");
+				this.file.createNewFile();
+				this.plugin.getLogger().info("Generating new " + this.file.getName() + "!");
 			}
-			catch (Exception e) {
-				plugin.getLogger().info("Failed to generate " + file.getName() + "!");
+			catch (final Exception e) {
+				this.plugin.getLogger().info("Failed to generate " + this.file.getName() + "!");
 				e.printStackTrace();
 			}
 		}
@@ -61,11 +61,11 @@ public class Config {
 
 	/**
 	 * Gets the {@link FileConfiguration} object from the {@link Config}.
-	 * 
+	 *
 	 * @return the file configuration object
 	 */
 	public FileConfiguration get() {
-		return config;
+		return this.config;
 	}
 
 	/**
@@ -73,11 +73,11 @@ public class Config {
 	 * not exist it will run {@link #create()} first before loading the config.
 	 */
 	public void reload() {
-		create();
+		this.create();
 		try {
-			config.load(file);
+			this.config.load(this.file);
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -89,10 +89,10 @@ public class Config {
 	 */
 	public void save() {
 		try {
-			config.options().copyDefaults(true);
-			config.save(file);
+			this.config.options().copyDefaults(true);
+			this.config.save(this.file);
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}

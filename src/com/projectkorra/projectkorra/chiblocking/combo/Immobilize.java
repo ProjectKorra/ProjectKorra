@@ -11,7 +11,9 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class Immobilize extends ChiAbility implements ComboAbility {
@@ -19,35 +21,35 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 	private long duration;
 	private long cooldown;
 	private Entity target;
-	
-	public Immobilize(Player player) {
+
+	public Immobilize(final Player player) {
 		super(player);
-		
+
 		this.cooldown = getConfig().getLong("Abilities.Chi.Immobilize.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Chi.Immobilize.ParalyzeDuration");
-		target = GeneralMethods.getTargetedEntity(player, 5);
-		if (!bPlayer.canBendIgnoreBinds(this)) {
+		this.target = GeneralMethods.getTargetedEntity(player, 5);
+		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
 		}
-		if (target == null) {
-			remove();
+		if (this.target == null) {
+			this.remove();
 			return;
 		} else {
-			paralyze(target, duration);
-			bPlayer.addCooldown(this);
+			paralyze(this.target, this.duration);
+			this.bPlayer.addCooldown(this);
 		}
 	}
-	
+
 	/**
 	 * Paralyzes the target for the given duration. The player will be unable to
 	 * move or interact for the duration.
-	 * 
+	 *
 	 * @param target The Entity to be paralyzed
 	 * @param duration The time in milliseconds the target will be paralyzed
 	 */
-	private static void paralyze(Entity target, Long duration) {
-		MovementHandler mh = new MovementHandler((LivingEntity) target);
-		mh.stop(duration/1000*20, Element.CHI.getColor() + "* Immobilized *");
+	private static void paralyze(final Entity target, final Long duration) {
+		final MovementHandler mh = new MovementHandler((LivingEntity) target, CoreAbility.getAbility(Immobilize.class));
+		mh.stopWithDuration(duration / 1000 * 20, Element.CHI.getColor() + "* Immobilized *");
 	}
 
 	@Override
@@ -61,7 +63,6 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
@@ -72,41 +73,51 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
 	public Location getLocation() {
-		return target != null ? target.getLocation() : null;
+		return this.target != null ? this.target.getLocation() : null;
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
-		return null;
+	public Object createNewComboInstance(final Player player) {
+		return new Immobilize(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
-	}
-	
-	public long getDuration() {
-		return duration;
+		final ArrayList<AbilityInformation> immobilize = new ArrayList<>();
+		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
+		immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK_ENTITY));
+		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
+		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
+		return immobilize;
 	}
 
-	public void setDuration(long duration) {
+	public long getDuration() {
+		return this.duration;
+	}
+
+	public void setDuration(final long duration) {
 		this.duration = duration;
 	}
 
 	public Entity getTarget() {
-		return target;
+		return this.target;
 	}
 
-	public void setTarget(Entity target) {
+	public void setTarget(final Entity target) {
 		this.target = target;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+
+	@Override
+	public String getInstructions() {
+		return "QuickStrike > SwiftKick > QuickStrike > QuickStrike";
 	}
 }

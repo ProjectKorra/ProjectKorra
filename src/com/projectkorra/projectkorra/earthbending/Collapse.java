@@ -28,56 +28,56 @@ public class Collapse extends EarthAbility {
 	private Block block;
 	private Map<Block, Block> affectedBlocks;
 
-	public Collapse(Player player) {
+	public Collapse(final Player player) {
 		super(player);
-		setFields();
+		this.setFields();
 
-		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("CollapsePillar")) {
+		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("CollapsePillar")) {
 			return;
 		}
 
-		block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
-		if (block == null) {
+		this.block = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK);
+		if (this.block == null) {
 			return;
 		}
 
-		this.origin = block.getLocation();
-		this.location = origin.clone();
-		this.distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
-		loadAffectedBlocks();
+		this.origin = this.block.getLocation();
+		this.location = this.origin.clone();
+		this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), this.height);
+		this.loadAffectedBlocks();
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height");
 		}
-		if (distance != 0) {
-			start();
-			bPlayer.addCooldown("CollapsePillar", cooldown);
-			time = System.currentTimeMillis() - (long) (1000.0 / speed);
+		if (this.distance != 0) {
+			this.start();
+			this.bPlayer.addCooldown("CollapsePillar", this.cooldown);
+			this.time = System.currentTimeMillis() - (long) (1000.0 / this.speed);
 		} else {
-			remove();
+			this.remove();
 		}
 	}
 
-	public Collapse(Player player, Location origin) {
+	public Collapse(final Player player, final Location origin) {
 		super(player);
-		setFields();
+		this.setFields();
 		this.origin = origin;
 		this.player = player;
 		this.block = origin.getBlock();
 		this.location = origin.clone();
-		this.distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
-		loadAffectedBlocks();
+		this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), this.height);
+		this.loadAffectedBlocks();
 
-		if (distance != 0) {
-			start();
-			time = System.currentTimeMillis() - (long) (1000.0 / speed);
+		if (this.distance != 0) {
+			this.start();
+			this.time = System.currentTimeMillis() - (long) (1000.0 / this.speed);
 		} else {
-			remove();
+			this.remove();
 		}
 	}
 
 	private void setFields() {
-		this.height = bPlayer.isAvatarState() ? getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height") : getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
+		this.height = this.bPlayer.isAvatarState() ? getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height") : getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
 		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
 		this.speed = getConfig().getDouble("Abilities.Earth.Collapse.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Column.Cooldown");
@@ -86,20 +86,20 @@ public class Collapse extends EarthAbility {
 	}
 
 	private void loadAffectedBlocks() {
-		affectedBlocks.clear();
+		this.affectedBlocks.clear();
 		Block thisBlock;
 
-		for (int i = 0; i <= distance; i++) {
-			thisBlock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(-i)));
-			affectedBlocks.put(thisBlock, thisBlock);
+		for (int i = 0; i <= this.distance; i++) {
+			thisBlock = this.block.getWorld().getBlockAt(this.location.clone().add(this.direction.clone().multiply(-i)));
+			this.affectedBlocks.put(thisBlock, thisBlock);
 			if (RaiseEarth.blockInAllAffectedBlocks(thisBlock)) {
-				RaiseEarth.revertBlock(thisBlock);
+				EarthAbility.revertBlock(thisBlock);
 			}
 		}
 	}
 
-	public static boolean blockInAllAffectedBlocks(Block block) {
-		for (Collapse collapse : getAbilities(Collapse.class)) {
+	public static boolean blockInAllAffectedBlocks(final Block block) {
+		for (final Collapse collapse : getAbilities(Collapse.class)) {
 			if (collapse.affectedBlocks.containsKey(block)) {
 				return true;
 			}
@@ -107,33 +107,33 @@ public class Collapse extends EarthAbility {
 		return false;
 	}
 
-	public static void revert(Block block) {
-		for (Collapse collapse : getAbilities(Collapse.class)) {
+	public static void revert(final Block block) {
+		for (final Collapse collapse : getAbilities(Collapse.class)) {
 			collapse.affectedBlocks.remove(block);
 		}
 	}
 
 	@Override
 	public void progress() {
-		if (System.currentTimeMillis() - time >= (long) (1000.0 / speed)) {
-			time = System.currentTimeMillis();
-			if (!tryToMoveEarth()) {
-				remove();
+		if (System.currentTimeMillis() - this.time >= (long) (1000.0 / this.speed)) {
+			this.time = System.currentTimeMillis();
+			if (!this.tryToMoveEarth()) {
+				this.remove();
 				return;
 			}
 		}
 	}
 
 	private boolean tryToMoveEarth() {
-		Block block = location.getBlock();
-		location = location.add(direction);
-		if (distance == 0) {
+		final Block block = this.location.getBlock();
+		this.location = this.location.add(this.direction);
+		if (this.distance == 0) {
 			return false;
 		}
 
-		moveEarth(block, direction, distance);
-		loadAffectedBlocks();
-		return location.distanceSquared(origin) < distance * distance;
+		this.moveEarth(block, this.direction, this.distance);
+		this.loadAffectedBlocks();
+		return this.location.distanceSquared(this.origin) < this.distance * this.distance;
 	}
 
 	@Override
@@ -143,12 +143,12 @@ public class Collapse extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -163,86 +163,86 @@ public class Collapse extends EarthAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (Block block : affectedBlocks.values()) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final Block block : this.affectedBlocks.values()) {
 			locations.add(block.getLocation());
 		}
 		return locations;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public Vector getDirection() {
-		return direction;
+		return this.direction;
 	}
 
-	public void setDirection(Vector direction) {
+	public void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 
-	public void setBlock(Block block) {
+	public void setBlock(final Block block) {
 		this.block = block;
 	}
 
 	public int getDistance() {
-		return distance;
+		return this.distance;
 	}
 
-	public void setDistance(int distance) {
+	public void setDistance(final int distance) {
 		this.distance = distance;
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(final int height) {
 		this.height = height;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public double getSelectRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setSelectRange(double selectRange) {
+	public void setSelectRange(final double selectRange) {
 		this.selectRange = selectRange;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public Map<Block, Block> getAffectedBlocks() {
-		return affectedBlocks;
+		return this.affectedBlocks;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 }

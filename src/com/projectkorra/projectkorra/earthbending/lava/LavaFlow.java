@@ -8,11 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.World;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -30,11 +30,8 @@ public class LavaFlow extends LavaAbility {
 	}
 
 	private static final Map<Block, TempBlock> TEMP_LAVA_BLOCKS = new ConcurrentHashMap<>();
-	public static final Map<TempBlock, Block> TEMP_LAVA_BLOCKS_BY_TEMPBLOCK = new ConcurrentHashMap<>();
 	private static final Map<Block, TempBlock> TEMP_LAND_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<TempBlock, Block> TEMP_LAND_BLOCKS_BY_TEMPBLOCK = new ConcurrentHashMap<>();
 	private static final Map<Block, TempBlock> TEMP_AIR_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<TempBlock, Block> TEMP_AIR_BLOCKS_BY_TEMPBLOCK = new ConcurrentHashMap<>();
 
 	private boolean removing;
 	private boolean makeLava;
@@ -77,13 +74,13 @@ public class LavaFlow extends LavaAbility {
 	 * cooldowns. The ability is not guaranteed to continue, it may be the case
 	 * that the player doesn't have the correct permissions to bend this
 	 * ability.
-	 * 
+	 *
 	 * @param player the player that bended the ability
 	 * @param type either shift or sneak
 	 */
-	public LavaFlow(Player player, AbilityType type) {
+	public LavaFlow(final Player player, final AbilityType type) {
 		super(player);
-		if (!bPlayer.canLavabend()) {
+		if (!this.bPlayer.canLavabend()) {
 			return;
 		}
 
@@ -122,46 +119,46 @@ public class LavaFlow extends LavaAbility {
 		this.downwardFlow = getConfig().getInt("Abilities.Earth.LavaFlow.DownwardFlow");
 		this.allowNaturalFlow = getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
 
-		if (bPlayer.isAvatarState()) {
-			shiftCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown");
-			clickLavaCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown");
-			clickLandCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
-			shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
-			clickLavaRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
-			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius");
+		if (this.bPlayer.isAvatarState()) {
+			this.shiftCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown");
+			this.clickLavaCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown");
+			this.clickLandCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
+			this.shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
+			this.clickLavaRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
+			this.shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius");
 		}
 
 		if (type == AbilityType.SHIFT) {
-			// Update the shift counter for all the player's LavaFlows
-			ArrayList<LavaFlow> shiftFlows = LavaFlow.getLavaFlow(player, LavaFlow.AbilityType.SHIFT);
+			// Update the shift counter for all the player's LavaFlows.
+			final ArrayList<LavaFlow> shiftFlows = LavaFlow.getLavaFlow(player, LavaFlow.AbilityType.SHIFT);
 			if (shiftFlows.size() > 0 && !player.isSneaking()) {
-				for (LavaFlow lavaFlow : shiftFlows) {
+				for (final LavaFlow lavaFlow : shiftFlows) {
 					lavaFlow.shiftCounter++;
 				}
 			}
 
-			if (bPlayer.isOnCooldown("LavaFlow")) {
-				removeSlowly();
+			if (this.bPlayer.isOnCooldown("LavaFlow")) {
+				this.removeSlowly();
 				return;
 			}
-			start();
+			this.start();
 		} else if (type == AbilityType.CLICK) {
-			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, ClickType.LEFT_CLICK);
+			final Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, this.clickRange, ClickType.LEFT_CLICK);
 			if (sourceBlock == null) {
-				removeSlowly();
+				this.removeSlowly();
 				return;
 			}
 
-			long cooldown = makeLava ? clickLavaCooldown : clickLandCooldown;
-			origin = sourceBlock.getLocation();
-			makeLava = !isLava(sourceBlock);
-			if (bPlayer.isOnCooldown("LavaFlow")) {
-				removeSlowly();
+			final long cooldown = this.makeLava ? this.clickLavaCooldown : this.clickLandCooldown;
+			this.origin = sourceBlock.getLocation();
+			this.makeLava = !isLava(sourceBlock);
+			if (this.bPlayer.isOnCooldown("LavaFlow")) {
+				this.removeSlowly();
 				return;
 			} else {
-				bPlayer.addCooldown("LavaFlow", cooldown);
+				this.bPlayer.addCooldown("LavaFlow", cooldown);
 			}
-			start();
+			this.start();
 		}
 	}
 
@@ -172,128 +169,129 @@ public class LavaFlow extends LavaAbility {
 	 */
 	@Override
 	public void progress() {
-		if (shiftCounter > 0 && type == AbilityType.SHIFT) {
-			removeSlowly();
+		if (this.shiftCounter > 0 && this.type == AbilityType.SHIFT) {
+			this.removeSlowly();
 			return;
-		} else if (removing) {
+		} else if (this.removing) {
 			return;
-		} else if (player.isDead() || !player.isOnline() || player.getWorld() != this.world) {
-			removeSlowly();
+		} else if (this.player.isDead() || !this.player.isOnline() || this.player.getWorld() != this.world) {
+			this.removeSlowly();
 			return;
 		}
 
-		Random random = new Random();
+		final Random random = new Random();
 
-		if (type == AbilityType.SHIFT) {
-			if (System.currentTimeMillis() - time > shiftRemoveDelay) {
-				removeSlowly();
+		if (this.type == AbilityType.SHIFT) {
+			if (System.currentTimeMillis() - this.time > this.shiftRemoveDelay) {
+				this.removeSlowly();
 				return;
 			}
-			if (!player.isSneaking() && !removing) {
-				if (affectedBlocks.size() > 0) {
-					removeOnDelay();
-					removing = true;
-					bPlayer.addCooldown("LavaFlow", shiftCooldown);
+			if (!this.player.isSneaking() && !this.removing) {
+				if (this.affectedBlocks.size() > 0) {
+					this.removeOnDelay();
+					this.removing = true;
+					this.bPlayer.addCooldown("LavaFlow", this.shiftCooldown);
 				} else {
-					removeSlowly();
+					this.removeSlowly();
 				}
 				return;
 			}
 
-			if (!bPlayer.canBendIgnoreCooldowns(this)) {
-				removeSlowly();
+			if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+				this.removeSlowly();
 				return;
-			} else if (origin == null) {
-				origin = player.getLocation().clone().add(0, -1, 0);
-				if (!isEarthbendable(origin.getBlock()) && origin.getBlock().getType() != Material.GLOWSTONE) {
-					removeSlowly();
+			} else if (this.origin == null) {
+				this.origin = this.player.getLocation().clone().add(0, -1, 0);
+				if (!this.isEarthbendable(this.origin.getBlock()) && this.origin.getBlock().getType() != Material.GLOWSTONE) {
+					this.removeSlowly();
 					return;
 				}
 			}
 
-			for (double x = -currentRadius; x <= currentRadius + particleOffset; x++) {
-				for (double z = -currentRadius; z < currentRadius + particleOffset; z++) {
-					Location loc = origin.clone().add(x, 0, z);
-					Block block = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
+			for (double x = -this.currentRadius; x <= this.currentRadius + this.particleOffset; x++) {
+				for (double z = -this.currentRadius; z < this.currentRadius + this.particleOffset; z++) {
+					final Location loc = this.origin.clone().add(x, 0, z);
+					final Block block = GeneralMethods.getTopBlock(loc, this.upwardFlow, this.downwardFlow);
 					if (block == null) {
 						continue;
 					}
 
-					double dSquared = distanceSquaredXZ(block.getLocation(), origin);
-					if (dSquared > Math.pow(shiftPlatformRadius, 2)) {
-						if (dSquared < Math.pow(currentRadius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-							if (dSquared < shiftPlatformRadius * 4 || getAdjacentLavaBlocks(block.getLocation()).size() > 0) {
+					final double dSquared = distanceSquaredXZ(block.getLocation(), this.origin);
+					if (dSquared > Math.pow(this.shiftPlatformRadius, 2)) {
+						if (dSquared < Math.pow(this.currentRadius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+							if (dSquared < this.shiftPlatformRadius * 4 || this.getAdjacentLavaBlocks(block.getLocation()).size() > 0) {
 								if (!isLava(block)) {
 									if (isPlant(block) || isSnow(block)) {
-										Block lower = block.getRelative(BlockFace.DOWN);
+										final Block lower = block.getRelative(BlockFace.DOWN);
 										if (isPlant(lower) || isSnow(lower)) {
-											Block lower2 = lower.getRelative(BlockFace.DOWN);
+											final Block lower2 = lower.getRelative(BlockFace.DOWN);
 											if (!isEarth(lower2) && !isSand(lower2) && !isMetal(lower2)) {
 												continue;
 											}
-											createLava(lower2);
+											this.createLava(lower2);
 										} else {
 											if (!isEarth(lower) && !isSand(lower) && !isMetal(lower)) {
 												continue;
 											}
-											createLava(lower);
+											this.createLava(lower);
 										}
 									} else {
 										if (!isEarth(block) && !isSand(block) && !isMetal(block)) {
 											continue;
 										}
-										createLava(block);
+										this.createLava(block);
 									}
 								}
 
 							}
-						} else if (Math.random() < particleDensity && dSquared < Math.pow(currentRadius + particleDensity, 2) && currentRadius + particleDensity < shiftMaxRadius && random.nextInt(3) == 0) {
+						} else if (Math.random() < this.particleDensity && dSquared < Math.pow(this.currentRadius + this.particleDensity, 2) && this.currentRadius + this.particleDensity < this.shiftMaxRadius && random.nextInt(3) == 0) {
 							ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
 						}
 					}
 				}
 
-				if (!shiftIsFinished) {
+				if (!this.shiftIsFinished) {
 					if (random.nextInt(10) == 0) {
-						ParticleEffect.LAVA.display(player.getLocation(), (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+						ParticleEffect.LAVA.display(this.player.getLocation(), (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
 					}
 				}
 
-				currentRadius += shiftFlowSpeed;
-				if (currentRadius > shiftMaxRadius) {
-					currentRadius = shiftMaxRadius;
-					shiftIsFinished = true;
+				this.currentRadius += this.shiftFlowSpeed;
+				if (this.currentRadius > this.shiftMaxRadius) {
+					this.currentRadius = this.shiftMaxRadius;
+					this.shiftIsFinished = true;
 				}
 			}
-		} else if (type == AbilityType.CLICK) {
+		} else if (this.type == AbilityType.CLICK) {
 			/*
 			 * The variable makeLava refers to whether or not the ability is
 			 * trying to remove land in place of lava or if makeLava = false
 			 * then lava is being replaced with land.
-			 * 
+			 *
 			 * Notice we have separate variables between both versions, because
 			 * most of the time making lava will have longer delays and longer
 			 * cooldowns.
 			 */
-			long curTime = System.currentTimeMillis() - time;
-			double delay = makeLava ? clickLavaDelay : clickLandDelay;
+			final long curTime = System.currentTimeMillis() - this.time;
+			final double delay = this.makeLava ? this.clickLavaDelay : this.clickLandDelay;
 
-			if (makeLava && curTime > clickLavaCleanupDelay) {
-				removeSlowly();
+			if (this.makeLava && curTime > this.clickLavaCleanupDelay) {
+				this.makeLava = false;
+				this.removeSlowly();
 				return;
-			} else if (!makeLava && curTime > clickLandCleanupDelay) {
-				removeSlowly();
+			} else if (!this.makeLava && curTime > this.clickLandCleanupDelay) {
+				this.removeSlowly();
 				return;
-			} else if (!makeLava && curTime < delay) {
+			} else if (!this.makeLava && curTime < delay) {
 				return;
-			} else if (makeLava && curTime < delay) {
-				for (double x = -clickLavaRadius; x <= clickLavaRadius; x++) {
-					for (double z = -clickLavaRadius; z <= clickLavaRadius; z++) {
-						Location loc = origin.clone().add(x, 0, z);
-						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
+			} else if (this.makeLava && curTime < delay) {
+				for (double x = -this.clickLavaRadius; x <= this.clickLavaRadius; x++) {
+					for (double z = -this.clickLavaRadius; z <= this.clickLavaRadius; z++) {
+						final Location loc = this.origin.clone().add(x, 0, z);
+						final Block tempBlock = GeneralMethods.getTopBlock(loc, this.upwardFlow, this.downwardFlow);
 						if (!isWater(tempBlock)) {
-							if (tempBlock != null && !isLava(tempBlock) && Math.random() < particleDensity && tempBlock.getLocation().distanceSquared(origin) <= Math.pow(clickLavaRadius, 2)) {
-								if (random.nextInt(3) == 0) {
+							if (tempBlock != null && !isLava(tempBlock) && Math.random() < this.particleDensity && tempBlock.getLocation().distanceSquared(this.origin) <= Math.pow(this.clickLavaRadius, 2)) {
+								if (random.nextInt(5) == 0) {
 									ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
 								}
 							}
@@ -308,56 +306,56 @@ public class LavaFlow extends LavaAbility {
 			 * created then we are finished with this instance of LavaFlow, but
 			 * we need to keep it running so that we can revert the blocks.
 			 */
-			if (!clickIsFinished) {
-				clickIsFinished = true;
-				double radius = makeLava ? clickLavaRadius : clickLandRadius;
+			if (!this.clickIsFinished) {
+				this.clickIsFinished = true;
+				final double radius = this.makeLava ? this.clickLavaRadius : this.clickLandRadius;
 
 				for (double x = -radius; x <= radius; x++) {
 					for (double z = -radius; z <= radius; z++) {
-						Location loc = origin.clone().add(x, 0, z);
-						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
+						final Location loc = this.origin.clone().add(x, 0, z);
+						final Block tempBlock = GeneralMethods.getTopBlock(loc, this.upwardFlow, this.downwardFlow);
 
-						double dSquared = distanceSquaredXZ(tempBlock.getLocation(), origin);
+						final double dSquared = distanceSquaredXZ(tempBlock.getLocation(), this.origin);
 						if (dSquared < Math.pow(radius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
-							if (makeLava && !isLava(tempBlock)) {
-								clickIsFinished = false;
-								if (Math.random() < lavaCreateSpeed) {
+							if (this.makeLava && !isLava(tempBlock)) {
+								this.clickIsFinished = false;
+								if (Math.random() < this.lavaCreateSpeed) {
 									if (!isLava(tempBlock) || isSnow(tempBlock)) {
 										if (isPlant(tempBlock) || isSnow(tempBlock)) {
-											Block lower = tempBlock.getRelative(BlockFace.DOWN);
+											final Block lower = tempBlock.getRelative(BlockFace.DOWN);
 											if (isPlant(lower) || isSnow(lower)) {
-												Block lower2 = lower.getRelative(BlockFace.DOWN);
+												final Block lower2 = lower.getRelative(BlockFace.DOWN);
 												if (!isEarth(lower2) && !isSand(lower2) && !isMetal(lower2)) {
 													continue;
 												}
-												createLava(lower2);
+												this.createLava(lower2);
 											} else {
 												if (!isEarth(lower) && !isSand(lower) && !isMetal(lower)) {
 													continue;
 												}
-												createLava(lower);
+												this.createLava(lower);
 											}
 										} else {
 											if (!isEarth(tempBlock) && !isSand(tempBlock) && !isMetal(tempBlock)) {
 												continue;
 											}
-											createLava(tempBlock);
+											this.createLava(tempBlock);
 										}
 									}
 								} else {
 									if (random.nextInt(4) == 0) {
-										Block block = loc.getBlock();
-										Block above = block.getRelative(BlockFace.UP);
-										Block above2 = above.getRelative(BlockFace.UP);
-										if (!isWater(block) && !isWater(above) && !isWater(above2)) {
+										final Block block = loc.getBlock();
+										final Block above = block.getRelative(BlockFace.UP);
+
+										if ((isEarth(block) || isSand(block) || isMetal(block)) && !isWater(above)) {
 											ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
 										}
 									}
 								}
-							} else if (!makeLava && isLava(tempBlock)) {
-								clickIsFinished = false;
-								if (Math.random() < landCreateSpeed) {
-									removeLava(tempBlock);
+							} else if (!this.makeLava && isLava(tempBlock)) {
+								this.clickIsFinished = false;
+								if (Math.random() < this.landCreateSpeed) {
+									this.removeLava(tempBlock);
 								}
 							}
 						}
@@ -371,45 +369,42 @@ public class LavaFlow extends LavaAbility {
 	/**
 	 * Creates a LavaBlock and appends the TempBlock to our arraylist called
 	 * TEMP_LAVA_BLOCKS.
-	 * 
+	 *
 	 * If ALLOW_NATURAL_FLOW is turned on then this method will remove the block
 	 * from TempBlock.instances, which will allow the lava to flow naturally.
-	 * 
+	 *
 	 * @param block the block that will be turned to lava
 	 */
-	public void createLava(Block block) {
+	public void createLava(final Block block) {
 		if (isEarth(block) || isSand(block) || isMetal(block)) {
 			if (isPlant(block.getRelative(BlockFace.UP)) || isSnow(block.getRelative(BlockFace.UP))) {
-				Block above = block.getRelative(BlockFace.UP);
-				Block above2 = above.getRelative(BlockFace.UP);
+				final Block above = block.getRelative(BlockFace.UP);
+				final Block above2 = above.getRelative(BlockFace.UP);
 				if (isPlant(above) || isSnow(above)) {
-					TempBlock tb = new TempBlock(above, Material.AIR, (byte) 0);
+					final TempBlock tb = new TempBlock(above, Material.AIR, (byte) 0);
 					TEMP_AIR_BLOCKS.put(above, tb);
-					TEMP_AIR_BLOCKS_BY_TEMPBLOCK.put(tb, above);
-					affectedBlocks.add(tb);
+					this.affectedBlocks.add(tb);
 					if (isPlant(above2) && above2.getType().equals(Material.DOUBLE_PLANT)) {
-						TempBlock tb2 = new TempBlock(above2, Material.AIR, (byte) 0);
+						final TempBlock tb2 = new TempBlock(above2, Material.AIR, (byte) 0);
 						TEMP_AIR_BLOCKS.put(above2, tb2);
-						TEMP_AIR_BLOCKS_BY_TEMPBLOCK.put(tb2, above2);
-						affectedBlocks.add(tb);
+						this.affectedBlocks.add(tb);
 					}
-				} else
+				} else {
 					return;
+				}
 			}
 			TempBlock tblock;
-			if(allowNaturalFlow) {
+			if (this.allowNaturalFlow) {
 				tblock = new TempBlock(block, Material.LAVA, (byte) 0);
-			}
-			else {
+			} else {
 				tblock = new TempBlock(block, Material.STATIONARY_LAVA, (byte) 0);
 			}
-			
-			if(tblock!=null) {
-				TEMP_LAVA_BLOCKS.put(block, tblock);
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.put(tblock, block);
-				affectedBlocks.add(tblock);
 
-				if (allowNaturalFlow) {
+			if (tblock != null) {
+				TEMP_LAVA_BLOCKS.put(block, tblock);
+				this.affectedBlocks.add(tblock);
+
+				if (this.allowNaturalFlow) {
 					TempBlock.removeBlock(block);
 				}
 			}
@@ -418,24 +413,50 @@ public class LavaFlow extends LavaAbility {
 
 	/**
 	 * Removes a lava block if it is inside of our ArrayList of TempBlocks.
-	 * 
+	 *
 	 * @param testBlock the block to attempt to remove
 	 */
-	@SuppressWarnings("deprecation")
-	public void removeLava(Block testBlock) {
+	public void removeLava(final Block testBlock) {
 		if (TEMP_LAVA_BLOCKS.containsKey(testBlock)) {
-			TempBlock tb = TEMP_LAVA_BLOCKS.get(testBlock);
+			final TempBlock tb = TEMP_LAVA_BLOCKS.get(testBlock);
 			tb.revertBlock();
 			TEMP_LAVA_BLOCKS.remove(testBlock);
-			TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tb);
-			affectedBlocks.remove(tb);
+			this.affectedBlocks.remove(tb);
 			return;
 		}
 
-		TempBlock tblock = new TempBlock(testBlock, revertMaterial, testBlock.getData());
-		affectedBlocks.add(tblock);
+		final TempBlock tblock = new TempBlock(testBlock, this.revertMaterial, testBlock.getData());
+		this.affectedBlocks.add(tblock);
 		TEMP_LAND_BLOCKS.put(testBlock, tblock);
-		TEMP_LAND_BLOCKS_BY_TEMPBLOCK.put(tblock, testBlock);
+	}
+
+	public static boolean isLavaFlowBlock(final Block block) {
+		return isLavaFlowBlock(TEMP_AIR_BLOCKS, block) || isLavaFlowBlock(TEMP_LAND_BLOCKS, block) || isLavaFlowBlock(TEMP_LAVA_BLOCKS, block);
+	}
+
+	private static boolean isLavaFlowBlock(final Map<Block, TempBlock> map, final Block block) {
+		return map.containsKey(block);
+	}
+
+	public static boolean removeBlock(final Block block) {
+		return removeBlock(TEMP_AIR_BLOCKS, block) || removeBlock(TEMP_LAND_BLOCKS, block) || removeBlock(TEMP_LAVA_BLOCKS, block);
+	}
+
+	private static boolean removeBlock(final Map<Block, TempBlock> map, final Block block) {
+		if (map.containsKey(block)) {
+			final TempBlock tb = map.get(block);
+			map.remove(block);
+
+			for (final LavaFlow lavaflow : CoreAbility.getAbilities(LavaFlow.class)) {
+				lavaflow.getAffectedBlocks().remove(tb);
+			}
+
+			tb.revertBlock();
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -444,59 +465,57 @@ public class LavaFlow extends LavaAbility {
 	 * automatically clean up over time.
 	 */
 	public void removeOnDelay() {
-		BukkitRunnable br = new BukkitRunnable() {
+		final BukkitRunnable br = new BukkitRunnable() {
 			@Override
 			public void run() {
-				removeSlowly();
+				LavaFlow.this.removeSlowly();
 			}
 		};
-		br.runTaskLater(ProjectKorra.plugin, (long) (shiftRemoveDelay / 1000.0 * 20.0));
-		tasks.add(br);
+		br.runTaskLater(ProjectKorra.plugin, (long) (this.shiftRemoveDelay / 1000.0 * 20.0));
+		this.tasks.add(br);
 	}
 
 	/**
 	 * Removes this instance of LavaFlow, cleans up any blocks that are
 	 * remaining in TEMP_LAVA_BLOCKS, and cancels any remaining tasks.
-	 * 
+	 *
 	 * This version of remove will create tasks that remove each lava block with
 	 * an animation.
 	 */
 	public void removeSlowly() {
 		super.remove();
-		for (int i = affectedBlocks.size() - 1; i > -1; i--) {
-			final TempBlock tblock = affectedBlocks.get(i);
+		for (int i = this.affectedBlocks.size() - 1; i > -1; i--) {
+			final TempBlock tblock = this.affectedBlocks.get(i);
 			final boolean isTempAir = TEMP_AIR_BLOCKS.values().contains(tblock);
+
 			new BukkitRunnable() {
-				@SuppressWarnings("deprecation")
+
 				@Override
 				public void run() {
 					tblock.revertBlock();
+
+					if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
+						LavaFlow.this.affectedBlocks.remove(tblock);
+						TEMP_LAVA_BLOCKS.remove(tblock.getBlock());
+					}
+					if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
+						LavaFlow.this.affectedBlocks.remove(tblock);
+						TEMP_LAND_BLOCKS.remove(tblock.getBlock());
+					}
+					if (TEMP_AIR_BLOCKS.values().contains(tblock)) {
+						LavaFlow.this.affectedBlocks.remove(tblock);
+						TEMP_AIR_BLOCKS.remove(tblock.getBlock());
+					}
+
 					if (isTempAir && tblock.getState().getType() == Material.DOUBLE_PLANT) {
 						tblock.getBlock().getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
 						tblock.getBlock().getRelative(BlockFace.UP).setData((byte) (tblock.getState().getRawData() + 8));
 					}
-
 				}
-			}.runTaskLater(ProjectKorra.plugin, (long) (i / shiftRemoveSpeed));
-
-			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_LAVA_BLOCKS.remove(TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
-			}
-			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_LAND_BLOCKS.remove(TEMP_LAND_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
-			}
-			if (TEMP_AIR_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_AIR_BLOCKS.remove(TEMP_AIR_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_AIR_BLOCKS_BY_TEMPBLOCK.remove(tblock);
-			}
+			}.runTaskLater(ProjectKorra.plugin, (long) (i / this.shiftRemoveSpeed));
 		}
 
-		for (BukkitRunnable task : tasks) {
+		for (final BukkitRunnable task : this.tasks) {
 			task.cancel();
 		}
 	}
@@ -508,22 +527,20 @@ public class LavaFlow extends LavaAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		for (int i = affectedBlocks.size() - 1; i > -1; i--) {
-			final TempBlock tblock = affectedBlocks.get(i);
+		for (int i = this.affectedBlocks.size() - 1; i > -1; i--) {
+			final TempBlock tblock = this.affectedBlocks.get(i);
 			tblock.revertBlock();
 			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_LAVA_BLOCKS.remove(TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
+				this.affectedBlocks.remove(tblock);
+				TEMP_LAVA_BLOCKS.remove(tblock.getBlock());
 			}
 			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
-				affectedBlocks.remove(tblock);
-				TEMP_LAND_BLOCKS.remove(TEMP_LAND_BLOCKS_BY_TEMPBLOCK.get(tblock));
-				TEMP_LAND_BLOCKS_BY_TEMPBLOCK.remove(tblock);
+				this.affectedBlocks.remove(tblock);
+				TEMP_LAND_BLOCKS.remove(tblock.getBlock());
 			}
 		}
 
-		for (BukkitRunnable task : tasks) {
+		for (final BukkitRunnable task : this.tasks) {
 			task.cancel();
 		}
 	}
@@ -531,14 +548,14 @@ public class LavaFlow extends LavaAbility {
 	/**
 	 * Returns a list of all the Lava blocks that are adjacent to the block at
 	 * loc.
-	 * 
+	 *
 	 * @param loc the middle location of the adjacent blocks
 	 * @return a list of the adjacent blocks
 	 */
-	public ArrayList<Block> getAdjacentLavaBlocks(Location loc) {
-		ArrayList<Block> list = getAdjacentBlocks(loc);
+	public ArrayList<Block> getAdjacentLavaBlocks(final Location loc) {
+		final ArrayList<Block> list = getAdjacentBlocks(loc);
 		for (int i = 0; i < list.size(); i++) {
-			Block block = list.get(i);
+			final Block block = list.get(i);
 			if (!isLava(block)) {
 				list.remove(i);
 				i--;
@@ -550,13 +567,13 @@ public class LavaFlow extends LavaAbility {
 	/**
 	 * Returns an ArrayList of all the surrounding blocks for loc, but it
 	 * excludes the block that is contained at Loc.
-	 * 
+	 *
 	 * @param loc the middle block location
 	 * @return a list of adjacent blocks
 	 */
-	public static ArrayList<Block> getAdjacentBlocks(Location loc) {
-		ArrayList<Block> list = new ArrayList<Block>();
-		Block block = loc.getBlock();
+	public static ArrayList<Block> getAdjacentBlocks(final Location loc) {
+		final ArrayList<Block> list = new ArrayList<Block>();
+		final Block block = loc.getBlock();
 
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -2; y <= 1; y++) {
@@ -575,14 +592,14 @@ public class LavaFlow extends LavaAbility {
 	 * was useful in allowing the flow of lava to look more natural and not be
 	 * substantially shortened by the Y distance if it is flowing upward or
 	 * downward.
-	 * 
+	 *
 	 * @param l1 the first location
 	 * @param l2 the second location
 	 * @return the distance squared between l1 and l2
 	 */
-	public static double distanceSquaredXZ(Location l1, Location l2) {
-		Location temp1 = l1.clone();
-		Location temp2 = l2.clone();
+	public static double distanceSquaredXZ(final Location l1, final Location l2) {
+		final Location temp1 = l1.clone();
+		final Location temp2 = l2.clone();
 		temp1.setY(0);
 		temp2.setY(0);
 		return temp1.distanceSquared(temp2);
@@ -591,14 +608,14 @@ public class LavaFlow extends LavaAbility {
 	/**
 	 * Returns all of the LavaFlows created by a specific player but filters the
 	 * abilities based on shift or click.
-	 * 
+	 *
 	 * @param player the player that created the ability instance
 	 * @param type the specific type of ability we are looking for
 	 * @return a list of all the LavaFlow instances
 	 */
-	public static ArrayList<LavaFlow> getLavaFlow(Player player, AbilityType type) {
-		ArrayList<LavaFlow> list = new ArrayList<LavaFlow>();
-		for (LavaFlow lf : getAbilities(LavaFlow.class)) {
+	public static ArrayList<LavaFlow> getLavaFlow(final Player player, final AbilityType type) {
+		final ArrayList<LavaFlow> list = new ArrayList<LavaFlow>();
+		for (final LavaFlow lf : getAbilities(LavaFlow.class)) {
 			if (lf.player != null && lf.player == player && lf.type != null && lf.type == type) {
 				list.add(lf);
 			}
@@ -608,7 +625,7 @@ public class LavaFlow extends LavaAbility {
 
 	public static Material getRevertMaterial() {
 		Material m = Material.STONE;
-		LavaFlow lf = (LavaFlow) CoreAbility.getAbility("LavaFlow");
+		final LavaFlow lf = (LavaFlow) CoreAbility.getAbility("LavaFlow");
 		m = lf.revertMaterial;
 		return m;
 	}
@@ -628,17 +645,17 @@ public class LavaFlow extends LavaAbility {
 
 	@Override
 	public Location getLocation() {
-		if (origin != null) {
-			return origin;
-		} else if (player != null) {
-			return player.getLocation();
+		if (this.origin != null) {
+			return this.origin;
+		} else if (this.player != null) {
+			return this.player.getLocation();
 		}
 		return null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return type == AbilityType.CLICK ? clickLandCooldown : shiftCooldown;
+		return this.type == AbilityType.CLICK ? this.clickLandCooldown : this.shiftCooldown;
 	}
 
 	@Override
@@ -653,267 +670,267 @@ public class LavaFlow extends LavaAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (TempBlock tblock : affectedBlocks) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final TempBlock tblock : this.affectedBlocks) {
 			locations.add(tblock.getLocation());
 		}
 		return locations;
 	}
 
 	public boolean isRemoving() {
-		return removing;
+		return this.removing;
 	}
 
-	public void setRemoving(boolean removing) {
+	public void setRemoving(final boolean removing) {
 		this.removing = removing;
 	}
 
 	public boolean isMakeLava() {
-		return makeLava;
+		return this.makeLava;
 	}
 
-	public void setMakeLava(boolean makeLava) {
+	public void setMakeLava(final boolean makeLava) {
 		this.makeLava = makeLava;
 	}
 
 	public boolean isClickIsFinished() {
-		return clickIsFinished;
+		return this.clickIsFinished;
 	}
 
-	public void setClickIsFinished(boolean clickIsFinished) {
+	public void setClickIsFinished(final boolean clickIsFinished) {
 		this.clickIsFinished = clickIsFinished;
 	}
 
 	public boolean isShiftIsFinished() {
-		return shiftIsFinished;
+		return this.shiftIsFinished;
 	}
 
-	public void setShiftIsFinished(boolean shiftIsFinished) {
+	public void setShiftIsFinished(final boolean shiftIsFinished) {
 		this.shiftIsFinished = shiftIsFinished;
 	}
 
 	public boolean isAllowNaturalFlow() {
-		return allowNaturalFlow;
+		return this.allowNaturalFlow;
 	}
 
-	public void setAllowNaturalFlow(boolean allowNaturalFlow) {
+	public void setAllowNaturalFlow(final boolean allowNaturalFlow) {
 		this.allowNaturalFlow = allowNaturalFlow;
 	}
 
 	public int getShiftCounter() {
-		return shiftCounter;
+		return this.shiftCounter;
 	}
 
-	public void setShiftCounter(int shiftCounter) {
+	public void setShiftCounter(final int shiftCounter) {
 		this.shiftCounter = shiftCounter;
 	}
 
 	public int getUpwardFlow() {
-		return upwardFlow;
+		return this.upwardFlow;
 	}
 
-	public void setUpwardFlow(int upwardFlow) {
+	public void setUpwardFlow(final int upwardFlow) {
 		this.upwardFlow = upwardFlow;
 	}
 
 	public int getDownwardFlow() {
-		return downwardFlow;
+		return this.downwardFlow;
 	}
 
-	public void setDownwardFlow(int downwardFlow) {
+	public void setDownwardFlow(final int downwardFlow) {
 		this.downwardFlow = downwardFlow;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getClickLavaDelay() {
-		return clickLavaDelay;
+		return this.clickLavaDelay;
 	}
 
-	public void setClickLavaDelay(long clickLavaDelay) {
+	public void setClickLavaDelay(final long clickLavaDelay) {
 		this.clickLavaDelay = clickLavaDelay;
 	}
 
 	public long getClickLandDelay() {
-		return clickLandDelay;
+		return this.clickLandDelay;
 	}
 
-	public void setClickLandDelay(long clickLandDelay) {
+	public void setClickLandDelay(final long clickLandDelay) {
 		this.clickLandDelay = clickLandDelay;
 	}
 
 	public long getClickLavaCooldown() {
-		return clickLavaCooldown;
+		return this.clickLavaCooldown;
 	}
 
-	public void setClickLavaCooldown(long clickLavaCooldown) {
+	public void setClickLavaCooldown(final long clickLavaCooldown) {
 		this.clickLavaCooldown = clickLavaCooldown;
 	}
 
 	public long getClickLandCooldown() {
-		return clickLandCooldown;
+		return this.clickLandCooldown;
 	}
 
-	public void setClickLandCooldown(long clickLandCooldown) {
+	public void setClickLandCooldown(final long clickLandCooldown) {
 		this.clickLandCooldown = clickLandCooldown;
 	}
 
 	public long getShiftCooldown() {
-		return shiftCooldown;
+		return this.shiftCooldown;
 	}
 
-	public void setShiftCooldown(long shiftCooldown) {
+	public void setShiftCooldown(final long shiftCooldown) {
 		this.shiftCooldown = shiftCooldown;
 	}
 
 	public long getClickLavaCleanupDelay() {
-		return clickLavaCleanupDelay;
+		return this.clickLavaCleanupDelay;
 	}
 
-	public void setClickLavaCleanupDelay(long clickLavaCleanupDelay) {
+	public void setClickLavaCleanupDelay(final long clickLavaCleanupDelay) {
 		this.clickLavaCleanupDelay = clickLavaCleanupDelay;
 	}
 
 	public long getClickLandCleanupDelay() {
-		return clickLandCleanupDelay;
+		return this.clickLandCleanupDelay;
 	}
 
-	public void setClickLandCleanupDelay(long clickLandCleanupDelay) {
+	public void setClickLandCleanupDelay(final long clickLandCleanupDelay) {
 		this.clickLandCleanupDelay = clickLandCleanupDelay;
 	}
 
 	public double getParticleDensity() {
-		return particleDensity;
+		return this.particleDensity;
 	}
 
-	public void setParticleDensity(double particleDensity) {
+	public void setParticleDensity(final double particleDensity) {
 		this.particleDensity = particleDensity;
 	}
 
 	public double getParticleOffset() {
-		return particleOffset;
+		return this.particleOffset;
 	}
 
-	public void setParticleOffset(double particleOffset) {
+	public void setParticleOffset(final double particleOffset) {
 		this.particleOffset = particleOffset;
 	}
 
 	public double getCurrentRadius() {
-		return currentRadius;
+		return this.currentRadius;
 	}
 
-	public void setCurrentRadius(double currentRadius) {
+	public void setCurrentRadius(final double currentRadius) {
 		this.currentRadius = currentRadius;
 	}
 
 	public double getShiftPlatformRadius() {
-		return shiftPlatformRadius;
+		return this.shiftPlatformRadius;
 	}
 
-	public void setShiftPlatformRadius(double shiftPlatformRadius) {
+	public void setShiftPlatformRadius(final double shiftPlatformRadius) {
 		this.shiftPlatformRadius = shiftPlatformRadius;
 	}
 
 	public double getShiftMaxRadius() {
-		return shiftMaxRadius;
+		return this.shiftMaxRadius;
 	}
 
-	public void setShiftMaxRadius(double shiftMaxRadius) {
+	public void setShiftMaxRadius(final double shiftMaxRadius) {
 		this.shiftMaxRadius = shiftMaxRadius;
 	}
 
 	public double getShiftFlowSpeed() {
-		return shiftFlowSpeed;
+		return this.shiftFlowSpeed;
 	}
 
-	public void setShiftFlowSpeed(double shiftFlowSpeed) {
+	public void setShiftFlowSpeed(final double shiftFlowSpeed) {
 		this.shiftFlowSpeed = shiftFlowSpeed;
 	}
 
 	public double getShiftRemoveSpeed() {
-		return shiftRemoveSpeed;
+		return this.shiftRemoveSpeed;
 	}
 
-	public void setShiftRemoveSpeed(double shiftRemoveSpeed) {
+	public void setShiftRemoveSpeed(final double shiftRemoveSpeed) {
 		this.shiftRemoveSpeed = shiftRemoveSpeed;
 	}
 
 	public double getShiftRemoveDelay() {
-		return shiftRemoveDelay;
+		return this.shiftRemoveDelay;
 	}
 
-	public void setShiftRemoveDelay(double shiftRemoveDelay) {
+	public void setShiftRemoveDelay(final double shiftRemoveDelay) {
 		this.shiftRemoveDelay = shiftRemoveDelay;
 	}
 
 	public double getClickRange() {
-		return clickRange;
+		return this.clickRange;
 	}
 
-	public void setClickRange(double clickRange) {
+	public void setClickRange(final double clickRange) {
 		this.clickRange = clickRange;
 	}
 
 	public double getClickLavaRadius() {
-		return clickLavaRadius;
+		return this.clickLavaRadius;
 	}
 
-	public void setClickLavaRadius(double clickLavaRadius) {
+	public void setClickLavaRadius(final double clickLavaRadius) {
 		this.clickLavaRadius = clickLavaRadius;
 	}
 
 	public double getClickLandRadius() {
-		return clickLandRadius;
+		return this.clickLandRadius;
 	}
 
-	public void setClickLandRadius(double clickLandRadius) {
+	public void setClickLandRadius(final double clickLandRadius) {
 		this.clickLandRadius = clickLandRadius;
 	}
 
 	public double getLavaCreateSpeed() {
-		return lavaCreateSpeed;
+		return this.lavaCreateSpeed;
 	}
 
-	public void setLavaCreateSpeed(double lavaCreateSpeed) {
+	public void setLavaCreateSpeed(final double lavaCreateSpeed) {
 		this.lavaCreateSpeed = lavaCreateSpeed;
 	}
 
 	public double getLandCreateSpeed() {
-		return landCreateSpeed;
+		return this.landCreateSpeed;
 	}
 
-	public void setLandCreateSpeed(double landCreateSpeed) {
+	public void setLandCreateSpeed(final double landCreateSpeed) {
 		this.landCreateSpeed = landCreateSpeed;
 	}
 
 	public AbilityType getType() {
-		return type;
+		return this.type;
 	}
 
-	public void setType(AbilityType type) {
+	public void setType(final AbilityType type) {
 		this.type = type;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public ArrayList<TempBlock> getAffectedBlocks() {
-		return affectedBlocks;
+		return this.affectedBlocks;
 	}
 
 	public ArrayList<BukkitRunnable> getTasks() {
-		return tasks;
+		return this.tasks;
 	}
 
 }

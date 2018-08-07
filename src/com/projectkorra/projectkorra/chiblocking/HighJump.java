@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.chiblocking;
 
+import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip;
-
-import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 public class HighJump extends ChiAbility {
 
@@ -18,36 +18,36 @@ public class HighJump extends ChiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 
-	public HighJump(Player player) {
+	public HighJump(final Player player) {
 		super(player);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 		this.height = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Height");
 		this.cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Cooldown");
-		start();
+		this.start();
 	}
 
-	private void jump(Player p) {
+	private void jump(final Player p) {
 		if (!GeneralMethods.isSolid(p.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
-			remove();
+			this.remove();
 			return;
 		}
-		Vector vec = p.getVelocity();
-		vec.setY(height);
+		final Vector vec = p.getVelocity();
+		vec.setY(this.height);
 		p.setVelocity(vec);
-		bPlayer.addCooldown(this);
+		this.bPlayer.addCooldown(this);
 		return;
 	}
 
 	@Override
 	public void progress() {
-		if (bPlayer.isOnCooldown(this)) {
-			remove();
+		if (this.bPlayer.isOnCooldown(this)) {
+			this.remove();
 			return;
 		}
-		jump(player);
-		WaterArmsWhip waw = WaterArmsWhip.getGrabbedEntities().get(player);
+		this.jump(this.player);
+		final WaterArmsWhip waw = WaterArmsWhip.getGrabbedEntities().get(this.player);
 		if (waw != null) {
 			waw.setGrabbed(false);
 		}
@@ -61,12 +61,12 @@ public class HighJump extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -80,14 +80,14 @@ public class HighJump extends ChiAbility {
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(final int height) {
 		this.height = height;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

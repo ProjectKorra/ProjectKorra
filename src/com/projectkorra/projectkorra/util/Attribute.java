@@ -7,10 +7,10 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 
 public class Attribute {
 
-	public static boolean setField(CoreAbility ability, String field, Object value) {
+	public static boolean setField(final CoreAbility ability, final String field, final Object value) {
 		try {
-			Field _field = ability.getClass().getDeclaredField(field);
-			boolean oldVisibility = _field.isAccessible();
+			final Field _field = ability.getClass().getDeclaredField(field);
+			final boolean oldVisibility = _field.isAccessible();
 			_field.setAccessible(true);
 			try {
 				_field.set(ability, value);
@@ -31,13 +31,13 @@ public class Attribute {
 		return true;
 	}
 
-	public static Object getField(CoreAbility ability, String field) {
+	public static Object getField(final CoreAbility ability, final String field) {
 		try {
-			Field _field = ability.getClass().getDeclaredField(field);
-			boolean oldVisibility = _field.isAccessible();
+			final Field _field = ability.getClass().getDeclaredField(field);
+			final boolean oldVisibility = _field.isAccessible();
 			_field.setAccessible(true);
 			try {
-				Object object = _field.get(ability);
+				final Object object = _field.get(ability);
 				_field.setAccessible(oldVisibility);
 				return object;
 			}

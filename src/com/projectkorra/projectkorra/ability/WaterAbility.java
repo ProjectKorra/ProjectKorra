@@ -29,16 +29,16 @@ import com.projectkorra.rpg.RPGMethods;
 
 public abstract class WaterAbility extends ElementalAbility {
 
-	public WaterAbility(Player player) {
+	public WaterAbility(final Player player) {
 		super(player);
 	}
 
 	public boolean canAutoSource() {
-		return getConfig().getBoolean("Abilities." + getElement() + "." + getName() + ".CanAutoSource");
+		return getConfig().getBoolean("Abilities." + this.getElement() + "." + this.getName() + ".CanAutoSource");
 	}
 
 	public boolean canDynamicSource() {
-		return getConfig().getBoolean("Abilities." + getElement() + "." + getName() + ".CanDynamicSource");
+		return getConfig().getBoolean("Abilities." + this.getElement() + "." + this.getName() + ".CanDynamicSource");
 	}
 
 	@Override
@@ -46,27 +46,27 @@ public abstract class WaterAbility extends ElementalAbility {
 		return Element.WATER;
 	}
 
-	public Block getIceSourceBlock(double range) {
-		return getIceSourceBlock(player, range);
+	public Block getIceSourceBlock(final double range) {
+		return getIceSourceBlock(this.player, range);
 	}
 
 	public double getNightFactor() {
-		if (getLocation() != null) {
-			return getNightFactor(getLocation().getWorld());
+		if (this.getLocation() != null) {
+			return getNightFactor(this.getLocation().getWorld());
 		}
-		return player != null ? getNightFactor(player.getLocation().getWorld()) : 1;
+		return this.player != null ? getNightFactor(this.player.getLocation().getWorld()) : 1;
 	}
 
-	public double getNightFactor(double value) {
-		return player != null ? getNightFactor(value, player.getWorld()) : value;
+	public double getNightFactor(final double value) {
+		return this.player != null ? getNightFactor(value, this.player.getWorld()) : value;
 	}
 
-	public Block getPlantSourceBlock(double range) {
-		return getPlantSourceBlock(range, false);
+	public Block getPlantSourceBlock(final double range) {
+		return this.getPlantSourceBlock(range, false);
 	}
 
-	public Block getPlantSourceBlock(double range, boolean onlyLeaves) {
-		return getPlantSourceBlock(player, range, onlyLeaves);
+	public Block getPlantSourceBlock(final double range, final boolean onlyLeaves) {
+		return getPlantSourceBlock(this.player, range, onlyLeaves);
 	}
 
 	@Override
@@ -80,67 +80,67 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	@Override
-	public void handleCollision(Collision collision) {
+	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.WATER, (byte) 0);
+			final ParticleData particleData = new ParticleEffect.BlockData(Material.WATER, (byte) 0);
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
 	}
-	
-	public static boolean isBendableWaterTempBlock(Block block) { // Will need to be done for earth as well.
+
+	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
 		return isBendableWaterTempBlock(TempBlock.get(block));
 	}
-	
-	public static boolean isBendableWaterTempBlock(TempBlock tempBlock) {
-		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock);
+
+	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
+		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock);
 	}
 
-	public boolean isIcebendable(Block block) {
-		return isIcebendable(block.getType());
+	public boolean isIcebendable(final Block block) {
+		return this.isIcebendable(block.getType());
 	}
 
-	public boolean isIcebendable(Material material) {
-		return isIcebendable(player, material);
+	public boolean isIcebendable(final Material material) {
+		return this.isIcebendable(this.player, material);
 	}
 
-	public boolean isIcebendable(Player player, Material material) {
+	public boolean isIcebendable(final Player player, final Material material) {
 		return isIcebendable(player, material, false);
 	}
 
-	public boolean isPlantbendable(Block block) {
-		return isPlantbendable(block.getType());
+	public boolean isPlantbendable(final Block block) {
+		return this.isPlantbendable(block.getType());
 	}
 
-	public boolean isPlantbendable(Material material) {
-		return isPlantbendable(player, material);
+	public boolean isPlantbendable(final Material material) {
+		return this.isPlantbendable(this.player, material);
 	}
 
-	public boolean isPlantbendable(Player player, Material material) {
+	public boolean isPlantbendable(final Player player, final Material material) {
 		return isPlantbendable(player, material, false);
 	}
 
-	public boolean isWaterbendable(Block block) {
-		return isWaterbendable(player, block);
+	public boolean isWaterbendable(final Block block) {
+		return this.isWaterbendable(this.player, block);
 	}
 
-	public boolean isWaterbendable(Player player, Block block) {
+	public boolean isWaterbendable(final Player player, final Block block) {
 		return isWaterbendable(player, null, block);
 	}
-	
+
 	public boolean allowBreakPlants() {
 		return true;
 	}
 
-	public static boolean isWaterbendable(Material material) {
+	public static boolean isWaterbendable(final Material material) {
 		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material);
 	}
 
-	public static Block getIceSourceBlock(Player player, double range) {
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
+	public static Block getIceSourceBlock(final Player player, final double range) {
+		final Location location = player.getEyeLocation();
+		final Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceBlast", location)) {
 				continue;
 			}
@@ -154,7 +154,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		return null;
 	}
 
-	public static double getNightFactor(double value, World world) {
+	public static double getNightFactor(final double value, final World world) {
 		if (isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
 				if (isLunarEclipse(world)) {
@@ -176,16 +176,16 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 	}
 
-	public static double getNightFactor(World world) {
+	public static double getNightFactor(final World world) {
 		return getNightFactor(1, world);
 	}
 
-	public static Block getPlantSourceBlock(Player player, double range, boolean onlyLeaves) {
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
+	public static Block getPlantSourceBlock(final Player player, final double range, final boolean onlyLeaves) {
+		final Location location = player.getEyeLocation();
+		final Vector vector = location.getDirection().clone().normalize();
 
 		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
 				continue;
 			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
@@ -203,19 +203,18 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * use BlockSource.getWaterSourceBlock() instead of this method. Dynamic
 	 * source selection saves the user's previous source for future use.
 	 * {@link BlockSource#getWaterSourceBlock(Player, double)}
-	 * 
+	 *
 	 * @param player the player that is attempting to Waterbend.
 	 * @param range the maximum block selection range.
 	 * @param plantbending true if the player can bend plants.
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
-	@SuppressWarnings("deprecation")
-	public static Block getWaterSourceBlock(Player player, double range, boolean plantbending) {
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
+	public static Block getWaterSourceBlock(final Player player, final double range, final boolean plantbending) {
+		final Location location = player.getEyeLocation();
+		final Vector vector = location.getDirection().clone().normalize();
 
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
 		if (bPlayer == null) {
 			return null;
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
@@ -223,7 +222,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 
 		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
@@ -236,10 +235,10 @@ public abstract class WaterAbility extends ElementalAbility {
 		return null;
 	}
 
-	public static boolean isAdjacentToFrozenBlock(Block block) {
-		BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
+	public static boolean isAdjacentToFrozenBlock(final Block block) {
+		final BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
 		boolean adjacent = false;
-		for (BlockFace face : faces) {
+		for (final BlockFace face : faces) {
 			if (PhaseChange.getFrozenBlocksAsBlock().contains((block.getRelative(face)))) {
 				adjacent = true;
 			}
@@ -247,13 +246,13 @@ public abstract class WaterAbility extends ElementalAbility {
 		return adjacent;
 	}
 
-	public static boolean isIcebendable(Player player, Material material, boolean onlyIce) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean isIcebendable(final Player player, final Material material, final boolean onlyIce) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
 	}
 
-	public static boolean isPlantbendable(Player player, Material material, boolean onlyLeaves) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean isPlantbendable(final Player player, final Material material, final boolean onlyLeaves) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (onlyLeaves) {
 			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend() && isLeaves(material);
 		} else {
@@ -261,26 +260,25 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 	}
 
-	public static boolean isLeaves(Block block) {
+	public static boolean isLeaves(final Block block) {
 		return block != null ? isLeaves(block.getType()) : false;
 	}
 
-	public static boolean isLeaves(Material material) {
+	public static boolean isLeaves(final Material material) {
 		return material == Material.LEAVES || material == Material.LEAVES_2;
 	}
 
-	public static boolean isSnow(Block block) {
+	public static boolean isSnow(final Block block) {
 		return block != null ? isSnow(block.getType()) : false;
 	}
 
-	public static boolean isSnow(Material material) {
+	public static boolean isSnow(final Material material) {
 		return material == Material.SNOW || material == Material.SNOW_BLOCK;
 	}
 
-	@SuppressWarnings("deprecation")
-	public static boolean isWaterbendable(Player player, String abilityName, Block block) {
-		byte full = 0x0;
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
+		final byte full = 0x0;
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
@@ -296,57 +294,63 @@ public abstract class WaterAbility extends ElementalAbility {
 		return true;
 	}
 
-	public static void playFocusWaterEffect(Block block) {
+	public static void playFocusWaterEffect(final Block block) {
 		block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 4, 20);
 	}
 
-	public static void playIcebendingSound(Location loc) {
+	public static void playIcebendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
-			
+			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
+
 			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
-			
+
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			} catch (IllegalArgumentException exception) {
+			}
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
+			finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}
 
-	public static void playPlantbendingSound(Location loc) {
+	public static void playPlantbendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
-			
+			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
+
 			Sound sound = Sound.BLOCK_GRASS_STEP;
-			
+
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			} catch (IllegalArgumentException exception) {
+			}
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
+			finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}
 
-	public static void playWaterbendingSound(Location loc) {
+	public static void playWaterbendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
-			
+			final float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
+
 			Sound sound = Sound.BLOCK_WATER_AMBIENT;
-			
+
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound"));
-			} catch (IllegalArgumentException exception) {
+			}
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.WaterSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
+			finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}
@@ -356,13 +360,13 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * {@link Collision} for the new system.
 	 * <p>
 	 * Removes all water spouts in a location within a certain radius.
-	 * 
+	 *
 	 * @param loc The location to use
 	 * @param radius The radius around the location to remove spouts in
 	 * @param source The player causing the removal
 	 */
 	@Deprecated
-	public static void removeWaterSpouts(Location loc, double radius, Player source) {
+	public static void removeWaterSpouts(final Location loc, final double radius, final Player source) {
 		WaterSpout.removeSpouts(loc, radius, source);
 	}
 
@@ -371,12 +375,12 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * {@link Collision} for the new system.
 	 * <p>
 	 * Removes all water spouts in a location with a radius of 1.5.
-	 * 
+	 *
 	 * @param loc The location to use
 	 * @param source The player causing the removal
 	 */
 	@Deprecated
-	public static void removeWaterSpouts(Location loc, Player source) {
+	public static void removeWaterSpouts(final Location loc, final Player source) {
 		removeWaterSpouts(loc, 1.5, source);
 	}
 

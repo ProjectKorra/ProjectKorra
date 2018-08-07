@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireSpin extends FireAbility implements ComboAbility {
 
@@ -28,15 +29,15 @@ public class FireSpin extends FireAbility implements ComboAbility {
 	private Location destination;
 	private ArrayList<LivingEntity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
-	
-	public FireSpin(Player player) {
+
+	public FireSpin(final Player player) {
 		super(player);
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
-		
-		if (player.getLocation().getBlock().getType() == Material.WATER || player.getLocation().getBlock().getType() == Material.STATIONARY_WATER){
+
+		if (player.getLocation().getBlock().getType() == Material.WATER || player.getLocation().getBlock().getType() == Material.STATIONARY_WATER) {
 			return;
 		}
 
@@ -49,86 +50,85 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		this.knockback = getConfig().getDouble("Abilities.Fire.FireSpin.Knockback");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireSpin.Speed");
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage");
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Range");
 			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback");
 		}
-		
-		start();
+
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		for (int i = 0; i < tasks.size(); i++) {
-			BukkitRunnable br = tasks.get(i);
+		for (int i = 0; i < this.tasks.size(); i++) {
+			final BukkitRunnable br = this.tasks.get(i);
 			if (br instanceof FireComboStream) {
-				FireComboStream fs = (FireComboStream) br;
+				final FireComboStream fs = (FireComboStream) br;
 				if (fs.isCancelled()) {
-					tasks.remove(fs);
+					this.tasks.remove(fs);
 				}
 			}
 		}
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			this.remove();
 			return;
 		}
-		
-		if (destination == null) {
-			if (bPlayer.isOnCooldown("FireSpin") && !bPlayer.isAvatarState()) {
-				remove();
+
+		if (this.destination == null) {
+			if (this.bPlayer.isOnCooldown("FireSpin") && !this.bPlayer.isAvatarState()) {
+				this.remove();
 				return;
 			}
-			bPlayer.addCooldown("FireSpin", cooldown);
-			destination = player.getEyeLocation().add(range, 0, range);
-			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 0.5f);
+			this.bPlayer.addCooldown("FireSpin", this.cooldown);
+			this.destination = this.player.getEyeLocation().add(this.range, 0, this.range);
+			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 0.5f);
 
 			for (int i = 0; i <= 360; i += 5) {
-				Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
+				Vector vec = GeneralMethods.getDirection(this.player.getLocation(), this.destination.clone());
 				vec = GeneralMethods.rotateXZ(vec, i - 180);
 				vec.setY(0);
 
-				FireComboStream fs = new FireComboStream(player, this, vec, player.getLocation().clone().add(0, 1, 0), range, speed);
+				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation().clone().add(0, 1, 0), this.range, this.speed);
 				fs.setSpread(0.0F);
 				fs.setDensity(1);
 				fs.setUseNewParticles(true);
-				fs.setDamage(damage);
-				fs.setKnockback(knockback);
-				if (tasks.size() % 10 != 0) {
+				fs.setDamage(this.damage);
+				fs.setKnockback(this.knockback);
+				if (this.tasks.size() % 10 != 0) {
 					fs.setCollides(false);
 				}
 				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
-				tasks.add(fs);
+				this.tasks.add(fs);
 			}
 		}
 
-		if (tasks.size() == 0) {
-			remove();
+		if (this.tasks.size() == 0) {
+			this.remove();
 			return;
 		}
 	}
-	
+
 	@Override
 	public void remove() {
 		super.remove();
-		for (BukkitRunnable task : tasks) {
+		for (final BukkitRunnable task : this.tasks) {
 			task.cancel();
 		}
 	}
-	
+
 	@Override
-	public void handleCollision(Collision collision) {
+	public void handleCollision(final Collision collision) {
 		if (collision.isRemovingFirst()) {
-			ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
-			double collisionDistanceSquared = Math.pow(getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
+			final ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
+			final double collisionDistanceSquared = Math.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
 			// Remove all of the streams that are by this specific ourLocation.
-			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with
-			// Collision's detection algorithm.
-			for (BukkitRunnable task : getTasks()) {
+			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with Collision's detection algorithm.
+			for (final BukkitRunnable task : this.getTasks()) {
 				if (task instanceof FireComboStream) {
-					FireComboStream stream = (FireComboStream) task;
+					final FireComboStream stream = (FireComboStream) task;
 					if (stream.getLocation().distanceSquared(collision.getLocationSecond()) > collisionDistanceSquared) {
 						newTasks.add(stream);
 					} else {
@@ -138,30 +138,36 @@ public class FireSpin extends FireAbility implements ComboAbility {
 					newTasks.add(task);
 				}
 			}
-			setTasks(newTasks);
+			this.setTasks(newTasks);
 		}
 	}
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (BukkitRunnable task : getTasks()) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final BukkitRunnable task : this.getTasks()) {
 			if (task instanceof FireComboStream) {
-				FireComboStream stream = (FireComboStream) task;
+				final FireComboStream stream = (FireComboStream) task;
 				locations.add(stream.getLocation());
 			}
 		}
 		return locations;
 	}
-	
+
 	@Override
-	public Object createNewComboInstance(Player player) {
-		return null;
+	public Object createNewComboInstance(final Player player) {
+		return new FireSpin(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		final ArrayList<AbilityInformation> fireSpin = new ArrayList<>();
+		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFT_CLICK));
+		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
+		return fireSpin;
 	}
 
 	@Override
@@ -171,7 +177,7 @@ public class FireSpin extends FireAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -181,7 +187,7 @@ public class FireSpin extends FireAbility implements ComboAbility {
 
 	@Override
 	public Location getLocation() {
-		return player.getLocation();
+		return this.player.getLocation();
 	}
 
 	@Override
@@ -190,14 +196,19 @@ public class FireSpin extends FireAbility implements ComboAbility {
 	}
 
 	public ArrayList<LivingEntity> getAffectedEntities() {
-		return affectedEntities;
-	}
-	
-	public ArrayList<BukkitRunnable> getTasks() {
-		return tasks;
+		return this.affectedEntities;
 	}
 
-	public void setTasks(ArrayList<BukkitRunnable> tasks) {
+	public ArrayList<BukkitRunnable> getTasks() {
+		return this.tasks;
+	}
+
+	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+
+	@Override
+	public String getInstructions() {
+		return "FireBlast > FireBlast > FireShield (Left Click) > FireShield (Tap Shift)";
 	}
 }

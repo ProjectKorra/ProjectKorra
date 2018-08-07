@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -12,34 +13,42 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public class FastSwim extends WaterAbility implements PassiveAbility {
-	
 	private long cooldown;
 	private double swimSpeed;
+	private long duration;
 
-	public FastSwim(Player player) {
+	public FastSwim(final Player player) {
 		super(player);
+		if (this.bPlayer.isOnCooldown(this)) {
+			return;
+		}
 
 		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
 		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
+		this.duration = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Duration");
 	}
 
 	@Override
 	public void progress() {
-		if (bPlayer.isOnCooldown(this)) {
+		if (!this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this) || CoreAbility.hasAbility(this.player, WaterSpout.class) || CoreAbility.hasAbility(this.player, EarthArmor.class) || CoreAbility.hasAbility(this.player, WaterArms.class)) {
 			return;
 		}
-		if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, EarthArmor.class)) {
-			return;
-		} else if (CoreAbility.hasAbility(player, WaterArms.class)) {
-			return;
-		} else if (bPlayer.getBoundAbility() == null || (bPlayer.getBoundAbility() != null && !bPlayer.getBoundAbility().isSneakAbility())) {
-			if (player.isSneaking() && WaterAbility.isWater(player.getLocation().getBlock())) {
-				player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimSpeed));	
-			}
-			else if (!player.isSneaking()) {
-				bPlayer.addCooldown(this);
+
+		if (this.bPlayer.getBoundAbility() == null || (this.bPlayer.getBoundAbility() != null && !this.bPlayer.getBoundAbility().isSneakAbility())) {
+			if (this.player.isSneaking() && ElementalAbility.isWater(this.player.getLocation().getBlock()) && !this.bPlayer.isOnCooldown(this)) {
+				if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
+					this.bPlayer.addCooldown(this);
+					return;
+				}
+				this.player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
+			} else if (!this.player.isSneaking()) {
+				this.bPlayer.addCooldown(this);
 			}
 		}
+	}
+
+	public static double getSwimSpeed() {
+		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 	}
 
 	@Override
@@ -54,7 +63,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -64,7 +73,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return this.player.getLocation();
 	}
 
 	@Override
@@ -72,4 +81,8 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		return true;
 	}
 
+	@Override
+	public boolean isProgressable() {
+		return true;
+	}
 }

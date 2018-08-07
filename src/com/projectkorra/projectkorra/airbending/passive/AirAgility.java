@@ -6,6 +6,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiAgility;
@@ -13,17 +14,17 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirAgility extends AirAbility implements PassiveAbility {
 
-	// Configurable variables
+	// Configurable variables.
 	private int jumpPower;
 	private int speedPower;
 
-	// Instance related variables
+	// Instance related variables.
 	private boolean jumpActivate;
 	private boolean speedActivate;
 
-	public AirAgility(Player player) {
+	public AirAgility(final Player player) {
 		super(player);
-		setFields();
+		this.setFields();
 	}
 
 	public void setFields() {
@@ -33,48 +34,46 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		if (!player.isSprinting()) {
+		if (!this.player.isSprinting() || !this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this)) {
 			return;
 		}
 
-		if (CoreAbility.hasAbility(player, ChiAgility.class)) {
-			ChiAgility chiAgility = CoreAbility.getAbility(player, ChiAgility.class);
-			if (chiAgility.getJumpPower() > jumpPower) {
-				jumpPower = chiAgility.getJumpPower();
+		if (CoreAbility.hasAbility(this.player, ChiAgility.class) && this.bPlayer.canBendPassive(CoreAbility.getAbility(ChiAbility.class))) {
+			final ChiAgility chiAgility = CoreAbility.getAbility(this.player, ChiAgility.class);
+			if (chiAgility.getJumpPower() > this.jumpPower) {
+				this.jumpPower = chiAgility.getJumpPower();
 			}
-			if (chiAgility.getSpeedPower() > speedPower) {
-				speedPower = chiAgility.getSpeedPower();
+			if (chiAgility.getSpeedPower() > this.speedPower) {
+				this.speedPower = chiAgility.getSpeedPower();
 			}
 		}
 
-		// Jump Buff
-		jumpActivate = true;
-		if (player.hasPotionEffect(PotionEffectType.JUMP)) {
-			for (PotionEffect potion : player.getActivePotionEffects()) {
-				if (potion.getType() == PotionEffectType.JUMP) {
-					if (potion.getAmplifier() > jumpPower - 1) {
-						jumpActivate = false;
-					}
-				}
+		// Jump Buff.
+		this.jumpActivate = true;
+		if (this.player.hasPotionEffect(PotionEffectType.JUMP)) {
+			final PotionEffect potion = this.player.getPotionEffect(PotionEffectType.JUMP);
+			if (potion.getAmplifier() > this.jumpPower - 1) {
+				this.jumpActivate = false;
+			} else {
+				this.player.removePotionEffect(PotionEffectType.JUMP);
 			}
 		}
-		if (jumpActivate) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, jumpPower - 1, true, false), false);
+		if (this.jumpActivate) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, this.jumpPower - 1, true, false), false);
 		}
 
-		// Speed Buff
-		speedActivate = true;
-		if (player.hasPotionEffect(PotionEffectType.SPEED)) {
-			for (PotionEffect potion : player.getActivePotionEffects()) {
-				if (potion.getType() == PotionEffectType.SPEED) {
-					if (potion.getAmplifier() > speedPower - 1) {
-						speedActivate = false;
-					}
-				}
+		// Speed Buff.
+		this.speedActivate = true;
+		if (this.player.hasPotionEffect(PotionEffectType.SPEED)) {
+			final PotionEffect potion = this.player.getPotionEffect(PotionEffectType.SPEED);
+			if (potion.getAmplifier() > this.speedPower - 1) {
+				this.speedActivate = false;
+			} else {
+				this.player.removePotionEffect(PotionEffectType.SPEED);
 			}
 		}
-		if (speedActivate) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, speedPower - 1, true, false), false);
+		if (this.speedActivate) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, this.speedPower - 1, true, false), false);
 		}
 	}
 
@@ -100,7 +99,7 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
@@ -108,12 +107,17 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 		return true;
 	}
 
+	@Override
+	public boolean isProgressable() {
+		return true;
+	}
+
 	public int getJumpPower() {
-		return jumpPower;
+		return this.jumpPower;
 	}
 
 	public int getSpeedPower() {
-		return speedPower;
+		return this.speedPower;
 	}
 
 }

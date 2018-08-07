@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.util;
 
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionEffect;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
 
 public class TempPotionEffect {
 
@@ -12,92 +12,91 @@ public class TempPotionEffect {
 	private static final long tick = 21;
 
 	private int ID = Integer.MIN_VALUE;
-	private Map<Integer, PotionInfo> infos = new ConcurrentHashMap<Integer, PotionInfo>();
-	private LivingEntity entity;
+	private final Map<Integer, PotionInfo> infos = new ConcurrentHashMap<Integer, PotionInfo>();
+	private final LivingEntity entity;
 
-	public TempPotionEffect(LivingEntity entity, PotionEffect effect) {
+	public TempPotionEffect(final LivingEntity entity, final PotionEffect effect) {
 		this(entity, effect, System.currentTimeMillis());
 	}
 
-	public TempPotionEffect(LivingEntity entity, PotionEffect effect, long starttime) {
+	public TempPotionEffect(final LivingEntity entity, final PotionEffect effect, final long starttime) {
 		this.entity = entity;
 		if (instances.containsKey(entity)) {
-			TempPotionEffect instance = instances.get(entity);
+			final TempPotionEffect instance = instances.get(entity);
 			instance.infos.put(instance.ID++, new PotionInfo(starttime, effect));
-			// instance.effects.put(starttime, effect);
 			instances.put(entity, instance);
 		} else {
-			// effects.put(starttime, effect);
-			infos.put(ID++, new PotionInfo(starttime, effect));
+			this.infos.put(this.ID++, new PotionInfo(starttime, effect));
 			instances.put(entity, this);
 		}
 	}
 
 	public static void progressAll() {
-		for (LivingEntity entity : instances.keySet()) {
+		for (final LivingEntity entity : instances.keySet()) {
 			instances.get(entity).progress();
 		}
 	}
 
-	private void addEffect(PotionEffect effect) {
-		for (PotionEffect peffect : entity.getActivePotionEffects()) {
+	private void addEffect(final PotionEffect effect) {
+		for (final PotionEffect peffect : this.entity.getActivePotionEffects()) {
 			if (peffect.getType().equals(effect.getType())) {
 				if (peffect.getAmplifier() > effect.getAmplifier()) {
 					if (peffect.getDuration() > effect.getDuration()) {
 						return;
 					} else {
-						int dt = effect.getDuration() - peffect.getDuration();
-						PotionEffect neweffect = new PotionEffect(effect.getType(), dt, effect.getAmplifier());
-						new TempPotionEffect(entity, neweffect, System.currentTimeMillis() + peffect.getDuration() * tick);
+						final int dt = effect.getDuration() - peffect.getDuration();
+						final PotionEffect neweffect = new PotionEffect(effect.getType(), dt, effect.getAmplifier());
+						new TempPotionEffect(this.entity, neweffect, System.currentTimeMillis() + peffect.getDuration() * tick);
 						return;
 					}
 				} else {
 					if (peffect.getDuration() > effect.getDuration()) {
-						entity.removePotionEffect(peffect.getType());
-						entity.addPotionEffect(effect);
-						int dt = peffect.getDuration() - effect.getDuration();
-						PotionEffect neweffect = new PotionEffect(peffect.getType(), dt, peffect.getAmplifier());
-						new TempPotionEffect(entity, neweffect, System.currentTimeMillis() + effect.getDuration() * tick);
+						this.entity.removePotionEffect(peffect.getType());
+						this.entity.addPotionEffect(effect);
+						final int dt = peffect.getDuration() - effect.getDuration();
+						final PotionEffect neweffect = new PotionEffect(peffect.getType(), dt, peffect.getAmplifier());
+						new TempPotionEffect(this.entity, neweffect, System.currentTimeMillis() + effect.getDuration() * tick);
 						return;
 					} else {
-						entity.removePotionEffect(peffect.getType());
-						entity.addPotionEffect(effect);
+						this.entity.removePotionEffect(peffect.getType());
+						this.entity.addPotionEffect(effect);
 						return;
 					}
 				}
 			}
 		}
-		entity.addPotionEffect(effect);
+		this.entity.addPotionEffect(effect);
 	}
 
 	private void progress() {
-		for (int id : infos.keySet()) {
-			PotionInfo info = infos.get(id);
+		for (final int id : this.infos.keySet()) {
+			final PotionInfo info = this.infos.get(id);
 			if (info.getTime() < System.currentTimeMillis()) {
-				addEffect(info.getEffect());
-				infos.remove(id);
+				this.addEffect(info.getEffect());
+				this.infos.remove(id);
 			}
 		}
-		if (infos.isEmpty() && instances.containsKey(entity))
-			instances.remove(entity);
+		if (this.infos.isEmpty() && instances.containsKey(this.entity)) {
+			instances.remove(this.entity);
+		}
 	}
 
 	private class PotionInfo {
 
-		private long starttime;
-		private PotionEffect effect;
+		private final long starttime;
+		private final PotionEffect effect;
 
-		public PotionInfo(long starttime, PotionEffect effect) {
+		public PotionInfo(final long starttime, final PotionEffect effect) {
 			this.starttime = starttime;
 			this.effect = effect;
 		}
 
 		public long getTime() {
-			return starttime;
+			return this.starttime;
 		}
 
 		public PotionEffect getEffect() {
-			return effect;
+			return this.effect;
 		}
 
 	}

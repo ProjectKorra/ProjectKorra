@@ -42,9 +42,12 @@ public class OctopusForm extends WaterAbility {
 	private int stepCounter;
 	private int totalStepCount;
 	private long time;
+	private long startTime;
 	private long interval;
 	private long cooldown;
+	private long duration;
 	private double attackRange;
+	private long usageCooldown;
 	private double knockback;
 	private double radius;
 	private double startAngle;
@@ -58,10 +61,10 @@ public class OctopusForm extends WaterAbility {
 	private ArrayList<TempBlock> newBlocks;
 	private PhaseChange pc;
 
-	public OctopusForm(Player player) {
+	public OctopusForm(final Player player) {
 		super(player);
 
-		OctopusForm oldOctopus = getAbility(player, OctopusForm.class);
+		final OctopusForm oldOctopus = getAbility(player, OctopusForm.class);
 		if (oldOctopus != null) {
 			if (oldOctopus.formed) {
 				oldOctopus.attack();
@@ -71,7 +74,7 @@ public class OctopusForm extends WaterAbility {
 			}
 		}
 
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			if (oldOctopus != null) {
 				oldOctopus.remove();
 			}
@@ -89,9 +92,11 @@ public class OctopusForm extends WaterAbility {
 		this.damage = getConfig().getInt("Abilities.Water.OctopusForm.Damage");
 		this.interval = getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
 		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
+		this.usageCooldown = getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown");
 		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
 		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Water.OctopusForm.Duration");
 		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
@@ -101,54 +106,53 @@ public class OctopusForm extends WaterAbility {
 		} else {
 			this.pc = new PhaseChange(player, PhaseChangeType.CUSTOM);
 		}
-		
-		if (bPlayer.isAvatarState()) {
+
+		if (this.bPlayer.isAvatarState()) {
 			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.Damage");
 			this.attackRange = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.AttackRange");
 			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Knockback");
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius");
 		}
 		this.time = System.currentTimeMillis();
+		this.startTime = System.currentTimeMillis();
 		if (!player.isSneaking()) {
-			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
+			this.sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 		}
 
-		if (sourceBlock != null) {
-			sourceLocation = sourceBlock.getLocation();
-			sourceSelected = true;
-			start();
+		if (this.sourceBlock != null) {
+			this.sourceLocation = this.sourceBlock.getLocation();
+			this.sourceSelected = true;
+			this.start();
 		}
 	}
 
 	private void incrementStep() {
-		if (sourceSelected) {
-			sourceSelected = false;
-			settingUp = true;
-			bPlayer.addCooldown(this);
-		} else if (settingUp) {
-			settingUp = false;
-			forming = true;
-		} else if (forming) {
-			forming = false;
-			formed = true;
-			bPlayer.addCooldown(this);
+		if (this.sourceSelected) {
+			this.sourceSelected = false;
+			this.settingUp = true;
+		} else if (this.settingUp) {
+			this.settingUp = false;
+			this.forming = true;
+		} else if (this.forming) {
+			this.forming = false;
+			this.formed = true;
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public static void form(Player player) {
-		OctopusForm oldForm = getAbility(player, OctopusForm.class);
+	public static void form(final Player player) {
+		final OctopusForm oldForm = getAbility(player, OctopusForm.class);
 
 		if (oldForm != null) {
 			oldForm.form();
 		} else if (WaterReturn.hasWaterBottle(player)) {
-			Location eyeLoc = player.getEyeLocation();
-			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
+			final Location eyeLoc = player.getEyeLocation();
+			final Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(FULL);
-				OctopusForm form = new OctopusForm(player);
+				final OctopusForm form = new OctopusForm(player);
+				form.setSourceBlock(block);
 				form.form();
 
 				if (form.formed || form.forming || form.settingUp) {
@@ -161,31 +165,32 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void form() {
-		incrementStep();
-		if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
-			new PlantRegrowth(player, sourceBlock);
-			sourceBlock.setType(Material.AIR);
-		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock) && sourceBlock != null) {
-			sourceBlock.setType(Material.AIR);
+		this.incrementStep();
+		if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
+			new PlantRegrowth(this.player, this.sourceBlock);
+			this.sourceBlock.setType(Material.AIR);
+		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock) && this.sourceBlock != null) {
+			this.sourceBlock.setType(Material.AIR);
 		}
-		source = new TempBlock(sourceBlock, Material.STATIONARY_WATER, (byte) 8);
+		this.source = new TempBlock(this.sourceBlock, Material.STATIONARY_WATER, (byte) 8);
 	}
 
 	private void attack() {
-		if (!formed) {
+		if (!this.formed || this.bPlayer.isOnCooldown("OctopusAttack")) {
 			return;
 		}
-		double tentacleAngle = (new Vector(1, 0, 0)).angle(player.getEyeLocation().getDirection()) + angleIncrement / 2;
+		this.bPlayer.addCooldown("OctopusAttack", this.usageCooldown);
+		final double tentacleAngle = (new Vector(1, 0, 0)).angle(this.player.getEyeLocation().getDirection()) + this.angleIncrement / 2;
 
-		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += angleIncrement) {
-			double phi = Math.toRadians(tangle);
-			affect(player.getLocation().clone().add(new Vector(radius * Math.cos(phi), 1, radius * Math.sin(phi))));
+		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += this.angleIncrement) {
+			final double phi = Math.toRadians(tangle);
+			this.affect(this.player.getLocation().clone().add(new Vector(this.radius * Math.cos(phi), 1, this.radius * Math.sin(phi))));
 		}
 	}
 
-	private void affect(Location location) {
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, attackRange)) {
-			if (entity.getEntityId() == player.getEntityId()) {
+	private void affect(final Location location) {
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, this.attackRange)) {
+			if (entity.getEntityId() == this.player.getEntityId()) {
 				continue;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
@@ -193,16 +198,16 @@ public class OctopusForm extends WaterAbility {
 				continue;
 			}
 
-			double knock = bPlayer.isAvatarState() ? AvatarState.getValue(knockback) : knockback;
-			entity.setVelocity(GeneralMethods.getDirection(player.getLocation(), location).normalize().multiply(knock));
+			final double knock = this.bPlayer.isAvatarState() ? AvatarState.getValue(this.knockback) : this.knockback;
+			entity.setVelocity(GeneralMethods.getDirection(this.player.getLocation(), location).normalize().multiply(knock));
 
 			if (entity instanceof LivingEntity) {
-				DamageHandler.damageEntity(entity, damage, this);
+				DamageHandler.damageEntity(entity, this.damage, this);
 			}
 			AirAbility.breakBreathbendingHold(entity);
 		}
 	}
-	
+
 	@Override
 	public boolean allowBreakPlants() {
 		return false;
@@ -210,162 +215,166 @@ public class OctopusForm extends WaterAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.remove();
 			return;
-		} else if (!player.isSneaking() && !sourceSelected) {
-			remove();
+		} else if (!this.player.isSneaking() && !this.sourceSelected) {
+			this.remove();
 			return;
-		} else if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > range * range && sourceSelected) {
-			remove();
+		} else if (this.sourceBlock.getLocation().distanceSquared(this.player.getLocation()) > this.range * this.range && this.sourceSelected) {
+			this.remove();
+			return;
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.startTime + this.duration) {
+			this.bPlayer.addCooldown(this);
+			this.remove();
 			return;
 		}
 
-		Random random = new Random();
+		final Random random = new Random();
 
-		if (System.currentTimeMillis() > time + interval) {
-			time = System.currentTimeMillis();
-			Location location = player.getLocation();
+		if (System.currentTimeMillis() > this.time + this.interval) {
+			this.time = System.currentTimeMillis();
+			final Location location = this.player.getLocation();
 
-			if (sourceSelected) {
-				playFocusWaterEffect(sourceBlock);
-			} else if (settingUp) {
-				if (sourceBlock.getY() < location.getBlockY()) {
-					source.revertBlock();
-					source = null;
-					Block newBlock = sourceBlock.getRelative(BlockFace.UP);
-					sourceLocation = newBlock.getLocation();
-
-					if (!GeneralMethods.isSolid(newBlock)) {
-						source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
-						sourceBlock = newBlock;
-					} else {
-						remove();
-						return;
-					}
-				} else if (sourceBlock.getY() > location.getBlockY()) {
-					source.revertBlock();
-					source = null;
-					Block newBlock = sourceBlock.getRelative(BlockFace.DOWN);
-					sourceLocation = newBlock.getLocation();
+			if (this.sourceSelected) {
+				playFocusWaterEffect(this.sourceBlock);
+			} else if (this.settingUp) {
+				if (this.sourceBlock.getY() < location.getBlockY()) {
+					this.source.revertBlock();
+					this.source = null;
+					final Block newBlock = this.sourceBlock.getRelative(BlockFace.UP);
+					this.sourceLocation = newBlock.getLocation();
 
 					if (!GeneralMethods.isSolid(newBlock)) {
-						source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
-						sourceBlock = newBlock;
+						this.source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
+						this.sourceBlock = newBlock;
 					} else {
-						remove();
+						this.remove();
 						return;
 					}
-				} else if (sourceLocation.distanceSquared(location) > radius * radius) {
-					Vector vector = GeneralMethods.getDirection(sourceLocation, location.getBlock().getLocation()).normalize();
-					sourceLocation.add(vector);
-					Block newBlock = sourceLocation.getBlock();
+				} else if (this.sourceBlock.getY() > location.getBlockY()) {
+					this.source.revertBlock();
+					this.source = null;
+					final Block newBlock = this.sourceBlock.getRelative(BlockFace.DOWN);
+					this.sourceLocation = newBlock.getLocation();
 
-					if (!newBlock.equals(sourceBlock)) {
-						if (source != null) {
-							source.revertBlock();
+					if (!GeneralMethods.isSolid(newBlock)) {
+						this.source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
+						this.sourceBlock = newBlock;
+					} else {
+						this.remove();
+						return;
+					}
+				} else if (this.sourceLocation.distanceSquared(location) > this.radius * this.radius) {
+					final Vector vector = GeneralMethods.getDirection(this.sourceLocation, location.getBlock().getLocation()).normalize();
+					this.sourceLocation.add(vector);
+					final Block newBlock = this.sourceLocation.getBlock();
+
+					if (!newBlock.equals(this.sourceBlock)) {
+						if (this.source != null) {
+							this.source.revertBlock();
 						}
 						if (!GeneralMethods.isSolid(newBlock)) {
-							source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
-							sourceBlock = newBlock;
+							this.source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
+							this.sourceBlock = newBlock;
 						}
 					}
 				} else {
-					incrementStep();
-					if (source != null) {
-						source.revertBlock();
+					this.incrementStep();
+					if (this.source != null) {
+						this.source.revertBlock();
 					}
 
-					source = null;
-					Vector vector = new Vector(1, 0, 0);
-					startAngle = vector.angle(GeneralMethods.getDirection(sourceBlock.getLocation(), location));
-					angle = startAngle;
+					this.source = null;
+					final Vector vector = new Vector(1, 0, 0);
+					this.startAngle = vector.angle(GeneralMethods.getDirection(this.sourceBlock.getLocation(), location));
+					this.angle = this.startAngle;
 				}
-			} else if (forming) {
-				if (angle - startAngle >= 360) {
-					currentFormHeight += 1;
+			} else if (this.forming) {
+				if (this.angle - this.startAngle >= 360) {
+					this.currentFormHeight += 1;
 				} else {
-					angle += 20;
+					this.angle += 20;
 				}
 
 				if (random.nextInt(4) == 0) {
-					playWaterbendingSound(player.getLocation());
+					playWaterbendingSound(this.player.getLocation());
 				}
 
-				formOctopus();
-				if (currentFormHeight == 2) {
-					incrementStep();
+				this.formOctopus();
+				if (this.currentFormHeight == 2) {
+					this.incrementStep();
 				}
-			} else if (formed) {
+			} else if (this.formed) {
 				if (random.nextInt(7) == 0) {
-					playWaterbendingSound(player.getLocation());
+					playWaterbendingSound(this.player.getLocation());
 				}
 
-				stepCounter += 1;
-				if (stepCounter % totalStepCount == 0) {
-					currentAnimationStep += 1;
+				this.stepCounter += 1;
+				if (this.stepCounter % this.totalStepCount == 0) {
+					this.currentAnimationStep += 1;
 				}
-				if (currentAnimationStep > 8) {
-					currentAnimationStep = 1;
+				if (this.currentAnimationStep > 8) {
+					this.currentAnimationStep = 1;
 				}
-				formOctopus();
+				this.formOctopus();
 			} else {
-				remove();
+				this.remove();
 				return;
 			}
 		}
 	}
 
 	private void formOctopus() {
-		Location location = player.getLocation();
-		newBlocks.clear();
-		ArrayList<Block> doneBlocks = new ArrayList<Block>();
+		final Location location = this.player.getLocation();
+		this.newBlocks.clear();
+		final ArrayList<Block> doneBlocks = new ArrayList<Block>();
 
-		for (double theta = startAngle; theta < startAngle + angle; theta += 10) {
-			double rtheta = Math.toRadians(theta);
-			Block block = location.clone().add(new Vector(radius * Math.cos(rtheta), 0, radius * Math.sin(rtheta))).getBlock();
+		for (double theta = this.startAngle; theta < this.startAngle + this.angle; theta += 10) {
+			final double rtheta = Math.toRadians(theta);
+			final Block block = location.clone().add(new Vector(this.radius * Math.cos(rtheta), 0, this.radius * Math.sin(rtheta))).getBlock();
 			if (!doneBlocks.contains(block)) {
-				addBaseWater(block);
+				this.addBaseWater(block);
 				doneBlocks.add(block);
 			}
 		}
 		for (int i = 0; i < 9; i++) {
-			freezeBelow(player.getLocation().add(i / 3 - 1, 0, i / 3 - 1).getBlock());
+			this.freezeBelow(this.player.getLocation().add(i / 3 - 1, 0, i / 3 - 1).getBlock());
 		}
 
-		Vector eyeDir = player.getEyeLocation().getDirection();
+		final Vector eyeDir = this.player.getEyeLocation().getDirection();
 		eyeDir.setY(0);
 
-		double tentacleAngle = Math.toDegrees((new Vector(1, 0, 0)).angle(eyeDir)) + angleIncrement / 2;
-		int astep = currentAnimationStep;
-		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += angleIncrement) {
+		final double tentacleAngle = Math.toDegrees((new Vector(1, 0, 0)).angle(eyeDir)) + this.angleIncrement / 2;
+		int astep = this.currentAnimationStep;
+		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += this.angleIncrement) {
 			astep += 1;
-			double phi = Math.toRadians(tangle);
-			tentacle(location.clone().add(new Vector(radius * Math.cos(phi), 0, radius * Math.sin(phi))), astep);
+			final double phi = Math.toRadians(tangle);
+			this.tentacle(location.clone().add(new Vector(this.radius * Math.cos(phi), 0, this.radius * Math.sin(phi))), astep);
 		}
 
-		for (TempBlock block : blocks) {
-			if (!newBlocks.contains(block)) {
+		for (final TempBlock block : this.blocks) {
+			if (!this.newBlocks.contains(block)) {
 				block.revertBlock();
 			}
 		}
 
-		blocks.clear();
-		blocks.addAll(newBlocks);
+		this.blocks.clear();
+		this.blocks.addAll(this.newBlocks);
 
-		if (blocks.isEmpty()) {
-			remove();
+		if (this.blocks.isEmpty()) {
+			this.remove();
 		}
 	}
 
-	private void tentacle(Location base, int animationstep) {
+	private void tentacle(final Location base, int animationstep) {
 		if (!TempBlock.isTempBlock(base.getBlock())) {
 			return;
-		} else if (!blocks.contains(TempBlock.get(base.getBlock()))) {
+		} else if (!this.blocks.contains(TempBlock.get(base.getBlock()))) {
 			return;
 		}
 
-		Vector direction = GeneralMethods.getDirection(player.getLocation(), base);
+		final Vector direction = GeneralMethods.getDirection(this.player.getLocation(), base);
 		direction.setY(0);
 		direction.normalize();
 
@@ -373,70 +382,70 @@ public class OctopusForm extends WaterAbility {
 			animationstep = animationstep % 8;
 		}
 
-		if (currentFormHeight >= 1) {
-			Block baseBlock = base.clone().add(0, 1, 0).getBlock();
+		if (this.currentFormHeight >= 1) {
+			final Block baseBlock = base.clone().add(0, 1, 0).getBlock();
 			if (animationstep == 1) {
-				addWater(baseBlock);
+				this.addWater(baseBlock);
 			} else if (animationstep == 2 || animationstep == 8) {
-				addWater(baseBlock);
+				this.addWater(baseBlock);
 			} else {
-				addWater(base.clone().add(direction.getX(), 1, direction.getZ()).getBlock());
+				this.addWater(base.clone().add(direction.getX(), 1, direction.getZ()).getBlock());
 			}
 		}
 
-		if (currentFormHeight == 2) {
-			Block baseBlock = base.clone().add(0, 2, 0).getBlock();
+		if (this.currentFormHeight == 2) {
+			final Block baseBlock = base.clone().add(0, 2, 0).getBlock();
 			if (animationstep == 1) {
-				addWater(base.clone().add(-direction.getX(), 2, -direction.getZ()).getBlock());
+				this.addWater(base.clone().add(-direction.getX(), 2, -direction.getZ()).getBlock());
 			} else if (animationstep == 3 || animationstep == 7 || animationstep == 2 || animationstep == 8) {
-				addWater(baseBlock);
+				this.addWater(baseBlock);
 			} else if (animationstep == 4 || animationstep == 6) {
-				addWater(base.clone().add(direction.getX(), 2, direction.getZ()).getBlock());
+				this.addWater(base.clone().add(direction.getX(), 2, direction.getZ()).getBlock());
 			} else {
-				addWater(base.clone().add(2 * direction.getX(), 2, 2 * direction.getZ()).getBlock());
+				this.addWater(base.clone().add(2 * direction.getX(), 2, 2 * direction.getZ()).getBlock());
 			}
 
 		}
 	}
 
-	private void addWater(Block block) {
+	private void addWater(final Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		}
 
 		if (TempBlock.isTempBlock(block)) {
-			TempBlock tblock = TempBlock.get(block);
-			if (!newBlocks.contains(tblock) && !blocks.contains(tblock) && isBendableWaterTempBlock(tblock)) {
+			final TempBlock tblock = TempBlock.get(block);
+			if (!this.newBlocks.contains(tblock) && !this.blocks.contains(tblock) && isBendableWaterTempBlock(tblock)) {
 				if (!SurgeWave.canThaw(block)) {
 					SurgeWave.thaw(block);
 				}
-				tblock.setType(Material.STATIONARY_WATER, (byte)8);
-				newBlocks.add(tblock);
-			} else if (blocks.contains(tblock)) {
-				newBlocks.add(tblock);
+				tblock.setType(Material.STATIONARY_WATER, (byte) 8);
+				this.newBlocks.add(tblock);
+			} else if (this.blocks.contains(tblock)) {
+				this.newBlocks.add(tblock);
 			}
-		} else if (isWaterbendable(player, block) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
+		} else if (this.isWaterbendable(this.player, block) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
 			if (isWater(block) && !TempBlock.isTempBlock(block)) {
 				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 255.0);
 			}
-			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
+			this.newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
 	}
 
-	private void addBaseWater(Block block) {
-		freezeBelow(block);
-		addWater(block);
+	private void addBaseWater(final Block block) {
+		this.freezeBelow(block);
+		this.addWater(block);
 	}
 
-	private void freezeBelow(Block block) {
-		Block toFreeze = block.getRelative(BlockFace.DOWN);
+	private void freezeBelow(final Block block) {
+		final Block toFreeze = block.getRelative(BlockFace.DOWN);
 		if (isWater(toFreeze) && !TempBlock.isTempBlock(toFreeze)) {
-			pc.freeze(toFreeze);
+			this.pc.freeze(toFreeze);
 		}
 	}
 
-	public static boolean wasBrokenFor(Player player, Block block) {
-		OctopusForm form = getAbility(player, OctopusForm.class);
+	public static boolean wasBrokenFor(final Player player, final Block block) {
+		final OctopusForm form = getAbility(player, OctopusForm.class);
 		if (form != null) {
 			if (form.sourceBlock == null) {
 				return false;
@@ -450,45 +459,45 @@ public class OctopusForm extends WaterAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		returnWater();
+		this.returnWater();
 
-		if (source != null) {
-			source.revertBlock();
+		if (this.source != null) {
+			this.source.revertBlock();
 		}
-		for (TempBlock block : blocks) {
+		for (final TempBlock block : this.blocks) {
 			block.revertBlock();
 		}
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				pc.remove();
+				OctopusForm.this.pc.remove();
 			}
-			
+
 		}.runTaskLater(ProjectKorra.plugin, 1000);
 	}
 
 	private void returnWater() {
-		if (source != null) {
-			source.revertBlock();
-			new WaterReturn(player, source.getLocation().getBlock());
-			source = null;
+		if (this.source != null) {
+			this.source.revertBlock();
+			new WaterReturn(this.player, this.source.getLocation().getBlock());
+			this.source = null;
 		} else {
-			Location location = player.getLocation();
-			double rtheta = Math.toRadians(startAngle);
-			Block block = location.clone().add(new Vector(radius * Math.cos(rtheta), 0, radius * Math.sin(rtheta))).getBlock();
-			new WaterReturn(player, block);
+			final Location location = this.player.getLocation();
+			final double rtheta = Math.toRadians(this.startAngle);
+			final Block block = location.clone().add(new Vector(this.radius * Math.cos(rtheta), 0, this.radius * Math.sin(rtheta))).getBlock();
+			new WaterReturn(this.player, block);
 		}
 	}
 
 	@Override
 	public Location getLocation() {
-		if (sourceBlock != null) {
-			return sourceBlock.getLocation();
-		} else if (sourceLocation != null) {
-			return sourceLocation;
+		if (this.sourceBlock != null) {
+			return this.sourceBlock.getLocation();
+		} else if (this.sourceLocation != null) {
+			return this.sourceLocation;
 		}
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
@@ -498,7 +507,7 @@ public class OctopusForm extends WaterAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -513,186 +522,186 @@ public class OctopusForm extends WaterAbility {
 
 	@Override
 	public double getCollisionRadius() {
-		return getRadius();
+		return this.getRadius();
 	}
 
 	public boolean isSourceSelected() {
-		return sourceSelected;
+		return this.sourceSelected;
 	}
 
-	public void setSourceSelected(boolean sourceSelected) {
+	public void setSourceSelected(final boolean sourceSelected) {
 		this.sourceSelected = sourceSelected;
 	}
 
 	public boolean isSettingUp() {
-		return settingUp;
+		return this.settingUp;
 	}
 
-	public void setSettingUp(boolean settingUp) {
+	public void setSettingUp(final boolean settingUp) {
 		this.settingUp = settingUp;
 	}
 
 	public boolean isForming() {
-		return forming;
+		return this.forming;
 	}
 
-	public void setForming(boolean forming) {
+	public void setForming(final boolean forming) {
 		this.forming = forming;
 	}
 
 	public boolean isFormed() {
-		return formed;
+		return this.formed;
 	}
 
-	public void setFormed(boolean formed) {
+	public void setFormed(final boolean formed) {
 		this.formed = formed;
 	}
 
 	public int getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(int range) {
+	public void setRange(final int range) {
 		this.range = range;
 	}
 
 	public int getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(int damage) {
+	public void setDamage(final int damage) {
 		this.damage = damage;
 	}
 
 	public int getCurrentAnimationStep() {
-		return currentAnimationStep;
+		return this.currentAnimationStep;
 	}
 
-	public void setCurrentAnimationStep(int currentAnimationStep) {
+	public void setCurrentAnimationStep(final int currentAnimationStep) {
 		this.currentAnimationStep = currentAnimationStep;
 	}
 
 	public int getStepCounter() {
-		return stepCounter;
+		return this.stepCounter;
 	}
 
-	public void setStepCounter(int stepCounter) {
+	public void setStepCounter(final int stepCounter) {
 		this.stepCounter = stepCounter;
 	}
 
 	public int getTotalStepCount() {
-		return totalStepCount;
+		return this.totalStepCount;
 	}
 
-	public void setTotalStepCount(int totalStepCount) {
+	public void setTotalStepCount(final int totalStepCount) {
 		this.totalStepCount = totalStepCount;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getAttackRange() {
-		return attackRange;
+		return this.attackRange;
 	}
 
-	public void setAttackRange(double attackRange) {
+	public void setAttackRange(final double attackRange) {
 		this.attackRange = attackRange;
 	}
 
 	public double getKnockback() {
-		return knockback;
+		return this.knockback;
 	}
 
-	public void setKnockback(double knockback) {
+	public void setKnockback(final double knockback) {
 		this.knockback = knockback;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getStartAngle() {
-		return startAngle;
+		return this.startAngle;
 	}
 
-	public void setStartAngle(double startAngle) {
+	public void setStartAngle(final double startAngle) {
 		this.startAngle = startAngle;
 	}
 
 	public double getAngle() {
-		return angle;
+		return this.angle;
 	}
 
-	public void setAngle(double angle) {
+	public void setAngle(final double angle) {
 		this.angle = angle;
 	}
 
 	public double getCurrentFormHeight() {
-		return currentFormHeight;
+		return this.currentFormHeight;
 	}
 
-	public void setCurrentFormHeight(double currentFormHeight) {
+	public void setCurrentFormHeight(final double currentFormHeight) {
 		this.currentFormHeight = currentFormHeight;
 	}
 
 	public double getAngleIncrement() {
-		return angleIncrement;
+		return this.angleIncrement;
 	}
 
-	public void setAngleIncrement(double angleIncrement) {
+	public void setAngleIncrement(final double angleIncrement) {
 		this.angleIncrement = angleIncrement;
 	}
 
 	public Block getSourceBlock() {
-		return sourceBlock;
+		return this.sourceBlock;
 	}
 
-	public void setSourceBlock(Block sourceBlock) {
+	public void setSourceBlock(final Block sourceBlock) {
 		this.sourceBlock = sourceBlock;
 	}
 
 	public TempBlock getSource() {
-		return source;
+		return this.source;
 	}
 
-	public void setSource(TempBlock source) {
+	public void setSource(final TempBlock source) {
 		this.source = source;
 	}
 
 	public Location getSourceLocation() {
-		return sourceLocation;
+		return this.sourceLocation;
 	}
 
-	public void setSourceLocation(Location sourceLocation) {
+	public void setSourceLocation(final Location sourceLocation) {
 		this.sourceLocation = sourceLocation;
 	}
 
 	public ArrayList<TempBlock> getBlocks() {
-		return blocks;
+		return this.blocks;
 	}
 
 	public ArrayList<TempBlock> getNewBlocks() {
-		return newBlocks;
+		return this.newBlocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

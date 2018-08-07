@@ -29,40 +29,42 @@ public class AirShield extends AirAbility {
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	private int streams;
-	private long cooldown;
 	private int particles;
+	private long cooldown;
+	private long duration;
 	private Random random;
 	private HashMap<Integer, Integer> angles;
 
-	public AirShield(Player player) {
+	public AirShield(final Player player) {
 		super(player);
-		
+
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
 		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
 		this.radius = this.maxRadius;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Air.AirShield.Duration");
 		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
 		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
 		this.random = new Random();
 		this.angles = new HashMap<>();
 
-		if (bPlayer.isAvatarState() && hasAbility(player, AirShield.class) && isToggledByAvatarState) {
+		if (this.bPlayer.isAvatarState() && hasAbility(player, AirShield.class) && this.isToggledByAvatarState) {
 			getAbility(player, AirShield.class).remove();
 			return;
 		}
 
 		int angle = 0;
-		int di = (int) (maxRadius * 2 / streams);
-		for (int i = -(int) maxRadius + di; i < (int) maxRadius; i += di) {
-			angles.put(i, angle);
+		final int di = (int) (this.maxRadius * 2 / this.streams);
+		for (int i = -(int) this.maxRadius + di; i < (int) this.maxRadius; i += di) {
+			this.angles.put(i, angle);
 			angle += 90;
 			if (angle == 360) {
 				angle = 0;
 			}
 		}
-		
-		start();
+
+		this.start();
 	}
 
 	/**
@@ -70,8 +72,8 @@ public class AirShield extends AirAbility {
 	 * {@link Collision} for the new system.
 	 */
 	@Deprecated
-	public static boolean isWithinShield(Location loc) {
-		for (AirShield ashield : getAbilities(AirShield.class)) {
+	public static boolean isWithinShield(final Location loc) {
+		for (final AirShield ashield : getAbilities(AirShield.class)) {
 			if (!ashield.player.getWorld().equals(loc.getWorld())) {
 				return false;
 			} else if (ashield.player.getLocation().distanceSquared(loc) <= ashield.radius * ashield.radius) {
@@ -83,27 +85,34 @@ public class AirShield extends AirAbility {
 
 	@Override
 	public void progress() {
-		// AvatarState can use AirShield even when AirShield is not in the bound slot
-		if (player.getEyeLocation().getBlock().isLiquid()) {
-			remove();
+		// AvatarState can use AirShield even when AirShield is not in the bound slot.
+		if (this.player.getEyeLocation().getBlock().isLiquid()) {
+			this.remove();
 			return;
-		} else if (!bPlayer.isAvatarState() || !isToggledByAvatarState) {
-			if (!player.isSneaking() || !bPlayer.canBend(this)) {
-				bPlayer.addCooldown(this);
-				remove();
+		} else if (!this.bPlayer.isAvatarState() || !this.isToggledByAvatarState) {
+			if (!this.player.isSneaking() || !this.bPlayer.canBend(this)) {
+				this.bPlayer.addCooldown(this);
+				this.remove();
 				return;
+			} else if (this.duration != 0) {
+				if (this.getStartTime() + this.duration <= System.currentTimeMillis()) {
+					this.bPlayer.addCooldown(this);
+					this.remove();
+					return;
+				}
 			}
-		} else if (!bPlayer.canBendIgnoreBinds(this)) {
-			remove();
+
+		} else if (!this.bPlayer.canBendIgnoreBinds(this)) {
+			this.remove();
 			return;
 		}
-		rotateShield();
+		this.rotateShield();
 	}
 
 	private void rotateShield() {
-		Location origin = player.getLocation();
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", entity.getLocation())) {
+		final Location origin = this.player.getLocation();
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, this.radius)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this.player, "AirShield", entity.getLocation())) {
 				continue;
 			}
 			if (origin.distanceSquared(entity.getLocation()) > 4) {
@@ -119,8 +128,8 @@ public class AirShield extends AirAbility {
 				vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
 				vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
-				Vector velocity = entity.getVelocity();
-				if (bPlayer.isAvatarState()) {
+				final Vector velocity = entity.getVelocity();
+				if (this.bPlayer.isAvatarState()) {
 					velocity.setX(AvatarState.getValue(vx));
 					velocity.setZ(AvatarState.getValue(vz));
 				} else {
@@ -140,41 +149,41 @@ public class AirShield extends AirAbility {
 			}
 		}
 
-		for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
+		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 		}
 
-		Set<Integer> keys = angles.keySet();
-		for (int i : keys) {
+		final Set<Integer> keys = this.angles.keySet();
+		for (final int i : keys) {
 			double x, y, z;
-			double factor = radius / maxRadius;
-			double angle = (double) angles.get(i);
+			final double factor = this.radius / this.maxRadius;
+			double angle = this.angles.get(i);
 			angle = Math.toRadians(angle);
-			y = origin.getY() + factor * (double) i;
-			double f = Math.sqrt(1 - factor * factor * ((double) i / radius) * ((double) i / radius));
+			y = origin.getY() + factor * i;
+			final double f = Math.sqrt(1 - factor * factor * (i / this.radius) * (i / this.radius));
 
-			x = origin.getX() + radius * Math.cos(angle) * f;
-			z = origin.getZ() + radius * Math.sin(angle) * f;
+			x = origin.getX() + this.radius * Math.cos(angle) * f;
+			z = origin.getZ() + this.radius * Math.sin(angle) * f;
 
-			Location effect = new Location(origin.getWorld(), x, y, z);
+			final Location effect = new Location(origin.getWorld(), x, y, z);
 			if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
-				playAirbendingParticles(effect, particles);
-				if (random.nextInt(4) == 0) {
+				playAirbendingParticles(effect, this.particles);
+				if (this.random.nextInt(4) == 0) {
 					playAirbendingSound(effect);
 				}
 			}
 
-			angles.put(i, angles.get(i) + (int) (speed));
+			this.angles.put(i, this.angles.get(i) + (int) (this.speed));
 		}
 
-		if (radius < maxRadius) {
-			radius += .3;
+		if (this.radius < this.maxRadius) {
+			this.radius += .3;
 		}
-		if (radius > maxRadius) {
-			radius = maxRadius;
+		if (this.radius > this.maxRadius) {
+			this.radius = this.maxRadius;
 		}
 	}
 
@@ -185,12 +194,12 @@ public class AirShield extends AirAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -205,58 +214,58 @@ public class AirShield extends AirAbility {
 
 	@Override
 	public double getCollisionRadius() {
-		return getRadius();
+		return this.getRadius();
 	}
 
 	public boolean isToggledByAvatarState() {
-		return isToggledByAvatarState;
+		return this.isToggledByAvatarState;
 	}
 
-	public void setToggledByAvatarState(boolean isToggledByAvatarState) {
+	public void setToggledByAvatarState(final boolean isToggledByAvatarState) {
 		this.isToggledByAvatarState = isToggledByAvatarState;
 	}
 
 	public double getMaxRadius() {
-		return maxRadius;
+		return this.maxRadius;
 	}
 
-	public void setMaxRadius(double maxRadius) {
+	public void setMaxRadius(final double maxRadius) {
 		this.maxRadius = maxRadius;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public int getStreams() {
-		return streams;
+		return this.streams;
 	}
 
-	public void setStreams(int streams) {
+	public void setStreams(final int streams) {
 		this.streams = streams;
 	}
 
 	public int getParticles() {
-		return particles;
+		return this.particles;
 	}
 
-	public void setParticles(int particles) {
+	public void setParticles(final int particles) {
 		this.particles = particles;
 	}
 
 	public HashMap<Integer, Integer> getAngles() {
-		return angles;
+		return this.angles;
 	}
 }

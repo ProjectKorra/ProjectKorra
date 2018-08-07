@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.ClickType;
 
 public class Twister extends AirAbility implements ComboAbility {
 
@@ -42,17 +43,17 @@ public class Twister extends AirAbility implements ComboAbility {
 	private Location destination;
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
-	
-	public Twister(Player player) {
+
+	public Twister(final Player player) {
 		super(player);
 
 		this.affectedEntities = new ArrayList<>();
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
-		if (bPlayer.isOnCooldown(this)) {
+		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
@@ -65,14 +66,14 @@ public class Twister extends AirAbility implements ComboAbility {
 		this.twisterHeightParticles = getConfig().getDouble("Abilities.Air.Twister.HeightPerParticle");
 		this.twisterRemoveDelay = getConfig().getLong("Abilities.Air.Twister.RemoveDelay");
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Twister.Damage");
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Twister.Range");
 		}
-		
-		bPlayer.addCooldown(this);
-		start();
+
+		this.bPlayer.addCooldown(this);
+		this.start();
 	}
 
 	@Override
@@ -82,65 +83,65 @@ public class Twister extends AirAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
+		if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
-		} else if (currentLoc != null && GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
-			remove();
-			return;
-		}
-		
-		if (destination == null) {
-			state = AbilityState.TWISTER_MOVING;
-			direction = player.getEyeLocation().getDirection().clone().normalize();
-			direction.setY(0);
-			origin = player.getLocation().add(direction.clone().multiply(2));
-			destination = player.getLocation().add(direction.clone().multiply(range));
-			currentLoc = origin.clone();
-		}
-		if (origin.distanceSquared(currentLoc) < origin.distanceSquared(destination) && state == AbilityState.TWISTER_MOVING) {
-			currentLoc.add(direction.clone().multiply(speed));
-		} else if (state == AbilityState.TWISTER_MOVING) {
-			state = AbilityState.TWISTER_STATIONARY;
-			time = System.currentTimeMillis();
-		} else if (System.currentTimeMillis() - time >= twisterRemoveDelay) {
-			remove();
-			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
-			remove();
+		} else if (this.currentLoc != null && GeneralMethods.isRegionProtectedFromBuild(this, this.currentLoc)) {
+			this.remove();
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(currentLoc, 3, -3);
+		if (this.destination == null) {
+			this.state = AbilityState.TWISTER_MOVING;
+			this.direction = this.player.getEyeLocation().getDirection().clone().normalize();
+			this.direction.setY(0);
+			this.origin = this.player.getLocation().add(this.direction.clone().multiply(2));
+			this.destination = this.player.getLocation().add(this.direction.clone().multiply(this.range));
+			this.currentLoc = this.origin.clone();
+		}
+		if (this.origin.distanceSquared(this.currentLoc) < this.origin.distanceSquared(this.destination) && this.state == AbilityState.TWISTER_MOVING) {
+			this.currentLoc.add(this.direction.clone().multiply(this.speed));
+		} else if (this.state == AbilityState.TWISTER_MOVING) {
+			this.state = AbilityState.TWISTER_STATIONARY;
+			this.time = System.currentTimeMillis();
+		} else if (System.currentTimeMillis() - this.time >= this.twisterRemoveDelay) {
+			this.remove();
+			return;
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.currentLoc)) {
+			this.remove();
+			return;
+		}
+
+		final Block topBlock = GeneralMethods.getTopBlock(this.currentLoc, 3, -3);
 		if (topBlock == null) {
-			remove();
+			this.remove();
 			return;
 		}
-		currentLoc.setY(topBlock.getLocation().getY());
+		this.currentLoc.setY(topBlock.getLocation().getY());
 
-		double height = twisterHeight;
-		double radius = twisterRadius;
-		for (double y = 0; y < height; y += twisterHeightParticles) {
-			double animRadius = ((radius / height) * y);
-			for (double i = -180; i <= 180; i += twisterDegreeParticles) {
-				Vector animDir = GeneralMethods.rotateXZ(new Vector(1, 0, 1), i);
-				Location animLoc = currentLoc.clone().add(animDir.multiply(animRadius));
+		final double height = this.twisterHeight;
+		final double radius = this.twisterRadius;
+		for (double y = 0; y < height; y += this.twisterHeightParticles) {
+			final double animRadius = ((radius / height) * y);
+			for (double i = -180; i <= 180; i += this.twisterDegreeParticles) {
+				final Vector animDir = GeneralMethods.rotateXZ(new Vector(1, 0, 1), i);
+				final Location animLoc = this.currentLoc.clone().add(animDir.multiply(animRadius));
 				animLoc.add(0, y, 0);
 				playAirbendingParticles(animLoc, 1, 0, 0, 0);
 			}
 		}
-		playAirbendingSound(currentLoc);
+		playAirbendingSound(this.currentLoc);
 
 		for (int i = 0; i < height; i += 3) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc.clone().add(0, i, 0), radius * 0.75)) {
-				if (!affectedEntities.contains(entity) && !entity.equals(player)) {
-					affectedEntities.add(entity);
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.currentLoc.clone().add(0, i, 0), radius * 0.75)) {
+				if (!this.affectedEntities.contains(entity) && !entity.equals(this.player)) {
+					this.affectedEntities.add(entity);
 				}
 			}
 		}
 
-		for (Entity entity : affectedEntities) {
-			Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), currentLoc.clone().add(0, height, 0));
+		for (final Entity entity : this.affectedEntities) {
+			final Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc.clone().add(0, height, 0));
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(((Player) entity).getName())) {
 					break;
@@ -162,29 +163,39 @@ public class Twister extends AirAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
-	
-	public void setCooldown(long cooldown) {
+
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
 	@Override
 	public Location getLocation() {
-		return origin;
+		return this.origin;
 	}
-	
-	public void setLocation(Location location) {
+
+	public void setLocation(final Location location) {
 		this.origin = location;
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
-		return null;
+	public Object createNewComboInstance(final Player player) {
+		return new Twister(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		return null;
+		final ArrayList<AbilityInformation> twister = new ArrayList<>();
+		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
+		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_UP));
+		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
+		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
+		return twister;
+	}
+
+	@Override
+	public String getInstructions() {
+		return "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)";
 	}
 }
