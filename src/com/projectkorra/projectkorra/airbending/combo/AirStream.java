@@ -36,18 +36,18 @@ public class AirStream extends AirAbility implements ComboAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private Set<Player> flights;
 
-	public AirStream(Player player) {
+	public AirStream(final Player player) {
 		super(player);
 
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 		this.flights = new HashSet<>();
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
-		if (bPlayer.isOnCooldown(this)) {
+		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
@@ -57,15 +57,15 @@ public class AirStream extends AirAbility implements ComboAbility {
 		this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirStream.EntityHeight");
 		this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirStream.EntityDuration");
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.Range");
 			this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityHeight");
 			this.airStreamEntityCarryDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityDuration");
 		}
 
-		bPlayer.addCooldown(this);
-		start();
+		this.bPlayer.addCooldown(this);
+		this.start();
 	}
 
 	@Override
@@ -80,94 +80,94 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
+		if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
-		} else if (currentLoc != null && GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
-			remove();
+		} else if (this.currentLoc != null && GeneralMethods.isRegionProtectedFromBuild(this, this.currentLoc)) {
+			this.remove();
 			return;
 		}
 
-		if (destination == null) {
-			origin = player.getEyeLocation();
-			currentLoc = origin.clone();
+		if (this.destination == null) {
+			this.origin = this.player.getEyeLocation();
+			this.currentLoc = this.origin.clone();
 		}
-		Entity target = GeneralMethods.getTargetedEntity(player, range);
+		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
 		if (target instanceof Player) {
 			if (Commands.invincible.contains(((Player) target).getName())) {
 				return;
 			}
 		}
 
-		if (target != null && target.getLocation().distanceSquared(currentLoc) > 49) {
-			destination = target.getLocation();
+		if (target != null && target.getLocation().distanceSquared(this.currentLoc) > 49) {
+			this.destination = target.getLocation();
 		} else {
-			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials());
+			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, getTransparentMaterials());
 		}
 
-		direction = GeneralMethods.getDirection(currentLoc, destination).normalize();
-		currentLoc.add(direction.clone().multiply(speed));
+		this.direction = GeneralMethods.getDirection(this.currentLoc, this.destination).normalize();
+		this.currentLoc.add(this.direction.clone().multiply(this.speed));
 
-		if (player.getWorld() != currentLoc.getWorld()) {
-			remove();
+		if (this.player.getWorld() != this.currentLoc.getWorld()) {
+			this.remove();
 			return;
-		} else if (!player.isSneaking()) {
-			remove();
+		} else if (!this.player.isSneaking()) {
+			this.remove();
 			return;
-		} else if (player.getWorld().equals(currentLoc.getWorld()) && Math.abs(player.getLocation().distanceSquared(currentLoc)) > range * range) {
-			remove();
+		} else if (this.player.getWorld().equals(this.currentLoc.getWorld()) && Math.abs(this.player.getLocation().distanceSquared(this.currentLoc)) > this.range * this.range) {
+			this.remove();
 			return;
-		} else if (affectedEntities.size() > 0 && System.currentTimeMillis() - time >= airStreamEntityCarryDuration) {
-			remove();
+		} else if (this.affectedEntities.size() > 0 && System.currentTimeMillis() - this.time >= this.airStreamEntityCarryDuration) {
+			this.remove();
 			return;
-		} else if (!isTransparent(currentLoc.getBlock())) {
-			remove();
+		} else if (!this.isTransparent(this.currentLoc.getBlock())) {
+			this.remove();
 			return;
-		} else if (currentLoc.getY() - origin.getY() > airStreamMaxEntityHeight) {
-			remove();
+		} else if (this.currentLoc.getY() - this.origin.getY() > this.airStreamMaxEntityHeight) {
+			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
-			remove();
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.currentLoc)) {
+			this.remove();
 			return;
-		} else if (!isTransparent(currentLoc.getBlock())) {
-			currentLoc.subtract(direction.clone().multiply(speed));
+		} else if (!this.isTransparent(this.currentLoc.getBlock())) {
+			this.currentLoc.subtract(this.direction.clone().multiply(this.speed));
 		}
 
 		for (int i = 0; i < 10; i++) {
-			BukkitRunnable br = new BukkitRunnable() {
-				final Location loc = currentLoc.clone();
-				final Vector dir = direction.clone();
+			final BukkitRunnable br = new BukkitRunnable() {
+				final Location loc = AirStream.this.currentLoc.clone();
+				final Vector dir = AirStream.this.direction.clone();
 
 				@Override
 				public void run() {
 					for (int angle = -180; angle <= 180; angle += 45) {
-						Vector orthog = GeneralMethods.getOrthogonalVector(dir.clone(), angle, 0.5);
-						playAirbendingParticles(loc.clone().add(orthog), 1, 0F, 0F, 0F);
+						final Vector orthog = GeneralMethods.getOrthogonalVector(this.dir.clone(), angle, 0.5);
+						playAirbendingParticles(this.loc.clone().add(orthog), 1, 0F, 0F, 0F);
 					}
 				}
 			};
 			br.runTaskLater(ProjectKorra.plugin, i * 2);
-			tasks.add(br);
+			this.tasks.add(br);
 		}
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc, 2.8)) {
-			if (affectedEntities.size() == 0) {
-				// Set the timer to remove the ability
-				time = System.currentTimeMillis();
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.currentLoc, 2.8)) {
+			if (this.affectedEntities.size() == 0) {
+				// Set the timer to remove the ability.
+				this.time = System.currentTimeMillis();
 			}
-			if (!entity.equals(player) && !affectedEntities.contains(entity)) {
-				affectedEntities.add(entity);
+			if (!entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
+				this.affectedEntities.add(entity);
 				if (entity instanceof Player) {
-					Player ep = (Player) entity;
-					ProjectKorra.flightHandler.createInstance(ep, player, getName());
-					flights.add(ep);
+					final Player ep = (Player) entity;
+					ProjectKorra.flightHandler.createInstance(ep, this.player, this.getName());
+					this.flights.add(ep);
 				}
 			}
 		}
 
-		for (Entity entity : affectedEntities) {
-			Vector force = GeneralMethods.getDirection(entity.getLocation(), currentLoc);
-			entity.setVelocity(force.clone().normalize().multiply(speed));
+		for (final Entity entity : this.affectedEntities) {
+			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
+			entity.setVelocity(force.clone().normalize().multiply(this.speed));
 			entity.setFallDistance(0F);
 		}
 	}
@@ -175,13 +175,13 @@ public class AirStream extends AirAbility implements ComboAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		for (BukkitRunnable task : tasks) {
+		for (final BukkitRunnable task : this.tasks) {
 			task.cancel();
 		}
-		for (Player flyer : flights) {
-			ProjectKorra.flightHandler.removeInstance(flyer, getName());
+		for (final Player flyer : this.flights) {
+			ProjectKorra.flightHandler.removeInstance(flyer, this.getName());
 		}
-		flights.clear();
+		this.flights.clear();
 	}
 
 	@Override
@@ -196,22 +196,22 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
 	public Location getLocation() {
-		return currentLoc;
+		return this.currentLoc;
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
+	public Object createNewComboInstance(final Player player) {
 		return new AirStream(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		ArrayList<AbilityInformation> airStream = new ArrayList<>();
+		final ArrayList<AbilityInformation> airStream = new ArrayList<>();
 		airStream.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
 		airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
 		airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
@@ -219,94 +219,94 @@ public class AirStream extends AirAbility implements ComboAbility {
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public Location getCurrentLoc() {
-		return currentLoc;
+		return this.currentLoc;
 	}
 
-	public void setCurrentLoc(Location currentLoc) {
+	public void setCurrentLoc(final Location currentLoc) {
 		this.currentLoc = currentLoc;
 	}
 
 	public Location getDestination() {
-		return destination;
+		return this.destination;
 	}
 
-	public void setDestination(Location destination) {
+	public void setDestination(final Location destination) {
 		this.destination = destination;
 	}
 
 	public Vector getDirection() {
-		return direction;
+		return this.direction;
 	}
 
-	public void setDirection(Vector direction) {
+	public void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getAirStreamMaxEntityHeight() {
-		return airStreamMaxEntityHeight;
+		return this.airStreamMaxEntityHeight;
 	}
 
-	public void setAirStreamMaxEntityHeight(double airStreamMaxEntityHeight) {
+	public void setAirStreamMaxEntityHeight(final double airStreamMaxEntityHeight) {
 		this.airStreamMaxEntityHeight = airStreamMaxEntityHeight;
 	}
 
 	public double getAirStreamEntityCarryDuration() {
-		return airStreamEntityCarryDuration;
+		return this.airStreamEntityCarryDuration;
 	}
 
-	public void setAirStreamEntityCarryDuration(double airStreamEntityCarryDuration) {
+	public void setAirStreamEntityCarryDuration(final double airStreamEntityCarryDuration) {
 		this.airStreamEntityCarryDuration = airStreamEntityCarryDuration;
 	}
 
 	public ArrayList<Entity> getAffectedEntities() {
-		return affectedEntities;
+		return this.affectedEntities;
 	}
 
 	public ArrayList<BukkitRunnable> getTasks() {
-		return tasks;
+		return this.tasks;
 	}
 
-	public void setTasks(ArrayList<BukkitRunnable> tasks) {
+	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
 	}
 
 	public Set<Player> getFlights() {
-		return flights;
+		return this.flights;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

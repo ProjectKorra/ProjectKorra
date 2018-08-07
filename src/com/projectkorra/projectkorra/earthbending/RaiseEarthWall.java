@@ -19,23 +19,23 @@ public class RaiseEarthWall extends EarthAbility {
 	private long cooldown;
 	private Location location;
 
-	public RaiseEarthWall(Player player) {
+	public RaiseEarthWall(final Player player) {
 		super(player);
 		this.selectRange = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.SelectRange");
 		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Height");
 		this.width = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Width");
 		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Wall.Cooldown");
 
-		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("RaiseEarthWall")) {
+		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("RaiseEarthWall")) {
 			return;
 		}
 
-		if (bPlayer.isAvatarState()) {
-			height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
-			width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
+		if (this.bPlayer.isAvatarState()) {
+			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
+			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
 		}
 
-		Vector direction = player.getEyeLocation().getDirection().normalize();
+		final Vector direction = player.getEyeLocation().getDirection().normalize();
 		double ox, oy, oz;
 		direction.setY(0);
 		ox = -direction.getZ();
@@ -46,66 +46,66 @@ public class RaiseEarthWall extends EarthAbility {
 		orth = orth.normalize();
 		orth = getDegreeRoundedVector(orth, 0.25);
 
-		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
+		final Block sblock = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.SHIFT_DOWN);
 
 		if (sblock == null) {
-			location = getTargetEarthBlock(selectRange).getLocation();
+			this.location = this.getTargetEarthBlock(this.selectRange).getLocation();
 		} else {
-			location = sblock.getLocation();
+			this.location = sblock.getLocation();
 		}
 
-		World world = location.getWorld();
+		final World world = this.location.getWorld();
 		boolean shouldAddCooldown = false;
 
-		for (int i = 0; i < width; i++) {
-			double adjustedI = i - width / 2.0;
-			Block block = world.getBlockAt(location.clone().add(orth.clone().multiply(adjustedI)));
+		for (int i = 0; i < this.width; i++) {
+			final double adjustedI = i - this.width / 2.0;
+			Block block = world.getBlockAt(this.location.clone().add(orth.clone().multiply(adjustedI)));
 
-			if (isTransparent(block)) {
-				for (int j = 1; j < height; j++) {
+			if (this.isTransparent(block)) {
+				for (int j = 1; j < this.height; j++) {
 					block = block.getRelative(BlockFace.DOWN);
-					if (isEarthbendable(block)) {
+					if (this.isEarthbendable(block)) {
 						shouldAddCooldown = true;
-						new RaiseEarth(player, block.getLocation(), height);
-					} else if (!isTransparent(block)) {
+						new RaiseEarth(player, block.getLocation(), this.height);
+					} else if (!this.isTransparent(block)) {
 						break;
 					}
 				}
-			} else if (isEarthbendable(block.getRelative(BlockFace.UP))) {
-				for (int j = 1; j < height; j++) {
+			} else if (this.isEarthbendable(block.getRelative(BlockFace.UP))) {
+				for (int j = 1; j < this.height; j++) {
 					block = block.getRelative(BlockFace.UP);
-					if (isTransparent(block)) {
+					if (this.isTransparent(block)) {
 						shouldAddCooldown = true;
-						new RaiseEarth(player, block.getRelative(BlockFace.DOWN).getLocation(), height);
-					} else if (!isEarthbendable(block)) {
+						new RaiseEarth(player, block.getRelative(BlockFace.DOWN).getLocation(), this.height);
+					} else if (!this.isEarthbendable(block)) {
 						break;
 					}
 				}
-			} else if (isEarthbendable(block)) {
+			} else if (this.isEarthbendable(block)) {
 				shouldAddCooldown = true;
-				new RaiseEarth(player, block.getLocation(), height);
+				new RaiseEarth(player, block.getLocation(), this.height);
 			}
 		}
 
 		if (shouldAddCooldown) {
-			bPlayer.addCooldown("RaiseEarthWall", cooldown);
+			this.bPlayer.addCooldown("RaiseEarthWall", this.cooldown);
 		}
 	}
 
-	private static Vector getDegreeRoundedVector(Vector vec, double degreeIncrement) {
+	private static Vector getDegreeRoundedVector(Vector vec, final double degreeIncrement) {
 		if (vec == null) {
 			return null;
 		}
 		vec = vec.normalize();
-		double[] dims = { vec.getX(), vec.getY(), vec.getZ() };
+		final double[] dims = { vec.getX(), vec.getY(), vec.getZ() };
 
 		for (int i = 0; i < dims.length; i++) {
-			double dim = dims[i];
-			int sign = dim >= 0 ? 1 : -1;
-			int dimDivIncr = (int) (dim / degreeIncrement);
+			final double dim = dims[i];
+			final int sign = dim >= 0 ? 1 : -1;
+			final int dimDivIncr = (int) (dim / degreeIncrement);
 
-			double lowerBound = dimDivIncr * degreeIncrement;
-			double upperBound = (dimDivIncr + (1 * sign)) * degreeIncrement;
+			final double lowerBound = dimDivIncr * degreeIncrement;
+			final double upperBound = (dimDivIncr + (1 * sign)) * degreeIncrement;
 
 			if (Math.abs(dim - lowerBound) < Math.abs(dim - upperBound)) {
 				dims[i] = lowerBound;
@@ -127,12 +127,12 @@ public class RaiseEarthWall extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -146,42 +146,42 @@ public class RaiseEarthWall extends EarthAbility {
 	}
 
 	public int getRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setRange(int range) {
+	public void setRange(final int range) {
 		this.selectRange = range;
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(final int height) {
 		this.height = height;
 	}
 
 	public int getWidth() {
-		return width;
+		return this.width;
 	}
 
-	public void setWidth(int width) {
+	public void setWidth(final int width) {
 		this.width = width;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
 	public int getSelectRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setSelectRange(int selectRange) {
+	public void setSelectRange(final int selectRange) {
 		this.selectRange = selectRange;
 	}
 

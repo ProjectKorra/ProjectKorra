@@ -15,17 +15,17 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class ChiAgility extends ChiAbility implements PassiveAbility {
 
-	// Configurable variables
+	// Configurable variables.
 	private int jumpPower;
 	private int speedPower;
 
-	// Instance related variables
+	// Instance related variables.
 	private boolean jumpActivate;
 	private boolean speedActivate;
 
-	public ChiAgility(Player player) {
+	public ChiAgility(final Player player) {
 		super(player);
-		setFields();
+		this.setFields();
 	}
 
 	public void setFields() {
@@ -35,51 +35,51 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		if (!player.isSprinting() || !bPlayer.canUsePassive(this) || !bPlayer.canBendPassive(this)) {
+		if (!this.player.isSprinting() || !this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this)) {
 			return;
 		}
 
-		if (CoreAbility.hasAbility(player, AirAgility.class) && bPlayer.canBendPassive(CoreAbility.getAbility(AirAbility.class))) {
-			AirAgility airAgility = CoreAbility.getAbility(player, AirAgility.class);
-			if (airAgility.getJumpPower() > jumpPower) {
-				jumpPower = airAgility.getJumpPower();
+		if (CoreAbility.hasAbility(this.player, AirAgility.class) && this.bPlayer.canBendPassive(CoreAbility.getAbility(AirAbility.class))) {
+			final AirAgility airAgility = CoreAbility.getAbility(this.player, AirAgility.class);
+			if (airAgility.getJumpPower() > this.jumpPower) {
+				this.jumpPower = airAgility.getJumpPower();
 			}
-			if (airAgility.getSpeedPower() > speedPower) {
-				speedPower = airAgility.getSpeedPower();
+			if (airAgility.getSpeedPower() > this.speedPower) {
+				this.speedPower = airAgility.getSpeedPower();
 			}
-		}
-		
-		if (hasAbility(player, AcrobatStance.class)) {
-			AcrobatStance stance = getAbility(player, AcrobatStance.class);
-			jumpPower = Math.max(jumpPower, stance.getJump());
-			speedPower = Math.max(speedPower, stance.getSpeed());
-		}
-		// Jump Buff
-		jumpActivate = true;
-		if (player.hasPotionEffect(PotionEffectType.JUMP)) {
-			PotionEffect potion = player.getPotionEffect(PotionEffectType.JUMP);
-			if (potion.getAmplifier() > jumpPower - 1) {
-				jumpActivate = false;
-			} else {
-				player.removePotionEffect(PotionEffectType.JUMP);
-			}
-		}
-		if (jumpActivate) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, jumpPower - 1, true, false), false);
 		}
 
-		// Speed Buff
-		speedActivate = true;
-		if (player.hasPotionEffect(PotionEffectType.SPEED)) {
-			PotionEffect potion = player.getPotionEffect(PotionEffectType.SPEED);
-			if (potion.getAmplifier() > speedPower - 1) {
-				speedActivate = false;
+		if (hasAbility(this.player, AcrobatStance.class)) {
+			final AcrobatStance stance = getAbility(this.player, AcrobatStance.class);
+			this.jumpPower = Math.max(this.jumpPower, stance.getJump());
+			this.speedPower = Math.max(this.speedPower, stance.getSpeed());
+		}
+		// Jump Buff.
+		this.jumpActivate = true;
+		if (this.player.hasPotionEffect(PotionEffectType.JUMP)) {
+			final PotionEffect potion = this.player.getPotionEffect(PotionEffectType.JUMP);
+			if (potion.getAmplifier() > this.jumpPower - 1) {
+				this.jumpActivate = false;
 			} else {
-				player.removePotionEffect(PotionEffectType.SPEED);
+				this.player.removePotionEffect(PotionEffectType.JUMP);
 			}
 		}
-		if (speedActivate) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, speedPower - 1, true, false), false);
+		if (this.jumpActivate) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, this.jumpPower - 1, true, false), false);
+		}
+
+		// Speed Buff.
+		this.speedActivate = true;
+		if (this.player.hasPotionEffect(PotionEffectType.SPEED)) {
+			final PotionEffect potion = this.player.getPotionEffect(PotionEffectType.SPEED);
+			if (potion.getAmplifier() > this.speedPower - 1) {
+				this.speedActivate = false;
+			} else {
+				this.player.removePotionEffect(PotionEffectType.SPEED);
+			}
+		}
+		if (this.speedActivate) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, this.speedPower - 1, true, false), false);
 		}
 	}
 
@@ -119,11 +119,11 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 	}
 
 	public int getJumpPower() {
-		return jumpPower;
+		return this.jumpPower;
 	}
 
 	public int getSpeedPower() {
-		return speedPower;
+		return this.speedPower;
 	}
 
 }

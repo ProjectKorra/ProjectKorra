@@ -9,25 +9,25 @@ public enum Statistic {
 	private String name;
 	private String displayName;
 
-	private Statistic(String name, String displayName) {
+	private Statistic(final String name, final String displayName) {
 		this.name = name;
 		this.displayName = displayName;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getDisplayName() {
-		return displayName;
+		return this.displayName;
 	}
 
-	public String getStatisticName(CoreAbility ability) {
-		return getName() + "_" + ability.getName();
+	public String getStatisticName(final CoreAbility ability) {
+		return this.getName() + "_" + ability.getName();
 	}
 
-	public static Statistic getStatistic(String name) {
-		for (Statistic statistic : Statistic.values()) {
+	public static Statistic getStatistic(final String name) {
+		for (final Statistic statistic : Statistic.values()) {
 			if (statistic.getName().equalsIgnoreCase(name)) {
 				return statistic;
 			}

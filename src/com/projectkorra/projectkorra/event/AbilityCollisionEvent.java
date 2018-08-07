@@ -13,26 +13,26 @@ public class AbilityCollisionEvent extends Event implements Cancellable {
 	private boolean cancelled;
 	private Collision collision;
 
-	public AbilityCollisionEvent(Collision collision) {
+	public AbilityCollisionEvent(final Collision collision) {
 		this.collision = collision;
 		this.cancelled = false;
 	}
 
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean cancelled) {
+	public void setCancelled(final boolean cancelled) {
 		this.cancelled = cancelled;
 	}
 
 	public Collision getCollision() {
-		return collision;
+		return this.collision;
 	}
 
-	public void setCollision(Collision collision) {
+	public void setCollision(final Collision collision) {
 		this.collision = collision;
 	}
 

@@ -17,13 +17,13 @@ import java.util.logging.LogRecord;
  * errors}</li>
  * <li>Formatter - {@link LogFormatter}</li>
  * </ul>
- * 
+ *
  * @author Jacklin213
  * @version 2.1.0
  */
 public class PKLogHandler extends FileHandler {
 
-	public PKLogHandler(String filename) throws IOException {
+	public PKLogHandler(final String filename) throws IOException {
 		super(filename, 500 * 1024, 20, true);
 		this.setLevel(Level.WARNING);
 		this.setFilter(new LogFilter());
@@ -31,9 +31,9 @@ public class PKLogHandler extends FileHandler {
 	}
 
 	@Override
-	public synchronized void publish(LogRecord record) {
+	public synchronized void publish(final LogRecord record) {
 		super.publish(record);
-		flush();
+		this.flush();
 	}
 
 }

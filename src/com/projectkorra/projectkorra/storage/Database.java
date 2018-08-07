@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.storage;
 
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Logger;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
-import java.util.logging.Logger;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public abstract class Database {
 
@@ -18,7 +18,7 @@ public abstract class Database {
 	protected final String dbprefix;
 	protected Connection connection = null;
 
-	public Database(Logger log, String prefix, String dbprefix) {
+	public Database(final Logger log, final String prefix, final String dbprefix) {
 		this.log = log;
 		this.prefix = prefix;
 		this.dbprefix = dbprefix;
@@ -29,8 +29,8 @@ public abstract class Database {
 	 *
 	 * @param message The string to print to console
 	 */
-	protected void printInfo(String message) {
-		log.info(prefix + dbprefix + message);
+	protected void printInfo(final String message) {
+		this.log.info(this.prefix + this.dbprefix + message);
 	}
 
 	/**
@@ -40,11 +40,12 @@ public abstract class Database {
 	 * @param severe If {@param severe} is true print an error, else print a
 	 *            warning
 	 */
-	protected void printErr(String message, boolean severe) {
-		if (severe)
-			log.severe(prefix + dbprefix + message);
-		else
-			log.warning(prefix + dbprefix + message);
+	protected void printErr(final String message, final boolean severe) {
+		if (severe) {
+			this.log.severe(this.prefix + this.dbprefix + message);
+		} else {
+			this.log.warning(this.prefix + this.dbprefix + message);
+		}
 	}
 
 	/**
@@ -53,7 +54,7 @@ public abstract class Database {
 	 * @return Connection if exists, else null
 	 */
 	public Connection getConnection() {
-		return connection;
+		return this.connection;
 	}
 
 	/**
@@ -67,11 +68,11 @@ public abstract class Database {
 	 * Close connection to Database.
 	 */
 	public void close() {
-		if (connection != null) {
+		if (this.connection != null) {
 			try {
-				connection.close();
+				this.connection.close();
 			}
-			catch (SQLException e) {
+			catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -86,7 +87,7 @@ public abstract class Database {
 	 * @param query Query to run
 	 */
 	public void modifyQuery(final String query) {
-		modifyQuery(query, true);
+		this.modifyQuery(query, true);
 	}
 
 	/**
@@ -100,11 +101,11 @@ public abstract class Database {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					doQuery(query);
+					Database.this.doQuery(query);
 				}
 			}.runTaskAsynchronously(ProjectKorra.plugin);
 		} else {
-			doQuery(query);
+			this.doQuery(query);
 		}
 	}
 
@@ -114,17 +115,17 @@ public abstract class Database {
 	 * @param query Query to run
 	 * @return Result set of ran query
 	 */
-	public ResultSet readQuery(String query) {
+	public ResultSet readQuery(final String query) {
 		try {
-			if (connection == null || connection.isClosed()) {
-				open();
+			if (this.connection == null || this.connection.isClosed()) {
+				this.open();
 			}
-			PreparedStatement stmt = connection.prepareStatement(query);
-			ResultSet rs = stmt.executeQuery();
+			final PreparedStatement stmt = this.connection.prepareStatement(query);
+			final ResultSet rs = stmt.executeQuery();
 
 			return rs;
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -132,21 +133,21 @@ public abstract class Database {
 
 	/**
 	 * Check database to see if a table exists.
-	 * 
+	 *
 	 * @param table Table name to check
 	 * @return true if table exists, else false
 	 */
-	public boolean tableExists(String table) {
+	public boolean tableExists(final String table) {
 		try {
-			if (connection == null || connection.isClosed()) {
-				open();
+			if (this.connection == null || this.connection.isClosed()) {
+				this.open();
 			}
-			DatabaseMetaData dmd = connection.getMetaData();
-			ResultSet rs = dmd.getTables(null, null, table, null);
+			final DatabaseMetaData dmd = this.connection.getMetaData();
+			final ResultSet rs = dmd.getTables(null, null, table, null);
 
 			return rs.next();
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -154,21 +155,21 @@ public abstract class Database {
 
 	/**
 	 * Check database to see if column exists within table.
-	 * 
+	 *
 	 * @param table Table name to check
 	 * @param column Column name to check
 	 * @return true if column exists within table, else false
 	 */
-	public boolean columnExists(String table, String column) {
+	public boolean columnExists(final String table, final String column) {
 		try {
-			if (connection == null || connection.isClosed()) {
-				open();
+			if (this.connection == null || this.connection.isClosed()) {
+				this.open();
 			}
-			DatabaseMetaData dmd = connection.getMetaData();
-			ResultSet rs = dmd.getColumns(null, null, table, column);
+			final DatabaseMetaData dmd = this.connection.getMetaData();
+			final ResultSet rs = dmd.getColumns(null, null, table, column);
 			return rs.next();
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -176,14 +177,14 @@ public abstract class Database {
 
 	private synchronized void doQuery(final String query) {
 		try {
-			if (connection == null || connection.isClosed()) {
-				open();
+			if (this.connection == null || this.connection.isClosed()) {
+				this.open();
 			}
-			PreparedStatement stmt = connection.prepareStatement(query);
+			final PreparedStatement stmt = this.connection.prepareStatement(query);
 			stmt.execute();
 			stmt.close();
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}

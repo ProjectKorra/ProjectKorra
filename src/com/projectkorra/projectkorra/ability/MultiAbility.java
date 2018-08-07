@@ -1,8 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfoSub;
-
 import java.util.ArrayList;
+
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfoSub;
 
 public interface MultiAbility {
 
@@ -11,7 +11,7 @@ public interface MultiAbility {
 	 * <p>
 	 * {@code new
 	 * MultiAbilitySub("SubAbility", Element.LIGHTNING);}
-	 * 
+	 *
 	 * @return a list of sub MultiAbilities
 	 */
 	public abstract ArrayList<MultiAbilityInfoSub> getMultiAbilities();

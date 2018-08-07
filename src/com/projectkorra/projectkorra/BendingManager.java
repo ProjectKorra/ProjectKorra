@@ -8,9 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -32,7 +31,7 @@ public class BendingManager implements Runnable {
 
 	public BendingManager() {
 		instance = this;
-		time = System.currentTimeMillis();
+		this.time = System.currentTimeMillis();
 	}
 
 	public static BendingManager getInstance() {
@@ -40,9 +39,9 @@ public class BendingManager implements Runnable {
 	}
 
 	public void handleCooldowns() {
-		for (UUID uuid : BendingPlayer.getPlayers().keySet()) {
-			BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);
-			for (String abil : bPlayer.getCooldowns().keySet()) {
+		for (final UUID uuid : BendingPlayer.getPlayers().keySet()) {
+			final BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);
+			for (final String abil : bPlayer.getCooldowns().keySet()) {
 				if (System.currentTimeMillis() >= bPlayer.getCooldown(abil)) {
 					bPlayer.removeCooldown(abil);
 				}
@@ -51,12 +50,12 @@ public class BendingManager implements Runnable {
 	}
 
 	public void handleDayNight() {
-		for (World world : Bukkit.getServer().getWorlds()) {
-			if (!times.containsKey(world)) {
-				if (FireAbility.isDay(world)) {
-					times.put(world, true);
+		for (final World world : Bukkit.getServer().getWorlds()) {
+			if (!this.times.containsKey(world)) {
+				if (ElementalAbility.isDay(world)) {
+					this.times.put(world, true);
 				} else {
-					times.put(world, false);
+					this.times.put(world, false);
 				}
 			} else {
 				if (GeneralMethods.hasRPG()) {
@@ -64,11 +63,11 @@ public class BendingManager implements Runnable {
 						continue;
 					}
 				}
-				if (times.get(world) && !FireAbility.isDay(world)) {
+				if (this.times.get(world) && !ElementalAbility.isDay(world)) {
 					// The hashmap says it is day, but it is not.
-					times.put(world, false); // Sets time to night.
-					for (Player player : world.getPlayers()) {
-						BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+					this.times.put(world, false); // Sets time to night.
+					for (final Player player : world.getPlayers()) {
+						final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 						if (bPlayer == null) {
 							continue;
 						}
@@ -81,11 +80,11 @@ public class BendingManager implements Runnable {
 					}
 				}
 
-				if (!times.get(world) && FireAbility.isDay(world)) {
+				if (!this.times.get(world) && ElementalAbility.isDay(world)) {
 					// The hashmap says it is night, but it is day.
-					times.put(world, true);
-					for (Player player : world.getPlayers()) {
-						BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+					this.times.put(world, true);
+					for (final Player player : world.getPlayers()) {
+						final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 						if (bPlayer == null) {
 							continue;
 						}
@@ -102,28 +101,30 @@ public class BendingManager implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		try {
-			interval = System.currentTimeMillis() - time;
-			time = System.currentTimeMillis();
-			ProjectKorra.time_step = interval;
+			this.interval = System.currentTimeMillis() - this.time;
+			this.time = System.currentTimeMillis();
+			ProjectKorra.time_step = this.interval;
 
 			CoreAbility.progressAll();
 			TempPotionEffect.progressAll();
-			handleDayNight();
+			this.handleDayNight();
 			RevertChecker.revertAirBlocks();
 			HorizontalVelocityTracker.updateAll();
-			handleCooldowns();
+			this.handleCooldowns();
 			TempArmor.cleanup();
-			
-			for (Player player : Bukkit.getOnlinePlayers()) {
+
+			for (final Player player : Bukkit.getOnlinePlayers()) {
 				if (Bloodbending.isBloodbent(player)) {
-					ActionBar.sendActionBar(SubElement.BLOOD.getColor() + "* Bloodbent *", player);
+					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
 				} else if (MetalClips.isControlled(player)) {
-					ActionBar.sendActionBar(SubElement.METAL.getColor() + "* MetalClipped *", player);
+					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}

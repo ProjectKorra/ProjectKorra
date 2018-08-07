@@ -26,10 +26,10 @@ public class IceSpikePillarField extends IceAbility {
 	private long cooldown;
 	private Vector thrownForce;
 
-	public IceSpikePillarField(Player player) {
+	public IceSpikePillarField(final Player player) {
 		super(player);
 
-		if (bPlayer.isOnCooldown("IceSpikePillarField")) {
+		if (this.bPlayer.isOnCooldown("IceSpikePillarField")) {
 			return;
 		}
 
@@ -37,32 +37,30 @@ public class IceSpikePillarField extends IceAbility {
 		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
 		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Field.Push"), 0);
-		
-		if (bPlayer.isAvatarState()) {
+
+		if (this.bPlayer.isAvatarState()) {
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage");
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius");
 			this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Push"), 0);
 		}
-		
-		this.numberOfSpikes = (int) (((radius * 2) * (radius * 2)) / 16);
 
-		Random random = new Random();
-		int locX = player.getLocation().getBlockX();
-		int locY = player.getLocation().getBlockY();
-		int locZ = player.getLocation().getBlockZ();
-		List<Block> iceBlocks = new ArrayList<Block>();
+		this.numberOfSpikes = (int) (((this.radius * 2) * (this.radius * 2)) / 16);
 
-		for (int x = (int) -(radius - 1); x <= (radius - 1); x++) {
-			for (int z = (int) -(radius - 1); z <= (radius - 1); z++) {
+		final Random random = new Random();
+		final int locX = player.getLocation().getBlockX();
+		final int locY = player.getLocation().getBlockY();
+		final int locZ = player.getLocation().getBlockZ();
+		final List<Block> iceBlocks = new ArrayList<Block>();
+
+		for (int x = (int) -(this.radius - 1); x <= (this.radius - 1); x++) {
+			for (int z = (int) -(this.radius - 1); z <= (this.radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
-					Block testBlock = player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
+					final Block testBlock = player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
 
-					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR 
-							&& !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ())
-							|| (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) {
+					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR && !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ()) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
-							Random rand = new Random();
+							final Random rand = new Random();
 							if (rand.nextInt(5) == 0) {
 								playIcebendingSound(iceBlocks.get(i).getLocation());
 							}
@@ -72,17 +70,17 @@ public class IceSpikePillarField extends IceAbility {
 			}
 		}
 
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), radius);
-		for (int i = 0; i < numberOfSpikes; i++) {
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.radius);
+		for (int i = 0; i < this.numberOfSpikes; i++) {
 			if (iceBlocks.isEmpty()) {
 				return;
 			}
 
 			Entity target = null;
 			Block targetBlock = null;
-			for (Entity entity : entities) {
+			for (final Entity entity : entities) {
 				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId()) {
-					for (Block block : iceBlocks) {
+					for (final Block block : iceBlocks) {
 						if (block.getX() == entity.getLocation().getBlockX() && block.getZ() == entity.getLocation().getBlockZ()) {
 							target = entity;
 							targetBlock = block;
@@ -101,10 +99,10 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-				
-				IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
+
+				final IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
 				pillar.inField = true;
-				bPlayer.addCooldown("IceSpikePillarField", cooldown);
+				this.bPlayer.addCooldown("IceSpikePillarField", this.cooldown);
 				iceBlocks.remove(targetBlock);
 			}
 		}
@@ -121,12 +119,12 @@ public class IceSpikePillarField extends IceAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -140,38 +138,38 @@ public class IceSpikePillarField extends IceAbility {
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public int getNumberOfSpikes() {
-		return numberOfSpikes;
+		return this.numberOfSpikes;
 	}
 
-	public void setNumberOfSpikes(int numberOfSpikes) {
+	public void setNumberOfSpikes(final int numberOfSpikes) {
 		this.numberOfSpikes = numberOfSpikes;
 	}
 
 	public Vector getThrownForce() {
-		return thrownForce;
+		return this.thrownForce;
 	}
 
-	public void setThrownForce(Vector thrownForce) {
+	public void setThrownForce(final Vector thrownForce) {
 		this.thrownForce = thrownForce;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

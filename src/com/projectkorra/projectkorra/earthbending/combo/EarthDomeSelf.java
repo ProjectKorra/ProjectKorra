@@ -13,14 +13,15 @@ import com.projectkorra.projectkorra.util.ClickType;
 
 public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 
-	public EarthDomeSelf(Player player) {
+	public EarthDomeSelf(final Player player) {
 		super(player);
-		
+
 		new EarthDome(player);
 	}
 
 	@Override
-	public void progress() {}
+	public void progress() {
+	}
 
 	@Override
 	public boolean isSneakAbility() {
@@ -48,13 +49,13 @@ public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
+	public Object createNewComboInstance(final Player player) {
 		return new EarthDomeSelf(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		ArrayList<AbilityInformation> combo = new ArrayList<>();
+		final ArrayList<AbilityInformation> combo = new ArrayList<>();
 		combo.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
 		combo.add(new AbilityInformation("Shockwave", ClickType.RIGHT_CLICK_BLOCK));
 		return combo;

@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.waterbending.TorrentWave;
+
 /**
  * The Ability interface defines the set of methods that any CoreAbility,
  * AddonAbility, ComboAbility, or MultiAbility should implement.
@@ -35,7 +36,7 @@ public interface Ability {
 	 * Determines if this ability uses the {@link PlayerToggleSneakEvent} as a
 	 * controlling mechanism. Currently {@link WaterPassive} will not work while
 	 * the player has a sneak ability bound.
-	 * 
+	 *
 	 * @return true if the ability uses sneak as a controlling mechanism
 	 */
 	public boolean isSneakAbility();
@@ -44,7 +45,7 @@ public interface Ability {
 	 * Determines if this ability is considered harmless against other players.
 	 * A harmless ability cannot manipulate another player. For example:
 	 * AirPassive, WaterSpout, AirSpout, and FireJet.
-	 * 
+	 *
 	 * @return true if the ability is harmless and should be allowed in both PvP
 	 *         and non-PvP zones
 	 */
@@ -66,7 +67,7 @@ public interface Ability {
 	 * A hidden ability is an ability that should not be shown by commands such
 	 * as <b>/bending display</b> and <b>/bending help</b>. For example: Combos,
 	 * MultiAbility sub abilities, and helper abilities.
-	 * 
+	 *
 	 * @return true if the ability should not be displayed to the players
 	 */
 	public boolean isHiddenAbility();
@@ -88,7 +89,7 @@ public interface Ability {
 	 * can be null in certain circumstances, for example when calling
 	 * {@link CoreAbility#getAbility(String)}, or if an ability decided to set
 	 * player to null.
-	 * 
+	 *
 	 * @return the player that this ability belongs to
 	 */
 	public Player getPlayer();
@@ -102,7 +103,7 @@ public interface Ability {
 	 * the same name (SurgeWall/SurgeWave) but need to have independent
 	 * cooldowns, then {@link BendingPlayer#addCooldown(String, long)} should be
 	 * called explicitly.
-	 * 
+	 *
 	 * @return Returns the name of the ability
 	 */
 	public String getName();
@@ -123,7 +124,7 @@ public interface Ability {
 	 * player can fully utilize the ability. In most cases the description will
 	 * be specified in the config.yml file and will be retrieved by accessing
 	 * the FileConfiguration via {@link CoreAbility#getConfig}.
-	 * 
+	 *
 	 * @return the description for this ability
 	 * @see HelpCommand
 	 * @see CoreAbility#getDescription()
@@ -134,7 +135,7 @@ public interface Ability {
 	 * Specifies the Element used to represent this type of ability, favoring
 	 * SubElements over Elements. For example, a LightningAbility would return
 	 * {@link Element#LIGHTNING} instead of {@link Element#FIRE}.
-	 * 
+	 *
 	 * @return the most accurate Element that this ability belongs to
 	 * @see SubElement#getParentElement
 	 */
@@ -147,7 +148,7 @@ public interface Ability {
 	 * while it is possible for an {@link EarthBlast}. The location is useful
 	 * for making sure that the player is currently in the same world as the
 	 * ability.
-	 * 
+	 *
 	 * @return the location of the Ability
 	 * @see BendingPlayer#canBend(CoreAbility)
 	 */

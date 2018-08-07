@@ -7,49 +7,49 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 
 public class AttributeModifyEvent extends Event {
-	
-	private CoreAbility ability;
-	private String attribute;
-	private double oldValue; 
+
+	private final CoreAbility ability;
+	private final String attribute;
+	private final double oldValue;
 	private double newValue;
-	private AttributeModifier modifier;
-	
-	public AttributeModifyEvent(CoreAbility ability, String attribute, double oldValue, double newValue, AttributeModifier modifier) {
+	private final AttributeModifier modifier;
+
+	public AttributeModifyEvent(final CoreAbility ability, final String attribute, final double oldValue, final double newValue, final AttributeModifier modifier) {
 		this.ability = ability;
 		this.attribute = attribute;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 		this.modifier = modifier;
 	}
-	
+
 	public CoreAbility getAbility() {
-		return ability;
+		return this.ability;
 	}
-	
+
 	public AttributeModifier getModifier() {
-		return modifier;
+		return this.modifier;
 	}
-	
+
 	public boolean hasModifier() {
-		return modifier != null;
+		return this.modifier != null;
 	}
-	
+
 	public String getAttribute() {
-		return attribute;
+		return this.attribute;
 	}
-	
+
 	public double getOldValue() {
-		return oldValue;
+		return this.oldValue;
 	}
-	
+
 	public double getNewValue() {
-		return newValue;
+		return this.newValue;
 	}
-	
-	public void setNewValue(double newValue) {
+
+	public void setNewValue(final double newValue) {
 		this.newValue = newValue;
 	}
-	
+
 	@Override
 	public HandlerList getHandlers() {
 		return null;

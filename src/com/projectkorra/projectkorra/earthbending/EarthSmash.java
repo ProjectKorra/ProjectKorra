@@ -60,19 +60,19 @@ public class EarthSmash extends EarthAbility {
 	private ArrayList<BlockRepresenter> currentBlocks;
 	private ArrayList<TempBlock> affectedBlocks;
 
-	public EarthSmash(Player player, ClickType type) {
+	public EarthSmash(final Player player, final ClickType type) {
 		super(player);
 
 		this.state = State.START;
 		this.requiredBendableBlocks = getConfig().getInt("Abilities.Earth.EarthSmash.RequiredBendableBlocks");
 		this.maxBlocksToPassThrough = getConfig().getInt("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough");
-		setFields();
+		this.setFields();
 		this.affectedEntities = new ArrayList<>();
 		this.currentBlocks = new ArrayList<>();
 		this.affectedBlocks = new ArrayList<>();
 
 		if (type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {
-			EarthSmash flySmash = flyingInSmashCheck(player);
+			final EarthSmash flySmash = flyingInSmashCheck(player);
 			if (flySmash != null) {
 				flySmash.state = State.FLYING;
 				flySmash.player = player;
@@ -81,12 +81,12 @@ public class EarthSmash extends EarthAbility {
 				return;
 			}
 
-			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.LIFTED);
+			EarthSmash grabbedSmash = this.aimingAtSmashCheck(player, State.LIFTED);
 			if (grabbedSmash == null) {
-				if (bPlayer.isOnCooldown(this)) {
+				if (this.bPlayer.isOnCooldown(this)) {
 					return;
 				}
-				grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
+				grabbedSmash = this.aimingAtSmashCheck(player, State.SHOT);
 			}
 
 			if (grabbedSmash != null) {
@@ -100,9 +100,9 @@ public class EarthSmash extends EarthAbility {
 				return;
 			}
 
-			start();
+			this.start();
 		} else if (type == ClickType.LEFT_CLICK && player.isSneaking()) {
-			for (EarthSmash smash : getAbilities(EarthSmash.class)) {
+			for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
 				if (smash.state == State.GRABBED && smash.player == player) {
 					smash.state = State.SHOT;
 					smash.destination = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().normalize().multiply(smash.shootRange));
@@ -111,7 +111,7 @@ public class EarthSmash extends EarthAbility {
 			}
 			return;
 		} else if (type == ClickType.RIGHT_CLICK && player.isSneaking()) {
-			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.GRABBED);
+			final EarthSmash grabbedSmash = this.aimingAtSmashCheck(player, State.GRABBED);
 			if (grabbedSmash != null) {
 				player.teleport(grabbedSmash.location.clone().add(0, 2, 0));
 				grabbedSmash.state = State.FLYING;
@@ -122,9 +122,9 @@ public class EarthSmash extends EarthAbility {
 			return;
 		}
 	}
-	
+
 	public void setFields() {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(this.player);
 		this.shootAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.ShootAnimationInterval");
 		this.flightAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.FlightAnimationInterval");
 		this.liftAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.LiftAnimationInterval");
@@ -143,7 +143,7 @@ public class EarthSmash extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
 		this.flightRemoveTimer = getConfig().getLong("Abilities.Earth.EarthSmash.FlightTimer");
 		this.removeTimer = getConfig().getLong("Abilities.Earth.EarthSmash.RemoveTimer");
-		
+
 		if (bPlayer.isAvatarState()) {
 			this.selectRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange");
 			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange");
@@ -159,136 +159,136 @@ public class EarthSmash extends EarthAbility {
 
 	@Override
 	public void progress() {
-		progressCounter++;
-		if (state == State.LIFTED && removeTimer > 0 && System.currentTimeMillis() - getStartTime() > removeTimer) {
-			remove();
+		this.progressCounter++;
+		if (this.state == State.LIFTED && this.removeTimer > 0 && System.currentTimeMillis() - this.getStartTime() > this.removeTimer) {
+			this.remove();
 			return;
 		}
 
-		if (state == State.START) {
-			if (!bPlayer.canBend(this)) {
-				remove();
+		if (this.state == State.START) {
+			if (!this.bPlayer.canBend(this)) {
+				this.remove();
 				return;
 			}
-		} else if (state == State.START || state == State.FLYING || state == State.GRABBED) {
-			if (!bPlayer.canBendIgnoreCooldowns(this)) {
-				remove();
+		} else if (this.state == State.START || this.state == State.FLYING || this.state == State.GRABBED) {
+			if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+				this.remove();
 				return;
 			}
 		}
 
-		if (state == State.START && progressCounter > 1) {
-			if (!player.isSneaking()) {
-				if (System.currentTimeMillis() - getStartTime() >= chargeTime) {
-					origin = getEarthSourceBlock(selectRange);
-					if (origin == null) {
-						remove();
+		if (this.state == State.START && this.progressCounter > 1) {
+			if (!this.player.isSneaking()) {
+				if (System.currentTimeMillis() - this.getStartTime() >= this.chargeTime) {
+					this.origin = this.getEarthSourceBlock(this.selectRange);
+					if (this.origin == null) {
+						this.remove();
 						return;
 					}
-					bPlayer.addCooldown(this);
-					location = origin.getLocation();
-					state = State.LIFTING;
+					this.bPlayer.addCooldown(this);
+					this.location = this.origin.getLocation();
+					this.state = State.LIFTING;
 				} else {
-					remove();
+					this.remove();
 					return;
 				}
-			} else if (System.currentTimeMillis() - getStartTime() > chargeTime) {
-				Location tempLoc = player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(1.2));
+			} else if (System.currentTimeMillis() - this.getStartTime() > this.chargeTime) {
+				final Location tempLoc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
 				tempLoc.add(0, 0.3, 0);
 				ParticleEffect.SMOKE.display(tempLoc, 0.3F, 0.1F, 0.3F, 0, 4);
 			}
-		} else if (state == State.LIFTING) {
-			if (System.currentTimeMillis() - delay >= liftAnimationInterval) {
-				delay = System.currentTimeMillis();
-				animateLift();
+		} else if (this.state == State.LIFTING) {
+			if (System.currentTimeMillis() - this.delay >= this.liftAnimationInterval) {
+				this.delay = System.currentTimeMillis();
+				this.animateLift();
 			}
-		} else if (state == State.GRABBED) {
-			if (player.isSneaking()) {
-				revert();
-				Location oldLoc = location.clone();
-				location = player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(grabbedDistance));
+		} else if (this.state == State.GRABBED) {
+			if (this.player.isSneaking()) {
+				this.revert();
+				final Location oldLoc = this.location.clone();
+				this.location = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(this.grabbedDistance));
 
-				// Check to make sure the new location is available to move to
-				for (Block block : getBlocks()) {
-					if (block.getType() != Material.AIR && !isTransparent(block)) {
-						location = oldLoc;
+				// Check to make sure the new location is available to move to.
+				for (final Block block : this.getBlocks()) {
+					if (block.getType() != Material.AIR && !this.isTransparent(block)) {
+						this.location = oldLoc;
 						break;
 					}
 				}
 
-				draw();
+				this.draw();
 				return;
 			} else {
-				state = State.LIFTED;
+				this.state = State.LIFTED;
 				return;
 			}
-		} else if (state == State.SHOT) {
-			if (System.currentTimeMillis() - delay >= shootAnimationInterval) {
-				delay = System.currentTimeMillis();
-				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-					remove();
+		} else if (this.state == State.SHOT) {
+			if (System.currentTimeMillis() - this.delay >= this.shootAnimationInterval) {
+				this.delay = System.currentTimeMillis();
+				if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+					this.remove();
 					return;
 				}
 
-				revert();
-				location.add(GeneralMethods.getDirection(location, destination).normalize().multiply(1));
-				if (location.distanceSquared(destination) < 4) {
-					remove();
+				this.revert();
+				this.location.add(GeneralMethods.getDirection(this.location, this.destination).normalize().multiply(1));
+				if (this.location.distanceSquared(this.destination) < 4) {
+					this.remove();
 					return;
 				}
 
-				// If an earthsmash runs into too many blocks we should remove it
+				// If an earthsmash runs into too many blocks we should remove it.
 				int badBlocksFound = 0;
-				for (Block block : getBlocks()) {
-					if (block.getType() != Material.AIR && (!isTransparent(block) || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)) {
+				for (final Block block : this.getBlocks()) {
+					if (block.getType() != Material.AIR && (!this.isTransparent(block) || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)) {
 						badBlocksFound++;
 					}
 				}
 
-				if (badBlocksFound > maxBlocksToPassThrough) {
-					remove();
+				if (badBlocksFound > this.maxBlocksToPassThrough) {
+					this.remove();
 					return;
 				}
-				shootingCollisionDetection();
-				draw();
-				smashToSmashCollisionDetection();
+				this.shootingCollisionDetection();
+				this.draw();
+				this.smashToSmashCollisionDetection();
 			}
 			return;
-		} else if (state == State.FLYING) {
-			if (!player.isSneaking()) {
-				remove();
+		} else if (this.state == State.FLYING) {
+			if (!this.player.isSneaking()) {
+				this.remove();
 				return;
-			} else if (System.currentTimeMillis() - delay >= flightAnimationInterval) {
-				delay = System.currentTimeMillis();
-				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-					remove();
+			} else if (System.currentTimeMillis() - this.delay >= this.flightAnimationInterval) {
+				this.delay = System.currentTimeMillis();
+				if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+					this.remove();
 					return;
 				}
-				revert();
-				destination = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().normalize().multiply(shootRange));
-				Vector direction = GeneralMethods.getDirection(location, destination).normalize();
+				this.revert();
+				this.destination = this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().normalize().multiply(this.shootRange));
+				final Vector direction = GeneralMethods.getDirection(this.location, this.destination).normalize();
 
-				List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location.clone().add(0, 2, 0), flightDetectionRadius);
+				final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location.clone().add(0, 2, 0), this.flightDetectionRadius);
 				if (entities.size() == 0) {
-					remove();
+					this.remove();
 					return;
 				}
-				for (Entity entity : entities) {
-					entity.setVelocity(direction.clone().multiply(flightSpeed));
+				for (final Entity entity : entities) {
+					entity.setVelocity(direction.clone().multiply(this.flightSpeed));
 				}
 
 				// These values tend to work well when dealing with a person aiming upward or downward.
 				if (direction.getY() < -0.35) {
-					location = player.getLocation().clone().add(0, -3.2, 0);
+					this.location = this.player.getLocation().clone().add(0, -3.2, 0);
 				} else if (direction.getY() > 0.35) {
-					location = player.getLocation().clone().add(0, -1.7, 0);
+					this.location = this.player.getLocation().clone().add(0, -1.7, 0);
 				} else {
-					location = player.getLocation().clone().add(0, -2.2, 0);
+					this.location = this.player.getLocation().clone().add(0, -2.2, 0);
 				}
-				draw();
+				this.draw();
 			}
-			if (System.currentTimeMillis() - flightStartTime > flightRemoveTimer) {
-				remove();
+			if (System.currentTimeMillis() - this.flightStartTime > this.flightRemoveTimer) {
+				this.remove();
 				return;
 			}
 		}
@@ -301,67 +301,66 @@ public class EarthSmash extends EarthAbility {
 	 * there is a clear path for the EarthSmash to rise, and that there is
 	 * enough Earthbendable material for it to be created.
 	 */
-	@SuppressWarnings("deprecation")
 	public void animateLift() {
-		if (animationCounter < 4) {
-			revert();
-			location.add(0, 1, 0);
-			//Remove the blocks underneath the rising smash
-			if (animationCounter == 0) {
-				//Check all of the blocks and make sure that they can be removed AND make sure there is enough dirt
+		if (this.animationCounter < 4) {
+			this.revert();
+			this.location.add(0, 1, 0);
+			// Remove the blocks underneath the rising smash.
+			if (this.animationCounter == 0) {
+				// Check all of the blocks and make sure that they can be removed AND make sure there is enough dirt.
 				int totalBendableBlocks = 0;
 				for (int x = -1; x <= 1; x++) {
 					for (int y = -2; y <= -1; y++) {
 						for (int z = -1; z <= 1; z++) {
-							Block block = location.clone().add(x, y, z).getBlock();
+							final Block block = this.location.clone().add(x, y, z).getBlock();
 							if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-								remove();
+								this.remove();
 								return;
 							}
-							if (isEarthbendable(block)) {
+							if (this.isEarthbendable(block)) {
 								totalBendableBlocks++;
 							}
 						}
 					}
 				}
-				if (totalBendableBlocks < requiredBendableBlocks) {
-					remove();
+				if (totalBendableBlocks < this.requiredBendableBlocks) {
+					this.remove();
 					return;
 				}
-				//Make sure there is a clear path upward otherwise remove
+				// Make sure there is a clear path upward otherwise remove.
 				for (int y = 0; y <= 3; y++) {
-					Block tempBlock = location.clone().add(0, y, 0).getBlock();
-					if (!isTransparent(tempBlock) && tempBlock.getType() != Material.AIR) {
-						remove();
+					final Block tempBlock = this.location.clone().add(0, y, 0).getBlock();
+					if (!this.isTransparent(tempBlock) && tempBlock.getType() != Material.AIR) {
+						this.remove();
 						return;
 					}
 				}
-				//Design what this EarthSmash looks like by using BlockRepresenters
-				Location tempLoc = location.clone().add(0, -2, 0);
+				// Design what this EarthSmash looks like by using BlockRepresenters.
+				final Location tempLoc = this.location.clone().add(0, -2, 0);
 				for (int x = -1; x <= 1; x++) {
 					for (int y = -1; y <= 1; y++) {
 						for (int z = -1; z <= 1; z++) {
 							if ((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) {
-								Block block = tempLoc.clone().add(x, y, z).getBlock();
-								currentBlocks.add(new BlockRepresenter(x, y, z, selectMaterialForRepresenter(block.getType()), block.getData()));
+								final Block block = tempLoc.clone().add(x, y, z).getBlock();
+								this.currentBlocks.add(new BlockRepresenter(x, y, z, this.selectMaterialForRepresenter(block.getType()), block.getData()));
 							}
 						}
 					}
 				}
 
-				//Remove the design of the second level of removed dirt
+				// Remove the design of the second level of removed dirt.
 				for (int x = -1; x <= 1; x++) {
 					for (int z = -1; z <= 1; z++) {
 						if ((Math.abs(x) + Math.abs(z)) % 2 == 1) {
-							Block block = location.clone().add(x, -2, z).getBlock();
-							if (isEarthbendable(block)) {
+							final Block block = this.location.clone().add(x, -2, z).getBlock();
+							if (this.isEarthbendable(block)) {
 								addTempAirBlock(block);
 							}
 						}
 
-						//Remove the first level of dirt
-						Block block = location.clone().add(x, -1, z).getBlock();
-						if (isEarthbendable(block)) {
+						// Remove the first level of dirt.
+						final Block block = this.location.clone().add(x, -1, z).getBlock();
+						if (this.isEarthbendable(block)) {
 							addTempAirBlock(block);
 						}
 					}
@@ -373,50 +372,50 @@ public class EarthSmash extends EarthAbility {
 				 * want to animate it starting from the original bending block.
 				 * We must readjust the location back to what it originally was.
 				 */
-				location.add(0, -1, 0);
+				this.location.add(0, -1, 0);
 
 			}
-			//Move any entities that are above the rock
-			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 2.5);
-			for (Entity entity : entities) {
-				org.bukkit.util.Vector velocity = entity.getVelocity();
+			// Move any entities that are above the rock.
+			final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, 2.5);
+			for (final Entity entity : entities) {
+				final org.bukkit.util.Vector velocity = entity.getVelocity();
 				entity.setVelocity(velocity.add(new Vector(0, 0.36, 0)));
 			}
-			location.getWorld().playEffect(location, Effect.GHAST_SHOOT, 0, 7);
-			draw();
+			this.location.getWorld().playEffect(this.location, Effect.GHAST_SHOOT, 0, 7);
+			this.draw();
 		} else {
-			state = State.LIFTED;
+			this.state = State.LIFTED;
 		}
-		animationCounter++;
+		this.animationCounter++;
 	}
 
 	/**
 	 * Redraws the blocks for this instance of EarthSmash.
 	 */
 	public void draw() {
-		if (currentBlocks.size() == 0) {
-			remove();
+		if (this.currentBlocks.size() == 0) {
+			this.remove();
 			return;
 		}
-		for (BlockRepresenter blockRep : currentBlocks) {
-			Block block = location.clone().add(blockRep.getX(), blockRep.getY(), blockRep.getZ()).getBlock();
-			if (block.getType().equals(Material.SAND) || block.getType().equals(Material.GRAVEL)) { //Check if block can be affected by gravity.
+		for (final BlockRepresenter blockRep : this.currentBlocks) {
+			final Block block = this.location.clone().add(blockRep.getX(), blockRep.getY(), blockRep.getZ()).getBlock();
+			if (block.getType().equals(Material.SAND) || block.getType().equals(Material.GRAVEL)) { // Check if block can be affected by gravity.
 
 			}
-			if (player != null && isTransparent(block)) {
-				affectedBlocks.add(new TempBlock(block, blockRep.getType(), blockRep.getData()));
+			if (this.player != null && this.isTransparent(block)) {
+				this.affectedBlocks.add(new TempBlock(block, blockRep.getType(), blockRep.getData()));
 				getPreventEarthbendingBlocks().add(block);
 			}
 		}
 	}
 
 	public void revert() {
-		checkRemainingBlocks();
-		for (int i = 0; i < affectedBlocks.size(); i++) {
-			TempBlock tblock = affectedBlocks.get(i);
+		this.checkRemainingBlocks();
+		for (int i = 0; i < this.affectedBlocks.size(); i++) {
+			final TempBlock tblock = this.affectedBlocks.get(i);
 			getPreventEarthbendingBlocks().remove(tblock.getBlock());
 			tblock.revertBlock();
-			affectedBlocks.remove(i);
+			this.affectedBlocks.remove(i);
 			i--;
 		}
 	}
@@ -425,27 +424,28 @@ public class EarthSmash extends EarthAbility {
 	 * Checks to see which of the blocks are still attached to the EarthSmash,
 	 * remember that blocks can be broken or used in other abilities so we need
 	 * to double check and remove any that are not still attached.
-	 * 
+	 *
 	 * Also when we remove the blocks from instances, movedearth, or tempair we
 	 * should do it on a delay because tempair takes a couple seconds before the
 	 * block shows up in that map.
 	 */
 	public void checkRemainingBlocks() {
-		for (int i = 0; i < currentBlocks.size(); i++) {
-			BlockRepresenter brep = currentBlocks.get(i);
-			final Block block = location.clone().add(brep.getX(), brep.getY(), brep.getZ()).getBlock();
+		for (int i = 0; i < this.currentBlocks.size(); i++) {
+			final BlockRepresenter brep = this.currentBlocks.get(i);
+			final Block block = this.location.clone().add(brep.getX(), brep.getY(), brep.getZ()).getBlock();
 			// Check for grass because sometimes the dirt turns into grass.
 			if (block.getType() != brep.getType() && (block.getType() != Material.GRASS) && (block.getType() != Material.COBBLESTONE)) {
-				currentBlocks.remove(i);
+				this.currentBlocks.remove(i);
 				i--;
 			}
 		}
 	}
 
+	@Override
 	public void remove() {
 		super.remove();
-		state = State.REMOVED;
-		revert();
+		this.state = State.REMOVED;
+		this.revert();
 	}
 
 	/**
@@ -453,13 +453,13 @@ public class EarthSmash extends EarthAbility {
 	 * blocks that should be Air, and only returns the ones that are dirt.
 	 */
 	public List<Block> getBlocks() {
-		List<Block> blocks = new ArrayList<Block>();
+		final List<Block> blocks = new ArrayList<Block>();
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {
 				for (int z = -1; z <= 1; z++) {
-					if ((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) { //Give it the cool shape
-						if (location != null) {
-							blocks.add(location.getWorld().getBlockAt(location.clone().add(x, y, z)));
+					if ((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) { // Give it the cool shape.
+						if (this.location != null) {
+							blocks.add(this.location.getWorld().getBlockAt(this.location.clone().add(x, y, z)));
 						}
 					}
 				}
@@ -473,12 +473,12 @@ public class EarthSmash extends EarthAbility {
 	 * the blocks surrounding the loc, including dirt and air.
 	 */
 	public List<Block> getBlocksIncludingInner() {
-		List<Block> blocks = new ArrayList<Block>();
+		final List<Block> blocks = new ArrayList<Block>();
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {
 				for (int z = -1; z <= 1; z++) {
-					if (location != null) {
-						blocks.add(location.getWorld().getBlockAt(location.clone().add(x, y, z)));
+					if (this.location != null) {
+						blocks.add(this.location.getWorld().getBlockAt(this.location.clone().add(x, y, z)));
 					}
 				}
 			}
@@ -490,7 +490,7 @@ public class EarthSmash extends EarthAbility {
 	 * Switches the Sand Material and Gravel to SandStone and stone
 	 * respectively, since gravel and sand cannot be bent due to gravity.
 	 */
-	public static Material selectMaterial(Material mat) {
+	public static Material selectMaterial(final Material mat) {
 		if (mat == Material.SAND) {
 			return Material.SANDSTONE;
 		} else if (mat == Material.GRAVEL) {
@@ -500,14 +500,14 @@ public class EarthSmash extends EarthAbility {
 		}
 	}
 
-	public Material selectMaterialForRepresenter(Material mat) {
-		Material tempMat = selectMaterial(mat);
-		Random rand = new Random();
-		if (!isEarthbendable(tempMat, true, true, true) && !isMetalbendable(tempMat)) {
-			if (currentBlocks.size() < 1) {
+	public Material selectMaterialForRepresenter(final Material mat) {
+		final Material tempMat = selectMaterial(mat);
+		final Random rand = new Random();
+		if (!isEarthbendable(tempMat, true, true, true) && !this.isMetalbendable(tempMat)) {
+			if (this.currentBlocks.size() < 1) {
 				return Material.DIRT;
 			} else {
-				return currentBlocks.get(rand.nextInt(currentBlocks.size())).getType();
+				return this.currentBlocks.get(rand.nextInt(this.currentBlocks.size())).getType();
 			}
 		}
 		return tempMat;
@@ -517,19 +517,19 @@ public class EarthSmash extends EarthAbility {
 	 * Determines if a player is trying to grab an EarthSmash. A player is
 	 * trying to grab an EarthSmash if they are staring at it and holding shift.
 	 */
-	private EarthSmash aimingAtSmashCheck(Player player, State reqState) {
-		if (!allowGrab) {
+	private EarthSmash aimingAtSmashCheck(final Player player, final State reqState) {
+		if (!this.allowGrab) {
 			return null;
 		}
 
-		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, grabRange, getTransparentMaterials()), 1);
-		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
+		final List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, this.grabRange, getTransparentMaterials()), 1);
+		for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (reqState == null || smash.state == reqState) {
-				for (Block block : blocks) {
+				for (final Block block : blocks) {
 					if (block == null || smash.getLocation() == null) {
 						continue;
 					}
-					if (block.getLocation().getWorld() == smash.location.getWorld() && block.getLocation().distanceSquared(smash.location) <= Math.pow(grabDetectionRadius, 2)) {
+					if (block.getLocation().getWorld() == smash.location.getWorld() && block.getLocation().distanceSquared(smash.location) <= Math.pow(this.grabDetectionRadius, 2)) {
 						return smash;
 					}
 				}
@@ -544,14 +544,14 @@ public class EarthSmash extends EarthAbility {
 	 * already been shot.
 	 */
 	public void shootingCollisionDetection() {
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, flightDetectionRadius);
-		for (Entity entity : entities) {
-			if (entity instanceof LivingEntity && entity != player && !affectedEntities.contains(entity)) {
-				affectedEntities.add(entity);
-				double damage = currentBlocks.size() / 13.0 * this.damage;
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.flightDetectionRadius);
+		for (final Entity entity : entities) {
+			if (entity instanceof LivingEntity && entity != this.player && !this.affectedEntities.contains(entity)) {
+				this.affectedEntities.add(entity);
+				final double damage = this.currentBlocks.size() / 13.0 * this.damage;
 				DamageHandler.damageEntity(entity, damage, this);
-				Vector travelVec = GeneralMethods.getDirection(location, entity.getLocation());
-				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
+				final Vector travelVec = GeneralMethods.getDirection(this.location, entity.getLocation());
+				entity.setVelocity(travelVec.setY(this.knockup).normalize().multiply(this.knockback));
 			}
 		}
 	}
@@ -563,10 +563,10 @@ public class EarthSmash extends EarthAbility {
 	 * time.
 	 */
 	public void smashToSmashCollisionDetection() {
-		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
-			if (smash.location != null && smash != this && smash.location.getWorld() == location.getWorld() && smash.location.distanceSquared(location) < Math.pow(flightDetectionRadius, 2)) {
+		for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
+			if (smash.location != null && smash != this && smash.location.getWorld() == this.location.getWorld() && smash.location.distanceSquared(this.location) < Math.pow(this.flightDetectionRadius, 2)) {
 				smash.remove();
-				remove();
+				this.remove();
 				return;
 			}
 		}
@@ -577,12 +577,12 @@ public class EarthSmash extends EarthAbility {
 	 * EarthSmash. A player is considered "flying" if they are standing ontop of
 	 * the earthsmash and holding shift.
 	 */
-	private static EarthSmash flyingInSmashCheck(Player player) {
-		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
+	private static EarthSmash flyingInSmashCheck(final Player player) {
+		for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (!smash.allowFlight) {
 				continue;
 			}
-			//Check to see if the player is standing on top of the smash.
+			// Check to see if the player is standing on top of the smash.
 			if (smash.state == State.LIFTED) {
 				if (smash.location.getWorld().equals(player.getWorld()) && smash.location.clone().add(0, 2, 0).distanceSquared(player.getLocation()) <= Math.pow(smash.flightDetectionRadius, 2)) {
 					return smash;
@@ -604,7 +604,7 @@ public class EarthSmash extends EarthAbility {
 		private Material type;
 		private byte data;
 
-		public BlockRepresenter(int x, int y, int z, Material type, byte data) {
+		public BlockRepresenter(final int x, final int y, final int z, final Material type, final byte data) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -613,73 +613,74 @@ public class EarthSmash extends EarthAbility {
 		}
 
 		public int getX() {
-			return x;
+			return this.x;
 		}
 
 		public int getY() {
-			return y;
+			return this.y;
 		}
 
 		public int getZ() {
-			return z;
+			return this.z;
 		}
 
 		public Material getType() {
-			return type;
+			return this.type;
 		}
 
 		public byte getData() {
-			return data;
+			return this.data;
 		}
 
-		public void setX(int x) {
+		public void setX(final int x) {
 			this.x = x;
 		}
 
-		public void setY(int y) {
+		public void setY(final int y) {
 			this.y = y;
 		}
 
-		public void setZ(int z) {
+		public void setZ(final int z) {
 			this.z = z;
 		}
 
-		public void setType(Material type) {
+		public void setType(final Material type) {
 			this.type = type;
 		}
 
-		public void setData(byte data) {
+		public void setData(final byte data) {
 			this.data = data;
 		}
 
+		@Override
 		public String toString() {
-			return x + ", " + y + ", " + z + ", " + type.toString();
+			return this.x + ", " + this.y + ", " + this.z + ", " + this.type.toString();
 		}
 	}
 
 	public class Pair<F, S> {
-		private F first; //first member of pair
-		private S second; //second member of pair
+		private F first; // first member of pair.
+		private S second; // second member of pair.
 
-		public Pair(F first, S second) {
+		public Pair(final F first, final S second) {
 			this.first = first;
 			this.second = second;
 		}
 
-		public void setFirst(F first) {
+		public void setFirst(final F first) {
 			this.first = first;
 		}
 
-		public void setSecond(S second) {
+		public void setSecond(final S second) {
 			this.second = second;
 		}
 
 		public F getFirst() {
-			return first;
+			return this.first;
 		}
 
 		public S getSecond() {
-			return second;
+			return this.second;
 		}
 	}
 
@@ -690,12 +691,12 @@ public class EarthSmash extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -710,246 +711,246 @@ public class EarthSmash extends EarthAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (TempBlock tblock : affectedBlocks) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final TempBlock tblock : this.affectedBlocks) {
 			locations.add(tblock.getLocation());
 		}
 		return locations;
 	}
 
 	public boolean isAllowGrab() {
-		return allowGrab;
+		return this.allowGrab;
 	}
 
-	public void setAllowGrab(boolean allowGrab) {
+	public void setAllowGrab(final boolean allowGrab) {
 		this.allowGrab = allowGrab;
 	}
 
 	public boolean isAllowFlight() {
-		return allowFlight;
+		return this.allowFlight;
 	}
 
-	public void setAllowFlight(boolean allowFlight) {
+	public void setAllowFlight(final boolean allowFlight) {
 		this.allowFlight = allowFlight;
 	}
 
 	public int getAnimationCounter() {
-		return animationCounter;
+		return this.animationCounter;
 	}
 
-	public void setAnimationCounter(int animationCounter) {
+	public void setAnimationCounter(final int animationCounter) {
 		this.animationCounter = animationCounter;
 	}
 
 	public int getProgressCounter() {
-		return progressCounter;
+		return this.progressCounter;
 	}
 
-	public void setProgressCounter(int progressCounter) {
+	public void setProgressCounter(final int progressCounter) {
 		this.progressCounter = progressCounter;
 	}
 
 	public int getRequiredBendableBlocks() {
-		return requiredBendableBlocks;
+		return this.requiredBendableBlocks;
 	}
 
-	public void setRequiredBendableBlocks(int requiredBendableBlocks) {
+	public void setRequiredBendableBlocks(final int requiredBendableBlocks) {
 		this.requiredBendableBlocks = requiredBendableBlocks;
 	}
 
 	public int getMaxBlocksToPassThrough() {
-		return maxBlocksToPassThrough;
+		return this.maxBlocksToPassThrough;
 	}
 
-	public void setMaxBlocksToPassThrough(int maxBlocksToPassThrough) {
+	public void setMaxBlocksToPassThrough(final int maxBlocksToPassThrough) {
 		this.maxBlocksToPassThrough = maxBlocksToPassThrough;
 	}
 
 	public long getDelay() {
-		return delay;
+		return this.delay;
 	}
 
-	public void setDelay(long delay) {
+	public void setDelay(final long delay) {
 		this.delay = delay;
 	}
 
 	public long getChargeTime() {
-		return chargeTime;
+		return this.chargeTime;
 	}
 
-	public void setChargeTime(long chargeTime) {
+	public void setChargeTime(final long chargeTime) {
 		this.chargeTime = chargeTime;
 	}
 
 	public long getRemoveTimer() {
-		return removeTimer;
+		return this.removeTimer;
 	}
 
-	public void setRemoveTimer(long removeTimer) {
+	public void setRemoveTimer(final long removeTimer) {
 		this.removeTimer = removeTimer;
 	}
 
 	public long getFlightRemoveTimer() {
-		return flightRemoveTimer;
+		return this.flightRemoveTimer;
 	}
 
-	public void setFlightRemoveTimer(long flightRemoveTimer) {
+	public void setFlightRemoveTimer(final long flightRemoveTimer) {
 		this.flightRemoveTimer = flightRemoveTimer;
 	}
 
 	public long getFlightStartTime() {
-		return flightStartTime;
+		return this.flightStartTime;
 	}
 
-	public void setFlightStartTime(long flightStartTime) {
+	public void setFlightStartTime(final long flightStartTime) {
 		this.flightStartTime = flightStartTime;
 	}
 
 	public long getShootAnimationInterval() {
-		return shootAnimationInterval;
+		return this.shootAnimationInterval;
 	}
 
-	public void setShootAnimationInterval(long shootAnimationInterval) {
+	public void setShootAnimationInterval(final long shootAnimationInterval) {
 		this.shootAnimationInterval = shootAnimationInterval;
 	}
 
 	public long getFlightAnimationInterval() {
-		return flightAnimationInterval;
+		return this.flightAnimationInterval;
 	}
 
-	public void setFlightAnimationInterval(long flightAnimationInterval) {
+	public void setFlightAnimationInterval(final long flightAnimationInterval) {
 		this.flightAnimationInterval = flightAnimationInterval;
 	}
 
 	public long getLiftAnimationInterval() {
-		return liftAnimationInterval;
+		return this.liftAnimationInterval;
 	}
 
-	public void setLiftAnimationInterval(long liftAnimationInterval) {
+	public void setLiftAnimationInterval(final long liftAnimationInterval) {
 		this.liftAnimationInterval = liftAnimationInterval;
 	}
 
 	public double getGrabRange() {
-		return grabRange;
+		return this.grabRange;
 	}
 
-	public void setGrabRange(double grabRange) {
+	public void setGrabRange(final double grabRange) {
 		this.grabRange = grabRange;
 	}
 
 	public double getSelectRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setSelectRange(double selectRange) {
+	public void setSelectRange(final double selectRange) {
 		this.selectRange = selectRange;
 	}
 
 	public double getShootRange() {
-		return shootRange;
+		return this.shootRange;
 	}
 
-	public void setShootRange(double shootRange) {
+	public void setShootRange(final double shootRange) {
 		this.shootRange = shootRange;
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public double getKnockback() {
-		return knockback;
+		return this.knockback;
 	}
 
-	public void setKnockback(double knockback) {
+	public void setKnockback(final double knockback) {
 		this.knockback = knockback;
 	}
 
 	public double getKnockup() {
-		return knockup;
+		return this.knockup;
 	}
 
-	public void setKnockup(double knockup) {
+	public void setKnockup(final double knockup) {
 		this.knockup = knockup;
 	}
 
 	public double getFlightSpeed() {
-		return flightSpeed;
+		return this.flightSpeed;
 	}
 
-	public void setFlightSpeed(double flightSpeed) {
+	public void setFlightSpeed(final double flightSpeed) {
 		this.flightSpeed = flightSpeed;
 	}
 
 	public double getGrabbedDistance() {
-		return grabbedDistance;
+		return this.grabbedDistance;
 	}
 
-	public void setGrabbedDistance(double grabbedDistance) {
+	public void setGrabbedDistance(final double grabbedDistance) {
 		this.grabbedDistance = grabbedDistance;
 	}
 
 	public double getGrabDetectionRadius() {
-		return grabDetectionRadius;
+		return this.grabDetectionRadius;
 	}
 
-	public void setGrabDetectionRadius(double grabDetectionRadius) {
+	public void setGrabDetectionRadius(final double grabDetectionRadius) {
 		this.grabDetectionRadius = grabDetectionRadius;
 	}
 
 	public double getFlightDetectionRadius() {
-		return flightDetectionRadius;
+		return this.flightDetectionRadius;
 	}
 
-	public void setFlightDetectionRadius(double flightDetectionRadius) {
+	public void setFlightDetectionRadius(final double flightDetectionRadius) {
 		this.flightDetectionRadius = flightDetectionRadius;
 	}
 
 	public State getState() {
-		return state;
+		return this.state;
 	}
 
-	public void setState(State state) {
+	public void setState(final State state) {
 		this.state = state;
 	}
 
 	public Block getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Block origin) {
+	public void setOrigin(final Block origin) {
 		this.origin = origin;
 	}
 
 	public Location getDestination() {
-		return destination;
+		return this.destination;
 	}
 
-	public void setDestination(Location destination) {
+	public void setDestination(final Location destination) {
 		this.destination = destination;
 	}
 
 	public ArrayList<Entity> getAffectedEntities() {
-		return affectedEntities;
+		return this.affectedEntities;
 	}
 
 	public ArrayList<BlockRepresenter> getCurrentBlocks() {
-		return currentBlocks;
+		return this.currentBlocks;
 	}
 
 	public ArrayList<TempBlock> getAffectedBlocks() {
-		return affectedBlocks;
+		return this.affectedBlocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

@@ -16,28 +16,28 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 public class PassiveHandler {
 	private static final Map<Player, Float> FOOD = new ConcurrentHashMap<>();
 
-	public static float getExhaustion(Player player, float level, double factor) {
+	public static float getExhaustion(final Player player, float level, final double factor) {
 		if (!FOOD.keySet().contains(player)) {
 			FOOD.put(player, level);
 			return level;
 		} else {
-			float oldlevel = FOOD.get(player);
+			final float oldlevel = FOOD.get(player);
 			if (level < oldlevel) {
 				level = 0;
 			} else {
 				level = (float) ((level - oldlevel) * factor + oldlevel);
 			}
-			
+
 			FOOD.put(player, level);
 			return level;
 		}
 	}
 
-	public static void checkExhaustionPassives(Player player) {
+	public static void checkExhaustionPassives(final Player player) {
 		if (!CoreAbility.getAbility(AirSaturation.class).isEnabled() && !CoreAbility.getAbility(ChiSaturation.class).isEnabled()) {
 			return;
 		}
-		
+
 		double air = AirSaturation.getExhaustionFactor();
 		double chi = ChiSaturation.getExhaustionFactor();
 
@@ -49,7 +49,7 @@ public class PassiveHandler {
 			return;
 		}
 
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (bPlayer == null) {
 			return;
@@ -58,12 +58,12 @@ public class PassiveHandler {
 		if (!PassiveManager.hasPassive(player, CoreAbility.getAbility(AirSaturation.class))) {
 			air = 0;
 		}
-		
+
 		if (!PassiveManager.hasPassive(player, CoreAbility.getAbility(ChiSaturation.class))) {
 			chi = 0;
 		}
 
-		double max = Math.max(air, chi);
+		final double max = Math.max(air, chi);
 		if (max == 0) {
 			return;
 		} else {

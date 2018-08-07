@@ -27,83 +27,83 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	public boolean damaging;
 	public Map<RaiseEarth, LivingEntity> entities;
 
-	public EarthPillars(Player player, boolean fall) {
+	public EarthPillars(final Player player, final boolean fall) {
 		super(player);
-		setFields(fall);
-		
-		if (!bPlayer.canBendIgnoreBinds(this) || !isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
+		this.setFields(fall);
+
+		if (!this.bPlayer.canBendIgnoreBinds(this) || !isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
 			return;
 		}
-		
+
 		if (fall) {
-			if (player.getFallDistance() < fallThreshold) {
+			if (player.getFallDistance() < this.fallThreshold) {
 				return;
 			}
 		}
-		
-		for (Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), radius)) {
+
+		for (final Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.radius)) {
 			if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId() && isEarthbendable(e.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
-				ParticleEffect.BLOCK_DUST.display(new BlockData(e.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte)0), 1f, 0.1f, 1f, 0, 6, e.getLocation(), 255);
-				affect((LivingEntity)e);
+				ParticleEffect.BLOCK_DUST.display(new BlockData(e.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte) 0), 1f, 0.1f, 1f, 0, 6, e.getLocation(), 255);
+				this.affect((LivingEntity) e);
 			}
 		}
-		
-		if (entities.isEmpty()) {
+
+		if (this.entities.isEmpty()) {
 			return;
 		}
-		
-		start();
+
+		this.start();
 	}
-	
-	private void setFields(boolean fall) {
+
+	private void setFields(final boolean fall) {
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthPillars.Radius");
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthPillars.Damage.Value");
 		this.power = getConfig().getDouble("Abilities.Earth.EarthPillars.Power");
 		this.damaging = getConfig().getBoolean("Abilities.Earth.EarthPillars.Damage.Enabled");
 		this.entities = new HashMap<>();
-		
+
 		if (fall) {
 			this.fallThreshold = getConfig().getDouble("Abilities.Earth.EarthPillars.FallThreshold");
 			this.damaging = true;
-			this.damage *= power;
-			this.radius = fallThreshold;
-			this.power += (player.getFallDistance() > fallThreshold ? player.getFallDistance() : fallThreshold)/100;
+			this.damage *= this.power;
+			this.radius = this.fallThreshold;
+			this.power += (this.player.getFallDistance() > this.fallThreshold ? this.player.getFallDistance() : this.fallThreshold) / 100;
 		}
 	}
-	
-	public void affect(LivingEntity lent) {
-		RaiseEarth re = new RaiseEarth(player, lent.getLocation().clone().subtract(0, 1, 0), 3);
-		entities.put(re, lent);
+
+	public void affect(final LivingEntity lent) {
+		final RaiseEarth re = new RaiseEarth(this.player, lent.getLocation().clone().subtract(0, 1, 0), 3);
+		this.entities.put(re, lent);
 	}
 
 	@Override
 	public void progress() {
-		List<RaiseEarth> removal = new ArrayList<>();
-		for (RaiseEarth abil : entities.keySet()) {
+		final List<RaiseEarth> removal = new ArrayList<>();
+		for (final RaiseEarth abil : this.entities.keySet()) {
 			if (abil.isRemoved() && abil.isStarted()) {
-				LivingEntity lent = entities.get(abil);
+				final LivingEntity lent = this.entities.get(abil);
 				if (!lent.isDead()) {
-					if (lent instanceof Player && !((Player)lent).isOnline()) {
+					if (lent instanceof Player && !((Player) lent).isOnline()) {
 						continue;
 					}
-					
-					lent.setVelocity(new Vector(0, power, 0));
+
+					lent.setVelocity(new Vector(0, this.power, 0));
 				}
-				if (damaging) {
-					DamageHandler.damageEntity(lent, damage, this);
+				if (this.damaging) {
+					DamageHandler.damageEntity(lent, this.damage, this);
 				}
-				
+
 				removal.add(abil);
 			}
 		}
-		
-		for (RaiseEarth remove : removal) {
-			entities.remove(remove);
+
+		for (final RaiseEarth remove : removal) {
+			this.entities.remove(remove);
 		}
-		
-		if (entities.isEmpty()) {
-			bPlayer.addCooldown(this);
-			remove();
+
+		if (this.entities.isEmpty()) {
+			this.bPlayer.addCooldown(this);
+			this.remove();
 			return;
 		}
 	}
@@ -134,13 +134,13 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
+	public Object createNewComboInstance(final Player player) {
 		return new EarthPillars(player, false);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		ArrayList<AbilityInformation> earthPillars = new ArrayList<>();
+		final ArrayList<AbilityInformation> earthPillars = new ArrayList<>();
 		earthPillars.add(new AbilityInformation("Shockwave", ClickType.SHIFT_DOWN));
 		earthPillars.add(new AbilityInformation("Shockwave", ClickType.SHIFT_UP));
 		earthPillars.add(new AbilityInformation("Shockwave", ClickType.SHIFT_DOWN));

@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.FireAbility;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -11,8 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.FireAbility;
 
 public class FireBurst extends FireAbility {
 
@@ -26,7 +26,7 @@ public class FireBurst extends FireAbility {
 	private double particlesPercentage;
 	private ArrayList<FireBlast> blasts;
 
-	public FireBurst(Player player) {
+	public FireBurst(final Player player) {
 		super(player);
 
 		this.charged = false;
@@ -39,59 +39,59 @@ public class FireBurst extends FireAbility {
 		this.particlesPercentage = getConfig().getDouble("Abilities.Fire.FireBurst.ParticlesPercentage");
 		this.blasts = new ArrayList<>();
 
-		if (!bPlayer.canBend(this) || hasAbility(player, FireBurst.class)) {
+		if (!this.bPlayer.canBend(this) || hasAbility(player, FireBurst.class)) {
 			return;
 		}
 
 		if (isDay(player.getWorld())) {
-			chargeTime /= getDayFactor();
+			this.chargeTime /= getDayFactor();
 		}
-		if (bPlayer.isAvatarState() || isSozinsComet(player.getWorld())) {
-			chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
-			damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
-			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown");
+		if (this.bPlayer.isAvatarState() || isSozinsComet(player.getWorld())) {
+			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
+			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown");
 		}
 
-		start();
+		this.start();
 	}
 
-	public static void coneBurst(Player player) {
-		FireBurst burst = getAbility(player, FireBurst.class);
+	public static void coneBurst(final Player player) {
+		final FireBurst burst = getAbility(player, FireBurst.class);
 		if (burst != null) {
 			burst.coneBurst();
 		}
 	}
 
 	private void coneBurst() {
-		if (charged) {
-			Location location = player.getEyeLocation();
-			List<Block> safeBlocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
-			Vector vector = location.getDirection();
+		if (this.charged) {
+			final Location location = this.player.getEyeLocation();
+			final List<Block> safeBlocks = GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), 2);
+			final Vector vector = location.getDirection();
 
-			double angle = Math.toRadians(30);
+			final double angle = Math.toRadians(30);
 			double x, y, z;
-			double r = 1;
+			final double r = 1;
 
-			for (double theta = 0; theta <= 180; theta += angleTheta) {
-				double dphi = anglePhi / Math.sin(Math.toRadians(theta));
+			for (double theta = 0; theta <= 180; theta += this.angleTheta) {
+				final double dphi = this.anglePhi / Math.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
-					double rphi = Math.toRadians(phi);
-					double rtheta = Math.toRadians(theta);
+					final double rphi = Math.toRadians(phi);
+					final double rtheta = Math.toRadians(theta);
 
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
-					Vector direction = new Vector(x, z, y);
+					final Vector direction = new Vector(x, z, y);
 
 					if (direction.angle(vector) <= angle) {
-						FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeBlocks);
+						final FireBlast fblast = new FireBlast(location, direction.normalize(), this.player, this.damage, safeBlocks);
 						fblast.setRange(this.range);
 					}
 				}
 			}
-			bPlayer.addCooldown(this);
+			this.bPlayer.addCooldown(this);
 		}
-		remove();
+		this.remove();
 	}
 
 	/**
@@ -100,9 +100,9 @@ public class FireBurst extends FireAbility {
 	 * spread out then we can show more at a time.
 	 */
 	public void handleSmoothParticles() {
-		for (int i = 0; i < blasts.size(); i++) {
-			final FireBlast fblast = blasts.get(i);
-			int toggleTime = (int) (i % (100.0 / particlesPercentage));
+		for (int i = 0; i < this.blasts.size(); i++) {
+			final FireBlast fblast = this.blasts.get(i);
+			final int toggleTime = (int) (i % (100.0 / this.particlesPercentage));
 			new BukkitRunnable() {
 				@Override
 				public void run() {
@@ -114,56 +114,56 @@ public class FireBurst extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.remove();
 			return;
 		}
 
-		if (System.currentTimeMillis() > getStartTime() + chargeTime && !charged) {
-			charged = true;
+		if (System.currentTimeMillis() > this.getStartTime() + this.chargeTime && !this.charged) {
+			this.charged = true;
 		}
 
-		if (!player.isSneaking()) {
-			if (charged) {
-				sphereBurst();
+		if (!this.player.isSneaking()) {
+			if (this.charged) {
+				this.sphereBurst();
 			} else {
-				remove();
+				this.remove();
 			}
-		} else if (charged) {
-			Location location = player.getEyeLocation();
+		} else if (this.charged) {
+			final Location location = this.player.getEyeLocation();
 			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 4, 3);
 		}
 	}
 
 	private void sphereBurst() {
-		if (charged) {
-			Location location = player.getEyeLocation();
-			List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
+		if (this.charged) {
+			final Location location = this.player.getEyeLocation();
+			final List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), 2);
 			double x, y, z;
-			double r = 1;
+			final double r = 1;
 
-			for (double theta = 0; theta <= 180; theta += angleTheta) {
-				double dphi = anglePhi / Math.sin(Math.toRadians(theta));
+			for (double theta = 0; theta <= 180; theta += this.angleTheta) {
+				final double dphi = this.anglePhi / Math.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
-					double rphi = Math.toRadians(phi);
-					double rtheta = Math.toRadians(theta);
+					final double rphi = Math.toRadians(phi);
+					final double rtheta = Math.toRadians(theta);
 
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 
-					Vector direction = new Vector(x, z, y);
-					FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
+					final Vector direction = new Vector(x, z, y);
+					final FireBlast fblast = new FireBlast(location, direction.normalize(), this.player, this.damage, safeblocks);
 
 					fblast.setRange(this.range);
 					fblast.setShowParticles(false);
-					blasts.add(fblast);
+					this.blasts.add(fblast);
 				}
 			}
-			bPlayer.addCooldown(this);
+			this.bPlayer.addCooldown(this);
 		}
-		remove();
-		handleSmoothParticles();
+		this.remove();
+		this.handleSmoothParticles();
 	}
 
 	@Override
@@ -173,12 +173,12 @@ public class FireBurst extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -192,66 +192,66 @@ public class FireBurst extends FireAbility {
 	}
 
 	public boolean isCharged() {
-		return charged;
+		return this.charged;
 	}
 
-	public void setCharged(boolean charged) {
+	public void setCharged(final boolean charged) {
 		this.charged = charged;
 	}
 
 	public int getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(int damage) {
+	public void setDamage(final int damage) {
 		this.damage = damage;
 	}
 
 	public long getChargeTime() {
-		return chargeTime;
+		return this.chargeTime;
 	}
 
-	public void setChargeTime(long chargeTime) {
+	public void setChargeTime(final long chargeTime) {
 		this.chargeTime = chargeTime;
 	}
 
 	public long getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(long range) {
+	public void setRange(final long range) {
 		this.range = range;
 	}
 
 	public double getAngleTheta() {
-		return angleTheta;
+		return this.angleTheta;
 	}
 
-	public void setAngleTheta(double angleTheta) {
+	public void setAngleTheta(final double angleTheta) {
 		this.angleTheta = angleTheta;
 	}
 
 	public double getAnglePhi() {
-		return anglePhi;
+		return this.anglePhi;
 	}
 
-	public void setAnglePhi(double anglePhi) {
+	public void setAnglePhi(final double anglePhi) {
 		this.anglePhi = anglePhi;
 	}
 
 	public double getParticlesPercentage() {
-		return particlesPercentage;
+		return this.particlesPercentage;
 	}
 
-	public void setParticlesPercentage(double particlesPercentage) {
+	public void setParticlesPercentage(final double particlesPercentage) {
 		this.particlesPercentage = particlesPercentage;
 	}
 
 	public ArrayList<FireBlast> getBlasts() {
-		return blasts;
+		return this.blasts;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

@@ -6,21 +6,21 @@ public class Cooldown {
 	 * The amount of time the cooldown is valid including the system time when
 	 * the cooldown was created
 	 */
-	private long cooldown;
+	private final long cooldown;
 	/** If the cooldown should be saved in the database */
-	private boolean database;
+	private final boolean database;
 
-	public Cooldown(long cooldown, boolean database) {
+	public Cooldown(final long cooldown, final boolean database) {
 		this.cooldown = cooldown;
 		this.database = database;
 	}
 
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	public boolean isDatabase() {
-		return database;
+		return this.database;
 	}
 
 }

@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.waterbending.util;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,10 +11,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterSourceGrabber {
 
@@ -31,13 +31,13 @@ public class WaterSourceGrabber {
 	private AnimationState state;
 	private Material material;
 	private Location currentLoc;
-	private Map<Block, TempBlock> affectedBlocks;
+	private final Map<Block, TempBlock> affectedBlocks;
 
-	public WaterSourceGrabber(Player player, Location origin) {
+	public WaterSourceGrabber(final Player player, final Location origin) {
 		this(player, origin, 1);
 	}
 
-	public WaterSourceGrabber(Player player, Location origin, double animationSpeed) {
+	public WaterSourceGrabber(final Player player, final Location origin, final double animationSpeed) {
 		this.player = player;
 		this.animimationSpeed = animationSpeed;
 		this.material = Material.STATIONARY_WATER;
@@ -48,114 +48,114 @@ public class WaterSourceGrabber {
 	}
 
 	public void progress() {
-		if (state == AnimationState.FAILED || state == AnimationState.FINISHED) {
+		if (this.state == AnimationState.FAILED || this.state == AnimationState.FINISHED) {
 			return;
-		} else if (state == AnimationState.RISING) {
-			revertBlocks();
-			double locDiff = player.getEyeLocation().getY() - currentLoc.getY();
-			currentLoc.add(0, animimationSpeed * Math.signum(locDiff), 0);
-			Block block = currentLoc.getBlock();
+		} else if (this.state == AnimationState.RISING) {
+			this.revertBlocks();
+			final double locDiff = this.player.getEyeLocation().getY() - this.currentLoc.getY();
+			this.currentLoc.add(0, this.animimationSpeed * Math.signum(locDiff), 0);
+			final Block block = this.currentLoc.getBlock();
 
-			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
-				remove();
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterSpout", block.getLocation())) {
+				this.remove();
 				return;
 			}
 
-			createBlock(block, material, data);
+			this.createBlock(block, this.material, this.data);
 			if (Math.abs(locDiff) < 1) {
-				state = AnimationState.TOWARD;
+				this.state = AnimationState.TOWARD;
 			}
 		} else {
-			revertBlocks();
-			Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
-			eyeLoc.setY(player.getEyeLocation().getY());
-			Vector vec = GeneralMethods.getDirection(currentLoc, eyeLoc);
-			currentLoc.add(vec.normalize().multiply(animimationSpeed));
+			this.revertBlocks();
+			final Location eyeLoc = this.player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
+			eyeLoc.setY(this.player.getEyeLocation().getY());
+			final Vector vec = GeneralMethods.getDirection(this.currentLoc, eyeLoc);
+			this.currentLoc.add(vec.normalize().multiply(this.animimationSpeed));
 
-			Block block = currentLoc.getBlock();
-			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
-				remove();
+			final Block block = this.currentLoc.getBlock();
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", block.getLocation())) {
+				this.remove();
 				return;
 			}
 
-			createBlock(block, material, data);
-			if (currentLoc.distanceSquared(eyeLoc) < 1.2) {
-				state = AnimationState.FINISHED;
-				revertBlocks();
+			this.createBlock(block, this.material, this.data);
+			if (this.currentLoc.distanceSquared(eyeLoc) < 1.2) {
+				this.state = AnimationState.FINISHED;
+				this.revertBlocks();
 			}
 		}
 	}
 
 	public AnimationState getState() {
-		return state;
+		return this.state;
 	}
 
 	public void remove() {
-		state = AnimationState.FAILED;
+		this.state = AnimationState.FAILED;
 	}
 
 	public void revertBlocks() {
-		Iterator<Block> keys = affectedBlocks.keySet().iterator();
+		final Iterator<Block> keys = this.affectedBlocks.keySet().iterator();
 		while (keys.hasNext()) {
-			Block block = keys.next();
-			affectedBlocks.get(block).revertBlock();
-			affectedBlocks.remove(block);
+			final Block block = keys.next();
+			this.affectedBlocks.get(block).revertBlock();
+			this.affectedBlocks.remove(block);
 		}
 	}
 
-	public void createBlock(Block block, Material mat) {
-		createBlock(block, mat, (byte) 0);
+	public void createBlock(final Block block, final Material mat) {
+		this.createBlock(block, mat, (byte) 0);
 	}
 
-	public void createBlock(Block block, Material mat, byte data) {
-		affectedBlocks.put(block, new TempBlock(block, mat, data));
+	public void createBlock(final Block block, final Material mat, final byte data) {
+		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
 	}
 
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 
-	public void setPlayer(Player player) {
+	public void setPlayer(final Player player) {
 		this.player = player;
 	}
 
 	public byte getData() {
-		return data;
+		return this.data;
 	}
 
-	public void setData(byte data) {
+	public void setData(final byte data) {
 		this.data = data;
 	}
 
 	public double getAnimimationSpeed() {
-		return animimationSpeed;
+		return this.animimationSpeed;
 	}
 
-	public void setAnimimationSpeed(double animimationSpeed) {
+	public void setAnimimationSpeed(final double animimationSpeed) {
 		this.animimationSpeed = animimationSpeed;
 	}
 
 	public Material getMaterial() {
-		return material;
+		return this.material;
 	}
 
-	public void setMaterial(Material material) {
+	public void setMaterial(final Material material) {
 		this.material = material;
 	}
 
 	public Location getCurrentLoc() {
-		return currentLoc;
+		return this.currentLoc;
 	}
 
-	public void setCurrentLoc(Location currentLoc) {
+	public void setCurrentLoc(final Location currentLoc) {
 		this.currentLoc = currentLoc;
 	}
 
 	public Map<Block, TempBlock> getAffectedBlocks() {
-		return affectedBlocks;
+		return this.affectedBlocks;
 	}
 
-	public void setState(AnimationState state) {
+	public void setState(final AnimationState state) {
 		this.state = state;
 	}
 

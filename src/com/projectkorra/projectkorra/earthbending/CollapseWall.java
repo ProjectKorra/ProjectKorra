@@ -24,10 +24,10 @@ public class CollapseWall extends EarthAbility {
 	private Map<Block, Block> blocks;
 	private Map<Block, Integer> baseBlocks;
 
-	public CollapseWall(Player player) {
+	public CollapseWall(final Player player) {
 		super(player);
 
-		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("CollapseWall")) {
+		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("CollapseWall")) {
 			return;
 		}
 
@@ -38,40 +38,40 @@ public class CollapseWall extends EarthAbility {
 		this.blocks = new ConcurrentHashMap<>();
 		this.baseBlocks = new ConcurrentHashMap<>();
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height");
 		}
-		
-		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
+
+		final Block sblock = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.SHIFT_DOWN);
 		if (sblock == null) {
-			location = getTargetEarthBlock(selectRange).getLocation();
+			this.location = this.getTargetEarthBlock(this.selectRange).getLocation();
 		} else {
-			location = sblock.getLocation();
+			this.location = sblock.getLocation();
 		}
 
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			if (isEarthbendable(block) && !blocks.containsKey(block) && block.getY() >= location.getBlockY()) {
-				getAffectedBlocks(block);
+		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
+			if (this.isEarthbendable(block) && !this.blocks.containsKey(block) && block.getY() >= this.location.getBlockY()) {
+				this.getAffectedBlocks(block);
 			}
 		}
 
-		if (!baseBlocks.isEmpty()) {
-			bPlayer.addCooldown("CollapseWall", cooldown);
+		if (!this.baseBlocks.isEmpty()) {
+			this.bPlayer.addCooldown("CollapseWall", this.cooldown);
 		}
-		for (Block block : baseBlocks.keySet()) {
+		for (final Block block : this.baseBlocks.keySet()) {
 			new Collapse(player, block.getLocation());
 		}
 	}
 
-	private void getAffectedBlocks(Block block) {
+	private void getAffectedBlocks(final Block block) {
 		int tall = 0;
 		Block baseBlock = block;
-		ArrayList<Block> bendableBlocks = new ArrayList<Block>();
+		final ArrayList<Block> bendableBlocks = new ArrayList<Block>();
 		bendableBlocks.add(block);
 
-		for (int i = 1; i <= height; i++) {
-			Block blocki = block.getRelative(BlockFace.DOWN, i);
-			if (isEarthbendable(blocki)) {
+		for (int i = 1; i <= this.height; i++) {
+			final Block blocki = block.getRelative(BlockFace.DOWN, i);
+			if (this.isEarthbendable(blocki)) {
 				baseBlock = blocki;
 				bendableBlocks.add(blocki);
 				tall++;
@@ -80,9 +80,9 @@ public class CollapseWall extends EarthAbility {
 			}
 		}
 
-		baseBlocks.put(baseBlock, tall);
-		for (Block blocki : bendableBlocks) {
-			blocks.put(blocki, baseBlock);
+		this.baseBlocks.put(baseBlock, tall);
+		for (final Block blocki : bendableBlocks) {
+			this.blocks.put(blocki, baseBlock);
 		}
 	}
 
@@ -97,12 +97,12 @@ public class CollapseWall extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -116,42 +116,42 @@ public class CollapseWall extends EarthAbility {
 	}
 
 	public int getSelectRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setSelectRange(int selectRange) {
+	public void setSelectRange(final int selectRange) {
 		this.selectRange = selectRange;
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(final int height) {
 		this.height = height;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public Map<Block, Block> getBlocks() {
-		return blocks;
+		return this.blocks;
 	}
 
 	public Map<Block, Integer> getBaseBlocks() {
-		return baseBlocks;
+		return this.baseBlocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

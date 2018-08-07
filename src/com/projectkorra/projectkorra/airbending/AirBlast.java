@@ -69,38 +69,38 @@ public class AirBlast extends AirAbility {
 	private ArrayList<Block> affectedLevers;
 	private ArrayList<Entity> affectedEntities;
 
-	public AirBlast(Player player) {
+	public AirBlast(final Player player) {
 		super(player);
-		if (bPlayer.isOnCooldown(this)) {
+		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		} else if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
 		}
 
-		setFields();
+		this.setFields();
 
 		if (ORIGINS.containsKey(player)) {
-			Entity entity = GeneralMethods.getTargetedEntity(player, range);
+			final Entity entity = GeneralMethods.getTargetedEntity(player, this.range);
 			this.isFromOtherOrigin = true;
 			this.origin = ORIGINS.get(player);
 			ORIGINS.remove(player);
 
 			if (entity != null) {
-				this.direction = GeneralMethods.getDirection(origin, entity.getLocation()).normalize();
+				this.direction = GeneralMethods.getDirection(this.origin, entity.getLocation()).normalize();
 			} else {
-				this.direction = GeneralMethods.getDirection(origin, GeneralMethods.getTargetedLocation(player, range)).normalize();
+				this.direction = GeneralMethods.getDirection(this.origin, GeneralMethods.getTargetedLocation(player, this.range)).normalize();
 			}
 		} else {
-			origin = player.getEyeLocation();
-			direction = player.getEyeLocation().getDirection().normalize();
+			this.origin = player.getEyeLocation();
+			this.direction = player.getEyeLocation().getDirection().normalize();
 		}
 
-		this.location = origin.clone();
-		bPlayer.addCooldown(this);
-		start();
+		this.location = this.origin.clone();
+		this.bPlayer.addCooldown(this);
+		this.start();
 	}
 
-	public AirBlast(Player player, Location location, Vector direction, double modifiedPushFactor, AirBurst burst) {
+	public AirBlast(final Player player, final Location location, final Vector direction, final double modifiedPushFactor, final AirBurst burst) {
 		super(player);
 		if (location.getBlock().isLiquid()) {
 			return;
@@ -110,23 +110,24 @@ public class AirBlast extends AirAbility {
 		this.direction = direction.clone();
 		this.location = location.clone();
 
-		setFields();
+		this.setFields();
 
 		this.affectedLevers = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
-		// prevent the airburst related airblasts from triggering doors/levers/buttons
+
+		// prevent the airburst related airblasts from triggering doors/levers/buttons.
 		this.canOpenDoors = false;
 		this.canPressButtons = false;
 		this.canFlickLevers = false;
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
 			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
 		}
 
 		this.pushFactor *= modifiedPushFactor;
 
-		start();
+		this.start();
 	}
 
 	private void setFields() {
@@ -150,13 +151,13 @@ public class AirBlast extends AirAbility {
 		this.affectedEntities = new ArrayList<>();
 	}
 
-	private static void playOriginEffect(Player player) {
+	private static void playOriginEffect(final Player player) {
 		if (!ORIGINS.containsKey(player)) {
 			return;
 		}
 
-		Location origin = ORIGINS.get(player);
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final Location origin = ORIGINS.get(player);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || player.isDead() || !player.isOnline()) {
 			return;
 		} else if (!origin.getWorld().equals(player.getWorld())) {
@@ -174,13 +175,13 @@ public class AirBlast extends AirAbility {
 	}
 
 	public static void progressOrigins() {
-		for (Player player : ORIGINS.keySet()) {
+		for (final Player player : ORIGINS.keySet()) {
 			playOriginEffect(player);
 		}
 	}
 
-	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), getTransparentMaterials());
+	public static void setOrigin(final Player player) {
+		final Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), getTransparentMaterials());
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
@@ -192,30 +193,30 @@ public class AirBlast extends AirAbility {
 	}
 
 	private void advanceLocation() {
-		if (showParticles) {
-			playAirbendingParticles(location, particles, 0.275F, 0.275F, 0.275F);
+		if (this.showParticles) {
+			playAirbendingParticles(this.location, this.particles, 0.275F, 0.275F, 0.275F);
 		}
-		if (random.nextInt(4) == 0) {
-			playAirbendingSound(location);
+		if (this.random.nextInt(4) == 0) {
+			playAirbendingSound(this.location);
 		}
-		if (GeneralMethods.checkDiagonalWall(location, direction)) {
-			remove();
+		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
+			this.remove();
 			return;
 		}
-		
-		location = location.add(direction.clone().multiply(speedFactor));
+
+		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 	}
 
-	private void affect(Entity entity) {
-		boolean isUser = entity.getUniqueId() == player.getUniqueId();
+	private void affect(final Entity entity) {
+		final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
 
-		if (!isUser || isFromOtherOrigin) {
-			pushFactor = pushFactorForOthers;
-			Vector velocity = entity.getVelocity();
-			double max = speed / speedFactor;
-			double factor = pushFactor;
+		if (!isUser || this.isFromOtherOrigin) {
+			this.pushFactor = this.pushFactorForOthers;
+			final Vector velocity = entity.getVelocity();
+			final double max = this.speed / this.speedFactor;
+			double factor = this.pushFactor;
 
-			Vector push = direction.clone();
+			final Vector push = this.direction.clone();
 			if (Math.abs(push.getY()) > max && !isUser) {
 				if (push.getY() < 0) {
 					push.setY(-max);
@@ -223,15 +224,15 @@ public class AirBlast extends AirAbility {
 					push.setY(max);
 				}
 			}
-			if (location.getWorld().equals(origin.getWorld())) {
-				factor *= 1 - location.distance(origin) / (2 * range);
+			if (this.location.getWorld().equals(this.origin.getWorld())) {
+				factor *= 1 - this.location.distance(this.origin) / (2 * this.range);
 			}
 
-			if (isUser && GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
+			if (isUser && GeneralMethods.isSolid(this.player.getLocation().add(0, -.5, 0).getBlock())) {
 				factor *= .5;
 			}
 
-			double comp = velocity.dot(push.clone().normalize());
+			final double comp = velocity.dot(push.clone().normalize());
 			if (comp > factor) {
 				velocity.multiply(.5);
 				velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
@@ -252,14 +253,14 @@ public class AirBlast extends AirAbility {
 			}
 
 			GeneralMethods.setVelocity(entity, velocity);
-			if (source != null) {
-				new HorizontalVelocityTracker(entity, player, 200l, source);
+			if (this.source != null) {
+				new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
 			} else {
-				new HorizontalVelocityTracker(entity, player, 200l, this);
+				new HorizontalVelocityTracker(entity, this.player, 200l, this);
 			}
 
 			if (!isUser && entity instanceof Player) {
-				ProjectKorra.flightHandler.createInstance((Player) entity, player, 1000L, getName());
+				ProjectKorra.flightHandler.createInstance((Player) entity, this.player, 1000L, this.getName());
 			}
 			if (entity.getFireTicks() > 0) {
 				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
@@ -268,37 +269,36 @@ public class AirBlast extends AirAbility {
 			entity.setFireTicks(0);
 			breakBreathbendingHold(entity);
 
-			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
-				DamageHandler.damageEntity((LivingEntity) entity, damage, source);
-				affectedEntities.add(entity);
-			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
-				DamageHandler.damageEntity((LivingEntity) entity, damage, this);
-				affectedEntities.add(entity);
+			if (this.source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity))) {
+				DamageHandler.damageEntity(entity, this.damage, this.source);
+				this.affectedEntities.add(entity);
+			} else if (this.source == null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity))) {
+				DamageHandler.damageEntity(entity, this.damage, this);
+				this.affectedEntities.add(entity);
 			}
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
+		if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-			remove();
-			return;
-		}
-
-		speedFactor = speed * (ProjectKorra.time_step / 1000.0);
-		ticks++;
-
-		if (ticks > MAX_TICKS) {
-			remove();
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+			this.remove();
 			return;
 		}
 
-		Block block = location.getBlock();
-		for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		this.speedFactor = this.speed * (ProjectKorra.time_step / 1000.0);
+		this.ticks++;
+
+		if (this.ticks > MAX_TICKS) {
+			this.remove();
+			return;
+		}
+
+		Block block = this.location.getBlock();
+		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
@@ -307,38 +307,38 @@ public class AirBlast extends AirAbility {
 				continue;
 			}
 
-			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.TRAP_DOOR };
-			if (Arrays.asList(doorTypes).contains(block.getType()) && !affectedLevers.contains(block) && canOpenDoors) {
+			final Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.TRAP_DOOR };
+			if (Arrays.asList(doorTypes).contains(block.getType()) && !this.affectedLevers.contains(block) && this.canOpenDoors) {
 				if (block.getData() >= 8 && block.getType() != Material.TRAP_DOOR) {
 					block = block.getRelative(BlockFace.DOWN);
 				}
 
-				handleDoorMechanics(block);
+				this.handleDoorMechanics(block);
 			}
-			if ((block.getType() == Material.LEVER) && !affectedLevers.contains(block) && canFlickLevers) {
-				Lever lever = new Lever(Material.LEVER, block.getData());
+			if ((block.getType() == Material.LEVER) && !this.affectedLevers.contains(block) && this.canFlickLevers) {
+				final Lever lever = new Lever(Material.LEVER, block.getData());
 				lever.setPowered(!lever.isPowered());
 				block.setData(lever.getData());
 
-				Block supportBlock = block.getRelative(lever.getAttachedFace());
+				final Block supportBlock = block.getRelative(lever.getAttachedFace());
 				if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-					BlockState initialSupportState = supportBlock.getState();
-					BlockState supportState = supportBlock.getState();
+					final BlockState initialSupportState = supportBlock.getState();
+					final BlockState supportState = supportBlock.getState();
 					supportState.setType(Material.AIR);
 					supportState.update(true, false);
 					initialSupportState.update(true);
 				}
-				affectedLevers.add(block);
-			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedLevers.contains(block) && canPressButtons) {
+				this.affectedLevers.add(block);
+			} else if ((block.getType() == Material.STONE_BUTTON) && !this.affectedLevers.contains(block) && this.canPressButtons) {
 				final Button button = new Button(Material.STONE_BUTTON, block.getData());
 				if (!button.isPowered()) {
 					button.setPowered(!button.isPowered());
 					block.setData(button.getData());
 
-					Block supportBlock = block.getRelative(button.getAttachedFace());
+					final Block supportBlock = block.getRelative(button.getAttachedFace());
 					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-						BlockState initialSupportState = supportBlock.getState();
-						BlockState supportState = supportBlock.getState();
+						final BlockState initialSupportState = supportBlock.getState();
+						final BlockState supportState = supportBlock.getState();
 						supportState.setType(Material.AIR);
 						supportState.update(true, false);
 						initialSupportState.update(true);
@@ -346,14 +346,15 @@ public class AirBlast extends AirAbility {
 
 					final Block btBlock = block;
 					new BukkitRunnable() {
+						@Override
 						public void run() {
 							button.setPowered(!button.isPowered());
 							btBlock.setData(button.getData());
 
-							Block supportBlock = btBlock.getRelative(button.getAttachedFace());
+							final Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-								BlockState initialSupportState = supportBlock.getState();
-								BlockState supportState = supportBlock.getState();
+								final BlockState initialSupportState = supportBlock.getState();
+								final BlockState supportState = supportBlock.getState();
 								supportState.setType(Material.AIR);
 								supportState.update(true, false);
 								initialSupportState.update(true);
@@ -361,18 +362,18 @@ public class AirBlast extends AirAbility {
 						}
 					}.runTaskLater(ProjectKorra.plugin, 10);
 
-					affectedLevers.add(block);
+					this.affectedLevers.add(block);
 				}
-			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedLevers.contains(block) && canPressButtons) {
+			} else if ((block.getType() == Material.WOOD_BUTTON) && !this.affectedLevers.contains(block) && this.canPressButtons) {
 				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
 				if (!button.isPowered()) {
 					button.setPowered(!button.isPowered());
 					block.setData(button.getData());
 
-					Block supportBlock = block.getRelative(button.getAttachedFace());
+					final Block supportBlock = block.getRelative(button.getAttachedFace());
 					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-						BlockState initialSupportState = supportBlock.getState();
-						BlockState supportState = supportBlock.getState();
+						final BlockState initialSupportState = supportBlock.getState();
+						final BlockState supportState = supportBlock.getState();
 						supportState.setType(Material.AIR);
 						supportState.update(true, false);
 						initialSupportState.update(true);
@@ -381,14 +382,15 @@ public class AirBlast extends AirAbility {
 					final Block btBlock = block;
 
 					new BukkitRunnable() {
+						@Override
 						public void run() {
 							button.setPowered(!button.isPowered());
 							btBlock.setData(button.getData());
 
-							Block supportBlock = btBlock.getRelative(button.getAttachedFace());
+							final Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-								BlockState initialSupportState = supportBlock.getState();
-								BlockState supportState = supportBlock.getState();
+								final BlockState initialSupportState = supportBlock.getState();
+								final BlockState supportState = supportBlock.getState();
 								supportState.setType(Material.AIR);
 								supportState.update(true, false);
 								initialSupportState.update(true);
@@ -396,11 +398,11 @@ public class AirBlast extends AirAbility {
 						}
 					}.runTaskLater(ProjectKorra.plugin, 15);
 
-					affectedLevers.add(block);
+					this.affectedLevers.add(block);
 				}
 			}
 		}
-		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedLevers.contains(block) && canCoolLava) {
+		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !this.affectedLevers.contains(block) && this.canCoolLava) {
 			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
 				if (LavaFlow.isLavaFlowBlock(block)) {
 					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
@@ -410,38 +412,42 @@ public class AirBlast extends AirAbility {
 					new TempBlock(block, Material.COBBLESTONE, (byte) 0);
 				}
 			}
-			remove();
+			this.remove();
 			return;
 		}
 
 		/*
-		 * If a player presses shift and AirBlasts straight down then the AirBlast's location gets messed up and reading the distance returns Double.NaN. If we don't remove this instance then the AirBlast will never be removed.
+		 * If a player presses shift and AirBlasts straight down then the
+		 * AirBlast's location gets messed up and reading the distance returns
+		 * Double.NaN. If we don't remove this instance then the AirBlast will
+		 * never be removed.
 		 */
 		double dist = 0;
-		if (location.getWorld().equals(origin.getWorld())) {
-			dist = location.distance(origin);
+		if (this.location.getWorld().equals(this.origin.getWorld())) {
+			dist = this.location.distance(this.origin);
 		}
-		if (Double.isNaN(dist) || dist > range) {
-			remove();
+		if (Double.isNaN(dist) || dist > this.range) {
+			this.remove();
 			return;
 		}
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
-			affect(entity);
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
+			this.affect(entity);
 		}
 
-		advanceLocation();
+		this.advanceLocation();
 		return;
 	}
 
 	/**
-	 * This method was used for the old collision detection system. Please see {@link Collision} for the new system.
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
 	 */
 	@Deprecated
-	public static boolean removeAirBlastsAroundPoint(Location location, double radius) {
+	public static boolean removeAirBlastsAroundPoint(final Location location, final double radius) {
 		boolean removed = false;
-		for (AirBlast airBlast : getAbilities(AirBlast.class)) {
-			Location airBlastlocation = airBlast.location;
+		for (final AirBlast airBlast : getAbilities(AirBlast.class)) {
+			final Location airBlastlocation = airBlast.location;
 			if (location.getWorld() == airBlastlocation.getWorld()) {
 				if (location.distanceSquared(airBlastlocation) <= radius * radius) {
 					airBlast.remove();
@@ -452,45 +458,50 @@ public class AirBlast extends AirAbility {
 		return removed;
 	}
 
-	private void handleDoorMechanics(Block block) {
+	private void handleDoorMechanics(final Block block) {
 		boolean tDoor = false;
-		boolean open = (block.getData() & 0x4) == 0x4;
+		final boolean open = (block.getData() & 0x4) == 0x4;
 
 		if (block.getType() != Material.TRAP_DOOR) {
-			Door door = (Door) block.getState().getData();
-			BlockFace face = door.getFacing();
-			Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), player.getLocation().getBlock().getLocation());
-			double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
+			final Door door = (Door) block.getState().getData();
+			final BlockFace face = door.getFacing();
+			final Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
+			final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
 
 			for (int i = 0; i < 3; i++) {
-				if (i == 1)
+				if (i == 1) {
 					continue;
-				BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
+				}
+				final BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
 
 				if (bf == face) {
-					if (open)
+					if (open) {
 						return;
+					}
 				} else if (bf.getOppositeFace() == face) {
-					if (!open)
+					if (!open) {
 						return;
+					}
 				}
 			}
 		} else {
 			tDoor = true;
 
-			if (origin.getY() < block.getY()) {
-				if (!open)
+			if (this.origin.getY() < block.getY()) {
+				if (!open) {
 					return;
+				}
 			} else {
-				if (open)
+				if (open) {
 					return;
+				}
 			}
 		}
 
 		block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
-		String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
+		final String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
 		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
-		affectedLevers.add(block);
+		this.affectedLevers.add(block);
 	}
 
 	@Override
@@ -500,12 +511,12 @@ public class AirBlast extends AirAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -520,166 +531,166 @@ public class AirBlast extends AirAbility {
 
 	@Override
 	public double getCollisionRadius() {
-		return getRadius();
+		return this.getRadius();
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public Vector getDirection() {
-		return direction;
+		return this.direction;
 	}
 
-	public void setDirection(Vector direction) {
+	public void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
 	public int getTicks() {
-		return ticks;
+		return this.ticks;
 	}
 
-	public void setTicks(int ticks) {
+	public void setTicks(final int ticks) {
 		this.ticks = ticks;
 	}
 
 	public double getSpeedFactor() {
-		return speedFactor;
+		return this.speedFactor;
 	}
 
-	public void setSpeedFactor(double speedFactor) {
+	public void setSpeedFactor(final double speedFactor) {
 		this.speedFactor = speedFactor;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getPushFactor() {
-		return pushFactor;
+		return this.pushFactor;
 	}
 
-	public void setPushFactor(double pushFactor) {
+	public void setPushFactor(final double pushFactor) {
 		this.pushFactor = pushFactor;
 	}
 
 	public double getPushFactorForOthers() {
-		return pushFactorForOthers;
+		return this.pushFactorForOthers;
 	}
 
-	public void setPushFactorForOthers(double pushFactorForOthers) {
+	public void setPushFactorForOthers(final double pushFactorForOthers) {
 		this.pushFactorForOthers = pushFactorForOthers;
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public boolean isCanFlickLevers() {
-		return canFlickLevers;
+		return this.canFlickLevers;
 	}
 
-	public void setCanFlickLevers(boolean canFlickLevers) {
+	public void setCanFlickLevers(final boolean canFlickLevers) {
 		this.canFlickLevers = canFlickLevers;
 	}
 
 	public boolean isCanOpenDoors() {
-		return canOpenDoors;
+		return this.canOpenDoors;
 	}
 
-	public void setCanOpenDoors(boolean canOpenDoors) {
+	public void setCanOpenDoors(final boolean canOpenDoors) {
 		this.canOpenDoors = canOpenDoors;
 	}
 
 	public boolean isCanPressButtons() {
-		return canPressButtons;
+		return this.canPressButtons;
 	}
 
-	public void setCanPressButtons(boolean canPressButtons) {
+	public void setCanPressButtons(final boolean canPressButtons) {
 		this.canPressButtons = canPressButtons;
 	}
 
 	public boolean isCanCoolLava() {
-		return canCoolLava;
+		return this.canCoolLava;
 	}
 
-	public void setCanCoolLava(boolean canCoolLava) {
+	public void setCanCoolLava(final boolean canCoolLava) {
 		this.canCoolLava = canCoolLava;
 	}
 
 	public boolean isFromOtherOrigin() {
-		return isFromOtherOrigin;
+		return this.isFromOtherOrigin;
 	}
 
-	public void setFromOtherOrigin(boolean isFromOtherOrigin) {
+	public void setFromOtherOrigin(final boolean isFromOtherOrigin) {
 		this.isFromOtherOrigin = isFromOtherOrigin;
 	}
 
 	public boolean isShowParticles() {
-		return showParticles;
+		return this.showParticles;
 	}
 
-	public void setShowParticles(boolean showParticles) {
+	public void setShowParticles(final boolean showParticles) {
 		this.showParticles = showParticles;
 	}
 
 	public AirBurst getSource() {
-		return source;
+		return this.source;
 	}
 
-	public void setSource(AirBurst source) {
+	public void setSource(final AirBurst source) {
 		this.source = source;
 	}
 
 	public ArrayList<Block> getAffectedLevers() {
-		return affectedLevers;
+		return this.affectedLevers;
 	}
 
 	public ArrayList<Entity> getAffectedEntities() {
-		return affectedEntities;
+		return this.affectedEntities;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
 	public int getParticles() {
-		return particles;
+		return this.particles;
 	}
 
-	public void setParticles(int particles) {
+	public void setParticles(final int particles) {
 		this.particles = particles;
 	}
 

@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Abstract representation of a command executor. Implements {@link SubCommand}.
- * 
+ *
  * @author kingbirdy
  *
  */
@@ -48,7 +48,7 @@ public abstract class PKCommand implements SubCommand {
 	 */
 	public static Map<String, PKCommand> instances = new HashMap<String, PKCommand>();
 
-	public PKCommand(String name, String properUse, String description, String[] aliases) {
+	public PKCommand(final String name, final String properUse, final String description, final String[] aliases) {
 		this.name = name;
 		this.properUse = properUse;
 		this.description = description;
@@ -60,24 +60,29 @@ public abstract class PKCommand implements SubCommand {
 		instances.put(name, this);
 	}
 
+	@Override
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
+	@Override
 	public String getProperUse() {
-		return properUse;
+		return this.properUse;
 	}
 
+	@Override
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
+	@Override
 	public String[] getAliases() {
-		return aliases;
+		return this.aliases;
 	}
 
-	public void help(CommandSender sender, boolean description) {
-		sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + properUse);
+	@Override
+	public void help(final CommandSender sender, final boolean description) {
+		sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + this.properUse);
 		if (description) {
 			sender.sendMessage(ChatColor.YELLOW + this.description);
 		}
@@ -87,12 +92,12 @@ public abstract class PKCommand implements SubCommand {
 	 * Checks if the {@link CommandSender} has permission to execute the
 	 * command. The permission is in the format 'bending.command.
 	 * {@link PKCommand#name name}'. If not, they are told so.
-	 * 
+	 *
 	 * @param sender The CommandSender to check
 	 * @return True if they have permission, false otherwise
 	 */
-	protected boolean hasPermission(CommandSender sender) {
-		if (sender.hasPermission("bending.command." + name)) {
+	protected boolean hasPermission(final CommandSender sender) {
+		if (sender.hasPermission("bending.command." + this.name)) {
 			return true;
 		} else {
 			sender.sendMessage(this.noPermissionMessage);
@@ -104,13 +109,13 @@ public abstract class PKCommand implements SubCommand {
 	 * Checks if the {@link CommandSender} has permission to execute the
 	 * command. The permission is in the format 'bending.command.
 	 * {@link PKCommand#name name}.extra'. If not, they are told so.
-	 * 
+	 *
 	 * @param sender The CommandSender to check
 	 * @param extra The additional node to check
 	 * @return True if they have permission, false otherwise
 	 */
-	protected boolean hasPermission(CommandSender sender, String extra) {
-		if (sender.hasPermission("bending.command." + name + "." + extra)) {
+	protected boolean hasPermission(final CommandSender sender, final String extra) {
+		if (sender.hasPermission("bending.command." + this.name + "." + extra)) {
 			return true;
 		} else {
 			GeneralMethods.sendBrandingMessage(sender, this.noPermissionMessage);
@@ -121,16 +126,16 @@ public abstract class PKCommand implements SubCommand {
 	/**
 	 * Checks if the argument length is within certain parameters, and if not,
 	 * informs the CommandSender of how to correctly use the command.
-	 * 
+	 *
 	 * @param sender The CommandSender who issued the command
 	 * @param size The length of the arguments list
 	 * @param min The minimum acceptable number of arguments
 	 * @param max The maximum acceptable number of arguments
 	 * @return True if min < size < max, false otherwise
 	 */
-	protected boolean correctLength(CommandSender sender, int size, int min, int max) {
+	protected boolean correctLength(final CommandSender sender, final int size, final int min, final int max) {
 		if (size < min || size > max) {
-			help(sender, false);
+			this.help(sender, false);
 			return false;
 		} else {
 			return true;
@@ -140,11 +145,11 @@ public abstract class PKCommand implements SubCommand {
 	/**
 	 * Checks if the CommandSender is an instance of a Player. If not, it tells
 	 * them they must be a Player to use the command.
-	 * 
+	 *
 	 * @param sender The CommandSender to check
 	 * @return True if sender instanceof Player, false otherwise
 	 */
-	protected boolean isPlayer(CommandSender sender) {
+	protected boolean isPlayer(final CommandSender sender) {
 		if (sender instanceof Player) {
 			return true;
 		} else {
@@ -157,70 +162,71 @@ public abstract class PKCommand implements SubCommand {
 	 * Returns a string representation of one of the five base elements,
 	 * converted from any possible alias of that element, its combos, or its
 	 * subelements.
-	 * 
+	 *
 	 * @param element The string to try and determine an element for
 	 * @return The element associated with the input string, if found, or null
 	 *         otherwise
 	 */
-	public String getElement(String element) {
-		if (Arrays.asList(Commands.firealiases).contains(element) || Arrays.asList(Commands.firecomboaliases).contains(element))
+	public String getElement(final String element) {
+		if (Arrays.asList(Commands.firealiases).contains(element) || Arrays.asList(Commands.firecomboaliases).contains(element)) {
 			return "fire";
-		else if (Arrays.asList(Commands.combustionaliases).contains(element))
+		} else if (Arrays.asList(Commands.combustionaliases).contains(element)) {
 			return "combustion";
-		else if (Arrays.asList(Commands.lightningaliases).contains(element))
+		} else if (Arrays.asList(Commands.lightningaliases).contains(element)) {
 			return "lightning";
-		else if (Arrays.asList(Commands.earthaliases).contains(element) || Arrays.asList(Commands.earthcomboaliases).contains(element))
+		} else if (Arrays.asList(Commands.earthaliases).contains(element) || Arrays.asList(Commands.earthcomboaliases).contains(element)) {
 			return "earth";
-		else if (Arrays.asList(Commands.metalbendingaliases).contains(element))
+		} else if (Arrays.asList(Commands.metalbendingaliases).contains(element)) {
 			return "metal";
-		else if (Arrays.asList(Commands.sandbendingaliases).contains(element))
+		} else if (Arrays.asList(Commands.sandbendingaliases).contains(element)) {
 			return "sand";
-		else if (Arrays.asList(Commands.lavabendingaliases).contains(element))
+		} else if (Arrays.asList(Commands.lavabendingaliases).contains(element)) {
 			return "lava";
-		else if (Arrays.asList(Commands.airaliases).contains(element) || Arrays.asList(Commands.aircomboaliases).contains(element))
+		} else if (Arrays.asList(Commands.airaliases).contains(element) || Arrays.asList(Commands.aircomboaliases).contains(element)) {
 			return "air";
-		else if (Arrays.asList(Commands.spiritualprojectionaliases).contains(element))
+		} else if (Arrays.asList(Commands.spiritualprojectionaliases).contains(element)) {
 			return "spiritual";
-		else if (Arrays.asList(Commands.flightaliases).contains(element))
+		} else if (Arrays.asList(Commands.flightaliases).contains(element)) {
 			return "flight";
-		else if (Arrays.asList(Commands.wateraliases).contains(element) || Arrays.asList(Commands.watercomboaliases).contains(element))
+		} else if (Arrays.asList(Commands.wateraliases).contains(element) || Arrays.asList(Commands.watercomboaliases).contains(element)) {
 			return "water";
-		else if (Arrays.asList(Commands.healingaliases).contains(element))
+		} else if (Arrays.asList(Commands.healingaliases).contains(element)) {
 			return "healing";
-		else if (Arrays.asList(Commands.bloodaliases).contains(element))
+		} else if (Arrays.asList(Commands.bloodaliases).contains(element)) {
 			return "blood";
-		else if (Arrays.asList(Commands.icealiases).contains(element))
+		} else if (Arrays.asList(Commands.icealiases).contains(element)) {
 			return "ice";
-		else if (Arrays.asList(Commands.plantaliases).contains(element))
+		} else if (Arrays.asList(Commands.plantaliases).contains(element)) {
 			return "plant";
-		else if (Arrays.asList(Commands.chialiases).contains(element) || Arrays.asList(Commands.chicomboaliases).contains(element))
+		} else if (Arrays.asList(Commands.chialiases).contains(element) || Arrays.asList(Commands.chicomboaliases).contains(element)) {
 			return "chi";
+		}
 		return null;
 	}
 
 	/**
 	 * Returns a boolean if the string provided is numerical.
-	 * 
+	 *
 	 * @param id
 	 * @return boolean
 	 */
-	protected boolean isNumeric(String id) {
-		NumberFormat formatter = NumberFormat.getInstance();
-		ParsePosition pos = new ParsePosition(0);
+	protected boolean isNumeric(final String id) {
+		final NumberFormat formatter = NumberFormat.getInstance();
+		final ParsePosition pos = new ParsePosition(0);
 		formatter.parse(id, pos);
 		return id.length() == pos.getIndex();
 	}
 
 	/**
 	 * Returns a list for of commands for a page.
-	 * 
+	 *
 	 * @param entries
 	 * @param title
 	 * @param page
 	 * @return
 	 */
-	protected List<String> getPage(List<String> entries, String title, int page, boolean sort) {
-		List<String> strings = new ArrayList<String>();
+	protected List<String> getPage(final List<String> entries, final String title, int page, final boolean sort) {
+		final List<String> strings = new ArrayList<String>();
 		if (sort) {
 			Collections.sort(entries);
 		}
@@ -250,7 +256,7 @@ public abstract class PKCommand implements SubCommand {
 	}
 
 	/** Gets a list of valid arguments that can be used in tabbing. */
-	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		return new ArrayList<String>();
 	}
 

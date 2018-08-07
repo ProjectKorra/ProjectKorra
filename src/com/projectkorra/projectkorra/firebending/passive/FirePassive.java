@@ -11,11 +11,11 @@ import com.projectkorra.projectkorra.firebending.Illumination;
 
 public class FirePassive {
 
-	public static void handle(Player player) {
+	public static void handle(final Player player) {
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return;
 		}
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null && bPlayer.canBendPassive(CoreAbility.getAbility(Illumination.class)) && bPlayer.canUsePassive(CoreAbility.getAbility(Illumination.class))) {
 			if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) && !CoreAbility.hasAbility(player, Tremorsense.class) && bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination")) && ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 				if (bPlayer.isIlluminating()) {

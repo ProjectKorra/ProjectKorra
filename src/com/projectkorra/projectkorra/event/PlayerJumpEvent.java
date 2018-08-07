@@ -8,25 +8,24 @@ public class PlayerJumpEvent extends Event {
 
 	private static final HandlerList HANDLERS = new HandlerList();
 
-	private Player player;
-	private double height;
+	private final Player player;
+	private final double height;
 
-	public PlayerJumpEvent(Player player, double height) {
+	public PlayerJumpEvent(final Player player, final double height) {
 		this.player = player;
 		this.height = height;
 	}
 
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 
 	public double getHeight() {
-		return height;
+		return this.height;
 	}
 
 	@Override
 	public HandlerList getHandlers() {
-		// TODO Auto-generated method stub
 		return HANDLERS;
 	}
 

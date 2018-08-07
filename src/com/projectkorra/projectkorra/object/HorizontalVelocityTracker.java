@@ -16,7 +16,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 
@@ -40,59 +39,61 @@ public class HorizontalVelocityTracker {
 
 	public static String[] abils = { "AirBlast", "AirBurst", "AirSuction", "Bloodbending" };
 
-	public HorizontalVelocityTracker(Entity e, Player instigator, long delay, Ability ability) {
-		if (!ProjectKorra.plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled"))
+	public HorizontalVelocityTracker(final Entity e, final Player instigator, final long delay, final Ability ability) {
+		if (!ProjectKorra.plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled")) {
 			return;
+		}
 
 		remove(e);
-		entity = e;
+		this.entity = e;
 		this.instigator = instigator;
-		fireTime = System.currentTimeMillis();
+		this.fireTime = System.currentTimeMillis();
 		this.delay = delay;
-		thisVelocity = e.getVelocity().clone();
-		launchLocation = e.getLocation().clone();
-		impactLocation = launchLocation.clone();
+		this.thisVelocity = e.getVelocity().clone();
+		this.launchLocation = e.getLocation().clone();
+		this.impactLocation = this.launchLocation.clone();
 		this.delay = delay;
-		abil = ability;
-		update();
-		instances.put(entity, this);
+		this.abil = ability;
+		this.update();
+		instances.put(this.entity, this);
 	}
 
 	public void update() {
-		if (System.currentTimeMillis() < fireTime + delay) {
+		if (System.currentTimeMillis() < this.fireTime + this.delay) {
 			return;
 		}
 
-		if (entity.isOnGround()) {
-			remove();
+		if (this.entity.isOnGround()) {
+			this.remove();
 			return;
 		}
 
-		lastVelocity = thisVelocity.clone();
-		thisVelocity = entity.getVelocity().clone();
+		this.lastVelocity = this.thisVelocity.clone();
+		this.thisVelocity = this.entity.getVelocity().clone();
 
-		Vector diff = thisVelocity.subtract(lastVelocity);
+		final Vector diff = this.thisVelocity.subtract(this.lastVelocity);
 
-		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(entity.getLocation(), 1.5);
+		final List<Block> blocks = GeneralMethods.getBlocksAroundPoint(this.entity.getLocation(), 1.5);
 
-		for (Block b : blocks) {
-			if (WaterAbility.isWater(b)) {
-				remove();
+		for (final Block b : blocks) {
+			if (ElementalAbility.isWater(b)) {
+				this.remove();
 				return;
 			}
 		}
 
-		if (thisVelocity.length() < lastVelocity.length()) {
+		if (this.thisVelocity.length() < this.lastVelocity.length()) {
 			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
-				impactLocation = entity.getLocation();
-				for (Block b : blocks) {
-					if (b.getType() == Material.BARRIER && barrier == false)
+				this.impactLocation = this.entity.getLocation();
+				for (final Block b : blocks) {
+					if (b.getType() == Material.BARRIER && this.barrier == false) {
 						return;
-					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
-						if (!ElementalAbility.isTransparent(instigator, b)) {
-							hasBeenDamaged = true;
-							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation, abil));
-							remove();
+					}
+					if (GeneralMethods.isSolid(b) && (this.entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
+						if (!ElementalAbility.isTransparent(this.instigator, b)) {
+							this.hasBeenDamaged = true;
+							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(this.entity, this.instigator, this.lastVelocity, this.thisVelocity, diff, this.launchLocation, this.impactLocation, this.abil));
+							this.remove();
 							return;
 						}
 					}
@@ -102,24 +103,26 @@ public class HorizontalVelocityTracker {
 	}
 
 	public static void updateAll() {
-		for (Entity e : instances.keySet())
+		for (final Entity e : instances.keySet()) {
 			if (e != null && !e.isDead() && instances.get(e) != null) {
 				instances.get(e).update();
 			} else {
 				instances.remove(e);
 			}
+		}
 	}
 
 	public void remove() {
-		instances.remove(entity);
+		instances.remove(this.entity);
 	}
 
-	public static void remove(Entity e) {
-		if (instances.containsKey(e))
+	public static void remove(final Entity e) {
+		if (instances.containsKey(e)) {
 			instances.remove(e);
+		}
 	}
 
-	public static boolean hasBeenDamagedByHorizontalVelocity(Entity e) {
+	public static boolean hasBeenDamagedByHorizontalVelocity(final Entity e) {
 		if (instances.containsKey(e)) {
 			return instances.get(e).hasBeenDamaged;
 		}

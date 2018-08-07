@@ -5,7 +5,7 @@ import java.io.FileFilter;
 
 /**
  * Checks if a file ends with a certain extension.
- * 
+ *
  * @author kingbirdy
  *
  */
@@ -15,15 +15,15 @@ public final class FileExtensionFilter implements FileFilter {
 
 	/**
 	 * Creates a new FileExtensionFilter.
-	 * 
+	 *
 	 * @param extension the extension to filter for
 	 */
-	public FileExtensionFilter(String extension) {
+	public FileExtensionFilter(final String extension) {
 		this.extension = extension;
 	}
 
 	@Override
-	public boolean accept(File file) {
-		return file.getName().endsWith(extension);
+	public boolean accept(final File file) {
+		return file.getName().endsWith(this.extension);
 	}
 }

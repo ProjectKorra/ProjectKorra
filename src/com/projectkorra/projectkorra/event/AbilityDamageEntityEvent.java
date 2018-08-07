@@ -10,7 +10,7 @@ import com.projectkorra.projectkorra.ability.Ability;
 
 /**
  * Called when an ability damages an {@link Entity}
- * 
+ *
  * @author kingbirdy
  *
  */
@@ -19,19 +19,19 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancelled = false;
-	private Entity entity;
-	private Ability ability;
+	private final Entity entity;
+	private final Ability ability;
 	private double damage;
-	private boolean ignoreArmor;
+	private final boolean ignoreArmor;
 
 	/**
 	 * Create a new AbilityDamageEntityEvent
-	 * 
+	 *
 	 * @param entity The entity that was damaged
 	 * @param ability The damaging ability
 	 * @param damage The amount of damage done
 	 */
-	public AbilityDamageEntityEvent(Entity entity, Ability ability, double damage, boolean ignoreArmor) {
+	public AbilityDamageEntityEvent(final Entity entity, final Ability ability, final double damage, final boolean ignoreArmor) {
 		this.entity = entity;
 		this.ability = ability;
 		this.damage = damage;
@@ -40,51 +40,51 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 
 	/**
 	 * Returns the damage dealt to the entity
-	 * 
+	 *
 	 * @return the amount of damage done
 	 */
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
 	/**
 	 * Sets the damage dealt to the entity
-	 * 
+	 *
 	 * @param damage the amount of damage done
 	 */
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	/**
 	 * Gets the entity that was damaged
-	 * 
+	 *
 	 * @return the damaged entity
 	 */
 	public Entity getEntity() {
-		return entity;
+		return this.entity;
 	}
 
 	/**
 	 * Gets the ability used
-	 * 
+	 *
 	 * @return ability used
 	 */
 	public Ability getAbility() {
-		return ability;
+		return this.ability;
 	}
 
 	public boolean doesIgnoreArmor() {
-		return ignoreArmor;
+		return this.ignoreArmor;
 	}
 
 	/**
 	 * Gets the player that used the ability
-	 * 
+	 *
 	 * @return player that used ability
 	 */
 	public Player getSource() {
-		return ability.getPlayer();
+		return this.ability.getPlayer();
 	}
 
 	@Override
@@ -98,11 +98,11 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean cancelled) {
+	public void setCancelled(final boolean cancelled) {
 		this.cancelled = cancelled;
 	}
 }

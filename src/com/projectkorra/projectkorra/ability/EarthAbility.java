@@ -40,24 +40,24 @@ public abstract class EarthAbility extends ElementalAbility {
 	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
 
-	public EarthAbility(Player player) {
+	public EarthAbility(final Player player) {
 		super(player);
 	}
 
-	public int getEarthbendableBlocksLength(Block block, Vector direction, int maxlength) {
-		Location location = block.getLocation();
+	public int getEarthbendableBlocksLength(final Block block, Vector direction, final int maxlength) {
+		final Location location = block.getLocation();
 		direction = direction.normalize();
 		for (int i = 0; i <= maxlength; i++) {
-			double j = i;
-			if (!isEarthbendable(location.clone().add(direction.clone().multiply(j)).getBlock())) {
+			final double j = i;
+			if (!this.isEarthbendable(location.clone().add(direction.clone().multiply(j)).getBlock())) {
 				return i;
 			}
 		}
 		return maxlength;
 	}
 
-	public Block getEarthSourceBlock(double range) {
-		return getEarthSourceBlock(player, getName(), range);
+	public Block getEarthSourceBlock(final double range) {
+		return getEarthSourceBlock(this.player, this.getName(), range);
 	}
 
 	@Override
@@ -65,12 +65,12 @@ public abstract class EarthAbility extends ElementalAbility {
 		return Element.EARTH;
 	}
 
-	public Block getLavaSourceBlock(double range) {
-		return getLavaSourceBlock(player, getName(), range);
+	public Block getLavaSourceBlock(final double range) {
+		return getLavaSourceBlock(this.player, this.getName(), range);
 	}
 
-	public Block getTargetEarthBlock(int range) {
-		return getTargetEarthBlock(player, range);
+	public Block getTargetEarthBlock(final int range) {
+		return getTargetEarthBlock(this.player, range);
 	}
 
 	@Override
@@ -84,67 +84,67 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	@Override
-	public void handleCollision(Collision collision) {
+	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.DIRT, (byte) 0);
+			final ParticleData particleData = new ParticleEffect.BlockData(Material.DIRT, (byte) 0);
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
 	}
 
-	public static boolean isEarthbendable(Material material, boolean metal, boolean sand, boolean lava) {
+	public static boolean isEarthbendable(final Material material, final boolean metal, final boolean sand, final boolean lava) {
 		return isEarth(material) || (metal && isMetal(material)) || (sand && isSand(material)) || (lava && isLava(material));
 	}
 
-	public boolean isEarthbendable(Block block) {
-		return isEarthbendable(player, getName(), block);
+	public boolean isEarthbendable(final Block block) {
+		return isEarthbendable(this.player, this.getName(), block);
 	}
 
-	public static boolean isEarthbendable(Player player, Block block) {
+	public static boolean isEarthbendable(final Player player, final Block block) {
 		return isEarthbendable(player, null, block);
 	}
 
-	public boolean isLavabendable(Block block) {
-		return isLavabendable(player, block);
+	public boolean isLavabendable(final Block block) {
+		return isLavabendable(this.player, block);
 	}
 
-	public boolean isMetalbendable(Block block) {
-		return isMetalbendable(block.getType());
+	public boolean isMetalbendable(final Block block) {
+		return this.isMetalbendable(block.getType());
 	}
 
-	public boolean isMetalbendable(Material material) {
-		return isMetalbendable(player, material);
+	public boolean isMetalbendable(final Material material) {
+		return isMetalbendable(this.player, material);
 	}
 
-	public boolean isSandbendable(Block block) {
-		return isSandbendable(block.getType());
+	public boolean isSandbendable(final Block block) {
+		return this.isSandbendable(block.getType());
 	}
 
-	public boolean isSandbendable(Material material) {
-		return isSandbendable(player, material);
+	public boolean isSandbendable(final Material material) {
+		return isSandbendable(this.player, material);
 	}
 
-	public void moveEarth(Block block, Vector direction, int chainlength) {
-		moveEarth(block, direction, chainlength, true);
+	public void moveEarth(final Block block, final Vector direction, final int chainlength) {
+		this.moveEarth(block, direction, chainlength, true);
 	}
 
-	public boolean moveEarth(Block block, Vector direction, int chainlength, boolean throwplayer) {
-		if (isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer) {
+		if (this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			boolean up = false;
 			boolean down = false;
-			Vector norm = direction.clone().normalize();
+			final Vector norm = direction.clone().normalize();
 			if (norm.dot(new Vector(0, 1, 0)) == 1) {
 				up = true;
 			} else if (norm.dot(new Vector(0, -1, 0)) == 1) {
 				down = true;
 			}
 
-			Vector negnorm = norm.clone().multiply(-1);
-			Location location = block.getLocation();
-			ArrayList<Block> blocks = new ArrayList<Block>();
+			final Vector negnorm = norm.clone().multiply(-1);
+			final Location location = block.getLocation();
+			final ArrayList<Block> blocks = new ArrayList<Block>();
 
 			for (double j = -2; j <= chainlength; j++) {
-				Block checkblock = location.clone().add(negnorm.clone().multiply(j)).getBlock();
+				final Block checkblock = location.clone().add(negnorm.clone().multiply(j)).getBlock();
 				if (!PREVENT_PHYSICS.contains(checkblock)) {
 					blocks.add(checkblock);
 					PREVENT_PHYSICS.add(checkblock);
@@ -161,11 +161,11 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			if (affectedblock == null) {
 				return false;
-			} else if (isTransparent(affectedblock)) {
+			} else if (this.isTransparent(affectedblock)) {
 				if (throwplayer) {
-					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(affectedblock.getLocation(), 1.75)) {
+					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(affectedblock.getLocation(), 1.75)) {
 						if (entity instanceof LivingEntity) {
-							LivingEntity lentity = (LivingEntity) entity;
+							final LivingEntity lentity = (LivingEntity) entity;
 							if (lentity.getEyeLocation().getBlockX() == affectedblock.getX() && lentity.getEyeLocation().getBlockZ() == affectedblock.getZ()) {
 								if (!(entity instanceof FallingBlock)) {
 									entity.setVelocity(norm.clone().multiply(.75));
@@ -181,7 +181,7 @@ public abstract class EarthAbility extends ElementalAbility {
 					}
 				}
 				if (up) {
-					Block topblock = affectedblock.getRelative(BlockFace.UP);
+					final Block topblock = affectedblock.getRelative(BlockFace.UP);
 					if (topblock.getType() != Material.AIR) {
 						GeneralMethods.breakBlock(affectedblock);
 					} else if (!affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
@@ -196,9 +196,9 @@ public abstract class EarthAbility extends ElementalAbility {
 
 				for (double i = 1; i < chainlength; i++) {
 					affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
-					if (!isEarthbendable(affectedblock)) {
+					if (!this.isEarthbendable(affectedblock)) {
 						if (down) {
-							if (isTransparent(affectedblock) && !affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
+							if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
 								moveEarthBlock(affectedblock, block);
 							}
 						}
@@ -208,7 +208,7 @@ public abstract class EarthAbility extends ElementalAbility {
 						DensityShift.revertSand(affectedblock);
 					}
 					if (block == null) {
-						for (Block checkblock : blocks) {
+						for (final Block checkblock : blocks) {
 							PREVENT_PHYSICS.remove(checkblock);
 						}
 						return false;
@@ -217,22 +217,22 @@ public abstract class EarthAbility extends ElementalAbility {
 					block = affectedblock;
 				}
 
-				int i = chainlength;
+				final int i = chainlength;
 				affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
-				if (!isEarthbendable(affectedblock)) {
+				if (!this.isEarthbendable(affectedblock)) {
 					if (down) {
-						if (isTransparent(affectedblock) && !affectedblock.isLiquid()) {
+						if (this.isTransparent(affectedblock) && !affectedblock.isLiquid()) {
 							moveEarthBlock(affectedblock, block);
 						}
 					}
 				}
 			} else {
-				for (Block checkblock : blocks) {
+				for (final Block checkblock : blocks) {
 					PREVENT_PHYSICS.remove(checkblock);
 				}
 				return false;
 			}
-			for (Block checkblock : blocks) {
+			for (final Block checkblock : blocks) {
 				PREVENT_PHYSICS.remove(checkblock);
 			}
 			return true;
@@ -240,21 +240,20 @@ public abstract class EarthAbility extends ElementalAbility {
 		return false;
 	}
 
-	public void moveEarth(Location location, Vector direction, int chainlength) {
-		moveEarth(location, direction, chainlength, true);
+	public void moveEarth(final Location location, final Vector direction, final int chainlength) {
+		this.moveEarth(location, direction, chainlength, true);
 	}
 
-	public void moveEarth(Location location, Vector direction, int chainlength, boolean throwplayer) {
-		moveEarth(location.getBlock(), direction, chainlength, throwplayer);
+	public void moveEarth(final Location location, final Vector direction, final int chainlength, final boolean throwplayer) {
+		this.moveEarth(location.getBlock(), direction, chainlength, throwplayer);
 	}
 
 	/**
 	 * Creates a temporary air block.
-	 * 
+	 *
 	 * @param block The block to use as a base
 	 */
-	@SuppressWarnings("deprecation")
-	public static void addTempAirBlock(Block block) {
+	public static void addTempAirBlock(final Block block) {
 		Information info;
 
 		if (MOVED_EARTH.containsKey(block)) {
@@ -273,9 +272,10 @@ public abstract class EarthAbility extends ElementalAbility {
 		TEMP_AIR_LOCATIONS.put(info.getID(), info);
 	}
 
-	public static void displaySandParticle(Location loc, float xOffset, float yOffset, float zOffset, float amount, float speed, boolean red) {
-		if (amount <= 0)
+	public static void displaySandParticle(final Location loc, final float xOffset, final float yOffset, final float zOffset, final float amount, final float speed, final boolean red) {
+		if (amount <= 0) {
 			return;
+		}
 
 		for (int x = 0; x < amount; x++) {
 			if (!red) {
@@ -294,13 +294,13 @@ public abstract class EarthAbility extends ElementalAbility {
 	 * use BlockSource.getEarthSourceBlock() instead of this method. Dynamic
 	 * source selection saves the user's previous source for future use.
 	 * {@link BlockSource#getEarthSourceBlock(Player, double, com.projectkorra.projectkorra.util.ClickType)}
-	 * 
+	 *
 	 * @param range the maximum block selection range.
 	 * @return a valid Earth source block, or null if one could not be found.
 	 */
-	public static Block getEarthSourceBlock(Player player, String abilityName, double range) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
+	public static Block getEarthSourceBlock(final Player player, final String abilityName, final double range) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
 		if (bPlayer == null) {
 			return null;
 		} else if (isEarthbendable(testBlock.getType(), true, true, true)) {
@@ -309,11 +309,11 @@ public abstract class EarthAbility extends ElementalAbility {
 			return null;
 		}
 
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
+		final Location location = player.getEyeLocation();
+		final Vector vector = location.getDirection().clone().normalize();
 
 		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
 				continue;
 			} else if (isEarthbendable(player, block)) {
@@ -323,7 +323,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		return null;
 	}
 
-	public static Block getLavaSourceBlock(Player player, double range) {
+	public static Block getLavaSourceBlock(final Player player, final double range) {
 		return getLavaSourceBlock(player, null, range);
 	}
 
@@ -332,24 +332,23 @@ public abstract class EarthAbility extends ElementalAbility {
 	 * use BlockSource.getLavaSourceBlock() instead of this method. Dynamic
 	 * source selection saves the user's previous source for future use.
 	 * {@link BlockSource#getLavaSourceBlock(Player, double, com.projectkorra.projectkorra.util.ClickType)}
-	 * 
+	 *
 	 * @param range the maximum block selection range.
 	 * @return a valid Lava source block, or null if one could not be found.
 	 */
-	@SuppressWarnings("deprecation")
-	public static Block getLavaSourceBlock(Player player, String abilityName, double range) {
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
+	public static Block getLavaSourceBlock(final Player player, final String abilityName, final double range) {
+		final Location location = player.getEyeLocation();
+		final Vector vector = location.getDirection().clone().normalize();
 
 		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
 				continue;
 			}
 			if (isLavabendable(player, block)) {
 				if (TempBlock.isTempBlock(block)) {
-					TempBlock tb = TempBlock.get(block);
-					byte full = 0x0;
+					final TempBlock tb = TempBlock.get(block);
+					final byte full = 0x0;
 					if (tb.getState().getRawData() != full && !isLava(tb.getState().getType())) {
 						continue;
 					}
@@ -360,7 +359,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		return null;
 	}
 
-	public static double getMetalAugment(double value) {
+	public static double getMetalAugment(final double value) {
 		return value * getConfig().getDouble("Properties.Earth.MetalPowerFactor");
 	}
 
@@ -370,24 +369,24 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	/**
 	 * Attempts to find the closest earth block near a given location.
-	 * 
+	 *
 	 * @param loc the initial location to search from.
 	 * @param radius the maximum radius to search for the earth block.
 	 * @param maxVertical the maximum block height difference between the
 	 *            starting location and the earth bendable block.
 	 * @return an earth bendable block, or null.
 	 */
-	public static Block getNearbyEarthBlock(Location loc, double radius, int maxVertical) {
+	public static Block getNearbyEarthBlock(final Location loc, final double radius, final int maxVertical) {
 		if (loc == null) {
 			return null;
 		}
 
-		int rotation = 30;
+		final int rotation = 30;
 		for (int i = 0; i < radius; i++) {
 			Vector tracer = new Vector(i, 1, 0);
 			for (int deg = 0; deg < 360; deg += rotation) {
-				Location searchLoc = loc.clone().add(tracer);
-				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
+				final Location searchLoc = loc.clone().add(tracer);
+				final Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
 
 				if (block != null && isEarthbendable(block.getType(), true, true, true)) {
 					return block;
@@ -410,7 +409,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.EarthSub"));
 	}
 
-	public static Block getTargetEarthBlock(Player player, int range) {
+	public static Block getTargetEarthBlock(final Player player, final int range) {
 		return player.getTargetBlock(getTransparentMaterialSet(), range);
 	}
 
@@ -418,8 +417,8 @@ public abstract class EarthAbility extends ElementalAbility {
 		return TEMP_AIR_LOCATIONS;
 	}
 
-	public static boolean isEarthbendable(Player player, String abilityName, Block block) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean isEarthbendable(final Player player, final String abilityName, final Block block) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || !isEarthbendable(block.getType(), true, true, true) || PREVENT_EARTHBENDING.contains(block) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		} else if (isMetal(block) && !bPlayer.canMetalbend()) {
@@ -436,11 +435,10 @@ public abstract class EarthAbility extends ElementalAbility {
 		return getConfig().getBoolean("Properties.Earth.RevertEarthbending");
 	}
 
-	@SuppressWarnings("deprecation")
-	public static boolean isLavabendable(Player player, Block block) {
-		byte full = 0x0;
+	public static boolean isLavabendable(final Player player, final Block block) {
+		final byte full = 0x0;
 		if (TempBlock.isTempBlock(block)) {
-			TempBlock tblock = TempBlock.instances.get(block);
+			final TempBlock tblock = TempBlock.instances.get(block);
 			if (tblock == null || !LavaFlow.getTempLavaBlocks().values().contains(tblock)) {
 				return false;
 			}
@@ -451,18 +449,17 @@ public abstract class EarthAbility extends ElementalAbility {
 		return false;
 	}
 
-	public static boolean isMetalbendable(Player player, Material material) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean isMetalbendable(final Player player, final Material material) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		return bPlayer == null ? null : isMetal(material) && bPlayer.canMetalbend();
 	}
 
-	public static boolean isSandbendable(Player player, Material material) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean isSandbendable(final Player player, final Material material) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		return bPlayer == null ? null : isSand(material) && bPlayer.canSandbend();
 	}
 
-	@SuppressWarnings("deprecation")
-	public static void moveEarthBlock(Block source, Block target) {
+	public static void moveEarthBlock(final Block source, final Block target) {
 		Information info;
 
 		if (MOVED_EARTH.containsKey(source)) {
@@ -493,17 +490,17 @@ public abstract class EarthAbility extends ElementalAbility {
 		source.setType(Material.AIR);
 	}
 
-	public static void playEarthbendingSound(Location loc) {
+	public static void playEarthbendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
+			final float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
 
 			Sound sound = Sound.ENTITY_GHAST_SHOOT;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound"));
 			}
-			catch (IllegalArgumentException exception) {
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.EarthSound.Sound' is not valid.");
 			}
 			finally {
@@ -512,17 +509,17 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	public static void playMetalbendingSound(Location loc) {
+	public static void playMetalbendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
+			final float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
 
 			Sound sound = Sound.ENTITY_IRONGOLEM_HURT;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound"));
 			}
-			catch (IllegalArgumentException exception) {
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MetalSound.Sound' is not valid.");
 			}
 			finally {
@@ -531,17 +528,17 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	public static void playSandbendingSound(Location loc) {
+	public static void playSandbendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
+			final float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
 
 			Sound sound = Sound.BLOCK_SAND_BREAK;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound"));
 			}
-			catch (IllegalArgumentException exception) {
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.SandSound.Sound' is not valid.");
 			}
 			finally {
@@ -550,17 +547,17 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	public static void playLavabendingSound(Location loc) {
+	public static void playLavabendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
+			final float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
 
 			Sound sound = Sound.BLOCK_LAVA_AMBIENT;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound"));
 			}
-			catch (IllegalArgumentException exception) {
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.LavaSound.Sound' is not valid.");
 			}
 			finally {
@@ -570,17 +567,17 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void removeAllEarthbendedBlocks() {
-		for (Block block : MOVED_EARTH.keySet()) {
+		for (final Block block : MOVED_EARTH.keySet()) {
 			revertBlock(block);
 		}
-		for (Integer i : TEMP_AIR_LOCATIONS.keySet()) {
+		for (final Integer i : TEMP_AIR_LOCATIONS.keySet()) {
 			revertAirBlock(i, true);
 		}
 	}
 
-	public static void removeRevertIndex(Block block) {
+	public static void removeRevertIndex(final Block block) {
 		if (MOVED_EARTH.containsKey(block)) {
-			Information info = MOVED_EARTH.get(block);
+			final Information info = MOVED_EARTH.get(block);
 			if (block.getType() == Material.SANDSTONE && info.getType() == Material.SAND) {
 				block.setType(Material.SAND);
 			}
@@ -592,17 +589,17 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	public static void revertAirBlock(int i) {
+	public static void revertAirBlock(final int i) {
 		revertAirBlock(i, false);
 	}
 
-	public static void revertAirBlock(int i, boolean force) {
+	public static void revertAirBlock(final int i, final boolean force) {
 		if (!TEMP_AIR_LOCATIONS.containsKey(i)) {
 			return;
 		}
 
-		Information info = TEMP_AIR_LOCATIONS.get(i);
-		Block block = info.getState().getBlock();
+		final Information info = TEMP_AIR_LOCATIONS.get(i);
+		final Block block = info.getState().getBlock();
 
 		if (block.getType() != Material.AIR && !block.isLiquid()) {
 			if (force || !MOVED_EARTH.containsKey(block)) {
@@ -617,16 +614,15 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public static boolean revertBlock(Block block) {
-		byte full = 0x0;
+	public static boolean revertBlock(final Block block) {
+		final byte full = 0x0;
 		if (!isEarthRevertOn()) {
 			MOVED_EARTH.remove(block);
 			return false;
 		}
 		if (MOVED_EARTH.containsKey(block)) {
-			Information info = MOVED_EARTH.get(block);
-			Block sourceblock = info.getState().getBlock();
+			final Information info = MOVED_EARTH.get(block);
+			final Block sourceblock = info.getState().getBlock();
 
 			if (info.getState().getType() == Material.AIR) {
 				MOVED_EARTH.remove(block);
@@ -654,8 +650,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			if (sourceblock.getType() == Material.AIR || sourceblock.isLiquid()) {
 				info.getState().update(true);
 			} else {
-				//GeneralMethods.dropItems(block,
-				//		GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), DIAMOND_PICKAXE));
+
 			}
 
 			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {

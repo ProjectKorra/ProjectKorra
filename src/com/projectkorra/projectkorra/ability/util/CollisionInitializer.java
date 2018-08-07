@@ -56,20 +56,20 @@ import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 /**
  * CollisionInitializer is used to create the default Collisions for a given
  * CollisionManager.
- * 
+ *
  * @see Collision
  * @see CollisionManager
  */
 public class CollisionInitializer {
 
-	private CollisionManager collisionManager;
+	private final CollisionManager collisionManager;
 	private ArrayList<CoreAbility> smallAbilities;
 	private ArrayList<CoreAbility> largeAbilities;
 	private ArrayList<CoreAbility> comboAbilities;
 	private ArrayList<CoreAbility> removeSpoutAbilities;
-	private ArrayList<CoreAbility> ignoreAbilities;
+	private final ArrayList<CoreAbility> ignoreAbilities;
 
-	public CollisionInitializer(CollisionManager collisionManager) {
+	public CollisionInitializer(final CollisionManager collisionManager) {
 		this.collisionManager = collisionManager;
 		this.smallAbilities = new ArrayList<>();
 		this.comboAbilities = new ArrayList<>();
@@ -79,126 +79,126 @@ public class CollisionInitializer {
 	}
 
 	public void initializeDefaultCollisions() {
-		CoreAbility airBlast = CoreAbility.getAbility(AirBlast.class);
-		CoreAbility airBurst = CoreAbility.getAbility(AirBurst.class);
-		CoreAbility airScooter = CoreAbility.getAbility(AirScooter.class);
-		CoreAbility airShield = CoreAbility.getAbility(AirShield.class);
-		CoreAbility airSpout = CoreAbility.getAbility(AirSpout.class);
-		CoreAbility airStream = CoreAbility.getAbility(AirStream.class);
-		CoreAbility airSuction = CoreAbility.getAbility(AirSuction.class);
-		CoreAbility airSweep = CoreAbility.getAbility(AirSweep.class);
-		CoreAbility airSwipe = CoreAbility.getAbility(AirSwipe.class);
-		CoreAbility flight = CoreAbility.getAbility(FlightMultiAbility.class);
-		CoreAbility suffocate = CoreAbility.getAbility(Suffocate.class);
-		CoreAbility tornado = CoreAbility.getAbility(Tornado.class);
+		final CoreAbility airBlast = CoreAbility.getAbility(AirBlast.class);
+		CoreAbility.getAbility(AirBurst.class);
+		CoreAbility.getAbility(AirScooter.class);
+		final CoreAbility airShield = CoreAbility.getAbility(AirShield.class);
+		CoreAbility.getAbility(AirSpout.class);
+		final CoreAbility airStream = CoreAbility.getAbility(AirStream.class);
+		final CoreAbility airSuction = CoreAbility.getAbility(AirSuction.class);
+		final CoreAbility airSweep = CoreAbility.getAbility(AirSweep.class);
+		final CoreAbility airSwipe = CoreAbility.getAbility(AirSwipe.class);
+		CoreAbility.getAbility(FlightMultiAbility.class);
+		CoreAbility.getAbility(Suffocate.class);
+		CoreAbility.getAbility(Tornado.class);
 
-		CoreAbility catapult = CoreAbility.getAbility(Catapult.class);
-		CoreAbility collapse = CoreAbility.getAbility(Collapse.class);
-		CoreAbility earthArmor = CoreAbility.getAbility(EarthArmor.class);
-		CoreAbility earthBlast = CoreAbility.getAbility(EarthBlast.class);
-		CoreAbility earthSmash = CoreAbility.getAbility(EarthSmash.class);
-		CoreAbility earthTunnel = CoreAbility.getAbility(EarthTunnel.class);
-		CoreAbility lavaFlow = CoreAbility.getAbility(LavaFlow.class);
-		CoreAbility raiseEarth = CoreAbility.getAbility(RaiseEarth.class);
-		CoreAbility ripple = CoreAbility.getAbility(Ripple.class);
+		CoreAbility.getAbility(Catapult.class);
+		CoreAbility.getAbility(Collapse.class);
+		CoreAbility.getAbility(EarthArmor.class);
+		final CoreAbility earthBlast = CoreAbility.getAbility(EarthBlast.class);
+		final CoreAbility earthSmash = CoreAbility.getAbility(EarthSmash.class);
+		CoreAbility.getAbility(EarthTunnel.class);
+		CoreAbility.getAbility(LavaFlow.class);
+		CoreAbility.getAbility(RaiseEarth.class);
+		CoreAbility.getAbility(Ripple.class);
 
-		CoreAbility blazeArc = CoreAbility.getAbility(BlazeArc.class);
-		CoreAbility combustion = CoreAbility.getAbility(Combustion.class);
-		CoreAbility fireBlast = CoreAbility.getAbility(FireBlast.class);
-		CoreAbility fireBlastCharged = CoreAbility.getAbility(FireBlastCharged.class);
-		CoreAbility fireBurst = CoreAbility.getAbility(FireBurst.class);
-		CoreAbility fireJet = CoreAbility.getAbility(FireJet.class);
-		CoreAbility fireKick = CoreAbility.getAbility(FireKick.class);
-		CoreAbility fireSpin = CoreAbility.getAbility(FireSpin.class);
-		CoreAbility fireWheel = CoreAbility.getAbility(FireWheel.class);
-		CoreAbility fireShield = CoreAbility.getAbility(FireShield.class);
-		CoreAbility fireManipulation = CoreAbility.getAbility(FireManipulation.class);
-		CoreAbility lightning = CoreAbility.getAbility(Lightning.class);
-		CoreAbility wallOfFire = CoreAbility.getAbility(WallOfFire.class);
+		final CoreAbility blazeArc = CoreAbility.getAbility(BlazeArc.class);
+		final CoreAbility combustion = CoreAbility.getAbility(Combustion.class);
+		final CoreAbility fireBlast = CoreAbility.getAbility(FireBlast.class);
+		final CoreAbility fireBlastCharged = CoreAbility.getAbility(FireBlastCharged.class);
+		CoreAbility.getAbility(FireBurst.class);
+		CoreAbility.getAbility(FireJet.class);
+		final CoreAbility fireKick = CoreAbility.getAbility(FireKick.class);
+		final CoreAbility fireSpin = CoreAbility.getAbility(FireSpin.class);
+		final CoreAbility fireWheel = CoreAbility.getAbility(FireWheel.class);
+		final CoreAbility fireShield = CoreAbility.getAbility(FireShield.class);
+		final CoreAbility fireManipulation = CoreAbility.getAbility(FireManipulation.class);
+		CoreAbility.getAbility(Lightning.class);
+		CoreAbility.getAbility(WallOfFire.class);
 
-		CoreAbility bloodbending = CoreAbility.getAbility(Bloodbending.class);
-		CoreAbility healingWaters = CoreAbility.getAbility(HealingWaters.class);
-		CoreAbility iceBlast = CoreAbility.getAbility(IceBlast.class);
-		CoreAbility iceBullet = CoreAbility.getAbility(IceBullet.class);
-		CoreAbility iceWave = CoreAbility.getAbility(IceWave.class);
-		CoreAbility iceSpikeBlast = CoreAbility.getAbility(IceSpikeBlast.class);
-		CoreAbility octopusForm = CoreAbility.getAbility(OctopusForm.class);
-		CoreAbility surgeWall = CoreAbility.getAbility(SurgeWall.class);
-		CoreAbility surgeWave = CoreAbility.getAbility(SurgeWave.class);
-		CoreAbility torrent = CoreAbility.getAbility(Torrent.class);
-		CoreAbility torrentWave = CoreAbility.getAbility(TorrentWave.class);
-		CoreAbility waterBubble = CoreAbility.getAbility(WaterBubble.class);
-		CoreAbility waterManipulation = CoreAbility.getAbility(WaterManipulation.class);
-		CoreAbility waterSpout = CoreAbility.getAbility(WaterSpout.class);
-		CoreAbility waterSpoutWave = CoreAbility.getAbility(WaterSpoutWave.class);
+		CoreAbility.getAbility(Bloodbending.class);
+		CoreAbility.getAbility(HealingWaters.class);
+		final CoreAbility iceBlast = CoreAbility.getAbility(IceBlast.class);
+		final CoreAbility iceBullet = CoreAbility.getAbility(IceBullet.class);
+		CoreAbility.getAbility(IceWave.class);
+		final CoreAbility iceSpikeBlast = CoreAbility.getAbility(IceSpikeBlast.class);
+		CoreAbility.getAbility(OctopusForm.class);
+		CoreAbility.getAbility(SurgeWall.class);
+		CoreAbility.getAbility(SurgeWave.class);
+		CoreAbility.getAbility(Torrent.class);
+		CoreAbility.getAbility(TorrentWave.class);
+		CoreAbility.getAbility(WaterBubble.class);
+		final CoreAbility waterManipulation = CoreAbility.getAbility(WaterManipulation.class);
+		CoreAbility.getAbility(WaterSpout.class);
+		CoreAbility.getAbility(WaterSpoutWave.class);
 
-		CoreAbility[] smallAbils = { airSwipe, earthBlast, waterManipulation, iceBlast, iceSpikeBlast, fireBlast };
-		CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
-		CoreAbility[] comboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
-		CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, iceBlast, iceSpikeBlast, fireBlast, fireBlastCharged, earthSmash, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
-		CoreAbility[] ignoreAbils = { airBlast, airSuction, blazeArc, combustion };
+		final CoreAbility[] smallAbils = { airSwipe, earthBlast, waterManipulation, iceBlast, iceSpikeBlast, fireBlast };
+		final CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		final CoreAbility[] comboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		final CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, iceBlast, iceSpikeBlast, fireBlast, fireBlastCharged, earthSmash, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		final CoreAbility[] ignoreAbils = { airBlast, airSuction, blazeArc, combustion };
 
-		for (CoreAbility smallAbil : smallAbils) {
-			addSmallAbility(smallAbil);
+		for (final CoreAbility smallAbil : smallAbils) {
+			this.addSmallAbility(smallAbil);
 		}
-		for (CoreAbility largeAbil : largeAbils) {
-			addLargeAbility(largeAbil);
+		for (final CoreAbility largeAbil : largeAbils) {
+			this.addLargeAbility(largeAbil);
 		}
-		for (CoreAbility comboAbil : comboAbils) {
-			addComboAbility(comboAbil);
+		for (final CoreAbility comboAbil : comboAbils) {
+			this.addComboAbility(comboAbil);
 		}
-		for (CoreAbility removeSpoutAbil : removeSpoutAbils) {
-			addRemoveSpoutAbility(removeSpoutAbil);
+		for (final CoreAbility removeSpoutAbil : removeSpoutAbils) {
+			this.addRemoveSpoutAbility(removeSpoutAbil);
 		}
-		for (CoreAbility ignoreAbil : ignoreAbils) {
-			addIgnoreAbility(ignoreAbil);
+		for (final CoreAbility ignoreAbil : ignoreAbils) {
+			this.addIgnoreAbility(ignoreAbil);
 		}
-		for (CoreAbility comboAbil : comboAbils) {
-			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
+		for (final CoreAbility comboAbil : comboAbils) {
+			this.collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
 		}
-		
-		collisionManager.addCollision(new Collision(airSwipe, airSwipe, false, false));
-		
-		collisionManager.addCollision(new Collision(airShield, airSwipe, false, false));
-		collisionManager.addCollision(new Collision(airShield, airSweep, false, false));
-		collisionManager.addCollision(new Collision(airShield, fireBlastCharged, false, false));
-		collisionManager.addCollision(new Collision(airShield, airStream, false, true));
-		
-		collisionManager.addCollision(new Collision(airSweep, airSweep, false, false));
-		
-		collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, false));
-		collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));
-		collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
-		collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
-		collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
-		
-		collisionManager.addCollision(new Collision(fireManipulation, airBlast, false, true));
-		collisionManager.addCollision(new Collision(fireManipulation, airSuction, false, true));
-		collisionManager.addCollision(new Collision(fireManipulation, fireBlast, false, true));
-		collisionManager.addCollision(new Collision(fireManipulation, fireBlastCharged, false, true));
-		collisionManager.addCollision(new Collision(fireManipulation, waterManipulation, false, true));
-		collisionManager.addCollision(new Collision(fireManipulation, earthBlast, false, true));
-		collisionManager.addCollision(new Collision(fireManipulation, airSweep, false, true));
+
+		this.collisionManager.addCollision(new Collision(airSwipe, airSwipe, false, false));
+
+		this.collisionManager.addCollision(new Collision(airShield, airSwipe, false, false));
+		this.collisionManager.addCollision(new Collision(airShield, airSweep, false, false));
+		this.collisionManager.addCollision(new Collision(airShield, fireBlastCharged, false, false));
+		this.collisionManager.addCollision(new Collision(airShield, airStream, false, true));
+
+		this.collisionManager.addCollision(new Collision(airSweep, airSweep, false, false));
+
+		this.collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, false));
+		this.collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));
+		this.collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
+		this.collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
+		this.collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
+
+		this.collisionManager.addCollision(new Collision(fireManipulation, airBlast, false, true));
+		this.collisionManager.addCollision(new Collision(fireManipulation, airSuction, false, true));
+		this.collisionManager.addCollision(new Collision(fireManipulation, fireBlast, false, true));
+		this.collisionManager.addCollision(new Collision(fireManipulation, fireBlastCharged, false, true));
+		this.collisionManager.addCollision(new Collision(fireManipulation, waterManipulation, false, true));
+		this.collisionManager.addCollision(new Collision(fireManipulation, earthBlast, false, true));
+		this.collisionManager.addCollision(new Collision(fireManipulation, airSweep, false, true));
 	}
 
 	/**
 	 * An ability that collides with other small abilities. (EarthBlast,
 	 * FireBlast). Two colliding small abilities will remove each other. A small
 	 * ability is removed when it collides with a large ability.
-	 * 
+	 *
 	 * @param smallAbility the small CoreAbility
 	 */
-	public void addSmallAbility(CoreAbility smallAbility) {
+	public void addSmallAbility(final CoreAbility smallAbility) {
 		if (smallAbility == null) {
 			return;
 		}
-		smallAbilities.add(smallAbility);
-		for (CoreAbility otherSmallAbility : smallAbilities) {
-			collisionManager.addCollision(new Collision(smallAbility, otherSmallAbility, true, true));
+		this.smallAbilities.add(smallAbility);
+		for (final CoreAbility otherSmallAbility : this.smallAbilities) {
+			this.collisionManager.addCollision(new Collision(smallAbility, otherSmallAbility, true, true));
 		}
 
-		for (CoreAbility largeAbility : largeAbilities) {
-			collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
+		for (final CoreAbility largeAbility : this.largeAbilities) {
+			this.collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
 		}
 
 	}
@@ -207,107 +207,107 @@ public class CollisionInitializer {
 	 * A large ability that removes small abilities (EarthSmash, Charged
 	 * FireBlast). The large ability remains while the small ability is
 	 * destroyed.
-	 * 
+	 *
 	 * @param largeAbility the large CoreAbility
 	 */
-	public void addLargeAbility(CoreAbility largeAbility) {
+	public void addLargeAbility(final CoreAbility largeAbility) {
 		if (largeAbility == null) {
 			return;
 		}
-		largeAbilities.add(largeAbility);
-		for (CoreAbility smallAbility : smallAbilities) {
-			collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
+		this.largeAbilities.add(largeAbility);
+		for (final CoreAbility smallAbility : this.smallAbilities) {
+			this.collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
 		}
 	}
 
 	/**
 	 * A combo ability that collides with all other combo abilities. Both
 	 * colliding combo abilities are destroyed.
-	 * 
+	 *
 	 * @param comboAbility the combo CoreAbility
 	 */
-	public void addComboAbility(CoreAbility comboAbility) {
+	public void addComboAbility(final CoreAbility comboAbility) {
 		if (comboAbility == null) {
 			return;
 		}
-		comboAbilities.add(comboAbility);
-		for (CoreAbility otherComboAbility : smallAbilities) {
-			collisionManager.addCollision(new Collision(comboAbility, otherComboAbility, true, true));
+		this.comboAbilities.add(comboAbility);
+		for (final CoreAbility otherComboAbility : this.smallAbilities) {
+			this.collisionManager.addCollision(new Collision(comboAbility, otherComboAbility, true, true));
 		}
 	}
 
 	/**
 	 * An ability that destroys WaterSpout, AirSpout, and SandSpout upon
 	 * contact. The spout is destroyed and this ability remains.
-	 * 
+	 *
 	 * @param ability the ability that removes spouts
 	 */
-	public void addRemoveSpoutAbility(CoreAbility ability) {
+	public void addRemoveSpoutAbility(final CoreAbility ability) {
 		if (ability == null) {
 			return;
 		}
-		removeSpoutAbilities.add(ability);
-		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(AirSpout.class), false, true));
-		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(WaterSpout.class), false, true));
+		this.removeSpoutAbilities.add(ability);
+		this.collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(AirSpout.class), false, true));
+		this.collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(WaterSpout.class), false, true));
 	}
 
 	/**
 	 * An ability that collides with other small abilities. (EarthBlast,
 	 * FireBlast). Two colliding small abilities will remove each other. A small
 	 * ability is removed when it collides with a large ability.
-	 * 
+	 *
 	 * @param smallAbility the small CoreAbility
 	 */
-	public void addIgnoreAbility(CoreAbility ignoreAbility) {
+	public void addIgnoreAbility(final CoreAbility ignoreAbility) {
 		if (ignoreAbility == null) {
 			return;
 		}
-		ignoreAbilities.add(ignoreAbility);
-		for (CoreAbility smallAbility : smallAbilities) {
-			collisionManager.addCollision(new Collision(ignoreAbility, smallAbility, false, false));
+		this.ignoreAbilities.add(ignoreAbility);
+		for (final CoreAbility smallAbility : this.smallAbilities) {
+			this.collisionManager.addCollision(new Collision(ignoreAbility, smallAbility, false, false));
 		}
 
-		for (CoreAbility largeAbility : largeAbilities) {
-			collisionManager.addCollision(new Collision(largeAbility, ignoreAbility, false, false));
+		for (final CoreAbility largeAbility : this.largeAbilities) {
+			this.collisionManager.addCollision(new Collision(largeAbility, ignoreAbility, false, false));
 		}
 
-		collisionManager.addCollision(new Collision(ignoreAbility, CoreAbility.getAbility(AirSpout.class), false, false));
-		collisionManager.addCollision(new Collision(ignoreAbility, CoreAbility.getAbility(WaterSpout.class), false, false));
+		this.collisionManager.addCollision(new Collision(ignoreAbility, CoreAbility.getAbility(AirSpout.class), false, false));
+		this.collisionManager.addCollision(new Collision(ignoreAbility, CoreAbility.getAbility(WaterSpout.class), false, false));
 	}
 
 	public CollisionManager getCollisionManager() {
-		return collisionManager;
+		return this.collisionManager;
 	}
 
 	public ArrayList<CoreAbility> getSmallAbilities() {
-		return smallAbilities;
+		return this.smallAbilities;
 	}
 
-	public void setSmallAbilities(ArrayList<CoreAbility> smallAbilities) {
+	public void setSmallAbilities(final ArrayList<CoreAbility> smallAbilities) {
 		this.smallAbilities = smallAbilities;
 	}
 
 	public ArrayList<CoreAbility> getLargeAbilities() {
-		return largeAbilities;
+		return this.largeAbilities;
 	}
 
-	public void setLargeAbilities(ArrayList<CoreAbility> largeAbilities) {
+	public void setLargeAbilities(final ArrayList<CoreAbility> largeAbilities) {
 		this.largeAbilities = largeAbilities;
 	}
 
 	public ArrayList<CoreAbility> getComboAbilities() {
-		return comboAbilities;
+		return this.comboAbilities;
 	}
 
-	public void setComboAbilities(ArrayList<CoreAbility> comboAbilities) {
+	public void setComboAbilities(final ArrayList<CoreAbility> comboAbilities) {
 		this.comboAbilities = comboAbilities;
 	}
 
 	public ArrayList<CoreAbility> getRemoveSpoutAbilities() {
-		return removeSpoutAbilities;
+		return this.removeSpoutAbilities;
 	}
 
-	public void setRemoveSpoutAbilities(ArrayList<CoreAbility> removeSpoutAbilities) {
+	public void setRemoveSpoutAbilities(final ArrayList<CoreAbility> removeSpoutAbilities) {
 		this.removeSpoutAbilities = removeSpoutAbilities;
 	}
 

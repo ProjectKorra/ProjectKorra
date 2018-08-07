@@ -20,46 +20,47 @@ public class RapidPunch extends ChiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private int numPunches;
-	private long interval, last = 0;
+	private long interval;
+	private final long last = 0;
 	private Entity target;
 
-	public RapidPunch(Player sourceplayer, Entity targetentity) {
+	public RapidPunch(final Player sourceplayer, final Entity targetentity) {
 		super(sourceplayer);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		
+
 		this.damage = getConfig().getDouble("Abilities.Chi.RapidPunch.Damage");
 		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
 		this.interval = getConfig().getLong("Abilities.Chi.RapidPunch.Interval");
 		this.target = targetentity;
-		bPlayer.addCooldown(this);
-		start();
+		this.bPlayer.addCooldown(this);
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (numPunches >= punches || target == null || !(target instanceof LivingEntity)) {
-			remove();
+		if (this.numPunches >= this.punches || this.target == null || !(this.target instanceof LivingEntity)) {
+			this.remove();
 			return;
 		}
 
-		if (System.currentTimeMillis() >= last + interval) {
-			LivingEntity lt = (LivingEntity) target;
-			DamageHandler.damageEntity(target, damage, this);
-	
-			if (target instanceof Player) {
-				if (ChiPassive.willChiBlock(player, (Player) target)) {
-					ChiPassive.blockChi((Player) target);
+		if (System.currentTimeMillis() >= this.last + this.interval) {
+			final LivingEntity lt = (LivingEntity) this.target;
+			DamageHandler.damageEntity(this.target, this.damage, this);
+
+			if (this.target instanceof Player) {
+				if (ChiPassive.willChiBlock(this.player, (Player) this.target)) {
+					ChiPassive.blockChi((Player) this.target);
 				}
-				if (Suffocate.isChannelingSphere((Player) target)) {
-					Suffocate.remove((Player) target);
+				if (Suffocate.isChannelingSphere((Player) this.target)) {
+					Suffocate.remove((Player) this.target);
 				}
 			}
-	
+
 			lt.setNoDamageTicks(0);
-			numPunches++;
+			this.numPunches++;
 		}
 	}
 
@@ -70,12 +71,12 @@ public class RapidPunch extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return target != null ? target.getLocation() : null;
+		return this.target != null ? this.target.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -89,38 +90,38 @@ public class RapidPunch extends ChiAbility {
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public int getPunches() {
-		return punches;
+		return this.punches;
 	}
 
-	public void setPunches(int punches) {
+	public void setPunches(final int punches) {
 		this.punches = punches;
 	}
 
 	public int getNumPunches() {
-		return numPunches;
+		return this.numPunches;
 	}
 
-	public void setNumPunches(int numPunches) {
+	public void setNumPunches(final int numPunches) {
 		this.numPunches = numPunches;
 	}
 
 	public Entity getTarget() {
-		return target;
+		return this.target;
 	}
 
-	public void setTarget(Entity target) {
+	public void setTarget(final Entity target) {
 		this.target = target;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

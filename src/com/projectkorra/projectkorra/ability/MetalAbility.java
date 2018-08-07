@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
 
 public abstract class MetalAbility extends EarthAbility implements SubAbility {
 
-	public MetalAbility(Player player) {
+	public MetalAbility(final Player player) {
 		super(player);
 	}
 

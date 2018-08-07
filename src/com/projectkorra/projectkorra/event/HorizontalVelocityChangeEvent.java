@@ -19,17 +19,17 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 
 	private boolean isCancelled;
 
-	private Entity entity;
-	private Player instigator;
-	private Vector from;
-	private Vector to;
-	private Vector difference;
+	private final Entity entity;
+	private final Player instigator;
+	private final Vector from;
+	private final Vector to;
+	private final Vector difference;
 	private Location start;
 	private Location end;
 	private Ability abil;
 
 	@Deprecated
-	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference) {
+	public HorizontalVelocityChangeEvent(final Entity entity, final Player instigator, final Vector from, final Vector to, final Vector difference) {
 		this.entity = entity;
 		this.instigator = instigator;
 		this.from = from;
@@ -37,7 +37,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.difference = difference;
 	}
 
-	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference, Location start, Location end, Ability ability) {
+	public HorizontalVelocityChangeEvent(final Entity entity, final Player instigator, final Vector from, final Vector to, final Vector difference, final Location start, final Location end, final Ability ability) {
 		this.entity = entity;
 		this.instigator = instigator;
 		this.from = from;
@@ -45,46 +45,46 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.difference = difference;
 		this.start = start;
 		this.end = end;
-		abil = ability;
+		this.abil = ability;
 	}
 
 	public Entity getEntity() {
-		return entity;
+		return this.entity;
 	}
 
 	public Player getInstigator() {
-		return instigator;
+		return this.instigator;
 	}
 
 	public Vector getFrom() {
-		return from;
+		return this.from;
 	}
 
 	public Vector getTo() {
-		return to;
+		return this.to;
 	}
 
 	public Location getStartPoint() {
-		return start;
+		return this.start;
 	}
 
 	public Location getEndPoint() {
-		return end;
+		return this.end;
 	}
 
 	public double getDistanceTraveled() {
-		if (!start.getWorld().equals(end.getWorld())) {
+		if (!this.start.getWorld().equals(this.end.getWorld())) {
 			return 0;
 		}
-		return start.distance(end);
+		return this.start.distance(this.end);
 	}
 
 	public Vector getDifference() {
-		return difference;
+		return this.difference;
 	}
 
 	public Ability getAbility() {
-		return abil;
+		return this.abil;
 	}
 
 	@Override
@@ -98,11 +98,11 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 
 	@Override
 	public boolean isCancelled() {
-		return isCancelled;
+		return this.isCancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean value) {
+	public void setCancelled(final boolean value) {
 		this.isCancelled = value;
 	}
 }

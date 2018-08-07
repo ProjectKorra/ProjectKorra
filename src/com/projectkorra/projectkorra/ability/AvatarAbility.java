@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ProjectKorra;
-
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
+
 public abstract class AvatarAbility extends ElementalAbility {
 
-	public AvatarAbility(Player player) {
+	public AvatarAbility(final Player player) {
 		super(player);
 	}
 
@@ -28,19 +28,21 @@ public abstract class AvatarAbility extends ElementalAbility {
 		return Element.AVATAR;
 	}
 
-	public static void playAvatarSound(Location loc) {
+	public static void playAvatarSound(final Location loc) {
 		if (getConfig().getBoolean("Abilities.Avatar.AvatarState.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Volume");
-			float pitch = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Pitch");
-			
+			final float volume = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Volume");
+			final float pitch = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Pitch");
+
 			Sound sound = Sound.BLOCK_ANVIL_LAND;
-			
+
 			try {
 				sound = Sound.valueOf(getConfig().getString("Abilities.Avatar.AvatarState.Sound.Sound"));
-			} catch (IllegalArgumentException exception) {
+			}
+			catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Abilities.Avatar.AvatarState.Sound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);	
+			}
+			finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}

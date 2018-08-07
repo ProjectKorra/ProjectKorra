@@ -14,7 +14,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -24,7 +23,7 @@ public class FireManipulation extends FireAbility {
 		SHIFT, CLICK;
 	}
 
-	// Configurable variables
+	// Configurable variables.
 	private long streamCooldown;
 	private double streamRange;
 	private double streamDamage;
@@ -40,7 +39,7 @@ public class FireManipulation extends FireAbility {
 	private int shieldParticles;
 	private long maxDuration;
 
-	// Instance related variables
+	// Instance related variables.
 	private FireManipulationType fireManipulationType;
 
 	private boolean firing;
@@ -50,15 +49,15 @@ public class FireManipulation extends FireAbility {
 	private Location origin;
 	private Location focalPoint;
 
-	public FireManipulation(Player player, FireManipulationType fireManipulationType) {
+	public FireManipulation(final Player player, final FireManipulationType fireManipulationType) {
 		super(player);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 
 		this.fireManipulationType = fireManipulationType;
-		setFields();
-		start();
+		this.setFields();
+		this.start();
 	}
 
 	public void setFields() {
@@ -81,108 +80,108 @@ public class FireManipulation extends FireAbility {
 	}
 
 	public void click() {
-		if (System.currentTimeMillis() - getStartTime() > 1500) {
-			if (!firing && !charging) {
-				charging = true;
-				focalPoint = GeneralMethods.getTargetedLocation(player, shieldRange * 2);
-				origin = player.getLocation().clone();
+		if (System.currentTimeMillis() - this.getStartTime() > 1500) {
+			if (!this.firing && !this.charging) {
+				this.charging = true;
+				this.focalPoint = GeneralMethods.getTargetedLocation(this.player, this.shieldRange * 2);
+				this.origin = this.player.getLocation().clone();
 			}
 		}
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBend(this)) {
-			remove();
+		if (!this.bPlayer.canBend(this)) {
+			this.remove();
 			return;
 		}
 
-		if (!firing && !charging) {
-			if (!player.isSneaking()) {
-				bPlayer.addCooldown(this, shieldCooldown);
-				remove();
+		if (!this.firing && !this.charging) {
+			if (!this.player.isSneaking()) {
+				this.bPlayer.addCooldown(this, this.shieldCooldown);
+				this.remove();
 				return;
-			} else if (System.currentTimeMillis() - getStartTime() > maxDuration) {
-				bPlayer.addCooldown(this, shieldCooldown);
-				remove();
+			} else if (System.currentTimeMillis() - this.getStartTime() > this.maxDuration) {
+				this.bPlayer.addCooldown(this, this.shieldCooldown);
+				this.remove();
 				return;
 			}
-			Location targetLocation = GeneralMethods.getTargetedLocation(player, shieldRange);
-			points.put(targetLocation, System.currentTimeMillis());
-			for (Location point : points.keySet()) {
-				if (System.currentTimeMillis() - points.get(point) > 1500) {
-					points.remove(point);
+			final Location targetLocation = GeneralMethods.getTargetedLocation(this.player, this.shieldRange);
+			this.points.put(targetLocation, System.currentTimeMillis());
+			for (final Location point : this.points.keySet()) {
+				if (System.currentTimeMillis() - this.points.get(point) > 1500) {
+					this.points.remove(point);
 					return;
 				}
 				ParticleEffect.FLAME.display(point, 0.25F, 0.25F, 0.25F, 0, 12);
 				ParticleEffect.SMOKE.display(point, 0.25F, 0.25F, 0.25F, 0, 6);
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(point, 1.2D)) {
-					if (entity instanceof LivingEntity && entity.getUniqueId() != player.getUniqueId()) {
-						DamageHandler.damageEntity(entity, shieldDamage, this);
+				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(point, 1.2D)) {
+					if (entity instanceof LivingEntity && entity.getUniqueId() != this.player.getUniqueId()) {
+						DamageHandler.damageEntity(entity, this.shieldDamage, this);
 					}
 				}
-				if (new Random().nextInt(points.keySet().size()) == 0) {
+				if (new Random().nextInt(this.points.keySet().size()) == 0) {
 					playFirebendingSound(point);
 				}
 			}
-		} else if (!firing && charging) {
-			if (!player.isSneaking()) {
-				remove();
+		} else if (!this.firing && this.charging) {
+			if (!this.player.isSneaking()) {
+				this.remove();
 				return;
 			}
 			boolean readyToFire = true;
-			for (Location point : points.keySet()) {
-				if (point.distance(focalPoint) > 1) {
+			for (final Location point : this.points.keySet()) {
+				if (point.distance(this.focalPoint) > 1) {
 					readyToFire = false;
 				}
 			}
 			if (readyToFire) {
-				shotPoint = focalPoint.clone();
-				firing = true;
+				this.shotPoint = this.focalPoint.clone();
+				this.firing = true;
 				return;
 			}
-			for (Location point : points.keySet()) {
-				Vector direction = focalPoint.toVector().subtract(point.toVector());
-				point.add(direction.clone().multiply(streamSpeed / 5));
-				ParticleEffect.FLAME.display(point, 0.25F, 0.25F, 0.25F, 0, shieldParticles);
-				ParticleEffect.SMOKE.display(point, 0.25F, 0.25F, 0.25F, 0, shieldParticles / 2);
+			for (final Location point : this.points.keySet()) {
+				final Vector direction = this.focalPoint.toVector().subtract(point.toVector());
+				point.add(direction.clone().multiply(this.streamSpeed / 5));
+				ParticleEffect.FLAME.display(point, 0.25F, 0.25F, 0.25F, 0, this.shieldParticles);
+				ParticleEffect.SMOKE.display(point, 0.25F, 0.25F, 0.25F, 0, this.shieldParticles / 2);
 			}
 		} else {
-			Vector direction = player.getLocation().getDirection().clone();
-			if (streamSneaking && !player.isSneaking()) {
-				streamSneaking = false;
-				streamRemoveTime = System.currentTimeMillis();
-				streamSneakDirection = direction;
+			Vector direction = this.player.getLocation().getDirection().clone();
+			if (this.streamSneaking && !this.player.isSneaking()) {
+				this.streamSneaking = false;
+				this.streamRemoveTime = System.currentTimeMillis();
+				this.streamSneakDirection = direction;
 			}
-			if (!streamSneaking) {
-				direction = streamSneakDirection;
-				if (System.currentTimeMillis() - streamRemoveTime > 1000) {
-					bPlayer.addCooldown(this, streamCooldown);
-					remove();
+			if (!this.streamSneaking) {
+				direction = this.streamSneakDirection;
+				if (System.currentTimeMillis() - this.streamRemoveTime > 1000) {
+					this.bPlayer.addCooldown(this, this.streamCooldown);
+					this.remove();
 					return;
 				}
 			}
-			shotPoint.add(direction.multiply(streamSpeed));
-			if (shotPoint.distance(origin) > streamRange) {
-				bPlayer.addCooldown(this, streamCooldown);
-				remove();
+			this.shotPoint.add(direction.multiply(this.streamSpeed));
+			if (this.shotPoint.distance(this.origin) > this.streamRange) {
+				this.bPlayer.addCooldown(this, this.streamCooldown);
+				this.remove();
 				return;
 			}
-			if (GeneralMethods.isSolid(shotPoint.getBlock())) {
-				bPlayer.addCooldown(this);
-				remove();
+			if (GeneralMethods.isSolid(this.shotPoint.getBlock())) {
+				this.bPlayer.addCooldown(this);
+				this.remove();
 				return;
 			}
-			
-			ParticleEffect.FLAME.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles);
-			ParticleEffect.SMOKE.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles / 2);
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(shotPoint, 2)) {
-				if (entity instanceof LivingEntity && entity.getUniqueId() != player.getUniqueId()) {
-					DamageHandler.damageEntity(entity, streamDamage, this);
+
+			ParticleEffect.FLAME.display(this.shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, this.streamParticles);
+			ParticleEffect.SMOKE.display(this.shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, this.streamParticles / 2);
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.shotPoint, 2)) {
+				if (entity instanceof LivingEntity && entity.getUniqueId() != this.player.getUniqueId()) {
+					DamageHandler.damageEntity(entity, this.streamDamage, this);
 				}
 			}
 			if (new Random().nextInt(5) == 0) {
-				playFirebendingSound(shotPoint);
+				playFirebendingSound(this.shotPoint);
 			}
 		}
 	}
@@ -214,15 +213,15 @@ public class FireManipulation extends FireAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		List<Location> locations = new ArrayList<>();
-		locations.addAll(points.keySet());
+		final List<Location> locations = new ArrayList<>();
+		locations.addAll(this.points.keySet());
 		return locations;
 	}
 
 	public FireManipulationType getFireManipulationType() {
-		return fireManipulationType;
+		return this.fireManipulationType;
 	}
-	
+
 	@Override
 	public double getCollisionRadius() {
 		return 0.4;

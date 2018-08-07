@@ -1,5 +1,13 @@
 package com.projectkorra.projectkorra.firebending.combustion;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
@@ -8,14 +16,6 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 public class Combustion extends CombustionAbility {
 
@@ -34,10 +34,10 @@ public class Combustion extends CombustionAbility {
 	private Location origin;
 	private Vector direction;
 
-	public Combustion(Player player) {
+	public Combustion(final Player player) {
 		super(player);
 
-		if (hasAbility(player, Combustion.class) || !bPlayer.canBend(this)) {
+		if (hasAbility(player, Combustion.class) || !this.bPlayer.canBend(this)) {
 			return;
 		}
 
@@ -51,26 +51,26 @@ public class Combustion extends CombustionAbility {
 		this.range = getConfig().getDouble("Abilities.Fire.Combustion.Range");
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
-		this.location = origin.clone();
+		this.location = this.origin.clone();
 
-		if (bPlayer.isAvatarState()) {
-			range = AvatarState.getValue(range);
-			damage = AvatarState.getValue(damage);
+		if (this.bPlayer.isAvatarState()) {
+			this.range = AvatarState.getValue(this.range);
+			this.damage = AvatarState.getValue(this.damage);
 		} else if (isDay(player.getWorld())) {
-			range = getDayFactor(range);
-			damage = getDayFactor(damage);
+			this.range = this.getDayFactor(this.range);
+			this.damage = this.getDayFactor(this.damage);
 		}
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this, GeneralMethods.getTargetedLocation(player, range))) {
+		if (GeneralMethods.isRegionProtectedFromBuild(this, GeneralMethods.getTargetedLocation(player, this.range))) {
 			return;
 		}
 
-		start();
-		bPlayer.addCooldown(this);
+		this.start();
+		this.bPlayer.addCooldown(this);
 	}
 
-	public static void explode(Player player) {
-		Combustion combustion = getAbility(player, Combustion.class);
+	public static void explode(final Player player) {
+		final Combustion combustion = getAbility(player, Combustion.class);
 		if (combustion != null) {
 			combustion.createExplosion(combustion.location, combustion.power, combustion.breakBlocks);
 			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
@@ -82,8 +82,8 @@ public class Combustion extends CombustionAbility {
 	 * {@link Collision} for the new system.
 	 */
 	@Deprecated
-	public static boolean removeAroundPoint(Location loc, double radius) {
-		for (Combustion combustion : getAbilities(Combustion.class)) {
+	public static boolean removeAroundPoint(final Location loc, final double radius) {
+		for (final Combustion combustion : getAbilities(Combustion.class)) {
 			if (combustion.location.getWorld().equals(loc.getWorld())) {
 				if (combustion.location.distanceSquared(loc) <= radius * radius) {
 					explode(combustion.getPlayer());
@@ -96,62 +96,62 @@ public class Combustion extends CombustionAbility {
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 5);
-		ParticleEffect.FLAME.display(location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 2);
-		playCombustionSound(location);
-		location = location.add(direction.clone().multiply(speedFactor));
+		ParticleEffect.FIREWORKS_SPARK.display(this.location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 5);
+		ParticleEffect.FLAME.display(this.location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 2);
+		playCombustionSound(this.location);
+		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 	}
 
-	private void createExplosion(Location block, float power, boolean canBreakBlocks) {
+	private void createExplosion(final Location block, final float power, final boolean canBreakBlocks) {
 		if (canFireGrief()) {
 			block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
 		}
-		for (Entity entity : block.getWorld().getEntities()) {
+		for (final Entity entity : block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distanceSquared(block) < radius * radius) { // They are close enough to the explosion.
-					DamageHandler.damageEntity((LivingEntity) entity, damage, this);
+				if (entity.getLocation().distanceSquared(block) < this.radius * this.radius) { // They are close enough to the explosion.
+					DamageHandler.damageEntity(entity, this.damage, this);
 					AirAbility.breakBreathbendingHold(entity);
 				}
 			}
 		}
-		remove();
+		this.remove();
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-			remove();
-			return;
-		}
-
-		speedFactor = speed * (ProjectKorra.time_step / 1000.0);
-		ticks++;
-		if (ticks > MAX_TICKS) {
-			remove();
-			return;
-		} else if (location.distanceSquared(origin) > range * range) {
-			remove();
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+			this.remove();
 			return;
 		}
 
-		Block block = location.getBlock();
+		this.speedFactor = this.speed * (ProjectKorra.time_step / 1000.0);
+		this.ticks++;
+		if (this.ticks > MAX_TICKS) {
+			this.remove();
+			return;
+		} else if (this.location.distanceSquared(this.origin) > this.range * this.range) {
+			this.remove();
+			return;
+		}
+
+		final Block block = this.location.getBlock();
 		if (block != null) {
 			if (block.getType() != Material.AIR && !isWater(block)) {
-				createExplosion(block.getLocation(), power, breakBlocks);
+				this.createExplosion(block.getLocation(), this.power, this.breakBlocks);
 			}
 		}
 
-		for (Entity entity : location.getWorld().getEntities()) {
+		for (final Entity entity : this.location.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distanceSquared(location) <= 4 && !entity.equals(player)) {
-					createExplosion(location, power, breakBlocks);
+				if (entity.getLocation().distanceSquared(this.location) <= 4 && !entity.equals(this.player)) {
+					this.createExplosion(this.location, this.power, this.breakBlocks);
 				}
 			}
 		}
-		advanceLocation();
+		this.advanceLocation();
 	}
 
 	@Override
@@ -161,15 +161,15 @@ public class Combustion extends CombustionAbility {
 
 	@Override
 	public Location getLocation() {
-		if (location != null) {
-			return location;
+		if (this.location != null) {
+			return this.location;
 		}
-		return origin;
+		return this.origin;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -184,86 +184,86 @@ public class Combustion extends CombustionAbility {
 
 	@Override
 	public double getCollisionRadius() {
-		return getRadius();
+		return this.getRadius();
 	}
 
 	public boolean isBreakBlocks() {
-		return breakBlocks;
+		return this.breakBlocks;
 	}
 
-	public void setBreakBlocks(boolean breakBlocks) {
+	public void setBreakBlocks(final boolean breakBlocks) {
 		this.breakBlocks = breakBlocks;
 	}
 
 	public int getTicks() {
-		return ticks;
+		return this.ticks;
 	}
 
-	public void setTicks(int ticks) {
+	public void setTicks(final int ticks) {
 		this.ticks = ticks;
 	}
 
 	public float getPower() {
-		return power;
+		return this.power;
 	}
 
-	public void setPower(float power) {
+	public void setPower(final float power) {
 		this.power = power;
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getSpeedFactor() {
-		return speedFactor;
+		return this.speedFactor;
 	}
 
-	public void setSpeedFactor(double speedFactor) {
+	public void setSpeedFactor(final double speedFactor) {
 		this.speedFactor = speedFactor;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public Vector getDirection() {
-		return direction;
+		return this.direction;
 	}
 
-	public void setDirection(Vector direction) {
+	public void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
@@ -271,11 +271,11 @@ public class Combustion extends CombustionAbility {
 		return MAX_TICKS;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

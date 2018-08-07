@@ -20,12 +20,12 @@ public class ConfigManager {
 		configCheck(ConfigType.PRESETS);
 	}
 
-	public static void configCheck(ConfigType type) {
+	public static void configCheck(final ConfigType type) {
 		FileConfiguration config;
 		if (type == ConfigType.PRESETS) {
 			config = presetConfig.get();
 
-			ArrayList<String> abilities = new ArrayList<String>();
+			final ArrayList<String> abilities = new ArrayList<String>();
 			abilities.add("FireBlast");
 			abilities.add("AirBlast");
 			abilities.add("WaterManipulation");
@@ -42,7 +42,7 @@ public class ConfigManager {
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
-			ArrayList<String> helpLines = new ArrayList<String>();
+			final ArrayList<String> helpLines = new ArrayList<String>();
 			helpLines.add("&c/bending help [Ability/Command] &eDisplay help.");
 			helpLines.add("&c/bending choose [Element] &eChoose an element.");
 			helpLines.add("&c/bending bind [Ability] # &eBind an ability.");
@@ -426,7 +426,7 @@ public class ConfigManager {
 		} else if (type == ConfigType.DEFAULT) {
 			config = defaultConfig.get();
 
-			ArrayList<String> earthBlocks = new ArrayList<String>();
+			final ArrayList<String> earthBlocks = new ArrayList<String>();
 			earthBlocks.add("DIRT");
 			earthBlocks.add("MYCEL");
 			earthBlocks.add("GRASS");
@@ -442,7 +442,7 @@ public class ConfigManager {
 			earthBlocks.add("STEP");
 			earthBlocks.add("GRASS_PATH");
 
-			ArrayList<String> metalBlocks = new ArrayList<String>();
+			final ArrayList<String> metalBlocks = new ArrayList<String>();
 			metalBlocks.add("IRON_ORE");
 			metalBlocks.add("GOLD_ORE");
 			metalBlocks.add("QUARTZ_ORE");
@@ -450,17 +450,17 @@ public class ConfigManager {
 			metalBlocks.add("GOLD_BLOCK");
 			metalBlocks.add("QUARTZ_BLOCK");
 
-			ArrayList<String> sandBlocks = new ArrayList<String>();
+			final ArrayList<String> sandBlocks = new ArrayList<String>();
 			sandBlocks.add("SAND");
 			sandBlocks.add("SANDSTONE");
 			sandBlocks.add("RED_SAND");
 			sandBlocks.add("RED_SANDSTONE");
 
-			ArrayList<String> iceBlocks = new ArrayList<String>();
+			final ArrayList<String> iceBlocks = new ArrayList<String>();
 			iceBlocks.add("ICE");
 			iceBlocks.add("PACKED_ICE");
 
-			ArrayList<String> plantBlocks = new ArrayList<String>();
+			final ArrayList<String> plantBlocks = new ArrayList<String>();
 			plantBlocks.add("SAPLING");
 			plantBlocks.add("LEAVES");
 			plantBlocks.add("LEAVES_2");
@@ -483,7 +483,7 @@ public class ConfigManager {
 			plantBlocks.add("PUMPKIN_STEM");
 			plantBlocks.add("MELON_STEM");
 
-			ArrayList<String> snowBlocks = new ArrayList<>();
+			final ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add("SNOW");
 
 			config.addDefault("Properties.UpdateChecker", true);
@@ -580,7 +580,7 @@ public class ConfigManager {
 
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
-			ArrayList<String> disabledWorlds = new ArrayList<String>();
+			final ArrayList<String> disabledWorlds = new ArrayList<String>();
 			disabledWorlds.add("TestWorld");
 			disabledWorlds.add("TestWorld2");
 			config.addDefault("Properties.DisabledWorlds", disabledWorlds);
@@ -1130,7 +1130,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthBlast.Cooldown", 500);
 			config.addDefault("Abilities.Earth.EarthBlast.DeflectRange", 3);
 			config.addDefault("Abilities.Earth.EarthBlast.CollisionRadius", 1.5);
-			
+
 			config.addDefault("Abilities.Earth.EarthDome.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthDome.Cooldown", 10000);
 			config.addDefault("Abilities.Earth.EarthDome.Radius", 2);
@@ -1305,7 +1305,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
 
-			config.addDefault("Abilities.Fire.FireManipulation.Enabled", true);
+			config.addDefault("Abilities.Fire.FireManipulation.Enabled", false);
 
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Cooldown", 12000);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Range", 50);
@@ -1452,7 +1452,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
 			config.addDefault("Abilities.Chi.WarriorStance.Cooldown", 0);
 			config.addDefault("Abilities.Chi.WarriorStance.Strength", 1);
-			config.addDefault("Abilities.Chi.WarriorStance.Resistance", -1);
+			config.addDefault("Abilities.Chi.WarriorStance.Resistance", -3);
 
 			config.addDefault("Abilities.Chi.QuickStrike.Enabled", true);
 			config.addDefault("Abilities.Chi.QuickStrike.Damage", 2);

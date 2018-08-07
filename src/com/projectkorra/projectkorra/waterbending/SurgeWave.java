@@ -52,7 +52,7 @@ public class SurgeWave extends WaterAbility {
 	private Map<Block, Block> waveBlocks;
 	private Map<Block, Material> frozenBlocks;
 
-	public SurgeWave(Player player) {
+	public SurgeWave(final Player player) {
 		super(player);
 
 		SurgeWave wave = getAbility(player, SurgeWave.class);
@@ -77,75 +77,75 @@ public class SurgeWave extends WaterAbility {
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
 
-		if (bPlayer.isAvatarState()) {
-			maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
+		if (this.bPlayer.isAvatarState()) {
+			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
 		}
-		maxRadius = getNightFactor(maxRadius);
+		this.maxRadius = this.getNightFactor(this.maxRadius);
 
-		if (prepare()) {
+		if (this.prepare()) {
 			wave = getAbility(player, SurgeWave.class);
 			if (wave != null) {
 				wave.remove();
 			}
-			start();
-			time = System.currentTimeMillis();
+			this.start();
+			this.time = System.currentTimeMillis();
 		}
 	}
 
-	private void addWater(Block block) {
+	private void addWater(final Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
-			waveBlocks.put(block, block);
+			this.waveBlocks.put(block, block);
 		}
 	}
 
 	private void cancelPrevious() {
-		SurgeWave oldWave = getAbility(player, SurgeWave.class);
+		final SurgeWave oldWave = getAbility(this.player, SurgeWave.class);
 		if (oldWave != null) {
 			oldWave.remove();
 		}
 	}
 
 	private void clearWave() {
-		for (Block block : waveBlocks.keySet()) {
+		for (final Block block : this.waveBlocks.keySet()) {
 			TempBlock.revertBlock(block, Material.AIR);
 		}
-		waveBlocks.clear();
+		this.waveBlocks.clear();
 	}
 
-	private void finalRemoveWater(Block block) {
-		if (waveBlocks.containsKey(block)) {
+	private void finalRemoveWater(final Block block) {
+		if (this.waveBlocks.containsKey(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
-			waveBlocks.remove(block);
+			this.waveBlocks.remove(block);
 		}
 	}
 
 	private void focusBlock() {
-		location = sourceBlock.getLocation();
+		this.location = this.sourceBlock.getLocation();
 	}
 
 	private void freeze() {
-		clearWave();
-		if (!bPlayer.canIcebend()) {
+		this.clearWave();
+		if (!this.bPlayer.canIcebend()) {
 			return;
 		}
 
-		double freezeradius = currentRadius;
-		if (freezeradius > maxFreezeRadius) {
-			freezeradius = maxFreezeRadius;
+		double freezeradius = this.currentRadius;
+		if (freezeradius > this.maxFreezeRadius) {
+			freezeradius = this.maxFreezeRadius;
 		}
 
-		for (final Block block : GeneralMethods.getBlocksAroundPoint(frozenLocation, freezeradius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
+		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isRegionProtectedFromBuild(this.player, "PhaseChange", block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
 			}
 
-			Block oldBlock = block;
-			TempBlock tblock = new TempBlock(block, block.getType(), (byte) 0);
+			final Block oldBlock = block;
+			final TempBlock tblock = new TempBlock(block, block.getType(), (byte) 0);
 			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
 				tblock.setType(Material.ICE);
 			} else if (isPlant(block) && block.getType() != Material.LEAVES) {
@@ -159,13 +159,13 @@ public class SurgeWave extends WaterAbility {
 
 				@Override
 				public void run() {
-					frozenBlocks.remove(block);
+					SurgeWave.this.frozenBlocks.remove(block);
 				}
-				
+
 			});
-			tblock.setRevertTime(iceRevertTime + (new Random().nextInt(1000)));
-			frozenBlocks.put(block, oldBlock.getType());
-			for (Block sound : frozenBlocks.keySet()) {
+			tblock.setRevertTime(this.iceRevertTime + (new Random().nextInt(1000)));
+			this.frozenBlocks.put(block, oldBlock.getType());
+			for (final Block sound : this.frozenBlocks.keySet()) {
 				if ((new Random()).nextInt(4) == 0) {
 					playWaterbendingSound(sound.getLocation());
 				}
@@ -173,7 +173,7 @@ public class SurgeWave extends WaterAbility {
 		}
 	}
 
-	private Vector getDirection(Location location, Location destination) {
+	private Vector getDirection(final Location location, final Location destination) {
 		double x1, y1, z1;
 		double x0, y0, z0;
 
@@ -188,53 +188,52 @@ public class SurgeWave extends WaterAbility {
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
 	}
 
-	@SuppressWarnings("deprecation")
 	public void moveWater() {
-		if (bPlayer.isOnCooldown("SurgeWave")) {
+		if (this.bPlayer.isOnCooldown("SurgeWave")) {
 			return;
 		}
-		bPlayer.addCooldown("SurgeWave", cooldown);
+		this.bPlayer.addCooldown("SurgeWave", this.cooldown);
 
-		if (sourceBlock != null) {
-			if (!sourceBlock.getWorld().equals(player.getWorld())) {
+		if (this.sourceBlock != null) {
+			if (!this.sourceBlock.getWorld().equals(this.player.getWorld())) {
 				return;
 			}
 
-			range = getNightFactor(range);
-			if (bPlayer.isAvatarState()) {
-				pushFactor = AvatarState.getValue(pushFactor);
+			this.range = this.getNightFactor(this.range);
+			if (this.bPlayer.isAvatarState()) {
+				this.pushFactor = AvatarState.getValue(this.pushFactor);
 			}
 
-			Entity target = GeneralMethods.getTargetedEntity(player, range);
+			final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
 			if (target == null) {
-				targetDestination = player.getTargetBlock(getTransparentMaterialSet(), (int) range).getLocation();
+				this.targetDestination = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
 			} else {
-				targetDestination = ((LivingEntity) target).getEyeLocation();
+				this.targetDestination = ((LivingEntity) target).getEyeLocation();
 			}
 
-			if (targetDestination.distanceSquared(location) <= 1) {
-				progressing = false;
-				targetDestination = null;
+			if (this.targetDestination.distanceSquared(this.location) <= 1) {
+				this.progressing = false;
+				this.targetDestination = null;
 			} else {
-				progressing = true;
-				targetDirection = getDirection(sourceBlock.getLocation(), targetDestination).normalize();
-				targetDestination = location.clone().add(targetDirection.clone().multiply(range));
+				this.progressing = true;
+				this.targetDirection = this.getDirection(this.sourceBlock.getLocation(), this.targetDestination).normalize();
+				this.targetDestination = this.location.clone().add(this.targetDirection.clone().multiply(this.range));
 
-				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
-					new PlantRegrowth(player, sourceBlock);
-					sourceBlock.setType(Material.AIR);
+				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
+					new PlantRegrowth(this.player, this.sourceBlock);
+					this.sourceBlock.setType(Material.AIR);
 				}
-				addWater(sourceBlock);
+				this.addWater(this.sourceBlock);
 			}
 		}
 	}
 
 	public boolean prepare() {
-		cancelPrevious();
-		Block block = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
+		this.cancelPrevious();
+		final Block block = BlockSource.getWaterSourceBlock(this.player, this.selectRange, ClickType.SHIFT_DOWN, true, true, this.bPlayer.canPlantbend());
 		if (block != null && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-			sourceBlock = block;
-			focusBlock();
+			this.sourceBlock = block;
+			this.focusBlock();
 			return true;
 		}
 		return false;
@@ -242,88 +241,88 @@ public class SurgeWave extends WaterAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			this.remove();
 			return;
 		}
 
-		if (System.currentTimeMillis() - time >= interval) {
-			time = System.currentTimeMillis();
-			if (!progressing && !bPlayer.getBoundAbilityName().equals(getName())) {
-				remove();
+		if (System.currentTimeMillis() - this.time >= this.interval) {
+			this.time = System.currentTimeMillis();
+			if (!this.progressing && !this.bPlayer.getBoundAbilityName().equals(this.getName())) {
+				this.remove();
 				return;
-			} else if (!progressing) {
-				sourceBlock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
+			} else if (!this.progressing) {
+				this.sourceBlock.getWorld().playEffect(this.location, Effect.SMOKE, 4, (int) this.range);
 				return;
 			}
 
-			if (activateFreeze) {
-				if (location.distanceSquared(player.getLocation()) > range * range) {
-					progressing = false;
-					remove();
+			if (this.activateFreeze) {
+				if (this.location.distanceSquared(this.player.getLocation()) > this.range * this.range) {
+					this.progressing = false;
+					this.remove();
 					return;
 				}
 			} else {
-				Vector direction = targetDirection;
-				location = location.clone().add(direction);
-				Block blockl = location.getBlock();
-				ArrayList<Block> blocks = new ArrayList<Block>();
+				final Vector direction = this.targetDirection;
+				this.location = this.location.clone().add(direction);
+				final Block blockl = this.location.getBlock();
+				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || isWaterbendable(player, blockl))) && blockl.getType() != Material.LEAVES)) {
-					for (double i = 0; i <= currentRadius; i += .5) {
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))) && blockl.getType() != Material.LEAVES)) {
+					for (double i = 0; i <= this.currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
-							Vector vec = GeneralMethods.getOrthogonalVector(targetDirection, angle, i);
-							Block block = location.clone().add(vec).getBlock();
+							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
+							final Block block = this.location.clone().add(vec).getBlock();
 
-							if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || isWaterbendable(block)) {
+							if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || this.isWaterbendable(block)) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							}
 
 							if ((new Random()).nextInt(15) == 0) {
-								playWaterbendingSound(location);
+								playWaterbendingSound(this.location);
 							}
 						}
 					}
 				}
 
-				for (Block block : waveBlocks.keySet()) {
+				for (final Block block : this.waveBlocks.keySet()) {
 					if (!blocks.contains(block)) {
-						finalRemoveWater(block);
+						this.finalRemoveWater(block);
 					}
 				}
-				for (Block block : blocks) {
-					if (!waveBlocks.containsKey(block)) {
-						addWater(block);
+				for (final Block block : blocks) {
+					if (!this.waveBlocks.containsKey(block)) {
+						this.addWater(block);
 					}
 				}
 
-				if (waveBlocks.isEmpty()) {
-					location = location.subtract(direction);
-					remove();
-					progressing = false;
+				if (this.waveBlocks.isEmpty()) {
+					this.location = this.location.subtract(direction);
+					this.remove();
+					this.progressing = false;
 					return;
 				}
 
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * currentRadius)) {
+				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2 * this.currentRadius)) {
 					boolean knockback = false;
-					for (Block block : waveBlocks.keySet()) {
+					for (final Block block : this.waveBlocks.keySet()) {
 						if (entity.getLocation().distanceSquared(block.getLocation()) <= 4) {
-							if (entity instanceof LivingEntity && freezing && entity.getEntityId() != player.getEntityId()) {
-								activateFreeze = true;
-								frozenLocation = entity.getLocation();
-								freeze();
+							if (entity instanceof LivingEntity && this.freezing && entity.getEntityId() != this.player.getEntityId()) {
+								this.activateFreeze = true;
+								this.frozenLocation = entity.getLocation();
+								this.freeze();
 								break;
 							}
-							if (entity.getEntityId() != player.getEntityId() || canHitSelf) {
+							if (entity.getEntityId() != this.player.getEntityId() || this.canHitSelf) {
 								knockback = true;
 							}
 						}
 					}
 					if (knockback) {
-						Vector dir = direction.clone();
-						dir.setY(dir.getY() * verticalFactor);
-						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(getNightFactor(pushFactor))));
+						final Vector dir = direction.clone();
+						dir.setY(dir.getY() * this.verticalFactor);
+						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.pushFactor))));
 
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {
@@ -334,19 +333,19 @@ public class SurgeWave extends WaterAbility {
 					}
 				}
 
-				if (!progressing) {
-					remove();
+				if (!this.progressing) {
+					this.remove();
 					return;
 				}
 
-				if (location.distanceSquared(targetDestination) < 1) {
-					progressing = false;
-					remove();
-					returnWater();
+				if (this.location.distanceSquared(this.targetDestination) < 1) {
+					this.progressing = false;
+					this.remove();
+					this.returnWater();
 					return;
 				}
-				if (currentRadius < maxRadius) {
-					currentRadius += 0.5;
+				if (this.currentRadius < this.maxRadius) {
+					this.currentRadius += 0.5;
 				}
 			}
 		}
@@ -355,24 +354,24 @@ public class SurgeWave extends WaterAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		thaw();
-		returnWater();
-		if (waveBlocks != null) {
-			for (Block block : waveBlocks.keySet()) {
-				finalRemoveWater(block);
+		this.thaw();
+		this.returnWater();
+		if (this.waveBlocks != null) {
+			for (final Block block : this.waveBlocks.keySet()) {
+				this.finalRemoveWater(block);
 			}
 		}
 	}
 
 	public void returnWater() {
-		if (location != null && player.isOnline()) {
-			new WaterReturn(player, location.getBlock());
+		if (this.location != null && this.player.isOnline()) {
+			new WaterReturn(this.player, this.location.getBlock());
 		}
 	}
 
 	private void thaw() {
-		if (frozenBlocks != null) {
-			for (Block block : frozenBlocks.keySet()) {
+		if (this.frozenBlocks != null) {
+			for (final Block block : this.frozenBlocks.keySet()) {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock.get(block).revertBlock();
 				}
@@ -380,8 +379,8 @@ public class SurgeWave extends WaterAbility {
 		}
 	}
 
-	public static boolean canThaw(Block block) {
-		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
+	public static boolean canThaw(final Block block) {
+		for (final SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.frozenBlocks.containsKey(block)) {
 				return false;
 			}
@@ -390,12 +389,12 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	public static void removeAllCleanup() {
-		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
-			for (Block block : surgeWave.waveBlocks.keySet()) {
+		for (final SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
+			for (final Block block : surgeWave.waveBlocks.keySet()) {
 				block.setType(Material.AIR);
 				surgeWave.waveBlocks.remove(block);
 			}
-			for (Block block : surgeWave.frozenBlocks.keySet()) {
+			for (final Block block : surgeWave.frozenBlocks.keySet()) {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock.get(block).revertBlock();
 				}
@@ -403,8 +402,8 @@ public class SurgeWave extends WaterAbility {
 		}
 	}
 
-	public static boolean isBlockWave(Block block) {
-		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
+	public static boolean isBlockWave(final Block block) {
+		for (final SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.waveBlocks.containsKey(block)) {
 				return true;
 			}
@@ -412,11 +411,11 @@ public class SurgeWave extends WaterAbility {
 		return false;
 	}
 
-	public static void thaw(Block block) {
-		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
+	public static void thaw(final Block block) {
+		for (final SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.frozenBlocks.containsKey(block)) {
 				if (TempBlock.isTempBlock(block)) {
-					TempBlock tb = TempBlock.get(block);
+					final TempBlock tb = TempBlock.get(block);
 					tb.revertBlock();
 				}
 			}
@@ -430,17 +429,17 @@ public class SurgeWave extends WaterAbility {
 
 	@Override
 	public Location getLocation() {
-		if (location != null) {
-			return location;
-		} else if (sourceBlock != null) {
-			return sourceBlock.getLocation();
+		if (this.location != null) {
+			return this.location;
+		} else if (this.sourceBlock != null) {
+			return this.sourceBlock.getLocation();
 		}
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -455,162 +454,162 @@ public class SurgeWave extends WaterAbility {
 
 	@Override
 	public boolean isCollidable() {
-		return progressing || activateFreeze;
+		return this.progressing || this.activateFreeze;
 	}
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (Block block : waveBlocks.keySet()) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final Block block : this.waveBlocks.keySet()) {
 			locations.add(block.getLocation());
 		}
-		for (Block block : frozenBlocks.keySet()) {
+		for (final Block block : this.frozenBlocks.keySet()) {
 			locations.add(block.getLocation());
 		}
 		return locations;
 	}
 
 	public boolean isFreezing() {
-		return freezing;
+		return this.freezing;
 	}
 
-	public void setFreezing(boolean freezing) {
+	public void setFreezing(final boolean freezing) {
 		this.freezing = freezing;
 	}
 
 	public boolean isActivateFreeze() {
-		return activateFreeze;
+		return this.activateFreeze;
 	}
 
-	public void setActivateFreeze(boolean activateFreeze) {
+	public void setActivateFreeze(final boolean activateFreeze) {
 		this.activateFreeze = activateFreeze;
 	}
 
 	public boolean isProgressing() {
-		return progressing;
+		return this.progressing;
 	}
 
-	public void setProgressing(boolean progressing) {
+	public void setProgressing(final boolean progressing) {
 		this.progressing = progressing;
 	}
 
 	public boolean isCanHitSelf() {
-		return canHitSelf;
+		return this.canHitSelf;
 	}
 
-	public void setCanHitSelf(boolean canHitSelf) {
+	public void setCanHitSelf(final boolean canHitSelf) {
 		this.canHitSelf = canHitSelf;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getCurrentRadius() {
-		return currentRadius;
+		return this.currentRadius;
 	}
 
-	public void setCurrentRadius(double currentRadius) {
+	public void setCurrentRadius(final double currentRadius) {
 		this.currentRadius = currentRadius;
 	}
 
 	public double getMaxRadius() {
-		return maxRadius;
+		return this.maxRadius;
 	}
 
-	public void setMaxRadius(double maxRadius) {
+	public void setMaxRadius(final double maxRadius) {
 		this.maxRadius = maxRadius;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getPushFactor() {
-		return pushFactor;
+		return this.pushFactor;
 	}
 
-	public void setPushFactor(double pushFactor) {
+	public void setPushFactor(final double pushFactor) {
 		this.pushFactor = pushFactor;
 	}
 
 	public double getVerticalFactor() {
-		return verticalFactor;
+		return this.verticalFactor;
 	}
 
-	public void setVerticalFactor(double verticalFactor) {
+	public void setVerticalFactor(final double verticalFactor) {
 		this.verticalFactor = verticalFactor;
 	}
 
 	public double getMaxFreezeRadius() {
-		return maxFreezeRadius;
+		return this.maxFreezeRadius;
 	}
 
-	public void setMaxFreezeRadius(double maxFreezeRadius) {
+	public void setMaxFreezeRadius(final double maxFreezeRadius) {
 		this.maxFreezeRadius = maxFreezeRadius;
 	}
 
 	public Block getSourceBlock() {
-		return sourceBlock;
+		return this.sourceBlock;
 	}
 
-	public void setSourceBlock(Block sourceBlock) {
+	public void setSourceBlock(final Block sourceBlock) {
 		this.sourceBlock = sourceBlock;
 	}
 
 	public Location getTargetDestination() {
-		return targetDestination;
+		return this.targetDestination;
 	}
 
-	public void setTargetDestination(Location targetDestination) {
+	public void setTargetDestination(final Location targetDestination) {
 		this.targetDestination = targetDestination;
 	}
 
 	public Location getFrozenLocation() {
-		return frozenLocation;
+		return this.frozenLocation;
 	}
 
-	public void setFrozenLocation(Location frozenLocation) {
+	public void setFrozenLocation(final Location frozenLocation) {
 		this.frozenLocation = frozenLocation;
 	}
 
 	public Vector getTargetDirection() {
-		return targetDirection;
+		return this.targetDirection;
 	}
 
-	public void setTargetDirection(Vector targetDirection) {
+	public void setTargetDirection(final Vector targetDirection) {
 		this.targetDirection = targetDirection;
 	}
 
 	public Map<Block, Block> getWaveBlocks() {
-		return waveBlocks;
+		return this.waveBlocks;
 	}
 
 	public Map<Block, Material> getFrozenBlocks() {
-		return frozenBlocks;
+		return this.frozenBlocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

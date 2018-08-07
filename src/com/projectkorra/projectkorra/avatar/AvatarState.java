@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.avatar;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -29,14 +28,14 @@ public class AvatarState extends AvatarAbility {
 	private long cooldown;
 	private double factor;
 
-	public AvatarState(Player player) {
+	public AvatarState(final Player player) {
 		super(player);
 
-		AvatarState oldAbil = getAbility(player, AvatarState.class);
+		final AvatarState oldAbil = getAbility(player, AvatarState.class);
 		if (oldAbil != null) {
 			oldAbil.remove();
 			return;
-		} else if (bPlayer.isOnCooldown(this)) {
+		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
@@ -54,64 +53,64 @@ public class AvatarState extends AvatarAbility {
 
 		playAvatarSound(player.getLocation());
 
-		start();
-		bPlayer.addCooldown(this, true);
-		if (duration != 0) {
+		this.start();
+		this.bPlayer.addCooldown(this, true);
+		if (this.duration != 0) {
 			START_TIMES.put(player.getName(), System.currentTimeMillis());
-			final UUID id = player.getUniqueId();
+			player.getUniqueId();
 		}
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			if (player != null) {
-				if (bPlayer.isOnCooldown(this)) {
-					bPlayer.removeCooldown(this);
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			if (this.player != null) {
+				if (this.bPlayer.isOnCooldown(this)) {
+					this.bPlayer.removeCooldown(this);
 				}
 			}
-			remove();
+			this.remove();
 			return;
 		}
 
-		if (START_TIMES.containsKey(player.getName())) {
-			if (START_TIMES.get(player.getName()) + duration < System.currentTimeMillis()) {
-				START_TIMES.remove(player.getName());
-				remove();
+		if (START_TIMES.containsKey(this.player.getName())) {
+			if (START_TIMES.get(this.player.getName()) + this.duration < System.currentTimeMillis()) {
+				START_TIMES.remove(this.player.getName());
+				this.remove();
 				return;
 			}
 		}
 
-		addPotionEffects();
+		this.addPotionEffects();
 	}
 
 	private void addPotionEffects() {
-		int duration = 70;
-		if (regenEnabled) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, regenPower));
+		final int duration = 70;
+		if (this.regenEnabled) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, this.regenPower));
 		}
-		if (speedEnabled) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, speedPower));
+		if (this.speedEnabled) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, this.speedPower));
 		}
-		if (resistanceEnabled) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, resistancePower));
+		if (this.resistanceEnabled) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, this.resistancePower));
 		}
-		if (fireResistanceEnabled) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, duration, fireResistancePower));
+		if (this.fireResistanceEnabled) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, duration, this.fireResistancePower));
 		}
 	}
 
-	public static double getValue(double value) {
-		double factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
+	public static double getValue(final double value) {
+		final double factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
 		return factor * value;
 	}
 
-	public static int getValue(int value) {
+	public static int getValue(final int value) {
 		return (int) getValue((double) value);
 	}
 
-	public static double getValue(double value, Player player) {
-		AvatarState astate = getAbility(player, AvatarState.class);
+	public static double getValue(final double value, final Player player) {
+		final AvatarState astate = getAbility(player, AvatarState.class);
 		if (astate != null) {
 			return astate.getFactor() * value;
 		}
@@ -125,12 +124,12 @@ public class AvatarState extends AvatarAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -144,82 +143,82 @@ public class AvatarState extends AvatarAbility {
 	}
 
 	public boolean isRegenEnabled() {
-		return regenEnabled;
+		return this.regenEnabled;
 	}
 
-	public void setRegenEnabled(boolean regenEnabled) {
+	public void setRegenEnabled(final boolean regenEnabled) {
 		this.regenEnabled = regenEnabled;
 	}
 
 	public boolean isSpeedEnabled() {
-		return speedEnabled;
+		return this.speedEnabled;
 	}
 
-	public void setSpeedEnabled(boolean speedEnabled) {
+	public void setSpeedEnabled(final boolean speedEnabled) {
 		this.speedEnabled = speedEnabled;
 	}
 
 	public boolean isResistanceEnabled() {
-		return resistanceEnabled;
+		return this.resistanceEnabled;
 	}
 
-	public void setResistanceEnabled(boolean resistanceEnabled) {
+	public void setResistanceEnabled(final boolean resistanceEnabled) {
 		this.resistanceEnabled = resistanceEnabled;
 	}
 
 	public boolean isFireResistanceEnabled() {
-		return fireResistanceEnabled;
+		return this.fireResistanceEnabled;
 	}
 
-	public void setFireResistanceEnabled(boolean fireResistanceEnabled) {
+	public void setFireResistanceEnabled(final boolean fireResistanceEnabled) {
 		this.fireResistanceEnabled = fireResistanceEnabled;
 	}
 
 	public int getRegenPower() {
-		return regenPower;
+		return this.regenPower;
 	}
 
-	public void setRegenPower(int regenPower) {
+	public void setRegenPower(final int regenPower) {
 		this.regenPower = regenPower;
 	}
 
 	public int getSpeedPower() {
-		return speedPower;
+		return this.speedPower;
 	}
 
-	public void setSpeedPower(int speedPower) {
+	public void setSpeedPower(final int speedPower) {
 		this.speedPower = speedPower;
 	}
 
 	public int getResistancePower() {
-		return resistancePower;
+		return this.resistancePower;
 	}
 
-	public void setResistancePower(int resistancePower) {
+	public void setResistancePower(final int resistancePower) {
 		this.resistancePower = resistancePower;
 	}
 
 	public int getFireResistancePower() {
-		return fireResistancePower;
+		return this.fireResistancePower;
 	}
 
-	public void setFireResistancePower(int fireResistancePower) {
+	public void setFireResistancePower(final int fireResistancePower) {
 		this.fireResistancePower = fireResistancePower;
 	}
 
 	public long getDuration() {
-		return duration;
+		return this.duration;
 	}
 
-	public void setDuration(long duration) {
+	public void setDuration(final long duration) {
 		this.duration = duration;
 	}
 
 	public double getFactor() {
-		return factor;
+		return this.factor;
 	}
 
-	public void setFactor(double factor) {
+	public void setFactor(final double factor) {
 		this.factor = factor;
 	}
 
@@ -227,7 +226,7 @@ public class AvatarState extends AvatarAbility {
 		return START_TIMES;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

@@ -22,13 +22,12 @@ public class DamageHandler {
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a
 	 * {@link EntityDamageByEntityEvent}.
-	 * 
+	 *
 	 * @param ability The ability that is used to damage the entity
 	 * @param entity The entity that is receiving the damage
 	 * @param damage The amount of damage to deal
 	 */
-	@SuppressWarnings("deprecation")
-	public static void damageEntity(Entity entity, Player source, double damage, Ability ability, boolean ignoreArmor) {
+	public static void damageEntity(final Entity entity, Player source, double damage, final Ability ability, boolean ignoreArmor) {
 		if (TempArmor.hasTempArmor((LivingEntity) entity)) {
 			ignoreArmor = true;
 		}
@@ -39,7 +38,7 @@ public class DamageHandler {
 			source = ability.getPlayer();
 		}
 
-		AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage, ignoreArmor);
+		final AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage, ignoreArmor);
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player && Commands.invincible.contains(entity.getName())) {
@@ -57,14 +56,14 @@ public class DamageHandler {
 				}
 
 				if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
-					EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, damage, ability);
+					final EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, damage, ability);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
 
-				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, DamageCause.CUSTOM, damage);
-				double prevHealth = ((LivingEntity) entity).getHealth();
+				final EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, DamageCause.CUSTOM, damage);
+				final double prevHealth = ((LivingEntity) entity).getHealth();
 				((LivingEntity) entity).damage(damage, source);
-				double nextHealth = ((LivingEntity) entity).getHealth();
+				final double nextHealth = ((LivingEntity) entity).getHealth();
 				entity.setLastDamageCause(finalEvent);
 				if (ignoreArmor) {
 					if (finalEvent.isApplicable(DamageModifier.ARMOR)) {
@@ -92,11 +91,11 @@ public class DamageHandler {
 
 	}
 
-	public static void damageEntity(Entity entity, Player source, double damage, Ability ability) {
+	public static void damageEntity(final Entity entity, final Player source, final double damage, final Ability ability) {
 		damageEntity(entity, source, damage, ability, true);
 	}
 
-	public static void damageEntity(Entity entity, double damage, Ability ability) {
+	public static void damageEntity(final Entity entity, final double damage, final Ability ability) {
 		damageEntity(entity, ability.getPlayer(), damage, ability);
 	}
 }

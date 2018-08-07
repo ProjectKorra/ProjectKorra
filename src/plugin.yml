@@ -54,7 +54,7 @@ permissions:
       bending.command.clear: true
       bending.command.who: true
       bending.command.preset.list: true
-      bending.command.preset.create.2: true
+      bending.command.preset.create.5: true
       bending.command.preset.create: true
       bending.command.preset.bind: true
       bending.command.preset.delete: true

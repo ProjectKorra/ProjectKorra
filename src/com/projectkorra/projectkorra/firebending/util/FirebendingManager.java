@@ -8,10 +8,11 @@ public class FirebendingManager implements Runnable {
 
 	public ProjectKorra plugin;
 
-	public FirebendingManager(ProjectKorra plugin) {
+	public FirebendingManager(final ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
 
+	@Override
 	public void run() {
 		BlazeArc.handleDissipation();
 		FireDamageTimer.handleFlames();

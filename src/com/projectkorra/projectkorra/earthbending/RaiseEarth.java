@@ -34,59 +34,59 @@ public class RaiseEarth extends EarthAbility {
 	private Location location;
 	private ConcurrentHashMap<Block, Block> affectedBlocks;
 
-	public RaiseEarth(Player player) {
+	public RaiseEarth(final Player player) {
 		super(player);
-		setFields();
+		this.setFields();
 
-		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("RaiseEarthPillar")) {
+		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("RaiseEarthPillar")) {
 			return;
 		}
 
 		try {
-			if (bPlayer.isAvatarState()) {
-				height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height");
+			if (this.bPlayer.isAvatarState()) {
+				this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height");
 			}
-			block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
-			if (block == null) {
+			this.block = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK);
+			if (this.block == null) {
 				return;
 			}
 
-			origin = block.getLocation();
-			location = origin.clone();
-			distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
+			this.origin = this.block.getLocation();
+			this.location = this.origin.clone();
+			this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), this.height);
 		}
-		catch (IllegalStateException e) {
+		catch (final IllegalStateException e) {
 			return;
 		}
 
-		loadAffectedBlocks();
+		this.loadAffectedBlocks();
 
-		if (distance != 0 && canInstantiate()) {
-			bPlayer.addCooldown("RaiseEarthPillar", cooldown);
-			time = System.currentTimeMillis() - interval;
-			start();
+		if (this.distance != 0 && this.canInstantiate()) {
+			this.bPlayer.addCooldown("RaiseEarthPillar", this.cooldown);
+			this.time = System.currentTimeMillis() - this.interval;
+			this.start();
 		}
 	}
 
-	public RaiseEarth(Player player, Location origin) {
+	public RaiseEarth(final Player player, final Location origin) {
 		this(player, origin, ConfigManager.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height"));
 	}
 
-	public RaiseEarth(Player player, Location origin, int height) {
+	public RaiseEarth(final Player player, final Location origin, final int height) {
 		super(player);
-		setFields();
+		this.setFields();
 
 		this.height = height;
 		this.origin = origin;
 		this.location = origin.clone();
-		this.block = location.getBlock();
-		this.distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
+		this.block = this.location.getBlock();
+		this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), height);
 
-		loadAffectedBlocks();
+		this.loadAffectedBlocks();
 
-		if (distance != 0 && canInstantiate()) {
-			time = System.currentTimeMillis() - interval;
-			start();
+		if (this.distance != 0 && this.canInstantiate()) {
+			this.time = System.currentTimeMillis() - this.interval;
+			this.start();
 		}
 	}
 
@@ -96,17 +96,17 @@ public class RaiseEarth extends EarthAbility {
 		this.selectRange = getConfig().getDouble("Abilities.Earth.RaiseEarth.Column.SelectRange");
 		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Column.Cooldown");
 		this.direction = new Vector(0, 1, 0);
-		this.interval = (long) (1000.0 / speed);
+		this.interval = (long) (1000.0 / this.speed);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 	}
 
 	private boolean canInstantiate() {
-		if (location.getBlock().getRelative(BlockFace.UP).getType() == Material.STATIONARY_LAVA) {
+		if (this.location.getBlock().getRelative(BlockFace.UP).getType() == Material.STATIONARY_LAVA) {
 			return false;
 		}
 
-		for (Block block : affectedBlocks.keySet()) {
-			if (!isEarthbendable(block) || ALL_AFFECTED_BLOCKS.containsKey(block)) {
+		for (final Block block : this.affectedBlocks.keySet()) {
+			if (!this.isEarthbendable(block) || ALL_AFFECTED_BLOCKS.containsKey(block)) {
 				return false;
 			}
 		}
@@ -114,11 +114,11 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	private void loadAffectedBlocks() {
-		affectedBlocks.clear();
+		this.affectedBlocks.clear();
 		Block thisBlock;
-		for (int i = 0; i <= distance; i++) {
-			thisBlock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(-i)));
-			affectedBlocks.put(thisBlock, thisBlock);
+		for (int i = 0; i <= this.distance; i++) {
+			thisBlock = this.block.getWorld().getBlockAt(this.location.clone().add(this.direction.clone().multiply(-i)));
+			this.affectedBlocks.put(thisBlock, thisBlock);
 			if (Collapse.blockInAllAffectedBlocks(thisBlock)) {
 				Collapse.revert(thisBlock);
 			}
@@ -127,30 +127,30 @@ public class RaiseEarth extends EarthAbility {
 
 	@Override
 	public void progress() {
-		if (System.currentTimeMillis() - time >= interval) {
-			time = System.currentTimeMillis();
-			Block block = location.getBlock();
-			location = location.add(direction);
+		if (System.currentTimeMillis() - this.time >= this.interval) {
+			this.time = System.currentTimeMillis();
+			final Block block = this.location.getBlock();
+			this.location = this.location.add(this.direction);
 			if (!block.isLiquid()) {
-				moveEarth(block, direction, distance);
+				this.moveEarth(block, this.direction, this.distance);
 			}
 
-			loadAffectedBlocks();
+			this.loadAffectedBlocks();
 
-			if (location.distanceSquared(origin) >= distance * distance) {
-				remove();
+			if (this.location.distanceSquared(this.origin) >= this.distance * this.distance) {
+				this.remove();
 				return;
 			}
 		}
 	}
 
-	public static boolean blockInAllAffectedBlocks(Block block) {
+	public static boolean blockInAllAffectedBlocks(final Block block) {
 		return ALL_AFFECTED_BLOCKS.containsKey(block);
 	}
 
-	public static void revertAffectedBlock(Block block) {
+	public static void revertAffectedBlock(final Block block) {
 		ALL_AFFECTED_BLOCKS.remove(block);
-		for (RaiseEarth raiseEarth : getAbilities(RaiseEarth.class)) {
+		for (final RaiseEarth raiseEarth : getAbilities(RaiseEarth.class)) {
 			raiseEarth.affectedBlocks.remove(block);
 		}
 	}
@@ -162,12 +162,12 @@ public class RaiseEarth extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -182,94 +182,94 @@ public class RaiseEarth extends EarthAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (Block block : affectedBlocks.values()) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final Block block : this.affectedBlocks.values()) {
 			locations.add(block.getLocation());
 		}
 		return locations;
 	}
 
 	public int getDistance() {
-		return distance;
+		return this.distance;
 	}
 
-	public void setDistance(int distance) {
+	public void setDistance(final int distance) {
 		this.distance = distance;
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(final int height) {
 		this.height = height;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(final double speed) {
 		this.speed = speed;
 	}
 
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 
-	public void setBlock(Block block) {
+	public void setBlock(final Block block) {
 		this.block = block;
 	}
 
 	public Vector getDirection() {
-		return direction;
+		return this.direction;
 	}
 
-	public void setDirection(Vector direction) {
+	public void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public ConcurrentHashMap<Block, Block> getAffectedBlocks() {
-		return affectedBlocks;
+		return this.affectedBlocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
 	public double getSelectRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setSelectRange(double selectRange) {
+	public void setSelectRange(final double selectRange) {
 		this.selectRange = selectRange;
 	}
 

@@ -22,11 +22,11 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	private double speed;
 	private ArrayList<FireComboStream> tasks;
 	private long duration;
-	
-	public JetBlast(Player player) {
+
+	public JetBlast(final Player player) {
 		super(player);
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
@@ -38,21 +38,21 @@ public class JetBlast extends FireAbility implements ComboAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlast.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Fire.JetBlast.Duration");
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 		}
-		
-		start();
+
+		this.start();
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
+	public Object createNewComboInstance(final Player player) {
 		return new JetBlast(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		ArrayList<AbilityInformation> jetBlast = new ArrayList<>();
+		final ArrayList<AbilityInformation> jetBlast = new ArrayList<>();
 		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
 		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
 		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
@@ -65,34 +65,34 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
-		if (System.currentTimeMillis() - time > duration) {
-			remove();
+		if (System.currentTimeMillis() - this.time > this.duration) {
+			this.remove();
 			return;
-		} else if (hasAbility(player, FireJet.class)) {
-			if (firstTime) {
-				if (bPlayer.isOnCooldown("JetBlast") && !bPlayer.isAvatarState()) {
-					remove();
+		} else if (hasAbility(this.player, FireJet.class)) {
+			if (this.firstTime) {
+				if (this.bPlayer.isOnCooldown("JetBlast") && !this.bPlayer.isAvatarState()) {
+					this.remove();
 					return;
 				}
 
-				bPlayer.addCooldown("JetBlast", cooldown);
-				firstTime = false;
-				float spread = 0F;
-				ParticleEffect.LARGE_EXPLODE.display(player.getLocation(), spread, spread, spread, 0, 1);
-				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
+				this.bPlayer.addCooldown("JetBlast", this.cooldown);
+				this.firstTime = false;
+				final float spread = 0F;
+				ParticleEffect.LARGE_EXPLODE.display(this.player.getLocation(), spread, spread, spread, 0, 1);
+				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
 			}
-			FireJet fj = getAbility(player, FireJet.class);
-			fj.setSpeed(speed);
-			fj.setDuration(duration);
-			
-			FireComboStream fs = new FireComboStream(player, this, player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5);
+			final FireJet fj = getAbility(this.player, FireJet.class);
+			fj.setSpeed(this.speed);
+			fj.setDuration(this.duration);
+
+			final FireComboStream fs = new FireComboStream(this.player, this, this.player.getVelocity().clone().multiply(-1), this.player.getLocation(), 3, 0.5);
 
 			fs.setDensity(1);
 			fs.setSpread(0.9F);
 			fs.setUseNewParticles(true);
 			fs.setCollides(false);
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
-			tasks.add(fs);
+			this.tasks.add(fs);
 		}
 	}
 
@@ -103,7 +103,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -113,14 +113,14 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	@Override
 	public Location getLocation() {
-		return player.getLocation();
+		return this.player.getLocation();
 	}
 
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public String getInstructions() {
 		return "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet";

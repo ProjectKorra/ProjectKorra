@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 
 public class Extraction extends MetalAbility {
@@ -21,7 +20,7 @@ public class Extraction extends MetalAbility {
 	private long cooldown;
 	private Block originBlock;
 
-	public Extraction(Player player) {
+	public Extraction(final Player player) {
 		super(player);
 
 		this.doubleChance = getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
@@ -29,33 +28,33 @@ public class Extraction extends MetalAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
 		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
 
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 
-		originBlock = player.getTargetBlock((HashSet<Material>) null, selectRange);
-		if (originBlock == null) {
+		this.originBlock = player.getTargetBlock((HashSet<Material>) null, this.selectRange);
+		if (this.originBlock == null) {
 			return;
 		}
 
-		if (!GeneralMethods.isRegionProtectedFromBuild(this, originBlock.getLocation())) {
-			Material material = originBlock.getType();
+		if (!GeneralMethods.isRegionProtectedFromBuild(this, this.originBlock.getLocation())) {
+			final Material material = this.originBlock.getType();
 			Material type = null;
 
 			switch (material) {
 				case IRON_ORE:
-					originBlock.setType(Material.STONE);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount()));
+					this.originBlock.setType(Material.STONE);
+					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, this.getAmount()));
 					type = Material.STONE;
 					break;
 				case GOLD_ORE:
-					originBlock.setType(Material.STONE);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount()));
+					this.originBlock.setType(Material.STONE);
+					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, this.getAmount()));
 					type = Material.STONE;
 					break;
 				case QUARTZ_ORE:
-					originBlock.setType(Material.NETHERRACK);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount()));
+					this.originBlock.setType(Material.NETHERRACK);
+					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, this.getAmount()));
 					type = Material.NETHERRACK;
 					break;
 				default:
@@ -64,26 +63,26 @@ public class Extraction extends MetalAbility {
 
 			if (type != null) {
 				/*
-				* Update the block from Methods.movedearth to Stone
-				* otherwise players can use RaiseEarth > Extraction >
-				* Collapse to dupe the material from the block.
-				*/
-				if (getMovedEarth().containsKey(originBlock)) {
-					getMovedEarth().remove(originBlock);
+				 * Update the block from Methods.movedearth to Stone otherwise
+				 * players can use RaiseEarth > Extraction > Collapse to dupe
+				 * the material from the block.
+				 */
+				if (getMovedEarth().containsKey(this.originBlock)) {
+					getMovedEarth().remove(this.originBlock);
 				}
 			}
 
-			playMetalbendingSound(originBlock.getLocation());
-			start();
-			bPlayer.addCooldown(this);
-			remove();
+			playMetalbendingSound(this.originBlock.getLocation());
+			this.start();
+			this.bPlayer.addCooldown(this);
+			this.remove();
 		}
 
 	}
 
 	private int getAmount() {
-		Random rand = new Random();
-		return rand.nextInt(99) + 1 <= tripleChance ? 3 : rand.nextInt(99) + 1 <= doubleChance ? 2 : 1;
+		final Random rand = new Random();
+		return rand.nextInt(99) + 1 <= this.tripleChance ? 3 : rand.nextInt(99) + 1 <= this.doubleChance ? 2 : 1;
 	}
 
 	@Override
@@ -97,17 +96,17 @@ public class Extraction extends MetalAbility {
 
 	@Override
 	public Location getLocation() {
-		if (originBlock != null) {
-			return originBlock.getLocation();
-		} else if (player != null) {
-			return player.getLocation();
+		if (this.originBlock != null) {
+			return this.originBlock.getLocation();
+		} else if (this.player != null) {
+			return this.player.getLocation();
 		}
 		return null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -121,38 +120,38 @@ public class Extraction extends MetalAbility {
 	}
 
 	public int getDoubleChance() {
-		return doubleChance;
+		return this.doubleChance;
 	}
 
-	public void setDoubleChance(int doubleChance) {
+	public void setDoubleChance(final int doubleChance) {
 		this.doubleChance = doubleChance;
 	}
 
 	public int getTripleChance() {
-		return tripleChance;
+		return this.tripleChance;
 	}
 
-	public void setTripleChance(int tripleChance) {
+	public void setTripleChance(final int tripleChance) {
 		this.tripleChance = tripleChance;
 	}
 
 	public int getSelectRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setSelectRange(int selectRange) {
+	public void setSelectRange(final int selectRange) {
 		this.selectRange = selectRange;
 	}
 
 	public Block getOriginBlock() {
-		return originBlock;
+		return this.originBlock;
 	}
 
-	public void setOriginBlock(Block originBlock) {
+	public void setOriginBlock(final Block originBlock) {
 		this.originBlock = originBlock;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

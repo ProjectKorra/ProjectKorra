@@ -31,10 +31,10 @@ public class StatsCommand extends PKCommand {
 	private static final String[] getaliases = { "get", "g" };
 	private static final String[] leaderboardaliases = { "leaderboard", "lb", "l" };
 
-	private String invalidLookup;
-	private String invalidSearchType;
-	private String invalidStatistic;
-	private String invalidPlayer;
+	private final String invalidLookup;
+	private final String invalidSearchType;
+	private final String invalidStatistic;
+	private final String invalidPlayer;
 
 	public StatsCommand() {
 		super("stats", "/bending stats <get/leaderboard> <ability/element/all> <statistic> [player/page]", ConfigManager.languageConfig.get().getString("Commands.Stats.Description"), new String[] { "statistics", "stats" });
@@ -46,30 +46,30 @@ public class StatsCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
-		if (!correctLength(sender, args.size(), 3, 4)) {
+	public void execute(final CommandSender sender, final List<String> args) {
+		if (!this.correctLength(sender, args.size(), 3, 4)) {
 			return;
 		}
-		CoreAbility ability = CoreAbility.getAbility(args.get(1));
-		Element element = Element.getElement(args.get(1));
+		final CoreAbility ability = CoreAbility.getAbility(args.get(1));
+		final Element element = Element.getElement(args.get(1));
 		Object object = null;
 		if (ability != null) {
 			object = ability;
 		} else if (element != null) {
 			object = element;
 		}
-		Statistic statistic = Statistic.getStatistic(args.get(2));
+		final Statistic statistic = Statistic.getStatistic(args.get(2));
 
-		boolean containsGet = contains(args.get(0), Arrays.asList(getaliases));
-		boolean containsLeaderboard = contains(args.get(0), Arrays.asList(leaderboardaliases));
+		final boolean containsGet = this.contains(args.get(0), Arrays.asList(getaliases));
+		final boolean containsLeaderboard = this.contains(args.get(0), Arrays.asList(leaderboardaliases));
 		if (!containsGet && !containsLeaderboard) {
-			GeneralMethods.sendBrandingMessage(sender, invalidLookup);
+			GeneralMethods.sendBrandingMessage(sender, this.invalidLookup);
 			return;
 		} else if (object == null && !args.get(1).equalsIgnoreCase("all")) {
-			GeneralMethods.sendBrandingMessage(sender, invalidSearchType);
+			GeneralMethods.sendBrandingMessage(sender, this.invalidSearchType);
 			return;
 		} else if (statistic == null) {
-			GeneralMethods.sendBrandingMessage(sender, invalidStatistic);
+			GeneralMethods.sendBrandingMessage(sender, this.invalidStatistic);
 			return;
 		}
 		if (containsGet) {
@@ -77,17 +77,17 @@ public class StatsCommand extends PKCommand {
 			if (args.size() == 4) {
 				target = ProjectKorra.plugin.getServer().getPlayer(args.get(3));
 				if (target == null) {
-					GeneralMethods.sendBrandingMessage(sender, invalidPlayer.replace("%player%", args.get(3)));
+					GeneralMethods.sendBrandingMessage(sender, this.invalidPlayer.replace("%player%", args.get(3)));
 					return;
 				}
 			} else {
-				if (isPlayer(sender)) {
+				if (this.isPlayer(sender)) {
 					target = (Player) sender;
 				} else {
 					return;
 				}
 			}
-			String message = getTarget(object, statistic, target);
+			final String message = this.getTarget(object, statistic, target);
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', message));
 		} else if (containsLeaderboard) {
 			int page = 1;
@@ -96,13 +96,13 @@ public class StatsCommand extends PKCommand {
 			}
 			catch (IndexOutOfBoundsException | NumberFormatException e) {
 			}
-			Object o = object;
-			int p = page;
+			final Object o = object;
+			final int p = page;
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					List<String> messages = getLeaderboard(sender, o, statistic, p);
-					for (String message : messages) {
+					final List<String> messages = StatsCommand.this.getLeaderboard(sender, o, statistic, p);
+					for (final String message : messages) {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 					}
 				}
@@ -110,8 +110,8 @@ public class StatsCommand extends PKCommand {
 		}
 	}
 
-	public boolean contains(String s, List<String> l) {
-		for (String string : l) {
+	public boolean contains(final String s, final List<String> l) {
+		for (final String string : l) {
 			if (string.equalsIgnoreCase(s)) {
 				return true;
 			}
@@ -119,7 +119,7 @@ public class StatsCommand extends PKCommand {
 		return false;
 	}
 
-	public String getTarget(Object object, Statistic statistic, Player target) {
+	public String getTarget(final Object object, final Statistic statistic, final Player target) {
 		String message = "&8- &f%object% " + statistic.getDisplayName() + " &e%player%: " + "&f%value%";
 		long value = 0;
 		if (object == null) {
@@ -128,10 +128,10 @@ public class StatsCommand extends PKCommand {
 			value = StatisticsMethods.getStatistic(target.getUniqueId(), object, statistic);
 		}
 		if (object instanceof CoreAbility) {
-			CoreAbility ability = (CoreAbility) object;
+			final CoreAbility ability = (CoreAbility) object;
 			message = message.replace("%object%", ability.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
 		} else if (object instanceof Element) {
-			Element element = (Element) object;
+			final Element element = (Element) object;
 			message = message.replace("%object%", element.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
 		} else {
 			message = message.replace("%object%", "Total").replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
@@ -139,29 +139,29 @@ public class StatsCommand extends PKCommand {
 		return message;
 	}
 
-	public List<String> getLeaderboard(CommandSender sender, Object object, Statistic statistic, int page) {
+	public List<String> getLeaderboard(final CommandSender sender, final Object object, final Statistic statistic, final int page) {
 		final List<String> messages = new ArrayList<>();
-		List<UUID> uuids = pullUUIDs(statistic, object);
-		int maxPage = (uuids.size() / 10) + 1;
+		final List<UUID> uuids = this.pullUUIDs(statistic, object);
+		final int maxPage = (uuids.size() / 10) + 1;
 		int p = page > maxPage ? maxPage : page;
 		p = p < 1 ? 1 : p;
 		String title = "%object% " + statistic.getDisplayName() + " Leaderboard";
 		if (object instanceof CoreAbility) {
-			CoreAbility ability = (CoreAbility) object;
+			final CoreAbility ability = (CoreAbility) object;
 			title = title.replace("%object%", ability.getName());
 		} else if (object instanceof Element) {
-			Element element = (Element) object;
+			final Element element = (Element) object;
 			title = title.replace("%object%", element.getName());
 		} else {
 			title = title.replace("%object%", "Total");
 		}
 		GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', "&8- &f" + title + " &8- [&7" + p + "/" + maxPage + "&8]"));
-		int maxIndex = (10 * p) - 1;
-		int minIndex = maxIndex - 9;
+		final int maxIndex = (10 * p) - 1;
+		final int minIndex = maxIndex - 9;
 		try {
 			uuids.get(minIndex);
 		}
-		catch (IndexOutOfBoundsException e) {
+		catch (final IndexOutOfBoundsException e) {
 			messages.add("&7No statistics found.");
 			return messages;
 		}
@@ -169,28 +169,28 @@ public class StatsCommand extends PKCommand {
 			if (index < 0 || index >= uuids.size()) {
 				break;
 			}
-			UUID uuid = uuids.get(index);
+			final UUID uuid = uuids.get(index);
 			long value = 0;
 			if (object == null) {
 				value = StatisticsMethods.getStatisticTotal(uuid, statistic);
 			} else {
 				value = StatisticsMethods.getStatistic(uuid, object, statistic);
 			}
-			OfflinePlayer oPlayer = ProjectKorra.plugin.getServer().getOfflinePlayer(uuid);
+			final OfflinePlayer oPlayer = ProjectKorra.plugin.getServer().getOfflinePlayer(uuid);
 			messages.add("&7" + (index + 1) + ") &e" + oPlayer.getName() + " &f" + value);
 		}
 		return messages;
 	}
 
-	public List<UUID> pullUUIDs(Statistic statistic) {
-		return pullUUIDs(statistic, null);
+	public List<UUID> pullUUIDs(final Statistic statistic) {
+		return this.pullUUIDs(statistic, null);
 	}
 
-	public List<UUID> pullUUIDs(Statistic statistic, Object object) {
-		Set<UUID> uuids = new HashSet<>();
+	public List<UUID> pullUUIDs(final Statistic statistic, final Object object) {
+		final Set<UUID> uuids = new HashSet<>();
 		try (ResultSet rs = DBConnection.sql.readQuery("SELECT uuid FROM pk_stats")) {
 			while (rs.next()) {
-				UUID uuid = UUID.fromString(rs.getString("uuid"));
+				final UUID uuid = UUID.fromString(rs.getString("uuid"));
 				if (object == null) {
 					if (StatisticsMethods.getStatisticTotal(uuid, statistic) > 0) {
 						uuids.add(uuid);
@@ -202,11 +202,11 @@ public class StatsCommand extends PKCommand {
 				}
 			}
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
-		for (Player player : ProjectKorra.plugin.getServer().getOnlinePlayers()) {
-			UUID uuid = player.getUniqueId();
+		for (final Player player : ProjectKorra.plugin.getServer().getOnlinePlayers()) {
+			final UUID uuid = player.getUniqueId();
 			if (object == null) {
 				if (StatisticsMethods.getStatisticTotal(uuid, statistic) > 0) {
 					uuids.add(uuid);
@@ -217,10 +217,10 @@ public class StatsCommand extends PKCommand {
 				}
 			}
 		}
-		List<UUID> list = new ArrayList<>(uuids);
+		final List<UUID> list = new ArrayList<>(uuids);
 		Collections.sort(list, new Comparator<UUID>() {
 			@Override
-			public int compare(UUID u1, UUID u2) {
+			public int compare(final UUID u1, final UUID u2) {
 				long value1 = 0;
 				long value2 = 0;
 				if (object == null) {
