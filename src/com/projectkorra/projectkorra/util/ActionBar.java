@@ -32,7 +32,7 @@ public class ActionBar {
 			sendPacket = ReflectionHandler.getMethod(playerConnection.getType(), "sendPacket", PackageType.MINECRAFT_SERVER.getClass("Packet"));
 			initialised = true;
 		}
-		catch (ReflectiveOperationException e) {
+		catch (final ReflectiveOperationException e) {
 			initialised = false;
 		}
 	}
@@ -41,31 +41,31 @@ public class ActionBar {
 		return initialised;
 	}
 
-	public static boolean sendActionBar(String message, Player... player) {
+	public static boolean sendActionBar(final String message, final Player... player) {
 		if (!initialised) {
 			return false;
 		}
 		try {
-			Object o = chatSer.newInstance(message);
+			final Object o = chatSer.newInstance(message);
 			Object packet;
 			if (version >= 12) {
 				packet = packetChat.newInstance(o, PackageType.MINECRAFT_SERVER.getClass("ChatMessageType").getEnumConstants()[2]);
 			} else {
-				packet = packetChat.newInstance(o, (byte)2);
+				packet = packetChat.newInstance(o, (byte) 2);
 			}
 			sendTo(packet, player);
 		}
-		catch (ReflectiveOperationException e) {
+		catch (final ReflectiveOperationException e) {
 			e.printStackTrace();
 			initialised = false;
 		}
 		return initialised;
 	}
 
-	private static void sendTo(Object packet, Player... player) throws ReflectiveOperationException {
-		for (Player p : player) {
-			Object entityplayer = getHandle.invoke(p);
-			Object PlayerConnection = playerConnection.get(entityplayer);
+	private static void sendTo(final Object packet, final Player... player) throws ReflectiveOperationException {
+		for (final Player p : player) {
+			final Object entityplayer = getHandle.invoke(p);
+			final Object PlayerConnection = playerConnection.get(entityplayer);
 			sendPacket.invoke(PlayerConnection, packet);
 		}
 	}

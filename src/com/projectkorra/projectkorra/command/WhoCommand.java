@@ -40,47 +40,47 @@ public class WhoCommand extends PKCommand {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	final Map<String, String> staff = new HashMap<String, String>(),
-			playerInfoWords = new HashMap<String, String>();
+	final Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
 
-	private String databaseOverload, noPlayersOnline, playerOffline;
+	private final String databaseOverload, noPlayersOnline, playerOffline;
 
 	public WhoCommand() {
 		super("who", "/bending who [Page/Player]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
 
-		databaseOverload = ConfigManager.languageConfig.get().getString("Commands.Who.DatabaseOverload");
-		noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
-		playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
+		this.databaseOverload = ConfigManager.languageConfig.get().getString("Commands.Who.DatabaseOverload");
+		this.noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
+		this.playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
 
 		new BukkitRunnable() {
+			@Override
 			public void run() {
-				Map<String, String> updatedstaff = new HashMap<String, String>();
+				final Map<String, String> updatedstaff = new HashMap<String, String>();
 				try {
 
-					// Create a URL for the desired page
-					URLConnection url = new URL("https://projectkorra.com/staff.txt").openConnection();
+					// Create a URL for the desired page.
+					final URLConnection url = new URL("https://projectkorra.com/staff.txt").openConnection();
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 
-					// Read all the text returned by the server
-					BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), Charset.forName("UTF-8")));
+					// Read all the text returned by the server.
+					final BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), Charset.forName("UTF-8")));
 					String unparsed;
 					while ((unparsed = in.readLine()) != null) {
-						String[] staffEntry = unparsed.split("/");
+						final String[] staffEntry = unparsed.split("/");
 						if (staffEntry.length >= 2) {
 							updatedstaff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
 						}
 					}
 					in.close();
-					staff.clear();
-					staff.putAll(updatedstaff);
+					WhoCommand.this.staff.clear();
+					WhoCommand.this.staff.putAll(updatedstaff);
 				}
-				catch (SocketException e) {
+				catch (final SocketException e) {
 					ProjectKorra.log.info("Could not update staff list.");
 				}
-				catch (MalformedURLException e) {
+				catch (final MalformedURLException e) {
 					e.printStackTrace();
 				}
-				catch (IOException e) {
+				catch (final IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -88,19 +88,19 @@ public class WhoCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
+	public void execute(final CommandSender sender, final List<String> args) {
+		if (!this.hasPermission(sender) || !this.correctLength(sender, args.size(), 0, 1)) {
 			return;
 		} else if (args.size() == 1 && args.get(0).length() > 2) {
-			whoPlayer(sender, args.get(0));
+			this.whoPlayer(sender, args.get(0));
 		} else if (args.size() == 0 || args.size() == 1) {
 			int page = 1;
-			if (args.size() == 1 && isNumeric(args.get(0))) {
+			if (args.size() == 1 && this.isNumeric(args.get(0))) {
 				page = Integer.valueOf(args.get(0));
 			}
-			List<String> players = new ArrayList<String>();
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				String playerName = player.getName();
+			final List<String> players = new ArrayList<String>();
+			for (final Player player : Bukkit.getOnlinePlayers()) {
+				final String playerName = player.getName();
 				String result = "";
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
 
@@ -108,18 +108,18 @@ public class WhoCommand extends PKCommand {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 					bp = BendingPlayer.getBendingPlayer(player.getName());
 				}
-				for (Element element : bp.getElements()) {
+				for (final Element element : bp.getElements()) {
 					if (result == "") {
 						result = ChatColor.WHITE + playerName + " - " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
 					} else {
 						result = result + ChatColor.WHITE + " | " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
 					}
 				}
-				if (staff.containsKey(player.getUniqueId().toString())) {
+				if (this.staff.containsKey(player.getUniqueId().toString())) {
 					if (result == "") {
-						result = ChatColor.WHITE + playerName + " | " + staff.get(player.getUniqueId().toString());
+						result = ChatColor.WHITE + playerName + " | " + this.staff.get(player.getUniqueId().toString());
 					} else {
-						result = result + ChatColor.WHITE + " | " + staff.get(player.getUniqueId().toString());
+						result = result + ChatColor.WHITE + " | " + this.staff.get(player.getUniqueId().toString());
 					}
 				}
 				if (result == "") {
@@ -128,11 +128,11 @@ public class WhoCommand extends PKCommand {
 				players.add(result);
 			}
 			if (players.isEmpty()) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + noPlayersOnline);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noPlayersOnline);
 			} else {
 				boolean firstMessage = true;
 
-				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
+				for (final String s : this.getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					if (firstMessage) {
 						GeneralMethods.sendBrandingMessage(sender, s);
 						firstMessage = false;
@@ -146,48 +146,46 @@ public class WhoCommand extends PKCommand {
 
 	/**
 	 * Sends information on the given player to the CommandSender.
-	 * 
+	 *
 	 * @param sender The CommandSender to display the information to
 	 * @param playerName The Player to look up
 	 */
 	private void whoPlayer(final CommandSender sender, final String playerName) {
-		//Player player = Bukkit.getPlayer(playerName);
-		@SuppressWarnings("deprecation")
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 		if (player == null || !player.hasPlayedBefore() && !player.isOnline()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + "Player not found!");
 			return;
 		}
 		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + this.playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
 		}
 
-		Player player_ = (Player) (player.isOnline() ? player : null);
+		final Player player_ = (Player) (player.isOnline() ? player : null);
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
-			BukkitRunnable runnable = new BukkitRunnable() {
+			final BukkitRunnable runnable = new BukkitRunnable() {
 				@Override
 				public void run() {
 					int count = 0;
 					final long delay = 200L;
 					while (!BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-						if (count > 5 * (1000 / delay)) { //After 5 seconds of waiting, tell the user the database is busy and to try again in a few seconds.
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + databaseOverload);
+						if (count > 5 * (1000 / delay)) { // After 5 seconds of waiting, tell the user the database is busy and to try again in a few seconds.
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + WhoCommand.this.databaseOverload);
 							break;
 						}
 						count++;
 						try {
 							Thread.sleep(delay);
 						}
-						catch (InterruptedException e) {
+						catch (final InterruptedException e) {
 							e.printStackTrace();
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + databaseOverload);
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + WhoCommand.this.databaseOverload);
 							break;
 						}
 					}
-					whoPlayer(sender, playerName);
+					WhoCommand.this.whoPlayer(sender, playerName);
 				}
 			};
 			runnable.runTaskAsynchronously(ProjectKorra.plugin);
@@ -211,7 +209,7 @@ public class WhoCommand extends PKCommand {
 					if (bPlayer.canUseSpiritualProjection()) {
 						sender.sendMessage(Element.SPIRITUAL.getColor() + "    Can use Spiritual Projection");
 					}
-					for (SubElement se : Element.getAddonSubElements(Element.AIR)) {
+					for (final SubElement se : Element.getAddonSubElements(Element.AIR)) {
 						if (bPlayer.canUseSubElement(se)) {
 							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
 						}
@@ -243,7 +241,7 @@ public class WhoCommand extends PKCommand {
 					if (bPlayer.canWaterHeal()) {
 						sender.sendMessage(Element.HEALING.getColor() + "    Can Heal");
 					}
-					for (SubElement se : Element.getAddonSubElements(Element.WATER)) {
+					for (final SubElement se : Element.getAddonSubElements(Element.WATER)) {
 						if (bPlayer.canUseSubElement(se)) {
 							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
 						}
@@ -268,7 +266,7 @@ public class WhoCommand extends PKCommand {
 					if (bPlayer.canSandbend()) {
 						sender.sendMessage(Element.SAND.getColor() + "    Can Sandbend");
 					}
-					for (SubElement se : Element.getAddonSubElements(Element.EARTH)) {
+					for (final SubElement se : Element.getAddonSubElements(Element.EARTH)) {
 						if (bPlayer.canUseSubElement(se)) {
 							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
 						}
@@ -290,7 +288,7 @@ public class WhoCommand extends PKCommand {
 					if (bPlayer.canLightningbend()) {
 						sender.sendMessage(Element.LIGHTNING.getColor() + "    Can Lightningbend");
 					}
-					for (SubElement se : Element.getAddonSubElements(Element.FIRE)) {
+					for (final SubElement se : Element.getAddonSubElements(Element.FIRE)) {
 						if (bPlayer.canUseSubElement(se)) {
 							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
 						}
@@ -306,13 +304,13 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 
-			for (Element element : Element.getAddonElements()) {
+			for (final Element element : Element.getAddonElements()) {
 				if (bPlayer.hasElement(element)) {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
 					if (player_ != null) {
-						for (SubElement subelement : Element.getSubElements(element)) {
+						for (final SubElement subelement : Element.getSubElements(element)) {
 							if (GeneralMethods.hasSpirits()) {
-								SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player_);
+								final SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player_);
 								if (subelement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
 									sender.sendMessage(subelement.getColor() + "    Is " + sPlayer.getSpirit().getName() + element.getName());
 								}
@@ -331,12 +329,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 
-			UUID uuid = player.getUniqueId();
+			final UUID uuid = player.getUniqueId();
 			if (bPlayer != null) {
 				sender.sendMessage("Abilities: ");
 				for (int i = 1; i <= 9; i++) {
-					String ability = bPlayer.getAbilities().get(i);
-					CoreAbility coreAbil = CoreAbility.getAbility(ability);
+					final String ability = bPlayer.getAbilities().get(i);
+					final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 					if (coreAbil == null) {
 						continue;
 					} else {
@@ -353,12 +351,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 
-			if (staff.containsKey(uuid.toString())) {
-				sender.sendMessage(staff.get(uuid.toString()));
+			if (this.staff.containsKey(uuid.toString())) {
+				sender.sendMessage(this.staff.get(uuid.toString()));
 			}
 
 			if (player.getPlayer() != null && player.getPlayer().hasPermission("bending.donor")) {
-				// Requires Servers to define `server-name` in their server.properties file. Example: server-name=My Server
+				// Requires Servers to define `server-name` in their server.properties file. Example: server-name=My Server.
 				sender.sendMessage(Element.AVATAR.getColor() + ProjectKorra.plugin.getServer().getServerName() + " Donor");
 			}
 		}
@@ -366,11 +364,12 @@ public class WhoCommand extends PKCommand {
 	}
 
 	@Override
-	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.who"))
+	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.who")) {
 			return new ArrayList<String>();
-		List<String> l = new ArrayList<String>();
-		for (Player p : Bukkit.getOnlinePlayers()) {
+		}
+		final List<String> l = new ArrayList<String>();
+		for (final Player p : Bukkit.getOnlinePlayers()) {
 			l.add(p.getName());
 		}
 		return l;

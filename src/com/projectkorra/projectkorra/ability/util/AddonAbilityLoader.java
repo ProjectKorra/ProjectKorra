@@ -1,12 +1,5 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import sun.reflect.ReflectionFactory;
-
-import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-import com.projectkorra.projectkorra.util.FileExtensionFilter;
-
-import org.bukkit.plugin.Plugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -21,6 +14,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
+import org.bukkit.plugin.Plugin;
+
+import com.projectkorra.projectkorra.event.AbilityLoadEvent;
+import com.projectkorra.projectkorra.util.FileExtensionFilter;
+
+import sun.reflect.ReflectionFactory;
+
 public class AddonAbilityLoader<T> {
 
 	private final Plugin plugin;
@@ -28,7 +28,7 @@ public class AddonAbilityLoader<T> {
 	private final ArrayList<File> files;
 	private ClassLoader loader;
 
-	public AddonAbilityLoader(Plugin plugin, File directory) {
+	public AddonAbilityLoader(final Plugin plugin, final File directory) {
 		this.plugin = plugin;
 		this.directory = directory;
 		this.files = new ArrayList<File>();
@@ -37,16 +37,16 @@ public class AddonAbilityLoader<T> {
 			return;
 		}
 
-		for (File f : directory.listFiles(new FileExtensionFilter(".jar"))) {
-			files.add(f);
+		for (final File f : directory.listFiles(new FileExtensionFilter(".jar"))) {
+			this.files.add(f);
 		}
 
-		List<URL> urls = new ArrayList<URL>();
-		for (File file : files) {
+		final List<URL> urls = new ArrayList<URL>();
+		for (final File file : this.files) {
 			try {
 				urls.add(file.toURI().toURL());
 			}
-			catch (MalformedURLException e) {
+			catch (final MalformedURLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -60,26 +60,25 @@ public class AddonAbilityLoader<T> {
 	 * @return A list of all of the T objects that were loaded from the jar
 	 *         files within @param directory
 	 */
-	@SuppressWarnings("unchecked")
-	public List<T> load(Class<?> classType, Class<?> parentClass) {
-		ArrayList<T> loadables = new ArrayList<>();
+	public List<T> load(final Class<?> classType, final Class<?> parentClass) {
+		final ArrayList<T> loadables = new ArrayList<>();
 
-		for (File file : files) {
+		for (final File file : this.files) {
 			JarFile jarFile = null;
 			try {
 				jarFile = new JarFile(file);
-				Enumeration<JarEntry> entries = jarFile.entries();
+				final Enumeration<JarEntry> entries = jarFile.entries();
 
 				while (entries.hasMoreElements()) {
-					JarEntry entry = entries.nextElement();
+					final JarEntry entry = entries.nextElement();
 					if (!entry.getName().endsWith(".class")) {
 						continue;
 					}
 
-					String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
+					final String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
 					Class<?> clazz = null;
 					try {
-						clazz = Class.forName(className, true, loader);
+						clazz = Class.forName(className, true, this.loader);
 					}
 					catch (Exception | Error e) {
 						continue;
@@ -89,28 +88,28 @@ public class AddonAbilityLoader<T> {
 						continue;
 					}
 
-					ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
-					Constructor<?> objDef = parentClass.getDeclaredConstructor();
-					Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
-					T loadable = (T) clazz.cast(intConstr.newInstance());
+					final ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+					final Constructor<?> objDef = parentClass.getDeclaredConstructor();
+					final Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
+					final T loadable = (T) clazz.cast(intConstr.newInstance());
 
 					loadables.add(loadable);
-					AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(plugin, loadable, jarFile);
-					plugin.getServer().getPluginManager().callEvent(event);
+					final AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(this.plugin, loadable, jarFile);
+					this.plugin.getServer().getPluginManager().callEvent(event);
 				}
 
 			}
 			catch (Exception | Error e) {
 				e.printStackTrace();
-				plugin.getLogger().log(Level.WARNING, "Unknown cause");
-				plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");
+				this.plugin.getLogger().log(Level.WARNING, "Unknown cause");
+				this.plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");
 			}
 			finally {
 				if (jarFile != null) {
 					try {
 						jarFile.close();
 					}
-					catch (IOException e) {
+					catch (final IOException e) {
 						e.printStackTrace();
 					}
 				}
@@ -120,19 +119,19 @@ public class AddonAbilityLoader<T> {
 	}
 
 	public ClassLoader getLoader() {
-		return loader;
+		return this.loader;
 	}
 
 	public Plugin getPlugin() {
-		return plugin;
+		return this.plugin;
 	}
 
 	public File getDirectory() {
-		return directory;
+		return this.directory;
 	}
 
 	public ArrayList<File> getFiles() {
-		return files;
+		return this.files;
 	}
 
 }

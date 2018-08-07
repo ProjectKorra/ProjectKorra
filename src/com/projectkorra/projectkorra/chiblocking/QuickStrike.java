@@ -18,41 +18,41 @@ public class QuickStrike extends ChiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 
-	public QuickStrike(Player sourceplayer, Entity targetentity) {
+	public QuickStrike(final Player sourceplayer, final Entity targetentity) {
 		super(sourceplayer);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 		this.damage = getConfig().getDouble("Abilities.Chi.QuickStrike.Damage");
 		this.cooldown = getConfig().getLong("Abilities.Chi.QuickStrike.Cooldown");
 		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
-		target = targetentity;
-		if (target == null) {
+		this.target = targetentity;
+		if (this.target == null) {
 			return;
 		}
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (bPlayer.isOnCooldown(this)) {
-			remove();
+		if (this.bPlayer.isOnCooldown(this)) {
+			this.remove();
 			return;
 		}
 
-		if (target == null) {
-			remove();
+		if (this.target == null) {
+			this.remove();
 			return;
 		}
 
-		bPlayer.addCooldown(this);
-		DamageHandler.damageEntity(target, damage, this);
+		this.bPlayer.addCooldown(this);
+		DamageHandler.damageEntity(this.target, this.damage, this);
 
-		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
-			ChiPassive.blockChi((Player) target);
+		if (this.target instanceof Player && ChiPassive.willChiBlock(this.player, (Player) this.target)) {
+			ChiPassive.blockChi((Player) this.target);
 		}
 
-		remove();
+		this.remove();
 	}
 
 	@Override
@@ -62,12 +62,12 @@ public class QuickStrike extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -81,26 +81,26 @@ public class QuickStrike extends ChiAbility {
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public int getBlockChance() {
-		return blockChance;
+		return this.blockChance;
 	}
 
-	public void setBlockChance(int blockChance) {
+	public void setBlockChance(final int blockChance) {
 		this.blockChance = blockChance;
 	}
 
 	public Entity getTarget() {
-		return target;
+		return this.target;
 	}
 
-	public void setTarget(Entity target) {
+	public void setTarget(final Entity target) {
 		this.target = target;
 	}
 }

@@ -37,7 +37,6 @@ public class ProjectKorra extends JavaPlugin {
 
 	public static ProjectKorra plugin;
 	public static Logger log;
-	// public static PKLogHandler handler;
 	public static CollisionManager collisionManager;
 	public static CollisionInitializer collisionInitializer;
 	public static StatisticsManager statistics;
@@ -51,18 +50,10 @@ public class ProjectKorra extends JavaPlugin {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
 
-		/*
-		 * try { File logFolder = new File(getDataFolder(), "Logs"); if
-		 * (!logFolder.exists()) { logFolder.mkdirs(); } handler = new
-		 * PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
-		 * log.getParent().addHandler(handler); } catch (SecurityException | IOException
-		 * e) { e.printStackTrace(); }
-		 */
-
 		new ConfigManager();
 		new GeneralMethods(this);
-		boolean checkUpdateOnStartup = ConfigManager.getConfig().getBoolean("Properties.UpdateChecker");
-		updater = new Updater(this, "https://projectkorra.com/forum/resources/projectkorra-core.1/", checkUpdateOnStartup);
+		final boolean checkUpdateOnStartup = ConfigManager.getConfig().getBoolean("Properties.UpdateChecker");
+		this.updater = new Updater(this, "https://projectkorra.com/forum/resources/projectkorra-core.1/", checkUpdateOnStartup);
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
@@ -76,7 +67,6 @@ public class ProjectKorra extends JavaPlugin {
 
 		DBConnection.init();
 		if (!DBConnection.isOpen()) {
-			// Message is logged by DBConnection
 			return;
 		}
 
@@ -84,24 +74,22 @@ public class ProjectKorra extends JavaPlugin {
 		cooldowns = new DBCooldownManager();
 		flightHandler = new FlightHandler();
 
-		getServer().getPluginManager().registerEvents(new PKListener(this), this);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		// getServer().getScheduler().scheduleSyncRepeatingTask(this, new
-		// PassiveHandler(), 0, 1);
-		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
+		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
-			getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 				@Override
 				public void run() {
 					ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding" + ".Color").toUpperCase());
 					color = color == null ? ChatColor.GOLD : color;
-					String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
-					String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders" + ".BottomBorder");
+					final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
+					final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders" + ".BottomBorder");
 					if (!topBorder.isEmpty()) {
 						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
 					}
@@ -129,22 +117,22 @@ public class ProjectKorra extends JavaPlugin {
 			}, 5);
 		}
 
-		Metrics metrics = new Metrics(this);
+		final Metrics metrics = new Metrics(this);
 		metrics.addCustomChart(new Metrics.AdvancedPie("Elements") {
 
 			@Override
-			public HashMap<String, Integer> getValues(HashMap<String, Integer> valueMap) {
-				for (Element element : Element.getMainElements()) {
-					valueMap.put(element.getName(), getPlayersWithElement(element));
+			public HashMap<String, Integer> getValues(final HashMap<String, Integer> valueMap) {
+				for (final Element element : Element.getMainElements()) {
+					valueMap.put(element.getName(), this.getPlayersWithElement(element));
 				}
 
 				return valueMap;
 			}
 
-			private int getPlayersWithElement(Element element) {
+			private int getPlayersWithElement(final Element element) {
 				int counter = 0;
-				for (Player player : Bukkit.getOnlinePlayers()) {
-					BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+				for (final Player player : Bukkit.getOnlinePlayers()) {
+					final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 					if (bPlayer != null && bPlayer.hasElement(element)) {
 						counter++;
 					}
@@ -154,7 +142,7 @@ public class ProjectKorra extends JavaPlugin {
 			}
 		});
 
-		double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
+		final double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
 		if (Bukkit.getPluginManager().getPlugin("Residence") != null) {
 			FlagPermissions.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
 		}
@@ -166,11 +154,11 @@ public class ProjectKorra extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		GeneralMethods.stopBending();
-		for (Player player : getServer().getOnlinePlayers()) {
+		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {
 				statistics.save(player.getUniqueId(), false);
 			}
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer != null) {
 				bPlayer.saveCooldowns();
 			}
@@ -184,7 +172,7 @@ public class ProjectKorra extends JavaPlugin {
 		return collisionManager;
 	}
 
-	public static void setCollisionManager(CollisionManager collisionManager) {
+	public static void setCollisionManager(final CollisionManager collisionManager) {
 		ProjectKorra.collisionManager = collisionManager;
 	}
 
@@ -192,7 +180,7 @@ public class ProjectKorra extends JavaPlugin {
 		return collisionInitializer;
 	}
 
-	public static void setCollisionInitializer(CollisionInitializer collisionInitializer) {
+	public static void setCollisionInitializer(final CollisionInitializer collisionInitializer) {
 		ProjectKorra.collisionInitializer = collisionInitializer;
 	}
 

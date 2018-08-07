@@ -19,34 +19,34 @@ public class SwiftKick extends ChiAbility {
 	private long cooldown;
 	private Entity target;
 
-	public SwiftKick(Player sourceplayer, Entity targetentity) {
+	public SwiftKick(final Player sourceplayer, final Entity targetentity) {
 		super(sourceplayer);
-		if (!bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 		this.damage = getConfig().getDouble("Abilities.Chi.SwiftKick.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.SwiftKick.ChiBlockChance");
 		this.cooldown = getConfig().getInt("Abilities.Chi.SwiftKick.Cooldown");
 		this.target = targetentity;
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (target == null) {
-			remove();
+		if (this.target == null) {
+			this.remove();
 			return;
 		}
-		if (player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
-			remove();
+		if (this.player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
+			this.remove();
 			return;
 		}
-		DamageHandler.damageEntity(target, damage, this);
-		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
-			ChiPassive.blockChi((Player) target);
+		DamageHandler.damageEntity(this.target, this.damage, this);
+		if (this.target instanceof Player && ChiPassive.willChiBlock(this.player, (Player) this.target)) {
+			ChiPassive.blockChi((Player) this.target);
 		}
-		bPlayer.addCooldown(this);
-		remove();
+		this.bPlayer.addCooldown(this);
+		this.remove();
 	}
 
 	@Override
@@ -56,12 +56,12 @@ public class SwiftKick extends ChiAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -75,30 +75,30 @@ public class SwiftKick extends ChiAbility {
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public int getBlockChance() {
-		return blockChance;
+		return this.blockChance;
 	}
 
-	public void setBlockChance(int blockChance) {
+	public void setBlockChance(final int blockChance) {
 		this.blockChance = blockChance;
 	}
 
 	public Entity getTarget() {
-		return target;
+		return this.target;
 	}
 
-	public void setTarget(Entity target) {
+	public void setTarget(final Entity target) {
 		this.target = target;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

@@ -35,11 +35,11 @@ public class FireShield extends FireAbility {
 	private Random random;
 	private int increment = 20;
 
-	public FireShield(Player player) {
+	public FireShield(final Player player) {
 		this(player, false);
 	}
 
-	public FireShield(Player player, boolean shield) {
+	public FireShield(final Player player, final boolean shield) {
 		super(player);
 
 		this.shield = shield;
@@ -54,12 +54,12 @@ public class FireShield extends FireAbility {
 		this.shieldFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Shield.FireTicks");
 		this.random = new Random();
 
-		if (hasAbility(player, FireShield.class) || bPlayer.isOnCooldown("FireShield")) {
+		if (hasAbility(player, FireShield.class) || this.bPlayer.isOnCooldown("FireShield")) {
 			return;
 		} else if (!player.getEyeLocation().getBlock().isLiquid()) {
-			start();
+			this.start();
 			if (!shield) {
-				bPlayer.addCooldown(this);
+				this.bPlayer.addCooldown(this);
 			}
 		}
 	}
@@ -69,9 +69,9 @@ public class FireShield extends FireAbility {
 	 * {@link Collision} for the new system.
 	 */
 	@Deprecated
-	public static boolean isWithinShield(Location loc) {
-		for (FireShield fshield : getAbilities(FireShield.class)) {
-			Location playerLoc = fshield.player.getLocation();
+	public static boolean isWithinShield(final Location loc) {
+		for (final FireShield fshield : getAbilities(FireShield.class)) {
+			final Location playerLoc = fshield.player.getLocation();
 
 			if (fshield.shield) {
 				if (!playerLoc.getWorld().equals(loc.getWorld())) {
@@ -80,7 +80,7 @@ public class FireShield extends FireAbility {
 					return true;
 				}
 			} else {
-				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discRadius));
+				final Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discRadius));
 				if (!tempLoc.getWorld().equals(loc.getWorld())) {
 					return false;
 				} else if (tempLoc.getWorld().equals(loc.getWorld()) && tempLoc.distance(loc) <= fshield.discRadius * fshield.discRadius) {
@@ -93,87 +93,87 @@ public class FireShield extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.remove();
 			return;
-		} else if ((!player.isSneaking() && shield) || (System.currentTimeMillis() > getStartTime() + shieldDuration && shield && shieldDuration > 0)) {
-			remove();
+		} else if ((!this.player.isSneaking() && this.shield) || (System.currentTimeMillis() > this.getStartTime() + this.shieldDuration && this.shield && this.shieldDuration > 0)) {
+			this.remove();
 			return;
-		} else if (System.currentTimeMillis() > getStartTime() + discDuration && !shield) {
-			remove();
+		} else if (System.currentTimeMillis() > this.getStartTime() + this.discDuration && !this.shield) {
+			this.remove();
 			return;
 		}
 
-		if (shield) {
-			location = player.getEyeLocation().clone();
+		if (this.shield) {
+			this.location = this.player.getEyeLocation().clone();
 
-			for (double theta = 0; theta < 180; theta += increment) {
-				for (double phi = 0; phi < 360; phi += increment) {
-					double rphi = Math.toRadians(phi);
-					double rtheta = Math.toRadians(theta);
+			for (double theta = 0; theta < 180; theta += this.increment) {
+				for (double phi = 0; phi < 360; phi += this.increment) {
+					final double rphi = Math.toRadians(phi);
+					final double rtheta = Math.toRadians(theta);
 
-					Location display = location.clone().add(radius/1.5 * Math.cos(rphi) * Math.sin(rtheta), radius/1.5 * Math.cos(rtheta), radius/1.5 * Math.sin(rphi) * Math.sin(rtheta));
-					if (random.nextInt(6) == 0) {
+					final Location display = this.location.clone().add(this.radius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.radius / 1.5 * Math.cos(rtheta), this.radius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
+					if (this.random.nextInt(6) == 0) {
 						ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
 					}
-					if (random.nextInt(4) == 0) {
+					if (this.random.nextInt(4) == 0) {
 						ParticleEffect.FLAME.display(display, 0.1f, 0.1f, 0.1f, 0.013f, 1);
 					}
-					if (random.nextInt(7) == 0) {
+					if (this.random.nextInt(7) == 0) {
 						playFirebendingSound(display);
 					}
 				}
 			}
-			
-			increment += 20;
-			if (increment >= 70) {
-				increment = 20;
+
+			this.increment += 20;
+			if (this.increment >= 70) {
+				this.increment = 20;
 			}
 
-			for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
+			for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
 				if (testblock.getType() == Material.FIRE) {
 					testblock.setType(Material.AIR);
 					testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 				}
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
-				} else if (entity instanceof LivingEntity) { 
-					if (player.getEntityId() != entity.getEntityId() && ignite) {
-						entity.setFireTicks((int)(shieldFireTicks*20));
-						new FireDamageTimer(entity, player);
+				} else if (entity instanceof LivingEntity) {
+					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
+						entity.setFireTicks((int) (this.shieldFireTicks * 20));
+						new FireDamageTimer(entity, this.player);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();
 				}
 			}
 		} else {
-			location = player.getEyeLocation().clone();
-			Vector direction = location.getDirection();
-			location = location.clone().add(direction.multiply(radius));
-			ParticleEffect.FLAME.display(location, 0.2f, 0.2f, 0.2f, 0.023f, 3);
+			this.location = this.player.getEyeLocation().clone();
+			final Vector direction = this.location.getDirection();
+			this.location = this.location.clone().add(direction.multiply(this.radius));
+			ParticleEffect.FLAME.display(this.location, 0.2f, 0.2f, 0.2f, 0.023f, 3);
 
 			for (double theta = 0; theta < 360; theta += 20) {
-				Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, discRadius/1.5);
-				Location display = location.clone().add(vector);
-				if (random.nextInt(6) == 0) {
+				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
+				final Location display = this.location.clone().add(vector);
+				if (this.random.nextInt(6) == 0) {
 					ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
 				}
 				ParticleEffect.FLAME.display(display, 0.3f, 0.2f, 0.3f, 0.023f, 2);
-				if (random.nextInt(4) == 0) {
+				if (this.random.nextInt(4) == 0) {
 					playFirebendingSound(display);
 				}
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, discRadius)) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.discRadius)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
-				} else if (entity instanceof LivingEntity) { 
-					if (player.getEntityId() != entity.getEntityId() && ignite) {
-						entity.setFireTicks((int)(discFireTicks*20));
-						new FireDamageTimer(entity, player);
+				} else if (entity instanceof LivingEntity) {
+					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
+						entity.setFireTicks((int) (this.discFireTicks * 20));
+						new FireDamageTimer(entity, this.player);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();
@@ -189,12 +189,12 @@ public class FireShield extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return shield ? shieldCooldown : discCooldown;
+		return this.shield ? this.shieldCooldown : this.discCooldown;
 	}
 
 	@Override
@@ -209,66 +209,66 @@ public class FireShield extends FireAbility {
 
 	@Override
 	public double getCollisionRadius() {
-		return shield ? radius : discRadius;
+		return this.shield ? this.radius : this.discRadius;
 	}
 
 	public boolean isShield() {
-		return shield;
+		return this.shield;
 	}
 
-	public void setShield(boolean shield) {
+	public void setShield(final boolean shield) {
 		this.shield = shield;
 	}
 
 	public boolean isIgnite() {
-		return ignite;
+		return this.ignite;
 	}
 
-	public void setIgnite(boolean ignite) {
+	public void setIgnite(final boolean ignite) {
 		this.ignite = ignite;
 	}
 
 	public long getDuration() {
-		return shield ? shieldDuration : discDuration;
+		return this.shield ? this.shieldDuration : this.discDuration;
 	}
 
-	public void setDiscDuration(long duration) {
+	public void setDiscDuration(final long duration) {
 		this.discDuration = duration;
 	}
 
-	public void setShieldDuration(long duration) {
+	public void setShieldDuration(final long duration) {
 		this.shieldDuration = duration;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getDiscRadius() {
-		return discRadius;
+		return this.discRadius;
 	}
 
-	public void setDiscRadius(double discRadius) {
+	public void setDiscRadius(final double discRadius) {
 		this.discRadius = discRadius;
 	}
 
-	public double getFireTicks(boolean shield) {
-		return shield ? shieldFireTicks : discFireTicks;
+	public double getFireTicks(final boolean shield) {
+		return shield ? this.shieldFireTicks : this.discFireTicks;
 	}
 
-	public void setFireTicks(double fireTicks, boolean shield) {
+	public void setFireTicks(final double fireTicks, final boolean shield) {
 		if (shield) {
 			this.shieldFireTicks = fireTicks;
 		} else {
@@ -276,11 +276,11 @@ public class FireShield extends FireAbility {
 		}
 	}
 
-	public void setDiscCooldown(long cooldown) {
+	public void setDiscCooldown(final long cooldown) {
 		this.discCooldown = cooldown;
 	}
-	
-	public void setShieldCooldown(long cooldown) {
+
+	public void setShieldCooldown(final long cooldown) {
 		this.shieldCooldown = cooldown;
 	}
 

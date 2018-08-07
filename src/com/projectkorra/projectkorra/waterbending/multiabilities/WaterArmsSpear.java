@@ -46,9 +46,9 @@ public class WaterArmsSpear extends WaterAbility {
 	private Location location;
 	private Location initLocation;
 	private WaterArms waterArms;
-	private List<Location> spearLocations;
+	private final List<Location> spearLocations;
 
-	public WaterArmsSpear(Player player, boolean freeze) {
+	public WaterArmsSpear(final Player player, final boolean freeze) {
 		super(player);
 		this.canFreeze = freeze;
 
@@ -68,186 +68,186 @@ public class WaterArmsSpear extends WaterAbility {
 		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
 		this.spearLocations = new ArrayList<>();
 
-		getNightAugments();
-		createInstance();
+		this.getNightAugments();
+		this.createInstance();
 	}
 
 	private void getNightAugments() {
-		World world = player.getWorld();
+		final World world = this.player.getWorld();
 		if (isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
 				if (isLunarEclipse(world)) {
-					spearRange = spearRangeFullMoon;
-					spearSphere = spearSphereFullMoon;
-					spearDuration = spearDurationFullMoon;
+					this.spearRange = this.spearRangeFullMoon;
+					this.spearSphere = this.spearSphereFullMoon;
+					this.spearDuration = this.spearDurationFullMoon;
 				} else if (isFullMoon(world)) {
-					spearRange = spearRangeFullMoon;
-					spearSphere = spearSphereFullMoon;
-					spearDuration = spearDurationFullMoon;
+					this.spearRange = this.spearRangeFullMoon;
+					this.spearSphere = this.spearSphereFullMoon;
+					this.spearDuration = this.spearDurationFullMoon;
 				} else {
-					spearRange = spearRangeNight;
-					spearSphere = spearSphereNight;
-					spearDuration = spearDurationNight;
+					this.spearRange = this.spearRangeNight;
+					this.spearSphere = this.spearSphereNight;
+					this.spearDuration = this.spearDurationNight;
 				}
 			} else {
 				if (isFullMoon(world)) {
-					spearRange = spearRangeFullMoon;
-					spearSphere = spearSphereFullMoon;
-					spearDuration = spearDurationFullMoon;
+					this.spearRange = this.spearRangeFullMoon;
+					this.spearSphere = this.spearSphereFullMoon;
+					this.spearDuration = this.spearDurationFullMoon;
 				} else {
-					spearRange = spearRangeNight;
-					spearSphere = spearSphereNight;
-					spearDuration = spearDurationNight;
+					this.spearRange = this.spearRangeNight;
+					this.spearSphere = this.spearSphereNight;
+					this.spearDuration = this.spearDurationNight;
 				}
 			}
 		}
 	}
 
 	private void createInstance() {
-		waterArms = getAbility(player, WaterArms.class);
-		if (waterArms != null) {
-			waterArms.switchPreferredArm();
-			arm = waterArms.getActiveArm();
+		this.waterArms = getAbility(this.player, WaterArms.class);
+		if (this.waterArms != null) {
+			this.waterArms.switchPreferredArm();
+			this.arm = this.waterArms.getActiveArm();
 
-			if (arm.equals(Arm.LEFT)) {
-				if (waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT") || !waterArms.displayLeftArm()) {
+			if (this.arm.equals(Arm.LEFT)) {
+				if (this.waterArms.isLeftArmCooldown() || this.bPlayer.isOnCooldown("WaterArms_LEFT") || !this.waterArms.displayLeftArm()) {
 					return;
 				} else {
-					if (usageCooldownEnabled) {
-						bPlayer.addCooldown("WaterArms_LEFT", usageCooldown);
+					if (this.usageCooldownEnabled) {
+						this.bPlayer.addCooldown("WaterArms_LEFT", this.usageCooldown);
 					}
-					waterArms.setLeftArmConsumed(true);
-					waterArms.setLeftArmCooldown(true);
+					this.waterArms.setLeftArmConsumed(true);
+					this.waterArms.setLeftArmCooldown(true);
 				}
 			}
-			if (arm.equals(Arm.RIGHT)) {
-				if (waterArms.isRightArmCooldown() || bPlayer.isOnCooldown("WaterArms_RIGHT") || !waterArms.displayRightArm()) {
+			if (this.arm.equals(Arm.RIGHT)) {
+				if (this.waterArms.isRightArmCooldown() || this.bPlayer.isOnCooldown("WaterArms_RIGHT") || !this.waterArms.displayRightArm()) {
 					return;
 				} else {
-					if (usageCooldownEnabled) {
-						bPlayer.addCooldown("WaterArms_RIGHT", usageCooldown);
+					if (this.usageCooldownEnabled) {
+						this.bPlayer.addCooldown("WaterArms_RIGHT", this.usageCooldown);
 					}
-					waterArms.setRightArmConsumed(true);
-					waterArms.setRightArmCooldown(true);
+					this.waterArms.setRightArmConsumed(true);
+					this.waterArms.setRightArmCooldown(true);
 				}
 			}
-			Vector dir = player.getLocation().getDirection();
-			location = waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
-			initLocation = location.clone();
+			final Vector dir = this.player.getLocation().getDirection();
+			this.location = this.waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
+			this.initLocation = this.location.clone();
 		} else {
 			return;
 		}
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
+		if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
-		} else if (distanceTravelled > spearRange) {
-			remove();
+		} else if (this.distanceTravelled > this.spearRange) {
+			this.remove();
 			return;
 		}
 
-		if (!hitEntity) {
-			progressSpear();
+		if (!this.hitEntity) {
+			this.progressSpear();
 		} else {
-			createIceBall();
-			remove();
+			this.createIceBall();
+			this.remove();
 		}
 
-		if (!canPlaceBlock(location.getBlock())) {
-			if (canFreeze) {
-				createSpear();
+		if (!this.canPlaceBlock(this.location.getBlock())) {
+			if (this.canFreeze) {
+				this.createSpear();
 			}
-			remove();
+			this.remove();
 			return;
 		}
 	}
 
 	private void progressSpear() {
 		for (int i = 0; i < 2; i++) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {
-					hitEntity = true;
-					location = entity.getLocation();
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2)) {
+				if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && !(entity instanceof ArmorStand)) {
+					this.hitEntity = true;
+					this.location = entity.getLocation();
 
-					if (spearDamageEnabled) {
-						DamageHandler.damageEntity(entity, spearDamage, this);
+					if (this.spearDamageEnabled) {
+						DamageHandler.damageEntity(entity, this.spearDamage, this);
 					}
 
 					return;
 				}
 			}
-			
-			if (!canPlaceBlock(location.getBlock())) {
+
+			if (!this.canPlaceBlock(this.location.getBlock())) {
 				return;
 			}
 
-			new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
-			getIceBlocks().put(location.getBlock(), System.currentTimeMillis() + 600L);
-			Vector direction = GeneralMethods.getDirection(initLocation, GeneralMethods.getTargetedLocation(player, spearRange, getTransparentMaterials())).normalize();
+			new TempBlock(this.location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+			getIceBlocks().put(this.location.getBlock(), System.currentTimeMillis() + 600L);
+			final Vector direction = GeneralMethods.getDirection(this.initLocation, GeneralMethods.getTargetedLocation(this.player, this.spearRange, getTransparentMaterials())).normalize();
 
-			location = location.add(direction.clone().multiply(1));
-			spearLocations.add(location.clone());
+			this.location = this.location.add(direction.clone().multiply(1));
+			this.spearLocations.add(this.location.clone());
 
-			distanceTravelled++;
+			this.distanceTravelled++;
 		}
 	}
 
 	private void createSpear() {
-		for (int i = spearLocations.size() - spearLength; i < spearLocations.size(); i++) {
+		for (int i = this.spearLocations.size() - this.spearLength; i < this.spearLocations.size(); i++) {
 			if (i >= 0) {
-				Block block = spearLocations.get(i).getBlock();
-				if (canPlaceBlock(block)) {
+				final Block block = this.spearLocations.get(i).getBlock();
+				if (this.canPlaceBlock(block)) {
 					playIcebendingSound(block.getLocation());
 					if (getIceBlocks().containsKey(block)) {
 						getIceBlocks().remove(block);
 					}
 
-					TempBlock tempBlock = new TempBlock(block, Material.AIR, (byte) 0);
+					final TempBlock tempBlock = new TempBlock(block, Material.AIR, (byte) 0);
 					tempBlock.setType(Material.ICE);
 
-					getIceBlocks().put(block, System.currentTimeMillis() + spearDuration + (long) (Math.random() * 500));
+					getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 				}
 			}
 		}
 	}
 
-	public static boolean canThaw(Block block) {
+	public static boolean canThaw(final Block block) {
 		return getIceBlocks().containsKey(block) && block.getType() == Material.ICE;
 	}
 
-	public static void thaw(Block block) {
+	public static void thaw(final Block block) {
 		if (canThaw(block)) {
 			getIceBlocks().remove(block);
 			if (TempBlock.isTempBlock(block)) {
 				TempBlock.get(block).revertBlock();
 			} else {
-				block.setType(Material.AIR); 
+				block.setType(Material.AIR);
 			}
 		}
 	}
 
 	private void createIceBall() {
-		if (spearSphere <= 0) {
-			if (canFreeze) {
-				createSpear();
+		if (this.spearSphere <= 0) {
+			if (this.canFreeze) {
+				this.createSpear();
 			}
 			return;
 		}
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, spearSphere)) {
-			if (isTransparent(player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
+		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.spearSphere)) {
+			if (isTransparent(this.player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
 				playIcebendingSound(block.getLocation());
 				new TempBlock(block, Material.ICE, (byte) 0);
-				getIceBlocks().put(block, System.currentTimeMillis() + spearDuration + (long) (Math.random() * 500));
+				getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 			}
 		}
 	}
 
-	private boolean canPlaceBlock(Block block) {
-		if (!isTransparent(player, block) && !((isWater(block) || isIcebendable(block)) && (TempBlock.isTempBlock(block) && !getIceBlocks().containsKey(block)))) {
+	private boolean canPlaceBlock(final Block block) {
+		if (!isTransparent(this.player, block) && !((isWater(block) || this.isIcebendable(block)) && (TempBlock.isTempBlock(block) && !getIceBlocks().containsKey(block)))) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;
@@ -260,13 +260,13 @@ public class WaterArmsSpear extends WaterAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (hasAbility(player, WaterArms.class)) {
-			if (arm.equals(Arm.LEFT)) {
-				waterArms.setLeftArmCooldown(false);
+		if (hasAbility(this.player, WaterArms.class)) {
+			if (this.arm.equals(Arm.LEFT)) {
+				this.waterArms.setLeftArmCooldown(false);
 			} else {
-				waterArms.setRightArmCooldown(false);
+				this.waterArms.setRightArmCooldown(false);
 			}
-			waterArms.setMaxUses(waterArms.getMaxUses() - 1);
+			this.waterArms.setMaxUses(this.waterArms.getMaxUses() - 1);
 		}
 	}
 
@@ -277,16 +277,16 @@ public class WaterArmsSpear extends WaterAbility {
 
 	@Override
 	public Location getLocation() {
-		if (location != null) {
-			return location;
+		if (this.location != null) {
+			return this.location;
 		} else {
-			return initLocation;
+			return this.initLocation;
 		}
 	}
 
 	@Override
 	public long getCooldown() {
-		return usageCooldown;
+		return this.usageCooldown;
 	}
 
 	@Override
@@ -300,170 +300,170 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	public boolean isHitEntity() {
-		return hitEntity;
+		return this.hitEntity;
 	}
 
-	public void setHitEntity(boolean hitEntity) {
+	public void setHitEntity(final boolean hitEntity) {
 		this.hitEntity = hitEntity;
 	}
 
 	public boolean isCanFreeze() {
-		return canFreeze;
+		return this.canFreeze;
 	}
 
-	public void setCanFreeze(boolean canFreeze) {
+	public void setCanFreeze(final boolean canFreeze) {
 		this.canFreeze = canFreeze;
 	}
 
 	public boolean isUsageCooldownEnabled() {
-		return usageCooldownEnabled;
+		return this.usageCooldownEnabled;
 	}
 
-	public void setUsageCooldownEnabled(boolean usageCooldownEnabled) {
+	public void setUsageCooldownEnabled(final boolean usageCooldownEnabled) {
 		this.usageCooldownEnabled = usageCooldownEnabled;
 	}
 
 	public boolean isSpearDamageEnabled() {
-		return spearDamageEnabled;
+		return this.spearDamageEnabled;
 	}
 
-	public void setSpearDamageEnabled(boolean spearDamageEnabled) {
+	public void setSpearDamageEnabled(final boolean spearDamageEnabled) {
 		this.spearDamageEnabled = spearDamageEnabled;
 	}
 
 	public int getSpearLength() {
-		return spearLength;
+		return this.spearLength;
 	}
 
-	public void setSpearLength(int spearLength) {
+	public void setSpearLength(final int spearLength) {
 		this.spearLength = spearLength;
 	}
 
 	public int getSpearRange() {
-		return spearRange;
+		return this.spearRange;
 	}
 
-	public void setSpearRange(int spearRange) {
+	public void setSpearRange(final int spearRange) {
 		this.spearRange = spearRange;
 	}
 
 	public int getSpearRangeNight() {
-		return spearRangeNight;
+		return this.spearRangeNight;
 	}
 
-	public void setSpearRangeNight(int spearRangeNight) {
+	public void setSpearRangeNight(final int spearRangeNight) {
 		this.spearRangeNight = spearRangeNight;
 	}
 
 	public int getSpearRangeFullMoon() {
-		return spearRangeFullMoon;
+		return this.spearRangeFullMoon;
 	}
 
-	public void setSpearRangeFullMoon(int spearRangeFullMoon) {
+	public void setSpearRangeFullMoon(final int spearRangeFullMoon) {
 		this.spearRangeFullMoon = spearRangeFullMoon;
 	}
 
 	public int getSpearSphere() {
-		return spearSphere;
+		return this.spearSphere;
 	}
 
-	public void setSpearSphere(int spearSphere) {
+	public void setSpearSphere(final int spearSphere) {
 		this.spearSphere = spearSphere;
 	}
 
 	public int getSpearSphereNight() {
-		return spearSphereNight;
+		return this.spearSphereNight;
 	}
 
-	public void setSpearSphereNight(int spearSphereNight) {
+	public void setSpearSphereNight(final int spearSphereNight) {
 		this.spearSphereNight = spearSphereNight;
 	}
 
 	public int getSpearSphereFullMoon() {
-		return spearSphereFullMoon;
+		return this.spearSphereFullMoon;
 	}
 
-	public void setSpearSphereFullMoon(int spearSphereFullMoon) {
+	public void setSpearSphereFullMoon(final int spearSphereFullMoon) {
 		this.spearSphereFullMoon = spearSphereFullMoon;
 	}
 
 	public int getDistanceTravelled() {
-		return distanceTravelled;
+		return this.distanceTravelled;
 	}
 
-	public void setDistanceTravelled(int distanceTravelled) {
+	public void setDistanceTravelled(final int distanceTravelled) {
 		this.distanceTravelled = distanceTravelled;
 	}
 
 	public long getSpearDuration() {
-		return spearDuration;
+		return this.spearDuration;
 	}
 
-	public void setSpearDuration(long spearDuration) {
+	public void setSpearDuration(final long spearDuration) {
 		this.spearDuration = spearDuration;
 	}
 
 	public long getSpearDurationNight() {
-		return spearDurationNight;
+		return this.spearDurationNight;
 	}
 
-	public void setSpearDurationNight(long spearDurationNight) {
+	public void setSpearDurationNight(final long spearDurationNight) {
 		this.spearDurationNight = spearDurationNight;
 	}
 
 	public long getSpearDurationFullMoon() {
-		return spearDurationFullMoon;
+		return this.spearDurationFullMoon;
 	}
 
-	public void setSpearDurationFullMoon(long spearDurationFullMoon) {
+	public void setSpearDurationFullMoon(final long spearDurationFullMoon) {
 		this.spearDurationFullMoon = spearDurationFullMoon;
 	}
 
 	public long getUsageCooldown() {
-		return usageCooldown;
+		return this.usageCooldown;
 	}
 
-	public void setUsageCooldown(long usageCooldown) {
+	public void setUsageCooldown(final long usageCooldown) {
 		this.usageCooldown = usageCooldown;
 	}
 
 	public double getSpearDamage() {
-		return spearDamage;
+		return this.spearDamage;
 	}
 
-	public void setSpearDamage(double spearDamage) {
+	public void setSpearDamage(final double spearDamage) {
 		this.spearDamage = spearDamage;
 	}
 
 	public Arm getArm() {
-		return arm;
+		return this.arm;
 	}
 
-	public void setArm(Arm arm) {
+	public void setArm(final Arm arm) {
 		this.arm = arm;
 	}
 
 	public Location getInitLocation() {
-		return initLocation;
+		return this.initLocation;
 	}
 
-	public void setInitLocation(Location initLocation) {
+	public void setInitLocation(final Location initLocation) {
 		this.initLocation = initLocation;
 	}
 
 	public WaterArms getWaterArms() {
-		return waterArms;
+		return this.waterArms;
 	}
 
-	public void setWaterArms(WaterArms waterArms) {
+	public void setWaterArms(final WaterArms waterArms) {
 		this.waterArms = waterArms;
 	}
 
 	public List<Location> getSpearLocations() {
-		return spearLocations;
+		return this.spearLocations;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

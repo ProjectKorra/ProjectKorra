@@ -19,7 +19,7 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 
 /**
  * Suffocate
- * 
+ *
  * Suffocate is an air ability that causes entities to be surrounded by a sphere
  * air that causes constant damage after a configurable delay. Suffocate also
  * causes Blinding and Slowing affects to entities depending on how the ability
@@ -61,10 +61,10 @@ public class Suffocate extends AirAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<LivingEntity> targets;
 
-	public Suffocate(Player player) {
+	public Suffocate(final Player player) {
 		super(player);
-		ability = this;
-		if (bPlayer.isOnCooldown(this)) {
+		this.ability = this;
+		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		} else if (hasAbility(player, Suffocate.class)) {
 			return;
@@ -92,35 +92,34 @@ public class Suffocate extends AirAbility {
 		this.targets = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		if (bPlayer.isAvatarState()) {
-			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown");
-			chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
-			damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
-			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
+		if (this.bPlayer.isAvatarState()) {
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown");
+			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
 
 		}
 
-		if (particleCount < 1) {
-			particleCount = 1;
-		} else if (particleCount > 2) {
-			particleCount = 2;
+		if (this.particleCount < 1) {
+			this.particleCount = 1;
+		} else if (this.particleCount > 2) {
+			this.particleCount = 2;
 		}
 
-		if (bPlayer.isAvatarState()) {
-			for (Entity ent : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
+		if (this.bPlayer.isAvatarState()) {
+			for (final Entity ent : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.range)) {
 				if (ent instanceof LivingEntity && !ent.equals(player)) {
-					targets.add((LivingEntity) ent);
+					this.targets.add((LivingEntity) ent);
 				}
 			}
 		} else {
-			//Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
-			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
 			List<Entity> entities = new ArrayList<Entity>();
 			for (int i = 0; i < 6; i++) {
-				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
+				final Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
-				if (entities.contains(player))
+				if (entities.contains(player)) {
 					entities.remove(player);
+				}
 				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
 					break;
 				}
@@ -128,111 +127,111 @@ public class Suffocate extends AirAbility {
 			if (entities == null || entities.isEmpty()) {
 				return;
 			}
-			Entity target = entities.get(0);
+			final Entity target = entities.get(0);
 			if (target != null && target instanceof LivingEntity) {
-				targets.add((LivingEntity) target);
+				this.targets.add((LivingEntity) target);
 			}
 		}
 
-		if (!canSuffocateUndead) {
-			for (int i = 0; i < targets.size(); i++) {
-				LivingEntity target = targets.get(i);
+		if (!this.canSuffocateUndead) {
+			for (int i = 0; i < this.targets.size(); i++) {
+				final LivingEntity target = this.targets.get(i);
 				if (GeneralMethods.isUndead(target)) {
-					targets.remove(i);
+					this.targets.remove(i);
 					i--;
 				}
 			}
 		}
 
-		bPlayer.addCooldown(this);
-		start();
+		this.bPlayer.addCooldown(this);
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		for (int i = 0; i < targets.size(); i++) {
-			LivingEntity target = targets.get(i);
-			if (target.isDead() || !target.getWorld().equals(player.getWorld()) || target.getLocation().distanceSquared(player.getEyeLocation()) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
-				breakSuffocateLocal(target);
+		for (int i = 0; i < this.targets.size(); i++) {
+			final LivingEntity target = this.targets.get(i);
+			if (target.isDead() || !target.getWorld().equals(this.player.getWorld()) || target.getLocation().distanceSquared(this.player.getEyeLocation()) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
+				this.breakSuffocateLocal(target);
 				i--;
 			} else if (target instanceof Player) {
-				Player targPlayer = (Player) target;
+				final Player targPlayer = (Player) target;
 				if (!targPlayer.isOnline()) {
-					breakSuffocateLocal(target);
+					this.breakSuffocateLocal(target);
 					i--;
 				}
 			}
 		}
-		if (targets.size() == 0 || !bPlayer.canBendIgnoreCooldowns(this)) {
-			remove();
+		if (this.targets.size() == 0 || !this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.remove();
 			return;
 		}
 
-		if (requireConstantAim) {
+		if (this.requireConstantAim) {
 			double dist = 0;
-			if (player.getWorld().equals(targets.get(0).getWorld())) {
-				dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
+			if (this.player.getWorld().equals(this.targets.get(0).getWorld())) {
+				dist = this.player.getEyeLocation().distance(this.targets.get(0).getEyeLocation());
 			}
-			Location targetLoc = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().normalize().multiply(dist));
-			List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, constantAimRadius);
+			final Location targetLoc = this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().normalize().multiply(dist));
+			final List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, this.constantAimRadius);
 
-			for (int i = 0; i < targets.size(); i++) {
-				LivingEntity target = targets.get(i);
+			for (int i = 0; i < this.targets.size(); i++) {
+				final LivingEntity target = this.targets.get(i);
 				if (!ents.contains(target)) {
-					breakSuffocateLocal(target);
+					this.breakSuffocateLocal(target);
 					i--;
 				}
 			}
-			if (targets.size() == 0) {
-				remove();
+			if (this.targets.size() == 0) {
+				this.remove();
 				return;
 			}
 		}
 
-		if (System.currentTimeMillis() - getStartTime() < chargeTime) {
+		if (System.currentTimeMillis() - this.getStartTime() < this.chargeTime) {
 			return;
-		} else if (!started) {
-			started = true;
-			for (LivingEntity targ : targets) {
+		} else if (!this.started) {
+			this.started = true;
+			for (final LivingEntity targ : this.targets) {
 				final LivingEntity target = targ;
-				BukkitRunnable br1 = new BukkitRunnable() {
+				final BukkitRunnable br1 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						DamageHandler.damageEntity(target, damage, ability);
+						DamageHandler.damageEntity(target, Suffocate.this.damage, Suffocate.this.ability);
 					}
 				};
-				BukkitRunnable br2 = new BukkitRunnable() {
+				final BukkitRunnable br2 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (slowRepeat * 20), (int) slow));
+						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
 					}
 				};
-				BukkitRunnable br3 = new BukkitRunnable() {
+				final BukkitRunnable br3 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (blindRepeat * 20), (int) blind));
+						target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (Suffocate.this.blindRepeat * 20), (int) Suffocate.this.blind));
 					}
 				};
 
-				tasks.add(br1);
-				tasks.add(br2);
-				tasks.add(br3);
-				br1.runTaskTimer(ProjectKorra.plugin, (long) (damageDelay * 20), (long) (damageRepeat * 20));
-				br2.runTaskTimer(ProjectKorra.plugin, (long) (slowDelay * 20), (long) (slowRepeat * 20 / 0.25));
-				br3.runTaskTimer(ProjectKorra.plugin, (long) (blindDelay * 20), (long) (blindRepeat * 20));
+				this.tasks.add(br1);
+				this.tasks.add(br2);
+				this.tasks.add(br3);
+				br1.runTaskTimer(ProjectKorra.plugin, (long) (this.damageDelay * 20), (long) (this.damageRepeat * 20));
+				br2.runTaskTimer(ProjectKorra.plugin, (long) (this.slowDelay * 20), (long) (this.slowRepeat * 20 / 0.25));
+				br3.runTaskTimer(ProjectKorra.plugin, (long) (this.blindDelay * 20), (long) (this.blindRepeat * 20));
 			}
 		}
 
-		animate();
-		if (!player.isSneaking()) {
-			remove();
+		this.animate();
+		if (!this.player.isSneaking()) {
+			this.remove();
 			return;
 		}
 	}
 
 	/** Stops an entity from being suffocated **/
-	public static void breakSuffocate(Entity entity) {
-		for (Suffocate suffocate : getAbilities(Suffocate.class)) {
+	public static void breakSuffocate(final Entity entity) {
+		for (final Suffocate suffocate : getAbilities(Suffocate.class)) {
 			if (suffocate.targets.contains(entity)) {
 				suffocate.breakSuffocateLocal(entity);
 			}
@@ -240,8 +239,8 @@ public class Suffocate extends AirAbility {
 	}
 
 	/** Checks if an entity is being suffocated **/
-	public static boolean isBreathbent(Entity entity) {
-		for (Suffocate suffocate : getAbilities(Suffocate.class)) {
+	public static boolean isBreathbent(final Entity entity) {
+		for (final Suffocate suffocate : getAbilities(Suffocate.class)) {
 			if (suffocate.targets.contains(entity)) {
 				return suffocate.started;
 			}
@@ -250,7 +249,7 @@ public class Suffocate extends AirAbility {
 	}
 
 	/** Determines if a player is Suffocating entities **/
-	public static boolean isChannelingSphere(Player player) {
+	public static boolean isChannelingSphere(final Player player) {
 		return hasAbility(player, Suffocate.class);
 	}
 
@@ -258,8 +257,8 @@ public class Suffocate extends AirAbility {
 	 * Removes an instance of Suffocate if player is the one suffocating
 	 * entities
 	 **/
-	public static void remove(Player player) {
-		Suffocate suff = getAbility(player, Suffocate.class);
+	public static void remove(final Player player) {
+		final Suffocate suff = getAbility(player, Suffocate.class);
 		if (suff != null) {
 			suff.remove();
 		}
@@ -269,16 +268,16 @@ public class Suffocate extends AirAbility {
 	 * Removes all instances of Suffocate at loc within the radius threshold.
 	 * The location of a Suffocate is defined at the benders location, not the
 	 * location of the entities being suffocated.
-	 * 
+	 *
 	 * @param causer The player causing this instance to be removed
 	 **/
-	public static boolean removeAtLocation(Player causer, Location loc, double radius) {
+	public static boolean removeAtLocation(final Player causer, final Location loc, final double radius) {
 		if (causer == null) {
 			return false;
 		}
-		for (Suffocate suff : getAbilities(Suffocate.class)) {
+		for (final Suffocate suff : getAbilities(Suffocate.class)) {
 			if (!suff.player.equals(causer)) {
-				Location playerLoc = suff.getPlayer().getLocation();
+				final Location playerLoc = suff.getPlayer().getLocation();
 				if (playerLoc.getWorld().equals(loc.getWorld()) && playerLoc.distanceSquared(loc) <= radius * radius) {
 					suff.remove();
 					return true;
@@ -294,43 +293,43 @@ public class Suffocate extends AirAbility {
 	 * SuffocationSpirals.
 	 */
 	public void animate() {
-		int steps = 8 * particleCount;
-		long curTime = System.currentTimeMillis();
-		long dt = curTime - getStartTime() - chargeTime;
-		long delay = 2 / particleCount;
-		long t1 = (long) (1500 * animationSpeed);
-		long t2 = (long) (2500 * animationSpeed);
-		long t3 = (long) (5000 * animationSpeed);
-		long t4 = (long) (6000 * animationSpeed);
-		for (LivingEntity lent : targets) {
+		final int steps = 8 * this.particleCount;
+		final long curTime = System.currentTimeMillis();
+		final long dt = curTime - this.getStartTime() - this.chargeTime;
+		final long delay = 2 / this.particleCount;
+		final long t1 = (long) (1500 * this.animationSpeed);
+		final long t2 = (long) (2500 * this.animationSpeed);
+		final long t3 = (long) (5000 * this.animationSpeed);
+		final long t4 = (long) (6000 * this.animationSpeed);
+		for (final LivingEntity lent : this.targets) {
 			final LivingEntity target = lent;
 			if (dt < t1) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL2);
+				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL2);
 			} else if (dt < t2) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+				new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
 			} else if (dt < t3) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
 			} else if (dt < t4) {
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
+				new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
+				new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
 			} else {
-				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
+				new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
+				new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
 			}
 		}
 	}
 
 	/** Stops an entity from being suffocated **/
-	public void breakSuffocateLocal(Entity entity) {
-		if (targets.contains(entity)) {
-			targets.remove(entity);
+	public void breakSuffocateLocal(final Entity entity) {
+		if (this.targets.contains(entity)) {
+			this.targets.remove(entity);
 		}
 	}
 
@@ -338,9 +337,9 @@ public class Suffocate extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		for (int i = 0; i < tasks.size(); i++) {
-			tasks.get(i).cancel();
-			tasks.remove(i);
+		for (int i = 0; i < this.tasks.size(); i++) {
+			this.tasks.get(i).cancel();
+			this.tasks.remove(i);
 			i--;
 		}
 	}
@@ -352,12 +351,12 @@ public class Suffocate extends AirAbility {
 	 */
 	public class SuffocateSpiral extends BukkitRunnable {
 		private Location startLoc;
-		private Location loc;
+		private final Location loc;
 		private LivingEntity target;
-		private int totalSteps;
-		private double radius;
-		private double dx, dy, dz;
-		private SpiralType type;
+		private final int totalSteps;
+		private final double radius;
+		private final double dx, dy, dz;
+		private final SpiralType type;
 		private int i;
 
 		/**
@@ -370,7 +369,7 @@ public class Suffocate extends AirAbility {
 		 * @param dz z offset
 		 * @param type Spiral animation direction
 		 */
-		public SuffocateSpiral(LivingEntity lent, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
+		public SuffocateSpiral(final LivingEntity lent, final int totalSteps, final double radius, final long interval, final double dx, final double dy, final double dz, final SpiralType type) {
 			this.target = lent;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -378,10 +377,10 @@ public class Suffocate extends AirAbility {
 			this.dy = dy;
 			this.dz = dz;
 			this.type = type;
-			this.loc = target.getEyeLocation();
+			this.loc = this.target.getEyeLocation();
 			this.i = 0;
 			this.runTaskTimer(ProjectKorra.plugin, 0L, interval);
-			tasks.add(this);
+			Suffocate.this.tasks.add(this);
 		}
 
 		/**
@@ -394,7 +393,7 @@ public class Suffocate extends AirAbility {
 		 * @param dz z offset
 		 * @param type Spiral animation direction
 		 */
-		public SuffocateSpiral(Location startLoc, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
+		public SuffocateSpiral(final Location startLoc, final int totalSteps, final double radius, final long interval, final double dx, final double dy, final double dz, final SpiralType type) {
 			this.startLoc = startLoc;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -405,52 +404,53 @@ public class Suffocate extends AirAbility {
 			this.loc = startLoc.clone();
 			this.i = 0;
 			this.runTaskTimer(ProjectKorra.plugin, 0L, interval);
-			tasks.add(this);
+			Suffocate.this.tasks.add(this);
 		}
 
 		/**
 		 * Starts the initial animation, and removes itself when it is finished.
 		 */
+		@Override
 		public void run() {
 			Location tempLoc;
-			if (target != null) {
-				tempLoc = target.getEyeLocation();
+			if (this.target != null) {
+				tempLoc = this.target.getEyeLocation();
 				tempLoc.setY(tempLoc.getY() - 0.5);
 			} else {
-				tempLoc = startLoc.clone();
+				tempLoc = this.startLoc.clone();
 			}
 
-			if (type == SpiralType.HORIZONTAL1) {
-				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setY(tempLoc.getY() + dy * i);
-				loc.setZ(tempLoc.getZ() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
-			} else if (type == SpiralType.HORIZONTAL2) {
-				loc.setX(tempLoc.getX() + radius * -Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setY(tempLoc.getY() + dy * i);
-				loc.setZ(tempLoc.getZ() + radius * -Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
-			} else if (type == SpiralType.VERTICAL1) {
-				loc.setX(tempLoc.getX() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setY(tempLoc.getY() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setZ(tempLoc.getZ() + dz * i);
-			} else if (type == SpiralType.VERTICAL2) {
-				loc.setX(tempLoc.getX() + dx * i);
-				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setZ(tempLoc.getZ() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
-			} else if (type == SpiralType.DIAGONAL1) {
-				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setZ(tempLoc.getZ() + radius * -Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
-			} else if (type == SpiralType.DIAGONAL2) {
-				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
-				loc.setZ(tempLoc.getZ() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
+			if (this.type == SpiralType.HORIZONTAL1) {
+				this.loc.setX(tempLoc.getX() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.dy * this.i);
+				this.loc.setZ(tempLoc.getZ() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+			} else if (this.type == SpiralType.HORIZONTAL2) {
+				this.loc.setX(tempLoc.getX() + this.radius * -Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.dy * this.i);
+				this.loc.setZ(tempLoc.getZ() + this.radius * -Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+			} else if (this.type == SpiralType.VERTICAL1) {
+				this.loc.setX(tempLoc.getX() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.dz * this.i);
+			} else if (this.type == SpiralType.VERTICAL2) {
+				this.loc.setX(tempLoc.getX() + this.dx * this.i);
+				this.loc.setY(tempLoc.getY() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+			} else if (this.type == SpiralType.DIAGONAL1) {
+				this.loc.setX(tempLoc.getX() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * -Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+			} else if (this.type == SpiralType.DIAGONAL2) {
+				this.loc.setX(tempLoc.getX() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			}
 
-			getAirbendingParticles().display(loc, (float) 0, (float) 0, (float) 0, 0, 1);
-			if (i == totalSteps + 1) {
+			getAirbendingParticles().display(this.loc, 0, 0, 0, 0, 1);
+			if (this.i == this.totalSteps + 1) {
 				this.cancel();
 			}
-			i++;
+			this.i++;
 		}
 	}
 
@@ -461,17 +461,17 @@ public class Suffocate extends AirAbility {
 
 	@Override
 	public Location getLocation() {
-		if (targets.size() > 0) {
-			return targets.get(0).getLocation();
-		} else if (player != null) {
-			return player.getLocation();
+		if (this.targets.size() > 0) {
+			return this.targets.get(0).getLocation();
+		} else if (this.player != null) {
+			return this.player.getLocation();
 		}
 		return null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -486,164 +486,165 @@ public class Suffocate extends AirAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		locations.add(player.getLocation());
+		final ArrayList<Location> locations = new ArrayList<>();
+		locations.add(this.player.getLocation());
 		return locations;
 	}
 
+	@Override
 	public boolean isStarted() {
-		return started;
+		return this.started;
 	}
 
-	public void setStarted(boolean started) {
+	public void setStarted(final boolean started) {
 		this.started = started;
 	}
 
 	public boolean isRequireConstantAim() {
-		return requireConstantAim;
+		return this.requireConstantAim;
 	}
 
-	public void setRequireConstantAim(boolean requireConstantAim) {
+	public void setRequireConstantAim(final boolean requireConstantAim) {
 		this.requireConstantAim = requireConstantAim;
 	}
 
 	public boolean isCanSuffocateUndead() {
-		return canSuffocateUndead;
+		return this.canSuffocateUndead;
 	}
 
-	public void setCanSuffocateUndead(boolean canSuffocateUndead) {
+	public void setCanSuffocateUndead(final boolean canSuffocateUndead) {
 		this.canSuffocateUndead = canSuffocateUndead;
 	}
 
 	public int getParticleCount() {
-		return particleCount;
+		return this.particleCount;
 	}
 
-	public void setParticleCount(int particleCount) {
+	public void setParticleCount(final int particleCount) {
 		this.particleCount = particleCount;
 	}
 
 	public long getChargeTime() {
-		return chargeTime;
+		return this.chargeTime;
 	}
 
-	public void setChargeTime(long chargeTime) {
+	public void setChargeTime(final long chargeTime) {
 		this.chargeTime = chargeTime;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public double getDamageDelay() {
-		return damageDelay;
+		return this.damageDelay;
 	}
 
-	public void setDamageDelay(double damageDelay) {
+	public void setDamageDelay(final double damageDelay) {
 		this.damageDelay = damageDelay;
 	}
 
 	public double getDamageRepeat() {
-		return damageRepeat;
+		return this.damageRepeat;
 	}
 
-	public void setDamageRepeat(double damageRepeat) {
+	public void setDamageRepeat(final double damageRepeat) {
 		this.damageRepeat = damageRepeat;
 	}
 
 	public double getSlow() {
-		return slow;
+		return this.slow;
 	}
 
-	public void setSlow(double slow) {
+	public void setSlow(final double slow) {
 		this.slow = slow;
 	}
 
 	public double getSlowRepeat() {
-		return slowRepeat;
+		return this.slowRepeat;
 	}
 
-	public void setSlowRepeat(double slowRepeat) {
+	public void setSlowRepeat(final double slowRepeat) {
 		this.slowRepeat = slowRepeat;
 	}
 
 	public double getSlowDelay() {
-		return slowDelay;
+		return this.slowDelay;
 	}
 
-	public void setSlowDelay(double slowDelay) {
+	public void setSlowDelay(final double slowDelay) {
 		this.slowDelay = slowDelay;
 	}
 
 	public double getConstantAimRadius() {
-		return constantAimRadius;
+		return this.constantAimRadius;
 	}
 
-	public void setConstantAimRadius(double constantAimRadius) {
+	public void setConstantAimRadius(final double constantAimRadius) {
 		this.constantAimRadius = constantAimRadius;
 	}
 
 	public double getBlind() {
-		return blind;
+		return this.blind;
 	}
 
-	public void setBlind(double blind) {
+	public void setBlind(final double blind) {
 		this.blind = blind;
 	}
 
 	public double getBlindDelay() {
-		return blindDelay;
+		return this.blindDelay;
 	}
 
-	public void setBlindDelay(double blindDelay) {
+	public void setBlindDelay(final double blindDelay) {
 		this.blindDelay = blindDelay;
 	}
 
 	public double getBlindRepeat() {
-		return blindRepeat;
+		return this.blindRepeat;
 	}
 
-	public void setBlindRepeat(double blindRepeat) {
+	public void setBlindRepeat(final double blindRepeat) {
 		this.blindRepeat = blindRepeat;
 	}
 
 	public double getAnimationSpeed() {
-		return animationSpeed;
+		return this.animationSpeed;
 	}
 
-	public void setAnimationSpeed(double animationSpeed) {
+	public void setAnimationSpeed(final double animationSpeed) {
 		this.animationSpeed = animationSpeed;
 	}
 
 	public ArrayList<BukkitRunnable> getTasks() {
-		return tasks;
+		return this.tasks;
 	}
 
 	public ArrayList<LivingEntity> getTargets() {
-		return targets;
+		return this.targets;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 }

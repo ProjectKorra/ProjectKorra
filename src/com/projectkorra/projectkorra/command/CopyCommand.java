@@ -1,26 +1,26 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class CopyCommand extends PKCommand {
 
-	private String playerNotFound;
-	private String copied;
-	private String failedToBindAll;
-	private String copiedOther;
+	private final String playerNotFound;
+	private final String copied;
+	private final String failedToBindAll;
+	private final String copiedOther;
 
 	public CopyCommand() {
 		super("copy", "/bending copy <Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Copy.Description"), new String[] { "copy", "co" });
@@ -32,61 +32,60 @@ public class CopyCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
-		if (!correctLength(sender, args.size(), 1, 2)) {
+	public void execute(final CommandSender sender, final List<String> args) {
+		if (!this.correctLength(sender, args.size(), 1, 2)) {
 			return;
 		} else if (args.size() == 1) {
-			if (!hasPermission(sender) || !isPlayer(sender)) {
+			if (!this.hasPermission(sender) || !this.isPlayer(sender)) {
 				return;
 			}
 
-			Player orig = Bukkit.getPlayer(args.get(0));
+			final Player orig = Bukkit.getPlayer(args.get(0));
 
 			if (orig == null || !orig.isOnline()) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + playerNotFound);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
 
-			boolean boundAll = assignAbilities(sender, orig, (Player) sender, true);
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+			final boolean boundAll = this.assignAbilities(sender, orig, (Player) sender, true);
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
 			if (!boundAll) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + failedToBindAll);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
 			}
 		} else if (args.size() == 2) {
-			if (!hasPermission(sender, "assign")) {
+			if (!this.hasPermission(sender, "assign")) {
 				GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
 				return;
 			}
 
-			Player orig = ProjectKorra.plugin.getServer().getPlayer(args.get(0));
-			Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
+			final Player orig = ProjectKorra.plugin.getServer().getPlayer(args.get(0));
+			final Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
 
 			if ((orig == null || !orig.isOnline()) || (target == null || !target.isOnline())) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + playerNotFound);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
 
-			boolean boundAll = assignAbilities(sender, orig, target, false);
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
-			GeneralMethods.sendBrandingMessage(target, ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+			final boolean boundAll = this.assignAbilities(sender, orig, target, false);
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+			GeneralMethods.sendBrandingMessage(target, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
 			if (!boundAll) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + failedToBindAll);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private boolean assignAbilities(CommandSender sender, Player player, Player player2, boolean self) {
+	private boolean assignAbilities(final CommandSender sender, final Player player, final Player player2, final boolean self) {
 
 		BendingPlayer orig = BendingPlayer.getBendingPlayer(player);
 		BendingPlayer target = BendingPlayer.getBendingPlayer(player2);
 
 		if (orig == null) {
-			GeneralMethods.createBendingPlayer(((Player) player).getUniqueId(), player.getName());
+			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			orig = BendingPlayer.getBendingPlayer(player);
 		}
 		if (target == null) {
-			GeneralMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
+			GeneralMethods.createBendingPlayer(player2.getUniqueId(), player2.getName());
 			target = BendingPlayer.getBendingPlayer(player2);
 		}
 		if (orig.isPermaRemoved()) {
@@ -98,10 +97,10 @@ public class CopyCommand extends PKCommand {
 			return false;
 		}
 
-		HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
+		final HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
-			CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
 			if (coreAbil != null && !target.canBind(coreAbil)) {
 				abilities.remove(i);
 				boundAll = false;
@@ -112,11 +111,12 @@ public class CopyCommand extends PKCommand {
 	}
 
 	@Override
-	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (!sender.hasPermission("bending.command.copy") || args.size() >= 2 || (args.size() >= 1 && !sender.hasPermission("bending.command.copy.assign")))
-			return new ArrayList<String>(); //Return nothing
-		List<String> l = new ArrayList<String>();
-		for (Player p : Bukkit.getOnlinePlayers()) {
+	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
+		if (!sender.hasPermission("bending.command.copy") || args.size() >= 2 || (args.size() >= 1 && !sender.hasPermission("bending.command.copy.assign"))) {
+			return new ArrayList<String>(); // Return nothing.
+		}
+		final List<String> l = new ArrayList<String>();
+		for (final Player p : Bukkit.getOnlinePlayers()) {
 			l.add(p.getName());
 		}
 		return l;

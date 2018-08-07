@@ -8,7 +8,7 @@ public class AirbendingManager implements Runnable {
 
 	public ProjectKorra plugin;
 
-	public AirbendingManager(ProjectKorra plugin) {
+	public AirbendingManager(final ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
 

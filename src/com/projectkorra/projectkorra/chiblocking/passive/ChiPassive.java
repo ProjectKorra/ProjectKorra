@@ -17,15 +17,15 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ActionBar;
 
 public class ChiPassive {
-	public static boolean willChiBlock(Player attacker, Player player) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean willChiBlock(final Player attacker, final Player player) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return false;
 		}
 
-		ChiAbility stance = bPlayer.getStance();
-		QuickStrike quickStrike = CoreAbility.getAbility(player, QuickStrike.class);
-		SwiftKick swiftKick = CoreAbility.getAbility(player, SwiftKick.class);
+		final ChiAbility stance = bPlayer.getStance();
+		final QuickStrike quickStrike = CoreAbility.getAbility(player, QuickStrike.class);
+		final SwiftKick swiftKick = CoreAbility.getAbility(player, SwiftKick.class);
 		double newChance = getChance();
 
 		if (stance != null && stance instanceof AcrobatStance) {
@@ -43,7 +43,7 @@ public class ChiPassive {
 		} else if (bPlayer.isChiBlocked()) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -56,23 +56,23 @@ public class ChiPassive {
 		if (bPlayer == null) {
 			return;
 		}
-		
+
 		bPlayer.blockChi();
 		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
-		
-		long start = System.currentTimeMillis();
+
+		final long start = System.currentTimeMillis();
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				ActionBar.sendActionBar(Element.CHI.getColor() + "* Chiblocked *", player);
 				if (System.currentTimeMillis() >= start + getDuration()) {
 					bPlayer.unblockChi();
-					cancel();
+					this.cancel();
 				}
 			}
 		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 	}
-	
+
 	public static double getChance() {
 		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.BlockChi.Chance");
 	}

@@ -1,13 +1,13 @@
 package com.projectkorra.projectkorra.waterbending.plant;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.PlantAbility;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.PlantAbility;
 
 public class PlantRegrowth extends PlantAbility {
 
@@ -17,12 +17,11 @@ public class PlantRegrowth extends PlantAbility {
 	private Material type;
 	private Block block;
 
-	@SuppressWarnings("deprecation")
-	public PlantRegrowth(Player player, Block block) {
+	public PlantRegrowth(final Player player, final Block block) {
 		super(player);
 
 		this.regrowTime = getConfig().getLong("Abilities.Water.Plantbending.RegrowTime");
-		if (regrowTime != 0) {
+		if (this.regrowTime != 0) {
 			this.block = block;
 			this.type = block.getType();
 			this.data = block.getData();
@@ -40,32 +39,31 @@ public class PlantRegrowth extends PlantAbility {
 				}
 			}
 
-			time = System.currentTimeMillis() + regrowTime / 2 + (long) (Math.random() * (double) regrowTime) / 2;
-			start();
+			this.time = System.currentTimeMillis() + this.regrowTime / 2 + (long) (Math.random() * this.regrowTime) / 2;
+			this.start();
 		}
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void remove() {
 		super.remove();
-		if (block.getType() == Material.AIR) {
-			block.setType(type);
-			block.setData(data);
-			if (type == Material.DOUBLE_PLANT) {
-				block.getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
-				block.getRelative(BlockFace.UP).setData((byte) 10);
+		if (this.block.getType() == Material.AIR) {
+			this.block.setType(this.type);
+			this.block.setData(this.data);
+			if (this.type == Material.DOUBLE_PLANT) {
+				this.block.getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
+				this.block.getRelative(BlockFace.UP).setData((byte) 10);
 			}
 
 		} else {
-			GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, type, data, null));
+			GeneralMethods.dropItems(this.block, GeneralMethods.getDrops(this.block, this.type, this.data, null));
 		}
 	}
 
 	@Override
 	public void progress() {
-		if (time < System.currentTimeMillis()) {
-			remove();
+		if (this.time < System.currentTimeMillis()) {
+			this.remove();
 		}
 	}
 
@@ -76,7 +74,7 @@ public class PlantRegrowth extends PlantAbility {
 
 	@Override
 	public Location getLocation() {
-		return block != null ? block.getLocation() : null;
+		return this.block != null ? this.block.getLocation() : null;
 	}
 
 	@Override
@@ -100,42 +98,42 @@ public class PlantRegrowth extends PlantAbility {
 	}
 
 	public byte getData() {
-		return data;
+		return this.data;
 	}
 
-	public void setData(byte data) {
+	public void setData(final byte data) {
 		this.data = data;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getRegrowTime() {
-		return regrowTime;
+		return this.regrowTime;
 	}
 
-	public void setRegrowTime(long regrowTime) {
+	public void setRegrowTime(final long regrowTime) {
 		this.regrowTime = regrowTime;
 	}
 
 	public Material getType() {
-		return type;
+		return this.type;
 	}
 
-	public void setType(Material type) {
+	public void setType(final Material type) {
 		this.type = type;
 	}
 
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 
-	public void setBlock(Block block) {
+	public void setBlock(final Block block) {
 		this.block = block;
 	}
 

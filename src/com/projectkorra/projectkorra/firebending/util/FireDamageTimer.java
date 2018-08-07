@@ -1,16 +1,16 @@
 package com.projectkorra.projectkorra.firebending.util;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.firebending.HeatControl;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.firebending.HeatControl;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class FireDamageTimer {
 
@@ -20,7 +20,7 @@ public class FireDamageTimer {
 	private static final Map<Entity, Player> INSTANCES = new ConcurrentHashMap<>();
 	private static final Map<Entity, Long> TIMES = new ConcurrentHashMap<>();
 
-	public FireDamageTimer(Entity entity, Player source) {
+	public FireDamageTimer(final Entity entity, final Player source) {
 		if (entity.getEntityId() == source.getEntityId()) {
 			return;
 		}
@@ -28,10 +28,10 @@ public class FireDamageTimer {
 		INSTANCES.put(entity, source);
 	}
 
-	public static boolean isEnflamed(Entity entity) {
+	public static boolean isEnflamed(final Entity entity) {
 		if (INSTANCES.containsKey(entity)) {
 			if (TIMES.containsKey(entity)) {
-				long time = TIMES.get(entity);
+				final long time = TIMES.get(entity);
 				if (System.currentTimeMillis() < time + BUFFER) {
 					return false;
 				}
@@ -43,17 +43,17 @@ public class FireDamageTimer {
 		}
 	}
 
-	public static void dealFlameDamage(Entity entity) {
+	public static void dealFlameDamage(final Entity entity) {
 		if (INSTANCES.containsKey(entity) && entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
 				if (!HeatControl.canBurn((Player) entity)) {
 					return;
 				}
 			}
-			LivingEntity Lentity = (LivingEntity) entity;
-			Player source = INSTANCES.get(entity);
+			final LivingEntity Lentity = (LivingEntity) entity;
+			final Player source = INSTANCES.get(entity);
 
-			//damages the entity
+			// damages the entity.
 			DamageHandler.damageEntity(Lentity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
 
 			if (entity.getFireTicks() > MAX_TICKS) {
@@ -63,7 +63,7 @@ public class FireDamageTimer {
 	}
 
 	public static void handleFlames() {
-		for (Entity entity : INSTANCES.keySet()) {
+		for (final Entity entity : INSTANCES.keySet()) {
 			if (entity.getFireTicks() <= 0) {
 				INSTANCES.remove(entity);
 			}

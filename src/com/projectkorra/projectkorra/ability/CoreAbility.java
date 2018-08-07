@@ -53,7 +53,7 @@ import sun.reflect.ReflectionFactory;
  * For {@link CollisionManager} and {@link Collision}, a CoreAbility may need to
  * override {@link #isCollidable()}, {@link #getCollisionRadius()},
  * {@link #handleCollision(Collision)}, and {@link #getLocations()}.
- * 
+ *
  * @see #start()
  * @see #progress()
  * @see #remove()
@@ -65,7 +65,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Set<CoreAbility> INSTANCES = Collections.newSetFromMap(new ConcurrentHashMap<CoreAbility, Boolean>());
 	private static final Map<Class<? extends CoreAbility>, Map<UUID, Map<Integer, CoreAbility>>> INSTANCES_BY_PLAYER = new ConcurrentHashMap<>();
 	private static final Map<Class<? extends CoreAbility>, Set<CoreAbility>> INSTANCES_BY_CLASS = new ConcurrentHashMap<>();
-	private static final Map<String, CoreAbility> ABILITIES_BY_NAME = new ConcurrentSkipListMap<>(); // preserves ordering
+	private static final Map<String, CoreAbility> ABILITIES_BY_NAME = new ConcurrentSkipListMap<>(); // preserves ordering.
 	private static final Map<Class<? extends CoreAbility>, CoreAbility> ABILITIES_BY_CLASS = new ConcurrentHashMap<>();
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
 	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
@@ -93,7 +93,7 @@ public abstract class CoreAbility implements Ability {
 	 * getDeclaredConstructor which is only usable with a public default
 	 * constructor. Reflection lets us create a list of all of the plugin's
 	 * abilities when the plugin first loads.
-	 * 
+	 *
 	 * @see #ABILITIES_BY_NAME
 	 * @see #getAbility(String)
 	 */
@@ -102,12 +102,12 @@ public abstract class CoreAbility implements Ability {
 
 	/**
 	 * Creates a new CoreAbility instance but does not start it.
-	 * 
+	 *
 	 * @param player the non-null player that created this instance
 	 * @see #start()
 	 */
-	public CoreAbility(Player player) {
-		if (player == null || !isEnabled()) {
+	public CoreAbility(final Player player) {
+		if (player == null || !this.isEnabled()) {
 			return;
 		}
 
@@ -116,7 +116,7 @@ public abstract class CoreAbility implements Ability {
 		this.startTime = System.currentTimeMillis();
 		this.started = false;
 		this.id = CoreAbility.idCounter;
-		this.startTick = getCurrentTick();
+		this.startTick = this.getCurrentTick();
 
 		if (idCounter == Integer.MAX_VALUE) {
 			idCounter = Integer.MIN_VALUE;
@@ -130,25 +130,25 @@ public abstract class CoreAbility implements Ability {
 	 * {@link #progress()} until {@link #remove()} is called. This method cannot
 	 * be overridden, and any code that needs to be performed before start
 	 * should be handled in the constructor.
-	 * 
+	 *
 	 * @see #getStartTime()
 	 * @see #isStarted()
 	 * @see #isRemoved()
 	 */
 	public void start() {
-		if (player == null || !isEnabled()) {
+		if (this.player == null || !this.isEnabled()) {
 			return;
 		}
-		AbilityStartEvent event = new AbilityStartEvent(this);
+		final AbilityStartEvent event = new AbilityStartEvent(this);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
-			remove();
+			this.remove();
 			return;
 		}
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
-		Class<? extends CoreAbility> clazz = getClass();
-		UUID uuid = player.getUniqueId();
+		final Class<? extends CoreAbility> clazz = this.getClass();
+		final UUID uuid = this.player.getUniqueId();
 
 		if (!INSTANCES_BY_PLAYER.containsKey(clazz)) {
 			INSTANCES_BY_PLAYER.put(clazz, new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
@@ -169,37 +169,37 @@ public abstract class CoreAbility implements Ability {
 	 * Causes this CoreAbility instance to be removed, and {@link #progress}
 	 * will no longer be called every tick. If this method is overridden then
 	 * the new method must call <b>super.remove()</b>.
-	 * 
+	 *
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see #isRemoved()
 	 */
 	@Override
 	public void remove() {
-		if (player == null) {
+		if (this.player == null) {
 			return;
 		}
 
 		Bukkit.getServer().getPluginManager().callEvent(new AbilityEndEvent(this));
-		removed = true;
+		this.removed = true;
 
-		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(getClass());
+		final Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(this.getClass());
 		if (classMap != null) {
-			Map<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
+			final Map<Integer, CoreAbility> playerMap = classMap.get(this.player.getUniqueId());
 			if (playerMap != null) {
 				playerMap.remove(this.id);
 				if (playerMap.size() == 0) {
-					classMap.remove(player.getUniqueId());
+					classMap.remove(this.player.getUniqueId());
 				}
 			}
 
 			if (classMap.size() == 0) {
-				INSTANCES_BY_PLAYER.remove(getClass());
+				INSTANCES_BY_PLAYER.remove(this.getClass());
 			}
 		}
 
-		if (INSTANCES_BY_CLASS.containsKey(getClass())) {
-			INSTANCES_BY_CLASS.get(getClass()).remove(this);
+		if (INSTANCES_BY_CLASS.containsKey(this.getClass())) {
+			INSTANCES_BY_CLASS.get(this.getClass()).remove(this);
 		}
 		INSTANCES.remove(this);
 	}
@@ -209,15 +209,15 @@ public abstract class CoreAbility implements Ability {
 	 * that has been started and has not been removed.
 	 */
 	public static void progressAll() {
-		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
-			for (CoreAbility abil : setAbils) {
+		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
+			for (final CoreAbility abil : setAbils) {
 				if (abil instanceof PassiveAbility) {
-					if (!((PassiveAbility)abil).isProgressable()) {
+					if (!((PassiveAbility) abil).isProgressable()) {
 						continue;
 					}
-					
-					if (!abil.getPlayer().isOnline()) { //This has to be before isDead as isDead
-						abil.remove();                  //will return true if they are offline 
+
+					if (!abil.getPlayer().isOnline()) { // This has to be before isDead as isDead.
+						abil.remove(); // will return true if they are offline.
 						continue;
 					} else if (abil.getPlayer().isDead()) {
 						continue;
@@ -229,15 +229,17 @@ public abstract class CoreAbility implements Ability {
 					abil.remove();
 					continue;
 				}
-				
+
 				try {
 					abil.progress();
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
-				} catch (Exception e) {
+				}
+				catch (final Exception e) {
 					e.printStackTrace();
 					try {
 						abil.remove();
-					} catch (Exception re) {
+					}
+					catch (final Exception re) {
 						re.printStackTrace();
 					}
 				}
@@ -250,15 +252,15 @@ public abstract class CoreAbility implements Ability {
 	 * removed.
 	 */
 	public static void removeAll() {
-		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
-			for (CoreAbility abil : setAbils) {
+		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
+			for (final CoreAbility abil : setAbils) {
 				abil.remove();
 			}
 		}
 
-		for (CoreAbility coreAbility : ABILITIES_BY_NAME.values()) {
+		for (final CoreAbility coreAbility : ABILITIES_BY_NAME.values()) {
 			if (coreAbility instanceof AddonAbility) {
-				AddonAbility addon = (AddonAbility) coreAbility;
+				final AddonAbility addon = (AddonAbility) coreAbility;
 				addon.stop();
 			}
 		}
@@ -267,13 +269,13 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Returns any T CoreAbility that has been started and not yet removed. May
 	 * return null if no such ability exists.
-	 * 
+	 *
 	 * @param player the player that created the CoreAbility instance
 	 * @param clazz the class of the type of CoreAbility
 	 * @return a CoreAbility instance or null
 	 */
-	public static <T extends CoreAbility> T getAbility(Player player, Class<T> clazz) {
-		Collection<T> abils = getAbilities(player, clazz);
+	public static <T extends CoreAbility> T getAbility(final Player player, final Class<T> clazz) {
+		final Collection<T> abils = getAbilities(player, clazz);
 		if (abils.iterator().hasNext()) {
 			return abils.iterator().next();
 		}
@@ -286,30 +288,30 @@ public abstract class CoreAbility implements Ability {
 	 * Players, instead this method looks at the CoreAbilities that were created
 	 * via Reflection by {@link #registerAbilities()} when the plugin was first
 	 * loaded.
-	 * 
+	 *
 	 * <p>
 	 * These "fake" instances have a null player, but methods such as
 	 * {@link Ability#getName()}, and {@link Ability#getElement()} will still
 	 * work, as will checking the type of the ability with instanceof.
-	 * 
+	 *
 	 * <p>
 	 * CoreAbility coreAbil = getAbility(someString); <br>
 	 * if (coreAbil instanceof FireAbility && coreAbil.isSneakAbility())
-	 * 
+	 *
 	 * @param abilityName the name of a loaded CoreAbility
 	 * @return a "fake" CoreAbility instance, or null if no such ability exists
 	 */
-	public static CoreAbility getAbility(String abilityName) {
+	public static CoreAbility getAbility(final String abilityName) {
 		return abilityName != null ? ABILITIES_BY_NAME.get(abilityName.toLowerCase()) : null;
 	}
 
 	/**
 	 * Returns a "fake" instance for a CoreAbility with the specific class.
-	 * 
+	 *
 	 * @param clazz the class for the type of CoreAbility to be returned
 	 * @return a "fake" CoreAbility instance or null
 	 */
-	public static CoreAbility getAbility(Class<? extends CoreAbility> clazz) {
+	public static CoreAbility getAbility(final Class<? extends CoreAbility> clazz) {
 		return clazz != null ? ABILITIES_BY_CLASS.get(clazz) : null;
 	}
 
@@ -332,12 +334,11 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Returns a Collection of all of the player created instances for a
 	 * specific type of CoreAbility.
-	 * 
+	 *
 	 * @param clazz the class for the type of CoreAbilities
 	 * @return a Collection of real instances
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends CoreAbility> Collection<T> getAbilities(Class<T> clazz) {
+	public static <T extends CoreAbility> Collection<T> getAbilities(final Class<T> clazz) {
 		if (clazz == null || INSTANCES_BY_CLASS.get(clazz) == null || INSTANCES_BY_CLASS.get(clazz).size() == 0) {
 			return Collections.emptySet();
 		}
@@ -347,13 +348,12 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Returns a Collection of specific CoreAbility instances that were created
 	 * by the specified player.
-	 * 
+	 *
 	 * @param player the player that created the instances
 	 * @param clazz the class for the type of CoreAbilities
 	 * @return a Collection of real instances
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends CoreAbility> Collection<T> getAbilities(Player player, Class<T> clazz) {
+	public static <T extends CoreAbility> Collection<T> getAbilities(final Player player, final Class<T> clazz) {
 		if (player == null || clazz == null || INSTANCES_BY_PLAYER.get(clazz) == null || INSTANCES_BY_PLAYER.get(clazz).get(player.getUniqueId()) == null) {
 			return Collections.emptySet();
 		}
@@ -371,18 +371,18 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Returns an List of fake instances that were loaded by
 	 * {@link #registerAbilities()} filtered by Element.
-	 * 
+	 *
 	 * @param element the Element of the loaded abilities
 	 * @return a list of fake CoreAbility instances
 	 */
-	public static List<CoreAbility> getAbilitiesByElement(Element element) {
-		ArrayList<CoreAbility> abilities = new ArrayList<CoreAbility>();
+	public static List<CoreAbility> getAbilitiesByElement(final Element element) {
+		final ArrayList<CoreAbility> abilities = new ArrayList<CoreAbility>();
 		if (element != null) {
-			for (CoreAbility ability : getAbilities()) {
+			for (final CoreAbility ability : getAbilities()) {
 				if (ability.getElement() == element) {
 					abilities.add(ability);
 				} else if (ability.getElement() instanceof SubElement) {
-					Element parentElement = ((SubElement) ability.getElement()).getParentElement();
+					final Element parentElement = ((SubElement) ability.getElement()).getParentElement();
 					if (parentElement == element) {
 						abilities.add(ability);
 					}
@@ -391,12 +391,14 @@ public abstract class CoreAbility implements Ability {
 		}
 		return abilities;
 	}
-	
+
 	/**
-	 * CoreAbility keeps track of plugins that have registered abilities
-	 * to use for bending reload purposes
-	 * <br><b>This isn't a simple list, external use isn't recommended</b>
-	 * @return a list of entrys with the plugin name and path abilities can be found at
+	 * CoreAbility keeps track of plugins that have registered abilities to use
+	 * for bending reload purposes <br>
+	 * <b>This isn't a simple list, external use isn't recommended</b>
+	 *
+	 * @return a list of entrys with the plugin name and path abilities can be
+	 *         found at
 	 */
 	public static List<String> getAddonPlugins() {
 		return ADDON_PLUGINS;
@@ -404,24 +406,25 @@ public abstract class CoreAbility implements Ability {
 
 	/**
 	 * Returns true if the player has an active CoreAbility instance of type T.
-	 * 
+	 *
 	 * @param player the player that created the T instance
 	 * @param clazz the class for the type of CoreAbility
 	 */
-	public static <T extends CoreAbility> boolean hasAbility(Player player, Class<T> clazz) {
+	public static <T extends CoreAbility> boolean hasAbility(final Player player, final Class<T> clazz) {
 		return getAbility(player, clazz) != null;
 	}
-	
+
 	/**
 	 * Unloads the ability
+	 *
 	 * @param clazz Ability class to unload
 	 */
-	public static <T extends CoreAbility> void unloadAbility(Class<T> clazz) {
+	public static <T extends CoreAbility> void unloadAbility(final Class<T> clazz) {
 		if (!ABILITIES_BY_CLASS.containsKey(clazz)) {
 			return;
 		}
-		String name = ABILITIES_BY_CLASS.get(clazz).getName();
-		for (CoreAbility abil : INSTANCES) {
+		final String name = ABILITIES_BY_CLASS.get(clazz).getName();
+		for (final CoreAbility abil : INSTANCES) {
 			if (abil.getName() == name) {
 				abil.remove();
 			}
@@ -434,16 +437,16 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Returns a Set of all of the players that currently have an active
 	 * instance of clazz.
-	 * 
+	 *
 	 * @param clazz the clazz for the type of CoreAbility
 	 */
-	public static Set<Player> getPlayers(Class<? extends CoreAbility> clazz) {
-		HashSet<Player> players = new HashSet<>();
+	public static Set<Player> getPlayers(final Class<? extends CoreAbility> clazz) {
+		final HashSet<Player> players = new HashSet<>();
 		if (clazz != null) {
-			Map<UUID, Map<Integer, CoreAbility>> uuidMap = INSTANCES_BY_PLAYER.get(clazz);
+			final Map<UUID, Map<Integer, CoreAbility>> uuidMap = INSTANCES_BY_PLAYER.get(clazz);
 			if (uuidMap != null) {
-				for (UUID uuid : uuidMap.keySet()) {
-					Player uuidPlayer = Bukkit.getPlayer(uuid);
+				for (final UUID uuid : uuidMap.keySet()) {
+					final Player uuidPlayer = Bukkit.getPlayer(uuid);
 					if (uuidPlayer != null) {
 						players.add(uuidPlayer);
 					}
@@ -465,10 +468,9 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
-	 * Scans a JavaPlugin and registers CoreAbility class files.
-	 * Does not work. Use {@link CoreAbility.registerPluginAbilities}
-	 * instead! 
-	 * 
+	 * Scans a JavaPlugin and registers CoreAbility class files. Does not work.
+	 * Use {@link CoreAbility.registerPluginAbilities} instead!
+	 *
 	 * @param plugin a JavaPlugin containing CoreAbility class files
 	 * @param packagePrefix a prefix of the package name, used to increase
 	 *            performance
@@ -476,16 +478,16 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	@Deprecated
-	public static void legacyRegisterPluginAbilities(JavaPlugin plugin, String packagePrefix) {
-		List<String> disabled = new ArrayList<String>(); //this way multiple classes with the same name only show once
+	public static void legacyRegisterPluginAbilities(final JavaPlugin plugin, final String packagePrefix) {
+		final List<String> disabled = new ArrayList<String>(); // this way multiple classes with the same name only show once.
 		if (plugin == null) {
 			return;
 		}
 
-		Class<? extends JavaPlugin> pluginClass = plugin.getClass();
-		ClassLoader loader = pluginClass.getClassLoader();
-		
-		ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+		final Class<? extends JavaPlugin> pluginClass = plugin.getClass();
+		final ClassLoader loader = pluginClass.getClassLoader();
+
+		final ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
 
 		try {
 			for (final ClassInfo info : ClassPath.from(loader).getAllClasses()) {
@@ -500,9 +502,9 @@ public abstract class CoreAbility implements Ability {
 						continue;
 					}
 
-					Constructor<?> objDef = CoreAbility.class.getDeclaredConstructor();
-					Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
-					CoreAbility ability = (CoreAbility) clazz.cast(intConstr.newInstance());
+					final Constructor<?> objDef = CoreAbility.class.getDeclaredConstructor();
+					final Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
+					final CoreAbility ability = (CoreAbility) clazz.cast(intConstr.newInstance());
 
 					if (ability == null || ability.getName() == null) {
 						continue;
@@ -512,12 +514,12 @@ public abstract class CoreAbility implements Ability {
 						continue;
 					}
 
-					String name = ability.getName();
+					final String name = ability.getName();
 					ABILITIES_BY_NAME.put(ability.getName().toLowerCase(), ability);
 					ABILITIES_BY_CLASS.put(ability.getClass(), ability);
 
 					if (ability instanceof ComboAbility) {
-						ComboAbility combo = (ComboAbility) ability;
+						final ComboAbility combo = (ComboAbility) ability;
 						if (combo.getCombination() != null) {
 							ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
 							ComboManager.getDescriptions().put(name, ability.getDescription());
@@ -531,7 +533,7 @@ public abstract class CoreAbility implements Ability {
 					}
 
 					if (ability instanceof MultiAbility) {
-						MultiAbility multiAbil = (MultiAbility) ability;
+						final MultiAbility multiAbil = (MultiAbility) ability;
 						MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 					}
 
@@ -541,48 +543,48 @@ public abstract class CoreAbility implements Ability {
 					}
 
 					if (ability instanceof AddonAbility) {
-						AddonAbility addon = (AddonAbility) ability;
+						final AddonAbility addon = (AddonAbility) ability;
 						addon.load();
 					}
 				}
-				catch (Exception e) {
+				catch (final Exception e) {
 					e.printStackTrace();
 				}
-				catch (Error e) {
+				catch (final Error e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		catch (IOException e) {
+		catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Scans a JavaPlugin and registers CoreAbility class files.
-	 * 
+	 *
 	 * @param plugin a JavaPlugin containing CoreAbility class files
 	 * @param packageBase a prefix of the package name, used to increase
 	 *            performance
 	 * @see #getAbilities()
 	 * @see #getAbility(String)
 	 */
-	public static void registerPluginAbilities(JavaPlugin plugin, String packageBase) {
-		AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, packageBase);
-		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
-		String entry = plugin.getName() + "::" + packageBase;
+	public static void registerPluginAbilities(final JavaPlugin plugin, final String packageBase) {
+		final AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, packageBase);
+		final List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
+		final String entry = plugin.getName() + "::" + packageBase;
 		if (!ADDON_PLUGINS.contains(entry)) {
 			ADDON_PLUGINS.add(entry);
 		}
-		
-		for (CoreAbility coreAbil : loadedAbilities) {
+
+		for (final CoreAbility coreAbil : loadedAbilities) {
 			if (!coreAbil.isEnabled()) {
 				plugin.getLogger().info(coreAbil.getName() + " is disabled");
 				continue;
 			}
 
-			String name = coreAbil.getName();
-			
+			final String name = coreAbil.getName();
+
 			if (name == null) {
 				plugin.getLogger().warning("Ability " + coreAbil.getClass().getName() + " has no name?");
 				continue;
@@ -593,7 +595,7 @@ public abstract class CoreAbility implements Ability {
 				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
 
 				if (coreAbil instanceof ComboAbility) {
-					ComboAbility combo = (ComboAbility) coreAbil;
+					final ComboAbility combo = (ComboAbility) coreAbil;
 					if (combo.getCombination() != null) {
 						ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
 						ComboManager.getDescriptions().put(name, coreAbil.getDescription());
@@ -602,14 +604,14 @@ public abstract class CoreAbility implements Ability {
 				}
 
 				if (coreAbil instanceof MultiAbility) {
-					MultiAbility multiAbil = (MultiAbility) coreAbil;
+					final MultiAbility multiAbil = (MultiAbility) coreAbil;
 					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 				}
 
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 					PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
@@ -627,23 +629,23 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Scans all of the Jar files inside of /ProjectKorra/folder and registers
 	 * all of the CoreAbility class files that were found.
-	 * 
+	 *
 	 * @param folder the name of the folder to scan
 	 * @see #getAbilities()
 	 * @see #getAbility(String)
 	 */
-	public static void registerAddonAbilities(String folder) {
-		ProjectKorra plugin = ProjectKorra.plugin;
-		File path = new File(plugin.getDataFolder().toString() + folder);
+	public static void registerAddonAbilities(final String folder) {
+		final ProjectKorra plugin = ProjectKorra.plugin;
+		final File path = new File(plugin.getDataFolder().toString() + folder);
 		if (!path.exists()) {
 			path.mkdir();
 			return;
 		}
 
-		AddonAbilityLoader<CoreAbility> abilityLoader = new AddonAbilityLoader<CoreAbility>(plugin, path);
-		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
+		final AddonAbilityLoader<CoreAbility> abilityLoader = new AddonAbilityLoader<CoreAbility>(plugin, path);
+		final List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
 
-		for (CoreAbility coreAbil : loadedAbilities) {
+		for (final CoreAbility coreAbil : loadedAbilities) {
 			if (!(coreAbil instanceof AddonAbility)) {
 				plugin.getLogger().warning(coreAbil.getName() + " is an addon ability and must implement the AddonAbility interface");
 				continue;
@@ -652,8 +654,8 @@ public abstract class CoreAbility implements Ability {
 				continue;
 			}
 
-			AddonAbility addon = (AddonAbility) coreAbil;
-			String name = coreAbil.getName();
+			final AddonAbility addon = (AddonAbility) coreAbil;
+			final String name = coreAbil.getName();
 
 			try {
 				addon.load();
@@ -661,7 +663,7 @@ public abstract class CoreAbility implements Ability {
 				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
 
 				if (coreAbil instanceof ComboAbility) {
-					ComboAbility combo = (ComboAbility) coreAbil;
+					final ComboAbility combo = (ComboAbility) coreAbil;
 					if (combo.getCombination() != null) {
 						ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
 						ComboManager.getDescriptions().put(name, coreAbil.getDescription());
@@ -671,14 +673,14 @@ public abstract class CoreAbility implements Ability {
 				}
 
 				if (coreAbil instanceof MultiAbility) {
-					MultiAbility multiAbil = (MultiAbility) coreAbil;
+					final MultiAbility multiAbil = (MultiAbility) coreAbil;
 					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 				}
 
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 				}
@@ -694,39 +696,39 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public long getStartTime() {
-		return startTime;
+		return this.startTime;
 	}
 
 	public long getStartTick() {
-		return startTick;
+		return this.startTick;
 	}
 
 	public long getCurrentTick() {
-		return player.getWorld().getFullTime();
+		return this.player.getWorld().getFullTime();
 	}
 
 	public boolean isStarted() {
-		return started;
+		return this.started;
 	}
 
 	public boolean isRemoved() {
-		return removed;
+		return this.removed;
 	}
 
 	public BendingPlayer getBendingPlayer() {
-		return bPlayer;
+		return this.bPlayer;
 	}
 
 	public int getId() {
-		return id;
+		return this.id;
 	}
 
 	@Override
 	public boolean isHiddenAbility() {
-		return hidden;
+		return this.hidden;
 	}
 
-	public void setHiddenAbility(boolean hidden) {
+	public void setHiddenAbility(final boolean hidden) {
 		this.hidden = hidden;
 	}
 
@@ -736,18 +738,18 @@ public abstract class CoreAbility implements Ability {
 			return true;
 		}
 
-		String elementName = getElement().getName();
-		if (getElement() instanceof SubElement) {
-			elementName = ((SubElement) getElement()).getParentElement().getName();
+		String elementName = this.getElement().getName();
+		if (this.getElement() instanceof SubElement) {
+			elementName = ((SubElement) this.getElement()).getParentElement().getName();
 		}
 
 		String tag = null;
 		if (this instanceof ComboAbility) {
-			tag = "Abilities." + elementName + "." + elementName + "Combo." + getName() + ".Enabled";
+			tag = "Abilities." + elementName + "." + elementName + "Combo." + this.getName() + ".Enabled";
 		} else if (this instanceof PassiveAbility) {
-			tag = "Abilities." + elementName + ".Passive." + getName() + ".Enabled";
+			tag = "Abilities." + elementName + ".Passive." + this.getName() + ".Enabled";
 		} else {
-			tag = "Abilities." + elementName + "." + getName() + ".Enabled";
+			tag = "Abilities." + elementName + "." + this.getName() + ".Enabled";
 		}
 
 		if (getConfig().isBoolean(tag)) {
@@ -760,51 +762,51 @@ public abstract class CoreAbility implements Ability {
 	@Override
 	public String getInstructions() {
 
-		String elementName = getElement().getName();
-		if (getElement() instanceof SubElement) {
-			elementName = ((SubElement) getElement()).getParentElement().getName();
+		String elementName = this.getElement().getName();
+		if (this.getElement() instanceof SubElement) {
+			elementName = ((SubElement) this.getElement()).getParentElement().getName();
 		}
-		return ConfigManager.languageConfig.get().contains("Abilities." + elementName + "." + getName() + ".Instructions") ? ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Instructions") : "";
+		return ConfigManager.languageConfig.get().contains("Abilities." + elementName + "." + this.getName() + ".Instructions") ? ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Instructions") : "";
 	}
 
 	@Override
 	public String getDescription() {
-		String elementName = getElement().getName();
-		if (getElement() instanceof SubElement) {
-			elementName = ((SubElement) getElement()).getParentElement().getName();
+		String elementName = this.getElement().getName();
+		if (this.getElement() instanceof SubElement) {
+			elementName = ((SubElement) this.getElement()).getParentElement().getName();
 		}
 		if (this instanceof PassiveAbility) {
-			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + getName() + ".Description");
+			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + this.getName() + ".Description");
 		} else if (this instanceof ComboAbility) {
-			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Combo." + getName() + ".Description");
+			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Combo." + this.getName() + ".Description");
 		}
-		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Description");
+		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Description");
 	}
 
 	@Override
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 
 	/**
 	 * Changes the player that owns this ability instance. Used for redirection
 	 * and other abilities that change the player object.
-	 * 
+	 *
 	 * @param target The player who now controls the ability
 	 */
-	public void setPlayer(Player target) {
+	public void setPlayer(final Player target) {
 		if (target == this.player) {
 			return;
 		}
 
-		Class<? extends CoreAbility> clazz = getClass();
+		final Class<? extends CoreAbility> clazz = this.getClass();
 
 		// The mapping from player UUID to a map of the player's instances.
 		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(clazz);
 
 		if (classMap != null) {
 			// The map of AbilityId to Ability for the current player.
-			Map<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
+			final Map<Integer, CoreAbility> playerMap = classMap.get(this.player.getUniqueId());
 
 			if (playerMap != null) {
 				// Remove the ability from the current player's map.
@@ -812,12 +814,12 @@ public abstract class CoreAbility implements Ability {
 
 				if (playerMap.isEmpty()) {
 					// Remove the player's empty ability map from global instances map.
-					classMap.remove(player.getUniqueId());
+					classMap.remove(this.player.getUniqueId());
 				}
 			}
 
 			if (classMap.isEmpty()) {
-				INSTANCES_BY_PLAYER.remove(getClass());
+				INSTANCES_BY_PLAYER.remove(this.getClass());
 			}
 		}
 
@@ -838,7 +840,7 @@ public abstract class CoreAbility implements Ability {
 
 		this.player = target;
 
-		BendingPlayer newBendingPlayer = BendingPlayer.getBendingPlayer(target);
+		final BendingPlayer newBendingPlayer = BendingPlayer.getBendingPlayer(target);
 		if (newBendingPlayer != null) {
 			this.bPlayer = newBendingPlayer;
 		}
@@ -849,7 +851,7 @@ public abstract class CoreAbility implements Ability {
 	 * each other. For example, an EarthBlast is not collidable right when the
 	 * person selects a source block, but it is collidable once the block begins
 	 * traveling.
-	 * 
+	 *
 	 * @return true if the instance is currently collidable
 	 * @see CollisionManager
 	 */
@@ -864,7 +866,7 @@ public abstract class CoreAbility implements Ability {
 	 * EarthBlast, etc. Some abilities consist of multiple Locations with small
 	 * radiuses, such as AirSpout, WaterSpout, Torrent, RaiseEarth, AirSwipe,
 	 * FireKick, etc.
-	 * 
+	 *
 	 * @return the radius for a location returned by {@link #getLocations()}
 	 * @see CollisionManager
 	 */
@@ -882,13 +884,13 @@ public abstract class CoreAbility implements Ability {
 	 * <p>
 	 * This ability should only worry about itself because handleCollision will
 	 * be called for the other ability instance as well.
-	 * 
+	 *
 	 * @param collision with data about the other ability instance
 	 * @see CollisionManager
 	 */
-	public void handleCollision(Collision collision) {
+	public void handleCollision(final Collision collision) {
 		if (collision.isRemovingFirst()) {
-			remove();
+			this.remove();
 		}
 	}
 
@@ -896,13 +898,13 @@ public abstract class CoreAbility implements Ability {
 	 * A List of Locations used to represent the ability. Some abilities might
 	 * just be 1 Location with a radius, while some might be multiple Locations
 	 * with small radiuses.
-	 * 
+	 *
 	 * @return a List of the ability's locations
 	 * @see CollisionManager
 	 */
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		locations.add(getLocation());
+		final ArrayList<Location> locations = new ArrayList<>();
+		locations.add(this.getLocation());
 		return locations;
 	}
 
@@ -925,15 +927,15 @@ public abstract class CoreAbility implements Ability {
 	 * caused by a developer forgetting to call {@link #remove()}
 	 */
 	public static String getDebugString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		int playerCounter = 0;
-		HashMap<String, Integer> classCounter = new HashMap<>();
+		final HashMap<String, Integer> classCounter = new HashMap<>();
 
-		for (Map<UUID, Map<Integer, CoreAbility>> map1 : INSTANCES_BY_PLAYER.values()) {
+		for (final Map<UUID, Map<Integer, CoreAbility>> map1 : INSTANCES_BY_PLAYER.values()) {
 			playerCounter++;
-			for (Map<Integer, CoreAbility> map2 : map1.values()) {
-				for (CoreAbility coreAbil : map2.values()) {
-					String simpleName = coreAbil.getClass().getSimpleName();
+			for (final Map<Integer, CoreAbility> map2 : map1.values()) {
+				for (final CoreAbility coreAbil : map2.values()) {
+					final String simpleName = coreAbil.getClass().getSimpleName();
 
 					if (classCounter.containsKey(simpleName)) {
 						classCounter.put(simpleName, classCounter.get(simpleName) + 1);
@@ -944,9 +946,9 @@ public abstract class CoreAbility implements Ability {
 			}
 		}
 
-		for (Set<CoreAbility> set : INSTANCES_BY_CLASS.values()) {
-			for (CoreAbility coreAbil : set) {
-				String simpleName = coreAbil.getClass().getSimpleName();
+		for (final Set<CoreAbility> set : INSTANCES_BY_CLASS.values()) {
+			for (final CoreAbility coreAbil : set) {
+				final String simpleName = coreAbil.getClass().getSimpleName();
 				if (classCounter.containsKey(simpleName)) {
 					classCounter.put(simpleName, classCounter.get(simpleName) + 1);
 				} else {
@@ -957,7 +959,7 @@ public abstract class CoreAbility implements Ability {
 
 		sb.append("Class->UUID's in memory: " + playerCounter + "\n");
 		sb.append("Abilities in memory:\n");
-		for (String className : classCounter.keySet()) {
+		for (final String className : classCounter.keySet()) {
 			sb.append(className + ": " + classCounter.get(className) + "\n");
 		}
 		return sb.toString();

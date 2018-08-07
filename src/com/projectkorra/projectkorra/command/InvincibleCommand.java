@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.command;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-
-import java.util.List;
 
 /**
  * Executor for /bending invincible. Extends {@link PKCommand}.
@@ -19,8 +19,8 @@ public class InvincibleCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !isPlayer(sender) || !correctLength(sender, args.size(), 0, 0)) {
+	public void execute(final CommandSender sender, final List<String> args) {
+		if (!this.hasPermission(sender) || !this.isPlayer(sender) || !this.correctLength(sender, args.size(), 0, 0)) {
 			return;
 		}
 

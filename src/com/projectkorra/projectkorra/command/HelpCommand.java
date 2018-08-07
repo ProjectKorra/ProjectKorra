@@ -25,18 +25,18 @@ import com.projectkorra.rpg.commands.RPGCommand;
  */
 public class HelpCommand extends PKCommand {
 
-	private String required;
-	private String optional;
-	private String properUsage;
-	private String learnMore;
-	private String air;
-	private String water;
-	private String earth;
-	private String fire;
-	private String chi;
-	private String avatar;
-	private String invalidTopic;
-	private String usage;
+	private final String required;
+	private final String optional;
+	private final String properUsage;
+	private final String learnMore;
+	private final String air;
+	private final String water;
+	private final String earth;
+	private final String fire;
+	private final String chi;
+	private final String avatar;
+	private final String invalidTopic;
+	private final String usage;
 
 	public HelpCommand() {
 		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
@@ -56,39 +56,41 @@ public class HelpCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
+	public void execute(final CommandSender sender, final List<String> args) {
 		boolean firstMessage = true;
-		
-		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1))
+
+		if (!this.hasPermission(sender) || !this.correctLength(sender, args.size(), 0, 1)) {
 			return;
-		else if (args.size() == 0) {
-			List<String> strings = new ArrayList<String>();
-			for (PKCommand command : instances.values()) {
+		} else if (args.size() == 0) {
+			final List<String> strings = new ArrayList<String>();
+			for (final PKCommand command : instances.values()) {
 				if (!command.getName().equalsIgnoreCase("help") && sender.hasPermission("bending.command." + command.getName())) {
 					strings.add(command.getProperUse());
 				}
 			}
 			if (GeneralMethods.hasItems()) {
-				for (PKICommand command : PKICommand.instances.values()) {
-					if (sender.hasPermission("bendingitems.command." + command.getName()))
+				for (final PKICommand command : PKICommand.instances.values()) {
+					if (sender.hasPermission("bendingitems.command." + command.getName())) {
 						strings.add(command.getProperUse());
+					}
 				}
 			}
 			if (GeneralMethods.hasRPG()) {
-				for (RPGCommand command : RPGCommand.instances.values()) {
-					if (sender.hasPermission("bending.command.rpg." + command.getName()))
+				for (final RPGCommand command : RPGCommand.instances.values()) {
+					if (sender.hasPermission("bending.command.rpg." + command.getName())) {
 						strings.add(command.getProperUse());
+					}
 				}
 			}
 			if (GeneralMethods.hasSpirits()) {
-				//spirits commands being added (if needed)
+				// spirits commands being added (if needed).
 			}
 			Collections.sort(strings);
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
 			Collections.reverse(strings);
-			
-			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", 1, false)) {
+
+			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", 1, false)) {
 				if (firstMessage) {
 					GeneralMethods.sendBrandingMessage(sender, s);
 					firstMessage = false;
@@ -99,29 +101,31 @@ public class HelpCommand extends PKCommand {
 			return;
 		}
 
-		String arg = args.get(0).toLowerCase();
-		
-		if (isNumeric(arg)) {
-			List<String> strings = new ArrayList<String>();
-			for (PKCommand command : instances.values()) {
+		final String arg = args.get(0).toLowerCase();
+
+		if (this.isNumeric(arg)) {
+			final List<String> strings = new ArrayList<String>();
+			for (final PKCommand command : instances.values()) {
 				strings.add(command.getProperUse());
 			}
 			if (GeneralMethods.hasItems()) {
-				for (PKICommand command : PKICommand.instances.values()) {
-					if (sender.hasPermission("bendingitems.command." + command.getName()))
+				for (final PKICommand command : PKICommand.instances.values()) {
+					if (sender.hasPermission("bendingitems.command." + command.getName())) {
 						strings.add(command.getProperUse());
+					}
 				}
 			}
 			if (GeneralMethods.hasRPG()) {
-				for (RPGCommand command : RPGCommand.instances.values()) {
-					if (sender.hasPermission("bending.command.rpg." + command.getName()))
+				for (final RPGCommand command : RPGCommand.instances.values()) {
+					if (sender.hasPermission("bending.command.rpg." + command.getName())) {
 						strings.add(command.getProperUse());
+					}
 				}
 			}
 			if (GeneralMethods.hasSpirits()) {
-				//spirits commands being added (if needed)
+				// spirits commands being added (if needed).
 			}
-			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", Integer.valueOf(arg), true)) {
+			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", Integer.valueOf(arg), true)) {
 				if (firstMessage) {
 					GeneralMethods.sendBrandingMessage(sender, s);
 					firstMessage = false;
@@ -129,30 +133,30 @@ public class HelpCommand extends PKCommand {
 					sender.sendMessage(ChatColor.YELLOW + s);
 				}
 			}
-		} else if (instances.keySet().contains(arg)) {//bending help command
+		} else if (instances.keySet().contains(arg)) {// bending help command.
 			instances.get(arg).help(sender, true);
-		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { //bending help elementcombo
-			sender.sendMessage(ChatColor.GOLD + properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Combo Name>" + ChatColor.GOLD));
-		} else if (Arrays.asList(Commands.passivealiases).contains(arg)) { //bending help elementpassive
-			sender.sendMessage(ChatColor.GOLD + properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Passive Name>" + ChatColor.RED));
-		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility) && CoreAbility.getAbility(arg).isEnabled() && !CoreAbility.getAbility(arg).isHiddenAbility() || CoreAbility.getAbility(arg) instanceof PassiveAbility) { //bending help ability
-			CoreAbility ability = CoreAbility.getAbility(arg);
-			ChatColor color = ability.getElement().getColor();
-			
+		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { // bending help elementcombo.
+			sender.sendMessage(ChatColor.GOLD + this.properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Combo Name>" + ChatColor.GOLD));
+		} else if (Arrays.asList(Commands.passivealiases).contains(arg)) { // bending help elementpassive.
+			sender.sendMessage(ChatColor.GOLD + this.properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Passive Name>" + ChatColor.RED));
+		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility) && CoreAbility.getAbility(arg).isEnabled() && !CoreAbility.getAbility(arg).isHiddenAbility() || CoreAbility.getAbility(arg) instanceof PassiveAbility) { // bending help ability.
+			final CoreAbility ability = CoreAbility.getAbility(arg);
+			final ChatColor color = ability.getElement().getColor();
+
 			if (ability instanceof AddonAbility) {
 				if (ability instanceof PassiveAbility) {
 					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon Passive)");
 				} else {
 					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon)");
 				}
-				
+
 				sender.sendMessage(color + ability.getDescription());
-				
+
 				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
+					sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
 				}
-				
-				AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
+
+				final AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
 				sender.sendMessage(color + "- By: " + ChatColor.WHITE + abil.getAuthor());
 				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + abil.getVersion());
 			} else {
@@ -161,76 +165,76 @@ public class HelpCommand extends PKCommand {
 				} else {
 					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()));
 				}
-				
+
 				sender.sendMessage(color + ability.getDescription());
-				
+
 				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
+					sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
 				}
 			}
 		} else if (Arrays.asList(Commands.airaliases).contains(arg)) {
-			sender.sendMessage(Element.AIR.getColor() + air.replace("/b display Air", Element.AIR.getSubColor() + "/b display Air" + Element.AIR.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.AIR.getColor() + this.air.replace("/b display Air", Element.AIR.getSubColor() + "/b display Air" + Element.AIR.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.wateraliases).contains(arg)) {
-			sender.sendMessage(Element.WATER.getColor() + water.replace("/b display Water", Element.WATER.getSubColor() + "/b display Water" + Element.WATER.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.WATER.getColor() + this.water.replace("/b display Water", Element.WATER.getSubColor() + "/b display Water" + Element.WATER.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.earthaliases).contains(arg)) {
-			sender.sendMessage(Element.EARTH.getColor() + earth.replace("/b display Earth", Element.EARTH.getSubColor() + "/b display Earth" + Element.EARTH.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.EARTH.getColor() + this.earth.replace("/b display Earth", Element.EARTH.getSubColor() + "/b display Earth" + Element.EARTH.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.firealiases).contains(arg)) {
-			sender.sendMessage(Element.FIRE.getColor() + fire.replace("/b display Fire", Element.FIRE.getSubColor() + "/b display Fire" + Element.FIRE.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.FIRE.getColor() + this.fire.replace("/b display Fire", Element.FIRE.getSubColor() + "/b display Fire" + Element.FIRE.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.chialiases).contains(arg)) {
-			sender.sendMessage(Element.CHI.getColor() + chi.replace("/b display Chi", Element.CHI.getSubColor() + "/b display Chi" + Element.CHI.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.CHI.getColor() + this.chi.replace("/b display Chi", Element.CHI.getSubColor() + "/b display Chi" + Element.CHI.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.avataraliases).contains(arg)) {
-			sender.sendMessage(Element.AVATAR.getColor() + avatar.replace("/b display Avatar", Element.AVATAR.getSubColor() + "/b display Avatar" + Element.AVATAR.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.AVATAR.getColor() + this.avatar.replace("/b display Avatar", Element.AVATAR.getSubColor() + "/b display Avatar" + Element.AVATAR.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else {
-			//combos - handled differently because they're stored in CamelCase in ComboManager
-			for (String combo : ComboManager.getDescriptions().keySet()) {
-				if (combo.equalsIgnoreCase(arg)) {				
-					CoreAbility ability = CoreAbility.getAbility(combo);
-					ChatColor color = ability != null ? ability.getElement().getColor() : null;
-					
+			// combos - handled differently because they're stored in CamelCase in ComboManager.
+			for (final String combo : ComboManager.getDescriptions().keySet()) {
+				if (combo.equalsIgnoreCase(arg)) {
+					final CoreAbility ability = CoreAbility.getAbility(combo);
+					final ChatColor color = ability != null ? ability.getElement().getColor() : null;
+
 					if (ability instanceof AddonAbility) {
 						sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon Combo)");
 						sender.sendMessage(color + ability.getDescription());
-						
+
 						if (!ability.getInstructions().isEmpty()) {
-							sender.sendMessage(ChatColor.WHITE + usage + ability.getInstructions());
+							sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
 						}
-						
-						AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
+
+						final AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
 						sender.sendMessage(color + "- By: " + ChatColor.WHITE + abil.getAuthor());
 						sender.sendMessage(color + "- Version: " + ChatColor.WHITE + abil.getVersion());
 					} else {
 						sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Combo)");
 						sender.sendMessage(color + ComboManager.getDescriptions().get(combo));
-						sender.sendMessage(ChatColor.WHITE + usage + ComboManager.getInstructions().get(combo));
+						sender.sendMessage(ChatColor.WHITE + this.usage + ComboManager.getInstructions().get(combo));
 					}
 
 					return;
 				}
 			}
-			
-			sender.sendMessage(ChatColor.RED + invalidTopic);
+
+			sender.sendMessage(ChatColor.RED + this.invalidTopic);
 		}
 	}
 
 	@Override
-	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		if (args.size() >= 1 || !sender.hasPermission("bending.command.help")) {
 			return new ArrayList<String>();
 		}
-		
-		List<String> list = new ArrayList<String>();
-		for (Element e : Element.getAllElements()) {
+
+		final List<String> list = new ArrayList<String>();
+		for (final Element e : Element.getAllElements()) {
 			list.add(e.getName());
 		}
-		
-		List<String> abils = new ArrayList<String>();
-		for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
+
+		final List<String> abils = new ArrayList<String>();
+		for (final CoreAbility coreAbil : CoreAbility.getAbilities()) {
 			if (!(sender instanceof Player) && (!coreAbil.isHiddenAbility()) && coreAbil.isEnabled() && !abils.contains(coreAbil.getName())) {
 				abils.add(coreAbil.getName());
 			} else if (sender instanceof Player) {

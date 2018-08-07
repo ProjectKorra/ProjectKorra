@@ -1,23 +1,22 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.entity.ProjectileHitEvent;
 
-import java.util.List;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Executor for /bending check. Extends {@link PKCommand}.
  */
 public class CheckCommand extends PKCommand {
 
-	private String newVersionAvailable;
-	private String curVersion;
-	private String newVersion;
-	private String upToDate;
+	private final String newVersionAvailable;
+	private final String curVersion;
+	private final String newVersion;
+	private final String upToDate;
 
 	public CheckCommand() {
 		super("check", "/bending check", ConfigManager.languageConfig.get().getString("Commands.Check.Description"), new String[] { "check", "chk" });
@@ -29,11 +28,11 @@ public class CheckCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender)) {
+	public void execute(final CommandSender sender, final List<String> args) {
+		if (!this.hasPermission(sender)) {
 			return;
 		} else if (args.size() > 0) {
-			help(sender, false);
+			this.help(sender, false);
 			return;
 		}
 		if (!ProjectKorra.plugin.updater.isEnabled()) {

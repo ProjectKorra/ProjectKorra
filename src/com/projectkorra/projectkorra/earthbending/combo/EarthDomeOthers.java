@@ -19,73 +19,80 @@ public class EarthDomeOthers extends EarthAbility {
 	public Vector direction;
 	public double range = 0, maxRange;
 	public Location loc;
-	
-	public EarthDomeOthers(Player player) {
+
+	public EarthDomeOthers(final Player player) {
 		super(player);
 
-		if (bPlayer.isOnCooldown("EarthDome")) return;
+		if (this.bPlayer.isOnCooldown("EarthDome")) {
+			return;
+		}
 		this.loc = player.getLocation().clone();
-		
-		if (GeneralMethods.isRegionProtectedFromBuild(player, loc)) return;
-		if (!isEarthbendable(loc.getBlock().getRelative(BlockFace.DOWN).getType(), true, true, true)) return;
-		this.direction = loc.getDirection().setY(0);
+
+		if (GeneralMethods.isRegionProtectedFromBuild(player, this.loc)) {
+			return;
+		}
+		if (!isEarthbendable(this.loc.getBlock().getRelative(BlockFace.DOWN).getType(), true, true, true)) {
+			return;
+		}
+		this.direction = this.loc.getDirection().setY(0);
 		this.maxRange = getConfig().getDouble("Abilities.Earth.EarthDome.Range");
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
-		if (!player.isOnline() || player.isDead()) {
-			remove(true);
+		if (!this.player.isOnline() || this.player.isDead()) {
+			this.remove(true);
 			return;
 		}
-		if (range >= maxRange) {
-			remove(true);
+		if (this.range >= this.maxRange) {
+			this.remove(true);
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(player, loc)) {
-			remove(true);
+		if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.loc)) {
+			this.remove(true);
 			return;
 		}
-		
-		range++;
-		loc.add(direction.normalize());
-		Block top = GeneralMethods.getTopBlock(loc, 2);
-		
-		while (!isEarthbendable(top)) {
-			if (isTransparent(top)) {
+
+		this.range++;
+		this.loc.add(this.direction.normalize());
+		Block top = GeneralMethods.getTopBlock(this.loc, 2);
+
+		while (!this.isEarthbendable(top)) {
+			if (this.isTransparent(top)) {
 				top = top.getRelative(BlockFace.DOWN);
 			} else {
-				remove(true);
+				this.remove(true);
 				return;
 			}
-		}	
-		
-		if (!isTransparent(top.getRelative(BlockFace.UP))) {
-			remove(true);
+		}
+
+		if (!this.isTransparent(top.getRelative(BlockFace.UP))) {
+			this.remove(true);
 			return;
 		}
-		
-		loc.setY(top.getY() + 1);
-		
-		ParticleEffect.CRIT.display(loc, 0.4f, 0, 0.4f, 0.001f, 9);
-		ParticleEffect.BLOCK_DUST.display(new BlockData(loc.getBlock().getRelative(BlockFace.DOWN).getType(), (byte)0), 0.2f, 0.1f, 0.2f, 0.001f, 7, loc, 255);
-		
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2)) {
-			if (!(entity instanceof LivingEntity) || entity.getEntityId() == player.getEntityId()) {
+
+		this.loc.setY(top.getY() + 1);
+
+		ParticleEffect.CRIT.display(this.loc, 0.4f, 0, 0.4f, 0.001f, 9);
+		ParticleEffect.BLOCK_DUST.display(new BlockData(this.loc.getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.2f, 0.1f, 0.2f, 0.001f, 7, this.loc, 255);
+
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.loc, 2)) {
+			if (!(entity instanceof LivingEntity) || entity.getEntityId() == this.player.getEntityId()) {
 				continue;
 			}
-			
-			new EarthDome(player, entity.getLocation().clone().subtract(0, 1, 0));
-			remove(false);
+
+			new EarthDome(this.player, entity.getLocation().clone().subtract(0, 1, 0));
+			this.remove(false);
 			return;
 		}
 	}
-	
-	public void remove(boolean cooldown) {
+
+	public void remove(final boolean cooldown) {
 		super.remove();
-		if (cooldown)
-			bPlayer.addCooldown("EarthDome", getConfig().getLong("Abilities.Earth.EarthDome.Cooldown"));
+		if (cooldown) {
+			this.bPlayer.addCooldown("EarthDome", getConfig().getLong("Abilities.Earth.EarthDome.Cooldown"));
+		}
 	}
 
 	@Override
@@ -110,9 +117,9 @@ public class EarthDomeOthers extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return loc != null ? loc : null;
+		return this.loc != null ? this.loc : null;
 	}
-	
+
 	@Override
 	public boolean isHiddenAbility() {
 		return true;

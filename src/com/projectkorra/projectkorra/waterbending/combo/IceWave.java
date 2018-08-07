@@ -18,29 +18,29 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 public class IceWave extends IceAbility implements ComboAbility {
 
 	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
-	
+
 	private long cooldown;
 	private Location origin;
-	
-	public IceWave(Player player) {
+
+	public IceWave(final Player player) {
 		super(player);
 
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
-		if (bPlayer.isOnCooldown("IceWave") && !bPlayer.isAvatarState()) {
-			remove();
+		if (this.bPlayer.isOnCooldown("IceWave") && !this.bPlayer.isAvatarState()) {
+			this.remove();
 			return;
 		}
 
 		this.cooldown = getConfig().getLong("Abilities.Water.IceWave.Cooldown");
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 		}
 
-		start();
+		this.start();
 	}
 
 	@Override
@@ -50,37 +50,37 @@ public class IceWave extends IceAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
+		if (this.player.isDead() || !this.player.isOnline()) {
+			this.remove();
 			return;
 		}
-		
-		if (origin == null && WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
-			bPlayer.addCooldown("IceWave", cooldown);
-			origin = player.getLocation();
 
-			WaterSpoutWave wave = WaterSpoutWave.getType(player, WaterSpoutWave.AbilityType.RELEASE).get(0);
+		if (this.origin == null && WaterSpoutWave.containsType(this.player, WaterSpoutWave.AbilityType.RELEASE)) {
+			this.bPlayer.addCooldown("IceWave", this.cooldown);
+			this.origin = this.player.getLocation();
+
+			final WaterSpoutWave wave = WaterSpoutWave.getType(this.player, WaterSpoutWave.AbilityType.RELEASE).get(0);
 			wave.setIceWave(true);
-		} else if (!WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
-			remove();
+		} else if (!WaterSpoutWave.containsType(this.player, WaterSpoutWave.AbilityType.RELEASE)) {
+			this.remove();
 			return;
-		}	
+		}
 	}
-	
-	public static boolean canThaw(Block block) {
+
+	public static boolean canThaw(final Block block) {
 		return FROZEN_BLOCKS.containsKey(block);
 	}
 
-	public static void thaw(Block block) {
+	public static void thaw(final Block block) {
 		if (FROZEN_BLOCKS.containsKey(block)) {
 			FROZEN_BLOCKS.get(block).revertBlock();
 			FROZEN_BLOCKS.remove(block);
 		}
 	}
-	
+
 	@Override
 	public void remove() {
-		bPlayer.addCooldown("WaterWave", cooldown);
+		this.bPlayer.addCooldown("WaterWave", this.cooldown);
 	}
 
 	@Override
@@ -95,35 +95,35 @@ public class IceWave extends IceAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
-	
-	public void setCooldown(long cooldown) {
+
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
 	@Override
 	public Location getLocation() {
-		return origin;
+		return this.origin;
 	}
-	
-	public void setLocation(Location location) {
+
+	public void setLocation(final Location location) {
 		this.origin = location;
 	}
 
 	@Override
-	public Object createNewComboInstance(Player player) {
+	public Object createNewComboInstance(final Player player) {
 		return new IceWave(player);
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		ArrayList<AbilityInformation> iceWave = new ArrayList<>();
+		final ArrayList<AbilityInformation> iceWave = new ArrayList<>();
 		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
 		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
 		return iceWave;
 	}
-	
+
 	@Override
 	public String getInstructions() {
 		return "Create a WaterSpout Wave > PhaseChange (Left Click)";

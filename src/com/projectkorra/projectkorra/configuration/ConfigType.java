@@ -14,16 +14,16 @@ public class ConfigType {
 	public static final ConfigType LANGUAGE = new ConfigType("Language");
 	public static final ConfigType[] CORE_TYPES = { DEFAULT, PRESETS, LANGUAGE };
 
-	private String string;
+	private final String string;
 
-	public ConfigType(String string) {
+	public ConfigType(final String string) {
 		this.string = string;
 		ALL_TYPES.put(string, this);
 	}
 
 	public static List<ConfigType> addonValues() {
-		List<ConfigType> values = new ArrayList<>();
-		for (String key : ALL_TYPES.keySet()) {
+		final List<ConfigType> values = new ArrayList<>();
+		for (final String key : ALL_TYPES.keySet()) {
 			if (!Arrays.asList(CORE_TYPES).contains(ALL_TYPES.get(key))) {
 				values.add(ALL_TYPES.get(key));
 			}
@@ -35,13 +35,14 @@ public class ConfigType {
 		return Arrays.asList(CORE_TYPES);
 	}
 
+	@Override
 	public String toString() {
-		return string;
+		return this.string;
 	}
 
 	public static List<ConfigType> values() {
-		List<ConfigType> values = new ArrayList<>();
-		for (String key : ALL_TYPES.keySet()) {
+		final List<ConfigType> values = new ArrayList<>();
+		for (final String key : ALL_TYPES.keySet()) {
 			values.add(ALL_TYPES.get(key));
 		}
 		return values;

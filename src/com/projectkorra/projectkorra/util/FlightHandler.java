@@ -24,25 +24,25 @@ public class FlightHandler {
 	 */
 	private final PriorityQueue<FlightAbility> CLEANUP = new PriorityQueue<>(100, new Comparator<FlightAbility>() {
 		@Override
-		public int compare(FlightAbility f1, FlightAbility f2) {
+		public int compare(final FlightAbility f1, final FlightAbility f2) {
 			return (int) (f1.duration - f2.duration);
 		}
 	});
 
 	public FlightHandler() {
-		startCleanup();
+		this.startCleanup();
 	}
 
 	/**
 	 * Create a new Flight instance for the provided player with an unlimited
 	 * duration. Call {@link FlightHandler#removeInstance(Player)} to remove
 	 * this instance when necessary.
-	 * 
+	 *
 	 * @param player The flying player
 	 * @param identifier The ability using Flight
 	 */
-	public void createInstance(Player player, String identifier) {
-		createInstance(player, Flight.PERMANENT, identifier);
+	public void createInstance(final Player player, final String identifier) {
+		this.createInstance(player, Flight.PERMANENT, identifier);
 	}
 
 	/**
@@ -51,25 +51,25 @@ public class FlightHandler {
 	 * second provided player argument. Call
 	 * {@link FlightHandler#removeInstance(Player)} to remove this instance when
 	 * necessary.
-	 * 
+	 *
 	 * @param player The flying player
 	 * @param source The source player
 	 * @param identifier The ability using Flight
 	 */
-	public void createInstance(Player player, Player source, String identifier) {
-		createInstance(player, source, Flight.PERMANENT, identifier);
+	public void createInstance(final Player player, final Player source, final String identifier) {
+		this.createInstance(player, source, Flight.PERMANENT, identifier);
 	}
 
 	/**
 	 * Create a new Flight instance with the specified duration. This instance
 	 * will automatically be removed with the set delay.
-	 * 
+	 *
 	 * @param player The flying player
 	 * @param duration Flight duration
 	 * @param identifier The ability using Flight
 	 */
-	public void createInstance(Player player, long duration, String identifier) {
-		createInstance(player, null, duration, identifier);
+	public void createInstance(final Player player, final long duration, final String identifier) {
+		this.createInstance(player, null, duration, identifier);
 	}
 
 	/**
@@ -77,28 +77,28 @@ public class FlightHandler {
 	 * will set the source for this Flight instance to the second provided
 	 * player argument. This instance will automatically be removed with the set
 	 * delay.
-	 * 
+	 *
 	 * @param player The flying player
 	 * @param source The source player
 	 * @param duration Flight duration
 	 * @param identifier The ability using Flight
 	 */
-	public void createInstance(Player player, Player source, long duration, String identifier) {
-		if (INSTANCES.containsKey(player.getUniqueId())) {
-			Flight flight = INSTANCES.get(player.getUniqueId());
-			FlightAbility ability = new FlightAbility(player, identifier, duration);
+	public void createInstance(final Player player, final Player source, final long duration, final String identifier) {
+		if (this.INSTANCES.containsKey(player.getUniqueId())) {
+			final Flight flight = this.INSTANCES.get(player.getUniqueId());
+			final FlightAbility ability = new FlightAbility(player, identifier, duration);
 			if (duration != Flight.PERMANENT) {
-				CLEANUP.add(ability);
+				this.CLEANUP.add(ability);
 			}
 			flight.abilities.put(identifier, ability);
 		} else {
-			Flight flight = new Flight(player, source);
-			FlightAbility ability = new FlightAbility(player, identifier, duration);
+			final Flight flight = new Flight(player, source);
+			final FlightAbility ability = new FlightAbility(player, identifier, duration);
 			if (duration != Flight.PERMANENT) {
-				CLEANUP.add(ability);
+				this.CLEANUP.add(ability);
 			}
 			flight.abilities.put(identifier, ability);
-			INSTANCES.put(player.getUniqueId(), flight);
+			this.INSTANCES.put(player.getUniqueId(), flight);
 		}
 	}
 
@@ -108,18 +108,18 @@ public class FlightHandler {
 	 * reverted to its initial state. This method does not need to be called for
 	 * instances with a defined duration, however can be used in this case if
 	 * necessary.
-	 * 
+	 *
 	 * @param player The flying player
 	 * @param identifier The ability using Flight
 	 */
-	public void removeInstance(Player player, String identifier) {
-		if (INSTANCES.containsKey(player.getUniqueId())) {
-			Flight flight = INSTANCES.get(player.getUniqueId());
+	public void removeInstance(final Player player, final String identifier) {
+		if (this.INSTANCES.containsKey(player.getUniqueId())) {
+			final Flight flight = this.INSTANCES.get(player.getUniqueId());
 			if (flight.abilities.containsKey(identifier)) {
 				flight.abilities.remove(identifier);
 			}
 			if (flight.abilities.isEmpty()) {
-				wipeInstance(player);
+				this.wipeInstance(player);
 			}
 		}
 	}
@@ -127,26 +127,26 @@ public class FlightHandler {
 	/**
 	 * Completely wipe all Flight data for the player. Should only be used if it
 	 * is guaranteed they have a Flight instance.
-	 * 
+	 *
 	 * @param player
 	 */
-	private void wipeInstance(Player player) {
-		Flight flight = INSTANCES.get(player.getUniqueId());
+	private void wipeInstance(final Player player) {
+		final Flight flight = this.INSTANCES.get(player.getUniqueId());
 		player.setAllowFlight(flight.couldFly);
 		player.setFlying(flight.wasFlying);
-		flight.abilities.values().forEach(ability -> CLEANUP.remove(ability));
-		INSTANCES.remove(player.getUniqueId());
+		flight.abilities.values().forEach(ability -> this.CLEANUP.remove(ability));
+		this.INSTANCES.remove(player.getUniqueId());
 	}
 
 	/**
 	 * Get the provided player's Flight instance.
-	 * 
+	 *
 	 * @param player The flying player
 	 * @return Flight instance
 	 */
-	public Flight getInstance(Player player) {
-		if (INSTANCES.containsKey(player.getUniqueId())) {
-			return INSTANCES.get(player.getUniqueId());
+	public Flight getInstance(final Player player) {
+		if (this.INSTANCES.containsKey(player.getUniqueId())) {
+			return this.INSTANCES.get(player.getUniqueId());
 		}
 		return null;
 	}
@@ -155,12 +155,12 @@ public class FlightHandler {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				long currentTime = System.currentTimeMillis();
-				while (!CLEANUP.isEmpty()) {
-					FlightAbility ability = CLEANUP.peek();
+				final long currentTime = System.currentTimeMillis();
+				while (!FlightHandler.this.CLEANUP.isEmpty()) {
+					final FlightAbility ability = FlightHandler.this.CLEANUP.peek();
 					if (currentTime >= ability.startTime + ability.duration) {
-						CLEANUP.poll();
-						removeInstance(ability.player, ability.identifier);
+						FlightHandler.this.CLEANUP.poll();
+						FlightHandler.this.removeInstance(ability.player, ability.identifier);
 					} else {
 						break;
 					}
@@ -173,13 +173,13 @@ public class FlightHandler {
 
 		public static final int PERMANENT = -1;
 
-		private Player player;
-		private Player source;
-		private boolean couldFly;
-		private boolean wasFlying;
-		private Map<String, FlightAbility> abilities;
+		private final Player player;
+		private final Player source;
+		private final boolean couldFly;
+		private final boolean wasFlying;
+		private final Map<String, FlightAbility> abilities;
 
-		public Flight(Player player, Player source) {
+		public Flight(final Player player, final Player source) {
 			this.player = player;
 			this.source = source;
 			this.couldFly = player.getAllowFlight();
@@ -188,27 +188,27 @@ public class FlightHandler {
 		}
 
 		public Player getPlayer() {
-			return player;
+			return this.player;
 		}
 
 		public Player getSource() {
-			return source;
+			return this.source;
 		}
 
 		@Override
 		public String toString() {
-			return "Flight{player=" + player.getName() + ",source=" + (source != null ? source.getName() : "null") + ",couldFly=" + couldFly + ",wasFlying=" + wasFlying + ",abilities=" + abilities + "}";
+			return "Flight{player=" + this.player.getName() + ",source=" + (this.source != null ? this.source.getName() : "null") + ",couldFly=" + this.couldFly + ",wasFlying=" + this.wasFlying + ",abilities=" + this.abilities + "}";
 		}
 	}
 
 	public static class FlightAbility {
 
-		private Player player;
-		private String identifier;
-		private long duration;
-		private long startTime;
+		private final Player player;
+		private final String identifier;
+		private final long duration;
+		private final long startTime;
 
-		public FlightAbility(Player player, String identifier, long duration) {
+		public FlightAbility(final Player player, final String identifier, final long duration) {
 			this.player = player;
 			this.identifier = identifier;
 			this.duration = duration;
@@ -217,7 +217,7 @@ public class FlightHandler {
 
 		@Override
 		public String toString() {
-			return "FlightAbility{player=" + player.getName() + ",identifier=" + identifier + ",duration=" + duration + ",startTime=" + startTime + "}";
+			return "FlightAbility{player=" + this.player.getName() + ",identifier=" + this.identifier + ",duration=" + this.duration + ",startTime=" + this.startTime + "}";
 		}
 	}
 

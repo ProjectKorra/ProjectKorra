@@ -9,13 +9,13 @@ import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 public class ChiblockingManager implements Runnable {
 	public ProjectKorra plugin;
 
-	public ChiblockingManager(ProjectKorra plugin) {
+	public ChiblockingManager(final ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
 
 	@Override
 	public void run() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (final Player player : Bukkit.getOnlinePlayers()) {
 			Smokescreen.removeFromHashMap(player);
 		}
 	}

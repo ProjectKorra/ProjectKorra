@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
 
 public abstract class IceAbility extends WaterAbility implements SubAbility {
 
-	public IceAbility(Player player) {
+	public IceAbility(final Player player) {
 		super(player);
 	}
 

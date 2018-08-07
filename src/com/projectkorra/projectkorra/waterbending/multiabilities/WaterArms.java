@@ -40,7 +40,7 @@ public class WaterArms extends WaterAbility {
 
 	private boolean cooldownLeft;
 	private boolean cooldownRight;
-	private boolean fullSource; // used to determine whip length in WhaterArmsWhip
+	private boolean fullSource; // used to determine whip length in WaterArmsWhip.
 	private boolean leftArmConsumed;
 	private boolean rightArmConsumed;
 	private boolean canUsePlantSource;
@@ -63,7 +63,7 @@ public class WaterArms extends WaterAbility {
 	private List<Block> right, left;
 	private Set<TempBlock> external;
 
-	public WaterArms(Player player) {
+	public WaterArms(final Player player) {
 		super(player);
 
 		this.fullSource = true;
@@ -90,7 +90,7 @@ public class WaterArms extends WaterAbility {
 		this.left = new ArrayList<>();
 		this.external = new HashSet<>();
 
-		WaterArms oldArms = getAbility(player, WaterArms.class);
+		final WaterArms oldArms = getAbility(player, WaterArms.class);
 
 		if (oldArms != null) {
 			if (player.isSneaking()) {
@@ -118,13 +118,13 @@ public class WaterArms extends WaterAbility {
 						}
 						break;
 					case 4:
-						if (player.hasPermission("bending.ability.WaterArms.Freeze") && bPlayer.canIcebend()) {
+						if (player.hasPermission("bending.ability.WaterArms.Freeze") && this.bPlayer.canIcebend()) {
 							new WaterArmsFreeze(player);
 						}
 						break;
 					case 5:
 						if (player.hasPermission("bending.ability.WaterArms.Spear")) {
-							if (bPlayer.canIcebend()) {
+							if (this.bPlayer.canIcebend()) {
 								new WaterArmsSpear(player, true);
 							} else {
 								new WaterArmsSpear(player, false);
@@ -138,32 +138,32 @@ public class WaterArms extends WaterAbility {
 			return;
 		}
 
-		if (bPlayer.canBend(this) && prepare()) {
-			start();
+		if (this.bPlayer.canBend(this) && this.prepare()) {
+			this.start();
 			MultiAbilityManager.bindMultiAbility(player, "WaterArms");
 
-			if (ChatColor.stripColor(bPlayer.getBoundAbilityName()) == null) {
-				remove();
+			if (ChatColor.stripColor(this.bPlayer.getBoundAbilityName()) == null) {
+				this.remove();
 				return;
 			}
 		}
 	}
 
 	private boolean prepare() {
-		Block sourceBlock = getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
+		final Block sourceBlock = getWaterSourceBlock(this.player, this.sourceGrabRange, this.canUsePlantSource);
 		if (sourceBlock != null) {
-			
+
 			if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
-				new PlantRegrowth(player, sourceBlock);
+				new PlantRegrowth(this.player, sourceBlock);
 				sourceBlock.setType(Material.AIR);
-				fullSource = false;
-			} 
-			
+				this.fullSource = false;
+			}
+
 			ParticleEffect.LARGE_SMOKE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
 			return true;
-		} else if (WaterReturn.hasWaterBottle(player)) {
-			WaterReturn.emptyWaterBottle(player);
-			fullSource = false;
+		} else if (WaterReturn.hasWaterBottle(this.player)) {
+			WaterReturn.emptyWaterBottle(this.player);
+			this.fullSource = false;
 			return true;
 		}
 		return false;
@@ -171,90 +171,90 @@ public class WaterArms extends WaterAbility {
 
 	@Override
 	public void progress() {
-		if (!world.equals(player.getWorld()) || !bPlayer.canBendIgnoreBindsCooldowns(this) || !bPlayer.hasElement(Element.WATER)) {
-			remove();
+		if (!this.world.equals(this.player.getWorld()) || !this.bPlayer.canBendIgnoreBindsCooldowns(this) || !this.bPlayer.hasElement(Element.WATER)) {
+			this.remove();
 			return;
-		} else if (!bPlayer.isToggled()) {
-			remove();
+		} else if (!this.bPlayer.isToggled()) {
+			this.remove();
 			return;
-		} else if (!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")) {
-			remove();
+		} else if (!MultiAbilityManager.hasMultiAbilityBound(this.player, "WaterArms")) {
+			this.remove();
 			return;
-		} else if (maxPunches == 0 || maxUses == 0 || maxIceBlasts == 0 || (leftArmConsumed && rightArmConsumed)) {
-			remove();
+		} else if (this.maxPunches == 0 || this.maxUses == 0 || this.maxIceBlasts == 0 || (this.leftArmConsumed && this.rightArmConsumed)) {
+			this.remove();
 			return;
 		}
 
-		selectedSlot = player.getInventory().getHeldItemSlot();
-		displayRightArm();
-		displayLeftArm();
+		this.selectedSlot = this.player.getInventory().getHeldItemSlot();
+		this.displayRightArm();
+		this.displayLeftArm();
 
-		if (lightningEnabled) {
-			checkIfZapped();
+		if (this.lightningEnabled) {
+			this.checkIfZapped();
 		}
 	}
 
-	private boolean canPlaceBlock(Block block) {
+	private boolean canPlaceBlock(final Block block) {
 		if (TempBlock.isTempBlock(block)) {
-			if (external.contains(TempBlock.get(block))) {
+			if (this.external.contains(TempBlock.get(block))) {
 				return false;
 			}
 		}
-		
+
 		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || block.getType() == Material.AIR;
 	}
 
 	/**
 	 * Displays the right arm. Returns false if the arm cannot be fully
 	 * displayed.
-	 * 
+	 *
 	 * @return false If arm cannot be fully displayed
 	 */
 	public boolean displayRightArm() {
-		List<Block> newBlocks = new ArrayList<>();
-		if (rightArmConsumed) {
+		final List<Block> newBlocks = new ArrayList<>();
+		if (this.rightArmConsumed) {
 			return false;
 		}
 
-		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 1).add(0, 1.5, 0);
-		if (!canPlaceBlock(r1.getBlock())) {
-			right.clear();
+		final Location r1 = GeneralMethods.getRightSide(this.player.getLocation(), 1).add(0, 1.5, 0);
+		if (!this.canPlaceBlock(r1.getBlock())) {
+			this.right.clear();
 			return false;
 		}
 
-		if (!(getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))) {
-			addBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
+		if (!(this.getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))) {
+			this.addBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
 			newBlocks.add(r1.getBlock());
 		}
 
-		Location r2 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
-		if (!canPlaceBlock(r2.getBlock()) || !canPlaceBlock(r1.getBlock())) {
-			right.clear();
-			right.addAll(newBlocks);
+		final Location r2 = GeneralMethods.getRightSide(this.player.getLocation(), 2).add(0, 1.5, 0);
+		if (!this.canPlaceBlock(r2.getBlock()) || !this.canPlaceBlock(r1.getBlock())) {
+			this.right.clear();
+			this.right.addAll(newBlocks);
 			return false;
 		}
-		
-		addBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
+
+		this.addBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
 		newBlocks.add(r2.getBlock());
 
-		for (int j = 1; j <= initLength; j++) {
-			Location r3 = r2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
-			if (!canPlaceBlock(r3.getBlock()) || !canPlaceBlock(r2.getBlock()) || !canPlaceBlock(r1.getBlock())) {
-				right.clear();
-				right.addAll(newBlocks);
+		for (int j = 1; j <= this.initLength; j++) {
+			final Location r3 = r2.clone().toVector().add(this.player.getLocation().clone().getDirection().multiply(j)).toLocation(this.player.getWorld());
+			if (!this.canPlaceBlock(r3.getBlock()) || !this.canPlaceBlock(r2.getBlock()) || !this.canPlaceBlock(r1.getBlock())) {
+				this.right.clear();
+				this.right.addAll(newBlocks);
 				return false;
 			}
-			
+
 			newBlocks.add(r3.getBlock());
-			if (j >= 1 && selectedSlot == freezeSlot && bPlayer.canIcebend()) {
-				addBlock(r3.getBlock(), Material.ICE, (byte) 0, 100);
+			if (j >= 1 && this.selectedSlot == this.freezeSlot && this.bPlayer.canIcebend()) {
+				this.addBlock(r3.getBlock(), Material.ICE, (byte) 0, 100);
 			} else {
-				addBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
+				this.addBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
 			}
 		}
-		
-		right.clear();
-		right.addAll(newBlocks);
+
+		this.right.clear();
+		this.right.addAll(newBlocks);
 
 		return true;
 	}
@@ -262,67 +262,67 @@ public class WaterArms extends WaterAbility {
 	/**
 	 * Displays the left arm. Returns false if the arm cannot be fully
 	 * displayed.
-	 * 
+	 *
 	 * @return false If the arm cannot be fully displayed.
 	 */
 	public boolean displayLeftArm() {
-		List<Block> newBlocks = new ArrayList<>();
-		if (leftArmConsumed) {
+		final List<Block> newBlocks = new ArrayList<>();
+		if (this.leftArmConsumed) {
 			return false;
 		}
 
-		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 1).add(0, 1.5, 0);
-		if (!canPlaceBlock(l1.getBlock())) {
-			left.clear();
+		final Location l1 = GeneralMethods.getLeftSide(this.player.getLocation(), 1).add(0, 1.5, 0);
+		if (!this.canPlaceBlock(l1.getBlock())) {
+			this.left.clear();
 			return false;
 		}
 
-		if (!(getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))) {
-			addBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
+		if (!(this.getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))) {
+			this.addBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
 			newBlocks.add(l1.getBlock());
 		}
 
-		Location l2 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
-		if (!canPlaceBlock(l2.getBlock()) || !canPlaceBlock(l1.getBlock())) {
-			left.clear();
-			left.addAll(newBlocks);
+		final Location l2 = GeneralMethods.getLeftSide(this.player.getLocation(), 2).add(0, 1.5, 0);
+		if (!this.canPlaceBlock(l2.getBlock()) || !this.canPlaceBlock(l1.getBlock())) {
+			this.left.clear();
+			this.left.addAll(newBlocks);
 			return false;
 		}
-		
-		addBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
+
+		this.addBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
 		newBlocks.add(l2.getBlock());
 
-		for (int j = 1; j <= initLength; j++) {
-			Location l3 = l2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
-			if (!canPlaceBlock(l3.getBlock()) || !canPlaceBlock(l2.getBlock()) || !canPlaceBlock(l1.getBlock())) {
-				left.clear();
-				left.addAll(newBlocks);
+		for (int j = 1; j <= this.initLength; j++) {
+			final Location l3 = l2.clone().toVector().add(this.player.getLocation().clone().getDirection().multiply(j)).toLocation(this.player.getWorld());
+			if (!this.canPlaceBlock(l3.getBlock()) || !this.canPlaceBlock(l2.getBlock()) || !this.canPlaceBlock(l1.getBlock())) {
+				this.left.clear();
+				this.left.addAll(newBlocks);
 				return false;
 			}
-			
+
 			newBlocks.add(l3.getBlock());
-			if (j >= 1 && selectedSlot == freezeSlot && bPlayer.canIcebend()) {
-				addBlock(l3.getBlock(), Material.ICE, (byte) 0, 100);
+			if (j >= 1 && this.selectedSlot == this.freezeSlot && this.bPlayer.canIcebend()) {
+				this.addBlock(l3.getBlock(), Material.ICE, (byte) 0, 100);
 			} else {
-				addBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte)8, 100);
+				this.addBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
 			}
 		}
-		
-		left.clear();
-		left.addAll(newBlocks);
+
+		this.left.clear();
+		this.left.addAll(newBlocks);
 
 		return true;
 	}
-	
-	public void addBlock(Block b, Material m, byte i, long revertTime) {
+
+	public void addBlock(final Block b, final Material m, final byte i, final long revertTime) {
 		if (TempBlock.isTempBlock(b)) {
-			TempBlock tb = TempBlock.get(b);
-			
-			if (right.contains(b) || left.contains(b)) {
+			final TempBlock tb = TempBlock.get(b);
+
+			if (this.right.contains(b) || this.left.contains(b)) {
 				tb.setType(m, i);
 				tb.setRevertTime(revertTime);
 			} else {
-				external.add(tb);
+				this.external.add(tb);
 			}
 		} else {
 			new TempBlock(b, m, i).setRevertTime(revertTime);
@@ -331,47 +331,47 @@ public class WaterArms extends WaterAbility {
 
 	/**
 	 * Calculate roughly where the player's right hand is.
-	 * 
+	 *
 	 * @return location of right hand
 	 */
 	private Location getRightHandPos() {
-		return GeneralMethods.getRightSide(player.getLocation(), .34).add(0, 1.5, 0);
+		return GeneralMethods.getRightSide(this.player.getLocation(), .34).add(0, 1.5, 0);
 	}
 
 	/**
 	 * Calculate roughly where the player's left hand is.
-	 * 
+	 *
 	 * @return location of left hand
 	 */
 	private Location getLeftHandPos() {
-		return GeneralMethods.getLeftSide(player.getLocation(), .34).add(0, 1.5, 0);
+		return GeneralMethods.getLeftSide(this.player.getLocation(), .34).add(0, 1.5, 0);
 	}
 
 	/**
 	 * Returns the location of the tip of the right arm, assuming it is fully
 	 * extended. Use the displayRightArm() check to see if it is fully extended.
-	 * 
+	 *
 	 * @return location of the tip of the right arm
 	 */
 	public Location getRightArmEnd() {
-		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
-		return r1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
+		final Location r1 = GeneralMethods.getRightSide(this.player.getLocation(), 2).add(0, 1.5, 0);
+		return r1.clone().add(this.player.getLocation().getDirection().normalize().multiply(this.initLength));
 	}
 
 	/**
 	 * Returns the location of the tip of the left arm assuming it is fully
 	 * extended. Use the displayLeftArm() check to see if it is fully extended.
-	 * 
+	 *
 	 * @return location of the tip of the left arm
 	 */
 	public Location getLeftArmEnd() {
-		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
-		return l1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
+		final Location l1 = GeneralMethods.getLeftSide(this.player.getLocation(), 2).add(0, 1.5, 0);
+		return l1.clone().add(this.player.getLocation().getDirection().normalize().multiply(this.initLength));
 	}
 
-	private static void progressRevert(boolean ignoreTime) {
-		for (Block block : WaterArmsSpear.getIceBlocks().keySet()) {
-			long time = WaterArmsSpear.getIceBlocks().get(block);
+	private static void progressRevert(final boolean ignoreTime) {
+		for (final Block block : WaterArmsSpear.getIceBlocks().keySet()) {
+			final long time = WaterArmsSpear.getIceBlocks().get(block);
 			if (System.currentTimeMillis() > time || ignoreTime) {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock.revertBlock(block, Material.AIR);
@@ -382,20 +382,20 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private void checkIfZapped() {
-		List<Block> blocks = new ArrayList<>(right);
-		blocks.addAll(left);
-		for (Lightning lightning : getAbilities(Lightning.class)) {
-			for (Lightning.Arc arc : lightning.getArcs()) {
-				for (Block arm : blocks) {
-					for (Location loc : arc.getPoints()) {
+		final List<Block> blocks = new ArrayList<>(this.right);
+		blocks.addAll(this.left);
+		for (final Lightning lightning : getAbilities(Lightning.class)) {
+			for (final Lightning.Arc arc : lightning.getArcs()) {
+				for (final Block arm : blocks) {
+					for (final Location loc : arc.getPoints()) {
 						if (arm.getLocation().getWorld().equals(loc.getWorld()) && loc.distance(arm.getLocation()) <= 2.5) {
-							for (Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
+							for (final Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
 								FireAbility.playLightningbendingParticle(l1);
 							}
-							if (lightningKill) {
-								DamageHandler.damageEntity(player, 60D, lightning);
+							if (this.lightningKill) {
+								DamageHandler.damageEntity(this.player, 60D, lightning);
 							} else {
-								DamageHandler.damageEntity(player, lightningDamage, lightning);
+								DamageHandler.damageEntity(this.player, this.lightningDamage, lightning);
 							}
 						}
 					}
@@ -404,8 +404,8 @@ public class WaterArms extends WaterAbility {
 		}
 	}
 
-	private static List<Location> getOffsetLocations(int amount, Location location, double offset) {
-		List<Location> locations = new ArrayList<Location>();
+	private static List<Location> getOffsetLocations(final int amount, final Location location, final double offset) {
+		final List<Location> locations = new ArrayList<Location>();
 		for (int i = 0; i < amount; i++) {
 			locations.add(location.clone().add((float) (Math.random() * offset), (float) (Math.random() * offset), (float) (Math.random() * offset)));
 		}
@@ -415,18 +415,18 @@ public class WaterArms extends WaterAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		MultiAbilityManager.unbindMultiAbility(player);
-		if (player.isOnline()) {
-			bPlayer.addCooldown("WaterArms", cooldown);
+		MultiAbilityManager.unbindMultiAbility(this.player);
+		if (this.player.isOnline()) {
+			this.bPlayer.addCooldown("WaterArms", this.cooldown);
 		}
-		new WaterReturn(player, player.getLocation().getBlock());
+		new WaterReturn(this.player, this.player.getLocation().getBlock());
 	}
 
 	public void prepareCancel() {
-		if (System.currentTimeMillis() < lastClickTime + 500L) {
-			remove();
+		if (System.currentTimeMillis() < this.lastClickTime + 500L) {
+			this.remove();
 		} else {
-			lastClickTime = System.currentTimeMillis();
+			this.lastClickTime = System.currentTimeMillis();
 		}
 	}
 
@@ -438,7 +438,7 @@ public class WaterArms extends WaterAbility {
 		 * before the user is able to see them, thus causing invisible arms.
 		 * Simple fix is just to display the arms again.
 		 */
-		for (WaterArms waterArms : getAbilities(WaterArms.class)) {
+		for (final WaterArms waterArms : getAbilities(WaterArms.class)) {
 			waterArms.displayLeftArm();
 			waterArms.displayRightArm();
 		}
@@ -451,174 +451,173 @@ public class WaterArms extends WaterAbility {
 		WaterArmsWhip.removeAllCleanup();
 	}
 
-	@SuppressWarnings("deprecation")
-	public static boolean isUnbreakable(Block block) {
+	public static boolean isUnbreakable(final Block block) {
 		if (Arrays.asList(UNBREAKABLES).contains(block.getTypeId())) {
 			return true;
 		}
 		return false;
 	}
 
-	public void displayBoundMsg(int slot) {
-		String name = bPlayer.getAbilities().get(slot);
+	public void displayBoundMsg(final int slot) {
+		final String name = this.bPlayer.getAbilities().get(slot);
 		if (name != null) {
-			player.sendMessage(getElement().getColor() + sneakMsg + " " + name);
+			this.player.sendMessage(this.getElement().getColor() + this.sneakMsg + " " + name);
 		}
 	}
 
 	/**
 	 * Returns the active arm of the player.
-	 * 
+	 *
 	 * @return {@link Arm} of the player
 	 */
 	public Arm getActiveArm() {
-		return activeArm;
+		return this.activeArm;
 	}
 
 	/**
 	 * Switches the active arm of a player.
 	 */
 	public void switchActiveArm() {
-		if (activeArm.equals(Arm.RIGHT)) {
-			activeArm = Arm.LEFT;
+		if (this.activeArm.equals(Arm.RIGHT)) {
+			this.activeArm = Arm.LEFT;
 		} else {
-			activeArm = Arm.RIGHT;
+			this.activeArm = Arm.RIGHT;
 		}
 	}
 
 	/**
 	 * Switches to the most suitable arm for the player.
-	 * 
+	 *
 	 * @return the {@link Arm} that was swapped to
 	 */
 	public Arm switchPreferredArm() {
-		switchActiveArm();
-		if (activeArm.equals(Arm.LEFT)) {
-			if (!displayLeftArm()) {
-				switchActiveArm();
+		this.switchActiveArm();
+		if (this.activeArm.equals(Arm.LEFT)) {
+			if (!this.displayLeftArm()) {
+				this.switchActiveArm();
 			}
 		}
-		if (activeArm.equals(Arm.RIGHT)) {
-			if (!displayRightArm()) {
-				switchActiveArm();
+		if (this.activeArm.equals(Arm.RIGHT)) {
+			if (!this.displayRightArm()) {
+				this.switchActiveArm();
 			}
 		}
-		return getActiveArm();
+		return this.getActiveArm();
 	}
 
 	public boolean canDisplayActiveArm() {
-		switch (activeArm) {
+		switch (this.activeArm) {
 			case LEFT:
-				return displayLeftArm();
+				return this.displayLeftArm();
 			case RIGHT:
-				return displayRightArm();
+				return this.displayRightArm();
 			default:
 				return false;
 		}
 	}
 
 	public Location getActiveArmEnd() {
-		switch (activeArm) {
+		switch (this.activeArm) {
 			case LEFT:
-				return getLeftArmEnd();
+				return this.getLeftArmEnd();
 			case RIGHT:
-				return getRightArmEnd();
+				return this.getRightArmEnd();
 			default:
 				return null;
 		}
 	}
 
 	public Boolean isFullSource() {
-		return fullSource;
+		return this.fullSource;
 	}
 
 	public boolean getLeftArmConsumed() {
-		return leftArmConsumed;
+		return this.leftArmConsumed;
 	}
 
-	public void setLeftArmConsumed(boolean consumed) {
+	public void setLeftArmConsumed(final boolean consumed) {
 		this.leftArmConsumed = consumed;
 	}
 
 	public boolean getRightArmConsumed() {
-		return rightArmConsumed;
+		return this.rightArmConsumed;
 	}
 
-	public void setRightArmConsumed(boolean consumed) {
+	public void setRightArmConsumed(final boolean consumed) {
 		this.rightArmConsumed = consumed;
 	}
 
 	public Integer getLengthReduction() {
-		return lengthReduction;
+		return this.lengthReduction;
 	}
 
-	public void setLengthReduction(int lengthReduction) {
+	public void setLengthReduction(final int lengthReduction) {
 		this.lengthReduction = lengthReduction;
 	}
 
 	public Integer getMaxPunches() {
-		return maxPunches;
+		return this.maxPunches;
 	}
 
-	public void setMaxPunches(int maxPunches) {
+	public void setMaxPunches(final int maxPunches) {
 		this.maxPunches = maxPunches;
 	}
 
 	public Integer getMaxUses() {
-		return maxUses;
+		return this.maxUses;
 	}
 
-	public void setMaxUses(int maxUses) {
+	public void setMaxUses(final int maxUses) {
 		this.maxUses = maxUses;
 	}
 
 	public Integer getMaxIceBlasts() {
-		return maxIceBlasts;
+		return this.maxIceBlasts;
 	}
 
-	public void setMaxIceBlasts(int maxIceBlasts) {
+	public void setMaxIceBlasts(final int maxIceBlasts) {
 		this.maxIceBlasts = maxIceBlasts;
 	}
 
 	public boolean canLightningDamage() {
-		return lightningEnabled;
+		return this.lightningEnabled;
 	}
 
-	public void setCanLightningDamage(boolean lightningEnabled) {
+	public void setCanLightningDamage(final boolean lightningEnabled) {
 		this.lightningEnabled = lightningEnabled;
 	}
 
 	public double getLightningDamage() {
-		return lightningDamage;
+		return this.lightningDamage;
 	}
 
-	public void setLightningDamage(double lightningDamage) {
+	public void setLightningDamage(final double lightningDamage) {
 		this.lightningDamage = lightningDamage;
 	}
 
 	public boolean isLeftArmCooldown() {
-		return cooldownLeft;
+		return this.cooldownLeft;
 	}
 
-	public void setLeftArmCooldown(boolean cooldown) {
+	public void setLeftArmCooldown(final boolean cooldown) {
 		this.cooldownLeft = cooldown;
 	}
 
 	public boolean isRightArmCooldown() {
-		return cooldownRight;
+		return this.cooldownRight;
 	}
 
-	public void setRightArmCooldown(boolean cooldown) {
+	public void setRightArmCooldown(final boolean cooldown) {
 		this.cooldownRight = cooldown;
 	}
 
-	public void setActiveArmCooldown(boolean cooldown) {
-		switch (activeArm) {
+	public void setActiveArmCooldown(final boolean cooldown) {
+		switch (this.activeArm) {
 			case LEFT:
-				setLeftArmCooldown(cooldown);
+				this.setLeftArmCooldown(cooldown);
 				return;
 			case RIGHT:
-				setRightArmCooldown(cooldown);
+				this.setRightArmCooldown(cooldown);
 				return;
 			default:
 				break;
@@ -627,10 +626,10 @@ public class WaterArms extends WaterAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
@@ -641,7 +640,7 @@ public class WaterArms extends WaterAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
@@ -655,98 +654,98 @@ public class WaterArms extends WaterAbility {
 	}
 
 	public boolean isCooldownLeft() {
-		return cooldownLeft;
+		return this.cooldownLeft;
 	}
 
-	public void setCooldownLeft(boolean cooldownLeft) {
+	public void setCooldownLeft(final boolean cooldownLeft) {
 		this.cooldownLeft = cooldownLeft;
 	}
 
 	public boolean isCooldownRight() {
-		return cooldownRight;
+		return this.cooldownRight;
 	}
 
-	public void setCooldownRight(boolean cooldownRight) {
+	public void setCooldownRight(final boolean cooldownRight) {
 		this.cooldownRight = cooldownRight;
 	}
 
 	public boolean isCanUsePlantSource() {
-		return canUsePlantSource;
+		return this.canUsePlantSource;
 	}
 
-	public void setCanUsePlantSource(boolean canUsePlantSource) {
+	public void setCanUsePlantSource(final boolean canUsePlantSource) {
 		this.canUsePlantSource = canUsePlantSource;
 	}
 
 	public boolean isLightningEnabled() {
-		return lightningEnabled;
+		return this.lightningEnabled;
 	}
 
-	public void setLightningEnabled(boolean lightningEnabled) {
+	public void setLightningEnabled(final boolean lightningEnabled) {
 		this.lightningEnabled = lightningEnabled;
 	}
 
 	public boolean isLightningKill() {
-		return lightningKill;
+		return this.lightningKill;
 	}
 
-	public void setLightningKill(boolean lightningKill) {
+	public void setLightningKill(final boolean lightningKill) {
 		this.lightningKill = lightningKill;
 	}
 
 	public int getInitLength() {
-		return initLength;
+		return this.initLength;
 	}
 
-	public void setInitLength(int initLength) {
+	public void setInitLength(final int initLength) {
 		this.initLength = initLength;
 	}
 
 	public int getSourceGrabRange() {
-		return sourceGrabRange;
+		return this.sourceGrabRange;
 	}
 
-	public void setSourceGrabRange(int sourceGrabRange) {
+	public void setSourceGrabRange(final int sourceGrabRange) {
 		this.sourceGrabRange = sourceGrabRange;
 	}
 
 	public int getSelectedSlot() {
-		return selectedSlot;
+		return this.selectedSlot;
 	}
 
-	public void setSelectedSlot(int selectedSlot) {
+	public void setSelectedSlot(final int selectedSlot) {
 		this.selectedSlot = selectedSlot;
 	}
 
 	public int getFreezeSlot() {
-		return freezeSlot;
+		return this.freezeSlot;
 	}
 
-	public void setFreezeSlot(int freezeSlot) {
+	public void setFreezeSlot(final int freezeSlot) {
 		this.freezeSlot = freezeSlot;
 	}
 
 	public long getLastClickTime() {
-		return lastClickTime;
+		return this.lastClickTime;
 	}
 
-	public void setLastClickTime(long lastClickTime) {
+	public void setLastClickTime(final long lastClickTime) {
 		this.lastClickTime = lastClickTime;
 	}
 
 	public World getWorld() {
-		return world;
+		return this.world;
 	}
 
-	public void setWorld(World world) {
+	public void setWorld(final World world) {
 		this.world = world;
 	}
 
 	public String getSneakMsg() {
-		return sneakMsg;
+		return this.sneakMsg;
 	}
 
-	public void setSneakMsg(String sneakMsg) {
+	public void setSneakMsg(final String sneakMsg) {
 		this.sneakMsg = sneakMsg;
 	}
 
@@ -754,19 +753,19 @@ public class WaterArms extends WaterAbility {
 		return UNBREAKABLES;
 	}
 
-	public void setFullSource(boolean fullSource) {
+	public void setFullSource(final boolean fullSource) {
 		this.fullSource = fullSource;
 	}
 
-	public void setActiveArm(Arm activeArm) {
+	public void setActiveArm(final Arm activeArm) {
 		this.activeArm = activeArm;
 	}
-	
-	public void addToArm(Block block, Arm arm) {
+
+	public void addToArm(final Block block, final Arm arm) {
 		if (arm.equals(Arm.LEFT)) {
-			left.add(block);
+			this.left.add(block);
 		} else {
-			right.add(block);
+			this.right.add(block);
 		}
 	}
 }

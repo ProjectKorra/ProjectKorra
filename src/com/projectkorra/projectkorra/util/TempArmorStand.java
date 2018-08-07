@@ -11,29 +11,30 @@ import com.projectkorra.projectkorra.ProjectKorra;
 
 /**
  * Object to represent an ArmorStand that is not used for normal functionality
+ * 
  * @author Simplicitee
  *
  */
 public class TempArmorStand {
-	
+
 	public static Set<TempArmorStand> tempStands = new HashSet<>();
-	
+
 	public ArmorStand stand;
 
-	public TempArmorStand(Location loc) {
-		stand = loc.getWorld().spawn(loc, ArmorStand.class);
-		stand.setMetadata("temparmorstand", new FixedMetadataValue(ProjectKorra.plugin, 0));
+	public TempArmorStand(final Location loc) {
+		this.stand = loc.getWorld().spawn(loc, ArmorStand.class);
+		this.stand.setMetadata("temparmorstand", new FixedMetadataValue(ProjectKorra.plugin, 0));
 	}
-	
+
 	public ArmorStand getArmorStand() {
-		return stand;
+		return this.stand;
 	}
-	
+
 	/**
 	 * Removes all instances of TempArmorStands and the associated ArmorStands
 	 */
 	public static void removeAll() {
-		for (TempArmorStand temp : tempStands) {
+		for (final TempArmorStand temp : tempStands) {
 			temp.getArmorStand().remove();
 		}
 		tempStands.clear();

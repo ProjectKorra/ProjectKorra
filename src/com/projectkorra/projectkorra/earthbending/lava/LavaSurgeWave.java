@@ -1,14 +1,7 @@
 package com.projectkorra.projectkorra.earthbending.lava;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.LavaAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -19,8 +12,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.LavaAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class LavaSurgeWave extends LavaAbility {
 
@@ -38,10 +38,10 @@ public class LavaSurgeWave extends LavaAbility {
 	private Block sourceBlock;
 	private Location targetDestination;
 	private Vector targetDirection;
-	private ConcurrentHashMap<Block, Block> waveBlocks;
-	private ConcurrentHashMap<Block, Block> frozenBlocks;
+	private final ConcurrentHashMap<Block, Block> waveBlocks;
+	private final ConcurrentHashMap<Block, Block> frozenBlocks;
 
-	public LavaSurgeWave(Player player) {
+	public LavaSurgeWave(final Player player) {
 		super(player);
 
 		this.progressing = false;
@@ -56,37 +56,37 @@ public class LavaSurgeWave extends LavaAbility {
 		this.waveBlocks = new ConcurrentHashMap<Block, Block>();
 		this.frozenBlocks = new ConcurrentHashMap<Block, Block>();
 
-		if (bPlayer.isAvatarState()) {
-			range = AvatarState.getValue(range);
-			maxRadius = AvatarState.getValue(maxRadius);
-			horizontalPush = AvatarState.getValue(horizontalPush);
-			verticalPush = AvatarState.getValue(verticalPush);
+		if (this.bPlayer.isAvatarState()) {
+			this.range = AvatarState.getValue(this.range);
+			this.maxRadius = AvatarState.getValue(this.maxRadius);
+			this.horizontalPush = AvatarState.getValue(this.horizontalPush);
+			this.verticalPush = AvatarState.getValue(this.verticalPush);
 		}
 
-		if (prepare()) {
-			LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);
+		if (this.prepare()) {
+			final LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);
 			if (wave != null) {
 				wave.remove();
 			}
-			start();
-			time = System.currentTimeMillis();
+			this.start();
+			this.time = System.currentTimeMillis();
 		}
 	}
 
 	public boolean prepare() {
-		cancelPrevious();
-		Block block = BlockSource.getSourceBlock(player, range, BlockSourceType.LAVA, ClickType.SHIFT_DOWN);
+		this.cancelPrevious();
+		final Block block = BlockSource.getSourceBlock(this.player, this.range, BlockSourceType.LAVA, ClickType.SHIFT_DOWN);
 
 		if (block != null) {
-			sourceBlock = block;
-			focusBlock();
+			this.sourceBlock = block;
+			this.focusBlock();
 			return true;
 		}
 		return false;
 	}
 
 	private void cancelPrevious() {
-		LavaSurgeWave oldWave = getAbility(player, LavaSurgeWave.class);
+		final LavaSurgeWave oldWave = getAbility(this.player, LavaSurgeWave.class);
 		if (oldWave != null) {
 			if (oldWave.progressing) {
 				oldWave.breakBlock();
@@ -97,44 +97,44 @@ public class LavaSurgeWave extends LavaAbility {
 	}
 
 	private void focusBlock() {
-		location = sourceBlock.getLocation();
+		this.location = this.sourceBlock.getLocation();
 	}
 
 	public void moveLava() {
-		if (bPlayer.isOnCooldown(this)) {
+		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
-		bPlayer.addCooldown(this);
-		if (sourceBlock != null) {
-			if (!sourceBlock.getWorld().equals(player.getWorld())) {
+		this.bPlayer.addCooldown(this);
+		if (this.sourceBlock != null) {
+			if (!this.sourceBlock.getWorld().equals(this.player.getWorld())) {
 				return;
 			}
 
-			Entity target = GeneralMethods.getTargetedEntity(player, range);
+			final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
 			if (target == null) {
-				targetDestination = getTargetEarthBlock((int) range).getLocation();
+				this.targetDestination = this.getTargetEarthBlock((int) this.range).getLocation();
 			} else {
-				targetDestination = ((LivingEntity) target).getEyeLocation();
+				this.targetDestination = ((LivingEntity) target).getEyeLocation();
 			}
 
-			if (targetDestination.distanceSquared(location) <= 1) {
-				progressing = false;
-				targetDestination = null;
+			if (this.targetDestination.distanceSquared(this.location) <= 1) {
+				this.progressing = false;
+				this.targetDestination = null;
 			} else {
-				progressing = true;
-				targetDirection = getDirection(sourceBlock.getLocation(), targetDestination).normalize();
-				targetDestination = location.clone().add(targetDirection.clone().multiply(range));
+				this.progressing = true;
+				this.targetDirection = this.getDirection(this.sourceBlock.getLocation(), this.targetDestination).normalize();
+				this.targetDestination = this.location.clone().add(this.targetDirection.clone().multiply(this.range));
 
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
-					sourceBlock.setType(Material.AIR);
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
+					this.sourceBlock.setType(Material.AIR);
 				}
-				addLava(sourceBlock);
+				this.addLava(this.sourceBlock);
 			}
 		}
 	}
 
-	private Vector getDirection(Location location, Location destination) {
+	private Vector getDirection(final Location location, final Location destination) {
 		double x1, y1, z1;
 		double x0, y0, z0;
 		x1 = destination.getX();
@@ -148,30 +148,30 @@ public class LavaSurgeWave extends LavaAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
-			breakBlock();
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.breakBlock();
 			return;
 		}
 
-		if (System.currentTimeMillis() - time >= interval) {
-			time = System.currentTimeMillis();
-			if (!progressing) {
-				sourceBlock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
+		if (System.currentTimeMillis() - this.time >= this.interval) {
+			this.time = System.currentTimeMillis();
+			if (!this.progressing) {
+				this.sourceBlock.getWorld().playEffect(this.location, Effect.SMOKE, 4, (int) this.range);
 				return;
 			}
 
-			Vector direction = targetDirection;
-			location = location.clone().add(direction);
-			Block blockl = location.getBlock();
-			ArrayList<Block> blocks = new ArrayList<Block>();
+			final Vector direction = this.targetDirection;
+			this.location = this.location.clone().add(direction);
+			final Block blockl = this.location.getBlock();
+			final ArrayList<Block> blocks = new ArrayList<Block>();
 
-			if (!GeneralMethods.isRegionProtectedFromBuild(this, location) && blockl.getType() != Material.LEAVES && (blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || WaterAbility.isPlant(blockl) || isLava(blockl))) {
-				for (double i = 0; i <= radius; i += 0.5) {
+			if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && blockl.getType() != Material.LEAVES && (blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || ElementalAbility.isPlant(blockl) || isLava(blockl))) {
+				for (double i = 0; i <= this.radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
-						Vector vec = GeneralMethods.getOrthogonalVector(targetDirection, angle, i);
-						Block block = location.clone().add(vec).getBlock();
+						final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
+						final Block block = this.location.clone().add(vec).getBlock();
 
-						if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || isLavabendable(block)) {
+						if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || this.isLavabendable(block)) {
 							blocks.add(block);
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}
@@ -179,35 +179,35 @@ public class LavaSurgeWave extends LavaAbility {
 				}
 			}
 
-			for (Block block : waveBlocks.keySet()) {
+			for (final Block block : this.waveBlocks.keySet()) {
 				if (!blocks.contains(block)) {
-					finalRemoveLava(block);
+					this.finalRemoveLava(block);
 				}
 			}
-			for (Block block : blocks) {
-				if (!waveBlocks.containsKey(block)) {
-					addLava(block);
+			for (final Block block : blocks) {
+				if (!this.waveBlocks.containsKey(block)) {
+					this.addLava(block);
 				}
 			}
-			if (waveBlocks.isEmpty()) {
-				breakBlock();
-				progressing = false;
+			if (this.waveBlocks.isEmpty()) {
+				this.breakBlock();
+				this.progressing = false;
 				return;
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * radius)) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2 * this.radius)) {
 				boolean knockback = false;
-				for (Block block : waveBlocks.keySet()) {
+				for (final Block block : this.waveBlocks.keySet()) {
 					if (entity.getLocation().distanceSquared(block.getLocation()) <= 2 * 2) {
-						if (entity.getEntityId() != player.getEntityId() || canHitSelf) {
+						if (entity.getEntityId() != this.player.getEntityId() || this.canHitSelf) {
 							knockback = true;
 						}
 					}
 				}
 				if (knockback) {
-					Vector dir = direction.clone();
-					dir.setY(dir.getY() * verticalPush);
-					entity.setVelocity(entity.getVelocity().clone().add(dir.clone().multiply(horizontalPush)));
+					final Vector dir = direction.clone();
+					dir.setY(dir.getY() * this.verticalPush);
+					entity.setVelocity(entity.getVelocity().clone().add(dir.clone().multiply(this.horizontalPush)));
 					entity.setFallDistance(0);
 
 					if (entity.getFireTicks() > 0) {
@@ -217,17 +217,17 @@ public class LavaSurgeWave extends LavaAbility {
 				}
 			}
 
-			if (!progressing) {
-				breakBlock();
+			if (!this.progressing) {
+				this.breakBlock();
 				return;
 			}
-			if (location.distanceSquared(targetDestination) < 1) {
-				progressing = false;
-				breakBlock();
+			if (this.location.distanceSquared(this.targetDestination) < 1) {
+				this.progressing = false;
+				this.breakBlock();
 				return;
 			}
-			if (radius < maxRadius) {
-				radius += .5;
+			if (this.radius < this.maxRadius) {
+				this.radius += .5;
 			}
 			return;
 		}
@@ -236,30 +236,30 @@ public class LavaSurgeWave extends LavaAbility {
 	}
 
 	private void breakBlock() {
-		for (Block block : waveBlocks.keySet()) {
-			finalRemoveLava(block);
+		for (final Block block : this.waveBlocks.keySet()) {
+			this.finalRemoveLava(block);
 		}
-		remove();
+		this.remove();
 	}
 
-	private void finalRemoveLava(Block block) {
-		if (waveBlocks.containsKey(block)) {
+	private void finalRemoveLava(final Block block) {
+		if (this.waveBlocks.containsKey(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
-			waveBlocks.remove(block);
+			this.waveBlocks.remove(block);
 		}
 	}
 
-	private void addLava(Block block) {
+	private void addLava(final Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
-			waveBlocks.put(block, block);
+			this.waveBlocks.put(block, block);
 		}
 	}
 
-	public static boolean isBlockInWave(Block block) {
-		for (LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
+	public static boolean isBlockInWave(final Block block) {
+		for (final LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
 			if (block.getWorld().equals(lavaWave.location.getWorld()) && block.getLocation().distance(lavaWave.location) <= 2 * lavaWave.radius) {
 				return true;
 			}
@@ -267,8 +267,8 @@ public class LavaSurgeWave extends LavaAbility {
 		return false;
 	}
 
-	public static boolean isBlockWave(Block block) {
-		for (LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
+	public static boolean isBlockWave(final Block block) {
+		for (final LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
 			if (lavaWave.waveBlocks.containsKey(block)) {
 				return true;
 			}
@@ -276,20 +276,20 @@ public class LavaSurgeWave extends LavaAbility {
 		return false;
 	}
 
-	public static void launch(Player player) {
-		LavaSurgeWave lavaWave = getAbility(player, LavaSurgeWave.class);
+	public static void launch(final Player player) {
+		final LavaSurgeWave lavaWave = getAbility(player, LavaSurgeWave.class);
 		if (lavaWave != null) {
 			lavaWave.moveLava();
 		}
 	}
 
 	public static void cleanup() {
-		for (LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
-			for (Block block : lavaWave.waveBlocks.keySet()) {
+		for (final LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
+			for (final Block block : lavaWave.waveBlocks.keySet()) {
 				block.setType(Material.AIR);
 				lavaWave.waveBlocks.remove(block);
 			}
-			for (Block block : lavaWave.frozenBlocks.keySet()) {
+			for (final Block block : lavaWave.frozenBlocks.keySet()) {
 				block.setType(Material.AIR);
 				lavaWave.frozenBlocks.remove(block);
 			}
@@ -303,12 +303,12 @@ public class LavaSurgeWave extends LavaAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -320,121 +320,121 @@ public class LavaSurgeWave extends LavaAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
 	}
 
 	public boolean isProgressing() {
-		return progressing;
+		return this.progressing;
 	}
 
-	public void setProgressing(boolean progressing) {
+	public void setProgressing(final boolean progressing) {
 		this.progressing = progressing;
 	}
 
 	public boolean isCanHitSelf() {
-		return canHitSelf;
+		return this.canHitSelf;
 	}
 
-	public void setCanHitSelf(boolean canHitSelf) {
+	public void setCanHitSelf(final boolean canHitSelf) {
 		this.canHitSelf = canHitSelf;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getMaxRadius() {
-		return maxRadius;
+		return this.maxRadius;
 	}
 
-	public void setMaxRadius(double maxRadius) {
+	public void setMaxRadius(final double maxRadius) {
 		this.maxRadius = maxRadius;
 	}
 
 	public double getHorizontalPush() {
-		return horizontalPush;
+		return this.horizontalPush;
 	}
 
-	public void setHorizontalPush(double horizontalPush) {
+	public void setHorizontalPush(final double horizontalPush) {
 		this.horizontalPush = horizontalPush;
 	}
 
 	public double getVerticalPush() {
-		return verticalPush;
+		return this.verticalPush;
 	}
 
-	public void setVerticalPush(double verticalPush) {
+	public void setVerticalPush(final double verticalPush) {
 		this.verticalPush = verticalPush;
 	}
 
 	public double getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(double interval) {
+	public void setInterval(final double interval) {
 		this.interval = interval;
 	}
 
 	public Block getSourceBlock() {
-		return sourceBlock;
+		return this.sourceBlock;
 	}
 
-	public void setSourceBlock(Block sourceBlock) {
+	public void setSourceBlock(final Block sourceBlock) {
 		this.sourceBlock = sourceBlock;
 	}
 
 	public Location getTargetDestination() {
-		return targetDestination;
+		return this.targetDestination;
 	}
 
-	public void setTargetDestination(Location targetDestination) {
+	public void setTargetDestination(final Location targetDestination) {
 		this.targetDestination = targetDestination;
 	}
 
 	public Vector getTargetDirection() {
-		return targetDirection;
+		return this.targetDirection;
 	}
 
-	public void setTargetDirection(Vector targetDirection) {
+	public void setTargetDirection(final Vector targetDirection) {
 		this.targetDirection = targetDirection;
 	}
 
 	public ConcurrentHashMap<Block, Block> getWaveBlocks() {
-		return waveBlocks;
+		return this.waveBlocks;
 	}
 
 	public ConcurrentHashMap<Block, Block> getFrozenBlocks() {
-		return frozenBlocks;
+		return this.frozenBlocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

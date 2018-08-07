@@ -10,11 +10,11 @@ import com.projectkorra.projectkorra.storage.MySQL;
 public class DBCooldownManager {
 
 	public DBCooldownManager() {
-		setupCooldowns();
+		this.setupCooldowns();
 	}
 
 	public void setupCooldowns() {
-		// Create pk_cooldown_ids table
+		// Create pk_cooldown_ids table.
 		if (!DBConnection.sql.tableExists("pk_cooldown_ids")) {
 			ProjectKorra.log.info("Creating pk_cooldown_ids table");
 			String query = "CREATE TABLE `pk_cooldown_ids` (id INTEGER PRIMARY KEY AUTOINCREMENT, cooldown_name TEXT(256) NOT NULL);";
@@ -23,7 +23,7 @@ public class DBCooldownManager {
 			}
 			DBConnection.sql.modifyQuery(query, false);
 		}
-		// Create pk_cooldowns table
+		// Create pk_cooldowns table.
 		if (!DBConnection.sql.tableExists("pk_cooldowns")) {
 			ProjectKorra.log.info("Creating pk_cooldowns table");
 			String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) PRIMARY KEY, cooldown_id INTEGER NOT NULL, value BIGINT);";
@@ -34,28 +34,28 @@ public class DBCooldownManager {
 		}
 	}
 
-	public int getCooldownId(String cooldown, boolean async) {
+	public int getCooldownId(final String cooldown, final boolean async) {
 		try (ResultSet rs = DBConnection.sql.readQuery("SELECT id FROM pk_cooldown_ids WHERE cooldown_name = '" + cooldown + "'")) {
 			if (rs.next()) {
 				return rs.getInt("id");
 			} else {
 				DBConnection.sql.modifyQuery("INSERT INTO pk_cooldown_ids (cooldown_name) VALUES ('" + cooldown + "')", async);
-				return getCooldownId(cooldown, async);
+				return this.getCooldownId(cooldown, async);
 			}
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
 		return -1;
 	}
-	
-	public String getCooldownName(int id) {
+
+	public String getCooldownName(final int id) {
 		try (ResultSet rs = DBConnection.sql.readQuery("SELECT cooldown_name FROM pk_cooldown_ids WHERE id = " + id)) {
 			if (rs.next()) {
 				return rs.getString("cooldown_name");
 			}
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
 		return "";

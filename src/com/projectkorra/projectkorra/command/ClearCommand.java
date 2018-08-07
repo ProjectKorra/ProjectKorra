@@ -1,28 +1,28 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Executor for /bending clear. Extends {@link PKCommand}.
  */
 public class ClearCommand extends PKCommand {
 
-	private String cantEditBinds;
-	private String cleared;
-	private String wrongNumber;
-	private String clearedSlot;
-	private String alreadyEmpty;
+	private final String cantEditBinds;
+	private final String cleared;
+	private final String wrongNumber;
+	private final String clearedSlot;
+	private final String alreadyEmpty;
 
 	public ClearCommand() {
 		super("clear", "/bending clear [Slot]", ConfigManager.languageConfig.get().getString("Commands.Clear.Description"), new String[] { "clear", "cl", "c" });
@@ -35,11 +35,11 @@ public class ClearCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1) || !isPlayer(sender)) {
+	public void execute(final CommandSender sender, final List<String> args) {
+		if (!this.hasPermission(sender) || !this.correctLength(sender, args.size(), 0, 1) || !this.isPlayer(sender)) {
 			return;
 		} else if (MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + cantEditBinds);
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
 			return;
 		}
 
@@ -53,31 +53,32 @@ public class ClearCommand extends PKCommand {
 			for (int i = 1; i <= 9; i++) {
 				GeneralMethods.saveAbility(bPlayer, i, null);
 			}
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + cleared);
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
 		} else if (args.size() == 1) {
 			try {
-				int slot = Integer.parseInt(args.get(0));
+				final int slot = Integer.parseInt(args.get(0));
 				if (slot < 1 || slot > 9) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + wrongNumber);
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 				}
 				if (bPlayer.getAbilities().get(slot) != null) {
 					bPlayer.getAbilities().remove(slot);
 					GeneralMethods.saveAbility(bPlayer, slot, null);
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + clearedSlot.replace("{slot}", String.valueOf(slot)));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + alreadyEmpty);
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);
 				}
 			}
-			catch (NumberFormatException e) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + wrongNumber);
+			catch (final NumberFormatException e) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 			}
 		}
 	}
 
 	@Override
-	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.clear"))
+	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.clear")) {
 			return new ArrayList<String>();
+		}
 		return Arrays.asList("123456789".split(""));
 	}
 

@@ -1,5 +1,19 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
@@ -12,20 +26,6 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Torrent extends WaterAbility {
 
@@ -65,7 +65,7 @@ public class Torrent extends WaterAbility {
 	private ArrayList<TempBlock> launchedBlocks;
 	private ArrayList<Entity> hurtEntities;
 
-	public Torrent(Player player) {
+	public Torrent(final Player player) {
 		super(player);
 
 		this.layer = 0;
@@ -89,50 +89,50 @@ public class Torrent extends WaterAbility {
 		this.launchedBlocks = new ArrayList<>();
 		this.hurtEntities = new ArrayList<>();
 
-		Torrent oldTorrent = getAbility(player, Torrent.class);
+		final Torrent oldTorrent = getAbility(player, Torrent.class);
 		if (oldTorrent != null) {
 			if (!oldTorrent.sourceSelected) {
 				oldTorrent.use();
-				bPlayer.addCooldown("Torrent", oldTorrent.cooldown);
+				this.bPlayer.addCooldown("Torrent", oldTorrent.cooldown);
 				return;
 			} else {
 				oldTorrent.remove();
 			}
 		}
 
-		if (bPlayer.isOnCooldown("Torrent")) {
+		if (this.bPlayer.isOnCooldown("Torrent")) {
 			return;
 		}
-		
-		if (bPlayer.isAvatarState()) {
+
+		if (this.bPlayer.isAvatarState()) {
 			this.push = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.Push");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.InitialDamage");
 			this.successiveDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.SuccessiveDamage");
 			this.maxHits = getConfig().getInt("Abilities.Avatar.AvatarState.Water.Torrent.MaxHits");
 		}
 
-		time = System.currentTimeMillis();
-		sourceBlock = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
-		if (sourceBlock != null && !GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
-			sourceSelected = true;
-			start();
+		this.time = System.currentTimeMillis();
+		this.sourceBlock = BlockSource.getWaterSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
+		if (this.sourceBlock != null && !GeneralMethods.isRegionProtectedFromBuild(this, this.sourceBlock.getLocation())) {
+			this.sourceSelected = true;
+			this.start();
 		}
 	}
 
 	private void freeze() {
-		if (layer == 0) {
+		if (this.layer == 0) {
 			return;
-		} else if (!bPlayer.canBendIgnoreBindsCooldowns(getAbility("PhaseChange"))) {
+		} else if (!this.bPlayer.canBendIgnoreBindsCooldowns(getAbility("PhaseChange"))) {
 			return;
 		}
 
-		List<Block> ice = GeneralMethods.getBlocksAroundPoint(location, layer);
-		for (Block block : ice) {
-			if (isTransparent(player, block) && block.getType() != Material.ICE) {
-				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
-				FROZEN_BLOCKS.put(tblock, player);
-				if (revert) {
-					tblock.setRevertTime(revertTime + (new Random().nextInt((500 + 500) + 1) - 500));
+		final List<Block> ice = GeneralMethods.getBlocksAroundPoint(this.location, this.layer);
+		for (final Block block : ice) {
+			if (isTransparent(this.player, block) && block.getType() != Material.ICE) {
+				final TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
+				FROZEN_BLOCKS.put(tblock, this.player);
+				if (this.revert) {
+					tblock.setRevertTime(this.revertTime + (new Random().nextInt((500 + 500) + 1) - 500));
 				}
 				playIcebendingSound(block.getLocation());
 			}
@@ -141,152 +141,152 @@ public class Torrent extends WaterAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+			this.remove();
 			return;
 		}
 
-		if (System.currentTimeMillis() > time + interval) {
-			time = System.currentTimeMillis();
+		if (System.currentTimeMillis() > this.time + this.interval) {
+			this.time = System.currentTimeMillis();
 
-			if (sourceSelected) {
-				if (sourceBlock.getLocation().getWorld() != this.player.getWorld()) {
-					remove();
-					return;
-				}
-				
-				if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
+			if (this.sourceSelected) {
+				if (this.sourceBlock.getLocation().getWorld() != this.player.getWorld()) {
+					this.remove();
 					return;
 				}
 
-				if (player.isSneaking()) {
-					sourceSelected = false;
-					settingUp = true;
+				if (this.sourceBlock.getLocation().distanceSquared(this.player.getLocation()) > this.selectRange * this.selectRange) {
+					return;
+				}
 
-					if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
-						new PlantRegrowth(player, sourceBlock);
-						sourceBlock.setType(Material.AIR);
-					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
-						sourceBlock.setType(Material.AIR);
+				if (this.player.isSneaking()) {
+					this.sourceSelected = false;
+					this.settingUp = true;
+
+					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
+						new PlantRegrowth(this.player, this.sourceBlock);
+						this.sourceBlock.setType(Material.AIR);
+					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
+						this.sourceBlock.setType(Material.AIR);
 					}
-					source = new TempBlock(sourceBlock, Material.STATIONARY_WATER, (byte) 8);
-					location = sourceBlock.getLocation();
+					this.source = new TempBlock(this.sourceBlock, Material.STATIONARY_WATER, (byte) 8);
+					this.location = this.sourceBlock.getLocation();
 				} else {
-					playFocusWaterEffect(sourceBlock);
+					playFocusWaterEffect(this.sourceBlock);
 					return;
 				}
 			}
 
-			if (settingUp) {
-				if (!player.isSneaking()) {
-					location = source.getLocation();
-					remove();
+			if (this.settingUp) {
+				if (!this.player.isSneaking()) {
+					this.location = this.source.getLocation();
+					this.remove();
 					return;
 				}
 
-				Location eyeLoc = player.getEyeLocation();
-				double startAngle = player.getEyeLocation().getDirection().angle(new Vector(1, 0, 0));
-				double dx = radius * Math.cos(startAngle);
-				double dy = 0;
-				double dz = radius * Math.sin(startAngle);
-				Location setup = eyeLoc.clone().add(dx, dy, dz);
+				final Location eyeLoc = this.player.getEyeLocation();
+				final double startAngle = this.player.getEyeLocation().getDirection().angle(new Vector(1, 0, 0));
+				final double dx = this.radius * Math.cos(startAngle);
+				final double dy = 0;
+				final double dz = this.radius * Math.sin(startAngle);
+				final Location setup = eyeLoc.clone().add(dx, dy, dz);
 
-				if (!location.getWorld().equals(player.getWorld())) {
-					remove();
+				if (!this.location.getWorld().equals(this.player.getWorld())) {
+					this.remove();
 					return;
-				} else if (location.distanceSquared(setup) > range * range) {
-					remove();
+				} else if (this.location.distanceSquared(setup) > this.range * this.range) {
+					this.remove();
 					return;
 				}
 
-				if (location.getBlockY() > setup.getBlockY()) {
-					Vector direction = new Vector(0, -1, 0);
-					location = location.clone().add(direction);
-				} else if (location.getBlockY() < setup.getBlockY()) {
-					Vector direction = new Vector(0, 1, 0);
-					location = location.clone().add(direction);
+				if (this.location.getBlockY() > setup.getBlockY()) {
+					final Vector direction = new Vector(0, -1, 0);
+					this.location = this.location.clone().add(direction);
+				} else if (this.location.getBlockY() < setup.getBlockY()) {
+					final Vector direction = new Vector(0, 1, 0);
+					this.location = this.location.clone().add(direction);
 				} else {
-					Vector direction = GeneralMethods.getDirection(location, setup).normalize();
-					location = location.clone().add(direction);
+					final Vector direction = GeneralMethods.getDirection(this.location, setup).normalize();
+					this.location = this.location.clone().add(direction);
 				}
 
-				if (location.distanceSquared(setup) <= 1) {
-					settingUp = false;
-					source.revertBlock();
-					source = null;
-					forming = true;
-				} else if (!location.getBlock().equals(source.getLocation().getBlock())) {
-					source.revertBlock();
-					source = null;
-					Block block = location.getBlock();
-					if (!isTransparent(player, block)) {
-						remove();
+				if (this.location.distanceSquared(setup) <= 1) {
+					this.settingUp = false;
+					this.source.revertBlock();
+					this.source = null;
+					this.forming = true;
+				} else if (!this.location.getBlock().equals(this.source.getLocation().getBlock())) {
+					this.source.revertBlock();
+					this.source = null;
+					final Block block = this.location.getBlock();
+					if (!isTransparent(this.player, block)) {
+						this.remove();
 						return;
 					}
-					source = new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+					this.source = new TempBlock(this.location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 				}
 			}
-			if (forming && !player.isSneaking()) {
-				location = player.getEyeLocation().add(radius, 0, 0);
-				remove();
+			if (this.forming && !this.player.isSneaking()) {
+				this.location = this.player.getEyeLocation().add(this.radius, 0, 0);
+				this.remove();
 				return;
 			}
 
-			if (forming || formed) {
+			if (this.forming || this.formed) {
 				if ((new Random()).nextInt(4) == 0) {
-					playWaterbendingSound(location);
+					playWaterbendingSound(this.location);
 				}
-				for (double theta = startAngle; theta < angle + startAngle; theta += 20) {
-					Location loc = player.getEyeLocation();
-					double phi = Math.toRadians(theta);
-					double dx = Math.cos(phi) * radius;
-					double dy = 0;
-					double dz = Math.sin(phi) * radius;
+				for (double theta = this.startAngle; theta < this.angle + this.startAngle; theta += 20) {
+					final Location loc = this.player.getEyeLocation();
+					final double phi = Math.toRadians(theta);
+					final double dx = Math.cos(phi) * this.radius;
+					final double dy = 0;
+					final double dz = Math.sin(phi) * this.radius;
 					loc.add(dx, dy, dz);
 					if (isWater(loc.getBlock()) && GeneralMethods.isAdjacentToThreeOrMoreSources(loc.getBlock())) {
 						ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, loc.getBlock().getLocation().clone().add(.5, .5, .5), 255.0);
 					}
 					loc.subtract(dx, dy, dz);
 				}
-				if (angle < 220) {
-					angle += 20;
+				if (this.angle < 220) {
+					this.angle += 20;
 				} else {
-					forming = false;
-					formed = true;
+					this.forming = false;
+					this.formed = true;
 				}
 
-				formRing();
-				if (blocks.isEmpty()) {
-					remove();
+				this.formRing();
+				if (this.blocks.isEmpty()) {
+					this.remove();
 					return;
 				}
 
 			}
 
-			if (formed && !player.isSneaking() && !launch) {
-				new TorrentWave(player, radius);
-				remove();
+			if (this.formed && !this.player.isSneaking() && !this.launch) {
+				new TorrentWave(this.player, this.radius);
+				this.remove();
 				return;
 			}
 
-			if (launch && formed) {
-				launching = true;
-				launch = false;
-				formed = false;
-				if (!launch()) {
-					returnWater(location);
-					remove();
+			if (this.launch && this.formed) {
+				this.launching = true;
+				this.launch = false;
+				this.formed = false;
+				if (!this.launch()) {
+					this.returnWater(this.location);
+					this.remove();
 					return;
 				}
 			}
 
-			if (launching) {
-				if (!player.isSneaking()) {
-					remove();
+			if (this.launching) {
+				if (!this.player.isSneaking()) {
+					this.remove();
 					return;
 				}
-				if (!launch()) {
-					remove();
+				if (!this.launch()) {
+					this.remove();
 					return;
 				}
 			}
@@ -294,90 +294,90 @@ public class Torrent extends WaterAbility {
 	}
 
 	private boolean launch() {
-		if (launchedBlocks.isEmpty() && blocks.isEmpty()) {
+		if (this.launchedBlocks.isEmpty() && this.blocks.isEmpty()) {
 			return false;
 		}
 
-		if (launchedBlocks.isEmpty()) {
-			clearRing();
-			Location loc = player.getEyeLocation();
-			ArrayList<Block> doneBlocks = new ArrayList<Block>();
-			for (double theta = startAngle; theta < angle + startAngle; theta += 20) {
-				double phi = Math.toRadians(theta);
-				double dx = Math.cos(phi) * radius;
-				double dy = 0;
-				double dz = Math.sin(phi) * radius;
-				Location blockloc = loc.clone().add(dx, dy, dz);
+		if (this.launchedBlocks.isEmpty()) {
+			this.clearRing();
+			final Location loc = this.player.getEyeLocation();
+			final ArrayList<Block> doneBlocks = new ArrayList<Block>();
+			for (double theta = this.startAngle; theta < this.angle + this.startAngle; theta += 20) {
+				final double phi = Math.toRadians(theta);
+				final double dx = Math.cos(phi) * this.radius;
+				final double dy = 0;
+				final double dz = Math.sin(phi) * this.radius;
+				final Location blockloc = loc.clone().add(dx, dy, dz);
 
-				if (Math.abs(theta - startAngle) < 10) {
-					location = blockloc.clone();
+				if (Math.abs(theta - this.startAngle) < 10) {
+					this.location = blockloc.clone();
 				}
 
-				Block block = blockloc.getBlock();
+				final Block block = blockloc.getBlock();
 				if (!doneBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, blockloc)) {
-					if (isTransparent(player, block)) {
-						launchedBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
+					if (isTransparent(this.player, block)) {
+						this.launchedBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 						doneBlocks.add(block);
-					} else if (!isTransparent(player, block)) {
+					} else if (!isTransparent(this.player, block)) {
 						break;
 					}
 				}
 			}
-			if (launchedBlocks.isEmpty()) {
+			if (this.launchedBlocks.isEmpty()) {
 				return false;
 			} else {
 				return true;
 			}
 		}
 
-		Entity target = GeneralMethods.getTargetedEntity(player, range, hurtEntities);
-		Location targetLoc = player.getTargetBlock(getTransparentMaterialSet(), (int) range).getLocation();
+		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range, this.hurtEntities);
+		Location targetLoc = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
 		if (target != null) {
 			targetLoc = target.getLocation();
 		}
 
-		ArrayList<TempBlock> newBlocks = new ArrayList<TempBlock>();
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range + 5);
-		List<Entity> affectedEntities = new ArrayList<Entity>();
-		Block realBlock = launchedBlocks.get(0).getBlock();
-		Vector dir = GeneralMethods.getDirection(location, targetLoc).normalize();
+		final ArrayList<TempBlock> newBlocks = new ArrayList<TempBlock>();
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.range + 5);
+		final List<Entity> affectedEntities = new ArrayList<Entity>();
+		final Block realBlock = this.launchedBlocks.get(0).getBlock();
+		final Vector dir = GeneralMethods.getDirection(this.location, targetLoc).normalize();
 
 		if (target != null) {
-			targetLoc = location.clone().add(dir.clone().multiply(10));
+			targetLoc = this.location.clone().add(dir.clone().multiply(10));
 		}
-		if (layer == 0) {
-			location = location.clone().add(dir);
+		if (this.layer == 0) {
+			this.location = this.location.clone().add(dir);
 		}
 
-		Block locBlock = location.getBlock();
-		if (location.distanceSquared(player.getLocation()) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-			if (layer < maxLayer) {
-				if (freeze || layer < 1) {
-					layer++;
+		final Block locBlock = this.location.getBlock();
+		if (this.location.distanceSquared(this.player.getLocation()) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+			if (this.layer < this.maxLayer) {
+				if (this.freeze || this.layer < 1) {
+					this.layer++;
 				}
 			}
-			if (launchedBlocks.size() == 1) {
-				remove();
+			if (this.launchedBlocks.size() == 1) {
+				this.remove();
 				return false;
 			}
-		} else if (!isTransparent(player, locBlock)) {
-			if (layer < maxLayer) {
-				if (layer == 0) {
-					hurtEntities.clear();
+		} else if (!isTransparent(this.player, locBlock)) {
+			if (this.layer < this.maxLayer) {
+				if (this.layer == 0) {
+					this.hurtEntities.clear();
 				}
-				if (freeze || layer < 1) {
-					layer++;
+				if (this.freeze || this.layer < 1) {
+					this.layer++;
 				}
 			}
-			if (freeze) {
-				freeze();
-			} else if (launchedBlocks.size() == 1) {
-				location = realBlock.getLocation();
-				remove();
+			if (this.freeze) {
+				this.freeze();
+			} else if (this.launchedBlocks.size() == 1) {
+				this.location = realBlock.getLocation();
+				this.remove();
 				return false;
 			}
 		} else {
-			if (locBlock.equals(realBlock) && layer == 0) {
+			if (locBlock.equals(realBlock) && this.layer == 0) {
 				return true;
 			}
 			if (locBlock.getLocation().distanceSquared(targetLoc) > 1) {
@@ -386,35 +386,35 @@ public class Torrent extends WaterAbility {
 				}
 				newBlocks.add(new TempBlock(locBlock, Material.STATIONARY_WATER, (byte) 8));
 			} else {
-				if (layer < maxLayer) {
-					if (layer == 0) {
-						hurtEntities.clear();
+				if (this.layer < this.maxLayer) {
+					if (this.layer == 0) {
+						this.hurtEntities.clear();
 					}
-					if (freeze || layer < 1) {
-						layer++;
+					if (this.freeze || this.layer < 1) {
+						this.layer++;
 					}
 				}
-				if (freeze) {
-					freeze();
+				if (this.freeze) {
+					this.freeze();
 				}
 			}
 		}
 
-		for (int i = 0; i < launchedBlocks.size(); i++) {
-			TempBlock block = launchedBlocks.get(i);
-			if (i == launchedBlocks.size() - 1) {
+		for (int i = 0; i < this.launchedBlocks.size(); i++) {
+			final TempBlock block = this.launchedBlocks.get(i);
+			if (i == this.launchedBlocks.size() - 1) {
 				block.revertBlock();
 			} else {
 				newBlocks.add(block);
-				for (Entity entity : entities) {
+				for (final Entity entity : entities) {
 					if (entity.getWorld() != block.getBlock().getWorld()) {
 						continue;
 					}
 					if (entity.getLocation().distanceSquared(block.getLocation()) <= 1.5 * 1.5 && !affectedEntities.contains(entity)) {
 						if (i == 0) {
-							affect(entity, dir);
+							this.affect(entity, dir);
 						} else {
-							affect(entity, GeneralMethods.getDirection(block.getLocation(), launchedBlocks.get(i - 1).getLocation()).normalize());
+							this.affect(entity, GeneralMethods.getDirection(block.getLocation(), this.launchedBlocks.get(i - 1).getLocation()).normalize());
 						}
 						affectedEntities.add(entity);
 					}
@@ -422,41 +422,41 @@ public class Torrent extends WaterAbility {
 			}
 		}
 
-		launchedBlocks.clear();
-		launchedBlocks.addAll(newBlocks);
+		this.launchedBlocks.clear();
+		this.launchedBlocks.addAll(newBlocks);
 
-		if (launchedBlocks.isEmpty()) {
+		if (this.launchedBlocks.isEmpty()) {
 			return false;
 		}
 		return true;
 	}
 
 	private void formRing() {
-		clearRing();
-		startAngle += 30;
+		this.clearRing();
+		this.startAngle += 30;
 
-		Location loc = player.getEyeLocation();
-		ArrayList<Block> doneBlocks = new ArrayList<Block>();
-		ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, radius + 2);
+		final Location loc = this.player.getEyeLocation();
+		final ArrayList<Block> doneBlocks = new ArrayList<Block>();
+		final ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, this.radius + 2);
 
-		for (double theta = startAngle; theta < angle + startAngle; theta += 20) {
-			double phi = Math.toRadians(theta);
-			double dx = Math.cos(phi) * radius;
-			double dy = 0;
-			double dz = Math.sin(phi) * radius;
-			Location blockLoc = loc.clone().add(dx, dy, dz);
-			Block block = blockLoc.getBlock();
+		for (double theta = this.startAngle; theta < this.angle + this.startAngle; theta += 20) {
+			final double phi = Math.toRadians(theta);
+			final double dx = Math.cos(phi) * this.radius;
+			final double dy = 0;
+			final double dz = Math.sin(phi) * this.radius;
+			final Location blockLoc = loc.clone().add(dx, dy, dz);
+			final Block block = blockLoc.getBlock();
 			if (!doneBlocks.contains(block)) {
-				if (isTransparent(player, block)) {
-					blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
+				if (isTransparent(this.player, block)) {
+					this.blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 					doneBlocks.add(block);
-					for (Entity entity : entities) {
+					for (final Entity entity : entities) {
 						if (entity.getWorld() != blockLoc.getWorld()) {
 							continue;
 						}
 						if (!affectedEntities.contains(entity) && entity.getLocation().distanceSquared(blockLoc) <= 1.5 * 1.5) {
-							deflect(entity);
+							this.deflect(entity);
 						}
 					}
 				}
@@ -465,49 +465,48 @@ public class Torrent extends WaterAbility {
 	}
 
 	private void clearRing() {
-		for (TempBlock block : blocks) {
+		for (final TempBlock block : this.blocks) {
 			block.revertBlock();
 		}
-		blocks.clear();
+		this.blocks.clear();
 	}
 
 	@Override
 	public void remove() {
 		super.remove();
-		clearRing();
-		for (TempBlock block : launchedBlocks) {
+		this.clearRing();
+		for (final TempBlock block : this.launchedBlocks) {
 			block.revertBlock();
 		}
 
-		launchedBlocks.clear();
-		if (source != null) {
-			source.revertBlock();
+		this.launchedBlocks.clear();
+		if (this.source != null) {
+			this.source.revertBlock();
 		}
 
-		if (location != null) {
-			returnWater(location);
+		if (this.location != null) {
+			this.returnWater(this.location);
 		}
 	}
 
-	private void returnWater(Location location) {
-		new WaterReturn(player, location.getBlock());
+	private void returnWater(final Location location) {
+		new WaterReturn(this.player, location.getBlock());
 	}
 
-	@SuppressWarnings("deprecation")
-	public static void create(Player player) {
+	public static void create(final Player player) {
 		if (hasAbility(player, Torrent.class)) {
 			return;
 		}
 
 		if (WaterReturn.hasWaterBottle(player)) {
-			Location eyeLoc = player.getEyeLocation();
-			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
+			final Location eyeLoc = player.getEyeLocation();
+			final Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (block.getType() != Material.WATER) {
 					block.setType(Material.STATIONARY_WATER);
 					block.setData((byte) 8);
 				}
-				Torrent tor = new Torrent(player);
+				final Torrent tor = new Torrent(player);
 
 				if (tor.sourceSelected || tor.settingUp) {
 					WaterReturn.emptyWaterBottle(player);
@@ -519,32 +518,32 @@ public class Torrent extends WaterAbility {
 	}
 
 	private void use() {
-		launch = true;
-		if (launching) {
-			freeze = true;
+		this.launch = true;
+		if (this.launching) {
+			this.freeze = true;
 		}
 	}
 
-	private void deflect(Entity entity) {
-		if (entity.getEntityId() == player.getEntityId()) {
+	private void deflect(final Entity entity) {
+		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
 		double x, z, vx, vz, mag;
 		double angle = 50;
 		angle = Math.toRadians(angle);
 
-		x = entity.getLocation().getX() - player.getLocation().getX();
-		z = entity.getLocation().getZ() - player.getLocation().getZ();
+		x = entity.getLocation().getX() - this.player.getLocation().getX();
+		z = entity.getLocation().getZ() - this.player.getLocation().getZ();
 
 		mag = Math.sqrt(x * x + z * z);
 
 		vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
 		vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
-		Vector vec = new Vector(vx, 0, vz).normalize().multiply(push);
-		Vector velocity = entity.getVelocity();
+		final Vector vec = new Vector(vx, 0, vz).normalize().multiply(this.push);
+		final Vector velocity = entity.getVelocity();
 
-		if (bPlayer.isAvatarState()) {
+		if (this.bPlayer.isAvatarState()) {
 			velocity.setX(AvatarState.getValue(vec.getX()));
 			velocity.setZ(AvatarState.getValue(vec.getZ()));
 		} else {
@@ -555,43 +554,43 @@ public class Torrent extends WaterAbility {
 		GeneralMethods.setVelocity(entity, velocity);
 		entity.setFallDistance(0);
 		if (entity instanceof LivingEntity) {
-			double damageDealt = getNightFactor(deflectDamage);
+			final double damageDealt = this.getNightFactor(this.deflectDamage);
 			DamageHandler.damageEntity(entity, damageDealt, this);
 			AirAbility.breakBreathbendingHold(entity);
 		}
 	}
 
-	private void affect(Entity entity, Vector direction) {
-		if (entity.getEntityId() == player.getEntityId()) {
+	private void affect(final Entity entity, final Vector direction) {
+		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
-		if (direction.getY() > maxUpwardForce) {
-			direction.setY(maxUpwardForce);
+		if (direction.getY() > this.maxUpwardForce) {
+			direction.setY(this.maxUpwardForce);
 		}
-		if (!freeze) {
-			entity.setVelocity(direction.multiply(push));
+		if (!this.freeze) {
+			entity.setVelocity(direction.multiply(this.push));
 		}
-		if (entity instanceof LivingEntity && !hurtEntities.contains(entity)) {
-			double damageDealt = getNightFactor(damage);
-			if (hits > 1 && hits <= maxHits) {
-				damageDealt = getNightFactor(successiveDamage);
+		if (entity instanceof LivingEntity && !this.hurtEntities.contains(entity)) {
+			double damageDealt = this.getNightFactor(this.damage);
+			if (this.hits > 1 && this.hits <= this.maxHits) {
+				damageDealt = this.getNightFactor(this.successiveDamage);
 			}
-			if (hits == maxHits) {
-				hits = maxHits + 1;
+			if (this.hits == this.maxHits) {
+				this.hits = this.maxHits + 1;
 			} else {
-				hits += 1;
+				this.hits += 1;
 			}
 			DamageHandler.damageEntity(entity, damageDealt, this);
 			AirAbility.breakBreathbendingHold(entity);
-			hurtEntities.add(entity);
+			this.hurtEntities.add(entity);
 			((LivingEntity) entity).setNoDamageTicks(0);
 		}
 	}
 
 	public static void progressAllCleanup() {
-		for (TempBlock block : FROZEN_BLOCKS.keySet()) {
-			Player player = FROZEN_BLOCKS.get(block);
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		for (final TempBlock block : FROZEN_BLOCKS.keySet()) {
+			final Player player = FROZEN_BLOCKS.get(block);
+			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
 				FROZEN_BLOCKS.remove(block);
 				continue;
@@ -610,36 +609,36 @@ public class Torrent extends WaterAbility {
 		}
 	}
 
-	public static void thaw(Block block) {
+	public static void thaw(final Block block) {
 		if (TempBlock.isTempBlock(block)) {
-			TempBlock tblock = TempBlock.get(block);
+			final TempBlock tblock = TempBlock.get(block);
 			if (FROZEN_BLOCKS.containsKey(tblock)) {
 				thaw(tblock);
 			}
 		}
 	}
 
-	public static void thaw(TempBlock block) {
+	public static void thaw(final TempBlock block) {
 		block.revertBlock();
 		FROZEN_BLOCKS.remove(block);
 	}
 
-	public static boolean canThaw(Block block) {
+	public static boolean canThaw(final Block block) {
 		if (TempBlock.isTempBlock(block)) {
-			TempBlock tblock = TempBlock.get(block);
+			final TempBlock tblock = TempBlock.get(block);
 			return !FROZEN_BLOCKS.containsKey(tblock);
 		}
 		return true;
 	}
 
 	public static void removeCleanup() {
-		for (TempBlock block : FROZEN_BLOCKS.keySet()) {
+		for (final TempBlock block : FROZEN_BLOCKS.keySet()) {
 			thaw(block);
 		}
 	}
 
-	public static boolean wasBrokenFor(Player player, Block block) {
-		Torrent torrent = getAbility(player, Torrent.class);
+	public static boolean wasBrokenFor(final Player player, final Block block) {
+		final Torrent torrent = getAbility(player, Torrent.class);
 		if (torrent != null) {
 			if (torrent.sourceBlock == null) {
 				return false;
@@ -658,12 +657,12 @@ public class Torrent extends WaterAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -678,208 +677,207 @@ public class Torrent extends WaterAbility {
 
 	@Override
 	public boolean isCollidable() {
-		return forming || formed || launch || launching;
+		return this.forming || this.formed || this.launch || this.launching;
 	}
-	
+
 	@Override
-	public boolean allowBreakPlants()
-	{
+	public boolean allowBreakPlants() {
 		return false;
 	}
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (TempBlock tblock : blocks) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final TempBlock tblock : this.blocks) {
 			locations.add(tblock.getLocation());
 		}
-		for (TempBlock tblock : launchedBlocks) {
+		for (final TempBlock tblock : this.launchedBlocks) {
 			locations.add(tblock.getLocation());
 		}
 		return locations;
 	}
 
 	public boolean isSourceSelected() {
-		return sourceSelected;
+		return this.sourceSelected;
 	}
 
-	public void setSourceSelected(boolean sourceSelected) {
+	public void setSourceSelected(final boolean sourceSelected) {
 		this.sourceSelected = sourceSelected;
 	}
 
 	public boolean isSettingUp() {
-		return settingUp;
+		return this.settingUp;
 	}
 
-	public void setSettingUp(boolean settingUp) {
+	public void setSettingUp(final boolean settingUp) {
 		this.settingUp = settingUp;
 	}
 
 	public boolean isForming() {
-		return forming;
+		return this.forming;
 	}
 
-	public void setForming(boolean forming) {
+	public void setForming(final boolean forming) {
 		this.forming = forming;
 	}
 
 	public boolean isFormed() {
-		return formed;
+		return this.formed;
 	}
 
-	public void setFormed(boolean formed) {
+	public void setFormed(final boolean formed) {
 		this.formed = formed;
 	}
 
 	public boolean isLaunch() {
-		return launch;
+		return this.launch;
 	}
 
-	public void setLaunch(boolean launch) {
+	public void setLaunch(final boolean launch) {
 		this.launch = launch;
 	}
 
 	public boolean isLaunching() {
-		return launching;
+		return this.launching;
 	}
 
-	public void setLaunching(boolean launching) {
+	public void setLaunching(final boolean launching) {
 		this.launching = launching;
 	}
 
 	public boolean isFreeze() {
-		return freeze;
+		return this.freeze;
 	}
 
-	public void setFreeze(boolean freeze) {
+	public void setFreeze(final boolean freeze) {
 		this.freeze = freeze;
 	}
 
 	public int getLayer() {
-		return layer;
+		return this.layer;
 	}
 
-	public void setLayer(int layer) {
+	public void setLayer(final int layer) {
 		this.layer = layer;
 	}
 
 	public int getMaxLayer() {
-		return maxLayer;
+		return this.maxLayer;
 	}
 
-	public void setMaxLayer(int maxLayer) {
+	public void setMaxLayer(final int maxLayer) {
 		this.maxLayer = maxLayer;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getStartAngle() {
-		return startAngle;
+		return this.startAngle;
 	}
 
-	public void setStartAngle(double startAngle) {
+	public void setStartAngle(final double startAngle) {
 		this.startAngle = startAngle;
 	}
 
 	public double getAngle() {
-		return angle;
+		return this.angle;
 	}
 
-	public void setAngle(double angle) {
+	public void setAngle(final double angle) {
 		this.angle = angle;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(final double radius) {
 		this.radius = radius;
 	}
 
 	public double getPush() {
-		return push;
+		return this.push;
 	}
 
-	public void setPush(double push) {
+	public void setPush(final double push) {
 		this.push = push;
 	}
 
 	public double getMaxUpwardForce() {
-		return maxUpwardForce;
+		return this.maxUpwardForce;
 	}
 
-	public void setMaxUpwardForce(double maxUpwardForce) {
+	public void setMaxUpwardForce(final double maxUpwardForce) {
 		this.maxUpwardForce = maxUpwardForce;
 	}
 
 	public double getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(double damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
 	public double getDeflectDamage() {
-		return deflectDamage;
+		return this.deflectDamage;
 	}
 
-	public void setDeflectDamage(double deflectDamage) {
+	public void setDeflectDamage(final double deflectDamage) {
 		this.deflectDamage = deflectDamage;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public double getSelectRange() {
-		return selectRange;
+		return this.selectRange;
 	}
 
-	public void setSelectRange(double selectRange) {
+	public void setSelectRange(final double selectRange) {
 		this.selectRange = selectRange;
 	}
 
 	public Block getSourceBlock() {
-		return sourceBlock;
+		return this.sourceBlock;
 	}
 
-	public void setSourceBlock(Block sourceBlock) {
+	public void setSourceBlock(final Block sourceBlock) {
 		this.sourceBlock = sourceBlock;
 	}
 
 	public TempBlock getSource() {
-		return source;
+		return this.source;
 	}
 
-	public void setSource(TempBlock source) {
+	public void setSource(final TempBlock source) {
 		this.source = source;
 	}
 
 	public ArrayList<TempBlock> getBlocks() {
-		return blocks;
+		return this.blocks;
 	}
 
-	public void setBlocks(ArrayList<TempBlock> blocks) {
+	public void setBlocks(final ArrayList<TempBlock> blocks) {
 		this.blocks = blocks;
 	}
 
@@ -892,18 +890,18 @@ public class Torrent extends WaterAbility {
 	}
 
 	public ArrayList<TempBlock> getLaunchedBlocks() {
-		return launchedBlocks;
+		return this.launchedBlocks;
 	}
 
 	public ArrayList<Entity> getHurtEntities() {
-		return hurtEntities;
+		return this.hurtEntities;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 }

@@ -14,46 +14,45 @@ import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 
 public class FerroControl extends MetalAbility implements PassiveAbility {
-	
+
 	private Block block;
 
-	public FerroControl(Player player) {
+	public FerroControl(final Player player) {
 		super(player);
-		
-		
+
 	}
 
 	@Override
 	public void progress() {
-		if (!player.isSneaking() || !bPlayer.canUsePassive(this) || !bPlayer.canBendPassive(this)) {
+		if (!this.player.isSneaking() || !this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this)) {
 			return;
 		}
-		
+
 		boolean used = false, tDoor = false, open = false;
-		block = player.getTargetBlock((HashSet<Material>) null, 5);
-		
-		if (block != null) {
-			if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
-				if (block.getData() >= 8) {
-					block = block.getRelative(BlockFace.DOWN);
+		this.block = this.player.getTargetBlock((HashSet<Material>) null, 5);
+
+		if (this.block != null) {
+			if (this.block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
+				if (this.block.getData() >= 8) {
+					this.block = this.block.getRelative(BlockFace.DOWN);
 				}
-				
-				block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
-				open = (block.getData() & 0x4) == 0x4;
+
+				this.block.setData((byte) ((this.block.getData() & 0x4) == 0x4 ? (this.block.getData() & ~0x4) : (this.block.getData() | 0x4)));
+				open = (this.block.getData() & 0x4) == 0x4;
 				used = true;
-			} else if (block.getType() == Material.IRON_TRAPDOOR && !GeneralMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
-				block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
-				open = (block.getData() & 0x4) == 0x4;
+			} else if (this.block.getType() == Material.IRON_TRAPDOOR && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
+				this.block.setData((byte) ((this.block.getData() & 0x4) == 0x4 ? (this.block.getData() & ~0x4) : (this.block.getData() | 0x4)));
+				open = (this.block.getData() & 0x4) == 0x4;
 				used = true;
 				tDoor = true;
 			}
-			
+
 		}
-		
+
 		if (used) {
-			String sound = "BLOCK_IRON_" + (tDoor ? "TRAP" : "") + "DOOR_" + (open ? "OPEN" : "CLOSE");
-			block.getWorld().playSound(block.getLocation(), Sound.valueOf(sound), 0.5f, 0);
-			bPlayer.addCooldown(this, 200);
+			final String sound = "BLOCK_IRON_" + (tDoor ? "TRAP" : "") + "DOOR_" + (open ? "OPEN" : "CLOSE");
+			this.block.getWorld().playSound(this.block.getLocation(), Sound.valueOf(sound), 0.5f, 0);
+			this.bPlayer.addCooldown(this, 200);
 		}
 	}
 
@@ -79,7 +78,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return block != null ? block.getLocation() : null;
+		return this.block != null ? this.block.getLocation() : null;
 	}
 
 	@Override

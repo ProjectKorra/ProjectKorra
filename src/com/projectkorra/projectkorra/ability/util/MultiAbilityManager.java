@@ -1,21 +1,21 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.event.BindChangeEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.event.BindChangeEvent;
 
 public class MultiAbilityManager {
 
@@ -25,7 +25,7 @@ public class MultiAbilityManager {
 	public static ArrayList<MultiAbilityInfo> multiAbilityList = new ArrayList<MultiAbilityInfo>();
 
 	public MultiAbilityManager() {
-		ArrayList<MultiAbilityInfoSub> waterArms = new ArrayList<MultiAbilityInfoSub>();
+		final ArrayList<MultiAbilityInfoSub> waterArms = new ArrayList<MultiAbilityInfoSub>();
 		waterArms.add(new MultiAbilityInfoSub("Pull", Element.WATER));
 		waterArms.add(new MultiAbilityInfoSub("Punch", Element.WATER));
 		waterArms.add(new MultiAbilityInfoSub("Grapple", Element.WATER));
@@ -38,28 +38,30 @@ public class MultiAbilityManager {
 
 	/**
 	 * Sets up a player's binds for a MultiAbility.
-	 * 
+	 *
 	 * @param player Player having the multiability bound
 	 * @param multiAbility MultiAbility being bound
 	 */
-	public static void bindMultiAbility(Player player, String multiAbility) {
-		BindChangeEvent event = new BindChangeEvent(player, multiAbility, true);
+	public static void bindMultiAbility(final Player player, final String multiAbility) {
+		final BindChangeEvent event = new BindChangeEvent(player, multiAbility, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled())
+		if (event.isCancelled()) {
 			return;
+		}
 
-		if (playerAbilities.containsKey(player))
+		if (playerAbilities.containsKey(player)) {
 			unbindMultiAbility(player);
+		}
 		playerSlot.put(player, player.getInventory().getHeldItemSlot());
 		playerBoundAbility.put(player, multiAbility);
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		HashMap<Integer, String> currAbilities = new HashMap<Integer, String>();
-		for (int i : bPlayer.getAbilities().keySet()) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final HashMap<Integer, String> currAbilities = new HashMap<Integer, String>();
+		for (final int i : bPlayer.getAbilities().keySet()) {
 			currAbilities.put(i, bPlayer.getAbilities().get(i));
 		}
 		playerAbilities.put(player, currAbilities);
 
-		List<MultiAbilityInfoSub> modes = getMultiAbility(multiAbility).getAbilities();
+		final List<MultiAbilityInfoSub> modes = getMultiAbility(multiAbility).getAbilities();
 
 		bPlayer.getAbilities().clear();
 		for (int i = 0; i < modes.size(); i++) {
@@ -71,8 +73,7 @@ public class MultiAbilityManager {
 		}
 
 		if (player.isOnline()) {
-			bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending
-			// scoreboards.
+			bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending scoreboards.
 			player.getInventory().setHeldItemSlot(0);
 		}
 	}
@@ -80,39 +81,42 @@ public class MultiAbilityManager {
 	/**
 	 * Returns the MultiAbility the player has bound. Returns null if no
 	 * multiability is bound and active.
-	 * 
+	 *
 	 * @param player The player to use
 	 * @return name of multi ability bounded
 	 */
-	public static String getBoundMultiAbility(Player player) {
-		if (playerBoundAbility.containsKey(player))
+	public static String getBoundMultiAbility(final Player player) {
+		if (playerBoundAbility.containsKey(player)) {
 			return playerBoundAbility.get(player);
+		}
 		return null;
 	}
 
 	/**
 	 * Returns a MultiAbility based on name.
-	 * 
+	 *
 	 * @param multiAbility Name of the multiability
 	 * @return the multiability object or null
 	 */
-	public static MultiAbilityInfo getMultiAbility(String multiAbility) {
-		for (MultiAbilityInfo ma : multiAbilityList) {
-			if (ma.getName().equalsIgnoreCase(multiAbility))
+	public static MultiAbilityInfo getMultiAbility(final String multiAbility) {
+		for (final MultiAbilityInfo ma : multiAbilityList) {
+			if (ma.getName().equalsIgnoreCase(multiAbility)) {
 				return ma;
+			}
 		}
 		return null;
 	}
 
 	/**
 	 * Returns a boolean based on whether a player has a MultiAbility active.
-	 * 
+	 *
 	 * @param player The player to check
 	 * @return true If player has a multiability active
 	 */
-	public static boolean hasMultiAbilityBound(Player player) {
-		if (playerAbilities.containsKey(player))
+	public static boolean hasMultiAbilityBound(final Player player) {
+		if (playerAbilities.containsKey(player)) {
 			return true;
+		}
 		return false;
 	}
 
@@ -120,20 +124,21 @@ public class MultiAbilityManager {
 	 * MultiAbility equivalent of
 	 * {@link GeneralMethods#getBoundAbility(Player)}. Returns a boolean based
 	 * on whether a player has a specific MultiAbility active.
-	 * 
+	 *
 	 * @param player The player to check
 	 * @param multiAbility The multiability name
 	 * @return true If player has the specified multiability active
 	 */
-	public static boolean hasMultiAbilityBound(Player player, String multiAbility) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean hasMultiAbilityBound(final Player player, final String multiAbility) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return false;
 		}
 
 		if (playerAbilities.containsKey(player)) {
-			if (!playerBoundAbility.get(player).equals(multiAbility) && bPlayer.getBoundAbility() != null)
+			if (!playerBoundAbility.get(player).equals(multiAbility) && bPlayer.getBoundAbility() != null) {
 				return false;
+			}
 			return true;
 		}
 		return false;
@@ -141,6 +146,7 @@ public class MultiAbilityManager {
 
 	public static void manage() {
 		new BukkitRunnable() {
+			@Override
 			public void run() {
 				scrollHotBarSlots();
 			}
@@ -149,10 +155,10 @@ public class MultiAbilityManager {
 
 	/**
 	 * Clears all MultiAbility data for a player. Called on player quit event.
-	 * 
+	 *
 	 * @param player
 	 */
-	public static void remove(Player player) {
+	public static void remove(final Player player) {
 		playerAbilities.remove(player);
 		playerBoundAbility.remove(player);
 		playerSlot.remove(player);
@@ -172,8 +178,8 @@ public class MultiAbilityManager {
 	 */
 	public static void scrollHotBarSlots() {
 		if (!playerAbilities.isEmpty()) {
-			for (Player player : playerAbilities.keySet()) {
-				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			for (final Player player : playerAbilities.keySet()) {
+				final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 				if (bPlayer == null) {
 					continue;
 				}
@@ -193,43 +199,48 @@ public class MultiAbilityManager {
 	/**
 	 * Reverts a player's binds to a previous state before use of a
 	 * MultiAbility.
-	 * 
+	 *
 	 * @param player
 	 */
-	public static void unbindMultiAbility(Player player) {
+	public static void unbindMultiAbility(final Player player) {
 		if (playerAbilities.containsKey(player)) {
-			HashMap<Integer, String> prevBinds = playerAbilities.get(player);
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			final HashMap<Integer, String> prevBinds = playerAbilities.get(player);
+			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
 				return;
 			}
 
 			int lastNonNull = -1;
 			for (int i = 1; i < 10; i++) {
-				if (prevBinds.get(i) != null)
+				if (prevBinds.get(i) != null) {
 					lastNonNull = i;
+				}
 				bPlayer.getAbilities().put(i, prevBinds.get(i));
 			}
-			if (lastNonNull > -1)
+			if (lastNonNull > -1) {
 				GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds.get(lastNonNull));
+			}
 
-			if (player.isOnline())
-				bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending
-			// scoreboards.
+			if (player.isOnline()) {
+				bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending scoreboards.
+			}
 			playerAbilities.remove(player);
 		}
 
 		if (playerSlot.containsKey(player)) {
-			if (player.isOnline())
+			if (player.isOnline()) {
 				player.getInventory().setHeldItemSlot(playerSlot.get(player));
+			}
 			playerSlot.remove(player);
 		} else {
-			if (player.isOnline())
+			if (player.isOnline()) {
 				player.getInventory().setHeldItemSlot(0);
+			}
 		}
 
-		if (playerBoundAbility.containsKey(player))
+		if (playerBoundAbility.containsKey(player)) {
 			playerBoundAbility.remove(player);
+		}
 	}
 
 	/**
@@ -240,24 +251,24 @@ public class MultiAbilityManager {
 		private String name;
 		private ArrayList<MultiAbilityInfoSub> abilities;
 
-		public MultiAbilityInfo(String name, ArrayList<MultiAbilityInfoSub> abilities) {
+		public MultiAbilityInfo(final String name, final ArrayList<MultiAbilityInfoSub> abilities) {
 			this.name = name;
 			this.abilities = abilities;
 		}
 
 		public ArrayList<MultiAbilityInfoSub> getAbilities() {
-			return abilities;
+			return this.abilities;
 		}
 
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
-		public void setAbilities(ArrayList<MultiAbilityInfoSub> abilities) {
+		public void setAbilities(final ArrayList<MultiAbilityInfoSub> abilities) {
 			this.abilities = abilities;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 	}
@@ -266,29 +277,29 @@ public class MultiAbilityManager {
 		private String name;
 		private Element element;
 
-		public MultiAbilityInfoSub(String name, Element element) {
+		public MultiAbilityInfoSub(final String name, final Element element) {
 			this.name = name;
 			this.element = element;
 		}
 
 		public Element getElement() {
-			return element;
+			return this.element;
 		}
 
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
-		public void setElement(Element element) {
+		public void setElement(final Element element) {
 			this.element = element;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 
 		public ChatColor getAbilityColor() {
-			return element != null ? element.getColor() : null;
+			return this.element != null ? this.element.getColor() : null;
 		}
 	}
 

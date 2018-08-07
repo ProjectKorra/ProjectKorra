@@ -12,12 +12,13 @@ import com.projectkorra.projectkorra.BendingPlayer;
 public class BendingPlayerCreationEvent extends Event {
 
 	private static final HandlerList handlers = new HandlerList();
-	private BendingPlayer bPlayer;
+	private final BendingPlayer bPlayer;
 
-	public BendingPlayerCreationEvent(BendingPlayer bPlayer) {
+	public BendingPlayerCreationEvent(final BendingPlayer bPlayer) {
 		this.bPlayer = bPlayer;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}
@@ -30,6 +31,6 @@ public class BendingPlayerCreationEvent extends Event {
 	 * @return BendingPlayer created
 	 */
 	public BendingPlayer getBendingPlayer() {
-		return bPlayer;
+		return this.bPlayer;
 	}
 }

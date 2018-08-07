@@ -26,101 +26,101 @@ public class Illumination extends FireAbility {
 	private TempBlock block;
 	private int oldLevel;
 
-	public Illumination(Player player) {
+	public Illumination(final Player player) {
 		super(player);
 
-		this.range = getDayFactor(getConfig().getDouble("Abilities.Fire.Illumination.Range"));
+		this.range = this.getDayFactor(getConfig().getDouble("Abilities.Fire.Illumination.Range"));
 		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
 		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
 
-		Illumination oldIllumination = getAbility(player, Illumination.class);
+		final Illumination oldIllumination = getAbility(player, Illumination.class);
 		if (oldIllumination != null) {
 			oldIllumination.remove();
 			return;
 		}
 
-		if (bPlayer.isOnCooldown(this)) {
+		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
 		if (player.getLocation().getBlock().getLightLevel() < this.lightThreshold) {
-			oldLevel = player.getLocation().getBlock().getLightLevel();
-			bPlayer.addCooldown(this);
-			set();
-			start();
+			this.oldLevel = player.getLocation().getBlock().getLightLevel();
+			this.bPlayer.addCooldown(this);
+			this.set();
+			this.start();
 		}
 
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			this.remove();
 			return;
 		}
 
-		if (!bPlayer.isIlluminating()) {
-			remove();
+		if (!this.bPlayer.isIlluminating()) {
+			this.remove();
 			return;
 		}
 
-		if (bPlayer.hasElement(Element.EARTH) && bPlayer.isTremorSensing()) {
-			remove();
+		if (this.bPlayer.hasElement(Element.EARTH) && this.bPlayer.isTremorSensing()) {
+			this.remove();
 			return;
 		}
 
-		if (oldLevel > this.lightThreshold) {
-			remove();
-			return;
-		}
-		
-		if (block == null) {
-			return;
-		}
-		
-		if (!player.getWorld().equals(block.getBlock().getWorld())) {
-			remove();
-			return;
-		} 
-		
-		if (player.getLocation().distanceSquared(block.getLocation()) > range * range) {
-			remove();
+		if (this.oldLevel > this.lightThreshold) {
+			this.remove();
 			return;
 		}
 
-		set();
+		if (this.block == null) {
+			return;
+		}
+
+		if (!this.player.getWorld().equals(this.block.getBlock().getWorld())) {
+			this.remove();
+			return;
+		}
+
+		if (this.player.getLocation().distanceSquared(this.block.getLocation()) > this.range * this.range) {
+			this.remove();
+			return;
+		}
+
+		this.set();
 	}
 
 	@Override
 	public void remove() {
 		super.remove();
-		revert();
+		this.revert();
 	}
 
 	private void revert() {
-		if (block != null) {
-			BLOCKS.remove(block);
-			block.revertBlock();
+		if (this.block != null) {
+			BLOCKS.remove(this.block);
+			this.block.revertBlock();
 		}
 	}
 
 	private void set() {
-		Block standingBlock = player.getLocation().getBlock();
-		Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
+		final Block standingBlock = this.player.getLocation().getBlock();
+		final Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
 
-		if (!BlazeArc.isIgnitable(player, standingBlock)) {
+		if (!BlazeArc.isIgnitable(this.player, standingBlock)) {
 			return;
 		} else if (!GeneralMethods.isSolid(standBlock)) {
 			return;
-		} else if (block != null && standingBlock.equals(block.getBlock())) {
+		} else if (this.block != null && standingBlock.equals(this.block.getBlock())) {
 			return;
 		} else if (standBlock.getType() == Material.LEAVES || standBlock.getType() == Material.LEAVES_2) {
 			return;
 		}
-		
-		revert();
-		this.block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
-		BLOCKS.put(block, player);
+
+		this.revert();
+		this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
+		BLOCKS.put(this.block, this.player);
 	}
 
 	@Override
@@ -130,12 +130,12 @@ public class Illumination extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -149,34 +149,34 @@ public class Illumination extends FireAbility {
 	}
 
 	public byte getNormalData() {
-		return normalData;
+		return this.normalData;
 	}
 
-	public void setNormalData(byte normalData) {
+	public void setNormalData(final byte normalData) {
 		this.normalData = normalData;
 	}
 
 	public double getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(double range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
 	public Material getNormalType() {
-		return normalType;
+		return this.normalType;
 	}
 
-	public void setNormalType(Material normalType) {
+	public void setNormalType(final Material normalType) {
 		this.normalType = normalType;
 	}
 
 	public TempBlock getBlock() {
-		return block;
+		return this.block;
 	}
 
-	public void setBlock(TempBlock block) {
+	public void setBlock(final TempBlock block) {
 		this.block = block;
 	}
 
@@ -186,11 +186,11 @@ public class Illumination extends FireAbility {
 
 	/**
 	 * Returns whether the block provided is a torch created by Illumination
-	 * 
+	 *
 	 * @param block The block being tested
 	 */
-	public static boolean isIlluminationTorch(Block block) {
-		TempBlock tempBlock = TempBlock.get(block);
+	public static boolean isIlluminationTorch(final Block block) {
+		final TempBlock tempBlock = TempBlock.get(block);
 
 		if (tempBlock == null || block.getType() != Material.TORCH || !BLOCKS.containsKey(tempBlock)) {
 			return false;
@@ -199,7 +199,7 @@ public class Illumination extends FireAbility {
 		return true;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

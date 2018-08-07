@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -12,8 +11,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 
 public class Tremorsense extends EarthAbility {
 
@@ -27,22 +27,22 @@ public class Tremorsense extends EarthAbility {
 	private Block block;
 	private int stickyRange;
 
-	public Tremorsense(Player player, boolean clicked) {
+	public Tremorsense(final Player player, final boolean clicked) {
 		super(player);
 
-		if (!bPlayer.canBendIgnoreBinds(this)) {
+		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
 		}
 
-		setFields();
-		byte lightLevel = player.getLocation().getBlock().getLightLevel();
+		this.setFields();
+		final byte lightLevel = player.getLocation().getBlock().getLightLevel();
 
-		if (lightLevel < this.lightThreshold && isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+		if (lightLevel < this.lightThreshold && this.isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			if (clicked) {
-				bPlayer.addCooldown(this);
-				activate();
+				this.bPlayer.addCooldown(this);
+				this.activate();
 			}
-			start();
+			this.start();
 		}
 	}
 
@@ -55,97 +55,95 @@ public class Tremorsense extends EarthAbility {
 	}
 
 	private void activate() {
-		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-		for (int i = -radius; i <= radius; i++) {
-			for (int j = -radius; j <= radius; j++) {
+		final Block block = this.player.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		for (int i = -this.radius; i <= this.radius; i++) {
+			for (int j = -this.radius; j <= this.radius; j++) {
 				boolean earth = false;
 				boolean foundAir = false;
 				Block smokeBlock = null;
 
-				for (int k = 0; k <= maxDepth; k++) {
-					Block blocki = block.getRelative(BlockFace.EAST, i).getRelative(BlockFace.NORTH, j).getRelative(BlockFace.DOWN, k);
+				for (int k = 0; k <= this.maxDepth; k++) {
+					final Block blocki = block.getRelative(BlockFace.EAST, i).getRelative(BlockFace.NORTH, j).getRelative(BlockFace.DOWN, k);
 					if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
 						continue;
 					}
-					if (isEarthbendable(blocki) && !earth) {
+					if (this.isEarthbendable(blocki) && !earth) {
 						earth = true;
 						smokeBlock = blocki;
-					} else if (!isEarthbendable(blocki) && earth) {
+					} else if (!this.isEarthbendable(blocki) && earth) {
 						foundAir = true;
 						break;
-					} else if (!isEarthbendable(blocki) && !earth && blocki.getType() != Material.AIR) {
+					} else if (!this.isEarthbendable(blocki) && !earth && blocki.getType() != Material.AIR) {
 						break;
 					}
 				}
 				if (foundAir) {
-					smokeBlock.getWorld().playEffect(smokeBlock.getRelative(BlockFace.UP).getLocation(), Effect.SMOKE, 4, radius);
+					smokeBlock.getWorld().playEffect(smokeBlock.getRelative(BlockFace.UP).getLocation(), Effect.SMOKE, 4, this.radius);
 				}
 			}
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void tryToSetGlowBlock() {
-		Block standBlock = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-		if (!bPlayer.isTremorSensing()) {
-			if (block != null) {
-				remove();
+		final Block standBlock = this.player.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		if (!this.bPlayer.isTremorSensing()) {
+			if (this.block != null) {
+				this.remove();
 			}
 			return;
 		}
 
-		boolean isBendable = isEarthbendable(standBlock);
+		final boolean isBendable = this.isEarthbendable(standBlock);
 
-		if (isBendable && block == null) {
-			block = standBlock;
-			player.sendBlockChange(block.getLocation(), 89, (byte) 1);
-		} else if (isBendable && !block.equals(standBlock)) {
-			revertGlowBlock();
-			block = standBlock;
-			player.sendBlockChange(block.getLocation(), 89, (byte) 1);
-		} else if (block == null) {
+		if (isBendable && this.block == null) {
+			this.block = standBlock;
+			this.player.sendBlockChange(this.block.getLocation(), 89, (byte) 1);
+		} else if (isBendable && !this.block.equals(standBlock)) {
+			this.revertGlowBlock();
+			this.block = standBlock;
+			this.player.sendBlockChange(this.block.getLocation(), 89, (byte) 1);
+		} else if (this.block == null) {
 			return;
-		} else if (!player.getWorld().equals(block.getWorld())) {
-			remove();
+		} else if (!this.player.getWorld().equals(this.block.getWorld())) {
+			this.remove();
 			return;
 		} else if (!isBendable) {
-			if (stickyRange > 0) {
-				if (standBlock.getLocation().distanceSquared(block.getLocation()) > stickyRange * stickyRange) {
-					revertGlowBlock();
+			if (this.stickyRange > 0) {
+				if (standBlock.getLocation().distanceSquared(this.block.getLocation()) > this.stickyRange * this.stickyRange) {
+					this.revertGlowBlock();
 				}
 			} else {
-				revertGlowBlock();
+				this.revertGlowBlock();
 			}
-			
+
 			return;
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void revertGlowBlock() {
-		if (block != null) {
-			player.sendBlockChange(block.getLocation(), block.getTypeId(), block.getData());
+		if (this.block != null) {
+			this.player.sendBlockChange(this.block.getLocation(), this.block.getTypeId(), this.block.getData());
 		}
 	}
 
 	@Override
 	public void remove() {
 		super.remove();
-		revertGlowBlock();
+		this.revertGlowBlock();
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || player.getLocation().getBlock().getLightLevel() > lightThreshold) {
-			remove();
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this) || this.player.getLocation().getBlock().getLightLevel() > this.lightThreshold) {
+			this.remove();
 			return;
 		} else {
-			tryToSetGlowBlock();
+			this.tryToSetGlowBlock();
 		}
 	}
 
-	public static void manage(Server server) {
-		for (Player player : server.getOnlinePlayers()) {
+	public static void manage(final Server server) {
+		for (final Player player : server.getOnlinePlayers()) {
 
 			if (canTremorSense(player) && !hasAbility(player, Tremorsense.class)) {
 				new Tremorsense(player, false);
@@ -153,8 +151,8 @@ public class Tremorsense extends EarthAbility {
 		}
 	}
 
-	public static boolean canTremorSense(Player player) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+	public static boolean canTremorSense(final Player player) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (bPlayer != null && bPlayer.canBendIgnoreBindsCooldowns(getAbility("Tremorsense"))) {
 			return true;
@@ -164,7 +162,7 @@ public class Tremorsense extends EarthAbility {
 	}
 
 	@Deprecated
-	/**No longer used; will be removed in the next version.*/
+	/** No longer used; will be removed in the next version. */
 	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
 	}
@@ -176,12 +174,12 @@ public class Tremorsense extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return this.player != null ? this.player.getLocation() : null;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -195,38 +193,38 @@ public class Tremorsense extends EarthAbility {
 	}
 
 	public byte getLightThreshold() {
-		return lightThreshold;
+		return this.lightThreshold;
 	}
 
-	public void setLightThreshold(byte lightThreshold) {
+	public void setLightThreshold(final byte lightThreshold) {
 		this.lightThreshold = lightThreshold;
 	}
 
 	public int getMaxDepth() {
-		return maxDepth;
+		return this.maxDepth;
 	}
 
-	public void setMaxDepth(int maxDepth) {
+	public void setMaxDepth(final int maxDepth) {
 		this.maxDepth = maxDepth;
 	}
 
 	public int getRadius() {
-		return radius;
+		return this.radius;
 	}
 
-	public void setRadius(int radius) {
+	public void setRadius(final int radius) {
 		this.radius = radius;
 	}
 
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 
-	public void setBlock(Block block) {
+	public void setBlock(final Block block) {
 		this.block = block;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 

@@ -10,7 +10,7 @@ public class BlockCacheElement {
 	private boolean allowed;
 	private long time;
 
-	public BlockCacheElement(Player player, Block block, String ability, boolean allowed, long time) {
+	public BlockCacheElement(final Player player, final Block block, final String ability, final boolean allowed, final long time) {
 		this.player = player;
 		this.block = block;
 		this.ability = ability;
@@ -19,42 +19,42 @@ public class BlockCacheElement {
 	}
 
 	public String getAbility() {
-		return ability;
+		return this.ability;
 	}
 
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
 	public boolean isAllowed() {
-		return allowed;
+		return this.allowed;
 	}
 
-	public void setAbility(String ability) {
+	public void setAbility(final String ability) {
 		this.ability = ability;
 	}
 
-	public void setAllowed(boolean allowed) {
+	public void setAllowed(final boolean allowed) {
 		this.allowed = allowed;
 	}
 
-	public void setBlock(Block block) {
+	public void setBlock(final Block block) {
 		this.block = block;
 	}
 
-	public void setPlayer(Player player) {
+	public void setPlayer(final Player player) {
 		this.player = player;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 

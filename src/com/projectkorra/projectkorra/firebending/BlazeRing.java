@@ -13,7 +13,7 @@ public class BlazeRing extends FireAbility {
 	private double angleIncrement;
 	private Location location;
 
-	public BlazeRing(Player player) {
+	public BlazeRing(final Player player) {
 		super(player);
 
 		this.range = getConfig().getInt("Abilities.Fire.Blaze.Ring.Range");
@@ -21,16 +21,16 @@ public class BlazeRing extends FireAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
 		this.location = player.getLocation();
 
-		if (bPlayer.isAvatarState()) {
-			range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
+		if (this.bPlayer.isAvatarState()) {
+			this.range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
 		}
-		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeRing")) {
+		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("BlazeRing")) {
 			return;
 		}
 
-		for (double degrees = 0; degrees < 360; degrees += angleIncrement) {
-			double angle = Math.toRadians(degrees);
-			Vector direction = player.getEyeLocation().getDirection().clone();
+		for (double degrees = 0; degrees < 360; degrees += this.angleIncrement) {
+			final double angle = Math.toRadians(degrees);
+			final Vector direction = player.getEyeLocation().getDirection().clone();
 			double x, z, vx, vz;
 
 			x = direction.getX();
@@ -42,12 +42,12 @@ public class BlazeRing extends FireAbility {
 			direction.setX(vx);
 			direction.setZ(vz);
 
-			new BlazeArc(player, location, direction, range);
+			new BlazeArc(player, this.location, direction, this.range);
 		}
 
-		start();
-		bPlayer.addCooldown("BlazeRing", cooldown);
-		remove();
+		this.start();
+		this.bPlayer.addCooldown("BlazeRing", this.cooldown);
+		this.remove();
 	}
 
 	@Override
@@ -61,12 +61,12 @@ public class BlazeRing extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -80,26 +80,26 @@ public class BlazeRing extends FireAbility {
 	}
 
 	public int getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(int range) {
+	public void setRange(final int range) {
 		this.range = range;
 	}
 
 	public double getAngleIncrement() {
-		return angleIncrement;
+		return this.angleIncrement;
 	}
 
-	public void setAngleIncrement(double angleIncrement) {
+	public void setAngleIncrement(final double angleIncrement) {
 		this.angleIncrement = angleIncrement;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 

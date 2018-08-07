@@ -8,7 +8,7 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirSaturation extends AirAbility implements PassiveAbility {
-	public AirSaturation(Player player) {
+	public AirSaturation(final Player player) {
 		super(player);
 	}
 
@@ -17,7 +17,8 @@ public class AirSaturation extends AirAbility implements PassiveAbility {
 	}
 
 	@Override
-	public void progress() {}
+	public void progress() {
+	}
 
 	@Override
 	public boolean isSneakAbility() {
@@ -41,14 +42,14 @@ public class AirSaturation extends AirAbility implements PassiveAbility {
 
 	@Override
 	public Location getLocation() {
-		return player.getLocation();
+		return this.player.getLocation();
 	}
 
 	@Override
 	public boolean isInstantiable() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isProgressable() {
 		return false;

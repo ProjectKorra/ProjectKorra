@@ -46,13 +46,13 @@ public class StatisticsManager implements Runnable {
 
 	public StatisticsManager() {
 		if (!ProjectKorra.isStatisticsEnabled()) {
-			ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, this, 20 * INTERVAL, 20 * INTERVAL);
+			ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, this, 20 * this.INTERVAL, 20 * this.INTERVAL);
 		}
-		setupStatistics();
+		this.setupStatistics();
 	}
 
 	public void setupStatistics() {
-		// Create pk_statKeys table
+		// Create pk_statKeys table.
 		if (!DBConnection.sql.tableExists("pk_statKeys")) {
 			ProjectKorra.log.info("Creating pk_statKeys table");
 			String query = "";
@@ -63,7 +63,7 @@ public class StatisticsManager implements Runnable {
 			}
 			DBConnection.sql.modifyQuery(query, false);
 		}
-		// Create pk_stats table
+		// Create pk_stats table.
 		if (!DBConnection.sql.tableExists("pk_stats")) {
 			ProjectKorra.log.info("Creating pk_stats table");
 			String query = "";
@@ -74,59 +74,59 @@ public class StatisticsManager implements Runnable {
 			}
 			DBConnection.sql.modifyQuery(query, false);
 		}
-		// Insert all abilities into pk_statKeys for all statistics
-		for (CoreAbility ability : CoreAbility.getAbilitiesByName()) {
+		// Insert all abilities into pk_statKeys for all statistics.
+		for (final CoreAbility ability : CoreAbility.getAbilitiesByName()) {
 			if (ability.isHarmlessAbility()) {
 				continue;
 			}
-			for (Statistic statistic : Statistic.values()) {
-				String statName = statistic.getStatisticName(ability);
-				ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'");
+			for (final Statistic statistic : Statistic.values()) {
+				final String statName = statistic.getStatisticName(ability);
+				final ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'");
 				try {
 					if (!rs.next()) {
 						DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
 					}
 				}
-				catch (SQLException e) {
+				catch (final SQLException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		// Populate Keys Map with all loaded statName(s) in pk_statKeys
-		ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys");
+		// Populate Keys Map with all loaded statName(s) in pk_statKeys.
+		final ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys");
 		try {
 			while (rs.next()) {
-				KEYS_BY_NAME.put(rs.getString("statName"), rs.getInt("id"));
-				KEYS_BY_ID.put(rs.getInt("id"), rs.getString("statName"));
+				this.KEYS_BY_NAME.put(rs.getString("statName"), rs.getInt("id"));
+				this.KEYS_BY_ID.put(rs.getInt("id"), rs.getString("statName"));
 			}
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void load(UUID uuid) {
-		STATISTICS.put(uuid, new HashMap<>());
-		DELTA.put(uuid, new HashMap<>());
+	public void load(final UUID uuid) {
+		this.STATISTICS.put(uuid, new HashMap<>());
+		this.DELTA.put(uuid, new HashMap<>());
 		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = '" + uuid.toString() + "'")) {
 			while (rs.next()) {
-				STATISTICS.get(uuid).put(rs.getInt("statId"), rs.getLong("statValue"));
-				DELTA.get(uuid).put(rs.getInt("statId"), 0L);
+				this.STATISTICS.get(uuid).put(rs.getInt("statId"), rs.getLong("statValue"));
+				this.DELTA.get(uuid).put(rs.getInt("statId"), 0L);
 			}
 		}
-		catch (SQLException e) {
+		catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void save(UUID uuid, boolean async) {
-		if (!DELTA.containsKey(uuid)) {
+	public void save(final UUID uuid, final boolean async) {
+		if (!this.DELTA.containsKey(uuid)) {
 			return;
 		}
-		Map<Integer, Long> stats = DELTA.get(uuid);
-		for (Entry<Integer, Long> entry : stats.entrySet()) {
-			int statId = entry.getKey();
-			long statValue = entry.getValue();
+		final Map<Integer, Long> stats = this.DELTA.get(uuid);
+		for (final Entry<Integer, Long> entry : stats.entrySet()) {
+			final int statId = entry.getKey();
+			final long statValue = entry.getValue();
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = '" + uuid.toString() + "' AND statId = " + statId)) {
 				if (!rs.next()) {
 					DBConnection.sql.modifyQuery("INSERT INTO pk_stats (statId, uuid, statValue) VALUES (" + statId + ", '" + uuid.toString() + "', " + statValue + ")", async);
@@ -134,90 +134,90 @@ public class StatisticsManager implements Runnable {
 					DBConnection.sql.modifyQuery("UPDATE pk_stats SET statValue = statValue + " + statValue + " WHERE uuid = '" + uuid.toString() + "' AND statId = " + statId + ";", async);
 				}
 			}
-			catch (SQLException e) {
+			catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public long getStatisticDelta(UUID uuid, int statId) {
-		// If the player is offline, pull value from database
-		if (!DELTA.containsKey(uuid)) {
+	public long getStatisticDelta(final UUID uuid, final int statId) {
+		// If the player is offline, pull value from database.
+		if (!this.DELTA.containsKey(uuid)) {
 			return 0;
-		} else if (!DELTA.get(uuid).containsKey(statId)) {
+		} else if (!this.DELTA.get(uuid).containsKey(statId)) {
 			return 0;
 		}
-		return DELTA.get(uuid).get(statId);
+		return this.DELTA.get(uuid).get(statId);
 	}
 
-	public long getStatisticCurrent(UUID uuid, int statId) {
-		// If the player is offline, pull value from database
-		if (!STATISTICS.containsKey(uuid)) {
+	public long getStatisticCurrent(final UUID uuid, final int statId) {
+		// If the player is offline, pull value from database.
+		if (!this.STATISTICS.containsKey(uuid)) {
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT statValue FROM pk_stats WHERE uuid = '" + uuid.toString() + "' AND statId = " + statId + ";")) {
 				if (rs.next()) {
 					return rs.getLong("statValue");
 				}
 			}
-			catch (SQLException e) {
+			catch (final SQLException e) {
 				e.printStackTrace();
 			}
 			return 0;
-		} else if (!STATISTICS.get(uuid).containsKey(statId)) {
+		} else if (!this.STATISTICS.get(uuid).containsKey(statId)) {
 			return 0;
 		}
-		return STATISTICS.get(uuid).get(statId);
+		return this.STATISTICS.get(uuid).get(statId);
 	}
 
-	public void addStatistic(UUID uuid, int statId, long statDelta) {
-		if (!STATISTICS.containsKey(uuid) || !DELTA.containsKey(uuid)) {
+	public void addStatistic(final UUID uuid, final int statId, final long statDelta) {
+		if (!this.STATISTICS.containsKey(uuid) || !this.DELTA.containsKey(uuid)) {
 			return;
 		}
-		STATISTICS.get(uuid).put(statId, getStatisticCurrent(uuid, statId) + statDelta);
-		DELTA.get(uuid).put(statId, getStatisticDelta(uuid, statId) + statDelta);
+		this.STATISTICS.get(uuid).put(statId, this.getStatisticCurrent(uuid, statId) + statDelta);
+		this.DELTA.get(uuid).put(statId, this.getStatisticDelta(uuid, statId) + statDelta);
 
 	}
 
-	public Map<Integer, Long> getStatisticsMap(UUID uuid) {
-		Map<Integer, Long> map = new HashMap<>();
-		// If the player is offline, create a new temporary Map from the database
-		if (!STATISTICS.containsKey(uuid)) {
+	public Map<Integer, Long> getStatisticsMap(final UUID uuid) {
+		final Map<Integer, Long> map = new HashMap<>();
+		// If the player is offline, create a new temporary Map from the database.
+		if (!this.STATISTICS.containsKey(uuid)) {
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = '" + uuid.toString() + "'")) {
 				while (rs.next()) {
-					int statId = rs.getInt("statId");
-					long statValue = rs.getLong("statValue");
+					final int statId = rs.getInt("statId");
+					final long statValue = rs.getLong("statValue");
 					map.put(statId, statValue);
 				}
 			}
-			catch (SQLException e) {
+			catch (final SQLException e) {
 				e.printStackTrace();
 			}
 			return map;
 		}
-		return STATISTICS.get(uuid);
+		return this.STATISTICS.get(uuid);
 	}
 
-	public void store(UUID uuid) {
-		STORAGE.add(uuid);
+	public void store(final UUID uuid) {
+		this.STORAGE.add(uuid);
 	}
 
 	@Override
 	public void run() {
-		for (UUID uuid : STORAGE) {
-			// Confirm that the player is offline
-			Player player = ProjectKorra.plugin.getServer().getPlayer(uuid);
+		for (final UUID uuid : this.STORAGE) {
+			// Confirm that the player is offline.
+			final Player player = ProjectKorra.plugin.getServer().getPlayer(uuid);
 			if (player == null) {
-				save(uuid, true);
+				this.save(uuid, true);
 			}
 		}
-		STORAGE.clear();
+		this.STORAGE.clear();
 	}
 
 	public Map<String, Integer> getKeysByName() {
-		return KEYS_BY_NAME;
+		return this.KEYS_BY_NAME;
 	}
 
 	public Map<Integer, String> getKeysById() {
-		return KEYS_BY_ID;
+		return this.KEYS_BY_ID;
 	}
 
 }

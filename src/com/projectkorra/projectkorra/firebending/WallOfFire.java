@@ -39,7 +39,7 @@ public class WallOfFire extends FireAbility {
 	private Location origin;
 	private List<Block> blocks;
 
-	public WallOfFire(Player player) {
+	public WallOfFire(final Player player) {
 		super(player);
 
 		this.active = true;
@@ -56,22 +56,22 @@ public class WallOfFire extends FireAbility {
 		this.random = new Random();
 		this.blocks = new ArrayList<>();
 
-		if (hasAbility(player, WallOfFire.class) && !bPlayer.isAvatarState()) {
+		if (hasAbility(player, WallOfFire.class) && !this.bPlayer.isAvatarState()) {
 			return;
-		} else if (bPlayer.isOnCooldown(this)) {
+		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
-		origin = GeneralMethods.getTargetedLocation(player, range);
+		this.origin = GeneralMethods.getTargetedLocation(player, this.range);
 
 		if (isDay(player.getWorld())) {
-			width = (int) getDayFactor(width);
-			height = (int) getDayFactor(height);
-			duration = (long) getDayFactor(duration);
-			damage = (int) getDayFactor(damage);
+			this.width = (int) this.getDayFactor(this.width);
+			this.height = (int) this.getDayFactor(this.height);
+			this.duration = (long) this.getDayFactor(this.duration);
+			this.damage = (int) this.getDayFactor(this.damage);
 		}
-		
-		if (bPlayer.isAvatarState()) {
+
+		if (this.bPlayer.isAvatarState()) {
 			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Width");
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Height");
 			this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.WallOfFire.Duration");
@@ -79,56 +79,56 @@ public class WallOfFire extends FireAbility {
 			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.WallOfFire.FireTicks");
 		}
 
-		time = System.currentTimeMillis();
-		Block block = origin.getBlock();
+		this.time = System.currentTimeMillis();
+		final Block block = this.origin.getBlock();
 		if (block.isLiquid() || GeneralMethods.isSolid(block)) {
 			return;
 		}
 
-		Vector direction = player.getEyeLocation().getDirection();
-		Vector compare = direction.clone();
+		final Vector direction = player.getEyeLocation().getDirection();
+		final Vector compare = direction.clone();
 		compare.setY(0);
-		if (Math.abs(direction.angle(compare)) > Math.toRadians(maxAngle)) {
+		if (Math.abs(direction.angle(compare)) > Math.toRadians(this.maxAngle)) {
 			return;
 		}
 
-		initializeBlocks();
-		start();
-		bPlayer.addCooldown(this);
+		this.initializeBlocks();
+		this.start();
+		this.bPlayer.addCooldown(this);
 	}
 
-	private void affect(Entity entity) {
+	private void affect(final Entity entity) {
 		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
-			Block block = ((LivingEntity) entity).getEyeLocation().getBlock();
+			final Block block = ((LivingEntity) entity).getEyeLocation().getBlock();
 			if (TempBlock.isTempBlock(block) && isIce(block)) {
 				return;
 			}
-			DamageHandler.damageEntity(entity, damage, this);
+			DamageHandler.damageEntity(entity, this.damage, this);
 			AirAbility.breakBreathbendingHold(entity);
 		}
-		entity.setFireTicks((int) (fireTicks * 20));
-		new FireDamageTimer(entity, player);
+		entity.setFireTicks((int) (this.fireTicks * 20));
+		new FireDamageTimer(entity, this.player);
 	}
 
 	private void damage() {
-		double radius = height;
-		if (radius < width) {
-			radius = width;
+		double radius = this.height;
+		if (radius < this.width) {
+			radius = this.width;
 		}
 
 		radius = radius + 1;
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
-		if (entities.contains(player)) {
-			entities.remove(player);
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.origin, radius);
+		if (entities.contains(this.player)) {
+			entities.remove(this.player);
 		}
-		for (Entity entity : entities) {
+		for (final Entity entity : entities) {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
-			for (Block block : blocks) {
+			for (final Block block : this.blocks) {
 				if (entity.getLocation().distanceSquared(block.getLocation()) <= 1.5 * 1.5) {
-					affect(entity);
+					this.affect(entity);
 					break;
 				}
 			}
@@ -136,21 +136,21 @@ public class WallOfFire extends FireAbility {
 	}
 
 	private void display() {
-		for (Block block : blocks) {
-			if (!isTransparent(block)) {
+		for (final Block block : this.blocks) {
+			if (!this.isTransparent(block)) {
 				continue;
 			}
 			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
 			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 
-			if (random.nextInt(7) == 0) {
+			if (this.random.nextInt(7) == 0) {
 				playFirebendingSound(block.getLocation());
 			}
 		}
 	}
 
 	private void initializeBlocks() {
-		Vector direction = player.getEyeLocation().getDirection();
+		Vector direction = this.player.getEyeLocation().getDirection();
 		direction = direction.normalize();
 
 		Vector ortholr = GeneralMethods.getOrthogonalVector(direction, 0, 1);
@@ -159,19 +159,19 @@ public class WallOfFire extends FireAbility {
 		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
 		orthoud = orthoud.normalize();
 
-		double w = width;
-		double h = height;
+		final double w = this.width;
+		final double h = this.height;
 
 		for (double i = -w; i <= w; i++) {
 			for (double j = -h; j <= h; j++) {
-				Location location = origin.clone().add(orthoud.clone().multiply(j));
+				Location location = this.origin.clone().add(orthoud.clone().multiply(j));
 				location = location.add(ortholr.clone().multiply(i));
 				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 					continue;
 				}
-				Block block = location.getBlock();
-				if (!blocks.contains(block)) {
-					blocks.add(block);
+				final Block block = location.getBlock();
+				if (!this.blocks.contains(block)) {
+					this.blocks.add(block);
 				}
 			}
 		}
@@ -179,26 +179,26 @@ public class WallOfFire extends FireAbility {
 
 	@Override
 	public void progress() {
-		time = System.currentTimeMillis();
+		this.time = System.currentTimeMillis();
 
-		if (time - getStartTime() > cooldown) {
-			remove();
+		if (this.time - this.getStartTime() > this.cooldown) {
+			this.remove();
 			return;
-		} else if (!active) {
+		} else if (!this.active) {
 			return;
-		} else if (time - getStartTime() > duration) {
-			active = false;
+		} else if (this.time - this.getStartTime() > this.duration) {
+			this.active = false;
 			return;
 		}
 
-		if (time - getStartTime() > intervalTick * interval) {
-			intervalTick++;
-			display();
+		if (this.time - this.getStartTime() > this.intervalTick * this.interval) {
+			this.intervalTick++;
+			this.display();
 		}
 
-		if (time - getStartTime() > damageTick * damageInterval) {
-			damageTick++;
-			damage();
+		if (this.time - this.getStartTime() > this.damageTick * this.damageInterval) {
+			this.damageTick++;
+			this.damage();
 		}
 	}
 
@@ -209,12 +209,12 @@ public class WallOfFire extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return origin;
+		return this.origin;
 	}
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -229,130 +229,130 @@ public class WallOfFire extends FireAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		for (Block block : blocks) {
+		final ArrayList<Location> locations = new ArrayList<>();
+		for (final Block block : this.blocks) {
 			locations.add(block.getLocation());
 		}
 		return locations;
 	}
 
 	public boolean isActive() {
-		return active;
+		return this.active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(final boolean active) {
 		this.active = active;
 	}
 
 	public int getDamageTick() {
-		return damageTick;
+		return this.damageTick;
 	}
 
-	public void setDamageTick(int damageTick) {
+	public void setDamageTick(final int damageTick) {
 		this.damageTick = damageTick;
 	}
 
 	public int getIntervalTick() {
-		return intervalTick;
+		return this.intervalTick;
 	}
 
-	public void setIntervalTick(int intervalTick) {
+	public void setIntervalTick(final int intervalTick) {
 		this.intervalTick = intervalTick;
 	}
 
 	public int getRange() {
-		return range;
+		return this.range;
 	}
 
-	public void setRange(int range) {
+	public void setRange(final int range) {
 		this.range = range;
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(final int height) {
 		this.height = height;
 	}
 
 	public int getWidth() {
-		return width;
+		return this.width;
 	}
 
-	public void setWidth(int width) {
+	public void setWidth(final int width) {
 		this.width = width;
 	}
 
 	public int getDamage() {
-		return damage;
+		return this.damage;
 	}
 
-	public void setDamage(int damage) {
+	public void setDamage(final int damage) {
 		this.damage = damage;
 	}
 
 	public long getDamageInterval() {
-		return damageInterval;
+		return this.damageInterval;
 	}
 
-	public void setDamageInterval(long damageInterval) {
+	public void setDamageInterval(final long damageInterval) {
 		this.damageInterval = damageInterval;
 	}
 
 	public long getDuration() {
-		return duration;
+		return this.duration;
 	}
 
-	public void setDuration(long duration) {
+	public void setDuration(final long duration) {
 		this.duration = duration;
 	}
 
 	public long getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(final long time) {
 		this.time = time;
 	}
 
 	public long getInterval() {
-		return interval;
+		return this.interval;
 	}
 
-	public void setInterval(long interval) {
+	public void setInterval(final long interval) {
 		this.interval = interval;
 	}
 
 	public double getFireTicks() {
-		return fireTicks;
+		return this.fireTicks;
 	}
 
-	public void setFireTicks(double fireTicks) {
+	public void setFireTicks(final double fireTicks) {
 		this.fireTicks = fireTicks;
 	}
 
 	public double getMaxAngle() {
-		return maxAngle;
+		return this.maxAngle;
 	}
 
-	public void setMaxAngle(double maxAngle) {
+	public void setMaxAngle(final double maxAngle) {
 		this.maxAngle = maxAngle;
 	}
 
 	public Location getOrigin() {
-		return origin;
+		return this.origin;
 	}
 
-	public void setOrigin(Location origin) {
+	public void setOrigin(final Location origin) {
 		this.origin = origin;
 	}
 
 	public List<Block> getBlocks() {
-		return blocks;
+		return this.blocks;
 	}
 
-	public void setCooldown(long cooldown) {
+	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
 
