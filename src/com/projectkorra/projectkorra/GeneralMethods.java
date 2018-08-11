@@ -110,7 +110,7 @@ import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
-import com.projectkorra.projectkorra.event.BindChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
@@ -651,16 +651,7 @@ public class GeneralMethods {
 		final CoreAbility ability = CoreAbility.getAbility(displayedMessage);
 
 		if (ability != null && bPlayer != null) {
-			if (bPlayer.isOnCooldown(ability)) {
-				final long cooldown = bPlayer.getCooldown(ability.getName()) - System.currentTimeMillis();
-				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName() + "" + ability.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
-			} else {
-				if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(ability.getName())) {
-					displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();
-				} else {
-					displayedMessage = ability.getElement().getColor() + ability.getName();
-				}
-			}
+			displayedMessage = ability.getMovePreview(player);
 		} else if (displayedMessage == null || displayedMessage.isEmpty() || displayedMessage.equals("")) {
 			displayedMessage = "";
 		}
@@ -1909,7 +1900,7 @@ public class GeneralMethods {
 		}
 		final String uuid = bPlayer.getUUIDString();
 
-		final BindChangeEvent event = new BindChangeEvent(Bukkit.getPlayer(UUID.fromString(uuid)), ability, slot, false);
+		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(Bukkit.getPlayer(UUID.fromString(uuid)), ability, slot, false);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return;

@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -41,6 +42,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
+import com.projectkorra.projectkorra.util.TimeUtil;
 
 import sun.reflect.ReflectionFactory;
 
@@ -781,6 +783,22 @@ public abstract class CoreAbility implements Ability {
 			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Combo." + this.getName() + ".Description");
 		}
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Description");
+	}
+	
+	public String getMovePreview(final Player player) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		String displayedMessage = "";
+		if (bPlayer.isOnCooldown(this)) {
+			final long cooldown = bPlayer.getCooldown(getName()) - System.currentTimeMillis();
+			displayedMessage = getElement().getColor() + "" + ChatColor.STRIKETHROUGH + getName() + "" + getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
+		} else {
+			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(getName())) {
+				displayedMessage = getElement().getColor() + "" + ChatColor.UNDERLINE + getName();
+			} else {
+				displayedMessage = getElement().getColor() + getName();
+			}
+		}
+		return displayedMessage;
 	}
 
 	@Override
