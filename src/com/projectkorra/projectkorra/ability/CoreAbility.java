@@ -785,7 +785,7 @@ public abstract class CoreAbility implements Ability {
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Description");
 	}
 	
-	public String getMovePreview(Player player) {
+	public String getMovePreview(final Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		String displayedMessage = "";
 		if (bPlayer.isOnCooldown(this)) {
