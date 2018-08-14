@@ -64,6 +64,7 @@ public class BendingPlayer {
 	private HashMap<Integer, String> abilities;
 	private final Map<String, Cooldown> cooldowns;
 	private final Map<Element, Boolean> toggledElements;
+	private final DBCooldownManager cooldownManager;
 
 	/**
 	 * Creates a new {@link BendingPlayer}.
@@ -88,6 +89,7 @@ public class BendingPlayer {
 		this.chiBlocked = false;
 		this.cooldowns = this.loadCooldowns();
 		this.toggledElements = new ConcurrentHashMap<Element, Boolean>();
+		this.cooldownManager = Manager.getManager(DBCooldownManager.class);
 		for (final Element e : Element.getAllElements()) {
 			if (!e.equals(Element.AVATAR)) {
 				this.toggledElements.put(e, true);
@@ -157,7 +159,7 @@ public class BendingPlayer {
 			while (rs.next()) {
 				final int cooldownId = rs.getInt("cooldown_id");
 				final long value = rs.getLong("value");
-				final String name = Manager.getManager(DBCooldownManager.class).getCooldownName(cooldownId);
+				final String name = cooldownManager.getCooldownName(cooldownId);
 				cooldowns.put(name, new Cooldown(value, true));
 			}
 		}
@@ -172,7 +174,7 @@ public class BendingPlayer {
 		for (final Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
 			final String name = entry.getKey();
 			final Cooldown cooldown = entry.getValue();
-			final int cooldownId = Manager.getManager(DBCooldownManager.class).getCooldownId(name, false);
+			final int cooldownId = cooldownManager.getCooldownId(name, false);
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
 				if (rs.next()) {
 					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
