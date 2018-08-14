@@ -10,12 +10,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.Manager;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.FlightHandler;
 
 public class AirSpout extends AirAbility {
 
@@ -55,7 +52,7 @@ public class AirSpout extends AirAbility {
 			return;
 		}
 
-		Manager.getManager(FlightHandler.class).createInstance(player, this.getName());
+		flightHandler.createInstance(player, this.getName());
 
 		if (this.bPlayer.isAvatarState()) {
 			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
@@ -165,7 +162,7 @@ public class AirSpout extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		Manager.getManager(FlightHandler.class).removeInstance(this.player, this.getName());
+		flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	private void removeFlight() {

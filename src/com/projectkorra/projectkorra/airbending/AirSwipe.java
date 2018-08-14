@@ -16,7 +16,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -26,7 +25,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class AirSwipe extends AirAbility {
@@ -222,7 +220,7 @@ public class AirSwipe extends AirAbility {
 							AirSwipe.this.affectedEntities.add(entity);
 						}
 						if (entity instanceof Player) {
-							Manager.getManager(FlightHandler.class).createInstance((Player) entity, AirSwipe.this.player, 1000L, AirSwipe.this.getName());
+							flightHandler.createInstance((Player) entity, AirSwipe.this.player, 1000L, AirSwipe.this.getName());
 						}
 						breakBreathbendingHold(entity);
 						if (AirSwipe.this.elements.containsKey(fDirection)) {
