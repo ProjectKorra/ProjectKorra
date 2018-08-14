@@ -12,10 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.FlightHandler;
 
 public class Tornado extends AirAbility {
 
@@ -68,7 +70,7 @@ public class Tornado extends AirAbility {
 			}
 		}
 
-		ProjectKorra.flightHandler.createInstance(player, this.getName());
+		Manager.getManager(FlightHandler.class).createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		this.start();
 	}
@@ -95,7 +97,7 @@ public class Tornado extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
+		Manager.getManager(FlightHandler.class).removeInstance(this.player, this.getName());
 	}
 
 	private void rotateTornado() {
@@ -168,7 +170,7 @@ public class Tornado extends AirAbility {
 						breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
-							ProjectKorra.flightHandler.createInstance((Player) entity, 50L, this.getName());
+							Manager.getManager(FlightHandler.class).createInstance((Player) entity, 50L, this.getName());
 						}
 					}
 				}

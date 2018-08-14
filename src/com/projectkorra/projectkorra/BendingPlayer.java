@@ -34,6 +34,7 @@ import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
+import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 
 /**
@@ -156,7 +157,7 @@ public class BendingPlayer {
 			while (rs.next()) {
 				final int cooldownId = rs.getInt("cooldown_id");
 				final long value = rs.getLong("value");
-				final String name = ProjectKorra.cooldowns.getCooldownName(cooldownId);
+				final String name = Manager.getManager(DBCooldownManager.class).getCooldownName(cooldownId);
 				cooldowns.put(name, new Cooldown(value, true));
 			}
 		}
@@ -171,7 +172,7 @@ public class BendingPlayer {
 		for (final Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
 			final String name = entry.getKey();
 			final Cooldown cooldown = entry.getValue();
-			final int cooldownId = ProjectKorra.cooldowns.getCooldownId(name, false);
+			final int cooldownId = Manager.getManager(DBCooldownManager.class).getCooldownId(name, false);
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
 				if (rs.next()) {
 					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);

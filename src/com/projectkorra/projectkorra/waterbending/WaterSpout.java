@@ -13,10 +13,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -80,7 +81,7 @@ public class WaterSpout extends WaterAbility {
 		if (!this.isWithinMaxSpoutHeight(topBlock.getLocation(), heightRemoveThreshold)) {
 			return;
 		}
-		ProjectKorra.flightHandler.createInstance(player, this.getName());
+		Manager.getManager(FlightHandler.class).createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		this.spoutableWaterHeight(player.getLocation()); // Sets base.
 		this.start();
@@ -183,7 +184,7 @@ public class WaterSpout extends WaterAbility {
 			AFFECTED_BLOCKS.remove(tb.getBlock());
 			tb.revertBlock();
 		}
-		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
+		Manager.getManager(FlightHandler.class).removeInstance(this.player, this.getName());
 	}
 
 	public void revertBaseBlock() {

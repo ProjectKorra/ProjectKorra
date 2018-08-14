@@ -8,10 +8,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.StatisticsManager;
 
 public class FireJet extends FireAbility {
 
@@ -58,7 +61,7 @@ public class FireJet extends FireAbility {
 				block.setType(Material.FIRE);
 			}
 
-			ProjectKorra.flightHandler.createInstance(player, this.getName());
+			Manager.getManager(FlightHandler.class).createInstance(player, this.getName());
 			player.setAllowFlight(true);
 			this.time = System.currentTimeMillis();
 
@@ -99,7 +102,7 @@ public class FireJet extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
+		Manager.getManager(FlightHandler.class).removeInstance(this.player, this.getName());
 	}
 
 	@Override

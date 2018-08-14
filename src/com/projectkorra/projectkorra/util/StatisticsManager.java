@@ -11,13 +11,14 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.storage.MySQL;
 import com.projectkorra.projectkorra.storage.SQLite;
 
-public class StatisticsManager implements Runnable {
+public class StatisticsManager extends Manager implements Runnable {
 
 	/**
 	 * HashMap which contains all current statistic values (Map<player,
@@ -44,7 +45,11 @@ public class StatisticsManager implements Runnable {
 	private final Set<UUID> STORAGE = new HashSet<>();
 	private final int INTERVAL = 5;
 
-	public StatisticsManager() {
+	private StatisticsManager() {
+	}
+
+	@Override
+	public void onActivate() {
 		if (!ProjectKorra.isStatisticsEnabled()) {
 			ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, this, 20 * this.INTERVAL, 20 * this.INTERVAL);
 		}

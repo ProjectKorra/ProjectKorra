@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FlightAbility;
@@ -29,6 +30,7 @@ import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
@@ -104,7 +106,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		MultiAbilityManager.bindMultiAbility(player, "Flight");
-		ProjectKorra.flightHandler.createInstance(player, ID);
+		Manager.getManager(FlightHandler.class).createInstance(player, ID);
 		this.hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		this.prevDir = player.getEyeLocation().getDirection().clone();
@@ -311,7 +313,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		if (this.player.isOnline() && !this.player.isDead()) {
 			this.player.eject();
 		}
-		ProjectKorra.flightHandler.removeInstance(this.player, ID);
+		Manager.getManager(FlightHandler.class).removeInstance(this.player, ID);
 		this.player.setGliding(this.hadGlide);
 	}
 

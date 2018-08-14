@@ -19,12 +19,14 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction extends AirAbility {
@@ -272,7 +274,7 @@ public class AirSuction extends AirAbility {
 				new HorizontalVelocityTracker(entity, this.player, 200l, this);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != this.player.getEntityId() && entity instanceof Player) {
-					ProjectKorra.flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
+					Manager.getManager(FlightHandler.class).createInstance((Player) entity, this.player, 5000L, this.getName());
 				}
 
 				if (entity.getFireTicks() > 0) {

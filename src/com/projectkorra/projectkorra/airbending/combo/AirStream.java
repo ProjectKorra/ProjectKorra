@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -18,6 +19,7 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.FlightHandler;
 
 public class AirStream extends AirAbility implements ComboAbility {
 	private long cooldown;
@@ -159,7 +161,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 				this.affectedEntities.add(entity);
 				if (entity instanceof Player) {
 					final Player ep = (Player) entity;
-					ProjectKorra.flightHandler.createInstance(ep, this.player, this.getName());
+					Manager.getManager(FlightHandler.class).createInstance(ep, this.player, this.getName());
 					this.flights.add(ep);
 				}
 			}
@@ -179,7 +181,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 			task.cancel();
 		}
 		for (final Player flyer : this.flights) {
-			ProjectKorra.flightHandler.removeInstance(flyer, this.getName());
+			Manager.getManager(FlightHandler.class).removeInstance(flyer, this.getName());
 		}
 		this.flights.clear();
 	}

@@ -24,8 +24,6 @@ import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.DBCooldownManager;
-import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.Metrics;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.StatisticsManager;
@@ -39,9 +37,6 @@ public class ProjectKorra extends JavaPlugin {
 	public static Logger log;
 	public static CollisionManager collisionManager;
 	public static CollisionInitializer collisionInitializer;
-	public static StatisticsManager statistics;
-	public static DBCooldownManager cooldowns;
-	public static FlightHandler flightHandler;
 	public static long time_step = 1;
 	public Updater updater;
 
@@ -70,9 +65,7 @@ public class ProjectKorra extends JavaPlugin {
 			return;
 		}
 
-		statistics = new StatisticsManager();
-		cooldowns = new DBCooldownManager();
-		flightHandler = new FlightHandler();
+		Manager.startup();
 
 		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
@@ -107,7 +100,7 @@ public class ProjectKorra extends JavaPlugin {
 
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			GeneralMethods.removeUnusableAbilities(player.getName());
-			statistics.load(player.getUniqueId());
+			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 				@Override
 				public void run() {
@@ -156,13 +149,14 @@ public class ProjectKorra extends JavaPlugin {
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {
-				statistics.save(player.getUniqueId(), false);
+				Manager.getManager(StatisticsManager.class).save(player.getUniqueId(), false);
 			}
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer != null) {
 				bPlayer.saveCooldowns();
 			}
 		}
+		Manager.shutdown();
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
 		}
