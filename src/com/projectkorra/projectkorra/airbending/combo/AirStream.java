@@ -159,7 +159,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 				this.affectedEntities.add(entity);
 				if (entity instanceof Player) {
 					final Player ep = (Player) entity;
-					ProjectKorra.flightHandler.createInstance(ep, this.player, this.getName());
+					flightHandler.createInstance(ep, this.player, this.getName());
 					this.flights.add(ep);
 				}
 			}
@@ -179,7 +179,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 			task.cancel();
 		}
 		for (final Player flyer : this.flights) {
-			ProjectKorra.flightHandler.removeInstance(flyer, this.getName());
+			flightHandler.removeInstance(flyer, this.getName());
 		}
 		this.flights.clear();
 	}

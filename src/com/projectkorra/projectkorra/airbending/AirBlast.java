@@ -260,7 +260,7 @@ public class AirBlast extends AirAbility {
 			}
 
 			if (!isUser && entity instanceof Player) {
-				ProjectKorra.flightHandler.createInstance((Player) entity, this.player, 1000L, this.getName());
+				flightHandler.createInstance((Player) entity, this.player, 1000L, this.getName());
 			}
 			if (entity.getFireTicks() > 0) {
 				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);

@@ -272,7 +272,7 @@ public class AirSuction extends AirAbility {
 				new HorizontalVelocityTracker(entity, this.player, 200l, this);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != this.player.getEntityId() && entity instanceof Player) {
-					ProjectKorra.flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
+					flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
 				}
 
 				if (entity.getFireTicks() > 0) {

@@ -3,13 +3,18 @@ package com.projectkorra.projectkorra.util;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.storage.MySQL;
 
-public class DBCooldownManager {
+public class DBCooldownManager extends Manager {
 
-	public DBCooldownManager() {
+	private DBCooldownManager() {
+	}
+
+	@Override
+	public void onActivate() {
 		this.setupCooldowns();
 	}
 

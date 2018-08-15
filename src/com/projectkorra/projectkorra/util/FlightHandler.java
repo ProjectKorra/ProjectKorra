@@ -9,9 +9,10 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 
-public class FlightHandler {
+public class FlightHandler extends Manager {
 
 	/**
 	 * A Map containing all Flight instances.
@@ -29,7 +30,11 @@ public class FlightHandler {
 		}
 	});
 
-	public FlightHandler() {
+	private FlightHandler() {
+	}
+
+	@Override
+	public void onActivate() {
 		this.startCleanup();
 	}
 

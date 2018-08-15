@@ -29,6 +29,7 @@ import com.google.common.reflect.ClassPath.ClassInfo;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.AbilityLoader;
 import com.projectkorra.projectkorra.ability.util.AddonAbilityLoader;
@@ -42,6 +43,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
+import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.TimeUtil;
 
 import sun.reflect.ReflectionFactory;
@@ -76,6 +78,7 @@ public abstract class CoreAbility implements Ability {
 
 	protected Player player;
 	protected BendingPlayer bPlayer;
+	protected FlightHandler flightHandler;
 
 	private boolean started;
 	private boolean removed;
@@ -115,6 +118,7 @@ public abstract class CoreAbility implements Ability {
 
 		this.player = player;
 		this.bPlayer = BendingPlayer.getBendingPlayer(player);
+		this.flightHandler = Manager.getManager(FlightHandler.class);
 		this.startTime = System.currentTimeMillis();
 		this.started = false;
 		this.id = CoreAbility.idCounter;
@@ -784,7 +788,7 @@ public abstract class CoreAbility implements Ability {
 		}
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Description");
 	}
-	
+
 	public String getMovePreview(final Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		String displayedMessage = "";

@@ -160,9 +160,11 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.FlightHandler.Flight;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.PassiveHandler;
+import com.projectkorra.projectkorra.util.StatisticsManager;
 import com.projectkorra.projectkorra.util.StatisticsMethods;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -845,7 +847,7 @@ public class PKListener implements Listener {
 			}
 
 			if (event.getCause() == DamageCause.FALL) {
-				final Flight flight = ProjectKorra.flightHandler.getInstance(player);
+				final Flight flight = Manager.getManager(FlightHandler.class).getInstance(player);
 				if (flight != null) {
 					if (flight.getPlayer() == flight.getSource()) {
 						event.setCancelled(true);
@@ -1116,7 +1118,7 @@ public class PKListener implements Listener {
 
 		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		if (ProjectKorra.isStatisticsEnabled()) {
-			ProjectKorra.statistics.load(player.getUniqueId());
+			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 
@@ -1253,7 +1255,7 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (ProjectKorra.isStatisticsEnabled()) {
-			ProjectKorra.statistics.store(player.getUniqueId());
+			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
 		}
 		if (bPlayer != null) {
 			bPlayer.saveCooldowns();

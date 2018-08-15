@@ -11,7 +11,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -55,7 +54,7 @@ public class AirScooter extends AirAbility {
 		this.random = new Random();
 		this.angles = new ArrayList<>();
 
-		ProjectKorra.flightHandler.createInstance(player, this.getName());
+		flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		player.setFlying(true);
 
@@ -177,7 +176,7 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
+		flightHandler.removeInstance(this.player, this.getName());
 		this.bPlayer.addCooldown(this);
 	}
 

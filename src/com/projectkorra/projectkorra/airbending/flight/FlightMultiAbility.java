@@ -104,7 +104,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		MultiAbilityManager.bindMultiAbility(player, "Flight");
-		ProjectKorra.flightHandler.createInstance(player, ID);
+		flightHandler.createInstance(player, ID);
 		this.hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		this.prevDir = player.getEyeLocation().getDirection().clone();
@@ -311,7 +311,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		if (this.player.isOnline() && !this.player.isDead()) {
 			this.player.eject();
 		}
-		ProjectKorra.flightHandler.removeInstance(this.player, ID);
+		flightHandler.removeInstance(this.player, ID);
 		this.player.setGliding(this.hadGlide);
 	}
 
