@@ -59,12 +59,12 @@ public class BendingPlayer {
 	private final UUID uuid;
 	private final String name;
 	private ChiAbility stance;
+	private final DBCooldownManager cooldownManager;
 	private final ArrayList<Element> elements;
 	private final ArrayList<SubElement> subelements;
 	private HashMap<Integer, String> abilities;
 	private final Map<String, Cooldown> cooldowns;
 	private final Map<Element, Boolean> toggledElements;
-	private final DBCooldownManager cooldownManager;
 
 	/**
 	 * Creates a new {@link BendingPlayer}.
@@ -78,6 +78,7 @@ public class BendingPlayer {
 	public BendingPlayer(final UUID uuid, final String playerName, final ArrayList<Element> elements, final ArrayList<SubElement> subelements, final HashMap<Integer, String> abilities, final boolean permaRemoved) {
 		this.uuid = uuid;
 		this.name = playerName;
+		this.cooldownManager = Manager.getManager(DBCooldownManager.class);
 		this.elements = elements;
 		this.subelements = subelements;
 		this.setAbilities(abilities);
@@ -89,7 +90,6 @@ public class BendingPlayer {
 		this.chiBlocked = false;
 		this.cooldowns = this.loadCooldowns();
 		this.toggledElements = new ConcurrentHashMap<Element, Boolean>();
-		this.cooldownManager = Manager.getManager(DBCooldownManager.class);
 		for (final Element e : Element.getAllElements()) {
 			if (!e.equals(Element.AVATAR)) {
 				this.toggledElements.put(e, true);
