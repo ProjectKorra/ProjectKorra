@@ -9,19 +9,7 @@ import java.lang.annotation.Target;
 @Target(value = { ElementType.FIELD })
 public @interface Attribute {
 
-	/**
-	 * This is the attribute name that is added to the CoreAbility name. E.g.
-	 * Returning "Damage" on a FireBlast ability would make the attribute
-	 * "FireBlastDamage"
-	 */
-	String value() default "";
-
-	/**
-	 * This is for overriding the attribute name if the name you want should not
-	 * come from the CoreAbility name. E.g. Returning "FastSwimSpeed" would make
-	 * the Attribute name "FastSwimSpeed", instead of ability + "FastSwimSpeed"
-	 */
-	String attribute() default "";
+	public String value();
 
 	public static final String SPEED = "Speed";
 	public static final String RANGE = "Range";
@@ -34,4 +22,5 @@ public @interface Attribute {
 	public static final String POWER = "Power";
 	public static final String WIDTH = "Width";
 	public static final String HEIGHT = "Height";
+
 }
