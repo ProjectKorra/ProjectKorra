@@ -2,8 +2,8 @@ package com.projectkorra.projectkorra.attribute;
 
 public enum AttributePriority {
 
-	HIGH,
+	LOW,
 	MEDIUM,
-	LOW;
+	HIGH;
 
 }
