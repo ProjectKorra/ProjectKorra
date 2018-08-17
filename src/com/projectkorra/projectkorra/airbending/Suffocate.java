@@ -30,7 +30,12 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 public class Suffocate extends AirAbility {
 
 	public static enum SpiralType {
-		HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
+		HORIZONTAL1,
+		HORIZONTAL2,
+		VERTICAL1,
+		VERTICAL2,
+		DIAGONAL1,
+		DIAGONAL2
 	};
 
 	private boolean started;

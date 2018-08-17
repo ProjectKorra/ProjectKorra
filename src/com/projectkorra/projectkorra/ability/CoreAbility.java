@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -39,6 +42,9 @@ import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.attribute.AttributeModifier;
+import com.projectkorra.projectkorra.attribute.AttributePriority;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
@@ -73,6 +79,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<Class<? extends CoreAbility>, CoreAbility> ABILITIES_BY_CLASS = new ConcurrentHashMap<>();
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
 	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
+	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
 
@@ -80,12 +87,15 @@ public abstract class CoreAbility implements Ability {
 	protected BendingPlayer bPlayer;
 	protected FlightHandler flightHandler;
 
+	private final Map<String, Map<AttributePriority, Set<Pair<Number, AttributeModifier>>>> attributeModifiers = new HashMap<>();
+	private final Map<String, Object> attributeValues = new HashMap<>();
 	private boolean started;
 	private boolean removed;
 	private boolean hidden;
 	private int id;
 	private long startTime;
 	private long startTick;
+	private boolean attributesModified;
 
 	static {
 		idCounter = Integer.MIN_VALUE;
@@ -103,6 +113,15 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public CoreAbility() {
+		for (Field field : getClass().getDeclaredFields()) {
+			if (field.isAnnotationPresent(Attribute.class)) {
+				Attribute attribute = field.getAnnotation(Attribute.class);
+				if (!ATTRIBUTE_FIELDS.containsKey(getClass())) {
+					ATTRIBUTE_FIELDS.put(getClass(), new HashMap<>());
+				}
+				ATTRIBUTE_FIELDS.get(getClass()).put(attribute.value(), field);
+			}
+		}
 	}
 
 	/**
@@ -151,6 +170,7 @@ public abstract class CoreAbility implements Ability {
 			this.remove();
 			return;
 		}
+
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
 		final Class<? extends CoreAbility> clazz = this.getClass();
@@ -237,6 +257,10 @@ public abstract class CoreAbility implements Ability {
 				}
 
 				try {
+					if (!abil.attributesModified) {
+						abil.modifyAttributes();
+						abil.attributesModified = true;
+					}
 					abil.progress();
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 				}
@@ -928,6 +952,76 @@ public abstract class CoreAbility implements Ability {
 		final ArrayList<Location> locations = new ArrayList<>();
 		locations.add(this.getLocation());
 		return locations;
+	}
+
+	public CoreAbility addAttributeModifier(String attribute, Number value, AttributeModifier modification) {
+		return addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
+	}
+
+	public CoreAbility addAttributeModifier(String attribute, Number value, AttributeModifier modificationType, AttributePriority priority) {
+		Validate.notNull(attribute, "attribute cannot be null");
+		Validate.notNull(value, "value cannot be null");
+		Validate.notNull(modificationType, "modifierMethod cannot be null");
+		Validate.notNull(priority, "priority cannot be null");
+		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(getClass()) && ATTRIBUTE_FIELDS.get(getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + getName());
+		if (!attributeModifiers.containsKey(attribute)) {
+			attributeModifiers.put(attribute, new HashMap<>());
+		}
+		if (!attributeModifiers.get(attribute).containsKey(priority)) {
+			attributeModifiers.get(attribute).put(priority, new HashSet<>());
+		}
+		attributeModifiers.get(attribute).get(priority).add(Pair.of(value, modificationType));
+		return this;
+	}
+
+	public CoreAbility setAttribute(String attribute, Object value) {
+		Validate.notNull(attribute, "attribute cannot be null");
+		Validate.notNull(value, "value cannot be null");
+		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(getClass()) && ATTRIBUTE_FIELDS.get(getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + getName());
+		attributeValues.put(attribute, value);
+		return this;
+	}
+
+	private void modifyAttributes() {
+		System.out.println(attributeModifiers);
+		for (String attribute : attributeModifiers.keySet()) {
+			Field field = ATTRIBUTE_FIELDS.get(getClass()).get(attribute);
+			boolean accessibility = field.isAccessible();
+			field.setAccessible(true);
+			try {
+				for (AttributePriority priority : AttributePriority.values()) {
+					if (attributeModifiers.get(attribute).containsKey(priority)) {
+						for (Pair<Number, AttributeModifier> pair : attributeModifiers.get(attribute).get(priority)) {
+							Object get = field.get(this);
+							Validate.isTrue(get instanceof Number, "The field " + field.getName() + " cannot algebraically be modified.");
+							Number oldValue = (Number) field.get(this);
+							Number newValue = pair.getRight().performModification(oldValue, pair.getLeft());
+							field.set(this, newValue);
+						}
+					}
+				}
+			}
+			catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			finally {
+				field.setAccessible(accessibility);
+			}
+		}
+		attributeValues.forEach((attribute, value) -> {
+			Field field = ATTRIBUTE_FIELDS.get(getClass()).get(attribute);
+			boolean accessibility = field.isAccessible();
+			field.setAccessible(true);
+			try {
+				field.set(this, value);
+			}
+			catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			finally {
+				field.setAccessible(accessibility);
+			}
+		});
 	}
 
 	/**
