@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -40,12 +41,20 @@ public class WaterManipulation extends WaterAbility {
 	private boolean prepared;
 	private int dispelRange;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
-	private double selectRange, range;
-	private double pushFactor;
+	@Attribute(Attribute.SELECT_RANGE)
+	private double selectRange;
+	@Attribute(Attribute.RANGE)
+	private double range;
+	@Attribute(Attribute.KNOCKBACK)
+	private double knockback;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute("Deflect" + Attribute.RANGE)
 	private double deflectRange;
 	private double collisionRadius;
 	private Block sourceBlock;
@@ -73,7 +82,7 @@ public class WaterManipulation extends WaterAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
 		this.selectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
 		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
-		this.pushFactor = getConfig().getDouble("Abilities.Water.WaterManipulation.Push");
+		this.knockback = getConfig().getDouble("Abilities.Water.WaterManipulation.Knockback");
 		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
 		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
@@ -271,7 +280,7 @@ public class WaterManipulation extends WaterAbility {
 						if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId()) {
 							final Location location = this.player.getEyeLocation();
 							final Vector vector = location.getDirection();
-							entity.setVelocity(vector.normalize().multiply(this.pushFactor));
+							entity.setVelocity(vector.normalize().multiply(this.knockback));
 
 							if (this.bPlayer.isAvatarState()) {
 								this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
@@ -678,11 +687,11 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	public double getPushFactor() {
-		return this.pushFactor;
+		return this.knockback;
 	}
 
 	public void setPushFactor(final double pushFactor) {
-		this.pushFactor = pushFactor;
+		this.knockback = pushFactor;
 	}
 
 	public double getDamage() {

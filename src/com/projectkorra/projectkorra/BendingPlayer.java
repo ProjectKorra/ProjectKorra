@@ -278,10 +278,6 @@ public class BendingPlayer {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, ability.getName(), playerLoc)) {
 			return false;
-		} else if (ability instanceof FireAbility && ElementalAbility.isSolarEclipse(this.player.getWorld())) {
-			return false;
-		} else if (ability instanceof WaterAbility && ElementalAbility.isLunarEclipse(this.player.getWorld())) {
-			return false;
 		}
 
 		return true;

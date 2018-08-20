@@ -72,14 +72,6 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
     </dependency>
-    <!-- PK RPG -->
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>rpg</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ProjectKorraRPG.jar</systemPath>
-    </dependency>
     <!-- PK ITEMS -->
     <dependency>
       <groupId>com.projectkorra</groupId>

@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -30,14 +31,20 @@ public class Bloodbending extends BloodAbility {
 	private static final Map<Entity, Player> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Player>();
 
 	private boolean canOnlyBeUsedAtNight;
+	@Attribute("CanBeUsedOnUndeadMobs")
 	private boolean canBeUsedOnUndeadMobs;
 	private boolean onlyUsableDuringMoon;
+	@Attribute("CanBloodbendOtherBloodbenders")
 	private boolean canBloodbendOtherBloodbenders;
+	@Attribute(Attribute.RANGE)
 	private int range;
 	private long time;
-	private long holdTime;
+	@Attribute(Attribute.DURATION)
+	private long duration;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
-	private double throwFactor;
+	@Attribute(Attribute.KNOCKBACK)
+	private double knockback;
 	private Entity target;
 	private Vector vector;
 
@@ -55,9 +62,9 @@ public class Bloodbending extends BloodAbility {
 		this.onlyUsableDuringMoon = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
 		this.canBloodbendOtherBloodbenders = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
 		this.range = getConfig().getInt("Abilities.Water.Bloodbending.Range");
-		this.holdTime = getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
+		this.duration = getConfig().getInt("Abilities.Water.Bloodbending.Duration");
 		this.cooldown = getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
-		this.throwFactor = getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
+		this.knockback = getConfig().getDouble("Abilities.Water.Bloodbending.Knockback");
 		this.vector = new Vector(0, 0, 0);
 
 		if (this.canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !this.bPlayer.canBloodbendAtAnytime()) {
@@ -150,7 +157,7 @@ public class Bloodbending extends BloodAbility {
 				vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(this.player, location.distance(target)));
 			}
 			vector.normalize();
-			entity.setVelocity(vector.multiply(this.throwFactor));
+			entity.setVelocity(vector.multiply(this.knockback));
 			new HorizontalVelocityTracker(entity, this.player, 200, this);
 		}
 		this.remove();
@@ -164,7 +171,7 @@ public class Bloodbending extends BloodAbility {
 		if (!this.player.isSneaking()) {
 			this.remove();
 			return;
-		} else if (this.holdTime > 0 && System.currentTimeMillis() - this.time > this.holdTime) {
+		} else if (this.duration > 0 && System.currentTimeMillis() - this.time > this.duration) {
 			this.remove();
 			this.bPlayer.addCooldown(this);
 			return;
@@ -418,19 +425,19 @@ public class Bloodbending extends BloodAbility {
 	}
 
 	public long getHoldTime() {
-		return this.holdTime;
+		return this.duration;
 	}
 
 	public void setHoldTime(final long holdTime) {
-		this.holdTime = holdTime;
+		this.duration = holdTime;
 	}
 
 	public double getThrowFactor() {
-		return this.throwFactor;
+		return this.knockback;
 	}
 
 	public void setThrowFactor(final double throwFactor) {
-		this.throwFactor = throwFactor;
+		this.knockback = throwFactor;
 	}
 
 	public Entity getTarget() {

@@ -15,21 +15,30 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireShield extends FireAbility {
 
 	private boolean shield;
+	@Attribute("IgniteEntities")
 	private boolean ignite;
+	@Attribute("Disc" + Attribute.DURATION)
 	private long discDuration;
+	@Attribute("Shield" + Attribute.DURATION)
 	private long shieldDuration;
-	private long interval;
+	@Attribute("Disc" + Attribute.COOLDOWN)
 	private long discCooldown;
+	@Attribute("Shield" + Attribute.COOLDOWN)
 	private long shieldCooldown;
-	private double radius;
+	@Attribute("Shield" + Attribute.RADIUS)
+	private double shieldRadius;
+	@Attribute("Disc" + Attribute.RADIUS)
 	private double discRadius;
+	@Attribute("Disc" + Attribute.FIRE_TICK)
 	private double discFireTicks;
+	@Attribute("Shield" + Attribute.FIRE_TICK)
 	private double shieldFireTicks;
 	private Location location;
 	private Random random;
@@ -50,7 +59,7 @@ public class FireShield extends FireAbility {
 		this.discFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Disc.FireTicks");
 		this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown");
 		this.shieldDuration = getConfig().getLong("Abilities.Fire.FireShield.Shield.Duration");
-		this.radius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
+		this.shieldRadius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
 		this.shieldFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Shield.FireTicks");
 		this.random = new Random();
 
@@ -76,7 +85,7 @@ public class FireShield extends FireAbility {
 			if (fshield.shield) {
 				if (!playerLoc.getWorld().equals(loc.getWorld())) {
 					return false;
-				} else if (playerLoc.distanceSquared(loc) <= fshield.radius * fshield.radius) {
+				} else if (playerLoc.distanceSquared(loc) <= fshield.shieldRadius * fshield.shieldRadius) {
 					return true;
 				}
 			} else {
@@ -112,7 +121,7 @@ public class FireShield extends FireAbility {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					final Location display = this.location.clone().add(this.radius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.radius / 1.5 * Math.cos(rtheta), this.radius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
+					final Location display = this.location.clone().add(this.shieldRadius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.shieldRadius / 1.5 * Math.cos(rtheta), this.shieldRadius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
 					if (this.random.nextInt(6) == 0) {
 						ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
 					}
@@ -130,14 +139,14 @@ public class FireShield extends FireAbility {
 				this.increment = 20;
 			}
 
-			for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
+			for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.shieldRadius)) {
 				if (testblock.getType() == Material.FIRE) {
 					testblock.setType(Material.AIR);
 					testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 				}
 			}
 
-			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.shieldRadius)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
 				} else if (entity instanceof LivingEntity) {
@@ -152,12 +161,12 @@ public class FireShield extends FireAbility {
 		} else {
 			this.location = this.player.getEyeLocation().clone();
 			final Vector direction = this.location.getDirection();
-			this.location = this.location.clone().add(direction.multiply(this.radius));
-			ParticleEffect.FLAME.display(this.location, 0.2f, 0.2f, 0.2f, 0.023f, 3);
+			this.location.add(direction.multiply(this.shieldRadius));
+			ParticleEffect.FLAME.display(this.location, 0.2f, 0.2f, 0.2f, 0.00023f, 3);
 
 			for (double theta = 0; theta < 360; theta += 20) {
 				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
-				final Location display = this.location.clone().add(vector);
+				final Location display = this.location.add(vector);
 				if (this.random.nextInt(6) == 0) {
 					ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
 				}
@@ -165,9 +174,10 @@ public class FireShield extends FireAbility {
 				if (this.random.nextInt(4) == 0) {
 					playFirebendingSound(display);
 				}
+				this.location.subtract(vector);
 			}
 
-			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.discRadius)) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.discRadius + 1)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
 				} else if (entity instanceof LivingEntity) {
@@ -209,7 +219,7 @@ public class FireShield extends FireAbility {
 
 	@Override
 	public double getCollisionRadius() {
-		return this.shield ? this.radius : this.discRadius;
+		return this.shield ? this.shieldRadius : this.discRadius;
 	}
 
 	public boolean isShield() {
@@ -240,20 +250,12 @@ public class FireShield extends FireAbility {
 		this.shieldDuration = duration;
 	}
 
-	public long getInterval() {
-		return this.interval;
-	}
-
-	public void setInterval(final long interval) {
-		this.interval = interval;
-	}
-
 	public double getRadius() {
-		return this.radius;
+		return this.shieldRadius;
 	}
 
 	public void setRadius(final double radius) {
-		this.radius = radius;
+		this.shieldRadius = radius;
 	}
 
 	public double getDiscRadius() {

@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -34,15 +35,23 @@ public class SurgeWave extends WaterAbility {
 	private boolean progressing;
 	private boolean canHitSelf;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
+	@Attribute("IceRevertTime")
 	private long iceRevertTime;
 	private double currentRadius;
+	@Attribute(Attribute.RADIUS)
 	private double maxRadius;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
-	private double pushFactor;
-	private double verticalFactor;
+	@Attribute(Attribute.KNOCKBACK)
+	private double knockback;
+	@Attribute(Attribute.KNOCKUP)
+	private double knockup;
+	@Attribute("Freeze" + Attribute.RADIUS)
 	private double maxFreezeRadius;
 	private Block sourceBlock;
 	private Location location;
@@ -68,8 +77,8 @@ public class SurgeWave extends WaterAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
 		this.maxRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
-		this.verticalFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
+		this.knockback = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback");
+		this.knockup = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup");
 		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
 		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
@@ -201,7 +210,7 @@ public class SurgeWave extends WaterAbility {
 
 			this.range = this.getNightFactor(this.range);
 			if (this.bPlayer.isAvatarState()) {
-				this.pushFactor = AvatarState.getValue(this.pushFactor);
+				this.knockback = AvatarState.getValue(this.knockback);
 			}
 
 			final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
@@ -321,8 +330,8 @@ public class SurgeWave extends WaterAbility {
 					}
 					if (knockback) {
 						final Vector dir = direction.clone();
-						dir.setY(dir.getY() * this.verticalFactor);
-						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.pushFactor))));
+						dir.setY(dir.getY() * this.knockup);
+						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.knockback))));
 
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {
@@ -542,19 +551,19 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	public double getPushFactor() {
-		return this.pushFactor;
+		return this.knockback;
 	}
 
 	public void setPushFactor(final double pushFactor) {
-		this.pushFactor = pushFactor;
+		this.knockback = pushFactor;
 	}
 
 	public double getVerticalFactor() {
-		return this.verticalFactor;
+		return this.knockup;
 	}
 
 	public void setVerticalFactor(final double verticalFactor) {
-		this.verticalFactor = verticalFactor;
+		this.knockup = verticalFactor;
 	}
 
 	public double getMaxFreezeRadius() {

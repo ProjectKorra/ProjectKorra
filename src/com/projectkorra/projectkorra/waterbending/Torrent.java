@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -46,17 +47,26 @@ public class Torrent extends WaterAbility {
 	private int hits = 1;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long revertTime;
 	private double startAngle;
 	private double angle;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
-	private double push;
-	private double maxUpwardForce;
+	@Attribute(Attribute.KNOCKBACK)
+	private double knockback;
+	@Attribute(Attribute.KNOCKUP)
+	private double knockup;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute("Successive" + Attribute.DAMAGE)
 	private double successiveDamage;
+	@Attribute("Deflect" + Attribute.DAMAGE)
 	private double deflectDamage;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
 	private Block sourceBlock;
 	private TempBlock source;
@@ -71,10 +81,10 @@ public class Torrent extends WaterAbility {
 		this.layer = 0;
 		this.startAngle = 0;
 		this.maxLayer = getConfig().getInt("Abilities.Water.Torrent.MaxLayer");
-		this.push = getConfig().getDouble("Abilities.Water.Torrent.Push");
+		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Knockback");
 		this.angle = getConfig().getDouble("Abilities.Water.Torrent.Angle");
 		this.radius = getConfig().getDouble("Abilities.Water.Torrent.Radius");
-		this.maxUpwardForce = getConfig().getDouble("Abilities.Water.Torrent.MaxUpwardForce");
+		this.knockup = getConfig().getDouble("Abilities.Water.Torrent.Knockup");
 		this.interval = getConfig().getLong("Abilities.Water.Torrent.Interval");
 		this.damage = getConfig().getDouble("Abilities.Water.Torrent.InitialDamage");
 		this.successiveDamage = getConfig().getDouble("Abilities.Water.Torrent.SuccessiveDamage");
@@ -105,7 +115,7 @@ public class Torrent extends WaterAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.push = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.Push");
+			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.Push");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.InitialDamage");
 			this.successiveDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.SuccessiveDamage");
 			this.maxHits = getConfig().getInt("Abilities.Avatar.AvatarState.Water.Torrent.MaxHits");
@@ -540,7 +550,7 @@ public class Torrent extends WaterAbility {
 		vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
 		vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
-		final Vector vec = new Vector(vx, 0, vz).normalize().multiply(this.push);
+		final Vector vec = new Vector(vx, 0, vz).normalize().multiply(this.knockback);
 		final Vector velocity = entity.getVelocity();
 
 		if (this.bPlayer.isAvatarState()) {
@@ -564,11 +574,11 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
-		if (direction.getY() > this.maxUpwardForce) {
-			direction.setY(this.maxUpwardForce);
+		if (direction.getY() > this.knockup) {
+			direction.setY(this.knockup);
 		}
 		if (!this.freeze) {
-			entity.setVelocity(direction.multiply(this.push));
+			entity.setVelocity(direction.multiply(this.knockback));
 		}
 		if (entity instanceof LivingEntity && !this.hurtEntities.contains(entity)) {
 			double damageDealt = this.getNightFactor(this.damage);
@@ -810,19 +820,19 @@ public class Torrent extends WaterAbility {
 	}
 
 	public double getPush() {
-		return this.push;
+		return this.knockback;
 	}
 
 	public void setPush(final double push) {
-		this.push = push;
+		this.knockback = push;
 	}
 
 	public double getMaxUpwardForce() {
-		return this.maxUpwardForce;
+		return this.knockup;
 	}
 
 	public void setMaxUpwardForce(final double maxUpwardForce) {
-		this.maxUpwardForce = maxUpwardForce;
+		this.knockup = maxUpwardForce;
 	}
 
 	public double getDamage() {

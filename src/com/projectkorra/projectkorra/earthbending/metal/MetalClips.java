@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
 
@@ -31,23 +32,35 @@ public class MetalClips extends MetalAbility {
 
 	private boolean isBeingWorn;
 	private boolean isControlling;
+	@Attribute("CanThrow")
 	private boolean canThrow;
 	private boolean isMagnetized;
+	@Attribute("CanUse4Clips")
 	private boolean canUse4Clips;
+	@Attribute("CanLoot")
 	private boolean canLoot;
 	private boolean hasSnuck;
 	private int metalClipsCount;
 	private int abilityType;
 	private int armorTime;
+	@Attribute("Magnet" + Attribute.RANGE)
 	private int magnetRange;
 	private long armorStartTime;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute("Shoot" + Attribute.COOLDOWN)
 	private long shootCooldown;
+	@Attribute("Crush" + Attribute.COOLDOWN)
 	private long crushCooldown;
+	@Attribute("Magnet" + Attribute.COOLDOWN)
 	private long magnetCooldown;
-	private double magnetPower;
+	@Attribute("Magnet" + Attribute.SPEED)
+	private double magnetSpeed;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute("Crush" + Attribute.DAMAGE)
 	private double crushDamage;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private LivingEntity targetEntity;
 	private List<Item> trackedIngots;
@@ -65,11 +78,11 @@ public class MetalClips extends MetalAbility {
 		this.range = getConfig().getDouble("Abilities.Earth.MetalClips.Range");
 		this.cooldown = getConfig().getLong("Abilities.Earth.MetalClips.Cooldown");
 		this.shootCooldown = 600;
-		this.crushCooldown = getConfig().getLong("Abilities.Earth.MetalClips.CrushCooldown");
-		this.magnetCooldown = getConfig().getLong("Abilities.Earth.MetalClips.MagnetCooldown");
-		this.magnetRange = getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
-		this.magnetPower = getConfig().getDouble("Abilities.Earth.MetalClips.MagnetPower");
-		this.crushDamage = getConfig().getDouble("Abilities.Earth.MetalClips.CrushDamage");
+		this.crushCooldown = getConfig().getLong("Abilities.Earth.MetalClips.Crush.Cooldown");
+		this.magnetCooldown = getConfig().getLong("Abilities.Earth.MetalClips.Magnet.Cooldown");
+		this.magnetRange = getConfig().getInt("Abilities.Earth.MetalClips.Magnet.Range");
+		this.magnetSpeed = getConfig().getDouble("Abilities.Earth.MetalClips.Magnet.Speed");
+		this.crushDamage = getConfig().getDouble("Abilities.Earth.MetalClips.Crush.Damage");
 		this.damage = getConfig().getDouble("Abilities.Earth.MetalClips.Damage");
 		this.canThrow = (getConfig().getBoolean("Abilities.Earth.MetalClips.ThrowEnabled") && player.hasPermission("bending.ability.metalclips.throw"));
 		this.trackedIngots = new ArrayList<>();
@@ -333,7 +346,7 @@ public class MetalClips extends MetalAbility {
 					final Item iron = (Item) entity;
 
 					if (Arrays.asList(METAL_ITEMS).contains(iron.getItemStack().getType())) {
-						iron.setVelocity(vector.normalize().multiply(this.magnetPower).add(new Vector(0, 0.2, 0)));
+						iron.setVelocity(vector.normalize().multiply(this.magnetSpeed).add(new Vector(0, 0.2, 0)));
 					}
 				}
 			}
@@ -640,11 +653,11 @@ public class MetalClips extends MetalAbility {
 	}
 
 	public double getMagnetPower() {
-		return this.magnetPower;
+		return this.magnetSpeed;
 	}
 
 	public void setMagnetPower(final double magnetPower) {
-		this.magnetPower = magnetPower;
+		this.magnetSpeed = magnetPower;
 	}
 
 	public double getRange() {

@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -23,11 +24,15 @@ public class EarthTunnel extends EarthAbility {
 
 	private long interval;
 	private long time;
+	@Attribute("Depth")
 	private double depth;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double radius;
 	private double angle;
+	@Attribute(Attribute.RADIUS)
 	private double maxRadius;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private double radiusIncrement;
 	private boolean revert;

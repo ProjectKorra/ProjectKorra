@@ -5,13 +5,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class Blaze extends FireAbility {
 
+	@Attribute("Arc")
 	private int arc;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 
 	public Blaze(final Player player) {

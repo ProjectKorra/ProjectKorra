@@ -14,6 +14,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -24,15 +25,22 @@ public class WallOfFire extends FireAbility {
 	private boolean active;
 	private int damageTick;
 	private int intervalTick;
+	@Attribute(Attribute.RANGE)
 	private int range;
+	@Attribute(Attribute.HEIGHT)
 	private int height;
+	@Attribute(Attribute.WIDTH)
 	private int width;
-	private int damage;
+	@Attribute(Attribute.DAMAGE)
+	private double damage;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long damageInterval;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.FIRE_TICK)
 	private double fireTicks;
 	private double maxAngle;
 	private Random random;
@@ -48,7 +56,7 @@ public class WallOfFire extends FireAbility {
 		this.range = getConfig().getInt("Abilities.Fire.WallOfFire.Range");
 		this.height = getConfig().getInt("Abilities.Fire.WallOfFire.Height");
 		this.width = getConfig().getInt("Abilities.Fire.WallOfFire.Width");
-		this.damage = getConfig().getInt("Abilities.Fire.WallOfFire.Damage");
+		this.damage = getConfig().getDouble("Abilities.Fire.WallOfFire.Damage");
 		this.cooldown = getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown");
 		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
 		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
@@ -284,7 +292,7 @@ public class WallOfFire extends FireAbility {
 		this.width = width;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return this.damage;
 	}
 

@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfoSub;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -46,10 +47,15 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		SOAR, GLIDE, LEVITATE, ENDING;
 	}
 
-	public double speed = 1, baseSpeed, slowSpeed, fastSpeed, multiplier;
-	public FlightMode mode = FlightMode.SOAR;
-	public long prevCheck = 0, duration;
-	public Vector prevDir;
+	private double speed = 1, slowSpeed, fastSpeed, multiplier;
+	@Attribute(Attribute.SPEED)
+	private double baseSpeed;
+	private FlightMode mode = FlightMode.SOAR;
+	@Attribute(Attribute.DURATION)
+	private long duration;
+	@Attribute(Attribute.COOLDOWN)
+	private long cooldown;
+	private Vector prevDir;
 
 	public FlightMultiAbility(final Player player) {
 		super(player);
@@ -109,6 +115,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		flying.add(player.getUniqueId());
 		this.prevDir = player.getEyeLocation().getDirection().clone();
 		this.duration = getConfig().getLong("Abilities.Air.Flight.Duration");
+		this.cooldown = getConfig().getLong("Abilities.Air.Flight.Cooldown");
 		this.baseSpeed = getConfig().getDouble("Abilities.Air.Flight.BaseSpeed");
 		this.slowSpeed = this.baseSpeed / 2;
 		this.fastSpeed = this.baseSpeed * 2;
@@ -118,7 +125,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 	@Override
 	public long getCooldown() {
-		return getConfig().getLong("Abilities.Air.Flight.Cooldown");
+		return cooldown;
 	}
 
 	@Override

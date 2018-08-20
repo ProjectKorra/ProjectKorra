@@ -24,7 +24,9 @@ public class AirScooter extends AirAbility {
 	private double radius;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
 	private long duration;
+	@Attribute(Attribute.HEIGHT)
 	private double maxHeightFromGround;
 	private Block floorblock;
 	private Random random;

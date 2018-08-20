@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -29,15 +30,22 @@ public class IceSpikeBlast extends IceAbility {
 	private boolean settingUp;
 	private boolean progressing;
 	private byte data;
-	private int slowPower;
+	@Attribute("SlowPotency")
+	private int slowPotency;
+	@Attribute("Slow" + Attribute.DURATION)
 	private int slowDuration;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute("Slow" + Attribute.COOLDOWN)
 	private long slowCooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double collisionRadius;
+	@Attribute("Deflect" + Attribute.RANGE)
 	private double deflectRange;
 	private Block sourceBlock;
 	private Location location;
@@ -60,7 +68,7 @@ public class IceSpikeBlast extends IceAbility {
 		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Range");
 		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Damage");
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.Cooldown");
-		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPower");
+		this.slowPotency = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPotency");
 		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowDuration");
 
 		if (!this.bPlayer.canBend(this) || !this.bPlayer.canIcebend()) {
@@ -72,14 +80,14 @@ public class IceSpikeBlast extends IceAbility {
 			this.slowCooldown = 0;
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Range");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Damage");
-			this.slowPower = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPower");
+			this.slowPotency = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPotency");
 			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowDuration");
 		}
 
 		block(player);
 		this.range = this.getNightFactor(this.range);
 		this.damage = this.getNightFactor(this.damage);
-		this.slowPower = (int) this.getNightFactor(this.slowPower);
+		this.slowPotency = (int) this.getNightFactor(this.slowPotency);
 		this.sourceBlock = getWaterSourceBlock(player, this.range, this.bPlayer.canPlantbend());
 		if (this.sourceBlock == null) {
 			this.sourceBlock = getIceSourceBlock(player, this.range);
@@ -101,13 +109,13 @@ public class IceSpikeBlast extends IceAbility {
 				return;
 			}
 			if (targetBPlayer.canBeSlowed()) {
-				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPower);
+				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPotency);
 				new TempPotionEffect(entity, effect);
 				targetBPlayer.slow(this.slowCooldown);
 				DamageHandler.damageEntity(entity, this.damage, this);
 			}
 		} else {
-			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPower);
+			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPotency);
 			new TempPotionEffect(entity, effect);
 			DamageHandler.damageEntity(entity, this.damage, this);
 		}
@@ -480,11 +488,11 @@ public class IceSpikeBlast extends IceAbility {
 	}
 
 	public int getSlowPower() {
-		return this.slowPower;
+		return this.slowPotency;
 	}
 
 	public void setSlowPower(final int slowPower) {
-		this.slowPower = slowPower;
+		this.slowPotency = slowPower;
 	}
 
 	public int getSlowDuration() {

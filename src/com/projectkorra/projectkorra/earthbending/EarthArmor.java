@@ -21,6 +21,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
@@ -31,9 +32,12 @@ public class EarthArmor extends EarthAbility {
 	private boolean formed;
 	private MaterialData headData;
 	private MaterialData legsData;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
+	@Attribute(Attribute.DURATION)
 	private long maxDuration;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
 	private Block headBlock;
 	private Block legsBlock;
@@ -42,6 +46,7 @@ public class EarthArmor extends EarthAbility {
 	private boolean active;
 	private PotionEffect oldAbsorbtion = null;
 	private float goldHearts;
+	@Attribute("GoldHearts")
 	private int maxGoldHearts;
 	private TempArmor armor;
 

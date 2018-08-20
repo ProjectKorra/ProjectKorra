@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -40,14 +41,20 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	private int leftClicks;
 	private int rightClicks;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
 	private double shootTime;
 	private double shots;
+	@Attribute("MaxShots")
 	private double maxShots;
 	private double animationSpeed;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long time;
 	private String name;

@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 public class AirSweep extends AirAbility implements ComboAbility {
 
 	private int progressCounter;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
@@ -31,7 +32,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	private double speed;
 	@Attribute(Attribute.RANGE)
 	private double range;
-	@Attribute(Attribute.POWER)
+	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	private Location origin;
 	private Location currentLoc;

@@ -16,7 +16,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
-import com.projectkorra.rpg.RPGMethods;
 
 /**
  * Executor for /bending remove. Extends {@link PKCommand}.
@@ -135,9 +134,6 @@ public class RemoveCommand extends PKCommand {
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
-			if (GeneralMethods.hasRPG()) {
-				RPGMethods.revokeAvatar(bPlayer.getUUID());
-			}
 			if (!player.getName().equalsIgnoreCase(sender.getName())) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
 			}

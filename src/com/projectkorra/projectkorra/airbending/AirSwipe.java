@@ -33,16 +33,18 @@ public class AirSwipe extends AirAbility {
 	private static final int MAX_AFFECTABLE_ENTITIES = 10;
 
 	private boolean charging;
+	@Attribute("Arc")
 	private int arc;
 	private int particles;
-	private int stepSize;
+	@Attribute("ArcIncrement")
+	private int arcIncrement;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long maxChargeTime;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
-	@Attribute(Attribute.POWER)
+	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactor;
 	@Attribute(Attribute.SPEED)
 	private double speed;
@@ -77,7 +79,7 @@ public class AirSwipe extends AirAbility {
 		this.origin = player.getEyeLocation();
 		this.particles = getConfig().getInt("Abilities.Air.AirSwipe.Particles");
 		this.arc = getConfig().getInt("Abilities.Air.AirSwipe.Arc");
-		this.stepSize = getConfig().getInt("Abilities.Air.AirSwipe.StepSize");
+		this.arcIncrement = getConfig().getInt("Abilities.Air.AirSwipe.StepSize");
 		this.maxChargeTime = getConfig().getLong("Abilities.Air.AirSwipe.MaxChargeTime");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSwipe.Cooldown");
 		this.damage = getConfig().getDouble("Abilities.Air.AirSwipe.Damage");
@@ -239,7 +241,7 @@ public class AirSwipe extends AirAbility {
 	private void launch() {
 		this.bPlayer.addCooldown("AirSwipe", this.cooldown);
 		this.origin = this.player.getEyeLocation();
-		for (double i = -this.arc; i <= this.arc; i += this.stepSize) {
+		for (double i = -this.arc; i <= this.arc; i += this.arcIncrement) {
 			final double angle = Math.toRadians(i);
 			final Vector direction = this.player.getEyeLocation().getDirection().clone();
 
@@ -444,11 +446,11 @@ public class AirSwipe extends AirAbility {
 	}
 
 	public int getStepSize() {
-		return this.stepSize;
+		return this.arcIncrement;
 	}
 
 	public void setStepSize(final int stepSize) {
-		this.stepSize = stepSize;
+		this.arcIncrement = stepSize;
 	}
 
 }

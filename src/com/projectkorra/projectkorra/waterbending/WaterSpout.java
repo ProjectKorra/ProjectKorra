@@ -24,6 +24,7 @@ public class WaterSpout extends WaterAbility {
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
 	private final List<TempBlock> blocks = new ArrayList<TempBlock>();
 
+	@Attribute("CanBendOnPackedIce")
 	private boolean canBendOnPackedIce;
 	private boolean useParticles;
 	private boolean useBlockSpiral;
@@ -32,10 +33,12 @@ public class WaterSpout extends WaterAbility {
 	private long interval;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	private long startTime;
 	private double rotation;
 	private double height;
+	@Attribute(Attribute.HEIGHT)
 	private double maxHeight;
 	private Block base;
 	private TempBlock baseBlock;

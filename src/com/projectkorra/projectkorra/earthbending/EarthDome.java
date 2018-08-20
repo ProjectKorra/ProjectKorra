@@ -12,12 +12,17 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class EarthDome extends EarthAbility {
 
 	public Location center;
+	@Attribute(Attribute.RADIUS)
 	public double radius;
+	@Attribute(Attribute.HEIGHT)
 	public int height;
+	@Attribute(Attribute.COOLDOWN)
+	public long cooldown;
 	public Set<Block> checked = new HashSet<>();
 	public Set<Block> corners = new HashSet<>();
 
@@ -31,26 +36,9 @@ public class EarthDome extends EarthAbility {
 		this.center = center;
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthDome.Radius");
 		this.height = getConfig().getInt("Abilities.Earth.EarthDome.Height");
+		this.cooldown = getConfig().getLong("Abilities.Earth.EarthDome.Cooldown");
 
-		for (int i = 0; i < 2; i++) {
-			for (final Location check : this.getCircle(center, this.radius + i, 10)) {
-				Block b = check.getBlock();
-				if (this.checked.contains(b)) {
-					continue;
-				}
-
-				b = this.getAppropriateBlock(b);
-				if (b == null) {
-					continue;
-				}
-
-				new RaiseEarth(player, b.getLocation(), Math.round(this.height - i));
-				this.checked.add(b);
-			}
-
-		}
-
-		this.bPlayer.addCooldown("EarthDome", this.getCooldown());
+		start();
 	}
 
 	public EarthDome(final Player player) {
@@ -81,6 +69,26 @@ public class EarthDome extends EarthAbility {
 
 	@Override
 	public void progress() {
+		for (int i = 0; i < 2; i++) {
+			for (final Location check : this.getCircle(center, this.radius + i, 10)) {
+				Block b = check.getBlock();
+				if (this.checked.contains(b)) {
+					continue;
+				}
+
+				b = this.getAppropriateBlock(b);
+				if (b == null) {
+					continue;
+				}
+
+				new RaiseEarth(player, b.getLocation(), Math.round(this.height - i));
+				this.checked.add(b);
+			}
+
+		}
+
+		this.bPlayer.addCooldown("EarthDome", this.getCooldown());
+		this.remove();
 	}
 
 	@Override
@@ -95,7 +103,7 @@ public class EarthDome extends EarthAbility {
 
 	@Override
 	public long getCooldown() {
-		return getConfig().getLong("Abilities.Earth.EarthDome.Cooldown");
+		return cooldown;
 	}
 
 	@Override

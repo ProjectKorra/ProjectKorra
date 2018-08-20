@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -37,20 +38,27 @@ public class WaterArmsWhip extends WaterAbility {
 	private boolean grabbed;
 	private boolean grappleRespectRegions;
 	private boolean usageCooldownEnabled;
+	@Attribute("WhipLength")
 	private int whipLength;
 	private int whipLengthWeak;
 	private int whipLengthNight;
 	private int whipLengthFullMoon;
+	@Attribute("InitialLength")
 	private int initLength;
+	@Attribute("PunchLength")
 	private int punchLength;
 	private int punchLengthNight;
 	private int punchLengthFullMoon;
 	private int activeLength;
+	@Attribute("WhipSpeed")
 	private int whipSpeed;
-	private long holdTime;
+	@Attribute("GrabDuration")
+	private long grabDuration;
+	@Attribute(Attribute.COOLDOWN)
 	private long usageCooldown;
 	private long time;
 	private double pullMultiplier;
+	@Attribute("PunchDamage")
 	private double punchDamage;
 	private double playerHealth;
 	private Arm arm;
@@ -79,12 +87,11 @@ public class WaterArmsWhip extends WaterAbility {
 		this.punchLengthFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon");
 		this.activeLength = this.initLength;
 		this.whipSpeed = 1;
-		this.holdTime = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.HoldTime");
+		this.grabDuration = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.Duration");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
-		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
+		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage");
 
 		switch (ability) {
-
 			case PULL:
 				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Pull");
 				break;
@@ -126,39 +133,17 @@ public class WaterArmsWhip extends WaterAbility {
 		}
 		final World world = this.player.getWorld();
 		if (isNight(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (isLunarEclipse(world)) {
-					if (this.ability.equals(Whip.PUNCH)) {
-						this.whipLength = this.punchLengthFullMoon;
-					} else {
-						this.whipLength = this.whipLengthFullMoon;
-					}
-				} else if (isFullMoon(world)) {
-					if (this.ability.equals(Whip.PUNCH)) {
-						this.whipLength = this.punchLengthFullMoon;
-					} else {
-						this.whipLength = this.whipLengthFullMoon;
-					}
+			if (this.ability.equals(Whip.PUNCH)) {
+				if (isFullMoon(world) && !GeneralMethods.hasRPG()) {
+					this.whipLength = this.punchLengthFullMoon;
 				} else {
-					if (this.ability.equals(Whip.PUNCH)) {
-						this.whipLength = this.punchLengthNight;
-					} else {
-						this.whipLength = this.whipLengthNight;
-					}
+					this.whipLength = this.punchLengthNight;
 				}
 			} else {
-				if (isFullMoon(world)) {
-					if (this.ability.equals(Whip.PUNCH)) {
-						this.whipLength = this.punchLengthFullMoon;
-					} else {
-						this.whipLength = this.whipLengthFullMoon;
-					}
+				if (isFullMoon(world) && !GeneralMethods.hasRPG()) {
+					this.whipLength = this.whipLengthFullMoon;
 				} else {
-					if (this.ability.equals(Whip.PUNCH)) {
-						this.whipLength = this.punchLengthNight;
-					} else {
-						this.whipLength = this.whipLengthNight;
-					}
+					this.whipLength = this.whipLengthNight;
 				}
 			}
 		}
@@ -169,7 +154,7 @@ public class WaterArmsWhip extends WaterAbility {
 		if (this.waterArms != null) {
 			this.waterArms.switchPreferredArm();
 			this.arm = this.waterArms.getActiveArm();
-			this.time = System.currentTimeMillis() + this.holdTime;
+			this.time = System.currentTimeMillis() + this.grabDuration;
 			this.playerHealth = this.player.getHealth();
 
 			if (this.arm.equals(Arm.LEFT)) {
@@ -599,11 +584,11 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	public long getHoldTime() {
-		return this.holdTime;
+		return this.grabDuration;
 	}
 
 	public void setHoldTime(final long holdTime) {
-		this.holdTime = holdTime;
+		this.grabDuration = holdTime;
 	}
 
 	public long getUsageCooldown() {

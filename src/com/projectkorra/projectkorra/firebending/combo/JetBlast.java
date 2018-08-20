@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -18,15 +19,18 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	private boolean firstTime;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private ArrayList<FireComboStream> tasks;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 
 	public JetBlast(final Player player) {
 		super(player);
 
-		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
 		}
 

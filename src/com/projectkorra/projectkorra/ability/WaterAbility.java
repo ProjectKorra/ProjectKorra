@@ -25,7 +25,6 @@ import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
-import com.projectkorra.rpg.RPGMethods;
 
 public abstract class WaterAbility extends ElementalAbility {
 
@@ -156,21 +155,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static double getNightFactor(final double value, final World world) {
 		if (isNight(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (isLunarEclipse(world)) {
-					return RPGMethods.getFactor("LunarEclipse") * value;
-				} else if (isFullMoon(world)) {
-					return RPGMethods.getFactor("FullMoon") * value;
-				} else {
-					return getConfig().getDouble("Properties.Water.NightFactor") * value;
-				}
-			} else {
-				if (isFullMoon(world)) {
-					return getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
-				} else {
-					return getConfig().getDouble("Properties.Water.NightFactor") * value;
-				}
-			}
+			return getConfig().getDouble("Properties.Water.NightFactor") * value;
 		} else {
 			return value;
 		}

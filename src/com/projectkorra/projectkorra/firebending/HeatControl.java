@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
@@ -47,15 +48,20 @@ public class HeatControl extends FireAbility {
 	private HeatControlType heatControlType;
 
 	// HeatControl Cook variables.
+	@Attribute("CookTime")
 	private long cookTime;
 	private long cookInterval;
 
 	// HeatControl Extinguish variables.
+	@Attribute("Extinguish" + Attribute.COOLDOWN)
 	private long extinguishCooldown;
+	@Attribute("Extinguish" + Attribute.RADIUS)
 	private double extinguishRadius;
 
 	// HeatControl Melt variables.
+	@Attribute("Melt" + Attribute.RANGE)
 	private double meltRange;
+	@Attribute("Melt" + Attribute.RADIUS)
 	private double meltRadius;
 	private Location meltLocation;
 	private static final Map<Block, TempBlock> MELTED_BLOCKS = new HashMap<>();
@@ -65,7 +71,9 @@ public class HeatControl extends FireAbility {
 	private long solidifyDelay;
 	private long solidifyLastBlockTime;
 	private long solidifyRevertTime;
+	@Attribute("Solidify" + Attribute.RADIUS)
 	private double solidifyMaxRadius;
+	@Attribute("Solidify" + Attribute.RANGE)
 	private double solidifyRange;
 	private boolean solidifyRevert;
 	private boolean solidifying;

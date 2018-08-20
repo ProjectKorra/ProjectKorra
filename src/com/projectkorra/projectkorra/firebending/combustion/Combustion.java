@@ -13,6 +13,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CombustionAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -23,11 +24,17 @@ public class Combustion extends CombustionAbility {
 
 	private boolean breakBlocks;
 	private int ticks;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
-	private float power;
+	@Attribute("ExplosivePower")
+	private float explosivePower;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private double speedFactor;
 	private Location location;
@@ -43,7 +50,7 @@ public class Combustion extends CombustionAbility {
 
 		this.ticks = 0;
 		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-		this.power = (float) getConfig().getDouble("Abilities.Fire.Combustion.Power");
+		this.explosivePower = (float) getConfig().getDouble("Abilities.Fire.Combustion.ExplosivePower");
 		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
 		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
 		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
@@ -72,7 +79,7 @@ public class Combustion extends CombustionAbility {
 	public static void explode(final Player player) {
 		final Combustion combustion = getAbility(player, Combustion.class);
 		if (combustion != null) {
-			combustion.createExplosion(combustion.location, combustion.power, combustion.breakBlocks);
+			combustion.createExplosion(combustion.location, combustion.explosivePower, combustion.breakBlocks);
 			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
 		}
 	}
@@ -140,14 +147,14 @@ public class Combustion extends CombustionAbility {
 		final Block block = this.location.getBlock();
 		if (block != null) {
 			if (block.getType() != Material.AIR && !isWater(block)) {
-				this.createExplosion(block.getLocation(), this.power, this.breakBlocks);
+				this.createExplosion(block.getLocation(), this.explosivePower, this.breakBlocks);
 			}
 		}
 
 		for (final Entity entity : this.location.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distanceSquared(this.location) <= 4 && !entity.equals(this.player)) {
-					this.createExplosion(this.location, this.power, this.breakBlocks);
+					this.createExplosion(this.location, this.explosivePower, this.breakBlocks);
 				}
 			}
 		}
@@ -204,11 +211,11 @@ public class Combustion extends CombustionAbility {
 	}
 
 	public float getPower() {
-		return this.power;
+		return this.explosivePower;
 	}
 
 	public void setPower(final float power) {
-		this.power = power;
+		this.explosivePower = power;
 	}
 
 	public double getDamage() {

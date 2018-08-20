@@ -22,6 +22,7 @@ public class Twister extends AirAbility implements ComboAbility {
 		TWISTER_MOVING, TWISTER_STATIONARY
 	}
 
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long time;
 	@Attribute(Attribute.DAMAGE)

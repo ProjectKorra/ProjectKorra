@@ -16,14 +16,21 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class IceSpikePillarField extends IceAbility {
 
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute("NumberOfSpikes")
 	private int numberOfSpikes;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.KNOCKUP)
+	private double knockup;
 	private Vector thrownForce;
 
 	public IceSpikePillarField(final Player player) {
@@ -36,16 +43,25 @@ public class IceSpikePillarField extends IceAbility {
 		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
 		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
-		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Field.Push"), 0);
+		this.knockup = getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup");
 
 		if (this.bPlayer.isAvatarState()) {
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage");
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius");
-			this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Push"), 0);
 		}
 
-		this.numberOfSpikes = (int) (((this.radius * 2) * (this.radius * 2)) / 16);
+		this.numberOfSpikes = (int) (((this.radius) * (this.radius)) / 4);
+		start();
+	}
 
+	@Override
+	public String getName() {
+		return "IceSpike";
+	}
+
+	@Override
+	public void progress() {
+		this.thrownForce = new Vector(0, knockup, 0);
 		final Random random = new Random();
 		final int locX = player.getLocation().getBlockX();
 		final int locY = player.getLocation().getBlockY();
@@ -99,22 +115,13 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-
 				final IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
 				pillar.inField = true;
-				this.bPlayer.addCooldown("IceSpikePillarField", this.cooldown);
 				iceBlocks.remove(targetBlock);
 			}
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "IceSpike";
-	}
-
-	@Override
-	public void progress() {
+		this.bPlayer.addCooldown("IceSpikePillarField", this.cooldown);
+		this.remove();
 	}
 
 	@Override

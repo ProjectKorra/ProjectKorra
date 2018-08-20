@@ -29,7 +29,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.spirits.SpiritElement;
 import com.projectkorra.spirits.SpiritPlayer;
 
@@ -340,14 +339,6 @@ public class WhoCommand extends PKCommand {
 					} else {
 						sender.sendMessage(i + " - " + coreAbil.getElement().getColor() + ability);
 					}
-				}
-			}
-
-			if (GeneralMethods.hasRPG()) {
-				if (RPGMethods.isCurrentAvatar(player.getUniqueId())) {
-					sender.sendMessage(Element.AVATAR.getColor() + "Current Avatar");
-				} else if (RPGMethods.hasBeenAvatar(player.getUniqueId())) {
-					sender.sendMessage(Element.AVATAR.getColor() + "Former Avatar");
 				}
 			}
 

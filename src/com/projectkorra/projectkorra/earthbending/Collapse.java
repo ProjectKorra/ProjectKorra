@@ -11,16 +11,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class Collapse extends EarthAbility {
 
 	private int distance;
+	@Attribute(Attribute.HEIGHT)
 	private int height;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Location origin;
 	private Location location;

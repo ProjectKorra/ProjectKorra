@@ -26,7 +26,6 @@ import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
-import com.projectkorra.rpg.RPGMethods;
 
 public abstract class FireAbility extends ElementalAbility {
 
@@ -113,17 +112,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 */
 	public static double getDayFactor(final double value, final World world) {
 		if (isDay(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (isSozinsComet(world)) {
-					return RPGMethods.getFactor("SozinsComet") * value;
-				} else if (isLunarEclipse(world)) {
-					return RPGMethods.getFactor("SolarEclipse") * value;
-				} else {
-					return value * getDayFactor();
-				}
-			} else {
-				return value * getDayFactor();
-			}
+			return value * getDayFactor();
 		}
 		return value;
 	}

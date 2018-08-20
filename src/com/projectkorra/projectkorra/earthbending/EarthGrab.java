@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -38,8 +39,16 @@ import com.projectkorra.projectkorra.util.TempBlock;
 public class EarthGrab extends EarthAbility {
 
 	private LivingEntity target;
-	private long cooldown, lastHit = 0, interval;
-	private double range, dragSpeed, trapHP, trappedHP, damageThreshold;
+	@Attribute(Attribute.COOLDOWN)
+	private long cooldown;
+	private long lastHit = 0, interval;
+	@Attribute(Attribute.RANGE)
+	private double range;
+	@Attribute(Attribute.SPEED)
+	private double dragSpeed;
+	@Attribute("TrapHealth")
+	private double trapHP;
+	private double trappedHP, damageThreshold;
 	private GrabMode mode;
 	private boolean initiated = false;
 	private MovementHandler mHandler;

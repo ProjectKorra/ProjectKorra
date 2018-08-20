@@ -11,14 +11,19 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class CollapseWall extends EarthAbility {
 
+	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
+	@Attribute(Attribute.HEIGHT)
 	private int height;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
 	private Location location;
 	private Map<Block, Block> blocks;

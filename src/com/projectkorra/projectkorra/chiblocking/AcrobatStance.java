@@ -9,13 +9,19 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AcrobatStance extends ChiAbility {
 
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.SPEED)
 	private int speed;
+	@Attribute("Jump")
 	private int jump;
+	@Attribute("ChiBlockBoost")
 	private double chiBlockBoost;
+	@Attribute("ParalyzeDodgeBoost")
 	private double paralyzeDodgeBoost;
 
 	public AcrobatStance(final Player player) {

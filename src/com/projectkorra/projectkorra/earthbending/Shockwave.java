@@ -7,14 +7,18 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class Shockwave extends EarthAbility {
 
 	private boolean charged;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angle;
 	private double threshold;
+	@Attribute(Attribute.RANGE)
 	private double range;
 
 	public Shockwave(final Player player, final boolean fall) {

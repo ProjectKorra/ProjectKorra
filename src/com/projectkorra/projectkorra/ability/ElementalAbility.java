@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.rpg.event.EventManager;
 
 /**
  * ElementalAbility is used to hold methods that should be accessible by every
@@ -73,19 +72,10 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isFullMoon(final World world) {
-		if (GeneralMethods.hasRPG()) {
-			final String event = EventManager.marker.get(world);
-			return event != null && event.equalsIgnoreCase("FullMoon");
-		} else {
-			final long days = world.getFullTime() / 24000;
-			final long phase = days % 8;
+		final double days = Math.ceil(world.getFullTime() / 24000);
+		final double phase = days % 8;
 
-			if (phase == 0) {
-				return true;
-			}
-
-			return false;
-		}
+		return phase == 0;
 	}
 
 	public static boolean isIce(final Block block) {
@@ -110,24 +100,6 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isSnow(final Material material) {
 		return getConfig().getStringList("Properties.Water.SnowBlocks").contains(material.toString());
-	}
-
-	public static boolean isLunarEclipse(final World world) {
-		if (world == null || !GeneralMethods.hasRPG()) {
-			return false;
-		}
-
-		final String event = EventManager.marker.get(world);
-		return event != null && event.equalsIgnoreCase("LunarEclipse");
-	}
-
-	public static boolean isSolarEclipse(final World world) {
-		if (world == null || !GeneralMethods.hasRPG() || !EventManager.marker.containsKey(world)) {
-			return false;
-		}
-
-		final String event = EventManager.marker.get(world);
-		return event != null && event.equalsIgnoreCase("SolarEclipse");
 	}
 
 	public static boolean isMeltable(final Block block) {
@@ -212,15 +184,6 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isSand(final Material material) {
 		return getConfig().getStringList("Properties.Earth.SandBlocks").contains(material.toString());
-	}
-
-	public static boolean isSozinsComet(final World world) {
-		if (world == null || !GeneralMethods.hasRPG()) {
-			return false;
-		}
-
-		final String event = EventManager.marker.get(world);
-		return event != null && event.equalsIgnoreCase("SozinsComet");
 	}
 
 	public static boolean isTransparent(final Player player, final Block block) {

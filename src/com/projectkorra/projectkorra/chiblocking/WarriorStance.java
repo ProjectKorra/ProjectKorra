@@ -9,11 +9,15 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class WarriorStance extends ChiAbility {
 
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute("Strength")
 	private int strength;
+	@Attribute("Resistance")
 	private int resistance;
 
 	public WarriorStance(final Player player) {

@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -27,12 +28,18 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	private Location origin;
 	private Location location;
 	private Vector direction;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.HEIGHT)
 	private int height;
 	private int radius;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.FIRE_TICK)
 	private double fireTicks;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private ArrayList<LivingEntity> affectedEntities;
 
