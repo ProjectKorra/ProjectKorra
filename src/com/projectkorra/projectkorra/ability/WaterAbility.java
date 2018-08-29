@@ -49,17 +49,6 @@ public abstract class WaterAbility extends ElementalAbility {
 		return getIceSourceBlock(this.player, range);
 	}
 
-	public double getNightFactor() {
-		if (this.getLocation() != null) {
-			return getNightFactor(this.getLocation().getWorld());
-		}
-		return this.player != null ? getNightFactor(this.player.getLocation().getWorld()) : 1;
-	}
-
-	public double getNightFactor(final double value) {
-		return this.player != null ? getNightFactor(value, this.player.getWorld()) : value;
-	}
-
 	public Block getPlantSourceBlock(final double range) {
 		return this.getPlantSourceBlock(range, false);
 	}
@@ -85,6 +74,10 @@ public abstract class WaterAbility extends ElementalAbility {
 			final ParticleData particleData = new ParticleEffect.BlockData(Material.WATER, (byte) 0);
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
+	}
+	
+	public double getNightFactor(double value) {
+		return this.player != null ? value * getNightFactor() : 1;
 	}
 
 	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
@@ -152,13 +145,17 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 		return null;
 	}
+	
+	public static double getNightFactor() {
+		return getConfig().getDouble("Properties.Water.NightFactor");
+	}
 
 	public static double getNightFactor(final double value, final World world) {
 		if (isNight(world)) {
-			return getConfig().getDouble("Properties.Water.NightFactor") * value;
-		} else {
-			return value;
+			return value * getNightFactor();
 		}
+		
+		return value;
 	}
 
 	public static double getNightFactor(final World world) {

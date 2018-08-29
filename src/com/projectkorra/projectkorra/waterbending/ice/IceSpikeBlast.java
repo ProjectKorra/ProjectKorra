@@ -487,12 +487,12 @@ public class IceSpikeBlast extends IceAbility {
 		this.data = data;
 	}
 
-	public int getSlowPower() {
+	public int getSlowPotency() {
 		return this.slowPotency;
 	}
 
-	public void setSlowPower(final int slowPower) {
-		this.slowPotency = slowPower;
+	public void setSlowPotency(final int slowPotency) {
+		this.slowPotency = slowPotency;
 	}
 
 	public int getSlowDuration() {

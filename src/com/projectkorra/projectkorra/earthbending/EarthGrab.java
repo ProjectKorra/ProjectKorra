@@ -41,14 +41,16 @@ public class EarthGrab extends EarthAbility {
 	private LivingEntity target;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
-	private long lastHit = 0, interval;
+	private long lastHit;
+	private long interval;
 	@Attribute(Attribute.RANGE)
 	private double range;
 	@Attribute(Attribute.SPEED)
 	private double dragSpeed;
 	@Attribute("TrapHealth")
 	private double trapHP;
-	private double trappedHP, damageThreshold;
+	private double trappedHP;
+	private double damageThreshold;
 	private GrabMode mode;
 	private boolean initiated = false;
 	private MovementHandler mHandler;
@@ -92,6 +94,7 @@ public class EarthGrab extends EarthAbility {
 		this.damageThreshold = getConfig().getDouble("Abilities.Earth.EarthGrab.DamageThreshold");
 		this.origin = this.player.getLocation().clone();
 		this.direction = this.player.getLocation().getDirection().setY(0).normalize();
+		this.lastHit = 0;
 	}
 
 	@Override

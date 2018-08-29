@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 public class EarthDomeOthers extends EarthAbility {
 
 	private Vector direction;
-	private double range = 0;
+	private double range;
 	@Attribute(Attribute.RANGE)
 	private double maxRange;
 	private Location loc;
@@ -37,6 +37,7 @@ public class EarthDomeOthers extends EarthAbility {
 		if (!isEarthbendable(this.loc.getBlock().getRelative(BlockFace.DOWN).getType(), true, true, true)) {
 			return;
 		}
+		this.range = 0;
 		this.direction = this.loc.getDirection().setY(0);
 		this.maxRange = getConfig().getDouble("Abilities.Earth.EarthDome.Range");
 		this.start();

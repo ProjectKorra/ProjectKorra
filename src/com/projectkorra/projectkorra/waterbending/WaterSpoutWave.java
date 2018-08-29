@@ -617,12 +617,12 @@ public class WaterSpoutWave extends WaterAbility {
 		this.chargeTime = chargeTime;
 	}
 
-	public double getFlightTime() {
+	public double getFlightDuration() {
 		return this.flightDuration;
 	}
 
-	public void setFlightTime(final double flightTime) {
-		this.flightDuration = flightTime;
+	public void setFlightDuration(final double flightDuration) {
+		this.flightDuration = flightDuration;
 	}
 
 	public double getWaveRadius() {

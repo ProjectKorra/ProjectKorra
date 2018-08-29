@@ -28,7 +28,7 @@ public class WaterBubble extends WaterAbility {
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	@Attribute("RequireAir")
-	private boolean requireAir = false;
+	private boolean requireAir;
 
 	private boolean isShift;
 	private double radius;

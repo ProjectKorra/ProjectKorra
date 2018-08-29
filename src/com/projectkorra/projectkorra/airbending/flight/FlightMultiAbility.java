@@ -47,7 +47,10 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		SOAR, GLIDE, LEVITATE, ENDING;
 	}
 
-	private double speed = 1, slowSpeed, fastSpeed, multiplier;
+	private double speed = 1;
+	private double slowSpeed;
+	private double fastSpeed;
+	private double multiplier;
 	@Attribute(Attribute.SPEED)
 	private double baseSpeed;
 	private FlightMode mode = FlightMode.SOAR;
@@ -117,6 +120,8 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.duration = getConfig().getLong("Abilities.Air.Flight.Duration");
 		this.cooldown = getConfig().getLong("Abilities.Air.Flight.Cooldown");
 		this.baseSpeed = getConfig().getDouble("Abilities.Air.Flight.BaseSpeed");
+		
+		this.speed = 1;
 		this.slowSpeed = this.baseSpeed / 2;
 		this.fastSpeed = this.baseSpeed * 2;
 		this.multiplier = this.baseSpeed;
@@ -216,11 +221,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 				}
 
 				this.prevDir = this.player.getEyeLocation().getDirection().clone();
-			}
-
-			this.particles();
-
-			if (this.speed > this.baseSpeed) {
+				
 				for (final Entity e : GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.speed)) {
 					if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId() && !this.player.getPassengers().contains(e)) {
 						if (!GeneralMethods.isRegionProtectedFromBuild(this.player, e.getLocation())) {
@@ -232,6 +233,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 				}
 			}
 
+			this.particles();
 			this.player.setVelocity(this.player.getEyeLocation().getDirection().clone().multiply(this.multiplier));
 		} else if (this.mode == FlightMode.GLIDE) {
 			this.player.setAllowFlight(false);

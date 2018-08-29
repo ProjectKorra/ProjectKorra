@@ -445,12 +445,12 @@ public class AirSwipe extends AirAbility {
 		this.cooldown = cooldown;
 	}
 
-	public int getStepSize() {
+	public int getArcIncrement() {
 		return this.arcIncrement;
 	}
 
-	public void setStepSize(final int stepSize) {
-		this.arcIncrement = stepSize;
+	public void setArcIncrement(final int arcIncrement) {
+		this.arcIncrement = arcIncrement;
 	}
 
 }

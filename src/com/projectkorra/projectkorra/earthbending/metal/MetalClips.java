@@ -652,12 +652,12 @@ public class MetalClips extends MetalAbility {
 		this.armorStartTime = armorStartTime;
 	}
 
-	public double getMagnetPower() {
+	public double getMagnetSpeed() {
 		return this.magnetSpeed;
 	}
 
-	public void setMagnetPower(final double magnetPower) {
-		this.magnetSpeed = magnetPower;
+	public void setMagnetSpeed(final double magnetSpeed) {
+		this.magnetSpeed = magnetSpeed;
 	}
 
 	public double getRange() {

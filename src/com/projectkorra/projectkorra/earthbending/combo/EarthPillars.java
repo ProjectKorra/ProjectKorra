@@ -33,7 +33,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	private double knockup;
 	private double fallThreshold;
 	private boolean damaging;
-	private boolean firstTime = true;
+	private boolean firstTime;
 	private Map<RaiseEarth, LivingEntity> entities;
 
 	public EarthPillars(final Player player, final boolean fall) {
@@ -49,6 +49,8 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 				return;
 			}
 		}
+		
+		this.firstTime = true;
 
 		this.start();
 	}

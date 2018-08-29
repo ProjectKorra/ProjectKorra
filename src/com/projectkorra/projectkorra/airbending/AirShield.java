@@ -22,8 +22,10 @@ import com.projectkorra.projectkorra.command.Commands;
 public class AirShield extends AirAbility {
 
 	private boolean isToggledByAvatarState;
-	@Attribute(Attribute.RADIUS)
+	@Attribute("Max" + Attribute.RADIUS)
 	private double maxRadius;
+	@Attribute("Initial" + Attribute.RADIUS)
+	private double initialRadius;
 	private double radius;
 	@Attribute(Attribute.SPEED)
 	private double speed;
@@ -39,9 +41,10 @@ public class AirShield extends AirAbility {
 	public AirShield(final Player player) {
 		super(player);
 
-		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
+		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.MaxRadius");
+		this.initialRadius = getConfig().getDouble("Abilities.Air.AirShield.InitialRadius");
 		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
-		this.radius = 0;
+		this.radius = initialRadius;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirShield.Duration");
 		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");

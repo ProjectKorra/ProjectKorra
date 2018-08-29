@@ -60,10 +60,6 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 	}
 
-	public double getDayFactor(final double value) {
-		return this.player != null ? getDayFactor(value, this.player.getWorld()) : 1;
-	}
-
 	/**
 	 * Returns if fire is allowed to completely replace blocks or if it should
 	 * place a temp fire block.
@@ -93,6 +89,10 @@ public abstract class FireAbility extends ElementalAbility {
 		info.setTime(time + System.currentTimeMillis());
 		loc.getBlock().setType(Material.FIRE);
 		TEMP_FIRE.put(loc, info);
+	}
+	
+	public double getDayFactor(double value) {
+		return this.player != null ? value * getDayFactor() : 1;
 	}
 
 	public static double getDayFactor() {

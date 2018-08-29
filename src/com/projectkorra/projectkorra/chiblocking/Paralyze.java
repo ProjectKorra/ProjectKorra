@@ -97,4 +97,7 @@ public class Paralyze extends ChiAbility {
 		this.target = target;
 	}
 
+	public long getDuration() {
+		return duration;
+	}
 }

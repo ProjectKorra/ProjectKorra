@@ -550,20 +550,20 @@ public class SurgeWave extends WaterAbility {
 		this.range = range;
 	}
 
-	public double getPushFactor() {
+	public double getKnockback() {
 		return this.knockback;
 	}
 
-	public void setPushFactor(final double pushFactor) {
-		this.knockback = pushFactor;
+	public void setKnockback(final double knockback) {
+		this.knockback = knockback;
 	}
 
-	public double getVerticalFactor() {
+	public double getKnockup() {
 		return this.knockup;
 	}
 
-	public void setVerticalFactor(final double verticalFactor) {
-		this.knockup = verticalFactor;
+	public void setKnockup(final double knockup) {
+		this.knockup = knockup;
 	}
 
 	public double getMaxFreezeRadius() {

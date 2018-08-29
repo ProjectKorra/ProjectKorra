@@ -424,20 +424,20 @@ public class Bloodbending extends BloodAbility {
 		this.time = time;
 	}
 
-	public long getHoldTime() {
+	public long getDuration() {
 		return this.duration;
 	}
 
-	public void setHoldTime(final long holdTime) {
-		this.duration = holdTime;
+	public void setDuration(final long duration) {
+		this.duration = duration;
 	}
 
-	public double getThrowFactor() {
+	public double getKnockback() {
 		return this.knockback;
 	}
 
-	public void setThrowFactor(final double throwFactor) {
-		this.knockback = throwFactor;
+	public void setKnockback(final double knockback) {
+		this.knockback = knockback;
 	}
 
 	public Entity getTarget() {

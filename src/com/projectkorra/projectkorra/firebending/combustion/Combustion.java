@@ -210,12 +210,12 @@ public class Combustion extends CombustionAbility {
 		this.ticks = ticks;
 	}
 
-	public float getPower() {
+	public float getExplosivePower() {
 		return this.explosivePower;
 	}
 
-	public void setPower(final float power) {
-		this.explosivePower = power;
+	public void setExplosivePower(final float explosivePower) {
+		this.explosivePower = explosivePower;
 	}
 
 	public double getDamage() {
