@@ -47,7 +47,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		SOAR, GLIDE, LEVITATE, ENDING;
 	}
 
-	private double speed = 1;
+	private double speed;
 	private double slowSpeed;
 	private double fastSpeed;
 	private double multiplier;

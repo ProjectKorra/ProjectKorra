@@ -76,7 +76,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 	}
 	
-	public double getNightFactor(double value) {
+	public double getNightFactor(final double value) {
 		return this.player != null ? value * getNightFactor() : 1;
 	}
 

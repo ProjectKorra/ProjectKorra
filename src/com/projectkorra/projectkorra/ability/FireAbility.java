@@ -91,7 +91,7 @@ public abstract class FireAbility extends ElementalAbility {
 		TEMP_FIRE.put(loc, info);
 	}
 	
-	public double getDayFactor(double value) {
+	public double getDayFactor(final double value) {
 		return this.player != null ? value * getDayFactor() : 1;
 	}
 
