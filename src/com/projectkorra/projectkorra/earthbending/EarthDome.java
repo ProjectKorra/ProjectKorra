@@ -16,15 +16,14 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class EarthDome extends EarthAbility {
 
-	public Location center;
+	private Location center;
 	@Attribute(Attribute.RADIUS)
-	public double radius;
+	private double radius;
 	@Attribute(Attribute.HEIGHT)
-	public int height;
+	private int height;
 	@Attribute(Attribute.COOLDOWN)
-	public long cooldown;
-	public Set<Block> checked = new HashSet<>();
-	public Set<Block> corners = new HashSet<>();
+	private long cooldown;
+	private Set<Block> checked;
 
 	public EarthDome(final Player player, final Location center) {
 		super(player);
@@ -37,6 +36,7 @@ public class EarthDome extends EarthAbility {
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthDome.Radius");
 		this.height = getConfig().getInt("Abilities.Earth.EarthDome.Height");
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthDome.Cooldown");
+		this.checked = new HashSet<>();
 
 		start();
 	}
@@ -71,18 +71,18 @@ public class EarthDome extends EarthAbility {
 	public void progress() {
 		for (int i = 0; i < 2; i++) {
 			for (final Location check : this.getCircle(center, this.radius + i, 10)) {
-				Block b = check.getBlock();
-				if (this.checked.contains(b)) {
+				Block currBlock = check.getBlock();
+				if (this.checked.contains(currBlock)) {
 					continue;
 				}
 
-				b = this.getAppropriateBlock(b);
-				if (b == null) {
+				currBlock = this.getAppropriateBlock(currBlock);
+				if (currBlock == null) {
 					continue;
 				}
 
-				new RaiseEarth(player, b.getLocation(), Math.round(this.height - i));
-				this.checked.add(b);
+				new RaiseEarth(player, currBlock.getLocation(), Math.round(this.height - i));
+				this.checked.add(currBlock);
 			}
 
 		}

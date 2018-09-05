@@ -250,12 +250,12 @@ public class FireShield extends FireAbility {
 		this.shieldDuration = duration;
 	}
 
-	public double getRadius() {
+	public double getShieldRadius() {
 		return this.shieldRadius;
 	}
 
-	public void setRadius(final double radius) {
-		this.shieldRadius = radius;
+	public void setShieldRadius(final double shieldRadius) {
+		this.shieldRadius = shieldRadius;
 	}
 
 	public double getDiscRadius() {

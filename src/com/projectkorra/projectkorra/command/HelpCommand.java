@@ -35,6 +35,9 @@ public class HelpCommand extends PKCommand {
 	private final String avatar;
 	private final String invalidTopic;
 	private final String usage;
+	private final String rpgUsage;
+	private final String spiritsUsage;
+	private final String itemsUsage;
 
 	public HelpCommand() {
 		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
@@ -51,6 +54,9 @@ public class HelpCommand extends PKCommand {
 		this.avatar = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Avatar");
 		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
 		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
+		this.rpgUsage = ConfigManager.languageConfig.get().getString("Command.Help.RPGUsage");
+		this.spiritsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.SpiritsUsage");
+		this.itemsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ItemsUsage");
 	}
 
 	@Override
@@ -67,13 +73,13 @@ public class HelpCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.hasItems()) {
-				strings.add("/bending items <argument>");
+				strings.add(itemsUsage);
 			}
 			if (GeneralMethods.hasRPG()) {
-				strings.add("/bending rpg <argument>");
+				strings.add(rpgUsage);
 			}
 			if (GeneralMethods.hasSpirits()) {
-				strings.add("/bending spirits <argument>");
+				strings.add(spiritsUsage);
 			}
 			Collections.sort(strings);
 			Collections.reverse(strings);
@@ -99,13 +105,13 @@ public class HelpCommand extends PKCommand {
 				strings.add(command.getProperUse());
 			}
 			if (GeneralMethods.hasItems()) {
-				strings.add("/bending items <argument>");
+				strings.add(itemsUsage);
 			}
 			if (GeneralMethods.hasRPG()) {
-				strings.add("/bending rpg <argument>");
+				strings.add(rpgUsage);
 			}
 			if (GeneralMethods.hasSpirits()) {
-				strings.add("/bending spirits <argument>");
+				strings.add(spiritsUsage);
 			}
 			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", Integer.valueOf(arg), true)) {
 				if (firstMessage) {

@@ -383,7 +383,7 @@ public abstract class CoreAbility implements Ability {
 	 * @param clazz the class for the type of CoreAbilities
 	 * @return a Collection of real instances
 	 */
-	public static <T extends CoreAbility> Collection<T> getAbilities(final Player player, final Class<? extends T> clazz) {
+	public static <T extends CoreAbility> Collection<T> getAbilities(final Player player, final Class<T> clazz) {
 		if (player == null || clazz == null || INSTANCES_BY_PLAYER.get(clazz) == null || INSTANCES_BY_PLAYER.get(clazz).get(player.getUniqueId()) == null) {
 			return Collections.emptySet();
 		}

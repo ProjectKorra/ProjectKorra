@@ -583,12 +583,12 @@ public class WaterArmsWhip extends WaterAbility {
 		this.whipSpeed = whipSpeed;
 	}
 
-	public long getHoldTime() {
+	public long getGrabDuration() {
 		return this.grabDuration;
 	}
 
-	public void setHoldTime(final long holdTime) {
-		this.grabDuration = holdTime;
+	public void setGrabDuration(final long grabDuration) {
+		this.grabDuration = grabDuration;
 	}
 
 	public long getUsageCooldown() {

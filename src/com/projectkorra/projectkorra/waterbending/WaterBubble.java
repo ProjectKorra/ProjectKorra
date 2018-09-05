@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 public class WaterBubble extends WaterAbility {
 
 	@Attribute("Click" + Attribute.DURATION)
-	private long clickDuration; // How long the click variant lasts.
+	private long clickDuration;
 	@Attribute(Attribute.RADIUS)
 	private double maxRadius;
 	@Attribute(Attribute.SPEED)
