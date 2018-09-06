@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
@@ -26,8 +27,11 @@ public class Ripple extends EarthAbility {
 
 	private int step;
 	private int maxStep;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	private Vector direction;
 	private Location origin;

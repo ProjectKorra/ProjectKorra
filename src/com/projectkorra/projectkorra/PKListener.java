@@ -135,7 +135,6 @@ import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
@@ -184,7 +183,6 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeTyp
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
-import com.projectkorra.rpg.RPGMethods;
 
 public class PKListener implements Listener {
 	ProjectKorra plugin;
@@ -405,12 +403,6 @@ public class PKListener implements Listener {
 
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
-		}
-
-		if (event.getResult() == Result.REMOVE) {
-			if (GeneralMethods.hasRPG()) {
-				RPGMethods.revokeAvatar(player.getUniqueId());
-			}
 		}
 	}
 

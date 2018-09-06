@@ -9,13 +9,16 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiAgility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirAgility extends AirAbility implements PassiveAbility {
 
 	// Configurable variables.
+	@Attribute("Jump")
 	private int jumpPower;
+	@Attribute(Attribute.SPEED)
 	private int speedPower;
 
 	// Instance related variables.

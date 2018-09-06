@@ -165,6 +165,9 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more at our website! ");
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
+			config.addDefault("Commands.Help.RPGUsage", "/bending rpg [argument]");
+			config.addDefault("Commands.Help.ItemsUsage", "/bending items [argument]");
+			config.addDefault("Commands.Help.SpiritsUsage", "/bending spirits [argument]");
 
 			config.addDefault("Commands.Display.Description", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.");
 
@@ -619,8 +622,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Range", 16);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.Range", 60);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityHeight", 21);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityDuration", 20000);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Height", 21);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Duration", 20000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Damage", 6);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Range", 21);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Knockback", 4);
@@ -709,14 +712,14 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Range", 30);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Push", 0.9);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Height", 7);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.SlowPower", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.SlowPotency", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.SlowDuration", 90);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius", 8);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Push", 1.2);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Range", 30);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Damage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPower", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPotency", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowDuration", 90);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.Damage", 4);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.Range", 16);
@@ -724,7 +727,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.ShootTime", 12000);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceWave.Damage", 4);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterSpout.Height", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterSpout.Wave.FlightTime", 5000);
+			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterSpout.Wave.FlightDuration", 5000);
 
 			config.addDefault("Abilities.Air.Passive.Factor", 0.3);
 			config.addDefault("Abilities.Air.Passive.AirAgility.Enabled", true);
@@ -852,8 +855,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirStream.Enabled", true);
 			config.addDefault("Abilities.Air.AirStream.Speed", 0.5);
 			config.addDefault("Abilities.Air.AirStream.Range", 40);
-			config.addDefault("Abilities.Air.AirStream.EntityDuration", 4000);
-			config.addDefault("Abilities.Air.AirStream.EntityHeight", 14);
+			config.addDefault("Abilities.Air.AirStream.EntityCarry.Duration", 4000);
+			config.addDefault("Abilities.Air.AirStream.EntityCarry.Height", 14);
 			config.addDefault("Abilities.Air.AirStream.Cooldown", 7000);
 
 			config.addDefault("Abilities.Air.AirSweep.Enabled", true);
@@ -872,9 +875,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 			config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", true);
 			config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
-			config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
+			config.addDefault("Abilities.Water.Bloodbending.Knockback", 2);
 			config.addDefault("Abilities.Water.Bloodbending.Range", 10);
-			config.addDefault("Abilities.Water.Bloodbending.HoldTime", 0);
+			config.addDefault("Abilities.Water.Bloodbending.Duration", 0);
 			config.addDefault("Abilities.Water.Bloodbending.Cooldown", 3000);
 			config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", true);
 			config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
@@ -884,8 +887,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.HealingWaters.Range", 5);
 			config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
 			config.addDefault("Abilities.Water.HealingWaters.ChargeTime", 1000);
-			config.addDefault("Abilities.Water.HealingWaters.Power", 1);
-			config.addDefault("Abilities.Water.HealingWaters.HealingDuration", 70);
+			config.addDefault("Abilities.Water.HealingWaters.PotionPotency", 1);
 			config.addDefault("Abilities.Water.HealingWaters.Duration", 0);
 			config.addDefault("Abilities.Water.HealingWaters.EnableParticles", true);
 
@@ -905,11 +907,11 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceSpike.Height", 6);
 			config.addDefault("Abilities.Water.IceSpike.Speed", 25);
 			config.addDefault("Abilities.Water.IceSpike.SlowCooldown", 5000);
-			config.addDefault("Abilities.Water.IceSpike.SlowPower", 2);
+			config.addDefault("Abilities.Water.IceSpike.SlowPotency", 2);
 			config.addDefault("Abilities.Water.IceSpike.SlowDuration", 70);
 			config.addDefault("Abilities.Water.IceSpike.Field.Damage", 2);
 			config.addDefault("Abilities.Water.IceSpike.Field.Radius", 6);
-			config.addDefault("Abilities.Water.IceSpike.Field.Push", 1);
+			config.addDefault("Abilities.Water.IceSpike.Field.Knockup", 1);
 			config.addDefault("Abilities.Water.IceSpike.Field.Cooldown", 2000);
 			config.addDefault("Abilities.Water.IceSpike.Blast.Range", 20);
 			config.addDefault("Abilities.Water.IceSpike.Blast.Damage", 1);
@@ -917,7 +919,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceSpike.Blast.DeflectRange", 3);
 			config.addDefault("Abilities.Water.IceSpike.Blast.Cooldown", 500);
 			config.addDefault("Abilities.Water.IceSpike.Blast.SlowCooldown", 5000);
-			config.addDefault("Abilities.Water.IceSpike.Blast.SlowPower", 2);
+			config.addDefault("Abilities.Water.IceSpike.Blast.SlowPotency", 2);
 			config.addDefault("Abilities.Water.IceSpike.Blast.SlowDuration", 70);
 			config.addDefault("Abilities.Water.IceSpike.Blast.Interval", 20);
 
@@ -948,8 +950,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Wave.Radius", 3);
 			config.addDefault("Abilities.Water.Surge.Wave.Range", 20);
 			config.addDefault("Abilities.Water.Surge.Wave.SelectRange", 12);
-			config.addDefault("Abilities.Water.Surge.Wave.HorizontalPush", 1);
-			config.addDefault("Abilities.Water.Surge.Wave.VerticalPush", 0.2);
+			config.addDefault("Abilities.Water.Surge.Wave.Knockback", 1);
+			config.addDefault("Abilities.Water.Surge.Wave.Knockup", 0.2);
 			config.addDefault("Abilities.Water.Surge.Wave.MaxFreezeRadius", 7);
 			config.addDefault("Abilities.Water.Surge.Wave.Cooldown", 500);
 			config.addDefault("Abilities.Water.Surge.Wave.Interval", 30);
@@ -968,10 +970,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.SuccessiveDamage", 1);
 			config.addDefault("Abilities.Water.Torrent.MaxLayer", 3);
 			config.addDefault("Abilities.Water.Torrent.MaxHits", 2);
-			config.addDefault("Abilities.Water.Torrent.Push", 1);
+			config.addDefault("Abilities.Water.Torrent.Knockback", 1);
 			config.addDefault("Abilities.Water.Torrent.Angle", 20);
 			config.addDefault("Abilities.Water.Torrent.Radius", 3);
-			config.addDefault("Abilities.Water.Torrent.MaxUpwardForce", 0.2);
+			config.addDefault("Abilities.Water.Torrent.Knockup", 0.2);
 			config.addDefault("Abilities.Water.Torrent.Interval", 30);
 			config.addDefault("Abilities.Water.Torrent.Cooldown", 0);
 			config.addDefault("Abilities.Water.Torrent.Revert", true);
@@ -1015,14 +1017,14 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Water.WaterArms.Whip.Pull.Multiplier", 0.15);
 
-			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.PunchDamage", 0.5);
+			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.Damage", 0.5);
 			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.MaxLength", 8);
 			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal", 11);
 			config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon", 13);
 
 			config.addDefault("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions", false);
 
-			config.addDefault("Abilities.Water.WaterArms.Whip.Grab.HoldTime", 3500);
+			config.addDefault("Abilities.Water.WaterArms.Whip.Grab.Duration", 3500);
 
 			config.addDefault("Abilities.Water.WaterArms.Freeze.Range", 20);
 			config.addDefault("Abilities.Water.WaterArms.Freeze.Damage", 2);
@@ -1030,7 +1032,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Spear.Range", 30);
 			config.addDefault("Abilities.Water.WaterArms.Spear.Damage", 3);
 			config.addDefault("Abilities.Water.WaterArms.Spear.DamageEnabled", true);
-			config.addDefault("Abilities.Water.WaterArms.Spear.Sphere", 2);
+			config.addDefault("Abilities.Water.WaterArms.Spear.SphereRadius", 2);
 			config.addDefault("Abilities.Water.WaterArms.Spear.Duration", 4500);
 			config.addDefault("Abilities.Water.WaterArms.Spear.Length", 18);
 
@@ -1056,7 +1058,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterManipulation.CollisionRadius", 1.5);
 			config.addDefault("Abilities.Water.WaterManipulation.DeflectRange", 3);
 			config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
-			config.addDefault("Abilities.Water.WaterManipulation.Push", 0.3);
+			config.addDefault("Abilities.Water.WaterManipulation.Knockback", 0.3);
 			config.addDefault("Abilities.Water.WaterManipulation.Cooldown", 1000);
 
 			config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
@@ -1074,7 +1076,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Wave.SelectRange", 6);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.AnimationSpeed", 1.2);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.ChargeTime", 500);
-			config.addDefault("Abilities.Water.WaterSpout.Wave.FlightTime", 2500);
+			config.addDefault("Abilities.Water.WaterSpout.Wave.FlightDuration", 2500);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.3);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 6000);
 
@@ -1185,37 +1187,37 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.LavaFlow.RevertMaterial", "STONE");
 
 			config.addDefault("Abilities.Earth.EarthSmash.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthSmash.AllowGrab", true);
-			config.addDefault("Abilities.Earth.EarthSmash.AllowFlight", true);
-			config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 16);
+			config.addDefault("Abilities.Earth.EarthSmash.Duration", 30000);
 			config.addDefault("Abilities.Earth.EarthSmash.SelectRange", 12);
 			config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1500);
 			config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 3000);
-			config.addDefault("Abilities.Earth.EarthSmash.ShootRange", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.Damage", 5);
 			config.addDefault("Abilities.Earth.EarthSmash.Knockback", 3.5);
 			config.addDefault("Abilities.Earth.EarthSmash.Knockup", 0.15);
-			config.addDefault("Abilities.Earth.EarthSmash.FlightSpeed", 0.72);
-			config.addDefault("Abilities.Earth.EarthSmash.FlightTimer", 3000);
-			config.addDefault("Abilities.Earth.EarthSmash.RemoveTimer", 30000);
+			config.addDefault("Abilities.Earth.EarthSmash.Flight.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthSmash.Flight.Speed", 0.72);
+			config.addDefault("Abilities.Earth.EarthSmash.Flight.Duration", 3000);
+			config.addDefault("Abilities.Earth.EarthSmash.Flight.AnimationInterval", 0);
+			config.addDefault("Abilities.Earth.EarthSmash.Flight.DetectionRadius", 3.5);
+			config.addDefault("Abilities.Earth.EarthSmash.Grab.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthSmash.Grab.Range", 16);
+			config.addDefault("Abilities.Earth.EarthSmash.Grab.DetectionRadius", 2.5);
+			config.addDefault("Abilities.Earth.EarthSmash.Shoot.Range", 25);
+			config.addDefault("Abilities.Earth.EarthSmash.Shoot.AnimationInterval", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.RequiredBendableBlocks", 11);
 			config.addDefault("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough", 3);
-			config.addDefault("Abilities.Earth.EarthSmash.ShootAnimationInterval", 25);
-			config.addDefault("Abilities.Earth.EarthSmash.FlightAnimationInterval", 0);
 			config.addDefault("Abilities.Earth.EarthSmash.LiftAnimationInterval", 30);
-			config.addDefault("Abilities.Earth.EarthSmash.GrabDetectionRadius", 2.5);
-			config.addDefault("Abilities.Earth.EarthSmash.FlightDetectionRadius", 3.5);
 
 			config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
 			config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
-			config.addDefault("Abilities.Earth.MetalClips.CrushDamage", 1);
 			config.addDefault("Abilities.Earth.MetalClips.Range", 10);
-			config.addDefault("Abilities.Earth.MetalClips.MagnetRange", 20);
-			config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
 			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 6000);
-			config.addDefault("Abilities.Earth.MetalClips.CrushCooldown", 2000);
-			config.addDefault("Abilities.Earth.MetalClips.MagnetCooldown", 1000);
 			config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
+			config.addDefault("Abilities.Earth.MetalClips.Magnet.Range", 20);
+			config.addDefault("Abilities.Earth.MetalClips.Magnet.Speed", 0.6);
+			config.addDefault("Abilities.Earth.MetalClips.Magnet.Cooldown", 1000);
+			config.addDefault("Abilities.Earth.MetalClips.Crush.Damage", 1);
+			config.addDefault("Abilities.Earth.MetalClips.Crush.Cooldown", 2000);
 			config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", true);
 
 			config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
@@ -1247,7 +1249,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthPillars.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Cooldown", 8000);
 			config.addDefault("Abilities.Earth.EarthPillars.Radius", 9);
-			config.addDefault("Abilities.Earth.EarthPillars.Power", 1.2);
+			config.addDefault("Abilities.Earth.EarthPillars.Knockup", 1.2);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
@@ -1264,7 +1266,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Combustion.Enabled", true);
 			config.addDefault("Abilities.Fire.Combustion.Cooldown", 10000);
 			config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
-			config.addDefault("Abilities.Fire.Combustion.Power", 1.0);
+			config.addDefault("Abilities.Fire.Combustion.ExplosivePower", 1.0);
 			config.addDefault("Abilities.Fire.Combustion.Damage", 4);
 			config.addDefault("Abilities.Fire.Combustion.Radius", 4);
 			config.addDefault("Abilities.Fire.Combustion.Range", 35);
@@ -1274,7 +1276,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireBlast.Speed", 20);
 			config.addDefault("Abilities.Fire.FireBlast.Range", 20);
 			config.addDefault("Abilities.Fire.FireBlast.CollisionRadius", 1.5);
-			config.addDefault("Abilities.Fire.FireBlast.Push", 0.3);
+			config.addDefault("Abilities.Fire.FireBlast.Knockback", 0.3);
 			config.addDefault("Abilities.Fire.FireBlast.Damage", 3);
 			config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);
 			config.addDefault("Abilities.Fire.FireBlast.Dissipate", false);
@@ -1282,6 +1284,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireBlast.SmokeParticleRadius", 0.3);
 			config.addDefault("Abilities.Fire.FireBlast.FlameParticleRadius", 0.275);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.ChargeTime", 3000);
+			config.addDefault("Abilities.Fire.FireBlast.Charged.Cooldown", 2000);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.CollisionRadius", 2);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.Damage", 4);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.DamageRadius", 4);
@@ -1326,8 +1329,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireShield.Disc.Radius", 1.5);
 			config.addDefault("Abilities.Fire.FireShield.Disc.Duration", 1000);
 			config.addDefault("Abilities.Fire.FireShield.Disc.Cooldown", 500);
-			config.addDefault("Abilities.Fire.FireShield.Interval", 100);
-			config.addDefault("Abilities.Fire.FireShield.FireTicks", 2);
+			config.addDefault("Abilities.Fire.FireShield.Shield.FireTicks", 2);
+			config.addDefault("Abilities.Fire.FireShield.Disc.FireTicks", 2);
 
 			config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
 			config.addDefault("Abilities.Fire.HeatControl.Cook.Interval", 1000);

@@ -21,6 +21,7 @@ public class AirSpout extends AirAbility {
 	private int angle;
 	private long animTime;
 	private long interval;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;

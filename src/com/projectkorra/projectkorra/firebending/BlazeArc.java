@@ -14,6 +14,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class BlazeArc extends FireAbility {
@@ -26,7 +27,9 @@ public class BlazeArc extends FireAbility {
 
 	private long time;
 	private long interval;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Location origin;
 	private Location location;

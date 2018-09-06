@@ -18,15 +18,17 @@ import com.projectkorra.projectkorra.command.Commands;
 
 public class Tornado extends AirAbility {
 
-	private final long cooldown;
-	private final long duration;
+	@Attribute(Attribute.COOLDOWN)
+	private long cooldown;
+	@Attribute(Attribute.DURATION)
+	private long duration;
 	private int numberOfStreams;
 	private int particleCount;
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	@Attribute(Attribute.HEIGHT)
 	private double maxHeight;
-	@Attribute(Attribute.POWER)
+	@Attribute(Attribute.KNOCKBACK)
 	private double playerPushFactor;
 	@Attribute(Attribute.RADIUS)
 	private double radius;

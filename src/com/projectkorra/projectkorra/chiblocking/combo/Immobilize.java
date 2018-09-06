@@ -13,12 +13,15 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class Immobilize extends ChiAbility implements ComboAbility {
 
+	@Attribute(Attribute.DURATION)
 	private long duration;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Entity target;
 

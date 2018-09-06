@@ -10,15 +10,18 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class EarthDomeOthers extends EarthAbility {
 
-	public Vector direction;
-	public double range = 0, maxRange;
-	public Location loc;
+	private Vector direction;
+	private double range;
+	@Attribute(Attribute.RANGE)
+	private double maxRange;
+	private Location loc;
 
 	public EarthDomeOthers(final Player player) {
 		super(player);
@@ -34,6 +37,7 @@ public class EarthDomeOthers extends EarthAbility {
 		if (!isEarthbendable(this.loc.getBlock().getRelative(BlockFace.DOWN).getType(), true, true, true)) {
 			return;
 		}
+		this.range = 0;
 		this.direction = this.loc.getDirection().setY(0);
 		this.maxRange = getConfig().getDouble("Abilities.Earth.EarthDome.Range");
 		this.start();

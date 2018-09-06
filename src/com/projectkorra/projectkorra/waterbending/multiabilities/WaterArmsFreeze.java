@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -23,9 +24,12 @@ public class WaterArmsFreeze extends IceAbility {
 
 	private boolean cancelled;
 	private boolean usageCooldownEnabled;
+	@Attribute(Attribute.RANGE)
 	private int iceRange;
 	private int distanceTravelled;
+	@Attribute(Attribute.DAMAGE)
 	private double iceDamage;
+	@Attribute(Attribute.COOLDOWN)
 	private long usageCooldown;
 	private Arm arm;
 	private Location location;

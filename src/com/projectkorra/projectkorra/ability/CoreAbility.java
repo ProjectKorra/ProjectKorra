@@ -641,7 +641,7 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility) coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 					PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
@@ -710,7 +710,7 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility) coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 				}
@@ -983,7 +983,6 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	private void modifyAttributes() {
-		System.out.println(attributeModifiers);
 		for (String attribute : attributeModifiers.keySet()) {
 			Field field = ATTRIBUTE_FIELDS.get(getClass()).get(attribute);
 			boolean accessibility = field.isAccessible();

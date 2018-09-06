@@ -102,7 +102,6 @@ public class Suffocate extends AirAbility {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
-
 		}
 
 		if (this.particleCount < 1) {

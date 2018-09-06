@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -43,19 +44,29 @@ public class WaterArms extends WaterAbility {
 	private boolean fullSource; // used to determine whip length in WaterArmsWhip.
 	private boolean leftArmConsumed;
 	private boolean rightArmConsumed;
+	@Attribute("CanUsePlantSource")
 	private boolean canUsePlantSource;
+	@Attribute("CanLightningStrikeArms")
 	private boolean lightningEnabled;
+	@Attribute("LightningOneHitKO")
 	private boolean lightningKill;
 	private int lengthReduction;
+	@Attribute("InitialLength")
 	private int initLength;
+	@Attribute(Attribute.SELECT_RANGE)
 	private int sourceGrabRange;
+	@Attribute("MaxPunches")
 	private int maxPunches;
+	@Attribute("MaxIceBlasts")
 	private int maxIceBlasts;
+	@Attribute("MaxUses")
 	private int maxUses;
 	private int selectedSlot;
 	private int freezeSlot;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long lastClickTime;
+	@Attribute("LightningDamage")
 	private double lightningDamage;
 	private World world;
 	private String sneakMsg;
@@ -651,22 +662,6 @@ public class WaterArms extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-
-	public boolean isCooldownLeft() {
-		return this.cooldownLeft;
-	}
-
-	public void setCooldownLeft(final boolean cooldownLeft) {
-		this.cooldownLeft = cooldownLeft;
-	}
-
-	public boolean isCooldownRight() {
-		return this.cooldownRight;
-	}
-
-	public void setCooldownRight(final boolean cooldownRight) {
-		this.cooldownRight = cooldownRight;
 	}
 
 	public boolean isCanUsePlantSource() {

@@ -13,6 +13,7 @@ public class QuickStrike extends ChiAbility {
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute("ChiBlockChance")
 	private int blockChance;
 	private Entity target;
 	@Attribute(Attribute.COOLDOWN)

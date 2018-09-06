@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
@@ -25,12 +26,16 @@ import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 public class HealingWaters extends HealingAbility {
 
 	// Configurable Variables.
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private long interval;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
-	private int power;
-	private int potDuration;
+	@Attribute("PotionPotency")
+	private int potionPotency;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	private boolean enableParticles;
 
@@ -76,8 +81,7 @@ public class HealingWaters extends HealingAbility {
 		this.range = getConfig().getDouble("Abilities.Water.HealingWaters.Range");
 		this.interval = getConfig().getLong("Abilities.Water.HealingWaters.Interval");
 		this.chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
-		this.power = getConfig().getInt("Abilities.Water.HealingWaters.Power");
-		this.potDuration = getConfig().getInt("Abilities.Water.HealingWaters.HealingDuration");
+		this.potionPotency = getConfig().getInt("Abilities.Water.HealingWaters.PotionPotency");
 		this.duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
 		this.enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
 		this.hex = "00ffff";
@@ -210,7 +214,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(final Player player) {
 		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation())) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, this.potDuration, this.power));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
 			AirAbility.breakBreathbendingHold(player);
 			this.healing = true;
 			this.healingSelf = true;
@@ -219,7 +223,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(final LivingEntity livingEntity) {
 		if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
-			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, this.potDuration, this.power));
+			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
 			AirAbility.breakBreathbendingHold(livingEntity);
 			this.healing = true;
 			this.healingSelf = false;

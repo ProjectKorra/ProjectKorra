@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -27,12 +28,19 @@ public class EarthBlast extends EarthAbility {
 	private boolean canHitSelf;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactor;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
+	@Attribute("DeflectRange")
 	private double deflectRange;
 	private double collisionRadius;
 	private byte sourceData;

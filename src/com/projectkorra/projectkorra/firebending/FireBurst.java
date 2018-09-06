@@ -13,13 +13,19 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class FireBurst extends FireAbility {
 
+	@Attribute("Charged")
 	private boolean charged;
+	@Attribute(Attribute.DAMAGE)
 	private int damage;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
+	@Attribute(Attribute.RANGE)
 	private long range;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angleTheta;
 	private double anglePhi;
@@ -46,7 +52,7 @@ public class FireBurst extends FireAbility {
 		if (isDay(player.getWorld())) {
 			this.chargeTime /= getDayFactor();
 		}
-		if (this.bPlayer.isAvatarState() || isSozinsComet(player.getWorld())) {
+		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
 			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown");

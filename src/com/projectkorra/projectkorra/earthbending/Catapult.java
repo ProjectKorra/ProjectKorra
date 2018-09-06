@@ -13,12 +13,14 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class Catapult extends EarthAbility {
 
 	private double stageTimeMult;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Location origin;
 	private Location target;

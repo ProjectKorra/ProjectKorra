@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
@@ -39,6 +40,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 
+	@Attribute(Attribute.RADIUS)
 	private double radius;
 	private boolean charging;
 	private boolean iceWave;
@@ -49,14 +51,22 @@ public class WaterSpoutWave extends WaterAbility {
 	private boolean revertIceSphere;
 	private int progressCounter;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long revertSphereTime;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private double chargeTime;
-	private double flightTime;
+	@Attribute("Flight" + Attribute.DURATION)
+	private double flightDuration;
+	@Attribute("Wave" + Attribute.RADIUS)
 	private double waveRadius;
+	@Attribute("Thaw" + Attribute.RADIUS)
 	private double thawRadius;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double animationSpeed;
 	private AbilityType type;
@@ -84,7 +94,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.speed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
 		this.damage = getConfig().getDouble("Abilities.Water.IceWave.Damage");
 		this.chargeTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
-		this.flightTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightTime");
+		this.flightDuration = getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightDuration");
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
 		this.revertSphereTime = getConfig().getLong("Abilities.Water.IceWave.RevertSphereTime");
 		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.IceWave.RevertSphere");
@@ -100,7 +110,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = 0;
-			this.flightTime = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterWave.FlightTime");
+			this.flightDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterWave.FlightDuration");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceWave.Damage");
 			this.cooldown = 0;
 		}
@@ -263,13 +273,13 @@ public class WaterSpoutWave extends WaterAbility {
 			} else {
 				this.moving = true;
 				this.collidable = true;
-				if ((System.currentTimeMillis() - this.time > this.flightTime && !this.bPlayer.isAvatarState()) || this.player.isSneaking()) {
+				if ((System.currentTimeMillis() - this.time > this.flightDuration && !this.bPlayer.isAvatarState()) || this.player.isSneaking()) {
 					this.remove();
 					return;
 				}
 
 				this.player.setFallDistance(0f);
-				double currentSpeed = this.speed - (this.speed * (System.currentTimeMillis() - this.time) / this.flightTime);
+				double currentSpeed = this.speed - (this.speed * (System.currentTimeMillis() - this.time) / this.flightDuration);
 				final double nightSpeed = this.getNightFactor(currentSpeed * 0.9);
 				currentSpeed = nightSpeed > currentSpeed ? nightSpeed : currentSpeed;
 				if (this.bPlayer.isAvatarState()) {
@@ -607,12 +617,12 @@ public class WaterSpoutWave extends WaterAbility {
 		this.chargeTime = chargeTime;
 	}
 
-	public double getFlightTime() {
-		return this.flightTime;
+	public double getFlightDuration() {
+		return this.flightDuration;
 	}
 
-	public void setFlightTime(final double flightTime) {
-		this.flightTime = flightTime;
+	public void setFlightDuration(final double flightDuration) {
+		this.flightDuration = flightDuration;
 	}
 
 	public double getWaveRadius() {

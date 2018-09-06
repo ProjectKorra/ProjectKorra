@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -23,9 +24,17 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class EarthPillars extends EarthAbility implements ComboAbility {
-	public double radius, damage, power, fallThreshold;
-	public boolean damaging;
-	public Map<RaiseEarth, LivingEntity> entities;
+	
+	@Attribute(Attribute.RADIUS)
+	private double radius;
+	@Attribute(Attribute.DAMAGE)
+	private double damage;
+	@Attribute(Attribute.KNOCKUP)
+	private double knockup;
+	private double fallThreshold;
+	private boolean damaging;
+	private boolean firstTime;
+	private Map<RaiseEarth, LivingEntity> entities;
 
 	public EarthPillars(final Player player, final boolean fall) {
 		super(player);
@@ -40,17 +49,8 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 				return;
 			}
 		}
-
-		for (final Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.radius)) {
-			if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId() && isEarthbendable(e.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
-				ParticleEffect.BLOCK_DUST.display(new BlockData(e.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte) 0), 1f, 0.1f, 1f, 0, 6, e.getLocation(), 255);
-				this.affect((LivingEntity) e);
-			}
-		}
-
-		if (this.entities.isEmpty()) {
-			return;
-		}
+		
+		this.firstTime = true;
 
 		this.start();
 	}
@@ -58,16 +58,16 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	private void setFields(final boolean fall) {
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthPillars.Radius");
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthPillars.Damage.Value");
-		this.power = getConfig().getDouble("Abilities.Earth.EarthPillars.Power");
+		this.knockup = getConfig().getDouble("Abilities.Earth.EarthPillars.Knockup");
 		this.damaging = getConfig().getBoolean("Abilities.Earth.EarthPillars.Damage.Enabled");
 		this.entities = new HashMap<>();
 
 		if (fall) {
 			this.fallThreshold = getConfig().getDouble("Abilities.Earth.EarthPillars.FallThreshold");
 			this.damaging = true;
-			this.damage *= this.power;
+			this.damage *= this.knockup;
 			this.radius = this.fallThreshold;
-			this.power += (this.player.getFallDistance() > this.fallThreshold ? this.player.getFallDistance() : this.fallThreshold) / 100;
+			this.knockup += (this.player.getFallDistance() > this.fallThreshold ? this.player.getFallDistance() : this.fallThreshold) / 100;
 		}
 	}
 
@@ -78,6 +78,20 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
+		if (firstTime) {
+			for (final Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.radius)) {
+				if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId() && isEarthbendable(e.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
+					ParticleEffect.BLOCK_DUST.display(new BlockData(e.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte) 0), 1f, 0.1f, 1f, 0, 6, e.getLocation(), 255);
+					this.affect((LivingEntity) e);
+				}
+			}
+
+			if (this.entities.isEmpty()) {
+				return;
+			}
+			firstTime = false;
+		}
+		
 		final List<RaiseEarth> removal = new ArrayList<>();
 		for (final RaiseEarth abil : this.entities.keySet()) {
 			if (abil.isRemoved() && abil.isStarted()) {
@@ -87,7 +101,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 						continue;
 					}
 
-					lent.setVelocity(new Vector(0, this.power, 0));
+					lent.setVelocity(new Vector(0, this.knockup, 0));
 				}
 				if (this.damaging) {
 					DamageHandler.damageEntity(lent, this.damage, this);

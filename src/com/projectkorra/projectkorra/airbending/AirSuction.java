@@ -45,7 +45,7 @@ public class AirSuction extends AirAbility {
 	private double range;
 	@Attribute(Attribute.RADIUS)
 	private double radius;
-	@Attribute(Attribute.POWER)
+	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactor;
 	private Random random;
 	private Location location;

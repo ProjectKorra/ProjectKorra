@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -22,11 +23,16 @@ public class TorrentWave extends WaterAbility {
 
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double radius;
+	@Attribute(Attribute.RADIUS)
 	private double maxRadius;
+	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
+	@Attribute(Attribute.HEIGHT)
 	private double maxHeight;
+	@Attribute("Grow" + Attribute.SPEED)
 	private double growSpeed;
 	private Location origin;
 	private ArrayList<TempBlock> blocks;

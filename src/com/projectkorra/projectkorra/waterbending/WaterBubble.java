@@ -15,15 +15,20 @@ import org.bukkit.material.MaterialData;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterBubble extends WaterAbility {
 
-	private static long clickDuration; // How long the click variant lasts.
-	private static double maxRadius;
-	private static double speed;
-	private static boolean requireAir = false;
+	@Attribute("Click" + Attribute.DURATION)
+	private long clickDuration;
+	@Attribute(Attribute.RADIUS)
+	private double maxRadius;
+	@Attribute(Attribute.SPEED)
+	private double speed;
+	@Attribute("RequireAir")
+	private boolean requireAir;
 
 	private boolean isShift;
 	private double radius;

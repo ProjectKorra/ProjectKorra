@@ -8,14 +8,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class RaiseEarthWall extends EarthAbility {
 
+	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
+	@Attribute(Attribute.HEIGHT)
 	private int height;
+	@Attribute(Attribute.WIDTH)
 	private int width;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Location location;
 
@@ -35,6 +40,40 @@ public class RaiseEarthWall extends EarthAbility {
 			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
 		}
 
+		start();
+	}
+
+	private static Vector getDegreeRoundedVector(Vector vec, final double degreeIncrement) {
+		if (vec == null) {
+			return null;
+		}
+		vec = vec.normalize();
+		final double[] dims = { vec.getX(), vec.getY(), vec.getZ() };
+
+		for (int i = 0; i < dims.length; i++) {
+			final double dim = dims[i];
+			final int sign = dim >= 0 ? 1 : -1;
+			final int dimDivIncr = (int) (dim / degreeIncrement);
+
+			final double lowerBound = dimDivIncr * degreeIncrement;
+			final double upperBound = (dimDivIncr + (1 * sign)) * degreeIncrement;
+
+			if (Math.abs(dim - lowerBound) < Math.abs(dim - upperBound)) {
+				dims[i] = lowerBound;
+			} else {
+				dims[i] = upperBound;
+			}
+		}
+		return new Vector(dims[0], dims[1], dims[2]);
+	}
+
+	@Override
+	public String getName() {
+		return "RaiseEarth";
+	}
+
+	@Override
+	public void progress() {
 		final Vector direction = player.getEyeLocation().getDirection().normalize();
 		double ox, oy, oz;
 		direction.setY(0);
@@ -90,39 +129,7 @@ public class RaiseEarthWall extends EarthAbility {
 		if (shouldAddCooldown) {
 			this.bPlayer.addCooldown("RaiseEarthWall", this.cooldown);
 		}
-	}
-
-	private static Vector getDegreeRoundedVector(Vector vec, final double degreeIncrement) {
-		if (vec == null) {
-			return null;
-		}
-		vec = vec.normalize();
-		final double[] dims = { vec.getX(), vec.getY(), vec.getZ() };
-
-		for (int i = 0; i < dims.length; i++) {
-			final double dim = dims[i];
-			final int sign = dim >= 0 ? 1 : -1;
-			final int dimDivIncr = (int) (dim / degreeIncrement);
-
-			final double lowerBound = dimDivIncr * degreeIncrement;
-			final double upperBound = (dimDivIncr + (1 * sign)) * degreeIncrement;
-
-			if (Math.abs(dim - lowerBound) < Math.abs(dim - upperBound)) {
-				dims[i] = lowerBound;
-			} else {
-				dims[i] = upperBound;
-			}
-		}
-		return new Vector(dims[0], dims[1], dims[2]);
-	}
-
-	@Override
-	public String getName() {
-		return "RaiseEarth";
-	}
-
-	@Override
-	public void progress() {
+		this.remove();
 	}
 
 	@Override

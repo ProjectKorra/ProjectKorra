@@ -72,30 +72,6 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
     </dependency>
-    <!-- PK RPG -->
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>rpg</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ProjectKorraRPG.jar</systemPath>
-    </dependency>
-    <!-- PK ITEMS -->
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>items</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ProjectKorraItems.jar</systemPath>
-    </dependency>
-    <!-- PK Spirits -->
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>spirits</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ProjectKorraSpirits.jar</systemPath>
-    </dependency>
     <!-- Residence -->
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>

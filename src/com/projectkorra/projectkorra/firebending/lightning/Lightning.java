@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
@@ -26,26 +27,40 @@ public class Lightning extends LightningAbility {
 
 	private static final int POINT_GENERATION = 5;
 
+	@Attribute("Charged")
 	private boolean charged;
 	private boolean hitWater;
 	private boolean hitIce;
 	private boolean selfHitWater;
 	private boolean selfHitClose;
+	@Attribute("ArcOnIce")
 	private boolean arcOnIce;
 	private int waterArcs;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private double chargeTime;
+	@Attribute("SubArcChance")
 	private double subArcChance;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute("MaxChainArcs")
 	private double maxChainArcs;
+	@Attribute("Chain" + Attribute.RANGE)
 	private double chainRange;
+	@Attribute("WaterArc" + Attribute.RANGE)
 	private double waterArcRange;
+	@Attribute("ChainArcChance")
 	private double chainArcChance;
+	@Attribute("StunChance")
 	private double stunChance;
+	@Attribute("Stun" + Attribute.DURATION)
 	private double stunDuration;
+	@Attribute("MaxArcAngle")
 	private double maxArcAngle;
 	private double particleRotation;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private State state;
 	private Location origin;
@@ -108,10 +123,6 @@ public class Lightning extends LightningAbility {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.ChargeTime");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.Cooldown");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Lightning.Damage");
-
-		} else if (isSozinsComet(player.getWorld())) {
-			this.chargeTime = 0;
-			this.cooldown = 0;
 		}
 		this.start();
 	}

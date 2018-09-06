@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -46,19 +47,27 @@ public class PhaseChange extends IceAbility {
 	private final CopyOnWriteArrayList<TempBlock> blocks = new CopyOnWriteArrayList<>();
 	private final Random r = new Random();
 
+	@Attribute(Attribute.SELECT_RANGE)
 	private int sourceRange = 8;
 
 	// Freeze Variables.
+	@Attribute("Freeze" + Attribute.COOLDOWN)
 	private long freezeCooldown = 500;
+	@Attribute("Freeze" + Attribute.RADIUS)
 	private int freezeRadius = 3;
+	@Attribute("FreezeDepth")
 	private int depth = 1;
+	@Attribute("Control" + Attribute.RADIUS)
 	private double controlRadius = 25;
 
 	// Melt Variables.
 	private Location meltLoc;
+	@Attribute("Melt" + Attribute.COOLDOWN)
 	private long meltCooldown = 7000;
 	private int meltRadius;
+	@Attribute("Melt" + Attribute.RADIUS)
 	private int meltMaxRadius = 7;
+	@Attribute("Melt" + Attribute.SPEED)
 	private double meltSpeed = 8;
 	private double meltTicks = 0;
 	private boolean allowMeltFlow;

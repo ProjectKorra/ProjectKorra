@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -27,27 +28,40 @@ public class EarthSmash extends EarthAbility {
 		START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
 	}
 
+	@Attribute("AllowGrab")
 	private boolean allowGrab;
+	@Attribute("AllowFlight")
 	private boolean allowFlight;
 	private int animationCounter;
 	private int progressCounter;
 	private int requiredBendableBlocks;
 	private int maxBlocksToPassThrough;
 	private long delay;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
-	private long removeTimer;
-	private long flightRemoveTimer;
+	@Attribute(Attribute.DURATION)
+	private long duration;
+	@Attribute("Flight" + Attribute.DURATION)
+	private long flightDuration;
 	private long flightStartTime;
 	private long shootAnimationInterval;
 	private long flightAnimationInterval;
 	private long liftAnimationInterval;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
+	@Attribute("GrabRange")
 	private double grabRange;
+	@Attribute("ShootRange")
 	private double shootRange;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
+	@Attribute(Attribute.KNOCKUP)
 	private double knockup;
+	@Attribute(Attribute.SPEED)
 	private double flightSpeed;
 	private double grabbedDistance;
 	private double grabDetectionRadius;
@@ -125,42 +139,42 @@ public class EarthSmash extends EarthAbility {
 
 	public void setFields() {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(this.player);
-		this.shootAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.ShootAnimationInterval");
-		this.flightAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.FlightAnimationInterval");
+		this.shootAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.Shoot.AnimationInterval");
+		this.flightAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.Flight.AnimationInterval");
 		this.liftAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.LiftAnimationInterval");
-		this.grabDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.GrabDetectionRadius");
-		this.flightDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.FlightDetectionRadius");
-		this.allowGrab = getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
-		this.allowFlight = getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowFlight");
+		this.grabDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.Grab.DetectionRadius");
+		this.flightDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.Flight.DetectionRadius");
+		this.allowGrab = getConfig().getBoolean("Abilities.Earth.EarthSmash.Grab.Enabled");
+		this.allowFlight = getConfig().getBoolean("Abilities.Earth.EarthSmash.Flight.Enabled");
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthSmash.SelectRange");
-		this.grabRange = getConfig().getDouble("Abilities.Earth.EarthSmash.GrabRange");
-		this.shootRange = getConfig().getDouble("Abilities.Earth.EarthSmash.ShootRange");
+		this.grabRange = getConfig().getDouble("Abilities.Earth.EarthSmash.Grab.Range");
+		this.shootRange = getConfig().getDouble("Abilities.Earth.EarthSmash.Shoot.Range");
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
 		this.knockback = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockback");
 		this.knockup = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockup");
-		this.flightSpeed = getConfig().getDouble("Abilities.Earth.EarthSmash.FlightSpeed");
+		this.flightSpeed = getConfig().getDouble("Abilities.Earth.EarthSmash.Flight.Speed");
 		this.chargeTime = getConfig().getLong("Abilities.Earth.EarthSmash.ChargeTime");
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
-		this.flightRemoveTimer = getConfig().getLong("Abilities.Earth.EarthSmash.FlightTimer");
-		this.removeTimer = getConfig().getLong("Abilities.Earth.EarthSmash.RemoveTimer");
+		this.flightDuration = getConfig().getLong("Abilities.Earth.EarthSmash.Flight.Duration");
+		this.duration = getConfig().getLong("Abilities.Earth.EarthSmash.Duration");
 
 		if (bPlayer.isAvatarState()) {
 			this.selectRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange");
-			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange");
+			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Grab.Range");
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Damage");
 			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback");
-			this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed");
-			this.flightRemoveTimer = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer");
-			this.shootRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange");
+			this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Flight.Speed");
+			this.flightDuration = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Flight.Duration");
+			this.shootRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Shoot.Range");
 		}
 	}
 
 	@Override
 	public void progress() {
 		this.progressCounter++;
-		if (this.state == State.LIFTED && this.removeTimer > 0 && System.currentTimeMillis() - this.getStartTime() > this.removeTimer) {
+		if (this.state == State.LIFTED && this.duration > 0 && System.currentTimeMillis() - this.getStartTime() > this.duration) {
 			this.remove();
 			return;
 		}
@@ -287,7 +301,7 @@ public class EarthSmash extends EarthAbility {
 				}
 				this.draw();
 			}
-			if (System.currentTimeMillis() - this.flightStartTime > this.flightRemoveTimer) {
+			if (System.currentTimeMillis() - this.flightStartTime > this.flightDuration) {
 				this.remove();
 				return;
 			}
@@ -782,20 +796,20 @@ public class EarthSmash extends EarthAbility {
 		this.chargeTime = chargeTime;
 	}
 
-	public long getRemoveTimer() {
-		return this.removeTimer;
+	public long getDuration() {
+		return this.duration;
 	}
 
-	public void setRemoveTimer(final long removeTimer) {
-		this.removeTimer = removeTimer;
+	public void setDuration(final long duration) {
+		this.duration = duration;
 	}
 
-	public long getFlightRemoveTimer() {
-		return this.flightRemoveTimer;
+	public long getFlightDuration() {
+		return this.flightDuration;
 	}
 
-	public void setFlightRemoveTimer(final long flightRemoveTimer) {
-		this.flightRemoveTimer = flightRemoveTimer;
+	public void setFlightDuration(final long flightDuration) {
+		this.flightDuration = flightDuration;
 	}
 
 	public long getFlightStartTime() {

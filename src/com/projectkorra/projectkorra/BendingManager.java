@@ -18,7 +18,6 @@ import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
-import com.projectkorra.rpg.RPGMethods;
 
 public class BendingManager implements Runnable {
 
@@ -58,11 +57,6 @@ public class BendingManager implements Runnable {
 					this.times.put(world, false);
 				}
 			} else {
-				if (GeneralMethods.hasRPG()) {
-					if (RPGMethods.isFullMoon(world) || RPGMethods.isLunarEclipse(world) || RPGMethods.isSolarEclipse(world) || RPGMethods.isSozinsComet(world)) {
-						continue;
-					}
-				}
 				if (this.times.get(world) && !ElementalAbility.isDay(world)) {
 					// The hashmap says it is day, but it is not.
 					this.times.put(world, false); // Sets time to night.

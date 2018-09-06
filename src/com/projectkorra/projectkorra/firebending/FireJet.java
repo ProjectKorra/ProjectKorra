@@ -10,14 +10,19 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireJet extends FireAbility {
 
+	@Attribute("AvatarStateToggle")
 	private boolean avatarStateToggled;
 	private long time;
+	@Attribute(Attribute.DURATION)
 	private long duration;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Random random;
 

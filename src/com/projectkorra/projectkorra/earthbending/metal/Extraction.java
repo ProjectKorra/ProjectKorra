@@ -11,12 +11,17 @@ import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class Extraction extends MetalAbility {
 
+	@Attribute("DoubleChance")
 	private int doubleChance;
+	@Attribute("TripleChance")
 	private int tripleChance;
+	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Block originBlock;
 

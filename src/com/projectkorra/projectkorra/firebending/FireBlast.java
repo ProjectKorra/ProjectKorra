@@ -30,6 +30,7 @@ public class FireBlast extends FireAbility {
 
 	private static final int MAX_TICKS = 10000;
 
+	@Attribute("PowerFurnace")
 	private boolean powerFurnace;
 	private boolean showParticles;
 	private boolean dissipate;
@@ -38,7 +39,6 @@ public class FireBlast extends FireAbility {
 	private int ticks;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
-	@Attribute(Attribute.SPEED)
 	private double speedFactor;
 	@Attribute(Attribute.RANGE)
 	private double range;
@@ -47,8 +47,10 @@ public class FireBlast extends FireAbility {
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	private double collisionRadius;
+	@Attribute(Attribute.FIRE_TICK)
 	private double fireTicks;
-	private double pushFactor;
+	@Attribute(Attribute.KNOCKBACK)
+	private double knockback;
 	private Random random;
 	private Location location;
 	private Location origin;
@@ -109,7 +111,7 @@ public class FireBlast extends FireAbility {
 		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
 		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
-		this.pushFactor = getConfig().getDouble("Abilities.Fire.FireBlast.Push");
+		this.knockback = getConfig().getDouble("Abilities.Fire.FireBlast.Knockback");
 		this.random = new Random();
 	}
 
@@ -131,9 +133,9 @@ public class FireBlast extends FireAbility {
 	private void affect(final Entity entity) {
 		if (entity.getUniqueId() != this.player.getUniqueId()) {
 			if (this.bPlayer.isAvatarState()) {
-				GeneralMethods.setVelocity(entity, this.direction.clone().multiply(AvatarState.getValue(this.pushFactor)));
+				GeneralMethods.setVelocity(entity, this.direction.clone().multiply(AvatarState.getValue(this.knockback)));
 			} else {
-				GeneralMethods.setVelocity(entity, this.direction.clone().multiply(this.pushFactor));
+				GeneralMethods.setVelocity(entity, this.direction.clone().multiply(this.knockback));
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (this.fireTicks * 20));
@@ -365,11 +367,11 @@ public class FireBlast extends FireAbility {
 	}
 
 	public double getPushFactor() {
-		return this.pushFactor;
+		return this.knockback;
 	}
 
 	public void setPushFactor(final double pushFactor) {
-		this.pushFactor = pushFactor;
+		this.knockback = pushFactor;
 	}
 
 	public Random getRandom() {

@@ -51,9 +51,9 @@ public class AirBlast extends AirAbility {
 	private double speedFactor;
 	@Attribute(Attribute.RANGE)
 	private double range;
-	@Attribute(Attribute.POWER)
+	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactor;
-	@Attribute(Attribute.POWER)
+	@Attribute(Attribute.KNOCKBACK + "Others")
 	private double pushFactorForOthers;
 	@Attribute(Attribute.DAMAGE)
 	private double damage;

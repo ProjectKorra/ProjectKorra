@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -36,7 +37,9 @@ public class OctopusForm extends WaterAbility {
 	private boolean settingUp;
 	private boolean forming;
 	private boolean formed;
+	@Attribute(Attribute.RANGE)
 	private int range;
+	@Attribute(Attribute.DAMAGE)
 	private int damage;
 	private int currentAnimationStep;
 	private int stepCounter;
@@ -44,11 +47,17 @@ public class OctopusForm extends WaterAbility {
 	private long time;
 	private long startTime;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
 	private long duration;
+	@Attribute("Attack" + Attribute.RANGE)
 	private double attackRange;
+	@Attribute("Usage" + Attribute.COOLDOWN)
 	private long usageCooldown;
+	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
 	private double startAngle;
 	private double angle;

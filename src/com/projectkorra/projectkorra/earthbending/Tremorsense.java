@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class Tremorsense extends EarthAbility {
 
@@ -21,10 +22,14 @@ public class Tremorsense extends EarthAbility {
 	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<Block, Player>();
 
 	private byte lightThreshold;
+	@Attribute("Depth")
 	private int maxDepth;
+	@Attribute(Attribute.RADIUS)
 	private int radius;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Block block;
+	@Attribute(Attribute.RANGE)
 	private int stickyRange;
 
 	public Tremorsense(final Player player, final boolean clicked) {

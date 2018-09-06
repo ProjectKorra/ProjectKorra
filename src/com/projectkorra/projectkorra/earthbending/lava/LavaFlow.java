@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -44,8 +45,10 @@ public class LavaFlow extends LavaAbility {
 	private long time;
 	private long clickLavaDelay;
 	private long clickLandDelay;
+	@Attribute("Click" + Attribute.COOLDOWN)
 	private long clickLavaCooldown;
 	private long clickLandCooldown;
+	@Attribute("Shift" + Attribute.COOLDOWN)
 	private long shiftCooldown;
 	private long clickLavaCleanupDelay;
 	private long clickLandCleanupDelay;
@@ -53,14 +56,20 @@ public class LavaFlow extends LavaAbility {
 	private double particleOffset;
 	private double currentRadius;
 	private double shiftPlatformRadius;
+	@Attribute("Shift" + Attribute.RADIUS)
 	private double shiftMaxRadius;
+	@Attribute("Shift" + Attribute.SPEED)
 	private double shiftFlowSpeed;
 	private double shiftRemoveSpeed;
 	private double shiftRemoveDelay;
+	@Attribute(Attribute.RANGE)
 	private double clickRange;
+	@Attribute("Click" + Attribute.RADIUS)
 	private double clickLavaRadius;
 	private double clickLandRadius;
+	@Attribute("ClickLava" + Attribute.SPEED)
 	private double lavaCreateSpeed;
+	@Attribute("ClickLand" + Attribute.SPEED)
 	private double landCreateSpeed;
 	private AbilityType type;
 	private Location origin;

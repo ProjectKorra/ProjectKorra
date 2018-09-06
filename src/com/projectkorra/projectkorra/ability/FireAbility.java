@@ -26,7 +26,6 @@ import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
-import com.projectkorra.rpg.RPGMethods;
 
 public abstract class FireAbility extends ElementalAbility {
 
@@ -61,10 +60,6 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 	}
 
-	public double getDayFactor(final double value) {
-		return this.player != null ? getDayFactor(value, this.player.getWorld()) : 1;
-	}
-
 	/**
 	 * Returns if fire is allowed to completely replace blocks or if it should
 	 * place a temp fire block.
@@ -95,6 +90,10 @@ public abstract class FireAbility extends ElementalAbility {
 		loc.getBlock().setType(Material.FIRE);
 		TEMP_FIRE.put(loc, info);
 	}
+	
+	public double getDayFactor(final double value) {
+		return this.player != null ? value * getDayFactor() : 1;
+	}
 
 	public static double getDayFactor() {
 		return getConfig().getDouble("Properties.Fire.DayFactor");
@@ -113,17 +112,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 */
 	public static double getDayFactor(final double value, final World world) {
 		if (isDay(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (isSozinsComet(world)) {
-					return RPGMethods.getFactor("SozinsComet") * value;
-				} else if (isLunarEclipse(world)) {
-					return RPGMethods.getFactor("SolarEclipse") * value;
-				} else {
-					return value * getDayFactor();
-				}
-			} else {
-				return value * getDayFactor();
-			}
+			return value * getDayFactor();
 		}
 		return value;
 	}

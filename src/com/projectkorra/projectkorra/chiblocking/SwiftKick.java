@@ -14,6 +14,7 @@ public class SwiftKick extends ChiAbility {
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute("ChiBlockChance")
 	private int blockChance;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;

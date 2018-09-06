@@ -21,9 +21,10 @@ public class AirBurst extends AirAbility {
 	private float playerFallDistance;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double fallThreshold;
-	@Attribute(Attribute.POWER)
+	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactor;
 	@Attribute(Attribute.DAMAGE)
 	private double damage;

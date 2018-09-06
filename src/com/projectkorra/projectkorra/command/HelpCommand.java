@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.items.command.PKICommand;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -18,7 +17,6 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.rpg.commands.RPGCommand;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
@@ -37,6 +35,9 @@ public class HelpCommand extends PKCommand {
 	private final String avatar;
 	private final String invalidTopic;
 	private final String usage;
+	private final String rpgUsage;
+	private final String spiritsUsage;
+	private final String itemsUsage;
 
 	public HelpCommand() {
 		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
@@ -53,6 +54,9 @@ public class HelpCommand extends PKCommand {
 		this.avatar = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Avatar");
 		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
 		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
+		this.rpgUsage = ConfigManager.languageConfig.get().getString("Command.Help.RPGUsage");
+		this.spiritsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.SpiritsUsage");
+		this.itemsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ItemsUsage");
 	}
 
 	@Override
@@ -69,21 +73,13 @@ public class HelpCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.hasItems()) {
-				for (final PKICommand command : PKICommand.instances.values()) {
-					if (sender.hasPermission("bendingitems.command." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
+				strings.add(itemsUsage);
 			}
 			if (GeneralMethods.hasRPG()) {
-				for (final RPGCommand command : RPGCommand.instances.values()) {
-					if (sender.hasPermission("bending.command.rpg." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
+				strings.add(rpgUsage);
 			}
 			if (GeneralMethods.hasSpirits()) {
-				// spirits commands being added (if needed).
+				strings.add(spiritsUsage);
 			}
 			Collections.sort(strings);
 			Collections.reverse(strings);
@@ -109,21 +105,13 @@ public class HelpCommand extends PKCommand {
 				strings.add(command.getProperUse());
 			}
 			if (GeneralMethods.hasItems()) {
-				for (final PKICommand command : PKICommand.instances.values()) {
-					if (sender.hasPermission("bendingitems.command." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
+				strings.add(itemsUsage);
 			}
 			if (GeneralMethods.hasRPG()) {
-				for (final RPGCommand command : RPGCommand.instances.values()) {
-					if (sender.hasPermission("bending.command.rpg." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
+				strings.add(rpgUsage);
 			}
 			if (GeneralMethods.hasSpirits()) {
-				// spirits commands being added (if needed).
+				strings.add(spiritsUsage);
 			}
 			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", Integer.valueOf(arg), true)) {
 				if (firstMessage) {

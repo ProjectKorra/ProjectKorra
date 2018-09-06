@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -22,11 +23,15 @@ public class RaiseEarth extends EarthAbility {
 	private static final Map<Block, Block> ALL_AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
 	private int distance;
+	@Attribute(Attribute.HEIGHT)
 	private int height;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Block block;
 	private Vector direction;
