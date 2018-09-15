@@ -1429,6 +1429,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
 			config.addDefault("Abilities.Chi.AcrobatStance.Cooldown", 0);
+			config.addDefault("Abilities.Chi.AcrobatStance.Duration", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.ChiBlockBoost", 3);
 			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 1);
 			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 1);
@@ -1454,6 +1455,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
 			config.addDefault("Abilities.Chi.WarriorStance.Cooldown", 0);
+			config.addDefault("Abilities.Chi.WarriorStance.Duration", 0);
 			config.addDefault("Abilities.Chi.WarriorStance.Strength", 1);
 			config.addDefault("Abilities.Chi.WarriorStance.Resistance", -3);
 

@@ -15,10 +15,13 @@ public class WarriorStance extends ChiAbility {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
+	private long duration;
 	@Attribute("Strength")
 	private int strength;
 	@Attribute("Resistance")
 	private int resistance;
+	
 
 	public WarriorStance(final Player player) {
 		super(player);
@@ -26,6 +29,7 @@ public class WarriorStance extends ChiAbility {
 			return;
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.WarriorStance.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Chi.WarriorStance.Duration");
 		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
 		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 
@@ -47,6 +51,9 @@ public class WarriorStance extends ChiAbility {
 	public void progress() {
 		if (!this.bPlayer.canBendIgnoreBinds(this) || !this.bPlayer.hasElement(Element.CHI)) {
 			this.remove();
+			return;
+		} else if (duration != 0 && System.currentTimeMillis() > this.getStartTime() + duration) {
+			remove();
 			return;
 		}
 
