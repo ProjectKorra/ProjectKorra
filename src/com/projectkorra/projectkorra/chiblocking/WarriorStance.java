@@ -52,7 +52,7 @@ public class WarriorStance extends ChiAbility {
 		if (!this.bPlayer.canBendIgnoreBinds(this) || !this.bPlayer.hasElement(Element.CHI)) {
 			this.remove();
 			return;
-		} else if (duration != 0 && System.currentTimeMillis() > this.getStartTime() + duration) {
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
 			remove();
 			return;
 		}
@@ -117,6 +117,14 @@ public class WarriorStance extends ChiAbility {
 
 	public void setResistance(final int resistance) {
 		this.resistance = resistance;
+	}
+
+	public long getDuration() {
+		return this.duration;
+	}
+
+	public void setDuration(final long duration) {
+		this.duration = duration;
 	}
 
 }
