@@ -15,6 +15,8 @@ public class AcrobatStance extends ChiAbility {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
+	private long duration;
 	@Attribute(Attribute.SPEED)
 	private int speed;
 	@Attribute("Jump")
@@ -30,6 +32,7 @@ public class AcrobatStance extends ChiAbility {
 			return;
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.AcrobatStance.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Chi.AcrobatStance.Duration");
 		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
 		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
@@ -53,6 +56,9 @@ public class AcrobatStance extends ChiAbility {
 	public void progress() {
 		if (!this.bPlayer.canBendIgnoreBinds(this) || !this.bPlayer.hasElement(Element.CHI)) {
 			this.remove();
+			return;
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
+			remove();
 			return;
 		}
 
@@ -114,6 +120,14 @@ public class AcrobatStance extends ChiAbility {
 
 	public void setJump(final int jump) {
 		this.jump = jump;
+	}
+	
+	public long getDuration() {
+		return this.duration;
+	}
+	
+	public void setDuration(final long duration) {
+		this.duration = duration;
 	}
 
 	public double getChiBlockBoost() {
