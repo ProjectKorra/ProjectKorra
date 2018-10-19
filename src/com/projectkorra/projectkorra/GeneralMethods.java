@@ -125,7 +125,6 @@ import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TimeUtil;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -1109,7 +1108,7 @@ public class GeneralMethods {
 		Entity target = null;
 		final Location origin = player.getEyeLocation();
 		final Vector direction = player.getEyeLocation().getDirection().normalize();
-		for (final Entity entity : origin.getWorld().getEntities()) {
+		for (final Entity entity : getEntitiesAroundPoint(origin, range)) {
 			if (entity instanceof Player) {
 				if (((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
 					continue;
