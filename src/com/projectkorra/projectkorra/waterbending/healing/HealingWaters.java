@@ -126,7 +126,7 @@ public class HealingWaters extends HealingAbility {
 				WaterReturn.emptyWaterBottle(this.player);
 			}
 		} else {
-			GeneralMethods.displayColoredParticle(this.origin, this.hex);
+			GeneralMethods.displayColoredParticle(this.hex, this.origin);
 		}
 
 		// If the ability is charged, try healing.
@@ -242,7 +242,7 @@ public class HealingWaters extends HealingAbility {
 			final double angle = this.pstage * increment;
 			final double x = centre.getX() + (0.75 * Math.cos(angle));
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
-			GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x, centre.getY(), z), this.hex);
+			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
 
 			if (this.pstage >= 36) {
 				this.pstage = 0;
@@ -263,8 +263,8 @@ public class HealingWaters extends HealingAbility {
 				final double x2 = centre.getX() + (0.75 * Math.cos(angle2));
 				final double z2 = centre.getZ() + (0.75 * Math.sin(angle2));
 
-				GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1), this.hex);
-				GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2), this.hex);
+				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1));
+				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2));
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;
@@ -299,7 +299,7 @@ public class HealingWaters extends HealingAbility {
 			}
 		}
 
-		GeneralMethods.displayColoredParticle(this.location, this.hex);
+		GeneralMethods.displayColoredParticle(this.hex, this.location);
 	}
 
 	private void fillBottle() {

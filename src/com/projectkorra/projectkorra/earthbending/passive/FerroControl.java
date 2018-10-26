@@ -6,7 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -32,17 +33,21 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 		this.block = this.player.getTargetBlock((HashSet<Material>) null, 5);
 
 		if (this.block != null) {
-			if (this.block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
-				if (this.block.getData() >= 8) {
-					this.block = this.block.getRelative(BlockFace.DOWN);
-				}
-
-				this.block.setData((byte) ((this.block.getData() & 0x4) == 0x4 ? (this.block.getData() & ~0x4) : (this.block.getData() | 0x4)));
-				open = (this.block.getData() & 0x4) == 0x4;
+			if (this.block.getType() == Material.IRON_DOOR && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
+				Door door = (Door) this.block.getBlockData();
+				
+				door.setOpen(!door.isOpen());
+				this.block.setBlockData(door);
+				
+				open = door.isOpen();
 				used = true;
 			} else if (this.block.getType() == Material.IRON_TRAPDOOR && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
-				this.block.setData((byte) ((this.block.getData() & 0x4) == 0x4 ? (this.block.getData() & ~0x4) : (this.block.getData() | 0x4)));
-				open = (this.block.getData() & 0x4) == 0x4;
+				TrapDoor trap = (TrapDoor) this.block.getBlockData();
+				
+				trap.setOpen(!trap.isOpen());
+				this.block.setBlockData(trap);
+				
+				open = trap.isOpen();
 				used = true;
 				tDoor = true;
 			}

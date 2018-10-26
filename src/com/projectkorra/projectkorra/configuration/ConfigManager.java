@@ -431,7 +431,7 @@ public class ConfigManager {
 
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
 			earthBlocks.add("DIRT");
-			earthBlocks.add("MYCEL");
+			earthBlocks.add("MYCELIUM");
 			earthBlocks.add("GRASS");
 			earthBlocks.add("STONE");
 			earthBlocks.add("GRAVEL");
@@ -444,6 +444,7 @@ public class ConfigManager {
 			earthBlocks.add("COBBLESTONE");
 			earthBlocks.add("STEP");
 			earthBlocks.add("GRASS_PATH");
+			earthBlocks.add("GRASS_BLOCK");
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
 			metalBlocks.add("IRON_ORE");
@@ -451,7 +452,7 @@ public class ConfigManager {
 			metalBlocks.add("QUARTZ_ORE");
 			metalBlocks.add("IRON_BLOCK");
 			metalBlocks.add("GOLD_BLOCK");
-			metalBlocks.add("QUARTZ_BLOCK");
+			metalBlocks.add("NETHER_QUARTZ_BLOCK");
 
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
 			sandBlocks.add("SAND");

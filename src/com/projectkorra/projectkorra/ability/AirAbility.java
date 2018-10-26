@@ -16,7 +16,6 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 
 public abstract class AirAbility extends ElementalAbility {
 
@@ -43,8 +42,7 @@ public abstract class AirAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			final ParticleData particleData = new ParticleEffect.BlockData(Material.WOOL, (byte) 0);
-			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.WHITE_WOOL.createBlockData());
 		}
 	}
 
@@ -113,7 +111,7 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param amount The amount of particles
 	 */
 	public static void playAirbendingParticles(final Location loc, final int amount) {
-		playAirbendingParticles(loc, amount, (float) Math.random(), (float) Math.random(), (float) Math.random());
+		playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());
 	}
 
 	/**
@@ -126,8 +124,8 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param yOffset The yOffset to use
 	 * @param zOffset The zOffset to use
 	 */
-	public static void playAirbendingParticles(final Location loc, final int amount, final float xOffset, final float yOffset, final float zOffset) {
-		getAirbendingParticles().display(loc, xOffset, yOffset, zOffset, 0, amount);
+	public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+		getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
 	}
 
 	/**

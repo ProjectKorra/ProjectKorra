@@ -139,7 +139,7 @@ public class Torrent extends WaterAbility {
 		final List<Block> ice = GeneralMethods.getBlocksAroundPoint(this.location, this.layer);
 		for (final Block block : ice) {
 			if (isTransparent(this.player, block) && block.getType() != Material.ICE) {
-				final TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
+				final TempBlock tblock = new TempBlock(block, Material.ICE);
 				FROZEN_BLOCKS.put(tblock, this.player);
 				if (this.revert) {
 					tblock.setRevertTime(this.revertTime + (new Random().nextInt((500 + 500) + 1) - 500));
@@ -179,7 +179,7 @@ public class Torrent extends WaterAbility {
 					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
 						this.sourceBlock.setType(Material.AIR);
 					}
-					this.source = new TempBlock(this.sourceBlock, Material.STATIONARY_WATER, (byte) 8);
+					this.source = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(0));
 					this.location = this.sourceBlock.getLocation();
 				} else {
 					playFocusWaterEffect(this.sourceBlock);
@@ -233,7 +233,7 @@ public class Torrent extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.source = new TempBlock(this.location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+					this.source = new TempBlock(this.location.getBlock(), Material.WATER, GeneralMethods.getWaterData(0));
 				}
 			}
 			if (this.forming && !this.player.isSneaking()) {
@@ -254,7 +254,7 @@ public class Torrent extends WaterAbility {
 					final double dz = Math.sin(phi) * this.radius;
 					loc.add(dx, dy, dz);
 					if (isWater(loc.getBlock()) && GeneralMethods.isAdjacentToThreeOrMoreSources(loc.getBlock())) {
-						ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, loc.getBlock().getLocation().clone().add(.5, .5, .5), 255.0);
+						ParticleEffect.WATER_BUBBLE.display(loc.getBlock().getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 					}
 					loc.subtract(dx, dy, dz);
 				}
@@ -326,7 +326,7 @@ public class Torrent extends WaterAbility {
 				final Block block = blockloc.getBlock();
 				if (!doneBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, blockloc)) {
 					if (isTransparent(this.player, block)) {
-						this.launchedBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
+						this.launchedBlocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
 						doneBlocks.add(block);
 					} else if (!isTransparent(this.player, block)) {
 						break;
@@ -392,9 +392,9 @@ public class Torrent extends WaterAbility {
 			}
 			if (locBlock.getLocation().distanceSquared(targetLoc) > 1) {
 				if (isWater(locBlock)) {
-					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, locBlock.getLocation().clone().add(.5, .5, .5), 255.0);
+					ParticleEffect.WATER_BUBBLE.display(locBlock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 				}
-				newBlocks.add(new TempBlock(locBlock, Material.STATIONARY_WATER, (byte) 8));
+				newBlocks.add(new TempBlock(locBlock, Material.WATER, GeneralMethods.getWaterData(0)));
 			} else {
 				if (this.layer < this.maxLayer) {
 					if (this.layer == 0) {
@@ -459,7 +459,7 @@ public class Torrent extends WaterAbility {
 			final Block block = blockLoc.getBlock();
 			if (!doneBlocks.contains(block)) {
 				if (isTransparent(this.player, block)) {
-					this.blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
+					this.blocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
 					doneBlocks.add(block);
 					for (final Entity entity : entities) {
 						if (entity.getWorld() != blockLoc.getWorld()) {
@@ -513,8 +513,8 @@ public class Torrent extends WaterAbility {
 			final Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (block.getType() != Material.WATER) {
-					block.setType(Material.STATIONARY_WATER);
-					block.setData((byte) 8);
+					block.setType(Material.WATER);
+					block.setBlockData(GeneralMethods.getWaterData(0));
 				}
 				final Torrent tor = new Torrent(player);
 

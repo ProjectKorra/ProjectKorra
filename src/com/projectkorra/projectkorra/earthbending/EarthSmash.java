@@ -8,6 +8,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -209,7 +210,7 @@ public class EarthSmash extends EarthAbility {
 			} else if (System.currentTimeMillis() - this.getStartTime() > this.chargeTime) {
 				final Location tempLoc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
 				tempLoc.add(0, 0.3, 0);
-				ParticleEffect.SMOKE.display(tempLoc, 0.3F, 0.1F, 0.3F, 0, 4);
+				ParticleEffect.SMOKE.display(tempLoc, 4, 0.3, 0.1, 0.3, 0);
 			}
 		} else if (this.state == State.LIFTING) {
 			if (System.currentTimeMillis() - this.delay >= this.liftAnimationInterval) {
@@ -254,7 +255,7 @@ public class EarthSmash extends EarthAbility {
 				// If an earthsmash runs into too many blocks we should remove it.
 				int badBlocksFound = 0;
 				for (final Block block : this.getBlocks()) {
-					if (block.getType() != Material.AIR && (!this.isTransparent(block) || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)) {
+					if (block.getType() != Material.AIR && (!this.isTransparent(block) || block.getType() == Material.WATER)) {
 						badBlocksFound++;
 					}
 				}
@@ -356,7 +357,7 @@ public class EarthSmash extends EarthAbility {
 						for (int z = -1; z <= 1; z++) {
 							if ((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) {
 								final Block block = tempLoc.clone().add(x, y, z).getBlock();
-								this.currentBlocks.add(new BlockRepresenter(x, y, z, this.selectMaterialForRepresenter(block.getType()), block.getData()));
+								this.currentBlocks.add(new BlockRepresenter(x, y, z, this.selectMaterialForRepresenter(block.getType()), block.getBlockData()));
 							}
 						}
 					}
@@ -417,7 +418,7 @@ public class EarthSmash extends EarthAbility {
 
 			}
 			if (this.player != null && this.isTransparent(block)) {
-				this.affectedBlocks.add(new TempBlock(block, blockRep.getType(), blockRep.getData()));
+				this.affectedBlocks.add(new TempBlock(block, blockRep.getType()));
 				getPreventEarthbendingBlocks().add(block);
 			}
 		}
@@ -616,9 +617,9 @@ public class EarthSmash extends EarthAbility {
 	public class BlockRepresenter {
 		private int x, y, z;
 		private Material type;
-		private byte data;
+		private BlockData data;
 
-		public BlockRepresenter(final int x, final int y, final int z, final Material type, final byte data) {
+		public BlockRepresenter(final int x, final int y, final int z, final Material type, final BlockData data) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -642,7 +643,7 @@ public class EarthSmash extends EarthAbility {
 			return this.type;
 		}
 
-		public byte getData() {
+		public BlockData getData() {
 			return this.data;
 		}
 
@@ -662,7 +663,7 @@ public class EarthSmash extends EarthAbility {
 			this.type = type;
 		}
 
-		public void setData(final byte data) {
+		public void setData(final BlockData data) {
 			this.data = data;
 		}
 

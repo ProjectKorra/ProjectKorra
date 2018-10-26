@@ -21,7 +21,6 @@ import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class EarthPillars extends EarthAbility implements ComboAbility {
 	
@@ -81,7 +80,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		if (firstTime) {
 			for (final Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.radius)) {
 				if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId() && isEarthbendable(e.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
-					ParticleEffect.BLOCK_DUST.display(new BlockData(e.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte) 0), 1f, 0.1f, 1f, 0, 6, e.getLocation(), 255);
+					ParticleEffect.BLOCK_DUST.display(e.getLocation(), 10, 1, 0.1, 1, e.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
 					this.affect((LivingEntity) e);
 				}
 			}

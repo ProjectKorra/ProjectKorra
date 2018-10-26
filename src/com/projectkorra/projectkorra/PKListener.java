@@ -252,19 +252,22 @@ public class PKListener implements Listener {
 	public void onBlockFlowTo(final BlockFromToEvent event) {
 		final Block toblock = event.getToBlock();
 		final Block fromblock = event.getBlock();
-		if (ElementalAbility.isLava(fromblock)) {
-			event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
-		}
-
-		if (ElementalAbility.isWater(fromblock)) {
-			event.setCancelled(!WaterBubble.isAir(toblock));
-			if (!event.isCancelled()) {
-				event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
-			}
-
-			if (!event.isCancelled()) {
-				if (Illumination.isIlluminationTorch(toblock)) {
-					toblock.setType(Material.AIR);
+		
+		if (TempBlock.isTempBlock(fromblock)) {
+			event.setCancelled(true);
+		} else {
+			if (ElementalAbility.isLava(fromblock)) {
+				event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
+			} else if (ElementalAbility.isWater(fromblock)) {
+				event.setCancelled(!WaterBubble.isAir(toblock));
+				if (!event.isCancelled()) {
+					event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
+				}
+	
+				if (!event.isCancelled()) {
+					if (Illumination.isIlluminationTorch(toblock)) {
+						toblock.setType(Material.AIR);
+					}
 				}
 			}
 		}
@@ -290,7 +293,7 @@ public class PKListener implements Listener {
 			boolean marked = true;
 			for (final BlockFace face : faces) {
 				final Block b = event.getBlock().getRelative(face);
-				if (b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER) {
+				if (b.getType() == Material.WATER) {
 					if (!TempBlock.isTempBlock(b)) {
 						marked = false; // if there is any normal water around it, prevent it.
 						break;
@@ -521,28 +524,26 @@ public class PKListener implements Listener {
 						ItemStack cooked = drops.get(i);
 						final Material material = drops.get(i).getType();
 						switch (material) {
-							case RAW_BEEF:
-								cooked = new ItemStack(Material.COOKED_BEEF, 1);
+							case BEEF:
+								cooked = new ItemStack(Material.COOKED_BEEF);
 								break;
-							case RAW_FISH:
-								final ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
-								if (drops.get(i).getDurability() == salmon.getDurability()) {
-									cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
-								} else {
-									cooked = new ItemStack(Material.COOKED_FISH, 1);
-								}
+							case SALMON:
+								cooked = new ItemStack(Material.COOKED_SALMON);
 								break;
-							case RAW_CHICKEN:
-								cooked = new ItemStack(Material.COOKED_CHICKEN, 1);
+							case CHICKEN:
+								cooked = new ItemStack(Material.COOKED_CHICKEN);
 								break;
-							case PORK:
-								cooked = new ItemStack(Material.GRILLED_PORK, 1);
+							case PORKCHOP:
+								cooked = new ItemStack(Material.COOKED_PORKCHOP);
 								break;
 							case MUTTON:
 								cooked = new ItemStack(Material.COOKED_MUTTON);
 								break;
 							case RABBIT:
 								cooked = new ItemStack(Material.COOKED_RABBIT);
+								break;
+							case COD:
+								cooked = new ItemStack(Material.COOKED_COD);
 								break;
 							default:
 								break;

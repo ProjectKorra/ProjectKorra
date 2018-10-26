@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -154,7 +155,7 @@ public class PhaseChange extends IceAbility {
 	public void setFields(final PhaseChangeType type) {
 		int night = 1;
 		if (isNight(this.player.getWorld())) {
-			night = (int) Math.round(this.getNightFactor());
+			night = (int) Math.round(getNightFactor());
 		}
 		this.sourceRange = night * getConfig().getInt("Abilities.Water.PhaseChange.SourceRange");
 
@@ -295,7 +296,7 @@ public class PhaseChange extends IceAbility {
 			}
 		}
 		if (tb == null) {
-			tb = new TempBlock(b, Material.ICE, (byte) 0);
+			tb = new TempBlock(b, Material.ICE);
 		}
 		this.blocks.add(tb);
 		PLAYER_BY_BLOCK.put(tb, this.player);
@@ -373,26 +374,37 @@ public class PhaseChange extends IceAbility {
 			}
 
 			if (b.getType() == Material.SNOW) {
-				if (b.getData() == 0) {
-					tb.revertBlock();
-					new TempBlock(b, Material.AIR, (byte) 0).setRevertTime(120 * 1000L);
-				} else {
-					final byte data = b.getData();
-					tb.revertBlock();
-					new TempBlock(b, Material.SNOW, (byte) (data - 1)).setRevertTime(120 * 1000L);
+				if (b.getBlockData() instanceof Snow) {
+					Snow snow = (Snow) b.getBlockData();
+					if (snow.getLayers() == snow.getMinimumLayers()) {
+						tb.revertBlock();
+						new TempBlock(b, Material.AIR).setRevertTime(120 * 1000L);
+					} else {
+						tb.revertBlock();
+						snow.setLayers(snow.getLayers() - 1);
+						new TempBlock(b, Material.SNOW, snow).setRevertTime(120 * 1000L);
+					}
 				}
 			}
 		} else if (isWater(b)) {
 			// Figure out what to do here also.
 		} else if (isIce(b)) {
-			final Material m = this.allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
-			b.setType(m);
+			if (allowMeltFlow) {
+				b.setType(Material.WATER);
+				b.setBlockData(GeneralMethods.getWaterData(0));
+			} else {
+				new TempBlock(b, Material.WATER, GeneralMethods.getWaterData(0));
+			}
 			this.melted_blocks.add(b);
 		} else if (b.getType() == Material.SNOW_BLOCK || b.getType() == Material.SNOW) {
-			if (b.getData() == 0) {
-				new TempBlock(b, Material.AIR, (byte) 0).setRevertTime(120 * 1000L);
-			} else {
-				new TempBlock(b, Material.SNOW, (byte) (b.getData() - 1)).setRevertTime(120 * 1000L);
+			if (b.getBlockData() instanceof Snow) {
+				Snow snow = (Snow) b.getBlockData();
+				if (snow.getLayers() == snow.getMinimumLayers()) {
+					new TempBlock(b, Material.AIR).setRevertTime(120 * 1000L);
+				} else {
+					snow.setLayers(snow.getLayers() - 1);
+					new TempBlock(b, Material.SNOW, snow).setRevertTime(120 * 1000L);
+				}
 			}
 
 			this.melted_blocks.add(b);

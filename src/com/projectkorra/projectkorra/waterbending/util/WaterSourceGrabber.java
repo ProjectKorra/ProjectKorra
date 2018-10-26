@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -26,7 +27,7 @@ public class WaterSourceGrabber {
 	}
 
 	private Player player;
-	private byte data;
+	private BlockData data;
 	private double animimationSpeed;
 	private AnimationState state;
 	private Material material;
@@ -40,8 +41,8 @@ public class WaterSourceGrabber {
 	public WaterSourceGrabber(final Player player, final Location origin, final double animationSpeed) {
 		this.player = player;
 		this.animimationSpeed = animationSpeed;
-		this.material = Material.STATIONARY_WATER;
-		this.data = 0;
+		this.material = Material.WATER;
+		this.data = GeneralMethods.getWaterData(0);
 		this.currentLoc = origin.clone();
 		this.state = AnimationState.RISING;
 		this.affectedBlocks = new ConcurrentHashMap<>();
@@ -104,10 +105,10 @@ public class WaterSourceGrabber {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, (byte) 0);
+		this.createBlock(block, mat, mat.createBlockData());
 	}
 
-	public void createBlock(final Block block, final Material mat, final byte data) {
+	public void createBlock(final Block block, final Material mat, final BlockData data) {
 		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
 	}
 
@@ -119,11 +120,11 @@ public class WaterSourceGrabber {
 		this.player = player;
 	}
 
-	public byte getData() {
+	public BlockData getData() {
 		return this.data;
 	}
 
-	public void setData(final byte data) {
+	public void setData(final BlockData data) {
 		this.data = data;
 	}
 

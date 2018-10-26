@@ -165,7 +165,7 @@ public class LavaSurgeWave extends LavaAbility {
 			final Block blockl = this.location.getBlock();
 			final ArrayList<Block> blocks = new ArrayList<Block>();
 
-			if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && blockl.getType() != Material.LEAVES && (blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || ElementalAbility.isPlant(blockl) || isLava(blockl))) {
+			if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || ElementalAbility.isPlant(blockl) || isLava(blockl))) {
 				for (double i = 0; i <= this.radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
@@ -253,7 +253,7 @@ public class LavaSurgeWave extends LavaAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
+			new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
 			this.waveBlocks.put(block, block);
 		}
 	}

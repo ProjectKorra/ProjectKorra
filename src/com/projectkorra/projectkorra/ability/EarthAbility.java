@@ -11,6 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
@@ -24,13 +26,11 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class EarthAbility extends ElementalAbility {
@@ -87,8 +87,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			final ParticleData particleData = new ParticleEffect.BlockData(Material.DIRT, (byte) 0);
-			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.DIRT.createBlockData());
 		}
 	}
 
@@ -265,28 +264,22 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			info.setBlock(block);
 			info.setState(block.getState());
-			info.setData(block.getData());
 		}
 		block.setType(Material.AIR);
 		info.setTime(System.currentTimeMillis());
 		TEMP_AIR_LOCATIONS.put(info.getID(), info);
 	}
 
-	public static void displaySandParticle(final Location loc, final float xOffset, final float yOffset, final float zOffset, final float amount, final float speed, final boolean red) {
+	public static void displaySandParticle(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset, final double speed, final boolean red) {
 		if (amount <= 0) {
 			return;
 		}
-
-		for (int x = 0; x < amount; x++) {
-			if (!red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
-			} else if (red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 1), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
-			}
-
-		}
+		
+		Material sand = red ? Material.RED_SAND : Material.SAND;
+		Material stone = red ? Material.RED_SANDSTONE : Material.SANDSTONE;
+		
+		ParticleEffect.ITEM_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, sand.createBlockData());
+		ParticleEffect.ITEM_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, stone.createBlockData());
 	}
 
 	/**
@@ -346,13 +339,6 @@ public abstract class EarthAbility extends ElementalAbility {
 				continue;
 			}
 			if (isLavabendable(player, block)) {
-				if (TempBlock.isTempBlock(block)) {
-					final TempBlock tb = TempBlock.get(block);
-					final byte full = 0x0;
-					if (tb.getState().getRawData() != full && !isLava(tb.getState().getType())) {
-						continue;
-					}
-				}
 				return block;
 			}
 		}
@@ -436,14 +422,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static boolean isLavabendable(final Player player, final Block block) {
-		final byte full = 0x0;
-		if (TempBlock.isTempBlock(block)) {
-			final TempBlock tblock = TempBlock.instances.get(block);
-			if (tblock == null || !LavaFlow.getTempLavaBlocks().values().contains(tblock)) {
-				return false;
-			}
-		}
-		if (isLava(block) && block.getData() == full) {
+		if (isLava(block) && (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0)) {
 			return true;
 		}
 		return false;
@@ -475,16 +454,14 @@ public abstract class EarthAbility extends ElementalAbility {
 		MOVED_EARTH.put(target, info);
 
 		if (info.getState().getType() == Material.SAND) {
-			if (info.getState().getRawData() == (byte) 0x1) {
-				target.setType(Material.RED_SANDSTONE);
-			} else {
-				target.setType(Material.SANDSTONE);
-			}
+			target.setType(Material.SANDSTONE);
+		} else if (info.getState().getType() == Material.RED_SAND) {
+			target.setType(Material.RED_SANDSTONE);
 		} else if (info.getState().getType() == Material.GRAVEL) {
 			target.setType(Material.STONE);
 		} else {
 			target.setType(info.getState().getType());
-			target.setData(info.getState().getRawData());
+			target.setBlockData(info.getState().getBlockData());
 		}
 
 		source.setType(Material.AIR);
@@ -514,7 +491,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			final float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
 			final float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
 
-			Sound sound = Sound.ENTITY_IRONGOLEM_HURT;
+			Sound sound = Sound.ENTITY_IRON_GOLEM_HURT;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound"));
@@ -615,7 +592,6 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static boolean revertBlock(final Block block) {
-		final byte full = 0x0;
 		if (!isEarthRevertOn()) {
 			MOVED_EARTH.remove(block);
 			return false;
@@ -653,9 +629,13 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			}
 
-			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block, false)) {
 				block.setType(Material.WATER);
-				block.setData(full);
+				BlockData data = Material.WATER.createBlockData();
+				if (data instanceof Levelled) {
+					((Levelled) data).setLevel(7);
+				}
+				block.setBlockData(data);
 			} else {
 				block.setType(Material.AIR);
 			}

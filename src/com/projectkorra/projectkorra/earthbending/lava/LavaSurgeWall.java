@@ -160,7 +160,7 @@ public class LavaSurgeWall extends LavaAbility {
 
 			if (this.forming) {
 				final ArrayList<Block> blocks = new ArrayList<Block>();
-				final Location loc = GeneralMethods.getTargetedLocation(this.player, (int) this.range, Material.WATER, Material.STATIONARY_WATER, Material.ICE);
+				final Location loc = GeneralMethods.getTargetedLocation(this.player, (int) this.range, Material.WATER, Material.ICE);
 				this.location = loc.clone();
 				final Vector dir = this.player.getEyeLocation().getDirection();
 				Vector vec;
@@ -232,7 +232,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	private void addWallBlock(final Block block) {
-		new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
+		new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
 	}
 
 	private void breakBlock() {
@@ -272,7 +272,7 @@ public class LavaSurgeWall extends LavaAbility {
 			return;
 		}
 		if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
+			new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
 			AFFECTED_BLOCKS.put(block, block);
 		}
 	}

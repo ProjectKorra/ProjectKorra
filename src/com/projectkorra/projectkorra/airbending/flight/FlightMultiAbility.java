@@ -261,8 +261,8 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	}
 
 	private void particles() {
-		ParticleEffect.CLOUD.display(GeneralMethods.getRightSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 0f, 0f, 0f, 0f, 1);
-		ParticleEffect.CLOUD.display(GeneralMethods.getLeftSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 0f, 0f, 0f, 0f, 1);
+		ParticleEffect.CLOUD.display(GeneralMethods.getRightSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 1, 0, 0, 0);
+		ParticleEffect.CLOUD.display(GeneralMethods.getLeftSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 1, 0, 0, 0);
 	}
 
 	private String speed() {

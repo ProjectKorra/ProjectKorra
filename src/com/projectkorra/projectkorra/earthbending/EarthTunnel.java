@@ -135,14 +135,14 @@ public class EarthTunnel extends EarthAbility {
 					if (getMovedEarth().containsKey(this.block)) {
 						this.block.setType(Material.AIR);
 					} else {
-						airBlocks.put(new TempBlock(this.block, Material.AIR, (byte) 0), System.currentTimeMillis());
+						airBlocks.put(new TempBlock(this.block, Material.AIR), System.currentTimeMillis());
 						if (isPlant(this.block.getRelative(BlockFace.UP)) || isSnow(this.block.getRelative(BlockFace.UP))) {
 							final Block above = this.block.getRelative(BlockFace.UP);
 							final Block above2 = above.getRelative(BlockFace.UP);
 							if (isPlant(above) || isSnow(above)) {
-								airBlocks.put(new TempBlock(above, Material.AIR, (byte) 0), System.currentTimeMillis());
-								if (isPlant(above2) && above2.getType().equals(Material.DOUBLE_PLANT)) {
-									airBlocks.put(new TempBlock(above2, Material.AIR, (byte) 0), System.currentTimeMillis());
+								airBlocks.put(new TempBlock(above, Material.AIR), System.currentTimeMillis());
+								if (isPlant(above2) && above2.getType().equals(Material.TALL_GRASS)) {
+									airBlocks.put(new TempBlock(above2, Material.AIR), System.currentTimeMillis());
 								}
 							}
 						}

@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -33,7 +33,7 @@ public class WaterBubble extends WaterAbility {
 	private boolean isShift;
 	private double radius;
 	private boolean removing = false; // Is true when the radius is shrinking.
-	private final Map<Block, MaterialData> waterOrigins = new ConcurrentHashMap<Block, MaterialData>();
+	private final Map<Block, BlockState> waterOrigins = new ConcurrentHashMap<>();
 	private Location location;
 	private long lastActivation; // When the last click happened.
 
@@ -122,9 +122,9 @@ public class WaterBubble extends WaterAbility {
 							final Block b = this.location.add(x, y, z).getBlock();
 
 							if (!this.waterOrigins.containsKey(b)) {
-								if (b.getType() == Material.STATIONARY_WATER || b.getType() == Material.WATER) {
+								if (b.getType() == Material.WATER) {
 									if (!TempBlock.isTempBlock(b)) {
-										this.waterOrigins.put(b, b.getState().getData());
+										this.waterOrigins.put(b, b.getState());
 									}
 									b.setType(Material.AIR);
 								}
@@ -143,8 +143,8 @@ public class WaterBubble extends WaterAbility {
 
 			for (final Block b : set) {
 				if (b.getType() == Material.AIR) {
-					b.setType(this.waterOrigins.get(b).getItemType());
-					b.setData(this.waterOrigins.get(b).getData());
+					b.setType(this.waterOrigins.get(b).getType());
+					b.setBlockData(this.waterOrigins.get(b).getBlockData());
 				}
 				this.waterOrigins.remove(b);
 			}
@@ -179,8 +179,8 @@ public class WaterBubble extends WaterAbility {
 
 		for (final Block b : this.waterOrigins.keySet()) {
 			if (b.getType() == Material.AIR) {
-				b.setType(this.waterOrigins.get(b).getItemType());
-				b.setData(this.waterOrigins.get(b).getData());
+				b.setType(this.waterOrigins.get(b).getType());
+				b.setBlockData(this.waterOrigins.get(b).getBlockData());
 			}
 		}
 	}

@@ -123,10 +123,10 @@ public class FireShield extends FireAbility {
 
 					final Location display = this.location.clone().add(this.shieldRadius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.shieldRadius / 1.5 * Math.cos(rtheta), this.shieldRadius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
 					if (this.random.nextInt(6) == 0) {
-						ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
+						ParticleEffect.SMOKE.display(display, 1, 0, 0, 0);
 					}
 					if (this.random.nextInt(4) == 0) {
-						ParticleEffect.FLAME.display(display, 0.1f, 0.1f, 0.1f, 0.013f, 1);
+						ParticleEffect.FLAME.display(display, 1, 0.1, 0.1, 0.1, 0.013);
 					}
 					if (this.random.nextInt(7) == 0) {
 						playFirebendingSound(display);
@@ -162,15 +162,15 @@ public class FireShield extends FireAbility {
 			this.location = this.player.getEyeLocation().clone();
 			final Vector direction = this.location.getDirection();
 			this.location.add(direction.multiply(this.shieldRadius));
-			ParticleEffect.FLAME.display(this.location, 0.2f, 0.2f, 0.2f, 0.00023f, 3);
+			ParticleEffect.FLAME.display(this.location, 3, 0.2, 0.2, 0.2, 0.00023);
 
 			for (double theta = 0; theta < 360; theta += 20) {
 				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
 				final Location display = this.location.add(vector);
 				if (this.random.nextInt(6) == 0) {
-					ParticleEffect.SMOKE.display(display, 0, 0, 0, 0, 1);
+					ParticleEffect.SMOKE.display(display, 1, 0, 0, 0);
 				}
-				ParticleEffect.FLAME.display(display, 0.3f, 0.2f, 0.3f, 0.023f, 2);
+				ParticleEffect.FLAME.display(display, 2, 0.3, 0.2, 0.3, 0.023);
 				if (this.random.nextInt(4) == 0) {
 					playFirebendingSound(display);
 				}

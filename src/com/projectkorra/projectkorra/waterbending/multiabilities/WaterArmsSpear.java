@@ -177,7 +177,7 @@ public class WaterArmsSpear extends WaterAbility {
 				return;
 			}
 
-			new TempBlock(this.location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+			new TempBlock(this.location.getBlock(), Material.WATER, GeneralMethods.getWaterData(0));
 			getIceBlocks().put(this.location.getBlock(), System.currentTimeMillis() + 600L);
 			final Vector direction = GeneralMethods.getDirection(this.initLocation, GeneralMethods.getTargetedLocation(this.player, this.spearRange, getTransparentMaterials())).normalize();
 
@@ -198,7 +198,7 @@ public class WaterArmsSpear extends WaterAbility {
 						getIceBlocks().remove(block);
 					}
 
-					final TempBlock tempBlock = new TempBlock(block, Material.AIR, (byte) 0);
+					final TempBlock tempBlock = new TempBlock(block, Material.AIR);
 					tempBlock.setType(Material.ICE);
 
 					getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
@@ -232,7 +232,7 @@ public class WaterArmsSpear extends WaterAbility {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.spearSphereRadius)) {
 			if (isTransparent(this.player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
 				playIcebendingSound(block.getLocation());
-				new TempBlock(block, Material.ICE, (byte) 0);
+				new TempBlock(block, Material.ICE);
 				getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 			}
 		}

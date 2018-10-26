@@ -38,16 +38,31 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static Material[] getTransparentMaterials() {
-		return GeneralMethods.NON_OPAQUE;
+		Material[] transparent = new Material[getTransparentMaterialSet().size()];
+		int i = 0;
+		
+		for (Material mat : getTransparentMaterialSet()) {
+			transparent[i] = mat;
+			i++;
+		}
+		
+		return transparent;
 	}
 
 	public static HashSet<Material> getTransparentMaterialSet() {
-		final HashSet<Material> set = new HashSet<Material>();
-		for (final Material material : getTransparentMaterials()) {
-			set.add(material);
+		final HashSet<Material> set = new HashSet<>();
+		
+		for (Material mat : Material.values()) {
+			if (!mat.isOccluding()) {
+				set.add(mat);
+			}
 		}
-
+		
 		return set;
+	}
+	
+	public static boolean isAir(final Material material) {
+		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR;
 	}
 
 	public static boolean isDay(final World world) {
@@ -91,7 +106,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isLava(final Material material) {
-		return material == Material.LAVA || material == Material.STATIONARY_LAVA;
+		return material == Material.LAVA;
 	}
 
 	public static boolean isSnow(final Block block) {
@@ -119,7 +134,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMetalBlock(final Block block) {
-		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.QUARTZ_ORE) {
+		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.NETHER_QUARTZ_ORE) {
 			return true;
 		}
 
@@ -209,7 +224,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isWater(final Material material) {
-		return material == Material.WATER || material == Material.STATIONARY_WATER;
+		return material == Material.WATER;
 	}
 
 }

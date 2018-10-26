@@ -57,7 +57,7 @@ public class Extraction extends MetalAbility {
 					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, this.getAmount()));
 					type = Material.STONE;
 					break;
-				case QUARTZ_ORE:
+				case NETHER_QUARTZ_ORE:
 					this.originBlock.setType(Material.NETHERRACK);
 					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, this.getAmount()));
 					type = Material.NETHERRACK;

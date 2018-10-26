@@ -117,8 +117,8 @@ public class FireBlast extends FireAbility {
 
 	private void advanceLocation() {
 		if (this.showParticles) {
-			ParticleEffect.FLAME.display(this.location, 0.275F, 0.275F, 0.275F, 0, 6);
-			ParticleEffect.SMOKE.display(this.location, 0.3F, 0.3F, 0.3F, 0, 3);
+			ParticleEffect.FLAME.display(this.location, 6, 0.275, 0.275, 0.275, 0);
+			ParticleEffect.SMOKE.display(this.location, 3, 0.3, 0.3, 0.3, 0);
 		}
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();

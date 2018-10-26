@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -218,18 +219,18 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, (byte) 0);
+		this.createBlock(block, mat, mat.createBlockData());
 	}
 
-	public void createBlock(final Block block, final Material mat, final byte data) {
+	public void createBlock(final Block block, final Material mat, final BlockData data) {
 		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
 	}
 
 	public void drawWaterCircle(final Location loc, final double theta, final double increment, final double radius) {
-		this.drawWaterCircle(loc, theta, increment, radius, Material.STATIONARY_WATER, (byte) 0);
+		this.drawWaterCircle(loc, theta, increment, radius, Material.WATER, GeneralMethods.getWaterData(0));
 	}
 
-	public void drawWaterCircle(final Location loc, final double theta, final double increment, final double radius, final Material mat, final byte data) {
+	public void drawWaterCircle(final Location loc, final double theta, final double increment, final double radius, final Material mat, final BlockData data) {
 		final double rotateSpeed = theta;
 		this.direction = GeneralMethods.rotateXZ(this.direction, rotateSpeed);
 
@@ -313,8 +314,8 @@ public class IceBullet extends IceAbility implements ComboAbility {
 				} else if (timeDiff < 2500 * this.animationSpeed) {
 					this.revertBlocks();
 					for (double i = 0; i < this.radius; i++) {
-						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, i, 0), 360, 5, this.radius - i, Material.ICE, (byte) 0);
-						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, -i, 0), 360, 5, this.radius - i, Material.ICE, (byte) 0);
+						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, i, 0), 360, 5, this.radius - i, Material.ICE, Material.ICE.createBlockData());
+						this.drawWaterCircle(this.player.getEyeLocation().clone().add(0, -i, 0), 360, 5, this.radius - i, Material.ICE, Material.ICE.createBlockData());
 					}
 				}
 

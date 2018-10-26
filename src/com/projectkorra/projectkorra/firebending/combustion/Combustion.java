@@ -80,7 +80,7 @@ public class Combustion extends CombustionAbility {
 		final Combustion combustion = getAbility(player, Combustion.class);
 		if (combustion != null) {
 			combustion.createExplosion(combustion.location, combustion.explosivePower, combustion.breakBlocks);
-			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
+			ParticleEffect.EXPLOSION_NORMAL.display(combustion.location, 3, Math.random(), Math.random(), Math.random(), 0);
 		}
 	}
 
@@ -103,8 +103,8 @@ public class Combustion extends CombustionAbility {
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(this.location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 5);
-		ParticleEffect.FLAME.display(this.location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 2);
+		ParticleEffect.FIREWORKS_SPARK.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
+		ParticleEffect.FLAME.display(this.location, 2, Math.random() / 2, Math.random() / 2, Math.random() / 2);
 		playCombustionSound(this.location);
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 	}

@@ -254,14 +254,14 @@ public class LavaFlow extends LavaAbility {
 
 							}
 						} else if (Math.random() < this.particleDensity && dSquared < Math.pow(this.currentRadius + this.particleDensity, 2) && this.currentRadius + this.particleDensity < this.shiftMaxRadius && random.nextInt(3) == 0) {
-							ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+							ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random());
 						}
 					}
 				}
 
 				if (!this.shiftIsFinished) {
 					if (random.nextInt(10) == 0) {
-						ParticleEffect.LAVA.display(this.player.getLocation(), (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+						ParticleEffect.LAVA.display(this.player.getLocation(), 1, Math.random(), Math.random(), Math.random());
 					}
 				}
 
@@ -301,7 +301,7 @@ public class LavaFlow extends LavaAbility {
 						if (!isWater(tempBlock)) {
 							if (tempBlock != null && !isLava(tempBlock) && Math.random() < this.particleDensity && tempBlock.getLocation().distanceSquared(this.origin) <= Math.pow(this.clickLavaRadius, 2)) {
 								if (random.nextInt(5) == 0) {
-									ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+									ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random());
 								}
 							}
 						}
@@ -357,7 +357,7 @@ public class LavaFlow extends LavaAbility {
 										final Block above = block.getRelative(BlockFace.UP);
 
 										if ((isEarth(block) || isSand(block) || isMetal(block)) && !isWater(above)) {
-											ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+											ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random(), 0);
 										}
 									}
 								}
@@ -390,11 +390,11 @@ public class LavaFlow extends LavaAbility {
 				final Block above = block.getRelative(BlockFace.UP);
 				final Block above2 = above.getRelative(BlockFace.UP);
 				if (isPlant(above) || isSnow(above)) {
-					final TempBlock tb = new TempBlock(above, Material.AIR, (byte) 0);
+					final TempBlock tb = new TempBlock(above, Material.AIR);
 					TEMP_AIR_BLOCKS.put(above, tb);
 					this.affectedBlocks.add(tb);
-					if (isPlant(above2) && above2.getType().equals(Material.DOUBLE_PLANT)) {
-						final TempBlock tb2 = new TempBlock(above2, Material.AIR, (byte) 0);
+					if (isPlant(above2) && above2.getType().equals(Material.TALL_GRASS)) {
+						final TempBlock tb2 = new TempBlock(above2, Material.AIR);
 						TEMP_AIR_BLOCKS.put(above2, tb2);
 						this.affectedBlocks.add(tb);
 					}
@@ -402,20 +402,17 @@ public class LavaFlow extends LavaAbility {
 					return;
 				}
 			}
-			TempBlock tblock;
+			TempBlock tblock = null;
 			if (this.allowNaturalFlow) {
-				tblock = new TempBlock(block, Material.LAVA, (byte) 0);
+				block.setType(Material.LAVA);
+				block.setBlockData(GeneralMethods.getLavaData(0));
 			} else {
-				tblock = new TempBlock(block, Material.STATIONARY_LAVA, (byte) 0);
+				tblock = new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
 			}
 
 			if (tblock != null) {
 				TEMP_LAVA_BLOCKS.put(block, tblock);
 				this.affectedBlocks.add(tblock);
-
-				if (this.allowNaturalFlow) {
-					TempBlock.removeBlock(block);
-				}
 			}
 		}
 	}
@@ -434,7 +431,7 @@ public class LavaFlow extends LavaAbility {
 			return;
 		}
 
-		final TempBlock tblock = new TempBlock(testBlock, this.revertMaterial, testBlock.getData());
+		final TempBlock tblock = new TempBlock(testBlock, this.revertMaterial);
 		this.affectedBlocks.add(tblock);
 		TEMP_LAND_BLOCKS.put(testBlock, tblock);
 	}
@@ -516,9 +513,8 @@ public class LavaFlow extends LavaAbility {
 						TEMP_AIR_BLOCKS.remove(tblock.getBlock());
 					}
 
-					if (isTempAir && tblock.getState().getType() == Material.DOUBLE_PLANT) {
-						tblock.getBlock().getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
-						tblock.getBlock().getRelative(BlockFace.UP).setData((byte) (tblock.getState().getRawData() + 8));
+					if (isTempAir && tblock.getState().getType() == Material.TALL_GRASS) {
+						tblock.getBlock().getRelative(BlockFace.UP).setType(Material.TALL_GRASS);
 					}
 				}
 			}.runTaskLater(ProjectKorra.plugin, (long) (i / this.shiftRemoveSpeed));

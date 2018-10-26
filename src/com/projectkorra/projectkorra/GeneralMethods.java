@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,6 +42,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -118,8 +121,8 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
+import com.projectkorra.projectkorra.util.ColoredParticle;
 import com.projectkorra.projectkorra.util.MovementHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
 import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.util.TempArmor;
@@ -140,9 +143,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 
 public class GeneralMethods {
-
-	public static final Material[] NON_OPAQUE = { Material.AIR, Material.SAPLING, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.WEB, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.CROPS, Material.LADDER, Material.RAILS, Material.SIGN_POST, Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE_BLOCK, Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.WATER_LILY, Material.NETHER_STALK, Material.ENDER_PORTAL, Material.COCOA, Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.FLOWER_POT, Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.DAYLIGHT_DETECTOR, Material.CARPET, Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.WALL_BANNER, Material.DAYLIGHT_DETECTOR_INVERTED, Material.END_ROD, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.BEETROOT_BLOCK, Material.END_GATEWAY };
-	public static final Material[] INTERACTABLE_MATERIALS = { Material.ACACIA_DOOR, Material.ACACIA_FENCE_GATE, Material.ANVIL, Material.BEACON, Material.BED_BLOCK, Material.BIRCH_DOOR, Material.BIRCH_FENCE_GATE, Material.BOAT, Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND, Material.DARK_OAK_DOOR, Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER, Material.ENCHANTMENT_TABLE, Material.ENDER_CHEST, Material.ENDER_PORTAL_FRAME, Material.FENCE_GATE, Material.FURNACE, Material.HOPPER, Material.HOPPER_MINECART, Material.COMMAND_MINECART, Material.JUKEBOX, Material.JUNGLE_DOOR, Material.JUNGLE_FENCE_GATE, Material.LEVER, Material.MINECART, Material.NOTE_BLOCK, Material.SPRUCE_DOOR, Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON, Material.TRAPPED_CHEST, Material.TRAP_DOOR, Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
 	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
@@ -562,63 +562,26 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void displayColoredParticle(final Location loc, ParticleEffect type, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
+	public static void displayColoredParticle(String hexVal, final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
 		int r = 0;
 		int g = 0;
 		int b = 0;
+		
+		if (hexVal.startsWith("#")) {
+			hexVal = hexVal.substring(1);
+		}
+		
 		if (hexVal.length() <= 6) {
 			r = Integer.valueOf(hexVal.substring(0, 2), 16).intValue();
 			g = Integer.valueOf(hexVal.substring(2, 4), 16).intValue();
 			b = Integer.valueOf(hexVal.substring(4, 6), 16).intValue();
-		} else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
-			r = Integer.valueOf(hexVal.substring(1, 3), 16).intValue();
-			g = Integer.valueOf(hexVal.substring(3, 5), 16).intValue();
-			b = Integer.valueOf(hexVal.substring(5, 7), 16).intValue();
 		}
-		float red = r / 255.0F;
-		final float green = g / 255.0F;
-		final float blue = b / 255.0F;
-		if (red <= 0) {
-			red = 1 / 255.0F;
-		}
-		loc.setX(loc.getX() + Math.random() * xOffset);
-		loc.setY(loc.getY() + Math.random() * yOffset);
-		loc.setZ(loc.getZ() + Math.random() * zOffset);
 
-		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
-			type = ParticleEffect.RED_DUST;
-		}
-		type.display(red, green, blue, 1F, 0, loc, 255.0);
+		new ColoredParticle(Color.fromRGB(r, g, b), 1F).display(loc, amount, offsetX, offsetY, offsetZ);
 	}
 
-	public static void displayColoredParticle(final Location loc, final String hexVal) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, 0, 0, 0);
-	}
-
-	public static void displayColoredParticle(final Location loc, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, xOffset, yOffset, zOffset);
-	}
-
-	public static void displayParticleVector(final Location loc, final ParticleEffect type, final float xTrans, final float yTrans, final float zTrans) {
-		if (type == ParticleEffect.FIREWORKS_SPARK) {
-			ParticleEffect.FIREWORKS_SPARK.display(xTrans, yTrans, zTrans, 0.09F, 0, loc, 257D);
-		} else if (type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL) {
-			ParticleEffect.SMOKE.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE) {
-			ParticleEffect.LARGE_SMOKE.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.ENCHANTMENT_TABLE) {
-			ParticleEffect.ENCHANTMENT_TABLE.display(xTrans, yTrans, zTrans, 0.5F, 0, loc, 257D);
-		} else if (type == ParticleEffect.PORTAL) {
-			ParticleEffect.PORTAL.display(xTrans, yTrans, zTrans, 0.5F, 0, loc, 257D);
-		} else if (type == ParticleEffect.FLAME) {
-			ParticleEffect.FLAME.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.CLOUD) {
-			ParticleEffect.CLOUD.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.SNOW_SHOVEL) {
-			ParticleEffect.SNOW_SHOVEL.display(xTrans, yTrans, zTrans, 0.2F, 0, loc, 257D);
-		} else {
-			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 257D);
-		}
+	public static void displayColoredParticle(final String hexVal, final Location loc) {
+		displayColoredParticle(hexVal, loc, 1, 0, 0, 0);
 	}
 
 	/**
@@ -904,10 +867,10 @@ public class GeneralMethods {
 	 * @param breakitem Unused
 	 * @return The item drops fromt the specified block
 	 */
-	public static Collection<ItemStack> getDrops(final Block block, final Material type, final byte data, final ItemStack breakitem) {
+	public static Collection<ItemStack> getDrops(final Block block, final Material type, final BlockData data) {
 		final BlockState tempstate = block.getState();
 		block.setType(type);
-		block.setData(data);
+		block.setBlockData(data);
 		final Collection<ItemStack> item = block.getDrops();
 		tempstate.update(true);
 		return item;
@@ -1102,6 +1065,22 @@ public class GeneralMethods {
 		}
 		return null;
 	}
+	
+	public static BlockData getLavaData(int level) {
+		BlockData data = Material.LAVA.createBlockData();
+		if (data instanceof Levelled) {
+			((Levelled) data).setLevel(level);
+		}
+		return data;
+	}
+	
+	public static BlockData getWaterData(int level) {
+		BlockData data = Material.WATER.createBlockData();
+		if (data instanceof Levelled) {
+			((Levelled) data).setLevel(level);
+		}
+		return data;
+	}
 
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
 		double longestr = range + 1;
@@ -1142,10 +1121,10 @@ public class GeneralMethods {
 
 		HashSet<Material> trans = new HashSet<Material>();
 		trans.add(Material.AIR);
+		trans.add(Material.CAVE_AIR);
+		trans.add(Material.VOID_AIR);
 
-		if (nonOpaque2 == null) {
-			trans = null;
-		} else {
+		if (nonOpaque2 != null) {
 			for (final Material material : nonOpaque2) {
 				trans.add(material);
 			}
@@ -1162,7 +1141,7 @@ public class GeneralMethods {
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
-		return getTargetedLocation(player, range, Material.AIR);
+		return getTargetedLocation(player, range);
 	}
 
 	public static Block getTopBlock(final Location loc, final int range) {
@@ -1258,20 +1237,36 @@ public class GeneralMethods {
 	public static boolean hasSpirits() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraSpirits") != null;
 	}
-
+	
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
-		if (block == null || (TempBlock.isTempBlock(block) && WaterAbility.isBendableWaterTempBlock(block))) {
+		return isAdjacentToThreeOrMoreSources(block, false);
+	}
+
+	public static boolean isAdjacentToThreeOrMoreSources(final Block block, final boolean lava) {
+		if (block == null || (TempBlock.isTempBlock(block) && (!lava && !WaterAbility.isBendableWaterTempBlock(block)))) {
 			return false;
 		}
 		int sources = 0;
-		final byte full = 0x0;
 		final BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
 		for (final BlockFace face : faces) {
 			final Block blocki = block.getRelative(face);
-			if ((blocki.getType() == Material.LAVA || blocki.getType() == Material.STATIONARY_LAVA) && blocki.getData() == full && EarthPassive.canPhysicsChange(blocki)) {
-				sources++;
+			if (lava) {
+				if (!(blocki.getType() == Material.LAVA && EarthPassive.canPhysicsChange(blocki))) {
+					continue;
+				}
+			} else {
+				if ((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && WaterManipulation.canPhysicsChange(blocki)) {
+					continue;
+				}
 			}
-			if ((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && blocki.getData() == full && WaterManipulation.canPhysicsChange(blocki)) {
+			
+			//At this point it should either be water or lava
+			if (blocki.getBlockData() instanceof Levelled) {
+				Levelled level = (Levelled) blocki.getBlockData();
+				if (level.getLevel() == 0) {
+					sources++;
+				}
+			} else { //ice
 				sources++;
 			}
 		}
@@ -1283,7 +1278,11 @@ public class GeneralMethods {
 	}
 
 	public static boolean isInteractable(final Block block) {
-		return Arrays.asList(INTERACTABLE_MATERIALS).contains(block.getType());
+		return isInteractable(block.getType());
+	}
+	
+	public static boolean isInteractable(final Material material) {
+		return material.isInteractable();
 	}
 
 	public static boolean isObstructed(final Location location1, final Location location2) {
@@ -1551,7 +1550,19 @@ public class GeneralMethods {
 	}
 
 	public static boolean isSolid(final Block block) {
-		return !Arrays.asList(NON_OPAQUE).contains(block.getType());
+		return isSolid(block.getType());
+	}
+	
+	public static boolean isSolid(final Material material) {
+		return material.isSolid();
+	}
+	
+	public static boolean isTransparent(final Block block) {
+		return isTransparent(block.getType());
+	}
+	
+	public static boolean isTransparent(final Material material) {
+		return !material.isOccluding() && !material.isSolid();
 	}
 
 	/** Checks if an entity is Undead **/
@@ -1560,7 +1571,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isWeapon(final Material mat) {
-		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE || mat == Material.GOLD_AXE || mat == Material.GOLD_HOE || mat == Material.GOLD_SWORD || mat == Material.GOLD_PICKAXE || mat == Material.GOLD_SPADE);
+		return mat != null && (mat == Material.WOODEN_AXE || mat == Material.WOODEN_PICKAXE || mat == Material.WOODEN_SHOVEL || mat == Material.WOODEN_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SHOVEL || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SHOVEL || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SHOVEL || mat == Material.GOLDEN_AXE || mat == Material.GOLDEN_HOE || mat == Material.GOLDEN_SWORD || mat == Material.GOLDEN_PICKAXE || mat == Material.GOLDEN_SHOVEL || mat == Material.TRIDENT);
 	}
 
 	public static void loadBendingPlayer(final BendingPlayer pl) {
@@ -1670,9 +1681,11 @@ public class GeneralMethods {
 	}
 
 	public static void removeBlock(final Block block) {
-		if (isAdjacentToThreeOrMoreSources(block)) {
+		if (isAdjacentToThreeOrMoreSources(block, false)) {
 			block.setType(Material.WATER);
-			block.setData((byte) 0x0);
+			if (block.getBlockData() instanceof Levelled) {
+				((Levelled) block.getBlockData()).setLevel(1);
+			}
 		} else {
 			block.setType(Material.AIR);
 		}
@@ -2056,20 +2069,12 @@ public class GeneralMethods {
 		entity.setVelocity(velocity);
 	}
 
-	public static FallingBlock spawnFallingBlock(final Location loc, final int type) {
-		return spawnFallingBlock(loc, type, (byte) 0);
-	}
-
-	public static FallingBlock spawnFallingBlock(final Location loc, final int type, final byte data) {
-		return loc.getWorld().spawnFallingBlock(loc, type, data);
-	}
-
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type) {
-		return spawnFallingBlock(loc, type, (byte) 0);
+		return spawnFallingBlock(loc, type, null);
 	}
 
-	public static FallingBlock spawnFallingBlock(final Location loc, final Material type, final byte data) {
-		return loc.getWorld().spawnFallingBlock(loc, type, data);
+	public static FallingBlock spawnFallingBlock(final Location loc, final Material type, final BlockData data) {
+		return loc.getWorld().spawnFallingBlock(loc, type.createBlockData(data.getAsString()));
 	}
 
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {

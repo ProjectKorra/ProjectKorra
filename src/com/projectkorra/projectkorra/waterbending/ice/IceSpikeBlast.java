@@ -5,10 +5,10 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -217,7 +217,7 @@ public class IceSpikeBlast extends IceAbility {
 			}
 
 			this.sourceBlock = block;
-			this.source = new TempBlock(this.sourceBlock, Material.ICE, this.data);
+			this.source = new TempBlock(this.sourceBlock, Material.ICE);
 			this.source.setRevertTime(140);
 		} else if (this.prepared) {
 			if (this.sourceBlock != null) {
@@ -398,9 +398,9 @@ public class IceSpikeBlast extends IceAbility {
 					return;
 				}
 
-				final MaterialData data = block.getState().getData();
+				final BlockState state = block.getState();
 				block.setType(Material.WATER);
-				block.setData((byte) 0);
+				block.setBlockData(GeneralMethods.getWaterData(0));
 				final IceSpikeBlast iceSpike = new IceSpikeBlast(player);
 				iceSpike.throwIce();
 				iceSpike.sourceBlock = null;
@@ -408,8 +408,8 @@ public class IceSpikeBlast extends IceAbility {
 				if (iceSpike.progressing) {
 					WaterReturn.emptyWaterBottle(player);
 				}
-				block.setType(data.getItemType());
-				block.setData(data.getData());
+				block.setType(state.getType());
+				block.setBlockData(state.getBlockData());
 
 			}
 		}

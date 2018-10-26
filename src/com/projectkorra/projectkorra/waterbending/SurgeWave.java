@@ -105,7 +105,7 @@ public class SurgeWave extends WaterAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
+			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 			this.waveBlocks.put(block, block);
 		}
 	}
@@ -154,10 +154,10 @@ public class SurgeWave extends WaterAbility {
 			}
 
 			final Block oldBlock = block;
-			final TempBlock tblock = new TempBlock(block, block.getType(), (byte) 0);
+			final TempBlock tblock = new TempBlock(block, block.getType());
 			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
 				tblock.setType(Material.ICE);
-			} else if (isPlant(block) && block.getType() != Material.LEAVES) {
+			} else if (isPlant(block)) {
 				block.breakNaturally();
 				tblock.setType(Material.ICE);
 			} else {
@@ -277,7 +277,7 @@ public class SurgeWave extends WaterAbility {
 				final Block blockl = this.location.getBlock();
 				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))) && blockl.getType() != Material.LEAVES)) {
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
 					for (double i = 0; i <= this.currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
 							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);

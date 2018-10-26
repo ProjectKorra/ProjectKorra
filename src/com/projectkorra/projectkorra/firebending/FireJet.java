@@ -51,9 +51,9 @@ public class FireJet extends FireAbility {
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (BlazeArc.isIgnitable(player, block) || block.getType() == Material.AIR || block.getType() == Material.STEP || block.getType() == Material.WOOD_STEP || this.bPlayer.isAvatarState()) {
+		if (BlazeArc.isIgnitable(player, block) || block.getType() == Material.AIR || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || this.bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
-			if (canFireGrief()) {
+			if (!canFireGrief()) {
 				if (block.getType() == Material.AIR) {
 					createTempFire(block.getLocation());
 				}
@@ -84,8 +84,8 @@ public class FireJet extends FireAbility {
 				playFirebendingSound(this.player.getLocation());
 			}
 
-			ParticleEffect.FLAME.display(this.player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
-			ParticleEffect.SMOKE.display(this.player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.FLAME.display(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
+			ParticleEffect.SMOKE.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

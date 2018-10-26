@@ -49,7 +49,7 @@ public class AcrobatStance extends ChiAbility {
 		this.start();
 		this.bPlayer.setStance(this);
 		GeneralMethods.displayMovePreview(player);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 0.5F, 2F);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class AcrobatStance extends ChiAbility {
 		this.bPlayer.addCooldown(this);
 		this.bPlayer.setStance(null);
 		GeneralMethods.displayMovePreview(this.player);
-		this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+		this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 0.5F, 2F);
 		this.player.removePotionEffect(PotionEffectType.SPEED);
 		this.player.removePotionEffect(PotionEffectType.JUMP);
 	}

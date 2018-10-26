@@ -22,7 +22,7 @@
     	<artifactId>Spigot-Server</artifactId>
     	<version>LATEST</version>
     	<scope>system</scope>
-    	<systemPath>${project.basedir}/lib/spigot-1.12.1.jar</systemPath>
+    	<systemPath>${project.basedir}/lib/spigot-1.13.1.jar</systemPath>
     </dependency>
     <!-- Factions -->
     <dependency>

@@ -12,9 +12,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -31,7 +32,6 @@ public class AirSuction extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
-	private static Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.TRAP_DOOR };
 	private final List<Block> affectedDoors = new ArrayList<>();
 
 	private boolean hasOtherOrigin;
@@ -127,12 +127,14 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static void setOrigin(final Player player) {
-		final Material[] ignore = new Material[getTransparentMaterials().length + doorTypes.length];
+		final Material[] ignore = new Material[getTransparentMaterials().length + AirBlast.DOORS.length + AirBlast.TDOORS.length];
 		for (int i = 0; i < ignore.length; i++) {
 			if (i < getTransparentMaterials().length) {
 				ignore[i] = getTransparentMaterials()[i];
+			} else if (i < getTransparentMaterials().length + AirBlast.DOORS.length){
+				ignore[i] = AirBlast.DOORS[i - getTransparentMaterials().length];
 			} else {
-				ignore[i] = doorTypes[i - getTransparentMaterials().length];
+				ignore[i] = AirBlast.TDOORS[i - getTransparentMaterials().length - AirBlast.DOORS.length];
 			}
 		}
 		final Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), ignore);
@@ -153,52 +155,60 @@ public class AirSuction extends AirAbility {
 		final double speedFactor = this.speed * (ProjectKorra.time_step / 1000.);
 		this.location = this.location.add(this.direction.clone().multiply(speedFactor));
 
-		if (Arrays.asList(doorTypes).contains(this.location.getBlock().getType()) && !this.affectedDoors.contains(this.location.getBlock())) {
+		if ((Arrays.asList(AirBlast.DOORS).contains(this.location.getBlock().getType()) || Arrays.asList(AirBlast.TDOORS).contains(this.location.getBlock().getType())) && !this.affectedDoors.contains(this.location.getBlock())) {
 			this.handleDoorMechanics(this.location.getBlock());
 		}
 	}
 
 	private void handleDoorMechanics(final Block block) {
 		boolean tDoor = false;
-		final boolean open = (block.getData() & 0x4) == 0x4;
+		boolean open = false;
 
-		if (block.getType() != Material.TRAP_DOOR) {
-			final Door door = (Door) block.getState().getData();
-			final BlockFace face = door.getFacing();
-			final Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
-			final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
+		if (Arrays.asList(AirBlast.DOORS).contains(block.getType())) {
+			Door door = (Door) block.getBlockData();
+			BlockFace face = door.getFacing();
+			Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
+			double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
 
 			for (int i = 0; i < 3; i++) {
 				if (i == 1) {
 					continue;
 				}
-				final BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
+				BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
 
 				if (bf == face) {
-					if (!open) {
+					if (!door.isOpen()) {
 						return;
 					}
 				} else if (bf.getOppositeFace() == face) {
-					if (open) {
+					if (door.isOpen()) {
 						return;
 					}
 				}
 			}
+			
+			door.setOpen(!door.isOpen());
+			block.setBlockData(door);
+			open = door.isOpen();
 		} else {
 			tDoor = true;
+			TrapDoor trap = (TrapDoor) block.getBlockData();
 
 			if (this.origin.getY() < block.getY()) {
-				if (open) {
+				if (trap.isOpen()) {
 					return;
 				}
 			} else {
-				if (!open) {
+				if (!trap.isOpen()) {
 					return;
 				}
 			}
+			
+			trap.setOpen(!trap.isOpen());
+			block.setBlockData(trap);
+			open = trap.isOpen();
 		}
 
-		block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
 		final String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
 		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
 		this.affectedDoors.add(block);
@@ -208,7 +218,7 @@ public class AirSuction extends AirAbility {
 		Location location = origin.clone();
 		for (double i = 1; i <= this.range; i++) {
 			location = origin.clone().add(direction.clone().multiply(i));
-			if ((!this.isTransparent(location.getBlock()) && !Arrays.asList(doorTypes).contains(location.getBlock().getType())) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			if ((!this.isTransparent(location.getBlock()) && !(Arrays.asList(AirBlast.DOORS).contains(location.getBlock().getType()) && Arrays.asList(AirBlast.TDOORS).contains(location.getBlock().getType()))) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 				return origin.clone().add(direction.clone().multiply(i - 1));
 			}
 		}

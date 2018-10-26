@@ -102,11 +102,11 @@ public class Tremorsense extends EarthAbility {
 
 		if (isBendable && this.block == null) {
 			this.block = standBlock;
-			this.player.sendBlockChange(this.block.getLocation(), 89, (byte) 1);
+			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE, (byte) 1);
 		} else if (isBendable && !this.block.equals(standBlock)) {
 			this.revertGlowBlock();
 			this.block = standBlock;
-			this.player.sendBlockChange(this.block.getLocation(), 89, (byte) 1);
+			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE, (byte) 1);
 		} else if (this.block == null) {
 			return;
 		} else if (!this.player.getWorld().equals(this.block.getWorld())) {
@@ -127,7 +127,7 @@ public class Tremorsense extends EarthAbility {
 
 	public void revertGlowBlock() {
 		if (this.block != null) {
-			this.player.sendBlockChange(this.block.getLocation(), this.block.getTypeId(), this.block.getData());
+			this.player.sendBlockChange(this.block.getLocation(), this.block.getType(), this.block.getData());
 		}
 	}
 

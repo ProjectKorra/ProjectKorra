@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -8,8 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -20,10 +19,9 @@ import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 public class BlazeArc extends FireAbility {
 
 	private static final long DISSIPATE_REMOVE_TIME = 400;
-	private static final Material[] OVERWRITABLE_MATERIALS = { Material.SAPLING, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.SNOW, Material.TORCH };
-	private static final Map<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<Block, Player>();
-	private static final Map<Block, Long> IGNITED_TIMES = new ConcurrentHashMap<Block, Long>();
-	private static final Map<Location, MaterialData> REPLACED_BLOCKS = new ConcurrentHashMap<Location, MaterialData>();
+	private static final Map<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Long> IGNITED_TIMES = new ConcurrentHashMap<>();
+	private static final Map<Location, BlockState> REPLACED_BLOCKS = new ConcurrentHashMap<>();
 
 	private long time;
 	private long interval;
@@ -59,7 +57,7 @@ public class BlazeArc extends FireAbility {
 					new PlantRegrowth(this.player, block);
 				}
 			} else if (block.getType() != Material.FIRE) {
-				REPLACED_BLOCKS.put(block.getLocation(), block.getState().getData());
+				REPLACED_BLOCKS.put(block.getLocation(), block.getState());
 			}
 		}
 
@@ -131,7 +129,7 @@ public class BlazeArc extends FireAbility {
 	public static boolean isIgnitable(final Player player, final Block block) {
 		if (block.getType() == Material.FIRE) {
 			return true;
-		} else if (Arrays.asList(OVERWRITABLE_MATERIALS).contains(block.getType())) {
+		} else if (block.getType().isBurnable()) {
 			return true;
 		} else if (block.getType() != Material.AIR) {
 			return false;
@@ -165,8 +163,8 @@ public class BlazeArc extends FireAbility {
 			IGNITED_TIMES.remove(block);
 		}
 		if (REPLACED_BLOCKS.containsKey(block.getLocation())) {
-			block.setType(REPLACED_BLOCKS.get(block.getLocation()).getItemType());
-			block.setData(REPLACED_BLOCKS.get(block.getLocation()).getData());
+			block.setType(REPLACED_BLOCKS.get(block.getLocation()).getType());
+			block.setBlockData(REPLACED_BLOCKS.get(block.getLocation()).getBlockData());
 			REPLACED_BLOCKS.remove(block.getLocation());
 		}
 	}
@@ -251,10 +249,6 @@ public class BlazeArc extends FireAbility {
 		return DISSIPATE_REMOVE_TIME;
 	}
 
-	public static Material[] getOverwritableMaterials() {
-		return OVERWRITABLE_MATERIALS;
-	}
-
 	public static Map<Block, Player> getIgnitedBlocks() {
 		return IGNITED_BLOCKS;
 	}
@@ -263,7 +257,7 @@ public class BlazeArc extends FireAbility {
 		return IGNITED_TIMES;
 	}
 
-	public static Map<Location, MaterialData> getReplacedBlocks() {
+	public static Map<Location, BlockState> getReplacedBlocks() {
 		return REPLACED_BLOCKS;
 	}
 

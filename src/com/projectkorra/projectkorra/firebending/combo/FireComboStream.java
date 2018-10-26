@@ -79,7 +79,7 @@ public class FireComboStream extends BukkitRunnable {
 		}
 		for (int i = 0; i < this.density; i++) {
 			if (this.useNewParticles) {
-				this.particleEffect.display(this.location, this.spread, this.spread, this.spread, 0, 1);
+				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}

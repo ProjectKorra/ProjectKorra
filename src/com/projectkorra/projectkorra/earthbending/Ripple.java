@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -218,7 +217,7 @@ public class Ripple extends EarthAbility {
 				final Block topblock = loc.getBlock();
 				final Block botblock = loc.clone().add(0, -1, 0).getBlock();
 
-				if (this.isTransparent(topblock) && !topblock.isLiquid() && this.isEarthbendable(botblock) && botblock.getType() != Material.STATIONARY_LAVA) {
+				if (this.isTransparent(topblock) && !topblock.isLiquid() && this.isEarthbendable(botblock)) {
 					location = loc.clone().add(0, -1, 0);
 					this.locations.add(location);
 					break;
