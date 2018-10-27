@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempBlock.RevertTask;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -261,7 +262,7 @@ public class SurgeWave extends WaterAbility {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
-				this.sourceBlock.getWorld().playEffect(this.location, Effect.SMOKE, 4, (int) this.range);
+				ParticleEffect.SMOKE_NORMAL.display(sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
 				return;
 			}
 

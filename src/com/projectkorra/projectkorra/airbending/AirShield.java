@@ -152,14 +152,14 @@ public class AirShield extends AirAbility {
 				entity.setFallDistance(0);
 			}
 		}
-
+		
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 		}
-
+		
 		final Set<Integer> keys = this.angles.keySet();
 		for (final int i : keys) {
 			double x, y, z;

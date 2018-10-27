@@ -253,13 +253,13 @@ public class PKListener implements Listener {
 		final Block toblock = event.getToBlock();
 		final Block fromblock = event.getBlock();
 		
-		if (TempBlock.isTempBlock(fromblock)) {
+		if (TempBlock.isTempBlock(fromblock) || TempBlock.isTempBlock(toblock)) {
 			event.setCancelled(true);
 		} else {
 			if (ElementalAbility.isLava(fromblock)) {
 				event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
 			} else if (ElementalAbility.isWater(fromblock)) {
-				event.setCancelled(!WaterBubble.isAir(toblock));
+				event.setCancelled(WaterBubble.isAir(toblock));
 				if (!event.isCancelled()) {
 					event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
 				}

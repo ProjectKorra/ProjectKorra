@@ -8,6 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -220,11 +222,23 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isWater(final Block block) {
-		return block != null ? isWater(block.getType()) : null;
+		if (block == null) {
+			return false;
+		} else if (isWater(block.getType())) {
+			return true;
+		} else if (isWater(block.getBlockData())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static boolean isWater(final BlockData data) {
+		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : false;
 	}
 
 	public static boolean isWater(final Material material) {
-		return material == Material.WATER;
+		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT;
 	}
 
 }

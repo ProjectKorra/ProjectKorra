@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -122,11 +123,17 @@ public class WaterBubble extends WaterAbility {
 							final Block b = this.location.add(x, y, z).getBlock();
 
 							if (!this.waterOrigins.containsKey(b)) {
-								if (b.getType() == Material.WATER) {
+								if (isWater(b)) {
 									if (!TempBlock.isTempBlock(b)) {
 										this.waterOrigins.put(b, b.getState());
+										if (b.getBlockData() instanceof Waterlogged) {
+											Waterlogged logged = (Waterlogged) b.getBlockData();
+											logged.setWaterlogged(false);
+											b.setBlockData(logged);
+										} else if (isWater(b.getType())) {
+											b.setType(Material.AIR);
+										}
 									}
-									b.setType(Material.AIR);
 								}
 							}
 							list.add(b); // Store it to say that it should be there.
@@ -142,7 +149,11 @@ public class WaterBubble extends WaterAbility {
 			set.removeAll(list);
 
 			for (final Block b : set) {
-				if (b.getType() == Material.AIR) {
+				if (b.getBlockData() instanceof Waterlogged) {
+					Waterlogged logged = (Waterlogged) b.getBlockData();
+					logged.setWaterlogged(true);
+					b.setBlockData(logged);
+				} else if (b.getType() == Material.AIR) {
 					b.setType(this.waterOrigins.get(b).getType());
 					b.setBlockData(this.waterOrigins.get(b).getBlockData());
 				}
@@ -178,11 +189,17 @@ public class WaterBubble extends WaterAbility {
 		super.remove();
 
 		for (final Block b : this.waterOrigins.keySet()) {
-			if (b.getType() == Material.AIR) {
+			if (b.getBlockData() instanceof Waterlogged) {
+				Waterlogged logged = (Waterlogged) b.getBlockData();
+				logged.setWaterlogged(true);
+				b.setBlockData(logged);
+			} else if (b.getType() == Material.AIR) {
 				b.setType(this.waterOrigins.get(b).getType());
 				b.setBlockData(this.waterOrigins.get(b).getBlockData());
 			}
 		}
+		
+		this.waterOrigins.clear();
 	}
 
 	/**
@@ -195,10 +212,10 @@ public class WaterBubble extends WaterAbility {
 	public static boolean isAir(final Block block) {
 		for (final WaterBubble bubble : CoreAbility.getAbilities(WaterBubble.class)) {
 			if (bubble.waterOrigins.containsKey(block)) {
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 }

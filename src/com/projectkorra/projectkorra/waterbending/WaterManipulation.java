@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -209,7 +208,7 @@ public class WaterManipulation extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.sourceBlock.getWorld().playEffect(this.location, Effect.SMOKE, 4, (int) this.selectRange);
+					ParticleEffect.SMOKE_NORMAL.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
 					return;
 				}
 

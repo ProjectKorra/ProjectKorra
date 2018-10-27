@@ -774,7 +774,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
 			config.addDefault("Abilities.Air.AirShield.Duration", 0);
-			config.addDefault("Abilities.Air.AirShield.Radius", 7);
+			config.addDefault("Abilities.Air.AirShield.MaxRadius", 7);
+			config.addDefault("Abilities.Air.AirShield.InitialRadius", 1);
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
 			config.addDefault("Abilities.Air.AirShield.Particles", 5);
