@@ -185,9 +185,4 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return this.affectedEntities;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift";
-	}
 }

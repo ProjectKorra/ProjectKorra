@@ -60,9 +60,4 @@ public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 		combo.add(new AbilityInformation("Shockwave", ClickType.RIGHT_CLICK_BLOCK));
 		return combo;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "\n(Self) RaiseEarth (Right click) > Shockwave (Right click)\n(Projection) RaiseEarth(Right click) > Shockwave (Left click)";
-	}
 }
