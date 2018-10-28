@@ -1182,7 +1182,7 @@ public class GeneralMethods {
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
-		return getTargetedLocation(player, range);
+		return getTargetedLocation(player, range, Material.AIR);
 	}
 
 	public static Block getTopBlock(final Location loc, final int range) {

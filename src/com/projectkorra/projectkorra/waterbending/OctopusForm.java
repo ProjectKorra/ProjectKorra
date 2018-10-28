@@ -431,7 +431,7 @@ public class OctopusForm extends WaterAbility {
 			} else if (this.blocks.contains(tblock)) {
 				this.newBlocks.add(tblock);
 			}
-		} else if (this.isWaterbendable(this.player, block) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
+		} else if (this.isWaterbendable(this.player, block) || block.getType() == Material.FIRE || isAir(block.getType())) {
 			if (isWater(block) && !TempBlock.isTempBlock(block)) {
 				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(0.5, 0.5, 0.5), 5, Math.random(), Math.random(), Math.random(), 0);
 			}

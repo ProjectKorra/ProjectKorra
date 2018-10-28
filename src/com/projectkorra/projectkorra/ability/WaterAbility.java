@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -291,7 +290,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playFocusWaterEffect(final Block block) {
-		block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 4, 20);
+		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
 	}
 
 	public static void playIcebendingSound(final Location loc) {
