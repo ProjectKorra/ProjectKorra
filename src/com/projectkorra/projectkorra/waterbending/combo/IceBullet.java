@@ -545,9 +545,4 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	public void setName(final String name) {
 		this.name = name;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast";
-	}
 }
