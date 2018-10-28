@@ -40,15 +40,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static Material[] getTransparentMaterials() {
-		Material[] transparent = new Material[getTransparentMaterialSet().size()];
-		int i = 0;
-		
-		for (Material mat : getTransparentMaterialSet()) {
-			transparent[i] = mat;
-			i++;
-		}
-		
-		return transparent;
+		return getTransparentMaterialSet().toArray(new Material[getTransparentMaterialSet().size()]);
 	}
 
 	public static HashSet<Material> getTransparentMaterialSet() {
@@ -224,17 +216,13 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isWater(final Block block) {
 		if (block == null) {
 			return false;
-		} else if (isWater(block.getType())) {
-			return true;
-		} else if (isWater(block.getBlockData())) {
-			return true;
 		} else {
-			return false;
+			return isWater(block.getBlockData());
 		}
 	}
 	
 	public static boolean isWater(final BlockData data) {
-		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : false;
+		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : isWater(data.getMaterial());
 	}
 
 	public static boolean isWater(final Material material) {
