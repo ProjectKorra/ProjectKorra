@@ -125,9 +125,4 @@ public class IceWave extends IceAbility implements ComboAbility {
 		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
 		return iceWave;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "Create a WaterSpout Wave > PhaseChange (Left Click)";
-	}
 }

@@ -118,9 +118,4 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "QuickStrike > SwiftKick > QuickStrike > QuickStrike";
-	}
 }

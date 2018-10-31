@@ -313,9 +313,4 @@ public class AirStream extends AirAbility implements ComboAbility {
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)";
-	}
 }
