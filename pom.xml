@@ -38,7 +38,7 @@
       <artifactId>GriefPrevention</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/GriefPrevention 10.5.3.jar</systemPath>
+      <systemPath>${project.basedir}/lib/GriefPrevention.jar</systemPath>
     </dependency>
     <!-- LWC -->
     <dependency>
@@ -46,7 +46,7 @@
       <artifactId>lwc</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/LWC.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Modern-LWC-2.1.1.jar</systemPath>
     </dependency>
     <!-- MassiveCore -->
     <dependency>
@@ -78,7 +78,7 @@
       <artifactId>residence</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Residence4.0.0.4.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Residence4.8.2.0.jar</systemPath>
     </dependency>
     <!-- Towny -->
     <dependency>

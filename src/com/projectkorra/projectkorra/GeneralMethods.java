@@ -66,6 +66,7 @@ import org.kingdoms.constants.player.KingdomPlayer;
 import org.kingdoms.manager.game.GameManagement;
 
 import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import com.google.common.reflect.ClassPath;
@@ -1500,8 +1501,7 @@ public class GeneralMethods {
 				try {
 					final TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(world.getName());
 					worldCoord = new WorldCoord(tWorld.getName(), Coord.parseCoord(location));
-
-					final boolean bBuild = PlayerCacheUtil.getCachePermission(player, location, 3, (byte) 0, TownyPermission.ActionType.BUILD);
+					final boolean bBuild = PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, TownyPermission.ActionType.BUILD);
 
 					if (!bBuild) {
 						final PlayerCache cache = twn.getCache(player);
@@ -1546,10 +1546,11 @@ public class GeneralMethods {
 			}
 
 			if (residence != null && respectResidence) {
-				final ClaimedResidence res = Residence.getResidenceManager().getByLoc(loc);
-				if (res != null) {
-					final ResidencePermissions perms = res.getPermissions();
-					if (perms.playerHas(player.getName(), ConfigManager.defaultConfig.get().getString("Properities.RegionProtection.Residence.Flag"), true)) {
+				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
+				final ClaimedResidence claim = res.getByLoc(location);
+				if (claim != null) {
+					final ResidencePermissions perms = claim.getPermissions();
+					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
 						return true;
 					}
 				}
