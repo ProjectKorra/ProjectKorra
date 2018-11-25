@@ -123,7 +123,7 @@ public class FireShield extends FireAbility {
 
 					final Location display = this.location.clone().add(this.shieldRadius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.shieldRadius / 1.5 * Math.cos(rtheta), this.shieldRadius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
 					if (this.random.nextInt(6) == 0) {
-						ParticleEffect.SMOKE.display(display, 1, 0, 0, 0);
+						ParticleEffect.SMOKE_NORMAL.display(display, 1, 0, 0, 0);
 					}
 					if (this.random.nextInt(4) == 0) {
 						ParticleEffect.FLAME.display(display, 1, 0.1, 0.1, 0.1, 0.013);
@@ -168,7 +168,7 @@ public class FireShield extends FireAbility {
 				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
 				final Location display = this.location.add(vector);
 				if (this.random.nextInt(6) == 0) {
-					ParticleEffect.SMOKE.display(display, 1, 0, 0, 0);
+					ParticleEffect.SMOKE_NORMAL.display(display, 1, 0, 0, 0);
 				}
 				ParticleEffect.FLAME.display(display, 2, 0.3, 0.2, 0.3, 0.023);
 				if (this.random.nextInt(4) == 0) {

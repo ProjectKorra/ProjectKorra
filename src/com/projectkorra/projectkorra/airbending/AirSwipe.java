@@ -162,9 +162,11 @@ public class AirSwipe extends AirAbility {
 						}
 					}
 
-					if (block.getType() != Material.AIR) {
+					if (!isAir(block.getType())) {
 						if (block.getType().equals(Material.SNOW)) {
 							continue;
+						} else if (isPlant(block.getType())) {
+							block.breakNaturally();
 						} else {
 							this.elements.remove(direction);
 						}

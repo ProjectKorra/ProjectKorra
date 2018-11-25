@@ -208,7 +208,7 @@ public class FireBlastCharged extends FireAbility {
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
 			ParticleEffect.FLAME.display(block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
-			ParticleEffect.SMOKE.display(block.getLocation(), 2, 0.5, 0.5, 0.5, 0);
+			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.5, 0.5, 0.5, 0);
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
 			}

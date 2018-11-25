@@ -329,6 +329,9 @@ public class EarthArmor extends EarthAbility {
 		if (material == Material.MYCELIUM) {
 			return 0xa86e45; // Default dirt brown.
 		}
+		if (material == Material.GRASS_BLOCK) {
+			return 0xa86e45;
+		}
 		if (material == Material.CLAY) {
 			return 0xBAC2D1; // Dull gray-brown.
 		}

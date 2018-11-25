@@ -47,7 +47,9 @@ public abstract class ElementalAbility extends CoreAbility {
 		final HashSet<Material> set = new HashSet<>();
 		
 		for (Material mat : Material.values()) {
-			if (!mat.isOccluding()) {
+			if (GeneralMethods.isTransparent(mat)) {
+				set.add(mat);
+			} else if (mat.isBurnable() && !mat.isSolid()) {
 				set.add(mat);
 			}
 		}

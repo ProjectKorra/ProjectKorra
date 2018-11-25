@@ -85,7 +85,7 @@ public class FireJet extends FireAbility {
 			}
 
 			ParticleEffect.FLAME.display(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
-			ParticleEffect.SMOKE.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
+			ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

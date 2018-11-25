@@ -149,7 +149,7 @@ public class WallOfFire extends FireAbility {
 				continue;
 			}
 			ParticleEffect.FLAME.display(block.getLocation(), 3, 0.6, 0.6, 0.6);
-			ParticleEffect.SMOKE.display(block.getLocation(), 2, 0.6, 0.6, 0.6);
+			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.6, 0.6, 0.6);
 
 			if (this.random.nextInt(7) == 0) {
 				playFirebendingSound(block.getLocation());

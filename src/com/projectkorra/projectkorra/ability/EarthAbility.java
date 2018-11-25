@@ -123,8 +123,8 @@ public abstract class EarthAbility extends ElementalAbility {
 		return isSandbendable(this.player, material);
 	}
 
-	public void moveEarth(final Block block, final Vector direction, final int chainlength) {
-		this.moveEarth(block, direction, chainlength, true);
+	public boolean moveEarth(final Block block, final Vector direction, final int chainlength) {
+		return this.moveEarth(block, direction, chainlength, true);
 	}
 
 	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer) {
@@ -181,9 +181,9 @@ public abstract class EarthAbility extends ElementalAbility {
 				}
 				if (up) {
 					final Block topblock = affectedblock.getRelative(BlockFace.UP);
-					if (topblock.getType() != Material.AIR) {
+					if (!isAir(topblock.getType())) {
 						GeneralMethods.breakBlock(affectedblock);
-					} else if (!affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
+					} else {
 						moveEarthBlock(affectedblock, topblock);
 					}
 				} else {
@@ -197,7 +197,7 @@ public abstract class EarthAbility extends ElementalAbility {
 					affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
 					if (!this.isEarthbendable(affectedblock)) {
 						if (down) {
-							if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
+							if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && !isAir(affectedblock.getType())) {
 								moveEarthBlock(affectedblock, block);
 							}
 						}
@@ -220,7 +220,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
 				if (!this.isEarthbendable(affectedblock)) {
 					if (down) {
-						if (this.isTransparent(affectedblock) && !affectedblock.isLiquid()) {
+						if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && !isAir(affectedblock.getType())) {
 							moveEarthBlock(affectedblock, block);
 						}
 					}

@@ -280,7 +280,7 @@ public class HeatControl extends FireAbility {
 
 	public void displayCookParticles() {
 		ParticleEffect.FLAME.display(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
-		ParticleEffect.SMOKE.display(this.player.getLocation().clone().add(0, 1, 0), 2, 0.5, 0.5, 0.5);
+		ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation().clone().add(0, 1, 0), 2, 0.5, 0.5, 0.5);
 	}
 
 	public static boolean isCookable(final Material material) {
@@ -382,7 +382,7 @@ public class HeatControl extends FireAbility {
 				@Override
 				public void run() {
 					if (tempBlock != null) {
-						ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
+						ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
 						if (HeatControl.this.randy.nextInt(3) == 0) {
 							tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
 						}
@@ -416,7 +416,7 @@ public class HeatControl extends FireAbility {
 						}
 					}
 
-					ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
+					ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
 					if (HeatControl.this.randy.nextInt(3) == 0) {
 						tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
 					}
