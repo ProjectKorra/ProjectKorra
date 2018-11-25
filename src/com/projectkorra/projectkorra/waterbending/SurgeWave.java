@@ -148,23 +148,21 @@ public class SurgeWave extends WaterAbility {
 		}
 
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isRegionProtectedFromBuild(this.player, "PhaseChange", block.getLocation())) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
 			}
 
 			final Block oldBlock = block;
-			final TempBlock tblock = new TempBlock(block, block.getType());
-			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
-				tblock.setType(Material.ICE);
+			if (!isAir(block.getType()) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
+				continue;
 			} else if (isPlant(block)) {
 				block.breakNaturally();
-				tblock.setType(Material.ICE);
-			} else {
-				tblock.revertBlock();
-				continue;
-			}
+			} 
+			
+			final TempBlock tblock = new TempBlock(block, Material.ICE);
+			
 			tblock.setRevertTask(new RevertTask() {
 
 				@Override
@@ -173,8 +171,10 @@ public class SurgeWave extends WaterAbility {
 				}
 
 			});
+			
 			tblock.setRevertTime(this.iceRevertTime + (new Random().nextInt(1000)));
 			this.frozenBlocks.put(block, oldBlock.getType());
+			
 			for (final Block sound : this.frozenBlocks.keySet()) {
 				if ((new Random()).nextInt(4) == 0) {
 					playWaterbendingSound(sound.getLocation());

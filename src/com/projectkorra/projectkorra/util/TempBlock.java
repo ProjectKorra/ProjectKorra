@@ -130,6 +130,10 @@ public class TempBlock {
 	public Block getBlock() {
 		return this.block;
 	}
+	
+	public BlockData getBlockData() {
+		return this.newdata;
+	}
 
 	public Location getLocation() {
 		return this.block.getLocation();
@@ -176,7 +180,7 @@ public class TempBlock {
 	}
 
 	public void setType(final Material material) {
-		this.setType(material, this.newdata);
+		this.setType(material, material.createBlockData());
 	}
 
 	public void setType(final Material material, final BlockData data) {

@@ -183,7 +183,7 @@ public abstract class EarthAbility extends ElementalAbility {
 					final Block topblock = affectedblock.getRelative(BlockFace.UP);
 					if (!isAir(topblock.getType())) {
 						GeneralMethods.breakBlock(affectedblock);
-					} else {
+					} else if (!affectedblock.isLiquid() && !isAir(affectedblock.getType())){
 						moveEarthBlock(affectedblock, topblock);
 					}
 				} else {

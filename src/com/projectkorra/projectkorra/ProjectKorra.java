@@ -107,7 +107,7 @@ public class ProjectKorra extends JavaPlugin {
 					PassiveManager.registerPassives(player);
 					GeneralMethods.removeUnusableAbilities(player.getName());
 				}
-			}, 5);
+			}, 30);
 		}
 
 		final Metrics metrics = new Metrics(this);

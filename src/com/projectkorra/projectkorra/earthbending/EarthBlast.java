@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthBlast extends EarthAbility {
 	private boolean isProgressing;
@@ -155,6 +156,8 @@ public class EarthBlast extends EarthAbility {
 	public boolean prepare() {
 		final Block block = BlockSource.getEarthSourceBlock(this.player, this.range, ClickType.SHIFT_DOWN);
 		if (block == null || !this.isEarthbendable(block)) {
+			return false;
+		} else if (TempBlock.isTempBlock(block)) {
 			return false;
 		}
 
