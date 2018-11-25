@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -26,7 +27,17 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
-
+	private static final Set<Material> TRANSPARENT = new HashSet<>();
+	
+	static {
+		TRANSPARENT.clear();
+		for (Material mat : Material.values()) {
+			if (GeneralMethods.isTransparent(mat)) {
+				TRANSPARENT.add(mat);
+			}
+		}
+	}
+	
 	public ElementalAbility(final Player player) {
 		super(player);
 	}
@@ -40,21 +51,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static Material[] getTransparentMaterials() {
-		return getTransparentMaterialSet().toArray(new Material[getTransparentMaterialSet().size()]);
+		return TRANSPARENT.toArray(new Material[TRANSPARENT.size()]);
 	}
 
 	public static HashSet<Material> getTransparentMaterialSet() {
-		final HashSet<Material> set = new HashSet<>();
-		
-		for (Material mat : Material.values()) {
-			if (GeneralMethods.isTransparent(mat)) {
-				set.add(mat);
-			} else if (mat.isBurnable() && !mat.isSolid()) {
-				set.add(mat);
-			}
-		}
-		
-		return set;
+		return new HashSet<>(TRANSPARENT);
 	}
 	
 	public static boolean isAir(final Material material) {
