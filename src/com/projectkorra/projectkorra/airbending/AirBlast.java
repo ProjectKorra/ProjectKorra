@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -40,7 +41,6 @@ public class AirBlast extends AirAbility {
 	public static final Material[] DOORS = { Material.ACACIA_DOOR, Material.BIRCH_DOOR, Material.DARK_OAK_DOOR, Material.JUNGLE_DOOR, Material.OAK_DOOR, Material.SPRUCE_DOOR };
 	public static final Material[] TDOORS = { Material.ACACIA_TRAPDOOR, Material.BIRCH_TRAPDOOR, Material.DARK_OAK_TRAPDOOR, Material.JUNGLE_TRAPDOOR, Material.OAK_TRAPDOOR, Material.SPRUCE_TRAPDOOR };
 	public static final Material[] BUTTONS = { Material.ACACIA_BUTTON, Material.BIRCH_BUTTON, Material.DARK_OAK_BUTTON, Material.JUNGLE_BUTTON, Material.OAK_BUTTON, Material.SPRUCE_BUTTON, Material.STONE_BUTTON };
-	
 
 	private boolean canFlickLevers;
 	private boolean canOpenDoors;
@@ -329,11 +329,11 @@ public class AirBlast extends AirAbility {
 						BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
 
 						if (bf == face) {
-							if (door.isOpen()) {
+							if (!door.isOpen()) {
 								return;
 							}
 						} else if (bf.getOppositeFace() == face) {
-							if (!door.isOpen()) {
+							if (door.isOpen()) {
 								return;
 							}
 						}
@@ -377,10 +377,13 @@ public class AirBlast extends AirAbility {
 								button.setPowered(false);
 								testblock.setBlockData(button);
 								affectedLevers.remove(testblock);
+								testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
 							}
 							
 						}.runTaskLater(ProjectKorra.plugin, 15);
 					}
+					
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
 				}
 			} else if (testblock.getType() == Material.LEVER) {
 				if (testblock.getBlockData() instanceof Switch) {
@@ -388,6 +391,7 @@ public class AirBlast extends AirAbility {
 					lever.setPowered(!lever.isPowered());
 					testblock.setBlockData(lever);
 					affectedLevers.add(testblock);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
 				}
 			}
 		}
