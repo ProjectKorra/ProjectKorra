@@ -341,7 +341,7 @@ public class AirBlast extends AirAbility {
 					
 					door.setOpen(!door.isOpen());
 					testblock.setBlockData(door);
-					testblock.getWorld().playSound(testblock.getLocation(), "BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE"), 0.5f, 0);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
 					affectedLevers.add(testblock);
 				}
 			} else if (Arrays.asList(TDOORS).contains(testblock.getType())) {
@@ -360,7 +360,7 @@ public class AirBlast extends AirAbility {
 					
 					tDoor.setOpen(!tDoor.isOpen());
 					testblock.setBlockData(tDoor);
-					testblock.getWorld().playSound(testblock.getLocation(), "BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE"), 0.5f, 0);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
 				}
 			} else if (Arrays.asList(BUTTONS).contains(testblock.getType())) {
 				if (testblock.getBlockData() instanceof Switch) {
