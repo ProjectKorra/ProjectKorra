@@ -116,13 +116,16 @@ public class WaterReturn extends WaterAbility {
 		if (inventory.contains(Material.GLASS_BOTTLE)) {
 			final int index = inventory.first(Material.GLASS_BOTTLE);
 			final ItemStack item = inventory.getItem(index);
-
+			ItemStack itm = new ItemStack(Material.POTION);
+			PotionMeta meta = (PotionMeta) itm.getItemMeta();
+			meta.setBasePotionData(new PotionData(PotionType.WATER));
+			itm.setItemMeta(meta);
 			if (item.getAmount() == 1) {
-				inventory.setItem(index, new ItemStack(Material.POTION));
+				inventory.setItem(index, itm);
 			} else {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
-				final HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.POTION));
+				final HashMap<Integer, ItemStack> leftover = inventory.addItem(itm);
 				for (final int left : leftover.keySet()) {
 					this.player.getWorld().dropItemNaturally(this.player.getLocation(), leftover.get(left));
 				}
