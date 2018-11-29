@@ -1,12 +1,14 @@
 package com.projectkorra.projectkorra;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
@@ -101,6 +103,17 @@ public class ProjectKorra extends JavaPlugin {
 			}, (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20), (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20));
 		}
 		TempBlock.startReversion();
+		
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+	    	@Override
+	    	public void run() {
+				for(Entry<LivingEntity, Long>  entry: BendingPlayer.DamageCooldown.entrySet()) {
+					 if(entry.getValue()<System.currentTimeMillis()) {
+						 BendingPlayer.DamageCooldown.remove(entry.getKey());
+					 }
+				}
+	    		}
+	    	}, 0L, 1L);
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
