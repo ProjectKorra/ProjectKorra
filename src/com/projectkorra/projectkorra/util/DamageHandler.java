@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.util;
 
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -18,6 +20,7 @@ import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
+@SuppressWarnings("deprecation")
 public class DamageHandler {
 
 	/**
@@ -38,6 +41,7 @@ public class DamageHandler {
 		if (source == null) {
 			source = ability.getPlayer();
 		}
+	
 
 		final AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage, ignoreArmor);
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
@@ -76,6 +80,7 @@ public class DamageHandler {
 					}
 				}
 
+
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
 					NCPExemptionManager.unexempt(source, CheckType.FIGHT_REACH);
 					NCPExemptionManager.unexempt(source, CheckType.FIGHT_DIRECTION);
@@ -95,7 +100,7 @@ public class DamageHandler {
 		}
 
 	}
-
+	
 	public static boolean hasArmor(LivingEntity entity) {
 		if(entity.getEquipment().getBoots()!=null || entity.getEquipment().getChestplate()!=null || entity.getEquipment().getHelmet()!=null || entity.getEquipment().getLeggings()!=null) {
 			return true;
@@ -106,7 +111,6 @@ public class DamageHandler {
 	public static Map<LivingEntity, Long> CooldownDamage() {
 		return BendingPlayer.DamageCooldown;
 	}
-	
 	
 	public static void damageEntity(final Entity entity, final Player source, final double damage, final Ability ability) {
 		damageEntity(entity, source, damage, ability, ConfigManager.getConfig().getBoolean("Properties.IgnoreArmor"));
