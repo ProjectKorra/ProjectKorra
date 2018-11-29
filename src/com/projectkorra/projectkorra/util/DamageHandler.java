@@ -6,11 +6,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 
@@ -65,9 +66,13 @@ public class DamageHandler {
 				((LivingEntity) entity).damage(damage, source);
 				final double nextHealth = ((LivingEntity) entity).getHealth();
 				entity.setLastDamageCause(finalEvent);
-				if (ignoreArmor) {
-					if (finalEvent.isApplicable(DamageModifier.ARMOR)) {
-						finalEvent.setDamage(DamageModifier.ARMOR, 0);
+				
+				if (ignoreArmor && hasArmor((LivingEntity) entity)) {
+					if(CooldownDamage().get((LivingEntity) entity)==null) {
+						((LivingEntity) entity).setHealth(prevHealth-damage);
+						CooldownDamage().put((LivingEntity) entity, System.currentTimeMillis()+1000);
+					} else if (CooldownDamage().get((LivingEntity) entity)<System.currentTimeMillis()) {
+						CooldownDamage().remove((LivingEntity) entity);
 					}
 				}
 
@@ -91,8 +96,20 @@ public class DamageHandler {
 
 	}
 
+	public static boolean hasArmor(LivingEntity entity) {
+		if(entity.getEquipment().getBoots()!=null || entity.getEquipment().getChestplate()!=null || entity.getEquipment().getHelmet()!=null || entity.getEquipment().getLeggings()!=null) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static Map<LivingEntity, Long> CooldownDamage() {
+		return BendingPlayer.DamageCooldown;
+	}
+	
+	
 	public static void damageEntity(final Entity entity, final Player source, final double damage, final Ability ability) {
-		damageEntity(entity, source, damage, ability, true);
+		damageEntity(entity, source, damage, ability, ConfigManager.getConfig().getBoolean("Properties.IgnoreArmor"));
 	}
 
 	public static void damageEntity(final Entity entity, final double damage, final Ability ability) {
