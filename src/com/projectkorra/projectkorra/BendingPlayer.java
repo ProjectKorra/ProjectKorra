@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
@@ -46,6 +47,7 @@ public class BendingPlayer {
 	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID
 	 * key.
 	 */
+        public static final Map<LivingEntity, Long> DamageCooldown = new ConcurrentHashMap<>();
 	private static final Map<UUID, BendingPlayer> PLAYERS = new ConcurrentHashMap<>();
 
 	private boolean permaRemoved;
