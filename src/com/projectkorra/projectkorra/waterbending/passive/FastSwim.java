@@ -26,11 +26,14 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
 		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 		this.duration = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Duration");
+		
+		start();
 	}
 
 	@Override
 	public void progress() {
 		if (!this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this) || CoreAbility.hasAbility(this.player, WaterSpout.class) || CoreAbility.hasAbility(this.player, EarthArmor.class) || CoreAbility.hasAbility(this.player, WaterArms.class)) {
+			remove();
 			return;
 		}
 
@@ -38,11 +41,13 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 			if (this.player.isSneaking() && ElementalAbility.isWater(this.player.getLocation().getBlock()) && !this.bPlayer.isOnCooldown(this)) {
 				if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
 					this.bPlayer.addCooldown(this);
+					remove();
 					return;
 				}
 				this.player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
 			} else if (!this.player.isSneaking()) {
 				this.bPlayer.addCooldown(this);
+				remove();
 			}
 		}
 	}
@@ -78,7 +83,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 
 	@Override
 	public boolean isInstantiable() {
-		return true;
+		return false;
 	}
 
 	@Override

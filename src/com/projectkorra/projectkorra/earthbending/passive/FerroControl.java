@@ -21,6 +21,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 	public FerroControl(final Player player) {
 		super(player);
 
+		start();
 	}
 
 	@Override
@@ -59,6 +60,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 			this.block.getWorld().playSound(this.block.getLocation(), Sound.valueOf(sound), 0.5f, 0);
 			this.bPlayer.addCooldown(this, 200);
 		}
+		remove();
 	}
 
 	@Override
@@ -88,7 +90,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 
 	@Override
 	public boolean isInstantiable() {
-		return true;
+		return false;
 	}
 
 	@Override
