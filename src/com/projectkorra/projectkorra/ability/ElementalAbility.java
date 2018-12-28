@@ -229,7 +229,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isWater(final Material material) {
-		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT;
+		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP;
 	}
 
 }

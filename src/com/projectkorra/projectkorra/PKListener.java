@@ -46,6 +46,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.event.entity.EntityToggleSwimEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -1330,18 +1331,19 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
-		if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
-			new FerroControl(player);
-		} else if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FastSwim.class))) {
-			new FastSwim(player);
-		}
-
 		AirScooter.check(player);
 
 		final CoreAbility coreAbil = bPlayer.getBoundAbility();
 		final String abil = bPlayer.getBoundAbilityName();
 		if (coreAbil == null) {
-
+			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
+				new FerroControl(player);
+			}
+			
+			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FastSwim.class))) {
+				new FastSwim(player);
+			}
+			
 			return;
 		}
 

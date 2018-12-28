@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -13,6 +12,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public class FastSwim extends WaterAbility implements PassiveAbility {
+	
 	private long cooldown;
 	private double swimSpeed;
 	private long duration;
@@ -20,6 +20,10 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 	public FastSwim(final Player player) {
 		super(player);
 		if (this.bPlayer.isOnCooldown(this)) {
+			return;
+		}
+		
+		if (player.isSneaking()) { // the sneak event calls before they actually start sneaking
 			return;
 		}
 
@@ -36,16 +40,19 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 			remove();
 			return;
 		}
-
+		
+		if (this.duration > 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
+			this.bPlayer.addCooldown(this);
+			remove();
+			return;
+		}
+		
 		if (this.bPlayer.getBoundAbility() == null || (this.bPlayer.getBoundAbility() != null && !this.bPlayer.getBoundAbility().isSneakAbility())) {
-			if (this.player.isSneaking() && ElementalAbility.isWater(this.player.getLocation().getBlock()) && !this.bPlayer.isOnCooldown(this)) {
-				if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
-					this.bPlayer.addCooldown(this);
-					remove();
-					return;
+			if (!this.player.isSneaking()) {
+				if (isWater(this.player.getLocation().getBlock()) && !this.bPlayer.isOnCooldown(this)) {
+					player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
 				}
-				this.player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
-			} else if (!this.player.isSneaking()) {
+			} else {
 				this.bPlayer.addCooldown(this);
 				remove();
 			}
