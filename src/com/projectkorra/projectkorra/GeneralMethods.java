@@ -1297,7 +1297,7 @@ public class GeneralMethods {
 					continue;
 				}
 			} else {
-				if ((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && WaterManipulation.canPhysicsChange(blocki)) {
+				if (!((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && WaterManipulation.canPhysicsChange(blocki))) {
 					continue;
 				}
 			}
