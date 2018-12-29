@@ -5,40 +5,48 @@
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
   <version>1.8.7</version>
-  <packaging>jar</packaging>
   <name>ProjectKorra</name>
 
   <repositories>
+    <!-- WorldGuard and WorldEdit Repo -->
     <repository>
-      <id>spigot-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+      <id>sk89q-repo</id>
+      <url>http://maven.sk89q.com/repo/</url>
+    </repository>
+    <!-- GriefPrevention Repo -->
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+    <!-- NoCheat Repo -->
+    <repository>
+      <id>md_5-snapshots</id>
+      <url>https://repo.md-5.net/content/repositories/snapshots/</url>
     </repository>
   </repositories>
 
   <dependencies>
-  	<!-- Spigot API -->
-  	<dependency>
-    	<groupId>org.spigotmc</groupId>
-    	<artifactId>Spigot-Server</artifactId>
-    	<version>LATEST</version>
-    	<scope>system</scope>
-    	<systemPath>${project.basedir}/lib/spigot-1.13.1.jar</systemPath>
+  	<!-- Spigot Server (run BuildTools locally) -->
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot</artifactId>
+      <version>1.13.2-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Factions -->
     <dependency>
-      <groupId>com.massivecraft</groupId>
-      <artifactId>factions</artifactId>
-      <version>LATEST</version>
+      <groupId>me.markeh</groupId>
+      <artifactId>factionsframework</artifactId>
+      <version>1.2.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Factions 2.7.5.jar</systemPath>
+      <systemPath>${project.basedir}/lib/FactionsFramework1.2.0.jar</systemPath>
     </dependency>
     <!-- GriefPrevention -->
     <dependency>
-      <groupId>me.ryanhamshire</groupId>
+      <groupId>com.github.TechFortress</groupId>
       <artifactId>GriefPrevention</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/GriefPrevention.jar</systemPath>
+      <version>16.7.1</version>
+      <scope>provided</scope>
     </dependency>
     <!-- LWC -->
     <dependency>
@@ -46,25 +54,17 @@
       <artifactId>lwc</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Modern-LWC-2.1.1.jar</systemPath>
-    </dependency>
-    <!-- MassiveCore -->
-    <dependency>
-      <groupId>com.massivecraft</groupId>
-      <artifactId>massivecore</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/MassiveCore 2.7.5.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Modern-LWC-2.1.2.jar</systemPath>
     </dependency>
     <!-- NoCheatPlus -->
     <dependency>
       <groupId>fr.neatmonster</groupId>
       <artifactId>nocheatplus</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/NoCheatPlus.jar</systemPath>
+      <version>3.16.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <!-- PreciousStones -->
+<!-- outdated
     <dependency>
       <groupId>net.sacredlabyrinth.Phaed</groupId>
       <artifactId>PreciousStones</artifactId>
@@ -72,29 +72,46 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
     </dependency>
+-->
     <!-- Residence -->
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>
       <artifactId>residence</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Residence4.8.2.0.jar</systemPath>
+      <systemPath>${project.basedir}/lib/Residence4.8.3.1.jar</systemPath>
     </dependency>
     <!-- Towny -->
     <dependency>
-      <groupId>com.plamergames.bukkit</groupId>
+      <groupId>com.palmergames</groupId>
       <artifactId>Towny</artifactId>
-      <version>LATEST</version>
+      <version>0.93.0.0</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/Towny.jar</systemPath>
     </dependency>
-    <!-- WorldGuard -->
     <dependency>
-      <groupId>com.sk89q</groupId>
-      <artifactId>worldguard</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/worldguard-6.1.jar</systemPath>
+      <groupId>com.sk89q.worldedit</groupId>
+      <artifactId>worldedit-core</artifactId>
+      <version>7.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-core</artifactId>
+      <version>7.0.0-beta-02</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldedit</groupId>
+      <artifactId>worldedit-bukkit</artifactId>
+      <version>7.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-legacy</artifactId>
+      <version>7.0.0-beta-02</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Kingdoms -->
     <dependency>
@@ -103,14 +120,6 @@
       <version>LATEST</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/Kingdoms.jar</systemPath>
-    </dependency>
-    <!-- GLib -->
-    <dependency>
-      <groupId>org.generallib</groupId>
-      <artifactId>GLib</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
     </dependency>
   </dependencies>
 
@@ -132,25 +141,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.8.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
       </plugin>
-	  <plugin>
-	    <artifactId>maven-shade-plugin</artifactId>
-		<version>2.3</version>
-		<executions>
-		  <execution>
-		    <phase>package</phase>
-			<goals>
-			  <goal>shade</goal>
-			</goals>
-		  </execution>
-		</executions>
-	    <configuration />
-	  </plugin>
     </plugins>
   </build>
 

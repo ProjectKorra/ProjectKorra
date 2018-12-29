@@ -1,56 +1,63 @@
 package com.projectkorra.projectkorra;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.api.ResidenceInterface;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.ResidencePermissions;
+import com.google.common.reflect.ClassPath;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Protection;
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.TownyMessaging;
+import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.object.*;
+import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
+import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
+import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
+import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.ability.*;
+import com.projectkorra.projectkorra.ability.util.*;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.airbending.*;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
+import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
+import com.projectkorra.projectkorra.event.BendingReloadEvent;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.FireShield;
+import com.projectkorra.projectkorra.firebending.combustion.Combustion;
+import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.*;
+import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flags;
+import me.markeh.factionsframework.entities.FPlayer;
+import me.markeh.factionsframework.entities.FPlayers;
+import me.markeh.factionsframework.entities.Faction;
+import me.markeh.factionsframework.entities.Factions;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -65,84 +72,16 @@ import org.kingdoms.constants.land.SimpleLocation;
 import org.kingdoms.constants.player.KingdomPlayer;
 import org.kingdoms.manager.game.GameManagement;
 
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.api.ResidenceInterface;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
-import com.google.common.reflect.ClassPath;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.massivecraft.factions.engine.EngineMain;
-import com.massivecraft.massivecore.ps.PS;
-import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.Coord;
-import com.palmergames.bukkit.towny.object.PlayerCache;
-import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.palmergames.bukkit.towny.object.TownyWorld;
-import com.palmergames.bukkit.towny.object.WorldCoord;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
-import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
-import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.AddonAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
-import com.projectkorra.projectkorra.ability.util.CollisionManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirShield;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.airbending.AirSuction;
-import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
-import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
-import com.projectkorra.projectkorra.event.BendingReloadEvent;
-import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.FireShield;
-import com.projectkorra.projectkorra.firebending.combustion.Combustion;
-import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.ActionBar;
-import com.projectkorra.projectkorra.util.BlockCacheElement;
-import com.projectkorra.projectkorra.util.ColoredParticle;
-import com.projectkorra.projectkorra.util.MovementHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
-import com.projectkorra.projectkorra.util.TempArmor;
-import com.projectkorra.projectkorra.util.TempArmorStand;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GeneralMethods {
 
@@ -549,7 +488,7 @@ public class GeneralMethods {
 		if (readFile.exists()) {
 			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile)); BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
+				 DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -563,7 +502,7 @@ public class GeneralMethods {
 			}
 		}
 	}
-	
+
 	@Deprecated
 	public static void displayColoredParticle(final Location loc, ParticleEffect type, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
 		int r = 0;
@@ -593,7 +532,7 @@ public class GeneralMethods {
 		}
 		type.display(loc, 0, red, green, blue);
 	}
-	
+
 	@Deprecated
 	public static void displayColoredParticle(final Location loc, final String hexVal) {
 		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, 0, 0, 0);
@@ -608,11 +547,11 @@ public class GeneralMethods {
 		int r = 0;
 		int g = 0;
 		int b = 0;
-		
+
 		if (hexVal.startsWith("#")) {
 			hexVal = hexVal.substring(1);
 		}
-		
+
 		if (hexVal.length() <= 6) {
 			r = Integer.valueOf(hexVal.substring(0, 2), 16).intValue();
 			g = Integer.valueOf(hexVal.substring(2, 4), 16).intValue();
@@ -1107,7 +1046,7 @@ public class GeneralMethods {
 		}
 		return null;
 	}
-	
+
 	public static BlockData getLavaData(int level) {
 		BlockData data = Material.LAVA.createBlockData();
 		if (data instanceof Levelled) {
@@ -1115,7 +1054,7 @@ public class GeneralMethods {
 		}
 		return data;
 	}
-	
+
 	public static BlockData getWaterData(int level) {
 		BlockData data = Material.WATER.createBlockData();
 		if (data instanceof Levelled) {
@@ -1279,7 +1218,7 @@ public class GeneralMethods {
 	public static boolean hasSpirits() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraSpirits") != null;
 	}
-	
+
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
 		return isAdjacentToThreeOrMoreSources(block, false);
 	}
@@ -1301,7 +1240,7 @@ public class GeneralMethods {
 					continue;
 				}
 			}
-			
+
 			//At this point it should either be water or lava
 			if (blocki.getBlockData() instanceof Levelled) {
 				Levelled level = (Levelled) blocki.getBlockData();
@@ -1322,7 +1261,7 @@ public class GeneralMethods {
 	public static boolean isInteractable(final Block block) {
 		return isInteractable(block.getType());
 	}
-	
+
 	public static boolean isInteractable(final Material material) {
 		return material.isInteractable();
 	}
@@ -1420,10 +1359,9 @@ public class GeneralMethods {
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
 		final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin fcp = pm.getPlugin("Factions");
+		final Plugin facsfw = pm.getPlugin("FactionsFramework ");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin massivecore = pm.getPlugin("MassiveCore");
 		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
@@ -1442,32 +1380,33 @@ public class GeneralMethods {
 				}
 			}
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
-				final WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
+				final WorldGuard wg = WorldGuard.getInstance();
 				if (!player.isOnline()) {
 					return true;
 				}
-
 				if (isIgnite) {
-					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
-						if (wg.getGlobalStateManager().get(world).blockLighter) {
+					if (!player.hasPermission("worldguard.override.lighter")) {
+						if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(world)).blockLighter) {
 							return true;
 						}
 					}
 				}
+
 				if (isExplosive) {
-					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions) {
+					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions) {
 						return true;
 					}
-					if (!wg.getRegionContainer().createQuery().testBuild(location, player, DefaultFlag.TNT)) {
+					if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT)) {
 						return true;
 					}
 				}
 
-				if (!wg.canBuild(player, location.getBlock())) {
+				if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
 					return true;
 				}
 			}
 
+			/* outdated plugin
 			if (psp != null && respectPreciousStones) {
 				final PreciousStones ps = (PreciousStones) psp;
 
@@ -1486,11 +1425,13 @@ public class GeneralMethods {
 					return true;
 				}
 			}
+			*/
 
-			if (fcp != null && massivecore != null && respectFactions) {
-				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
-					return true;
-				}
+			if (facsfw != null && respectFactions) {
+				FPlayer fPlayer = FPlayers.getBySender(player);
+				Faction faction = Factions.getFactionAt(location);
+
+				return !(faction.isNone() || fPlayer.getFaction().equals(faction));
 			}
 
 			if (twnp != null && respectTowny) {
@@ -1594,15 +1535,15 @@ public class GeneralMethods {
 	public static boolean isSolid(final Block block) {
 		return isSolid(block.getType());
 	}
-	
+
 	public static boolean isSolid(final Material material) {
 		return material.isSolid();
 	}
-	
+
 	public static boolean isTransparent(final Block block) {
 		return isTransparent(block.getType());
 	}
-	
+
 	public static boolean isTransparent(final Material material) {
 		return !material.isOccluding() && !material.isSolid();
 	}
