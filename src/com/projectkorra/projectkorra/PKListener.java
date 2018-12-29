@@ -23,14 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -1765,6 +1758,26 @@ public class PKListener implements Listener {
 			}
 
 			Smokescreen.getSnowballs().remove(id);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onBlockPistonExtendEvent(final BlockPistonExtendEvent event){
+		for (Block b : event.getBlocks()) {
+			if (TempBlock.isTempBlock(b)) {
+				event.setCancelled(true);
+				break;
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onBlockPistonRetractEvent(final BlockPistonRetractEvent event){
+		for (Block b : event.getBlocks()) {
+			if (TempBlock.isTempBlock(b)) {
+				event.setCancelled(true);
+				break;
+			}
 		}
 	}
 
