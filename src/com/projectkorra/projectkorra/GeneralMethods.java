@@ -44,6 +44,7 @@ import me.markeh.factionsframework.entities.FPlayer;
 import me.markeh.factionsframework.entities.FPlayers;
 import me.markeh.factionsframework.entities.Faction;
 import me.markeh.factionsframework.entities.Factions;
+import me.markeh.factionsframework.enums.Rel;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -1430,8 +1431,9 @@ public class GeneralMethods {
 			if (facsfw != null && respectFactions) {
 				FPlayer fPlayer = FPlayers.getBySender(player);
 				Faction faction = Factions.getFactionAt(location);
+				Rel relation = fPlayer.getRelationTo(faction);
 
-				return !(faction.isNone() || fPlayer.getFaction().equals(faction));
+				return !(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY);
 			}
 
 			if (twnp != null && respectTowny) {
