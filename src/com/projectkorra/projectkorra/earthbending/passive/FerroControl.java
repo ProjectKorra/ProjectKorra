@@ -27,6 +27,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 	@Override
 	public void progress() {
 		if (!this.player.isSneaking() || !this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this)) {
+			remove();
 			return;
 		}
 

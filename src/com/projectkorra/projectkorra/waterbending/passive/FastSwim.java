@@ -48,7 +48,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		}
 		
 		if (this.bPlayer.getBoundAbility() == null || (this.bPlayer.getBoundAbility() != null && !this.bPlayer.getBoundAbility().isSneakAbility())) {
-			if (!this.player.isSneaking()) {
+			if (this.player.isSneaking()) {
 				if (isWater(this.player.getLocation().getBlock()) && !this.bPlayer.isOnCooldown(this)) {
 					player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
 				}
