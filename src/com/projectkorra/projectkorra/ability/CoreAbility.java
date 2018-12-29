@@ -796,6 +796,9 @@ public abstract class CoreAbility implements Ability {
 		if (this.getElement() instanceof SubElement) {
 			elementName = ((SubElement) this.getElement()).getParentElement().getName();
 		}
+		if (this instanceof ComboAbility) {
+			elementName = elementName + ".Combo";
+		}
 		return ConfigManager.languageConfig.get().contains("Abilities." + elementName + "." + this.getName() + ".Instructions") ? ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Instructions") : "";
 	}
 

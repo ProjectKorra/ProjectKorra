@@ -194,9 +194,4 @@ public class Twister extends AirAbility implements ComboAbility {
 		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
 		return twister;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)";
-	}
 }

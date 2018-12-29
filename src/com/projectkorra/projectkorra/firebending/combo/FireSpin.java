@@ -212,9 +212,4 @@ public class FireSpin extends FireAbility implements ComboAbility {
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "FireBlast > FireBlast > FireShield (Left Click) > FireShield (Tap Shift)";
-	}
 }

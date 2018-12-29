@@ -124,10 +124,4 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet";
-	}
-
 }

@@ -143,9 +143,4 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return this.affectedEntities;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet";
-	}
 }

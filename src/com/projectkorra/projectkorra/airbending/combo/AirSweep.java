@@ -333,9 +333,4 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)";
-	}
 }

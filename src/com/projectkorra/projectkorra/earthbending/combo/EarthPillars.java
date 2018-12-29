@@ -160,9 +160,4 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		earthPillars.add(new AbilityInformation("Catapult", ClickType.SHIFT_UP));
 		return earthPillars;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "Shockwave (Tap sneak) > Shockwave (Hold sneak) > Catapult (Release sneak)";
-	}
 }
