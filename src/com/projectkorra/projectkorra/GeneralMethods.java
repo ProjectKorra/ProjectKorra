@@ -1433,7 +1433,7 @@ public class GeneralMethods {
 				Faction faction = Factions.getFactionAt(location);
 				Rel relation = fPlayer.getRelationTo(faction);
 
-				if(!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)){
+				if (!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)) {
 					return true;
 				}
 			}
