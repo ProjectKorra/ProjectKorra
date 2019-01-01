@@ -152,11 +152,11 @@
     </dependency>
     <!-- Kingdoms -->
     <dependency>
-      <groupId>org.kingdoms</groupId>
-      <artifactId>Kingdoms</artifactId>
+      <groupId>com.songoda</groupId>
+      <artifactId>kingdoms</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Kingdoms.jar</systemPath>
+      <systemPath>${project.basedir}/lib/FabledKingdoms-1.2.3.jar</systemPath>
     </dependency>
   </dependencies>
   <build>

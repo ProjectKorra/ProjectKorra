@@ -50,6 +50,10 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.songoda.kingdoms.constants.land.Land;
+import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
+import com.songoda.kingdoms.constants.player.KingdomPlayer;
+import com.songoda.kingdoms.manager.game.GameManagement;
 import me.markeh.factionsframework.entities.FPlayer;
 import me.markeh.factionsframework.entities.FPlayers;
 import me.markeh.factionsframework.entities.Faction;
@@ -75,13 +79,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.kingdoms.constants.StructureType;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.SimpleChunkLocation;
-import org.kingdoms.constants.land.SimpleLocation;
-import org.kingdoms.constants.player.KingdomPlayer;
-import org.kingdoms.manager.game.GameManagement;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -1521,35 +1518,18 @@ public class GeneralMethods {
 			}
 
 			if (kingdoms != null && respectKingdoms) {
-				final SimpleLocation location_ = new SimpleLocation(loc);
-				final SimpleChunkLocation chunk = location_.toSimpleChunk();
-				final Land land = GameManagement.getLandManager().getOrLoadLand(chunk);
-
-				if (land.getOwner() != null) {
-					final KingdomPlayer kp = GameManagement.getPlayerManager().getSession(player);
-
-					if (!kp.isAdminMode()) {
-						if (land.getOwner().equals("SafeZone")) {
+				KingdomPlayer kPlayer = GameManagement.getPlayerManager().getOfflineKingdomPlayer(player).getKingdomPlayer();
+				if (kPlayer.getKingdom() != null) {
+					SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
+					Land land = GameManagement.getLandManager().getOrLoadLand(chunkLocation);
+					String owner = land.getOwner();
+					if (owner != null) {
+						if (!kPlayer.getKingdom().getKingdomName().equals(owner)) {
 							return true;
-						} else if (kp.getKingdom() == null) { // If the player isn't in a kingdom but it's claimed land.
-							return true;
-						} else {
-							final Kingdom kingdom = kp.getKingdom();
-							final String kingdomName = kingdom.getKingdomName();
-							if (!kingdomName.equals(land.getOwner())) // If the player's kingdom doesn't match.
-							{
-								return true;
-							}
-
-							// If it's within the nexus area, test for higher permission.
-							if (land.getStructure() != null && land.getStructure().getType() == StructureType.NEXUS) {
-								if (!kp.getRank().isHigherOrEqualTo(kingdom.getPermissionsInfo().getBuildInNexus())) {
-									return true;
-								}
-							}
 						}
 					}
 				}
+
 			}
 
 			if (plotsquared != null && respectPlotSquared) {
