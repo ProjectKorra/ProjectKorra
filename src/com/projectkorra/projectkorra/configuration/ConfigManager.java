@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.configuration;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class ConfigManager {
 
@@ -566,6 +566,9 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
 			config.addDefault("Properties.RegionProtection.Kingdoms", true);
+			config.addDefault("Properties.RegionProtection.PlotSquared", true);
+			config.addDefault("Properties.RegionProtection.RedProtect", true);
+			config.addDefault("Properties.RegionProtection.BentoBox", true);
 			config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
 
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);

@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
   <version>1.8.7</version>
   <name>ProjectKorra</name>
-
   <repositories>
     <!-- WorldGuard and WorldEdit Repo -->
     <repository>
@@ -23,15 +21,30 @@
       <id>md_5-snapshots</id>
       <url>https://repo.md-5.net/content/repositories/snapshots/</url>
     </repository>
+    <!-- Spigot Repo -->
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <!-- Bentobox Repo -->
+    <repository>
+      <id>codemc-repo</id>
+      <url>https://repo.codemc.org/repository/maven-public/</url>
+    </repository>
   </repositories>
-
   <dependencies>
-  	<!-- Spigot Server (run BuildTools locally) -->
+    <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>
-      <artifactId>spigot</artifactId>
+      <artifactId>spigot-api</artifactId>
       <version>1.13.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+    <!-- lang3 -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.8.1</version>
     </dependency>
     <!-- Factions -->
     <dependency>
@@ -64,14 +77,14 @@
       <scope>provided</scope>
     </dependency>
     <!-- PreciousStones -->
-<!-- outdated
-    <dependency>
-      <groupId>net.sacredlabyrinth.Phaed</groupId>
-      <artifactId>PreciousStones</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
-    </dependency>
+    <!-- outdated
+<dependency>
+  <groupId>net.sacredlabyrinth.Phaed</groupId>
+  <artifactId>PreciousStones</artifactId>
+  <version>LATEST</version>
+  <scope>system</scope>
+  <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
+</dependency>
 -->
     <!-- Residence -->
     <dependency>
@@ -89,6 +102,7 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/Towny.jar</systemPath>
     </dependency>
+    <!-- WorldEdit / WorldGuard -->
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-core</artifactId>
@@ -113,16 +127,38 @@
       <version>7.0.0-beta-02</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Kingdoms -->
+    <!-- SkyBlock / AcidIsland -->
     <dependency>
-      <groupId>org.kingdoms</groupId>
-      <artifactId>Kingdoms</artifactId>
+      <groupId>world.bentobox</groupId>
+      <artifactId>bentobox</artifactId>
+      <version>LATEST</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- RedProtect -->
+    <dependency>
+      <groupId>br.net.fabiozumbi12</groupId>
+      <artifactId>RedProtect</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Kingdoms.jar</systemPath>
+      <systemPath>${project.basedir}/lib/RedProtect-7.5.5-b129-Universal.jar</systemPath>
+    </dependency>
+    <!-- PlotSquared -->
+    <dependency>
+      <groupId>com.github.intelletualsites</groupId>
+      <artifactId>plotsquared</artifactId>
+      <version>LATEST</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/PlotSquared-Bukkit-4.18.12.31-38a382f-2131.jar</systemPath>
+    </dependency>
+    <!-- Kingdoms -->
+    <dependency>
+      <groupId>com.songoda</groupId>
+      <artifactId>kingdoms</artifactId>
+      <version>LATEST</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/FabledKingdoms-1.2.3.jar</systemPath>
     </dependency>
   </dependencies>
-
   <build>
     <defaultGoal>clean package install</defaultGoal>
     <finalName>${project.name}-${project.version}</finalName>
@@ -149,7 +185,6 @@
       </plugin>
     </plugins>
   </build>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
