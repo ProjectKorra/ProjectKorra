@@ -1,9 +1,19 @@
 package com.projectkorra.projectkorra;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
+import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -72,6 +82,9 @@ import org.kingdoms.constants.land.SimpleChunkLocation;
 import org.kingdoms.constants.land.SimpleLocation;
 import org.kingdoms.constants.player.KingdomPlayer;
 import org.kingdoms.manager.game.GameManagement;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -1338,6 +1351,9 @@ public class GeneralMethods {
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
+		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.PlotSquared");
+		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
+		final boolean respectBentoBox = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.BentoBox");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1366,6 +1382,9 @@ public class GeneralMethods {
 		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
+		final Plugin plotsquared = pm.getPlugin("PlotSquared");
+		final Plugin redprotect = pm.getPlugin("RedProtect");
+		final Plugin bentobox = pm.getPlugin("BentoBox");
 
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
@@ -1528,6 +1547,70 @@ public class GeneralMethods {
 									return true;
 								}
 							}
+						}
+					}
+				}
+			}
+
+			if (plotsquared != null && respectPlotSquared) {
+				com.github.intellectualsites.plotsquared.plot.object.Location plotLocation = BukkitUtil.getLocation(location);
+				PlotArea plotArea = plotLocation.getPlotArea();
+				if (plotArea != null) {
+					Plot plot = plotArea.getPlot(plotLocation);
+					PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+					if (plot != null) {
+						if (location.getBlock().getY() == 0) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
+								return true;
+							}
+						} else if ((location.getY() > plotArea.MAX_BUILD_HEIGHT || location.getY() < plotArea.MIN_BUILD_HEIGHT) && !Permissions
+								.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+							return true;
+						}
+						if (!plot.hasOwner()) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+								return true;
+							}
+						}
+						if (!plot.isAdded(plotPlayer.getUUID())) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+								return true;
+							}
+						} else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(com.github.intellectualsites.plotsquared.plot.flag.Flags.DONE)) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+								return true;
+							}
+						}
+					}
+					if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
+						return true;
+					}
+				}
+			}
+
+			if (redprotect != null && respectRedProtect) {
+				RedProtectAPI api = RedProtect.get().getAPI();
+				Region region = api.getRegion(location);
+				if (!(region != null && region.canBuild(player))) {
+					return true;
+				}
+			}
+
+			if (bentobox != null && respectBentoBox) {
+				BentoBox bentoBoxPlugin = BentoBox.getInstance();
+				if (bentoBoxPlugin.getIWM().inWorld(loc)) {
+					Optional<Island> island = bentoBoxPlugin.getIslands().getProtectedIslandAt(loc);
+					if (!(player.isOp() || player.hasPermission(bentoBoxPlugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass.BREAK_BLOCKS.everywhere"))){
+						if (island.isPresent()) {
+							if (!island.get().isAllowed(User.getInstance(player), bentoBoxPlugin.getFlagsManager().getFlagByID("BREAK_BLOCKS"))) {
+								return true;
+							}
+							if (!(player.hasPermission(bentoBoxPlugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass.BREAK_BLOCKS.island"))) {
+								return true;
+							}
+						}
+						if (!bentoBoxPlugin.getFlagsManager().getFlagByID("BREAK_BLOCKS").isSetForWorld(loc.getWorld())) {
+							return true;
 						}
 					}
 				}
@@ -1786,15 +1869,24 @@ public class GeneralMethods {
 		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
+		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
+		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
+		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.PlotSquared");
+		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
+		final boolean respectBentoBox = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.BentoBox");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
 		final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin fcp = pm.getPlugin("Factions");
+		final Plugin fcp = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin massivecore = pm.getPlugin("MassiveCore");
 		final Plugin lwc = pm.getPlugin("LWC");
+		final Plugin residence = pm.getPlugin("Residence");
+		final Plugin kingdoms = pm.getPlugin("Kingdoms");
+		final Plugin plotsquared = pm.getPlugin("PlotSquared");
+		final Plugin redprotect = pm.getPlugin("RedProtect");
+		final Plugin bentobox = pm.getPlugin("BentoBox");
 
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
@@ -1803,10 +1895,7 @@ public class GeneralMethods {
 			writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
 		}
 		if (fcp != null && respectFactions) {
-			writeToDebug("Factions v" + fcp.getDescription().getVersion());
-		}
-		if (massivecore != null && respectFactions) {
-			writeToDebug("MassiveCore v" + massivecore.getDescription().getVersion());
+			writeToDebug("FactionsFramework v" + fcp.getDescription().getVersion());
 		}
 		if (twnp != null && respectTowny) {
 			writeToDebug("Towny v" + twnp.getDescription().getVersion());
@@ -1816,6 +1905,21 @@ public class GeneralMethods {
 		}
 		if (lwc != null && respectLWC) {
 			writeToDebug("LWC v" + lwc.getDescription().getVersion());
+		}
+		if (residence != null && respectResidence) {
+			writeToDebug("Residence v" + residence.getDescription().getVersion());
+		}
+		if (kingdoms != null && respectKingdoms) {
+			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
+		}
+		if (plotsquared != null && respectPlotSquared) {
+			writeToDebug("PlotSquared v" + plotsquared.getDescription().getVersion());
+		}
+		if (redprotect != null && respectRedProtect) {
+			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
+		}
+		if (bentobox != null && respectBentoBox) {
+			writeToDebug("BentoBox v" + bentobox.getDescription().getVersion());
 		}
 
 		writeToDebug("");
