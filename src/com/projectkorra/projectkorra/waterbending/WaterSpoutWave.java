@@ -211,6 +211,17 @@ public class WaterSpoutWave extends WaterAbility {
 					new PlantRegrowth(this.player, this.origin.getBlock());
 					this.origin.getBlock().setType(Material.AIR);
 				}
+				
+				if (TempBlock.isTempBlock(this.origin.getBlock())) {
+					TempBlock tb = TempBlock.get(this.origin.getBlock());
+					
+					if (Torrent.getFrozenBlocks().containsKey(tb)) {
+						Torrent.massThaw(tb);
+					} else if (!isBendableWaterTempBlock(tb)) {
+						this.remove();
+						return;
+					}
+				}
 			}
 
 			this.removeOldType(this.player, AbilityType.CLICK);

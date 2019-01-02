@@ -1328,7 +1328,8 @@ public class PKListener implements Listener {
 
 		final CoreAbility coreAbil = bPlayer.getBoundAbility();
 		final String abil = bPlayer.getBoundAbilityName();
-		if (coreAbil == null) {
+		
+		if (coreAbil == null || !coreAbil.isSneakAbility()) {
 			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
 				new FerroControl(player);
 			}
@@ -1336,7 +1337,9 @@ public class PKListener implements Listener {
 			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FastSwim.class))) {
 				new FastSwim(player);
 			}
-			
+		}
+		
+		if (coreAbil == null) {
 			return;
 		}
 

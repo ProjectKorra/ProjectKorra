@@ -73,7 +73,7 @@ public class IceSpikePillarField extends IceAbility {
 				for (int y = -1; y <= 1; y++) {
 					final Block testBlock = player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
 
-					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR && !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ()) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) {
+					if (((WaterAbility.isIcebendable(player, testBlock.getType(), false) && !TempBlock.isTempBlock(testBlock)) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR && !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ()) ) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
 							final Random rand = new Random();
@@ -85,11 +85,13 @@ public class IceSpikePillarField extends IceAbility {
 				}
 			}
 		}
+		
+		int pillars;
 
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.radius);
-		for (int i = 0; i < this.numberOfSpikes; i++) {
+		for (pillars = 0; pillars < this.numberOfSpikes; pillars++) {
 			if (iceBlocks.isEmpty()) {
-				return;
+				break;
 			}
 
 			Entity target = null;
@@ -118,9 +120,14 @@ public class IceSpikePillarField extends IceAbility {
 				final IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
 				pillar.inField = true;
 				iceBlocks.remove(targetBlock);
+			} else {
+				pillars--;
 			}
 		}
-		this.bPlayer.addCooldown("IceSpikePillarField", this.cooldown);
+		
+		if (pillars > 0) {
+			this.bPlayer.addCooldown("IceSpikePillarField", this.cooldown);
+		}
 		this.remove();
 	}
 

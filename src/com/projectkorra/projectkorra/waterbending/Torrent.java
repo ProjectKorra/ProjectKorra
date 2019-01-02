@@ -1,15 +1,13 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.*;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,16 +16,25 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class Torrent extends WaterAbility {
 
 	private static final double CLEANUP_RANGE = 50;
-	private static final Map<TempBlock, Player> FROZEN_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<TempBlock, Pair<Player, Integer>> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 
 	private boolean sourceSelected;
 	private boolean settingUp;
@@ -131,12 +138,11 @@ public class Torrent extends WaterAbility {
 		} else if (!this.bPlayer.canBendIgnoreBindsCooldowns(getAbility("PhaseChange"))) {
 			return;
 		}
-
 		final List<Block> ice = GeneralMethods.getBlocksAroundPoint(this.location, this.layer);
 		for (final Block block : ice) {
 			if (isTransparent(this.player, block) && block.getType() != Material.ICE) {
 				final TempBlock tblock = new TempBlock(block, Material.ICE);
-				FROZEN_BLOCKS.put(tblock, this.player);
+				FROZEN_BLOCKS.put(tblock, Pair.of(this.player, this.getId()));
 				if (this.revert) {
 					tblock.setRevertTime(this.revertTime + (new Random().nextInt((500 + 500) + 1) - 500));
 				}
@@ -168,13 +174,24 @@ public class Torrent extends WaterAbility {
 				if (this.player.isSneaking()) {
 					this.sourceSelected = false;
 					this.settingUp = true;
-
+					
+					if (TempBlock.isTempBlock(sourceBlock)) {
+						TempBlock origin = TempBlock.get(sourceBlock);
+						
+						if (FROZEN_BLOCKS.containsKey(origin)) {
+							massThaw(origin);
+						} else if (isBendableWaterTempBlock(origin)) {
+							origin.revertBlock();
+						}
+					} 
+					
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
 					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
 						this.sourceBlock.setType(Material.AIR);
 					}
+					
 					this.source = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(0));
 					this.location = this.sourceBlock.getLocation();
 				} else {
@@ -600,7 +617,7 @@ public class Torrent extends WaterAbility {
 
 	public static void progressAllCleanup() {
 		for (final TempBlock block : FROZEN_BLOCKS.keySet()) {
-			final Player player = FROZEN_BLOCKS.get(block);
+			final Player player = FROZEN_BLOCKS.get(block).getLeft();
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
 				FROZEN_BLOCKS.remove(block);
@@ -632,6 +649,31 @@ public class Torrent extends WaterAbility {
 	public static void thaw(final TempBlock block) {
 		block.revertBlock();
 		FROZEN_BLOCKS.remove(block);
+	}
+	
+	/**
+	 * Thaws the entire mass of ice created by a torrent that the given block is part of
+	 * @param origin part of the ice mass created by a torrent
+	 */
+	public static void massThaw(final TempBlock origin) {
+		if (FROZEN_BLOCKS.containsKey(origin)) {
+			Player creator = FROZEN_BLOCKS.get(origin).getLeft();
+			int id = FROZEN_BLOCKS.get(origin).getRight();
+			
+			for (TempBlock tb : FROZEN_BLOCKS.keySet()) {
+				if (tb.equals(origin)) {
+					continue;
+				}
+				
+				Player check = FROZEN_BLOCKS.get(tb).getLeft();
+				int id2 = FROZEN_BLOCKS.get(tb).getRight();
+				if (creator.equals(check) && id == id2) {
+					thaw(tb);
+				}
+			}
+			
+			thaw(origin);
+		}
 	}
 
 	public static boolean canThaw(final Block block) {
@@ -897,7 +939,11 @@ public class Torrent extends WaterAbility {
 	}
 
 	public static Map<TempBlock, Player> getFrozenBlocks() {
-		return FROZEN_BLOCKS;
+		Map<TempBlock, Player> blocks = new HashMap<>();
+		for (TempBlock tb : FROZEN_BLOCKS.keySet()) {
+			blocks.put(tb, FROZEN_BLOCKS.get(tb).getLeft());
+		}
+		return blocks;
 	}
 
 	public ArrayList<TempBlock> getLaunchedBlocks() {

@@ -1106,8 +1106,8 @@ public class GeneralMethods {
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
-
-	public static Location getTargetedLocation(final Player player, final double originselectrange, final Material... nonOpaque2) {
+	
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
 
@@ -1121,15 +1121,30 @@ public class GeneralMethods {
 				trans.add(material);
 			}
 		}
-
-		final Block block = player.getTargetBlock(trans, (int) originselectrange + 1);
-		double distance = originselectrange;
-		if (block.getWorld().equals(origin.getWorld())) {
-			distance = block.getLocation().distance(origin) - 1.5;
+		
+		Location location = origin.clone();
+		Vector vec = direction.normalize().multiply(0.2);
+		
+		for (double i = 0; i < range; i += 0.2) {
+			location.add(vec);
+			
+			Block block = location.getBlock();
+			
+			if (trans.contains(block.getType())) {
+				continue;
+			} else if (ignoreTempBlocks && (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block))) {
+				continue;
+			} else {
+				location.subtract(vec);
+				break;
+			}
 		}
-		final Location location = origin.add(direction.multiply(distance));
 
 		return location;
+	}
+
+	public static Location getTargetedLocation(final Player player, final double range, final Material... nonOpaque2) {
+		return getTargetedLocation(player, range, true, nonOpaque2);
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
@@ -1341,7 +1356,7 @@ public class GeneralMethods {
 	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
 		final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
+		//final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
 		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
 		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
@@ -1372,7 +1387,7 @@ public class GeneralMethods {
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		final Plugin psp = pm.getPlugin("PreciousStones");
+		//final Plugin psp = pm.getPlugin("PreciousStones");
 		final Plugin facsfw = pm.getPlugin("FactionsFramework ");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
@@ -1522,9 +1537,9 @@ public class GeneralMethods {
 				if (kPlayer.getKingdom() != null) {
 					SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
 					Land land = GameManagement.getLandManager().getOrLoadLand(chunkLocation);
-					String owner = land.getOwner();
+					UUID owner = land.getOwnerUUID();
 					if (owner != null) {
-						if (!kPlayer.getKingdom().getKingdomName().equals(owner)) {
+						if (!kPlayer.getKingdom().getKing().equals(owner)) {
 							return true;
 						}
 					}

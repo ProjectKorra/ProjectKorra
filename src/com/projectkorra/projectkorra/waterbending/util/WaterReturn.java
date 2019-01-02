@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
@@ -116,13 +117,15 @@ public class WaterReturn extends WaterAbility {
 		if (inventory.contains(Material.GLASS_BOTTLE)) {
 			final int index = inventory.first(Material.GLASS_BOTTLE);
 			final ItemStack item = inventory.getItem(index);
+			
+			ItemStack water = waterBottleItem();
 
 			if (item.getAmount() == 1) {
-				inventory.setItem(index, new ItemStack(Material.POTION));
+				inventory.setItem(index, water);
 			} else {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
-				final HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.POTION));
+				final HashMap<Integer, ItemStack> leftover = inventory.addItem(water);
 				for (final int left : leftover.keySet()) {
 					this.player.getWorld().dropItemNaturally(this.player.getLocation(), leftover.get(left));
 				}
@@ -187,6 +190,16 @@ public class WaterReturn extends WaterAbility {
 				}
 			}
 		}
+	}
+	
+	public static ItemStack waterBottleItem() {
+		ItemStack water = new ItemStack(Material.POTION);
+		PotionMeta meta = (PotionMeta) water.getItemMeta();
+		
+		meta.setBasePotionData(new PotionData(PotionType.WATER));
+		water.setItemMeta(meta);
+		
+		return water;
 	}
 
 	public long getTime() {

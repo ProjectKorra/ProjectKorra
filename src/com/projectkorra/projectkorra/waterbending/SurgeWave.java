@@ -233,6 +233,13 @@ public class SurgeWave extends WaterAbility {
 					new PlantRegrowth(this.player, this.sourceBlock);
 					this.sourceBlock.setType(Material.AIR);
 				}
+				
+				if (TempBlock.isTempBlock(this.sourceBlock)) {
+					TempBlock tb = TempBlock.get(this.sourceBlock);
+					if (Torrent.getFrozenBlocks().containsKey(tb)) {
+						Torrent.massThaw(tb);
+					}
+				}
 				this.addWater(this.sourceBlock);
 			}
 		}
