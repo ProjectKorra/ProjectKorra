@@ -1,9 +1,13 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,14 +18,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class EarthSmash extends EarthAbility {
 
@@ -230,7 +229,6 @@ public class EarthSmash extends EarthAbility {
 						break;
 					}
 				}
-
 				this.draw();
 				return;
 			} else {
@@ -537,7 +535,7 @@ public class EarthSmash extends EarthAbility {
 			return null;
 		}
 
-		final List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, this.grabRange, getTransparentMaterials()), 1);
+		final List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, this.grabRange, false, getTransparentMaterials()), 1);
 		for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (reqState == null || smash.state == reqState) {
 				for (final Block block : blocks) {
