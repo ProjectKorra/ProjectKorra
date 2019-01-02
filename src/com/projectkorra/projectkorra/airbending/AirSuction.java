@@ -132,7 +132,7 @@ public class AirSuction extends AirAbility {
 				ignore[i] = AirBlast.TDOORS[i - getTransparentMaterials().length - AirBlast.DOORS.length];
 			}
 		}
-		final Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), ignore);
+		final Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), false, ignore);
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
