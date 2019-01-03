@@ -50,6 +50,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.songoda.kingdoms.constants.land.Land;
 import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
 import com.songoda.kingdoms.constants.player.KingdomPlayer;
@@ -1428,7 +1429,8 @@ public class GeneralMethods {
 					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions) {
 						return true;
 					}
-					if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT)) {
+					StateFlag.State tntflag = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT);
+					if (tntflag != null && tntflag.equals(StateFlag.State.DENY)) {
 						return true;
 					}
 				}
