@@ -337,10 +337,8 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
-						if (entity instanceof Player) {
-							if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
-								continue;
-							}
+						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+							continue;
 						}
 						final Vector dir = direction.clone();
 						dir.setY(dir.getY() * this.knockup);

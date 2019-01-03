@@ -274,10 +274,8 @@ public class Ripple extends EarthAbility {
 	}
 
 	private void affect(final Entity entity) {
-		if (entity instanceof Player) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
-				return;
-			}
+		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+			return;
 		}
 		if (entity instanceof LivingEntity) {
 			DamageHandler.damageEntity(entity, this.damage, this);

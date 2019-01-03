@@ -164,10 +164,8 @@ public class AirStream extends AirAbility implements ComboAbility {
 		}
 
 		for (final Entity entity : this.affectedEntities) {
-			if (entity instanceof Player) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
-					continue;
-				}
+			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+				continue;
 			}
 			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
 			entity.setVelocity(force.clone().normalize().multiply(this.speed));
@@ -194,7 +192,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return true;
+		return false;
 	}
 
 	@Override
