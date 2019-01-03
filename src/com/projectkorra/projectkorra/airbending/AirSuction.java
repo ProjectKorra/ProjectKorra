@@ -1,10 +1,14 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,15 +20,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class AirSuction extends AirAbility {
 
@@ -193,7 +192,6 @@ public class AirSuction extends AirAbility {
 			}
 			
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
-				if (entity.getEntityId() != this.player.getEntityId()) {
 					if (entity instanceof Player) {
 						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
 							continue;
@@ -204,7 +202,7 @@ public class AirSuction extends AirAbility {
 					final Vector push = this.direction.clone();
 					double factor = this.pushFactor;
 					
-					if (Math.abs(push.getY()) > max && entity.getEntityId() != this.player.getEntityId()) {
+					if (Math.abs(push.getY()) > max) {
 						if (push.getY() < 0) {
 							push.setY(-max);
 						} else {
@@ -226,16 +224,10 @@ public class AirSuction extends AirAbility {
 						velocity.add(push.clone().multiply(factor * .5));
 					}
 	
-					if (entity instanceof Player) {
-						if (Commands.invincible.contains(((Player) entity).getName())) {
-							continue;
-						}
-					}
-	
 					GeneralMethods.setVelocity(entity, velocity);
 					new HorizontalVelocityTracker(entity, this.player, 200l, this);
 					entity.setFallDistance(0);
-					if (entity.getEntityId() != this.player.getEntityId() && entity instanceof Player) {
+					if (entity instanceof Player) {
 						flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
 					}
 	
@@ -244,7 +236,6 @@ public class AirSuction extends AirAbility {
 					}
 					entity.setFireTicks(0);
 					breakBreathbendingHold(entity);
-				}
 			}
 	
 			this.advanceLocation();
