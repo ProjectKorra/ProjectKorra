@@ -255,7 +255,7 @@ public class IceSpikeBlast extends IceAbility {
 
 		final LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(this.player, this.range);
 		if (target == null) {
-			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, getTransparentMaterials());
+			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, true, getTransparentMaterials());
 		} else {
 			this.destination = target.getEyeLocation();
 		}
@@ -376,7 +376,7 @@ public class IceSpikeBlast extends IceAbility {
 				Location loc;
 				final Entity target = GeneralMethods.getTargetedEntity(player, iceSpike.range);
 				if (target == null) {
-					loc = GeneralMethods.getTargetedLocation(player, iceSpike.range);
+					loc = GeneralMethods.getTargetedLocation(player, iceSpike.range, true);
 				} else {
 					loc = ((LivingEntity) target).getEyeLocation();
 				}

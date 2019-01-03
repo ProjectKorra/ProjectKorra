@@ -1357,7 +1357,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("AirBurst")) {
 						new AirBurst(player, false);
 					} else if (abil.equalsIgnoreCase("AirSuction")) {
-						AirSuction.setOrigin(player);
+						new AirSuction(player);
 					} else if (abil.equalsIgnoreCase("AirSwipe")) {
 						new AirSwipe(player, true);
 					} else if (abil.equalsIgnoreCase("AirShield")) {
@@ -1561,7 +1561,7 @@ public class PKListener implements Listener {
 					if (abil.equalsIgnoreCase("AirBlast")) {
 						new AirBlast(player);
 					} else if (abil.equalsIgnoreCase("AirSuction")) {
-						new AirSuction(player);
+						AirSuction.shoot(player);
 					} else if (abil.equalsIgnoreCase("AirBurst")) {
 						AirBurst.coneBurst(player);
 					} else if (abil.equalsIgnoreCase("AirScooter")) {

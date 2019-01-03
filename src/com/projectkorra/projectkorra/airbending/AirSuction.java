@@ -1,14 +1,10 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,17 +16,21 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction extends AirAbility {
 
-	private static final int MAX_TICKS = 10000;
-	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 	private final List<Block> affectedDoors = new ArrayList<>();
-
-	private boolean hasOtherOrigin;
-	private int ticks;
+	
+	private boolean progressing;
 	private int particleCount;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -57,9 +57,20 @@ public class AirSuction extends AirAbility {
 		} else if (hasAbility(player, AirSpout.class) || hasAbility(player, WaterSpout.class)) {
 			return;
 		}
+		
+		if (hasAbility(player, AirSuction.class)) {
+			AirSuction suc = getAbility(player, AirSuction.class);
+			if (!suc.isProgressing()) {
+				Location loc = getTargetLocation();
+				
+				if (!GeneralMethods.isRegionProtectedFromBuild(player, this.getName(), loc)) {
+					suc.setOrigin(loc);
+				}
+			}
+			return;
+		}
 
-		this.hasOtherOrigin = false;
-		this.ticks = 0;
+		this.progressing = false;
 		this.particleCount = getConfig().getInt("Abilities.Air.AirSuction.Particles");
 		this.speed = getConfig().getDouble("Abilities.Air.AirSuction.Speed");
 		this.range = getConfig().getDouble("Abilities.Air.AirSuction.Range");
@@ -67,79 +78,19 @@ public class AirSuction extends AirAbility {
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirSuction.Push");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSuction.Cooldown");
 		this.random = new Random();
-
-		if (ORIGINS.containsKey(player)) {
-			this.origin = ORIGINS.get(player);
-			this.hasOtherOrigin = true;
-			ORIGINS.remove(player);
-		} else {
-			this.origin = player.getEyeLocation();
+		this.origin = getTargetLocation();
+		
+		if (GeneralMethods.isRegionProtectedFromBuild(player, this.getName(), origin)) {
+			return;
 		}
-
-		this.location = GeneralMethods.getTargetedLocation(player, this.range, getTransparentMaterials());
-		this.direction = GeneralMethods.getDirection(this.location, this.origin).normalize();
-		final Entity entity = GeneralMethods.getTargetedEntity(player, this.range);
-
-		if (entity != null) {
-			this.direction = GeneralMethods.getDirection(entity.getLocation(), this.origin).normalize();
-			this.location = this.getLocation(this.origin, this.direction.clone().multiply(-1));
-		}
-
-		this.bPlayer.addCooldown(this);
+		
+		this.location = null;
+		
 		if (this.bPlayer.isAvatarState()) {
 			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSuction.Push");
 		}
+		
 		this.start();
-	}
-
-	private static void playOriginEffect(final Player player) {
-		if (!ORIGINS.containsKey(player)) {
-			return;
-		}
-
-		final Location origin = ORIGINS.get(player);
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || player.isDead() || !player.isOnline()) {
-			return;
-		} else if (!origin.getWorld().equals(player.getWorld())) {
-			ORIGINS.remove(player);
-			return;
-		} else if (!bPlayer.canBendIgnoreCooldowns(getAbility("AirSuction"))) {
-			ORIGINS.remove(player);
-			return;
-		} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange() * getSelectRange()) {
-			ORIGINS.remove(player);
-			return;
-		}
-
-		playAirbendingParticles(origin, getSelectParticles());
-	}
-
-	public static void progressOrigins() {
-		for (final Player player : ORIGINS.keySet()) {
-			playOriginEffect(player);
-		}
-	}
-
-	public static void setOrigin(final Player player) {
-		final Material[] ignore = new Material[getTransparentMaterials().length + AirBlast.DOORS.length + AirBlast.TDOORS.length];
-		for (int i = 0; i < ignore.length; i++) {
-			if (i < getTransparentMaterials().length) {
-				ignore[i] = getTransparentMaterials()[i];
-			} else if (i < getTransparentMaterials().length + AirBlast.DOORS.length){
-				ignore[i] = AirBlast.DOORS[i - getTransparentMaterials().length];
-			} else {
-				ignore[i] = AirBlast.TDOORS[i - getTransparentMaterials().length - AirBlast.DOORS.length];
-			}
-		}
-		final Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), false, ignore);
-		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
-			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
-			return;
-		} else {
-			ORIGINS.put(player, location);
-		}
 	}
 
 	private void advanceLocation() {
@@ -209,91 +160,131 @@ public class AirSuction extends AirAbility {
 		this.affectedDoors.add(block);
 	}
 
-	private Location getLocation(final Location origin, final Vector direction) {
-		Location location = origin.clone();
-		for (double i = 1; i <= this.range; i++) {
-			location = origin.clone().add(direction.clone().multiply(i));
-			if ((!this.isTransparent(location.getBlock()) && !(Arrays.asList(AirBlast.DOORS).contains(location.getBlock().getType()) && Arrays.asList(AirBlast.TDOORS).contains(location.getBlock().getType()))) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-				return origin.clone().add(direction.clone().multiply(i - 1));
+	private Location getTargetLocation() {
+		final Material[] ignore = new Material[getTransparentMaterials().length + AirBlast.DOORS.length + AirBlast.TDOORS.length];
+		
+		for (int i = 0; i < ignore.length; i++) {
+			if (i < getTransparentMaterials().length) {
+				ignore[i] = getTransparentMaterials()[i];
+			} else if (i < getTransparentMaterials().length + AirBlast.DOORS.length){
+				ignore[i] = AirBlast.DOORS[i - getTransparentMaterials().length];
+			} else {
+				ignore[i] = AirBlast.TDOORS[i - getTransparentMaterials().length - AirBlast.DOORS.length];
 			}
 		}
-		return location;
+		
+		return GeneralMethods.getTargetedLocation(player, getSelectRange(), ignore);
 	}
 
 	@Override
 	public void progress() {
 		if (this.player.isDead() || !this.player.isOnline()) {
-			this.remove();
-			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, "AirSuction", this.location)) {
-			this.remove();
+			this.remove(); 
 			return;
 		}
 
-		this.ticks++;
-		if (this.ticks > MAX_TICKS) {
-			this.remove();
-			return;
-		} else if ((this.location.distanceSquared(this.origin) > this.range * this.range) || (this.location.distanceSquared(this.origin) <= 1)) {
-			this.remove();
-			return;
-		}
-
-		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
-			if (entity.getEntityId() != this.player.getEntityId() || this.hasOtherOrigin) {
-				if (entity instanceof Player) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
-						continue;
-					}
-				}
-				final Vector velocity = entity.getVelocity();
-				final double max = this.speed;
-				double factor = this.pushFactor;
-
-				final Vector push = this.direction.clone();
-				if (Math.abs(push.getY()) > max && entity.getEntityId() != this.player.getEntityId()) {
-					if (push.getY() < 0) {
-						push.setY(-max);
-					} else {
-						push.setY(max);
-					}
-				}
-				if (this.location.getWorld().equals(this.origin.getWorld())) {
-					factor *= 1 - this.location.distance(this.origin) / (2 * this.range);
-				}
-
-				final double comp = velocity.dot(push.clone().normalize());
-				if (comp > factor) {
-					velocity.multiply(.5);
-					velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
-				} else if (comp + factor * .5 > factor) {
-					velocity.add(push.clone().multiply(factor - comp));
-				} else {
-					velocity.add(push.clone().multiply(factor * .5));
-				}
-
-				if (entity instanceof Player) {
-					if (Commands.invincible.contains(((Player) entity).getName())) {
-						continue;
-					}
-				}
-
-				GeneralMethods.setVelocity(entity, velocity);
-				new HorizontalVelocityTracker(entity, this.player, 200l, this);
-				entity.setFallDistance(0);
-				if (entity.getEntityId() != this.player.getEntityId() && entity instanceof Player) {
-					flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
-				}
-
-				if (entity.getFireTicks() > 0) {
-					entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
-				}
-				entity.setFireTicks(0);
-				breakBreathbendingHold(entity);
+		if (this.progressing) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this.player, "AirSuction", this.location)) {
+				this.remove();
+				return;
+			} else if (this.location.distanceSquared(this.origin) > this.range * this.range || this.location.distanceSquared(this.origin) <= 1) {
+				this.remove();
+				return;
 			}
+			
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
+				if (entity.getEntityId() != this.player.getEntityId()) {
+					if (entity instanceof Player) {
+						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
+							continue;
+						}
+					}
+					final Vector velocity = entity.getVelocity();
+					final double max = this.speed;
+					final Vector push = this.direction.clone();
+					double factor = this.pushFactor;
+					
+					if (Math.abs(push.getY()) > max && entity.getEntityId() != this.player.getEntityId()) {
+						if (push.getY() < 0) {
+							push.setY(-max);
+						} else {
+							push.setY(max);
+						}
+					}
+					
+					if (this.location.getWorld().equals(this.origin.getWorld())) {
+						factor *= 1 - this.location.distance(this.origin) / (2 * this.range);
+					}
+	
+					final double comp = velocity.dot(push.clone().normalize());
+					if (comp > factor) {
+						velocity.multiply(.5);
+						velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
+					} else if (comp + factor * .5 > factor) {
+						velocity.add(push.clone().multiply(factor - comp));
+					} else {
+						velocity.add(push.clone().multiply(factor * .5));
+					}
+	
+					if (entity instanceof Player) {
+						if (Commands.invincible.contains(((Player) entity).getName())) {
+							continue;
+						}
+					}
+	
+					GeneralMethods.setVelocity(entity, velocity);
+					new HorizontalVelocityTracker(entity, this.player, 200l, this);
+					entity.setFallDistance(0);
+					if (entity.getEntityId() != this.player.getEntityId() && entity instanceof Player) {
+						flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
+					}
+	
+					if (entity.getFireTicks() > 0) {
+						entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
+					}
+					entity.setFireTicks(0);
+					breakBreathbendingHold(entity);
+				}
+			}
+	
+			this.advanceLocation();
+		} else {
+			playAirbendingParticles(origin, 5, 0.5, 0.5, 0.5);
 		}
+	}
+	
+	public void shoot() {
+		Location target;
+		Entity entity = GeneralMethods.getTargetedEntity(player, this.range);
 
-		this.advanceLocation();
+		if (entity != null) {
+			target = entity.getLocation();
+		} else {
+			target = getTargetLocation();
+		}
+		
+		this.location = target.clone();
+		this.direction = GeneralMethods.getDirection(this.location, this.origin).normalize();
+		this.progressing = true;
+		this.bPlayer.addCooldown(this);
+	}
+	
+	public static void shoot(Player player) {
+		AirSuction suc = null;
+		
+		if (CoreAbility.hasAbility(player, AirSuction.class)) {
+			suc = CoreAbility.getAbility(player, AirSuction.class);
+			if (suc.isProgressing()) {
+				return;
+			} 
+		} else {
+			suc = new AirSuction(player);
+			suc.setOrigin(player.getEyeLocation().clone());
+		}
+		
+		if (suc.getOrigin() != null) {
+			suc.shoot();
+		}
 	}
 
 	/**
@@ -344,6 +335,10 @@ public class AirSuction extends AirAbility {
 	public double getCollisionRadius() {
 		return this.getRadius();
 	}
+	
+	public boolean isProgressing() {
+		return progressing;
+	}
 
 	public Location getOrigin() {
 		return this.origin;
@@ -359,22 +354,6 @@ public class AirSuction extends AirAbility {
 
 	public void setDirection(final Vector direction) {
 		this.direction = direction;
-	}
-
-	public boolean isHasOtherOrigin() {
-		return this.hasOtherOrigin;
-	}
-
-	public void setHasOtherOrigin(final boolean hasOtherOrigin) {
-		this.hasOtherOrigin = hasOtherOrigin;
-	}
-
-	public int getTicks() {
-		return this.ticks;
-	}
-
-	public void setTicks(final int ticks) {
-		this.ticks = ticks;
 	}
 
 	public int getParticleCount() {
@@ -423,10 +402,6 @@ public class AirSuction extends AirAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
-	}
-
-	public static Map<Player, Location> getOrigins() {
-		return ORIGINS;
 	}
 
 	public static int getSelectParticles() {

@@ -145,7 +145,7 @@ public class EarthBlast extends EarthAbility {
 		}
 
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(this.player, this.range, trans);
+			location = GeneralMethods.getTargetedLocation(this.player, this.range, true, trans);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
@@ -455,7 +455,6 @@ public class EarthBlast extends EarthAbility {
 			if (mloc.distanceSquared(location) <= blast.range * blast.range && GeneralMethods.getDistanceFromLine(vector, location, blast.location) < blast.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				blast.redirect(player, blast.getTargetLocation());
 			}
-
 		}
 	}
 

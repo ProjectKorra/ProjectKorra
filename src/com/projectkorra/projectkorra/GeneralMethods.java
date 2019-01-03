@@ -1145,7 +1145,7 @@ public class GeneralMethods {
 	}
 
 	public static Location getTargetedLocation(final Player player, final double range, final Material... nonOpaque2) {
-		return getTargetedLocation(player, range, true, nonOpaque2);
+		return getTargetedLocation(player, range, false, nonOpaque2);
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {

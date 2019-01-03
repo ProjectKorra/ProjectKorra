@@ -28,7 +28,6 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
@@ -221,7 +220,7 @@ public class HeatControl extends FireAbility {
 			final Location targetLocation = GeneralMethods.getTargetedLocation(this.player, this.solidifyRange);
 
 			this.resetLocation(targetLocation);
-			final List<Location> area = GeneralMethods.getCircle(this.solidifyLocation, this.solidifyRadius, 3, true, true, 0);
+			final List<Location> area = GeneralMethods.getCircle(this.solidifyLocation, this.solidifyRadius, 3, false, true, 0);
 			this.solidify(area);
 		}
 
@@ -363,11 +362,7 @@ public class HeatControl extends FireAbility {
 
 		final Block b = lava.get(this.randy.nextInt(lava.size()));
 
-		Material tempRevertMaterial = Material.STONE;
-
-		if (Integer.parseInt(PackageType.getServerVersion().split("_")[1]) > 9) {
-			tempRevertMaterial = Material.valueOf("MAGMA");
-		}
+		Material tempRevertMaterial = Material.MAGMA_BLOCK;
 
 		final TempBlock tempBlock;
 		if (TempBlock.isTempBlock(b)) {
