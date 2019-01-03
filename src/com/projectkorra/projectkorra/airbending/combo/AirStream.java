@@ -96,11 +96,6 @@ public class AirStream extends AirAbility implements ComboAbility {
 			this.currentLoc = this.origin.clone();
 		}
 		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
-		if (target instanceof Player) {
-			if (Commands.invincible.contains(((Player) target).getName())) {
-				return;
-			}
-		}
 
 		if (target != null && target.getLocation().distanceSquared(this.currentLoc) > 49) {
 			this.destination = target.getLocation();
@@ -159,11 +154,6 @@ public class AirStream extends AirAbility implements ComboAbility {
 				this.time = System.currentTimeMillis();
 			}
 			if (!entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
-				if (entity instanceof Player) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
-						continue;
-					}
-				}
 				this.affectedEntities.add(entity);
 				if (entity instanceof Player) {
 					final Player ep = (Player) entity;
@@ -174,6 +164,11 @@ public class AirStream extends AirAbility implements ComboAbility {
 		}
 
 		for (final Entity entity : this.affectedEntities) {
+			if (entity instanceof Player) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
+					continue;
+				}
+			}
 			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
 			entity.setVelocity(force.clone().normalize().multiply(this.speed));
 			entity.setFallDistance(0F);
