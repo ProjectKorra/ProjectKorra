@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -164,7 +165,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 
 				final Block blockAbove = block.getRelative(BlockFace.UP);
-				if (blockAbove.getType() != Material.AIR && !this.isWaterbendable(blockAbove)) {
+				if (!ElementalAbility.isAir(blockAbove.getType()) && !this.isWaterbendable(blockAbove)) {
 					this.remove();
 					return;
 				}
@@ -235,7 +236,7 @@ public class WaterSpoutWave extends WaterAbility {
 				this.location.add(0, this.animationSpeed, 0);
 				final Block block = this.location.getBlock();
 
-				if (!(this.isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (!(this.isWaterbendable(block) || ElementalAbility.isAir(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()))) {
 					this.remove();
 					return;
 				}
@@ -251,7 +252,7 @@ public class WaterSpoutWave extends WaterAbility {
 				this.location.add(vec.normalize().multiply(this.animationSpeed));
 				final Block block = this.location.getBlock();
 
-				if (!(this.isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (!(this.isWaterbendable(block) || ElementalAbility.isAir(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()))) {
 					this.remove();
 					return;
 				}
@@ -295,7 +296,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 				this.player.setVelocity(this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
-					if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (this.iceWave) {
 							this.createBlockDelay(block, Material.ICE, Material.ICE.createBlockData(), 2L);
 						} else {
@@ -343,7 +344,7 @@ public class WaterSpoutWave extends WaterAbility {
 			dir.setY(0);
 			final Block block = this.player.getEyeLocation().add(dir).getBlock();
 			this.location = block.getLocation();
-			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				this.createBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 			}
 		}
@@ -419,7 +420,7 @@ public class WaterSpoutWave extends WaterAbility {
 						continue;
 					}
 
-					if (block.getType() == Material.AIR || block.getType() == Material.ICE || this.isWaterbendable(block)) {
+					if (ElementalAbility.isAir(block.getType()) || block.getType() == Material.ICE || this.isWaterbendable(block)) {
 						if (!FROZEN_BLOCKS.containsKey(block)) {
 							final TempBlock tblock = new TempBlock(block, Material.ICE);
 							FROZEN_BLOCKS.put(block, tblock);

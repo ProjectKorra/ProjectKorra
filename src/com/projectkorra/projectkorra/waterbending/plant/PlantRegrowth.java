@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.waterbending.plant;
 
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -48,7 +49,7 @@ public class PlantRegrowth extends PlantAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (this.block.getType() == Material.AIR) {
+		if (ElementalAbility.isAir(this.block.getType())) {
 			this.block.setType(this.type);
 			this.block.setBlockData(this.data);
 			if (this.type == Material.TALL_GRASS) {

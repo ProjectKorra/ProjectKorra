@@ -1,21 +1,5 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -24,6 +8,13 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class FireAbility extends ElementalAbility {
 
@@ -69,7 +60,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * fire dissipates or is destroyed.
 	 */
 	public static void createTempFire(final Location loc) {
-		if (loc.getBlock().getType() == Material.AIR) {
+		if (ElementalAbility.isAir(loc.getBlock().getType())) {
 			loc.getBlock().setType(Material.FIRE);
 			return;
 		}
@@ -216,9 +207,9 @@ public abstract class FireAbility extends ElementalAbility {
 		while (it.hasNext()) {
 			final Location loc = it.next();
 			final Information info = TEMP_FIRE.get(loc);
-			if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
+			if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
 				revertTempFire(loc);
-			} else if (info.getBlock().getType() == Material.AIR || System.currentTimeMillis() > info.getTime()) {
+			} else if (ElementalAbility.isAir(info.getBlock().getType()) || System.currentTimeMillis() > info.getTime()) {
 				revertTempFire(loc);
 			}
 		}
@@ -234,7 +225,7 @@ public abstract class FireAbility extends ElementalAbility {
 			return;
 		}
 		final Information info = TEMP_FIRE.get(location);
-		if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
+		if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
 			if (info.getState().getType().isBurnable() && !info.getState().getType().isOccluding()) {
 				final ItemStack itemStack = new ItemStack(info.getState().getType(), 1);
 				info.getState().getBlock().getWorld().dropItemNaturally(info.getLocation(), itemStack);

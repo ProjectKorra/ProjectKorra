@@ -1,21 +1,8 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -25,6 +12,14 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SurgeWall extends WaterAbility {
 
@@ -269,7 +264,7 @@ public class SurgeWall extends WaterAbility {
 							continue;
 						} else if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE || this.isWaterbendable(block)) && this.isTransparent(block)) {
+						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || block.getType() == Material.FIRE || this.isWaterbendable(block)) && this.isTransparent(block)) {
 							WALL_BLOCKS.put(block, this.player);
 							this.addWallBlock(block);
 							blocks.add(block);
@@ -306,7 +301,7 @@ public class SurgeWall extends WaterAbility {
 				block = this.location.getBlock();
 			}
 
-			if (block.getType() != Material.AIR) {
+			if (!ElementalAbility.isAir(block.getType())) {
 				this.remove();
 				return;
 			} else if (!this.progressing) {

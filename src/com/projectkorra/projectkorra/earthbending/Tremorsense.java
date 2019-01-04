@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,10 +13,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Tremorsense extends EarthAbility {
 
@@ -78,7 +78,7 @@ public class Tremorsense extends EarthAbility {
 					} else if (!this.isEarthbendable(blocki) && earth) {
 						foundAir = true;
 						break;
-					} else if (!this.isEarthbendable(blocki) && !earth && blocki.getType() != Material.AIR) {
+					} else if (!this.isEarthbendable(blocki) && !earth && !ElementalAbility.isAir(blocki.getType())) {
 						break;
 					}
 				}
