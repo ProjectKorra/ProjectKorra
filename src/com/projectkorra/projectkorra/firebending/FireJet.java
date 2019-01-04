@@ -13,6 +13,8 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
+import static com.projectkorra.projectkorra.firebending.Illumination.isIlluminationTorch;
+
 public class FireJet extends FireAbility {
 
 	@Attribute("AvatarStateToggle")
@@ -51,7 +53,17 @@ public class FireJet extends FireAbility {
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (BlazeArc.isIgnitable(player, block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || this.bPlayer.isAvatarState()) {
+		if (BlazeArc.isIgnitable(player, block) ||
+				ElementalAbility.isAir(block.getType()) ||
+				block.getType() == Material.STONE_SLAB ||
+				block.getType() == Material.ACACIA_SLAB ||
+				block.getType() == Material.BIRCH_SLAB ||
+				block.getType() == Material.DARK_OAK_SLAB ||
+				block.getType() == Material.JUNGLE_SLAB ||
+				block.getType() == Material.OAK_SLAB ||
+				block.getType() == Material.SPRUCE_SLAB ||
+				isIlluminationTorch(block) ||
+				this.bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
 				if (ElementalAbility.isAir(block.getType())) {
