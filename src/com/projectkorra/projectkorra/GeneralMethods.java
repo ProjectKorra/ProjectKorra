@@ -95,8 +95,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.projectkorra.projectkorra.ability.ElementalAbility.isAir;
-
 public class GeneralMethods {
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
