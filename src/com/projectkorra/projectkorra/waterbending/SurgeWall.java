@@ -496,7 +496,7 @@ public class SurgeWall extends WaterAbility {
 	private void returnWater() {
 		if (this.location != null) {
 			if (this.frozen) {
-				this.location.getBlock().setType(Material.WATER);
+				this.thaw();
 			}
 			new WaterReturn(this.player, this.location.getBlock());
 		}
