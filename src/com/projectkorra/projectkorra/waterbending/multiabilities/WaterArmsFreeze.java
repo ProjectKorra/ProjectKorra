@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.waterbending.multiabilities;
 
+import com.projectkorra.projectkorra.command.Commands;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -130,6 +131,9 @@ public class WaterArmsFreeze extends IceAbility {
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && !(entity instanceof ArmorStand)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+					continue;
+				}
 				DamageHandler.damageEntity(entity, this.iceDamage, this);
 				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 40, 2);
 				new TempPotionEffect((LivingEntity) entity, effect);
