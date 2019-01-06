@@ -277,8 +277,8 @@ public abstract class EarthAbility extends ElementalAbility {
 		Material sand = red ? Material.RED_SAND : Material.SAND;
 		Material stone = red ? Material.RED_SANDSTONE : Material.SANDSTONE;
 		
-		ParticleEffect.ITEM_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, sand.createBlockData());
-		ParticleEffect.ITEM_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, stone.createBlockData());
+		ParticleEffect.BLOCK_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, sand.createBlockData());
+		ParticleEffect.BLOCK_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, stone.createBlockData());
 	}
 
 	/**

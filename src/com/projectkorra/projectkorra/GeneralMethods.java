@@ -2158,11 +2158,11 @@ public class GeneralMethods {
 	}
 
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type) {
-		return spawnFallingBlock(loc, type, null);
+		return spawnFallingBlock(loc, type, type.createBlockData());
 	}
 
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type, final BlockData data) {
-		return loc.getWorld().spawnFallingBlock(loc, type.createBlockData(data.getAsString()));
+		return loc.getWorld().spawnFallingBlock(loc, data);
 	}
 
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
