@@ -524,9 +524,8 @@ public class Torrent extends WaterAbility {
 
 				if (tor.sourceSelected || tor.settingUp) {
 					WaterReturn.emptyWaterBottle(player);
-				} else {
-					block.setType(Material.AIR);
 				}
+				block.setType(Material.AIR);
 			}
 		}
 	}
