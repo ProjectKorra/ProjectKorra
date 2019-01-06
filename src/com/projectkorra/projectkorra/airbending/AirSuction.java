@@ -45,6 +45,7 @@ public class AirSuction extends AirAbility {
 	private Location location;
 	private Location origin;
 	private Vector direction;
+	private boolean canAffectSelf;
 
 	public AirSuction(final Player player) {
 		super(player);
@@ -78,6 +79,7 @@ public class AirSuction extends AirAbility {
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSuction.Cooldown");
 		this.random = new Random();
 		this.origin = getTargetLocation();
+		this.canAffectSelf = true;
 		
 		if (GeneralMethods.isRegionProtectedFromBuild(player, this.getName(), origin)) {
 			return;
@@ -195,6 +197,9 @@ public class AirSuction extends AirAbility {
 					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
 						continue;
 					}
+					if((entity.getEntityId() == player.getEntityId()) && !canAffectSelf){
+						continue;
+					}
 					final Vector velocity = entity.getVelocity();
 					final double max = this.speed;
 					final Vector push = this.direction.clone();
@@ -269,6 +274,7 @@ public class AirSuction extends AirAbility {
 		} else {
 			suc = new AirSuction(player);
 			suc.setOrigin(player.getEyeLocation().clone());
+			suc.setCanEffectSelf(false);
 		}
 		
 		if (suc.getOrigin() != null) {
@@ -391,6 +397,10 @@ public class AirSuction extends AirAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+
+	public void setCanEffectSelf(final boolean affect) {
+		this.canAffectSelf = affect;
 	}
 
 	public static int getSelectParticles() {
