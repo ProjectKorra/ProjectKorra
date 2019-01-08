@@ -164,6 +164,15 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onFluidLevelChange(FluidLevelChangeEvent event) {
+		if (TempBlock.isTempBlock(event.getBlock())){
+			event.setCancelled(true);
+		} else if (TempBlock.isTouchingTempBlock(event.getBlock())) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockForm(final BlockFormEvent event) {
 		if (TempBlock.isTempBlock(event.getBlock())) {
 			event.setCancelled(true);
