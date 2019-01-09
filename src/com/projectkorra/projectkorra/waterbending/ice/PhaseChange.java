@@ -382,6 +382,10 @@ public class PhaseChange extends IceAbility {
 					}
 				}
 			}
+
+			if (isIce(tb.getBlock()) && ElementalAbility.isWater(tb.getState().getBlockData().getMaterial())) {
+				tb.revertBlock();
+			}
 		} else if (isWater(b)) {
 			// Figure out what to do here also.
 		} else if (isIce(b)) {
