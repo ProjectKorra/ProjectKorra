@@ -541,6 +541,7 @@ public class ConfigManager {
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
+			config.addDefault("Properties.DatabaseCooldowns", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);

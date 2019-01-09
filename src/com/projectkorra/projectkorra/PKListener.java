@@ -1153,7 +1153,9 @@ public class PKListener implements Listener {
 			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
 		}
 		if (bPlayer != null) {
-			bPlayer.saveCooldowns();
+			if (ProjectKorra.isDatabaseCooldownsEnabled()) {
+				bPlayer.saveCooldowns();
+			}
 
 			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
 				TOGGLED_OUT.remove(player.getUniqueId());
