@@ -74,6 +74,8 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
+import static com.projectkorra.projectkorra.ProjectKorra.isStatisticsEnabled;
+
 public class PKListener implements Listener {
 	ProjectKorra plugin;
 
@@ -629,11 +631,11 @@ public class PKListener implements Listener {
 					}
 				}.runTaskLater(ProjectKorra.plugin, 20);
 			}
-			if (event.getAttacker() != null) {
+			if (event.getAttacker() != null && isStatisticsEnabled()) {
 				StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.PLAYER_KILLS, 1);
 			}
 		}
-		if (event.getAttacker() != null) {
+		if (event.getAttacker() != null && isStatisticsEnabled()) {
 			StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.TOTAL_KILLS, 1);
 		}
 	}
@@ -1012,7 +1014,7 @@ public class PKListener implements Listener {
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 
 		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-		if (ProjectKorra.isStatisticsEnabled()) {
+		if (isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
@@ -1149,7 +1151,7 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		if (ProjectKorra.isStatisticsEnabled()) {
+		if (isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
 		}
 		if (bPlayer != null) {
