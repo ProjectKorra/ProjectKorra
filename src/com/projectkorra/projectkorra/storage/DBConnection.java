@@ -66,7 +66,7 @@ public class DBConnection {
 			}
 			if (!sql.tableExists("pk_cooldowns")) {
 				ProjectKorra.log.info("Creating pk_cooldowns table");
-				final String query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT);";
+				final String query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 				sql.modifyQuery(query, false);
 			}
 		} else {
@@ -111,7 +111,7 @@ public class DBConnection {
 			}
 			if (!sql.tableExists("pk_cooldowns")) {
 				ProjectKorra.log.info("Creating pk_cooldowns table");
-				final String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT);";
+				final String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 				sql.modifyQuery(query, false);
 			}
 		}
