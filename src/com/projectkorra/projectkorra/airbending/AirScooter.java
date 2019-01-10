@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Random;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -10,10 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class AirScooter extends AirAbility {
 
@@ -39,7 +38,7 @@ public class AirScooter extends AirAbility {
 
 		if (check(player)) {
 			return;
-		} else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || player.getEyeLocation().getBlock().isLiquid()) {
+		} else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || ElementalAbility.isWater(player.getEyeLocation().getBlock())) {
 			return;
 		} else if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
 			return;
@@ -92,7 +91,7 @@ public class AirScooter extends AirAbility {
 		this.floorblock = null;
 		for (int i = 0; i <= this.maxHeightFromGround; i++) {
 			final Block block = this.player.getEyeLocation().getBlock().getRelative(BlockFace.DOWN, i);
-			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
+			if (GeneralMethods.isSolid(block) || ElementalAbility.isWater(block)) {
 				this.floorblock = block;
 				return;
 			}
@@ -141,7 +140,7 @@ public class AirScooter extends AirAbility {
 		final double distance = this.player.getLocation().getY() - this.floorblock.getY();
 		final double dx = Math.abs(distance - 2.4);
 		if (distance > 2.75) {
-			velocity.setY(-.25 * dx * dx);
+			velocity.setY(-0.25);
 		} else if (distance < 2) {
 			velocity.setY(.25 * dx * dx);
 		} else {
@@ -150,9 +149,9 @@ public class AirScooter extends AirAbility {
 
 		final Vector v = velocity.clone().setY(0);
 		final Block b = this.floorblock.getLocation().clone().add(v.multiply(1.2)).getBlock();
-		if (!GeneralMethods.isSolid(b) && !b.isLiquid()) {
+		if (!GeneralMethods.isSolid(b) && !ElementalAbility.isWater(b)) {
 			velocity.add(new Vector(0, -0.6, 0));
-		} else if (GeneralMethods.isSolid(b.getRelative(BlockFace.UP)) || b.getRelative(BlockFace.UP).isLiquid()) {
+		} else if (GeneralMethods.isSolid(b.getRelative(BlockFace.UP)) || ElementalAbility.isWater(b.getRelative(BlockFace.UP))) {
 			velocity.add(new Vector(0, 1.0, 0));
 		}
 
