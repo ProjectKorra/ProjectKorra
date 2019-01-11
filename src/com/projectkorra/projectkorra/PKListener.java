@@ -653,9 +653,16 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		final String e = bPlayer == null || bPlayer.getElements().size() == 0 ? "Nonbender" : (bPlayer.getElements().size() > 1 ? "Avatar" : bPlayer.getElements().get(0).getName());
+		String e = "Nonbender";
+		ChatColor c = ChatColor.WHITE;
+		if(player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))){
+			c = Element.AVATAR.getColor();
+			e = Element.AVATAR.getName();
+		} else if (bPlayer.getElements().size() > 0) {
+			c = bPlayer.getElements().get(0).getColor();
+			e = bPlayer.getElements().get(0).getName();
+		}
 		final String element = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e);
-		final ChatColor c = bPlayer == null || bPlayer.getElements().size() == 0 ? ChatColor.WHITE : (bPlayer.getElements().size() > 1 ? Element.AVATAR.getColor() : bPlayer.getElements().get(0).getColor());
 		event.setFormat(event.getFormat().replace("{element}", c + element + ChatColor.RESET).replace("{ELEMENT}", c + element + ChatColor.RESET).replace("{elementcolor}", c + "").replace("{ELEMENTCOLOR}", c + ""));
 
 		if (!ConfigManager.languageConfig.get().getBoolean("Chat.Enable")) {
@@ -668,15 +675,10 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (player.hasPermission("bending.avatar") || bPlayer.getElements().size() > 1) {
+		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Colors.Avatar"));
-		} else {
-			for (final Element element_ : Element.getMainElements()) {
-				if (bPlayer.hasElement(element_)) {
-					color = element_.getColor();
-					break;
-				}
-			}
+		} else if (bPlayer.getElements().size() > 0) {
+			color = bPlayer.getElements().get(0).getColor();
 		}
 
 		String format = ConfigManager.languageConfig.get().getString("Chat.Format");

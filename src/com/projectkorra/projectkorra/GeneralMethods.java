@@ -1659,13 +1659,13 @@ public class GeneralMethods {
 		String prefix = "";
 
 		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-		if (bPlayer.getElements().size() > 1) {
+
+		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 			prefix = Element.AVATAR.getPrefix();
-		} else if (bPlayer.getElements().size() == 1) {
+		} else if (bPlayer.getElements().size() > 0) {
 			element = bPlayer.getElements().get(0);
 			prefix = element.getPrefix();
-		} else {
-			prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
 		}
 
 		if (chatEnabled) {
