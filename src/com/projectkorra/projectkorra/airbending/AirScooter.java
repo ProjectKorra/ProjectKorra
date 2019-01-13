@@ -7,7 +7,10 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -30,6 +33,7 @@ public class AirScooter extends AirAbility {
 	private Block floorblock;
 	private Random random;
 	private ArrayList<Double> angles;
+	private Slime slime;
 
 	private double phi = 0;
 
@@ -65,6 +69,15 @@ public class AirScooter extends AirAbility {
 		for (int i = 0; i < 5; i++) {
 			this.angles.add((double) (60 * i));
 		}
+		slime = (Slime)player.getWorld().spawnEntity(player.getLocation(), EntityType.SLIME);
+		if (slime == null){
+			return;
+		}
+		slime.setSize(1);
+		slime.setSilent(true);
+		slime.setInvulnerable(true);
+		slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
+		slime.addPassenger(player);
 
 		this.start();
 	}
@@ -127,7 +140,7 @@ public class AirScooter extends AirAbility {
 		 * checks the players speed and ends the move if they are going too slow
 		 */
 		if (System.currentTimeMillis() > this.getStartTime() + this.interval) {
-			if (this.player.getVelocity().length() < this.speed * 0.3) {
+			if (this.slime.getVelocity().length() < this.speed * 0.3) {
 				this.remove();
 				return;
 			}
@@ -140,9 +153,9 @@ public class AirScooter extends AirAbility {
 		final double distance = this.player.getLocation().getY() - this.floorblock.getY();
 		final double dx = Math.abs(distance - 2.4);
 		if (distance > 2.75) {
-			velocity.setY(-0.25);
+			velocity.setY(-.25);
 		} else if (distance < 2) {
-			velocity.setY(.25 * dx * dx);
+			velocity.setY(.25);
 		} else {
 			velocity.setY(0);
 		}
@@ -150,9 +163,9 @@ public class AirScooter extends AirAbility {
 		final Vector v = velocity.clone().setY(0);
 		final Block b = this.floorblock.getLocation().clone().add(v.multiply(1.2)).getBlock();
 		if (!GeneralMethods.isSolid(b) && !ElementalAbility.isWater(b)) {
-			velocity.add(new Vector(0, -0.6, 0));
+			velocity.add(new Vector(0, -0.1, 0));
 		} else if (GeneralMethods.isSolid(b.getRelative(BlockFace.UP)) || ElementalAbility.isWater(b.getRelative(BlockFace.UP))) {
-			velocity.add(new Vector(0, 1.0, 0));
+			velocity.add(new Vector(0, 0.7, 0));
 		}
 
 		final Location loc = this.player.getLocation();
@@ -164,7 +177,7 @@ public class AirScooter extends AirAbility {
 
 		this.player.setSprinting(false);
 		this.player.removePotionEffect(PotionEffectType.SPEED);
-		this.player.setVelocity(velocity);
+		slime.setVelocity(velocity);
 
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.player.getLocation());
@@ -177,6 +190,7 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
+		slime.remove();
 		flightHandler.removeInstance(this.player, this.getName());
 		this.bPlayer.addCooldown(this);
 	}
