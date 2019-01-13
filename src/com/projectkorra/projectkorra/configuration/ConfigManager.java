@@ -817,6 +817,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBurst.AngleTheta", 10);
 
 			config.addDefault("Abilities.Air.AirScooter.Enabled", true);
+			config.addDefault("Abilities.Air.AirScooter.ShowSitting", true);
 			config.addDefault("Abilities.Air.AirScooter.Speed", 0.675);
 			config.addDefault("Abilities.Air.AirScooter.Interval", 100);
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);

@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -34,6 +35,7 @@ public class AirScooter extends AirAbility {
 	private Random random;
 	private ArrayList<Double> angles;
 	private Slime slime;
+	private Boolean useslime;
 
 	private double phi = 0;
 
@@ -56,6 +58,7 @@ public class AirScooter extends AirAbility {
 		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirScooter.Duration");
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
+		this.useslime = getConfig().getBoolean("Abilities.Air.AirScooter.ShowSitting");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
 
@@ -69,15 +72,21 @@ public class AirScooter extends AirAbility {
 		for (int i = 0; i < 5; i++) {
 			this.angles.add((double) (60 * i));
 		}
-		slime = (Slime)player.getWorld().spawnEntity(player.getLocation(), EntityType.SLIME);
-		if (slime == null){
-			return;
+		if (player.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
+			useslime = false;
 		}
-		slime.setSize(1);
-		slime.setSilent(true);
-		slime.setInvulnerable(true);
-		slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
-		slime.addPassenger(player);
+		if (useslime) {
+			slime = (Slime) player.getWorld().spawnEntity(player.getLocation(), EntityType.SLIME);
+			if (slime != null) {
+				slime.setSize(1);
+				slime.setSilent(true);
+				slime.setInvulnerable(true);
+				slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
+				slime.addPassenger(player);
+			} else {
+				useslime = false;
+			}
+		}
 
 		this.start();
 	}
@@ -134,7 +143,7 @@ public class AirScooter extends AirAbility {
 			return;
 		}
 
-		if (slime == null || !slime.getPassengers().contains(player)){
+		if (useslime && (slime == null || !slime.getPassengers().contains(player))){
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
@@ -146,9 +155,16 @@ public class AirScooter extends AirAbility {
 		 * checks the players speed and ends the move if they are going too slow
 		 */
 		if (System.currentTimeMillis() > this.getStartTime() + this.interval) {
-			if (this.slime.getVelocity().length() < this.speed * 0.3) {
-				this.remove();
-				return;
+			if (useslime) {
+				if (this.slime.getVelocity().length() < this.speed * 0.3) {
+					this.remove();
+					return;
+				}
+			} else {
+				if (this.player.getVelocity().length() < this.speed * 0.3) {
+					this.remove();
+					return;
+				}
 			}
 			this.spinScooter();
 		}
@@ -183,7 +199,11 @@ public class AirScooter extends AirAbility {
 
 		this.player.setSprinting(false);
 		this.player.removePotionEffect(PotionEffectType.SPEED);
-		slime.setVelocity(velocity);
+		if (useslime) {
+			slime.setVelocity(velocity);
+		} else {
+			player.setVelocity(velocity);
+		}
 
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.player.getLocation());
@@ -196,7 +216,9 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		slime.remove();
+		if (slime != null) {
+			slime.remove();
+		}
 		flightHandler.removeInstance(this.player, this.getName());
 		this.bPlayer.addCooldown(this);
 	}
