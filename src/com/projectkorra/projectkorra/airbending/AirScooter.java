@@ -134,6 +134,12 @@ public class AirScooter extends AirAbility {
 			return;
 		}
 
+		if (slime == null || !slime.getPassengers().contains(player)){
+			this.bPlayer.addCooldown(this);
+			this.remove();
+			return;
+		}
+
 		Vector velocity = this.player.getEyeLocation().getDirection().clone().normalize();
 		velocity = velocity.clone().normalize().multiply(this.speed);
 		/*
