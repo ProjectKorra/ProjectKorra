@@ -380,6 +380,10 @@ public class PKListener implements Listener {
 				abil.remove();
 			}
 
+			if (CoreAbility.getAbility(player, FireJet.class) != null && event.getCause() == DamageCause.FLY_INTO_WALL) {
+				event.setCancelled(true);
+			}
+
 			if (bPlayer.isElementToggled(Element.FIRE)) {
 				return;
 			}

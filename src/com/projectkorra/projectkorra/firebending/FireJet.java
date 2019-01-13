@@ -116,8 +116,9 @@ public class FireJet extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
+		this.player.setGliding(false);
 		flightHandler.removeInstance(this.player, this.getName());
-		player.setGliding(false);
+		this.player.setFallDistance(0);
 	}
 
 	@Override
