@@ -79,6 +79,7 @@ public class FireJet extends FireAbility {
 			this.time = System.currentTimeMillis();
 
 			this.start();
+			player.setGliding(true);
 			this.bPlayer.addCooldown(this);
 		}
 	}
@@ -116,6 +117,7 @@ public class FireJet extends FireAbility {
 	public void remove() {
 		super.remove();
 		flightHandler.removeInstance(this.player, this.getName());
+		player.setGliding(false);
 	}
 
 	@Override

@@ -380,7 +380,9 @@ public class SurgeWall extends WaterAbility {
 			if (WALL_BLOCKS.containsKey(block)) {
 				if (this.oldTemps.containsKey(block)) {
 					final TempBlock tb = TempBlock.get(block);
-					tb.setType(this.oldTemps.get(block));
+					if (tb != null) {
+						tb.setType(this.oldTemps.get(block));
+					}
 				} else {
 					TempBlock.revertBlock(block, Material.AIR);
 				}

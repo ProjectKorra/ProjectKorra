@@ -1659,6 +1659,10 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
+
+		if (CoreAbility.getAbility(player, FireJet.class) != null) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
