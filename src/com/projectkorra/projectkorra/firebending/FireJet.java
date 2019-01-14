@@ -27,6 +27,7 @@ public class FireJet extends FireAbility {
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Random random;
+	private Boolean previousGlidingState;
 
 	public FireJet(final Player player) {
 		super(player);
@@ -79,6 +80,7 @@ public class FireJet extends FireAbility {
 			this.time = System.currentTimeMillis();
 
 			this.start();
+			previousGlidingState = player.isGliding();
 			player.setGliding(true);
 			this.bPlayer.addCooldown(this);
 		}
@@ -116,7 +118,7 @@ public class FireJet extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		this.player.setGliding(false);
+		this.player.setGliding(previousGlidingState);
 		flightHandler.removeInstance(this.player, this.getName());
 		this.player.setFallDistance(0);
 	}
