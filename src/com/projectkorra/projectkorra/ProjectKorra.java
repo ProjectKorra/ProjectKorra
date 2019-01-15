@@ -1,21 +1,8 @@
 package com.projectkorra.projectkorra;
 
-import java.util.HashMap;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
-import com.projectkorra.projectkorra.ability.util.CollisionManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
+import com.projectkorra.projectkorra.ability.util.*;
 import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
 import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
 import com.projectkorra.projectkorra.command.Commands;
@@ -24,12 +11,16 @@ import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.Metrics;
-import com.projectkorra.projectkorra.util.RevertChecker;
-import com.projectkorra.projectkorra.util.StatisticsManager;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.Updater;
+import com.projectkorra.projectkorra.util.*;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Statistic;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class ProjectKorra extends JavaPlugin {
 
@@ -152,7 +143,7 @@ public class ProjectKorra extends JavaPlugin {
 				Manager.getManager(StatisticsManager.class).save(player.getUniqueId(), false);
 			}
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer != null) {
+			if (bPlayer != null && isDatabaseCooldownsEnabled()) {
 				bPlayer.saveCooldowns();
 			}
 		}
@@ -180,6 +171,9 @@ public class ProjectKorra extends JavaPlugin {
 
 	public static boolean isStatisticsEnabled() {
 		return ConfigManager.getConfig().getBoolean("Properties.Statistics");
+	}
+	public static boolean isDatabaseCooldownsEnabled() {
+		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
 	}
 
 }

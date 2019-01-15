@@ -1,10 +1,18 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
+import com.projectkorra.projectkorra.firebending.Illumination;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,19 +27,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
-import com.projectkorra.projectkorra.firebending.Illumination;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.Information;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class EarthAbility extends ElementalAbility {
 
@@ -278,8 +277,8 @@ public abstract class EarthAbility extends ElementalAbility {
 		Material sand = red ? Material.RED_SAND : Material.SAND;
 		Material stone = red ? Material.RED_SANDSTONE : Material.SANDSTONE;
 		
-		ParticleEffect.ITEM_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, sand.createBlockData());
-		ParticleEffect.ITEM_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, stone.createBlockData());
+		ParticleEffect.BLOCK_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, sand.createBlockData());
+		ParticleEffect.BLOCK_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, stone.createBlockData());
 	}
 
 	/**
@@ -578,7 +577,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		final Information info = TEMP_AIR_LOCATIONS.get(i);
 		final Block block = info.getState().getBlock();
 
-		if (block.getType() != Material.AIR && !block.isLiquid()) {
+		if (!ElementalAbility.isAir(block.getType()) && !block.isLiquid()) {
 			if (force || !MOVED_EARTH.containsKey(block)) {
 				TEMP_AIR_LOCATIONS.remove(i);
 			} else {
@@ -600,7 +599,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			final Information info = MOVED_EARTH.get(block);
 			final Block sourceblock = info.getState().getBlock();
 
-			if (info.getState().getType() == Material.AIR) {
+			if (ElementalAbility.isAir(info.getState().getType())) {
 				MOVED_EARTH.remove(block);
 				return true;
 			}
@@ -623,7 +622,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				return true;
 			}
 
-			if (sourceblock.getType() == Material.AIR || sourceblock.isLiquid()) {
+			if (ElementalAbility.isAir(sourceblock.getType()) || sourceblock.isLiquid()) {
 				info.getState().update(true);
 			} else {
 

@@ -1164,19 +1164,19 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			final Block tempBlock = loc.clone().add(0, y, 0).getBlock();
-			if (tempBlock.getType() == Material.AIR) {
+			if (ElementalAbility.isAir(tempBlock.getType())) {
 				return blockHolder;
 			}
 			blockHolder = tempBlock;
 		}
 
-		while (blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
+		while (ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (blockHolder.getType() != Material.AIR) {
+			if (!ElementalAbility.isAir(blockHolder.getType())) {
 				return blockHolder;
 			}
 		}
@@ -1187,20 +1187,20 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
+		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			final Block tempblock = loc.clone().add(0, y, 0).getBlock();
-			if (tempblock.getType() == Material.AIR) {
+			if (ElementalAbility.isAir(tempblock.getType())) {
 				return blockHolder;
 			}
 
 			blockHolder = tempblock;
 		}
 
-		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (blockHolder.getType() == Material.AIR) {
+			if (ElementalAbility.isAir(blockHolder.getType())) {
 				return blockHolder;
 			}
 		}
@@ -1659,13 +1659,13 @@ public class GeneralMethods {
 		String prefix = "";
 
 		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-		if (bPlayer.getElements().size() > 1) {
+
+		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 			prefix = Element.AVATAR.getPrefix();
-		} else if (bPlayer.getElements().size() == 1) {
+		} else if (bPlayer.getElements().size() > 0) {
 			element = bPlayer.getElements().get(0);
 			prefix = element.getPrefix();
-		} else {
-			prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
 		}
 
 		if (chatEnabled) {
@@ -2158,11 +2158,11 @@ public class GeneralMethods {
 	}
 
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type) {
-		return spawnFallingBlock(loc, type, null);
+		return spawnFallingBlock(loc, type, type.createBlockData());
 	}
 
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type, final BlockData data) {
-		return loc.getWorld().spawnFallingBlock(loc, type.createBlockData(data.getAsString()));
+		return loc.getWorld().spawnFallingBlock(loc, data);
 	}
 
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {

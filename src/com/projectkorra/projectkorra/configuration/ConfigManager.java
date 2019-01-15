@@ -541,6 +541,7 @@ public class ConfigManager {
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
+			config.addDefault("Properties.DatabaseCooldowns", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
@@ -816,6 +817,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBurst.AngleTheta", 10);
 
 			config.addDefault("Abilities.Air.AirScooter.Enabled", true);
+			config.addDefault("Abilities.Air.AirScooter.ShowSitting", true);
 			config.addDefault("Abilities.Air.AirScooter.Speed", 0.675);
 			config.addDefault("Abilities.Air.AirScooter.Interval", 100);
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);

@@ -1,18 +1,18 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class AirSpout extends AirAbility {
 
@@ -109,7 +109,7 @@ public class AirSpout extends AirAbility {
 		final Block standingblock = this.player.getLocation().getBlock();
 		for (int i = 0; i <= this.height + 5; i++) {
 			final Block block = standingblock.getRelative(BlockFace.DOWN, i);
-			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
+			if (GeneralMethods.isSolid(block) || ElementalAbility.isWater(block)) {
 				return block;
 			}
 		}
@@ -135,7 +135,7 @@ public class AirSpout extends AirAbility {
 		}
 
 		final Block eyeBlock = this.player.getEyeLocation().getBlock();
-		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
+		if (ElementalAbility.isWater(eyeBlock) || GeneralMethods.isSolid(eyeBlock)) {
 			this.remove();
 			return;
 		}

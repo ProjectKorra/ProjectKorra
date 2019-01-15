@@ -1,17 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import java.util.ArrayList;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
@@ -22,6 +10,17 @@ import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
 
 public class FireWheel extends FireAbility implements ComboAbility {
 
@@ -125,7 +124,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		} else if (ElementalAbility.isPlant(topBlock)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
-		} else if (topBlock.getType() == Material.AIR) {
+		} else if (ElementalAbility.isAir(topBlock.getType())) {
 			this.remove();
 			return;
 		} else if (GeneralMethods.isSolid(topBlock.getRelative(BlockFace.UP)) || isWater(topBlock.getRelative(BlockFace.UP))) {

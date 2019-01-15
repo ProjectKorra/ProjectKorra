@@ -1,20 +1,20 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Tornado extends AirAbility {
 
@@ -104,7 +104,7 @@ public class Tornado extends AirAbility {
 		final double timefactor = this.currentHeight / this.maxHeight;
 		this.currentRadius = timefactor * this.radius;
 
-		if (this.origin.getBlock().getType() != Material.AIR && this.origin.getBlock().getType() != Material.BARRIER) {
+		if (!ElementalAbility.isAir(this.origin.getBlock().getType()) && this.origin.getBlock().getType() != Material.BARRIER) {
 			this.origin.setY(this.origin.getY() - 1. / 10. * this.currentHeight);
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, this.currentHeight)) {

@@ -1,10 +1,7 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,8 +11,10 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TempBlock {
 
@@ -88,8 +87,10 @@ public class TempBlock {
 		for (final Block block : instances.keySet()) {
 			revertBlock(block, Material.AIR);
 		}
-		for (final TempBlock tempblock : REVERT_QUEUE) {
-			tempblock.revertBlock();
+		if (REVERT_QUEUE != null) {
+			for (final TempBlock tempblock : REVERT_QUEUE) {
+				tempblock.revertBlock();
+			}
 		}
 	}
 

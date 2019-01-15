@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -155,7 +156,7 @@ public class SurgeWave extends WaterAbility {
 			}
 
 			final Block oldBlock = block;
-			if (!isAir(block.getType()) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
+			if (!ElementalAbility.isAir(block.getType()) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
 				continue;
 			} else if (isPlant(block)) {
 				block.breakNaturally();
@@ -285,13 +286,13 @@ public class SurgeWave extends WaterAbility {
 				final Block blockl = this.location.getBlock();
 				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((ElementalAbility.isAir(blockl.getType()) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
 					for (double i = 0; i <= this.currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
 							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 							final Block block = this.location.clone().add(vec).getBlock();
 
-							if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || this.isWaterbendable(block)) {
+							if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || block.getType() == Material.FIRE) || this.isWaterbendable(block)) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							}
@@ -337,10 +338,8 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
-						if (entity instanceof Player) {
-							if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
-								continue;
-							}
+						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+							continue;
 						}
 						final Vector dir = direction.clone();
 						dir.setY(dir.getY() * this.knockup);

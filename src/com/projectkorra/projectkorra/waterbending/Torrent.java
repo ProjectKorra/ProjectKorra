@@ -1,12 +1,15 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.*;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,20 +19,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Torrent extends WaterAbility {
 
@@ -533,9 +524,8 @@ public class Torrent extends WaterAbility {
 
 				if (tor.sourceSelected || tor.settingUp) {
 					WaterReturn.emptyWaterBottle(player);
-				} else {
-					block.setType(Material.AIR);
 				}
+				block.setType(Material.AIR);
 			}
 		}
 	}
@@ -551,10 +541,8 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
-		if (entity instanceof Player) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || Commands.invincible.contains(((Player) entity).getName())){
-				return;
-			}
+		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+			return;
 		}
 		double x, z, vx, vz, mag;
 		double angle = 50;
@@ -590,6 +578,9 @@ public class Torrent extends WaterAbility {
 
 	private void affect(final Entity entity, final Vector direction) {
 		if (entity.getEntityId() == this.player.getEntityId()) {
+			return;
+		}
+		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))){
 			return;
 		}
 		if (direction.getY() > this.knockup) {

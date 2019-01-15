@@ -1,12 +1,11 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,11 +13,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterBubble extends WaterAbility {
 
@@ -153,7 +149,7 @@ public class WaterBubble extends WaterAbility {
 					Waterlogged logged = (Waterlogged) b.getBlockData();
 					logged.setWaterlogged(true);
 					b.setBlockData(logged);
-				} else if (b.getType() == Material.AIR) {
+				} else if (ElementalAbility.isAir(b.getType())) {
 					b.setType(this.waterOrigins.get(b).getType());
 					b.setBlockData(this.waterOrigins.get(b).getBlockData());
 				}
@@ -193,7 +189,7 @@ public class WaterBubble extends WaterAbility {
 				Waterlogged logged = (Waterlogged) b.getBlockData();
 				logged.setWaterlogged(true);
 				b.setBlockData(logged);
-			} else if (b.getType() == Material.AIR) {
+			} else if (ElementalAbility.isAir(b.getType())) {
 				b.setType(this.waterOrigins.get(b).getType());
 				b.setBlockData(this.waterOrigins.get(b).getBlockData());
 			}

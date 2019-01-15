@@ -1,23 +1,23 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpout extends WaterAbility {
 
@@ -109,7 +109,7 @@ public class WaterSpout extends WaterAbility {
 			loc.add(x, height, z);
 
 			final Block block = loc.getBlock();
-			if ((!TempBlock.isTempBlock(block)) && (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block))) {
+			if ((!TempBlock.isTempBlock(block)) && (ElementalAbility.isAir(block.getType()) || !GeneralMethods.isSolid(block))) {
 				this.blocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(7)));
 				AFFECTED_BLOCKS.put(block, block);
 			}
@@ -291,7 +291,7 @@ public class WaterSpout extends WaterAbility {
 					return i;
 				}
 
-				if ((blocki.getType() != Material.AIR && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
+				if ((!ElementalAbility.isAir(blocki.getType()) && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
 					this.revertBaseBlock();
 					return -1;
 				}

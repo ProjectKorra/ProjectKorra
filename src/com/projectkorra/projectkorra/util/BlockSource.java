@@ -1,19 +1,17 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.HashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -269,7 +267,7 @@ public class BlockSource {
 		} else {
 			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
 		}
-		if (sourceBlock != null && !sourceBlock.getType().equals(Material.AIR) && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock))) {
+		if (sourceBlock != null && !ElementalAbility.isAir(sourceBlock.getType()) && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock))) {
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {
 				return null;
 			}
