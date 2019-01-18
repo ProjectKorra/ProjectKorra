@@ -292,8 +292,11 @@ public class EarthGrab extends EarthAbility {
 			if (!isEarth(entity.getLocation().clone().subtract(0, 1, 0).getBlock()) && (this.bPlayer.canSandbend() && !isSand(entity.getLocation().clone().subtract(0, 1, 0).getBlock())) && entity.getLocation().clone().subtract(0, 1, 0).getBlock().getType() != Material.FARMLAND) {
 				continue;
 			}
-
-			if (entity instanceof Arrow) {
+			if (entity instanceof Trident) {
+				final Location l = entity.getLocation();
+				entity.remove();
+				entity = l.getWorld().dropItem(l, new ItemStack(Material.TRIDENT, 1));
+			} else if (entity instanceof Arrow) {
 				final Location l = entity.getLocation();
 				entity.remove();
 				entity = l.getWorld().dropItem(l, new ItemStack(Material.ARROW, 1));
