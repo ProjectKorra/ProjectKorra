@@ -85,10 +85,11 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	}
 
 	public static void revertAllSand() {
-		Set<TempBlock> sandtoremove = new HashSet<>(SAND_BLOCKS);
-		for (final TempBlock block : sandtoremove) {
+		for (final TempBlock block : SAND_BLOCKS) {
+			block.setRevertTask(null);
 			block.revertBlock();
 		}
+		SAND_BLOCKS.clear();
 	}
 
 	public static void removeAll() {
