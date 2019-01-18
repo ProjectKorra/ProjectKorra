@@ -89,8 +89,12 @@ public class TempBlock {
 		}
 		if (REVERT_QUEUE != null) {
 			for (final TempBlock tempblock : REVERT_QUEUE) {
-				tempblock.revertBlock();
+				tempblock.state.update(true);
+				if (tempblock.revertTask != null) {
+					tempblock.revertTask.run();
+				}
 			}
+			REVERT_QUEUE.clear();
 		}
 	}
 
