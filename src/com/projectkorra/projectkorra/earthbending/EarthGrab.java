@@ -293,13 +293,14 @@ public class EarthGrab extends EarthAbility {
 				continue;
 			}
 			if (entity instanceof Trident) {
-				final Location l = entity.getLocation();
-				entity.remove();
-				entity = l.getWorld().dropItem(l, new ItemStack(Material.TRIDENT, 1));
+				continue;
 			} else if (entity instanceof Arrow) {
-				final Location l = entity.getLocation();
-				entity.remove();
-				entity = l.getWorld().dropItem(l, new ItemStack(Material.ARROW, 1));
+				Arrow arrow = (Arrow) entity;
+				if (arrow.getPickupStatus() == Arrow.PickupStatus.ALLOWED) {
+					final Location l = entity.getLocation();
+					entity.remove();
+					entity = l.getWorld().dropItem(l, new ItemStack(Material.ARROW, 1));
+				}
 			} else if (!(entity instanceof Item)) {
 				continue;
 			}
