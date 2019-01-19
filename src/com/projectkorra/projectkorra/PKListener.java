@@ -560,7 +560,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTeleportEvent(final EntityTeleportEvent event) {
 		final Entity entity = event.getEntity();
-		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity) || MetalClips.isControlled((LivingEntity) entity)) {
+		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity) || (entity instanceof LivingEntity && MetalClips.isControlled((LivingEntity) entity))) {
 			event.setCancelled(true);
 		}
 
@@ -1415,9 +1415,18 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onPlayerSwing(final PlayerAnimationEvent event) {
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerSwing(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
+		if (event.getHand() != EquipmentSlot.HAND) {
+			return;
+		}
+		if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_AIR) {
+			return;
+		}
+		if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.isCancelled()){
+			return;
+		}
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -1663,9 +1672,10 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
-
-		if (CoreAbility.getAbility(player, FireJet.class) != null) {
-			event.setCancelled(true);
+		if (ConfigManager.getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding")) {
+			if (CoreAbility.getAbility(player, FireJet.class) != null) {
+				event.setCancelled(true);
+			}
 		}
 	}
 

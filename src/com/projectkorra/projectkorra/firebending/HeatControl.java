@@ -1,26 +1,5 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -36,6 +15,18 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.*;
 
 public class HeatControl extends FireAbility {
 
@@ -43,7 +34,7 @@ public class HeatControl extends FireAbility {
 		COOK, EXTINGUISH, MELT, SOLIDIFY
 	}
 
-	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON };
+	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON, Material.KELP };
 
 	private HeatControlType heatControlType;
 
@@ -269,6 +260,9 @@ public class HeatControl extends FireAbility {
 				break;
 			case SALMON:
 				cooked = new ItemStack(Material.COOKED_SALMON);
+				break;
+			case KELP:
+				cooked = new ItemStack(Material.DRIED_KELP);
 				break;
 			default:
 				break;
