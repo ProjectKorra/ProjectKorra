@@ -28,6 +28,7 @@ public class FireJet extends FireAbility {
 	private double speed;
 	private Random random;
 	private Boolean previousGlidingState;
+	private Boolean showGliding;
 
 	public FireJet(final Player player) {
 		super(player);
@@ -49,6 +50,7 @@ public class FireJet extends FireAbility {
 		this.duration = getConfig().getLong("Abilities.Fire.FireJet.Duration");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireJet.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");
+		this.showGliding = getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding");
 		this.random = new Random();
 
 		this.speed = this.getDayFactor(this.speed);
@@ -80,8 +82,10 @@ public class FireJet extends FireAbility {
 			this.time = System.currentTimeMillis();
 
 			this.start();
-			previousGlidingState = player.isGliding();
-			player.setGliding(true);
+			if (showGliding) {
+				previousGlidingState = player.isGliding();
+				player.setGliding(true);
+			}
 			this.bPlayer.addCooldown(this);
 		}
 	}
@@ -118,7 +122,9 @@ public class FireJet extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		this.player.setGliding(previousGlidingState);
+		if (showGliding) {
+			this.player.setGliding(previousGlidingState);
+		}
 		flightHandler.removeInstance(this.player, this.getName());
 		this.player.setFallDistance(0);
 	}

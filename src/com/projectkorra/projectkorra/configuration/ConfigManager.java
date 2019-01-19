@@ -817,7 +817,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBurst.AngleTheta", 10);
 
 			config.addDefault("Abilities.Air.AirScooter.Enabled", true);
-			config.addDefault("Abilities.Air.AirScooter.ShowSitting", true);
+			config.addDefault("Abilities.Air.AirScooter.ShowSitting", false);
 			config.addDefault("Abilities.Air.AirScooter.Speed", 0.675);
 			config.addDefault("Abilities.Air.AirScooter.Interval", 100);
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);
@@ -1363,6 +1363,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Speed", 0.8);
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
+			config.addDefault("Abilities.Fire.FireJet.ShowGliding", false);
 
 			config.addDefault("Abilities.Fire.FireManipulation.Enabled", false);
 

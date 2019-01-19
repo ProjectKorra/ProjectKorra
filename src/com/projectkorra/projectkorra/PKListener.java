@@ -1672,9 +1672,10 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
-
-		if (CoreAbility.getAbility(player, FireJet.class) != null) {
-			event.setCancelled(true);
+		if (ConfigManager.getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding")) {
+			if (CoreAbility.getAbility(player, FireJet.class) != null) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
