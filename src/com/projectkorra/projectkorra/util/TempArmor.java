@@ -1,19 +1,12 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TempArmor {
 
@@ -208,10 +201,6 @@ public class TempArmor {
 	 * TempArmor instance was started, if the display queue is empty.
 	 */
 	public void revert() {
-		if (this.removeAbilOnForceRevert && this.ability != null && !this.ability.isRemoved()) {
-			this.ability.remove();
-		}
-
 		final PriorityQueue<TempArmor> queue = INSTANCES.get(this.entity);
 
 		if (queue.contains(this)) {
@@ -230,6 +219,10 @@ public class TempArmor {
 			this.entity.getEquipment().setArmorContents(ORIGINAL.get(this.entity));
 			INSTANCES.remove(this.entity);
 			ORIGINAL.remove(this.entity);
+		}
+
+		if (this.removeAbilOnForceRevert && this.ability != null && !this.ability.isRemoved()) {
+			this.ability.remove();
 		}
 	}
 
