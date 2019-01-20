@@ -135,6 +135,8 @@ public class PKListener implements Listener {
 			TempBlock.revertBlock(block, Material.AIR);
 		} else if (DensityShift.isPassiveSand(block)) {
 			DensityShift.revertSand(block);
+		} else if (WaterBubble.isAir(block)){
+			event.setCancelled(true);
 		}
 	}
 
