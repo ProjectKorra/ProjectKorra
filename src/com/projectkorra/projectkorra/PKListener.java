@@ -1693,6 +1693,14 @@ public class PKListener implements Listener {
 			Smokescreen.getSnowballs().remove(id);
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPickupItem(final EntityPickupItemEvent event) {
+		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+			if (metalClips.getTrackedIngots().contains(event.getItem())) {
+				event.setCancelled(true);
+			}
+		}
+	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPistonExtendEvent(final BlockPistonExtendEvent event){
