@@ -193,15 +193,11 @@ public class MetalClips extends MetalAbility {
 	}
 
 	public void resetArmor() {
-		if (!this.isMagnetized) {
-			this.bPlayer.addCooldown(this);
-		}
 		if (this.targetEntity == null || !TempArmor.hasTempArmor(this.targetEntity) || this.targetEntity.isDead()) {
 			return;
 		}
 
 		TempArmor.getVisibleTempArmor(this.targetEntity).revert();
-
 		this.dropIngots(this.targetEntity.getLocation());
 		this.isBeingWorn = false;
 	}
@@ -404,6 +400,7 @@ public class MetalClips extends MetalAbility {
 				this.targetEntity.setFallDistance(0);
 			}
 		}
+
 		Iterator<Item> it = this.trackedIngots.iterator();
 		while (it.hasNext()) {
 			final Item ii = it.next();
@@ -412,34 +409,36 @@ public class MetalClips extends MetalAbility {
 				continue;
 			}
 
-			if (ii.getItemStack().getType() == Material.IRON_INGOT) {
-				if (GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2).size() == 0) {
-					this.remove();
-					return;
-				}
+			for (final Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 1.8)) {
+				if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId()) {
+					if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton)) {
+						if (this.targetEntity == null) {
+							this.targetEntity = (LivingEntity) e;
+							TARGET_TO_ABILITY.put(this.targetEntity, this);
+							this.formArmor();
+						} else if (this.targetEntity == e) {
+							this.formArmor();
+						} else {
+							if (TARGET_TO_ABILITY.get(this.targetEntity) == this) {
+								this.resetArmor();
+								this.metalClipsCount = 0;
+								ENTITY_CLIPS_COUNT.remove(this.targetEntity);
+								TARGET_TO_ABILITY.remove(this.targetEntity);
 
-				for (final Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
-					if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId()) {
-						if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton)) {
-							if (this.targetEntity == null) {
-								this.targetEntity = (LivingEntity) e;
+								this.targetEntity = (LivingEntity)e;
 								TARGET_TO_ABILITY.put(this.targetEntity, this);
 								this.formArmor();
-							} else if (this.targetEntity == e) {
-								this.formArmor();
 							} else {
-								this.dropIngots(e.getLocation());
 								TARGET_TO_ABILITY.get(this.targetEntity).remove();
 							}
-						} else {
-							DamageHandler.damageEntity(e, this.player, this.damage, this);
-							this.dropIngots(e.getLocation(), ii.getItemStack().getAmount());
-							this.remove();
 						}
-						it.remove();
-						ii.remove();
-						break;
+					} else {
+						DamageHandler.damageEntity(e, this.player, this.damage, this);
+						this.dropIngots(e.getLocation(), ii.getItemStack().getAmount());
 					}
+					it.remove();
+					ii.remove();
+					break;
 				}
 			}
 		}
@@ -459,6 +458,9 @@ public class MetalClips extends MetalAbility {
 		super.remove();
 
 		this.resetArmor();
+		if (!this.isMagnetized) {
+			this.bPlayer.addCooldown(this);
+		}
 		this.trackedIngots.clear();
 		this.metalClipsCount = 0;
 

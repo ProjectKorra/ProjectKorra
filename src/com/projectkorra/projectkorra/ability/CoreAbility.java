@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -254,10 +255,16 @@ public abstract class CoreAbility implements Ability {
 					e.printStackTrace();
 					Bukkit.getLogger().severe(abil.toString());
 					try {
+						abil.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + abil.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
+					}
+					catch (final Exception me) {
+						Bukkit.getLogger().severe("unable to notify ability user of error");
+					}
+					try {
 						abil.remove();
 					}
 					catch (final Exception re) {
-						re.printStackTrace();
+						Bukkit.getLogger().severe("unable to fully remove ability of above error");
 					}
 				}
 			}
