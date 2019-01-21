@@ -436,15 +436,13 @@ public class MetalClips extends MetalAbility {
 							this.dropIngots(e.getLocation(), ii.getItemStack().getAmount());
 							this.remove();
 						}
-
+						it.remove();
 						ii.remove();
 						break;
 					}
 				}
 			}
 		}
-
-		this.removeDeadIngots();
 	}
 
 	public void dropIngots(final Location loc) {
@@ -454,10 +452,6 @@ public class MetalClips extends MetalAbility {
 	public void dropIngots(final Location loc, final int amount) {
 		final Item i = this.player.getWorld().dropItem(loc, new ItemStack(Material.IRON_INGOT, amount));
 		i.setPickupDelay(61);
-	}
-
-	public void removeDeadIngots() {
-		this.trackedIngots.removeIf((Item item) -> item.isDead());
 	}
 
 	@Override
