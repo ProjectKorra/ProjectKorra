@@ -1,16 +1,15 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An object to control how an entity moves. <br>
@@ -128,7 +127,11 @@ public class MovementHandler {
 	 */
 	public void reset() {
 		if (this.runnable != null) {
-			this.runnable.cancel();
+			try {
+				this.runnable.cancel();
+			} catch (IllegalStateException e) { //if a player hasn't landed on the ground yet this runnable wont be scheduled, and will give an error on server shutdown
+				this.runnable = null;
+			}
 		}
 		if (this.msg != null) {
 			this.msg.cancel();
