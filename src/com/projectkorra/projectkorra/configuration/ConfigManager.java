@@ -1489,8 +1489,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.AcrobatStance.Cooldown", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.Duration", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.ChiBlockBoost", 3);
-			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 1);
-			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 1);
+			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 3);
+			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 3);
 
 			config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 			config.addDefault("Abilities.Chi.HighJump.Height", 1.3);

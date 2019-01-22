@@ -33,8 +33,8 @@ public class AcrobatStance extends ChiAbility {
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.AcrobatStance.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Chi.AcrobatStance.Duration");
-		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
-		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
+		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") - 1;
+		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") - 1;
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 
@@ -62,11 +62,11 @@ public class AcrobatStance extends ChiAbility {
 			return;
 		}
 
-		if (!this.player.hasPotionEffect(PotionEffectType.SPEED)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, this.speed, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.SPEED) || this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() < this.speed || (this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() <= this.speed && this.player.getPotionEffect(PotionEffectType.SPEED).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, this.speed, true, false), true);
 		}
-		if (!this.player.hasPotionEffect(PotionEffectType.JUMP)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, this.jump, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.JUMP) || this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() < this.jump || (this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() <= this.jump && this.player.getPotionEffect(PotionEffectType.JUMP).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, this.jump, true, false), true);
 		}
 	}
 
