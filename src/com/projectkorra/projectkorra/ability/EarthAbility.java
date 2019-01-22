@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -155,6 +156,9 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
 				TempBlock.get(affectedblock).revertBlock();
+			}
+			if (LavaFlow.isLavaFlowBlock(block)){
+				LavaFlow.removeBlock(block);
 			}
 
 			if (affectedblock == null) {
