@@ -6,10 +6,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -387,7 +384,10 @@ public class LavaFlow extends LavaAbility {
 	public void createLava(final Block block) {
 		if (isEarth(block) || isSand(block) || isMetal(block)) {
 			if (EarthAbility.getMovedEarth().containsKey(block)){
-				return;
+				Information info = EarthAbility.getMovedEarth().get(block);
+				if(!info.getBlock().equals(block)) {
+					return;
+				}
 			}
 			if (isPlant(block.getRelative(BlockFace.UP)) || isSnow(block.getRelative(BlockFace.UP))) {
 				final Block above = block.getRelative(BlockFace.UP);
