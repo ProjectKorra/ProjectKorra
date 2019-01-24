@@ -57,10 +57,10 @@ public class WarriorStance extends ChiAbility {
 			return;
 		}
 
-		if (!this.player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) || this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() > this.resistance || (this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() >= this.resistance && this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getDuration() == 1)) { //special case for negative resistance
+		if (!this.player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) || this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() > this.resistance || (this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() == this.resistance && this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getDuration() == 1)) { //special case for negative resistance
 			this.player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, this.resistance, true, false), true);
 		}
-		if (!this.player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) || this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() < this.strength || (this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() <= this.strength && this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() == 1)) {
+		if (!this.player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) || this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() < this.strength || (this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() == this.strength && this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() == 1)) {
 			this.player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 10, this.strength, true, false), true);
 		}
 	}
