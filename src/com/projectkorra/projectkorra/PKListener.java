@@ -1463,11 +1463,6 @@ public class PKListener implements Listener {
 		} else if (bPlayer.isChiBlocked()) {
 			event.setCancelled(true);
 			return;
-		} else if (GeneralMethods.isInteractable(player.getTargetBlock(new HashSet<Material>(), 5))) {
-			event.setCancelled(true);
-			return;
-		} else if (player.getInventory().getItemInMainHand().getType() == Material.FISHING_ROD) {
-			return;
 		}
 
 		BlockSource.update(player, ClickType.LEFT_CLICK);
