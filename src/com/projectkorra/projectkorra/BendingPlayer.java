@@ -16,6 +16,8 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -905,4 +907,9 @@ public class BendingPlayer {
 		this.chiBlocked = false;
 	}
 
+	@Override
+	public String toString()
+	{
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 }

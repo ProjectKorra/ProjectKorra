@@ -1,32 +1,5 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.jar.JarFile;
-
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -34,14 +7,8 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.util.AbilityLoader;
-import com.projectkorra.projectkorra.ability.util.AddonAbilityLoader;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.ability.util.CollisionManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.*;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.AttributePriority;
@@ -51,8 +18,28 @@ import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.TimeUtil;
-
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import sun.reflect.ReflectionFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.jar.JarFile;
 
 /**
  * CoreAbility provides default implementation of an Ability, including methods
@@ -266,11 +253,18 @@ public abstract class CoreAbility implements Ability {
 				}
 				catch (final Exception e) {
 					e.printStackTrace();
+					Bukkit.getLogger().severe(abil.toString());
+					try {
+						abil.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + abil.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
+					}
+					catch (final Exception me) {
+						Bukkit.getLogger().severe("unable to notify ability user of error");
+					}
 					try {
 						abil.remove();
 					}
 					catch (final Exception re) {
-						re.printStackTrace();
+						Bukkit.getLogger().severe("unable to fully remove ability of above error");
 					}
 				}
 			}
@@ -1085,6 +1079,12 @@ public abstract class CoreAbility implements Ability {
 
 	public static double getDefaultCollisionRadius() {
 		return DEFAULT_COLLISION_RADIUS;
+	}
+
+	@Override
+	public String toString()
+	{
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

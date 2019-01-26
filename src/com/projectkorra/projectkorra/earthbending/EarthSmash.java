@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -288,6 +289,9 @@ public class EarthSmash extends EarthAbility {
 					return;
 				}
 				for (final Entity entity : entities) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+						continue;
+					}
 					entity.setVelocity(direction.clone().multiply(this.flightSpeed));
 				}
 
@@ -561,6 +565,9 @@ public class EarthSmash extends EarthAbility {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.flightDetectionRadius);
 		for (final Entity entity : entities) {
 			if (entity instanceof LivingEntity && entity != this.player && !this.affectedEntities.contains(entity)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					continue;
+				}
 				this.affectedEntities.add(entity);
 				final double damage = this.currentBlocks.size() / 13.0 * this.damage;
 				DamageHandler.damageEntity(entity, damage, this);

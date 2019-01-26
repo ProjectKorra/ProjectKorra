@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
 	public Updater updater;
+	private BukkitTask revertChecker;
 
 	@Override
 	public void onEnable() {
@@ -65,7 +67,7 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+		revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
 			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 				@Override
@@ -137,6 +139,7 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		revertChecker.cancel();
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {

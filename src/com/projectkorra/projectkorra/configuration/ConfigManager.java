@@ -833,6 +833,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
 			config.addDefault("Abilities.Air.AirShield.Particles", 5);
+			config.addDefault("Abilities.Air.AirShield.DynamicCooldown", false);
 
 			config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 			config.addDefault("Abilities.Air.AirSpout.Cooldown", 0);
@@ -1488,8 +1489,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.AcrobatStance.Cooldown", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.Duration", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.ChiBlockBoost", 3);
-			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 1);
-			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 1);
+			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 3);
+			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 3);
 
 			config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 			config.addDefault("Abilities.Chi.HighJump.Height", 1.3);

@@ -1,17 +1,13 @@
 package com.projectkorra.projectkorra.airbending.passive;
 
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.chiblocking.passive.ChiAgility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirAgility extends AirAbility implements PassiveAbility {
 
@@ -31,8 +27,8 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 	}
 
 	public void setFields() {
-		this.jumpPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.JumpPower");
-		this.speedPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.SpeedPower");
+		this.jumpPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.JumpPower") - 1;
+		this.speedPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.SpeedPower") - 1;
 	}
 
 	@Override
@@ -41,42 +37,13 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 			return;
 		}
 
-		if (CoreAbility.hasAbility(this.player, ChiAgility.class) && this.bPlayer.canBendPassive(CoreAbility.getAbility(ChiAbility.class))) {
-			final ChiAgility chiAgility = CoreAbility.getAbility(this.player, ChiAgility.class);
-			if (chiAgility.getJumpPower() > this.jumpPower) {
-				this.jumpPower = chiAgility.getJumpPower();
-			}
-			if (chiAgility.getSpeedPower() > this.speedPower) {
-				this.speedPower = chiAgility.getSpeedPower();
-			}
-		}
-
 		// Jump Buff.
-		this.jumpActivate = true;
-		if (this.player.hasPotionEffect(PotionEffectType.JUMP)) {
-			final PotionEffect potion = this.player.getPotionEffect(PotionEffectType.JUMP);
-			if (potion.getAmplifier() > this.jumpPower - 1) {
-				this.jumpActivate = false;
-			} else {
-				this.player.removePotionEffect(PotionEffectType.JUMP);
-			}
+		if (!this.player.hasPotionEffect(PotionEffectType.JUMP) || this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() < this.jumpPower || (this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() == this.jumpPower && this.player.getPotionEffect(PotionEffectType.JUMP).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, this.jumpPower, true, false), true);
 		}
-		if (this.jumpActivate) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, this.jumpPower - 1, true, false), false);
-		}
-
 		// Speed Buff.
-		this.speedActivate = true;
-		if (this.player.hasPotionEffect(PotionEffectType.SPEED)) {
-			final PotionEffect potion = this.player.getPotionEffect(PotionEffectType.SPEED);
-			if (potion.getAmplifier() > this.speedPower - 1) {
-				this.speedActivate = false;
-			} else {
-				this.player.removePotionEffect(PotionEffectType.SPEED);
-			}
-		}
-		if (this.speedActivate) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, this.speedPower - 1, true, false), false);
+		if (!this.player.hasPotionEffect(PotionEffectType.SPEED) || this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() < this.speedPower || (this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() == this.speedPower && this.player.getPotionEffect(PotionEffectType.SPEED).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, this.speedPower, true, false), true);
 		}
 	}
 

@@ -135,6 +135,8 @@ public class PKListener implements Listener {
 			TempBlock.revertBlock(block, Material.AIR);
 		} else if (DensityShift.isPassiveSand(block)) {
 			DensityShift.revertSand(block);
+		} else if (WaterBubble.isAir(block)){
+			event.setCancelled(true);
 		}
 	}
 
@@ -1461,11 +1463,6 @@ public class PKListener implements Listener {
 		} else if (bPlayer.isChiBlocked()) {
 			event.setCancelled(true);
 			return;
-		} else if (GeneralMethods.isInteractable(player.getTargetBlock(new HashSet<Material>(), 5))) {
-			event.setCancelled(true);
-			return;
-		} else if (player.getInventory().getItemInMainHand().getType() == Material.FISHING_ROD) {
-			return;
 		}
 
 		BlockSource.update(player, ClickType.LEFT_CLICK);
@@ -1691,6 +1688,24 @@ public class PKListener implements Listener {
 			}
 
 			Smokescreen.getSnowballs().remove(id);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPickupItem(final EntityPickupItemEvent event) {
+		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+			if (metalClips.getTrackedIngots().contains(event.getItem())) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onItemMerge(final ItemMergeEvent event) {
+		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+			if (metalClips.getTrackedIngots().contains(event.getEntity()) || metalClips.getTrackedIngots().contains(event.getTarget())) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
