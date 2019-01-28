@@ -192,6 +192,14 @@ permissions:
       bending.ability.AirSweep: true
       bending.ability.AirStream: true
       bending.ability.Twister: true
+  bending.ability.Flight:
+    default: false
+    description: Grants access to Flight sub-abilities.
+    children:
+      bending.ability.Flight.Soar: true
+      bending.ability.Flight.Glide: true
+      bending.ability.Flight.Levitate: true
+      bending.ability.Flight.Ending: true
   bending.ability.WaterCombo:
     default: false
     description: Grants access to all WaterCombos.
