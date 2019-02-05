@@ -1,40 +1,29 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.MovementHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
-import com.projectkorra.projectkorra.util.TempArmor;
-import com.projectkorra.projectkorra.util.TempArmorStand;
-import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class EarthGrab extends EarthAbility {
 
@@ -58,7 +47,7 @@ public class EarthGrab extends EarthAbility {
 	private Location origin;
 	private Vector direction;
 	private TempArmor armor;
-	private final Material[] crops = new Material[] { Material.BEETROOT_BLOCK, Material.CARROT, Material.POTATO, Material.SUGAR_CANE_BLOCK, Material.CROPS, Material.MELON_BLOCK, Material.PUMPKIN };
+	private final Material[] crops = new Material[] { Material.WHEAT, Material.BEETROOTS, Material.CARROTS, Material.POTATOES, Material.SUGAR_CANE, Material.MELON, Material.PUMPKIN };
 
 	public static enum GrabMode {
 		TRAP, DRAG, PROJECTING;
@@ -165,7 +154,7 @@ public class EarthGrab extends EarthAbility {
 
 		this.origin.setY(top.getY() + 1);
 
-		ParticleEffect.BLOCK_DUST.display(new BlockData(this.origin.getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.2f, 0.5f, 0.2f, 0, 27, this.origin, 256);
+		ParticleEffect.BLOCK_DUST.display(this.origin, 27, 0.2, 0.5, 0.2, this.origin.getBlock().getRelative(BlockFace.DOWN).getBlockData());
 		playEarthbendingSound(this.origin);
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, 1)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && this.isEarthbendable(entity.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
@@ -194,7 +183,7 @@ public class EarthGrab extends EarthAbility {
 			this.trap.setHealth(this.trapHP);
 			this.trap.setMetadata("earthgrab:trap", new FixedMetadataValue(ProjectKorra.plugin, this));
 
-			new TempBlock(this.target.getLocation().clone().subtract(0, 1, 0).getBlock(), this.target.getLocation().clone().subtract(0, 1, 0).getBlock().getType(), (byte) 0);
+			new TempBlock(this.target.getLocation().clone().subtract(0, 1, 0).getBlock(), this.target.getLocation().clone().subtract(0, 1, 0).getBlock().getType());
 
 			this.mHandler = new MovementHandler(this.target, this);
 			this.mHandler.stop(Element.EARTH.getColor() + "* Trapped *");
@@ -218,9 +207,9 @@ public class EarthGrab extends EarthAbility {
 			this.initiated = true;
 		}
 
-		ParticleEffect.BLOCK_DUST.display(new BlockData(this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.3f, 0.6f, 0.3f, 0, 36, this.target.getLocation(), 256);
+		ParticleEffect.BLOCK_DUST.display(this.target.getLocation(), 36, 0.3, 0.6, 0.3, this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
 
-		if (this.trap.getLocation().clone().subtract(0, 0.1, 0).getBlock().getType() != Material.AIR) {
+		if (!ElementalAbility.isAir(this.trap.getLocation().clone().subtract(0, 0.1, 0).getBlock().getType())) {
 			this.trap.setGravity(false);
 		} else {
 			this.trap.setGravity(true);
@@ -288,7 +277,7 @@ public class EarthGrab extends EarthAbility {
 			}
 
 			final Block b = l.getBlock();
-			if (b.getData() == (byte) 7 || b.getType() == Material.MELON_BLOCK || b.getType() == Material.PUMPKIN) {
+			if ((b.getBlockData() instanceof Ageable && ((Ageable) b.getBlockData()).getAge() == ((Ageable) b.getBlockData()).getMaximumAge()) || b.getType() == Material.MELON || b.getType() == Material.PUMPKIN) {
 				b.breakNaturally();
 			}
 		}
@@ -300,20 +289,24 @@ public class EarthGrab extends EarthAbility {
 		}
 
 		for (Entity entity : ents) {
-			if (!isEarth(entity.getLocation().clone().subtract(0, 1, 0).getBlock()) && (this.bPlayer.canSandbend() && !isSand(entity.getLocation().clone().subtract(0, 1, 0).getBlock())) && entity.getLocation().clone().subtract(0, 1, 0).getBlock().getType() != Material.SOIL) {
+			if (!isEarth(entity.getLocation().clone().subtract(0, 1, 0).getBlock()) && (this.bPlayer.canSandbend() && !isSand(entity.getLocation().clone().subtract(0, 1, 0).getBlock())) && entity.getLocation().clone().subtract(0, 1, 0).getBlock().getType() != Material.FARMLAND) {
 				continue;
 			}
-
-			if (entity instanceof Arrow) {
-				final Location l = entity.getLocation();
-				entity.remove();
-				entity = l.getWorld().dropItem(l, new ItemStack(Material.ARROW, 1));
+			if (entity instanceof Trident) {
+				continue;
+			} else if (entity instanceof Arrow) {
+				Arrow arrow = (Arrow) entity;
+				if (arrow.getPickupStatus() == Arrow.PickupStatus.ALLOWED) {
+					final Location l = entity.getLocation();
+					entity.remove();
+					entity = l.getWorld().dropItem(l, new ItemStack(Material.ARROW, 1));
+				}
 			} else if (!(entity instanceof Item)) {
 				continue;
 			}
 			final Block b = entity.getLocation().getBlock().getRelative(BlockFace.DOWN);
 			entity.setVelocity(GeneralMethods.getDirection(entity.getLocation(), this.player.getLocation()).normalize().multiply(this.dragSpeed));
-			ParticleEffect.BLOCK_CRACK.display(new BlockData(b.getType(), b.getData()), 0, 0, 0, 0, 1, entity.getLocation(), 256);
+			ParticleEffect.BLOCK_CRACK.display(entity.getLocation(), 2, 0, 0, 0, b.getBlockData());
 			playEarthbendingSound(entity.getLocation());
 		}
 	}
@@ -322,7 +315,7 @@ public class EarthGrab extends EarthAbility {
 		if (System.currentTimeMillis() >= this.lastHit + this.interval) {
 			this.trapHP -= 1;
 			this.lastHit = System.currentTimeMillis();
-			ParticleEffect.BLOCK_CRACK.display(new BlockData(this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.1f, 0.5f, 0.1f, 0, 17, this.target.getLocation().clone().add(0, 1, 0), 256);
+			ParticleEffect.BLOCK_CRACK.display(this.target.getLocation().clone().add(0, 1, 0), 17, 0.1, 0.5, 0.1, this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
 			playEarthbendingSound(this.target.getLocation());
 		}
 	}

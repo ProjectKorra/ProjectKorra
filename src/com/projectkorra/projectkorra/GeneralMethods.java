@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,6 +42,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -54,23 +57,22 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.kingdoms.constants.StructureType;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.SimpleChunkLocation;
-import org.kingdoms.constants.land.SimpleLocation;
-import org.kingdoms.constants.player.KingdomPlayer;
-import org.kingdoms.manager.game.GameManagement;
 
 import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
+import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
-import com.massivecraft.factions.engine.EngineMain;
-import com.massivecraft.massivecore.ps.PS;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
@@ -118,6 +120,7 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
+import com.projectkorra.projectkorra.util.ColoredParticle;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
@@ -127,22 +130,32 @@ import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.songoda.kingdoms.constants.land.Land;
+import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
+import com.songoda.kingdoms.constants.player.KingdomPlayer;
+import com.songoda.kingdoms.manager.game.GameManagement;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
+import me.markeh.factionsframework.entities.FPlayer;
+import me.markeh.factionsframework.entities.FPlayers;
+import me.markeh.factionsframework.entities.Faction;
+import me.markeh.factionsframework.entities.Factions;
+import me.markeh.factionsframework.enums.Rel;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 
 public class GeneralMethods {
-
-	public static final Material[] NON_OPAQUE = { Material.AIR, Material.SAPLING, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.WEB, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.CROPS, Material.LADDER, Material.RAILS, Material.SIGN_POST, Material.LEVER, Material.STONE_PLATE, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE_BLOCK, Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.WATER_LILY, Material.NETHER_STALK, Material.ENDER_PORTAL, Material.COCOA, Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.FLOWER_POT, Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.DAYLIGHT_DETECTOR, Material.CARPET, Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.WALL_BANNER, Material.DAYLIGHT_DETECTOR_INVERTED, Material.END_ROD, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.BEETROOT_BLOCK, Material.END_GATEWAY };
-	public static final Material[] INTERACTABLE_MATERIALS = { Material.ACACIA_DOOR, Material.ACACIA_FENCE_GATE, Material.ANVIL, Material.BEACON, Material.BED_BLOCK, Material.BIRCH_DOOR, Material.BIRCH_FENCE_GATE, Material.BOAT, Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND, Material.DARK_OAK_DOOR, Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER, Material.ENCHANTMENT_TABLE, Material.ENDER_CHEST, Material.ENDER_PORTAL_FRAME, Material.FENCE_GATE, Material.FURNACE, Material.HOPPER, Material.HOPPER_MINECART, Material.COMMAND_MINECART, Material.JUKEBOX, Material.JUNGLE_DOOR, Material.JUNGLE_FENCE_GATE, Material.LEVER, Material.MINECART, Material.NOTE_BLOCK, Material.SPRUCE_DOOR, Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON, Material.TRAPPED_CHEST, Material.TRAP_DOOR, Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
 	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
@@ -547,7 +560,7 @@ public class GeneralMethods {
 		if (readFile.exists()) {
 			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile)); BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
+				 DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -562,6 +575,7 @@ public class GeneralMethods {
 		}
 	}
 
+	@Deprecated
 	public static void displayColoredParticle(final Location loc, ParticleEffect type, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
 		int r = 0;
 		int g = 0;
@@ -581,44 +595,46 @@ public class GeneralMethods {
 		if (red <= 0) {
 			red = 1 / 255.0F;
 		}
-		loc.setX(loc.getX() + Math.random() * xOffset);
-		loc.setY(loc.getY() + Math.random() * yOffset);
-		loc.setZ(loc.getZ() + Math.random() * zOffset);
+		loc.setX(loc.getX() + (Math.random()*2 - 1) * xOffset);
+		loc.setY(loc.getY() + (Math.random()*2 - 1) * yOffset);
+		loc.setZ(loc.getZ() + (Math.random()*2 - 1) * zOffset);
 
 		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
 			type = ParticleEffect.RED_DUST;
 		}
-		type.display(red, green, blue, 1F, 0, loc, 255.0);
+		type.display(loc, 0, red, green, blue);
 	}
 
+	@Deprecated
 	public static void displayColoredParticle(final Location loc, final String hexVal) {
 		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, 0, 0, 0);
 	}
 
+	@Deprecated
 	public static void displayColoredParticle(final Location loc, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
 		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, xOffset, yOffset, zOffset);
 	}
 
-	public static void displayParticleVector(final Location loc, final ParticleEffect type, final float xTrans, final float yTrans, final float zTrans) {
-		if (type == ParticleEffect.FIREWORKS_SPARK) {
-			ParticleEffect.FIREWORKS_SPARK.display(xTrans, yTrans, zTrans, 0.09F, 0, loc, 257D);
-		} else if (type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL) {
-			ParticleEffect.SMOKE.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE) {
-			ParticleEffect.LARGE_SMOKE.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.ENCHANTMENT_TABLE) {
-			ParticleEffect.ENCHANTMENT_TABLE.display(xTrans, yTrans, zTrans, 0.5F, 0, loc, 257D);
-		} else if (type == ParticleEffect.PORTAL) {
-			ParticleEffect.PORTAL.display(xTrans, yTrans, zTrans, 0.5F, 0, loc, 257D);
-		} else if (type == ParticleEffect.FLAME) {
-			ParticleEffect.FLAME.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.CLOUD) {
-			ParticleEffect.CLOUD.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
-		} else if (type == ParticleEffect.SNOW_SHOVEL) {
-			ParticleEffect.SNOW_SHOVEL.display(xTrans, yTrans, zTrans, 0.2F, 0, loc, 257D);
-		} else {
-			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 257D);
+	public static void displayColoredParticle(String hexVal, final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
+		int r = 0;
+		int g = 0;
+		int b = 0;
+
+		if (hexVal.startsWith("#")) {
+			hexVal = hexVal.substring(1);
 		}
+
+		if (hexVal.length() <= 6) {
+			r = Integer.valueOf(hexVal.substring(0, 2), 16).intValue();
+			g = Integer.valueOf(hexVal.substring(2, 4), 16).intValue();
+			b = Integer.valueOf(hexVal.substring(4, 6), 16).intValue();
+		}
+
+		new ColoredParticle(Color.fromRGB(r, g, b), 1F).display(loc, amount, offsetX, offsetY, offsetZ);
+	}
+
+	public static void displayColoredParticle(final String hexVal, final Location loc) {
+		displayColoredParticle(hexVal, loc, 1, 0, 0, 0);
 	}
 
 	/**
@@ -904,10 +920,10 @@ public class GeneralMethods {
 	 * @param breakitem Unused
 	 * @return The item drops fromt the specified block
 	 */
-	public static Collection<ItemStack> getDrops(final Block block, final Material type, final byte data, final ItemStack breakitem) {
+	public static Collection<ItemStack> getDrops(final Block block, final Material type, final BlockData data) {
 		final BlockState tempstate = block.getState();
 		block.setType(type);
-		block.setData(data);
+		block.setBlockData(data);
 		final Collection<ItemStack> item = block.getDrops();
 		tempstate.update(true);
 		return item;
@@ -1103,6 +1119,22 @@ public class GeneralMethods {
 		return null;
 	}
 
+	public static BlockData getLavaData(int level) {
+		BlockData data = Material.LAVA.createBlockData();
+		if (data instanceof Levelled) {
+			((Levelled) data).setLevel(level);
+		}
+		return data;
+	}
+
+	public static BlockData getWaterData(int level) {
+		BlockData data = Material.WATER.createBlockData();
+		if (data instanceof Levelled) {
+			((Levelled) data).setLevel(level);
+		}
+		return data;
+	}
+
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
 		double longestr = range + 1;
 		Entity target = null;
@@ -1135,30 +1167,45 @@ public class GeneralMethods {
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
-
-	public static Location getTargetedLocation(final Player player, final double originselectrange, final Material... nonOpaque2) {
+	
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
 
 		HashSet<Material> trans = new HashSet<Material>();
 		trans.add(Material.AIR);
+		trans.add(Material.CAVE_AIR);
+		trans.add(Material.VOID_AIR);
 
-		if (nonOpaque2 == null) {
-			trans = null;
-		} else {
+		if (nonOpaque2 != null) {
 			for (final Material material : nonOpaque2) {
 				trans.add(material);
 			}
 		}
-
-		final Block block = player.getTargetBlock(trans, (int) originselectrange + 1);
-		double distance = originselectrange;
-		if (block.getWorld().equals(origin.getWorld())) {
-			distance = block.getLocation().distance(origin) - 1.5;
+		
+		Location location = origin.clone();
+		Vector vec = direction.normalize().multiply(0.2);
+		
+		for (double i = 0; i < range; i += 0.2) {
+			location.add(vec);
+			
+			Block block = location.getBlock();
+			
+			if (trans.contains(block.getType())) {
+				continue;
+			} else if (ignoreTempBlocks && (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block))) {
+				continue;
+			} else {
+				location.subtract(vec);
+				break;
+			}
 		}
-		final Location location = origin.add(direction.multiply(distance));
 
 		return location;
+	}
+
+	public static Location getTargetedLocation(final Player player, final double range, final Material... nonOpaque2) {
+		return getTargetedLocation(player, range, false, nonOpaque2);
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
@@ -1177,19 +1224,19 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			final Block tempBlock = loc.clone().add(0, y, 0).getBlock();
-			if (tempBlock.getType() == Material.AIR) {
+			if (ElementalAbility.isAir(tempBlock.getType())) {
 				return blockHolder;
 			}
 			blockHolder = tempBlock;
 		}
 
-		while (blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
+		while (ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (blockHolder.getType() != Material.AIR) {
+			if (!ElementalAbility.isAir(blockHolder.getType())) {
 				return blockHolder;
 			}
 		}
@@ -1200,20 +1247,20 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
+		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			final Block tempblock = loc.clone().add(0, y, 0).getBlock();
-			if (tempblock.getType() == Material.AIR) {
+			if (ElementalAbility.isAir(tempblock.getType())) {
 				return blockHolder;
 			}
 
 			blockHolder = tempblock;
 		}
 
-		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (blockHolder.getType() == Material.AIR) {
+			if (ElementalAbility.isAir(blockHolder.getType())) {
 				return blockHolder;
 			}
 		}
@@ -1260,18 +1307,34 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
-		if (block == null || (TempBlock.isTempBlock(block) && WaterAbility.isBendableWaterTempBlock(block))) {
+		return isAdjacentToThreeOrMoreSources(block, false);
+	}
+
+	public static boolean isAdjacentToThreeOrMoreSources(final Block block, final boolean lava) {
+		if (block == null || (TempBlock.isTempBlock(block) && (!lava && !WaterAbility.isBendableWaterTempBlock(block)))) {
 			return false;
 		}
 		int sources = 0;
-		final byte full = 0x0;
 		final BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
 		for (final BlockFace face : faces) {
 			final Block blocki = block.getRelative(face);
-			if ((blocki.getType() == Material.LAVA || blocki.getType() == Material.STATIONARY_LAVA) && blocki.getData() == full && EarthPassive.canPhysicsChange(blocki)) {
-				sources++;
+			if (lava) {
+				if (!(blocki.getType() == Material.LAVA && EarthPassive.canPhysicsChange(blocki))) {
+					continue;
+				}
+			} else {
+				if (!((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && WaterManipulation.canPhysicsChange(blocki))) {
+					continue;
+				}
 			}
-			if ((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && blocki.getData() == full && WaterManipulation.canPhysicsChange(blocki)) {
+
+			//At this point it should either be water or lava
+			if (blocki.getBlockData() instanceof Levelled) {
+				Levelled level = (Levelled) blocki.getBlockData();
+				if (level.getLevel() == 0) {
+					sources++;
+				}
+			} else { //ice
 				sources++;
 			}
 		}
@@ -1283,7 +1346,11 @@ public class GeneralMethods {
 	}
 
 	public static boolean isInteractable(final Block block) {
-		return Arrays.asList(INTERACTABLE_MATERIALS).contains(block.getType());
+		return isInteractable(block.getType());
+	}
+
+	public static boolean isInteractable(final Material material) {
+		return material.isInteractable();
 	}
 
 	public static boolean isObstructed(final Location location1, final Location location2) {
@@ -1350,13 +1417,15 @@ public class GeneralMethods {
 	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
 		final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
+		//final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
 		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
 		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
+		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectKingdoms");
+		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPlotSquared");
+		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1378,14 +1447,15 @@ public class GeneralMethods {
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin fcp = pm.getPlugin("Factions");
+		//final Plugin psp = pm.getPlugin("PreciousStones");
+		final Plugin facsfw = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin massivecore = pm.getPlugin("MassiveCore");
 		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
+		final Plugin plotsquared = pm.getPlugin("PlotSquared");
+		final Plugin redprotect = pm.getPlugin("RedProtect");
 
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
@@ -1401,32 +1471,34 @@ public class GeneralMethods {
 				}
 			}
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
-				final WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
+				final WorldGuard wg = WorldGuard.getInstance();
 				if (!player.isOnline()) {
 					return true;
 				}
-
 				if (isIgnite) {
-					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
-						if (wg.getGlobalStateManager().get(world).blockLighter) {
+					if (!player.hasPermission("worldguard.override.lighter")) {
+						if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(world)).blockLighter) {
 							return true;
 						}
 					}
 				}
+
 				if (isExplosive) {
-					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions) {
+					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions) {
 						return true;
 					}
-					if (!wg.getRegionContainer().createQuery().testBuild(location, player, DefaultFlag.TNT)) {
+					StateFlag.State tntflag = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT);
+					if (tntflag != null && tntflag.equals(StateFlag.State.DENY)) {
 						return true;
 					}
 				}
 
-				if (!wg.canBuild(player, location.getBlock())) {
+				if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
 					return true;
 				}
 			}
 
+			/* outdated plugin
 			if (psp != null && respectPreciousStones) {
 				final PreciousStones ps = (PreciousStones) psp;
 
@@ -1445,9 +1517,14 @@ public class GeneralMethods {
 					return true;
 				}
 			}
+			*/
 
-			if (fcp != null && massivecore != null && respectFactions) {
-				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
+			if (facsfw != null && respectFactions) {
+				FPlayer fPlayer = FPlayers.getBySender(player);
+				Faction faction = Factions.getFactionAt(location);
+				Rel relation = fPlayer.getRelationTo(faction);
+
+				if (!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)) {
 					return true;
 				}
 			}
@@ -1460,8 +1537,7 @@ public class GeneralMethods {
 				try {
 					final TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(world.getName());
 					worldCoord = new WorldCoord(tWorld.getName(), Coord.parseCoord(location));
-
-					final boolean bBuild = PlayerCacheUtil.getCachePermission(player, location, 3, (byte) 0, TownyPermission.ActionType.BUILD);
+					final boolean bBuild = PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, TownyPermission.ActionType.BUILD);
 
 					if (!bBuild) {
 						final PlayerCache cache = twn.getCache(player);
@@ -1506,44 +1582,72 @@ public class GeneralMethods {
 			}
 
 			if (residence != null && respectResidence) {
-				final ClaimedResidence res = Residence.getResidenceManager().getByLoc(loc);
-				if (res != null) {
-					final ResidencePermissions perms = res.getPermissions();
-					if (perms.playerHas(player.getName(), ConfigManager.defaultConfig.get().getString("Properities.RegionProtection.Residence.Flag"), true)) {
+				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
+				final ClaimedResidence claim = res.getByLoc(location);
+				if (claim != null) {
+					final ResidencePermissions perms = claim.getPermissions();
+					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
 						return true;
 					}
 				}
 			}
 
 			if (kingdoms != null && respectKingdoms) {
-				final SimpleLocation location_ = new SimpleLocation(loc);
-				final SimpleChunkLocation chunk = location_.toSimpleChunk();
-				final Land land = GameManagement.getLandManager().getOrLoadLand(chunk);
-
-				if (land.getOwner() != null) {
-					final KingdomPlayer kp = GameManagement.getPlayerManager().getSession(player);
-
-					if (!kp.isAdminMode()) {
-						if (land.getOwner().equals("SafeZone")) {
+				KingdomPlayer kPlayer = GameManagement.getPlayerManager().getOfflineKingdomPlayer(player).getKingdomPlayer();
+				if (kPlayer.getKingdom() != null) {
+					SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
+					Land land = GameManagement.getLandManager().getOrLoadLand(chunkLocation);
+					UUID owner = land.getOwnerUUID();
+					if (owner != null) {
+						if (!kPlayer.getKingdom().getKing().equals(owner)) {
 							return true;
-						} else if (kp.getKingdom() == null) { // If the player isn't in a kingdom but it's claimed land.
-							return true;
-						} else {
-							final Kingdom kingdom = kp.getKingdom();
-							final String kingdomName = kingdom.getKingdomName();
-							if (!kingdomName.equals(land.getOwner())) // If the player's kingdom doesn't match.
-							{
+						}
+					}
+				}
+
+			}
+
+			if (plotsquared != null && respectPlotSquared) {
+				com.github.intellectualsites.plotsquared.plot.object.Location plotLocation = BukkitUtil.getLocation(location);
+				PlotArea plotArea = plotLocation.getPlotArea();
+				if (plotArea != null) {
+					Plot plot = plotArea.getPlot(plotLocation);
+					PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+					if (plot != null) {
+						if (location.getBlock().getY() == 0) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
 								return true;
 							}
-
-							// If it's within the nexus area, test for higher permission.
-							if (land.getStructure() != null && land.getStructure().getType() == StructureType.NEXUS) {
-								if (!kp.getRank().isHigherOrEqualTo(kingdom.getPermissionsInfo().getBuildInNexus())) {
-									return true;
-								}
+						} else if ((location.getY() > plotArea.MAX_BUILD_HEIGHT || location.getY() < plotArea.MIN_BUILD_HEIGHT) && !Permissions
+								.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+							return true;
+						}
+						if (!plot.hasOwner()) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+								return true;
+							}
+						}
+						if (!plot.isAdded(plotPlayer.getUUID())) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+								return true;
+							}
+						} else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(com.github.intellectualsites.plotsquared.plot.flag.Flags.DONE)) {
+							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+								return true;
 							}
 						}
 					}
+					if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
+						return true;
+					}
+				}
+			}
+
+			if (redprotect != null && respectRedProtect) {
+				RedProtectAPI api = RedProtect.get().getAPI();
+				Region region = api.getRegion(location);
+				if (!(region != null && region.canBuild(player))) {
+					return true;
 				}
 			}
 		}
@@ -1551,7 +1655,19 @@ public class GeneralMethods {
 	}
 
 	public static boolean isSolid(final Block block) {
-		return !Arrays.asList(NON_OPAQUE).contains(block.getType());
+		return isSolid(block.getType());
+	}
+
+	public static boolean isSolid(final Material material) {
+		return material.isSolid();
+	}
+
+	public static boolean isTransparent(final Block block) {
+		return isTransparent(block.getType());
+	}
+
+	public static boolean isTransparent(final Material material) {
+		return !material.isOccluding() && !material.isSolid();
 	}
 
 	/** Checks if an entity is Undead **/
@@ -1560,7 +1676,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isWeapon(final Material mat) {
-		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE || mat == Material.GOLD_AXE || mat == Material.GOLD_HOE || mat == Material.GOLD_SWORD || mat == Material.GOLD_PICKAXE || mat == Material.GOLD_SPADE);
+		return mat != null && (mat == Material.WOODEN_AXE || mat == Material.WOODEN_PICKAXE || mat == Material.WOODEN_SHOVEL || mat == Material.WOODEN_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SHOVEL || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SHOVEL || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SHOVEL || mat == Material.GOLDEN_AXE || mat == Material.GOLDEN_HOE || mat == Material.GOLDEN_SWORD || mat == Material.GOLDEN_PICKAXE || mat == Material.GOLDEN_SHOVEL || mat == Material.TRIDENT);
 	}
 
 	public static void loadBendingPlayer(final BendingPlayer pl) {
@@ -1581,13 +1697,13 @@ public class GeneralMethods {
 		String prefix = "";
 
 		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-		if (bPlayer.getElements().size() > 1) {
+
+		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 			prefix = Element.AVATAR.getPrefix();
-		} else if (bPlayer.getElements().size() == 1) {
+		} else if (bPlayer.getElements().size() > 0) {
 			element = bPlayer.getElements().get(0);
 			prefix = element.getPrefix();
-		} else {
-			prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
 		}
 
 		if (chatEnabled) {
@@ -1670,9 +1786,11 @@ public class GeneralMethods {
 	}
 
 	public static void removeBlock(final Block block) {
-		if (isAdjacentToThreeOrMoreSources(block)) {
+		if (isAdjacentToThreeOrMoreSources(block, false)) {
 			block.setType(Material.WATER);
-			block.setData((byte) 0x0);
+			if (block.getBlockData() instanceof Levelled) {
+				((Levelled) block.getBlockData()).setLevel(1);
+			}
 		} else {
 			block.setType(Material.AIR);
 		}
@@ -1786,15 +1904,24 @@ public class GeneralMethods {
 		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
+		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
+		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
+		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.PlotSquared");
+		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
+		final boolean respectBentoBox = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.BentoBox");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
 		final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin fcp = pm.getPlugin("Factions");
+		final Plugin fcp = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin massivecore = pm.getPlugin("MassiveCore");
 		final Plugin lwc = pm.getPlugin("LWC");
+		final Plugin residence = pm.getPlugin("Residence");
+		final Plugin kingdoms = pm.getPlugin("Kingdoms");
+		final Plugin plotsquared = pm.getPlugin("PlotSquared");
+		final Plugin redprotect = pm.getPlugin("RedProtect");
+		final Plugin bentobox = pm.getPlugin("BentoBox");
 
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
@@ -1803,10 +1930,7 @@ public class GeneralMethods {
 			writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
 		}
 		if (fcp != null && respectFactions) {
-			writeToDebug("Factions v" + fcp.getDescription().getVersion());
-		}
-		if (massivecore != null && respectFactions) {
-			writeToDebug("MassiveCore v" + massivecore.getDescription().getVersion());
+			writeToDebug("FactionsFramework v" + fcp.getDescription().getVersion());
 		}
 		if (twnp != null && respectTowny) {
 			writeToDebug("Towny v" + twnp.getDescription().getVersion());
@@ -1816,6 +1940,21 @@ public class GeneralMethods {
 		}
 		if (lwc != null && respectLWC) {
 			writeToDebug("LWC v" + lwc.getDescription().getVersion());
+		}
+		if (residence != null && respectResidence) {
+			writeToDebug("Residence v" + residence.getDescription().getVersion());
+		}
+		if (kingdoms != null && respectKingdoms) {
+			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
+		}
+		if (plotsquared != null && respectPlotSquared) {
+			writeToDebug("PlotSquared v" + plotsquared.getDescription().getVersion());
+		}
+		if (redprotect != null && respectRedProtect) {
+			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
+		}
+		if (bentobox != null && respectBentoBox) {
+			writeToDebug("BentoBox v" + bentobox.getDescription().getVersion());
 		}
 
 		writeToDebug("");
@@ -2056,20 +2195,12 @@ public class GeneralMethods {
 		entity.setVelocity(velocity);
 	}
 
-	public static FallingBlock spawnFallingBlock(final Location loc, final int type) {
-		return spawnFallingBlock(loc, type, (byte) 0);
-	}
-
-	public static FallingBlock spawnFallingBlock(final Location loc, final int type, final byte data) {
-		return loc.getWorld().spawnFallingBlock(loc, type, data);
-	}
-
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type) {
-		return spawnFallingBlock(loc, type, (byte) 0);
+		return spawnFallingBlock(loc, type, type.createBlockData());
 	}
 
-	public static FallingBlock spawnFallingBlock(final Location loc, final Material type, final byte data) {
-		return loc.getWorld().spawnFallingBlock(loc, type, data);
+	public static FallingBlock spawnFallingBlock(final Location loc, final Material type, final BlockData data) {
+		return loc.getWorld().spawnFallingBlock(loc, data);
 	}
 
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {

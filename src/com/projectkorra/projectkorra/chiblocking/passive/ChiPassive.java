@@ -58,7 +58,7 @@ public class ChiPassive {
 		}
 
 		bPlayer.blockChi();
-		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
+		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 2, 0);
 
 		final long start = System.currentTimeMillis();
 		new BukkitRunnable() {

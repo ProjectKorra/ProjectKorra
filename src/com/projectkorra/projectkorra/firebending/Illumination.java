@@ -117,12 +117,12 @@ public class Illumination extends FireAbility {
 			return;
 		} else if (this.block != null && standingBlock.equals(this.block.getBlock())) {
 			return;
-		} else if (standBlock.getType() == Material.LEAVES || standBlock.getType() == Material.LEAVES_2) {
+		} else if (standBlock.getType() == Material.ACACIA_LEAVES || standBlock.getType() == Material.BIRCH_LEAVES || standBlock.getType() == Material.DARK_OAK_LEAVES || standBlock.getType() == Material.JUNGLE_LEAVES || standBlock.getType() == Material.OAK_LEAVES || standBlock.getType() == Material.SPRUCE_LEAVES) {
 			return;
 		}
 
 		this.revert();
-		this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
+		this.block = new TempBlock(standingBlock, Material.TORCH);
 		BLOCKS.put(this.block, this.player);
 	}
 

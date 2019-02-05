@@ -29,7 +29,7 @@ public class HydroSink extends WaterAbility implements PassiveAbility {
 			return true;
 		} else if (WaterAbility.isWaterbendable(player, null, block) && !ElementalAbility.isPlant(block)) {
 			return true;
-		} else if (fallBlock.getType() == Material.AIR) {
+		} else if (ElementalAbility.isAir(fallBlock.getType())) {
 			return true;
 		} else if ((WaterAbility.isWaterbendable(player, null, fallBlock) && !ElementalAbility.isPlant(fallBlock)) || fallBlock.getType() == Material.SNOW_BLOCK) {
 			return true;

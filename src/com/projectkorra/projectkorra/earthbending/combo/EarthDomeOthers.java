@@ -13,7 +13,6 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class EarthDomeOthers extends EarthAbility {
 
@@ -78,8 +77,8 @@ public class EarthDomeOthers extends EarthAbility {
 
 		this.loc.setY(top.getY() + 1);
 
-		ParticleEffect.CRIT.display(this.loc, 0.4f, 0, 0.4f, 0.001f, 9);
-		ParticleEffect.BLOCK_DUST.display(new BlockData(this.loc.getBlock().getRelative(BlockFace.DOWN).getType(), (byte) 0), 0.2f, 0.1f, 0.2f, 0.001f, 7, this.loc, 255);
+		ParticleEffect.CRIT.display(this.loc, 9, 0.4, 0, 0.4, 0.001);
+		ParticleEffect.BLOCK_DUST.display(this.loc, 7, 0.2, 0.1, 0.2, 0.001, this.loc.getBlock().getRelative(BlockFace.DOWN).getBlockData());
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.loc, 2)) {
 			if (!(entity instanceof LivingEntity) || entity.getEntityId() == this.player.getEntityId()) {

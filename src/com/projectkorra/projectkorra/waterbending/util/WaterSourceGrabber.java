@@ -1,19 +1,20 @@
 package com.projectkorra.projectkorra.waterbending.util;
 
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterSourceGrabber {
 
@@ -26,7 +27,7 @@ public class WaterSourceGrabber {
 	}
 
 	private Player player;
-	private byte data;
+	private BlockData data;
 	private double animimationSpeed;
 	private AnimationState state;
 	private Material material;
@@ -40,8 +41,8 @@ public class WaterSourceGrabber {
 	public WaterSourceGrabber(final Player player, final Location origin, final double animationSpeed) {
 		this.player = player;
 		this.animimationSpeed = animationSpeed;
-		this.material = Material.STATIONARY_WATER;
-		this.data = 0;
+		this.material = Material.WATER;
+		this.data = GeneralMethods.getWaterData(0);
 		this.currentLoc = origin.clone();
 		this.state = AnimationState.RISING;
 		this.affectedBlocks = new ConcurrentHashMap<>();
@@ -56,7 +57,7 @@ public class WaterSourceGrabber {
 			this.currentLoc.add(0, this.animimationSpeed * Math.signum(locDiff), 0);
 			final Block block = this.currentLoc.getBlock();
 
-			if (!(WaterAbility.isWaterbendable(this.player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterSpout", block.getLocation())) {
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterSpout", block.getLocation())) {
 				this.remove();
 				return;
 			}
@@ -73,7 +74,7 @@ public class WaterSourceGrabber {
 			this.currentLoc.add(vec.normalize().multiply(this.animimationSpeed));
 
 			final Block block = this.currentLoc.getBlock();
-			if (!(WaterAbility.isWaterbendable(this.player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", block.getLocation())) {
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", block.getLocation())) {
 				this.remove();
 				return;
 			}
@@ -104,10 +105,10 @@ public class WaterSourceGrabber {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, (byte) 0);
+		this.createBlock(block, mat, mat.createBlockData());
 	}
 
-	public void createBlock(final Block block, final Material mat, final byte data) {
+	public void createBlock(final Block block, final Material mat, final BlockData data) {
 		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
 	}
 
@@ -119,11 +120,11 @@ public class WaterSourceGrabber {
 		this.player = player;
 	}
 
-	public byte getData() {
+	public BlockData getData() {
 		return this.data;
 	}
 
-	public void setData(final byte data) {
+	public void setData(final BlockData data) {
 		this.data = data;
 	}
 

@@ -1,13 +1,12 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class Shockwave extends EarthAbility {
 
@@ -83,8 +82,8 @@ public class Shockwave extends EarthAbility {
 				return;
 			}
 		} else if (this.charged) {
-			final Location location = this.player.getEyeLocation();
-			location.getWorld().playEffect(location, Effect.SMOKE, GeneralMethods.getIntCardinalDirection(this.player.getEyeLocation().getDirection()), 3);
+			final Location location = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection());
+			ParticleEffect.SMOKE_NORMAL.display(location, 1);
 		}
 	}
 

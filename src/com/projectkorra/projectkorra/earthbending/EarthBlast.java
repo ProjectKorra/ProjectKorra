@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthBlast extends EarthAbility {
 	private boolean isProgressing;
@@ -43,7 +44,6 @@ public class EarthBlast extends EarthAbility {
 	@Attribute("DeflectRange")
 	private double deflectRange;
 	private double collisionRadius;
-	private byte sourceData;
 	private Material sourceType;
 	private Location location;
 	private Location destination;
@@ -108,17 +108,12 @@ public class EarthBlast extends EarthAbility {
 			DensityShift.revertSand(this.sourceBlock);
 		}
 
-		this.sourceData = this.sourceBlock.getData();
 		if (this.sourceBlock.getType() == Material.SAND) {
 			this.sourceType = Material.SAND;
-			if (this.sourceBlock.getData() == (byte) 0x1) {
-				this.sourceBlock.setType(Material.RED_SANDSTONE);
-			} else {
-				this.sourceBlock.setType(Material.SANDSTONE);
-			}
-		} else if (this.sourceBlock.getType() == Material.STEP) {
-			this.sourceBlock.setType(Material.STEP);
-			this.sourceType = Material.STEP;
+			this.sourceBlock.setType(Material.SANDSTONE);
+		} else if (this.sourceBlock.getType() == Material.RED_SAND) {
+			this.sourceType = Material.RED_SAND;
+			this.sourceBlock.setType(Material.RED_SANDSTONE);
 		} else if (this.sourceBlock.getType() == Material.STONE) {
 			this.sourceBlock.setType(Material.COBBLESTONE);
 			this.sourceType = Material.STONE;
@@ -150,7 +145,7 @@ public class EarthBlast extends EarthAbility {
 		}
 
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(this.player, this.range, trans);
+			location = GeneralMethods.getTargetedLocation(this.player, this.range, true, trans);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
@@ -161,6 +156,8 @@ public class EarthBlast extends EarthAbility {
 	public boolean prepare() {
 		final Block block = BlockSource.getEarthSourceBlock(this.player, this.range, ClickType.SHIFT_DOWN);
 		if (block == null || !this.isEarthbendable(block)) {
+			return false;
+		} else if (TempBlock.isTempBlock(block)) {
 			return false;
 		}
 
@@ -299,10 +296,6 @@ public class EarthBlast extends EarthAbility {
 
 				if (isEarthRevertOn()) {
 					this.sourceBlock.setType(this.sourceType);
-					this.sourceBlock.setData(this.sourceData);
-					if (this.sourceBlock.getType() == Material.RED_SANDSTONE && this.sourceType == Material.SAND) {
-						this.sourceBlock.setData((byte) 0x1);
-					}
 
 					moveEarthBlock(this.sourceBlock, block);
 
@@ -326,7 +319,6 @@ public class EarthBlast extends EarthAbility {
 						if (this.sourceBlock.getType() == Material.RED_SANDSTONE) {
 							this.sourceType = Material.SAND;
 							this.sourceBlock.setType(this.sourceType);
-							this.sourceBlock.setData((byte) 0x1);
 						} else {
 							this.sourceBlock.setType(this.sourceType);
 						}
@@ -356,17 +348,7 @@ public class EarthBlast extends EarthAbility {
 		if (this.destination != null && this.sourceBlock != null) {
 			this.sourceBlock.setType(Material.AIR);
 		} else if (this.sourceBlock != null) {
-			if (this.sourceBlock.getType() == Material.SAND) {
-				if (this.sourceBlock.getData() == (byte) 0x1) {
-					this.sourceBlock.setType(this.sourceType);
-					this.sourceBlock.setData((byte) 0x1);
-				} else {
-					this.sourceBlock.setType(this.sourceType);
-				}
-			} else {
-				this.sourceBlock.setType(this.sourceType);
-				this.sourceBlock.setData(this.sourceData);
-			}
+			this.sourceBlock.setType(this.sourceType);
 		}
 	}
 
@@ -402,7 +384,6 @@ public class EarthBlast extends EarthAbility {
 
 			final Material currentType = this.sourceBlock.getType();
 			this.sourceBlock.setType(this.sourceType);
-			this.sourceBlock.setData(this.sourceData);
 			if (isEarthRevertOn()) {
 				addTempAirBlock(this.sourceBlock);
 			} else {
@@ -474,7 +455,6 @@ public class EarthBlast extends EarthAbility {
 			if (mloc.distanceSquared(location) <= blast.range * blast.range && GeneralMethods.getDistanceFromLine(vector, location, blast.location) < blast.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				blast.redirect(player, blast.getTargetLocation());
 			}
-
 		}
 	}
 

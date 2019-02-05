@@ -1,17 +1,5 @@
 package com.projectkorra.projectkorra.earthbending.lava;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
@@ -21,6 +9,17 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LavaSurgeWave extends LavaAbility {
 
@@ -165,13 +164,13 @@ public class LavaSurgeWave extends LavaAbility {
 			final Block blockl = this.location.getBlock();
 			final ArrayList<Block> blocks = new ArrayList<Block>();
 
-			if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && blockl.getType() != Material.LEAVES && (blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || ElementalAbility.isPlant(blockl) || isLava(blockl))) {
+			if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (ElementalAbility.isAir(blockl.getType()) || blockl.getType() == Material.FIRE || ElementalAbility.isPlant(blockl) || isLava(blockl))) {
 				for (double i = 0; i <= this.radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 						final Block block = this.location.clone().add(vec).getBlock();
 
-						if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || this.isLavabendable(block)) {
+						if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || block.getType() == Material.FIRE) || this.isLavabendable(block)) {
 							blocks.add(block);
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}
@@ -253,7 +252,7 @@ public class LavaSurgeWave extends LavaAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
+			new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
 			this.waveBlocks.put(block, block);
 		}
 	}

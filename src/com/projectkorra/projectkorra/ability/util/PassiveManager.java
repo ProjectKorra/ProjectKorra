@@ -44,7 +44,7 @@ public class PassiveManager {
 				}
 
 				try {
-					final Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get(ability);
+					final Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get((PassiveAbility) ability);
 					final Constructor<?> constructor = clazz.getConstructor(Player.class);
 					final Object object = constructor.newInstance(player);
 					((CoreAbility) object).start();

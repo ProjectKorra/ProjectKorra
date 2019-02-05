@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -161,19 +162,21 @@ public class AirSwipe extends AirAbility {
 						}
 					}
 
-					if (block.getType() != Material.AIR) {
+					if (!isAir(block.getType())) {
 						if (block.getType().equals(Material.SNOW)) {
 							continue;
+						} else if (isPlant(block.getType())) {
+							block.breakNaturally();
 						} else {
 							this.elements.remove(direction);
 						}
 						if (isLava(block)) {
 							if (LavaFlow.isLavaFlowBlock(block)) {
 								LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
-							} else if (block.getData() == 0x0) {
-								new TempBlock(block, Material.OBSIDIAN, (byte) 0);
+							} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
+								new TempBlock(block, Material.OBSIDIAN);
 							} else {
-								new TempBlock(block, Material.COBBLESTONE, (byte) 0);
+								new TempBlock(block, Material.COBBLESTONE);
 							}
 						}
 					} else {

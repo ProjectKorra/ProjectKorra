@@ -1,9 +1,17 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,17 +22,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class FireBlast extends FireAbility {
 
@@ -117,8 +117,8 @@ public class FireBlast extends FireAbility {
 
 	private void advanceLocation() {
 		if (this.showParticles) {
-			ParticleEffect.FLAME.display(this.location, 0.275F, 0.275F, 0.275F, 0, 6);
-			ParticleEffect.SMOKE.display(this.location, 0.3F, 0.3F, 0.3F, 0, 3);
+			ParticleEffect.FLAME.display(this.location, 6, 0.275, 0.275, 0.275, 0);
+			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, 0.3, 0.3, 0.3, 0);
 		}
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
@@ -131,7 +131,7 @@ public class FireBlast extends FireAbility {
 	}
 
 	private void affect(final Entity entity) {
-		if (entity.getUniqueId() != this.player.getUniqueId()) {
+		if (entity.getUniqueId() != this.player.getUniqueId() && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) && !((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			if (this.bPlayer.isAvatarState()) {
 				GeneralMethods.setVelocity(entity, this.direction.clone().multiply(AvatarState.getValue(this.knockback)));
 			} else {

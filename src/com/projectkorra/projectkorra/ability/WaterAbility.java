@@ -1,15 +1,5 @@
 package com.projectkorra.projectkorra.ability;
 
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -18,13 +8,25 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
+import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class WaterAbility extends ElementalAbility {
 
@@ -71,8 +73,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			final ParticleData particleData = new ParticleEffect.BlockData(Material.WATER, (byte) 0);
-			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, collision.getLocationFirst().getBlock().getBlockData());
 		}
 	}
 	
@@ -85,7 +86,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
-		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock);
+		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock) || Torrent.getFrozenBlocks().containsKey(tempBlock);
 	}
 
 	public boolean isIcebendable(final Block block) {
@@ -196,7 +197,20 @@ public abstract class WaterAbility extends ElementalAbility {
 		final Vector vector = location.getDirection().clone().normalize();
 
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
+		Set<Material> trans = getTransparentMaterialSet();
+		
+		if (plantbending) {
+			Set<Material> remove = new HashSet<>();
+			for (Material m : trans) {
+				if (isPlant(m)) {
+					remove.add(m);
+				}
+			}
+			
+			trans.removeAll(remove);
+		}
+		
+		final Block testBlock = player.getTargetBlock(trans, range > 3 ? 3 : (int) range);
 		if (bPlayer == null) {
 			return null;
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
@@ -247,7 +261,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isLeaves(final Material material) {
-		return material == Material.LEAVES || material == Material.LEAVES_2;
+		return material == Material.ACACIA_LEAVES || material == Material.BIRCH_LEAVES || material == Material.DARK_OAK_LEAVES || material == Material.JUNGLE_LEAVES || material == Material.OAK_LEAVES || material == Material.SPRUCE_LEAVES;
 	}
 
 	public static boolean isSnow(final Block block) {
@@ -259,14 +273,13 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
-		final byte full = 0x0;
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
 		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
-		} else if (isWater(block) && block.getData() == full) {
+		} else if (isWater(block) && block.getBlockData() instanceof Levelled && ((Levelled)block.getBlockData()).getLevel() == 0) {
 			return true;
 		} else if (isIce(block) && !bPlayer.canIcebend()) {
 			return false;
@@ -277,7 +290,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playFocusWaterEffect(final Block block) {
-		block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 4, 20);
+		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
 	}
 
 	public static void playIcebendingSound(final Location loc) {

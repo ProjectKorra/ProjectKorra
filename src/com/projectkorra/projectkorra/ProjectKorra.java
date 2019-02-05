@@ -1,21 +1,8 @@
 package com.projectkorra.projectkorra;
 
-import java.util.HashMap;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
-import com.projectkorra.projectkorra.ability.util.CollisionManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
+import com.projectkorra.projectkorra.ability.util.*;
 import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
 import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
 import com.projectkorra.projectkorra.command.Commands;
@@ -24,12 +11,17 @@ import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.Metrics;
-import com.projectkorra.projectkorra.util.RevertChecker;
-import com.projectkorra.projectkorra.util.StatisticsManager;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.Updater;
+import com.projectkorra.projectkorra.util.*;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Statistic;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class ProjectKorra extends JavaPlugin {
 
@@ -39,6 +31,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
 	public Updater updater;
+	private BukkitTask revertChecker;
 
 	@Override
 	public void onEnable() {
@@ -74,7 +67,7 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+		revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
 			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 				@Override
@@ -107,7 +100,7 @@ public class ProjectKorra extends JavaPlugin {
 					PassiveManager.registerPassives(player);
 					GeneralMethods.removeUnusableAbilities(player.getName());
 				}
-			}, 5);
+			}, 30);
 		}
 
 		final Metrics metrics = new Metrics(this);
@@ -146,13 +139,14 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		revertChecker.cancel();
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {
 				Manager.getManager(StatisticsManager.class).save(player.getUniqueId(), false);
 			}
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer != null) {
+			if (bPlayer != null && isDatabaseCooldownsEnabled()) {
 				bPlayer.saveCooldowns();
 			}
 		}
@@ -180,6 +174,9 @@ public class ProjectKorra extends JavaPlugin {
 
 	public static boolean isStatisticsEnabled() {
 		return ConfigManager.getConfig().getBoolean("Properties.Statistics");
+	}
+	public static boolean isDatabaseCooldownsEnabled() {
+		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
 	}
 
 }

@@ -1,15 +1,5 @@
 package com.projectkorra.projectkorra.airbending.combo;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
@@ -18,6 +8,15 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AirStream extends AirAbility implements ComboAbility {
 	
@@ -97,11 +96,6 @@ public class AirStream extends AirAbility implements ComboAbility {
 			this.currentLoc = this.origin.clone();
 		}
 		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
-		if (target instanceof Player) {
-			if (Commands.invincible.contains(((Player) target).getName())) {
-				return;
-			}
-		}
 
 		if (target != null && target.getLocation().distanceSquared(this.currentLoc) > 49) {
 			this.destination = target.getLocation();
@@ -170,6 +164,9 @@ public class AirStream extends AirAbility implements ComboAbility {
 		}
 
 		for (final Entity entity : this.affectedEntities) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+				continue;
+			}
 			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
 			entity.setVelocity(force.clone().normalize().multiply(this.speed));
 			entity.setFallDistance(0F);
@@ -195,7 +192,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -312,10 +309,5 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
-	}
-
-	@Override
-	public String getInstructions() {
-		return "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)";
 	}
 }

@@ -1,22 +1,21 @@
 package com.projectkorra.projectkorra.firebending.combustion;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CombustionAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class Combustion extends CombustionAbility {
 
@@ -80,7 +79,7 @@ public class Combustion extends CombustionAbility {
 		final Combustion combustion = getAbility(player, Combustion.class);
 		if (combustion != null) {
 			combustion.createExplosion(combustion.location, combustion.explosivePower, combustion.breakBlocks);
-			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
+			ParticleEffect.EXPLOSION_NORMAL.display(combustion.location, 3, Math.random(), Math.random(), Math.random(), 0);
 		}
 	}
 
@@ -103,8 +102,8 @@ public class Combustion extends CombustionAbility {
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(this.location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 5);
-		ParticleEffect.FLAME.display(this.location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 2);
+		ParticleEffect.FIREWORKS_SPARK.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
+		ParticleEffect.FLAME.display(this.location, 2, Math.random() / 2, Math.random() / 2, Math.random() / 2);
 		playCombustionSound(this.location);
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 	}
@@ -146,7 +145,7 @@ public class Combustion extends CombustionAbility {
 
 		final Block block = this.location.getBlock();
 		if (block != null) {
-			if (block.getType() != Material.AIR && !isWater(block)) {
+			if (!ElementalAbility.isAir(block.getType()) && !isWater(block)) {
 				this.createExplosion(block.getLocation(), this.explosivePower, this.breakBlocks);
 			}
 		}

@@ -1,26 +1,5 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.material.Button;
-import org.bukkit.material.Door;
-import org.bukkit.material.Lever;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -32,11 +11,35 @@ import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.Switch;
+import org.bukkit.block.data.type.TrapDoor;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBlast extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
+	public static final Material[] DOORS = { Material.ACACIA_DOOR, Material.BIRCH_DOOR, Material.DARK_OAK_DOOR, Material.JUNGLE_DOOR, Material.OAK_DOOR, Material.SPRUCE_DOOR };
+	public static final Material[] TDOORS = { Material.ACACIA_TRAPDOOR, Material.BIRCH_TRAPDOOR, Material.DARK_OAK_TRAPDOOR, Material.JUNGLE_TRAPDOOR, Material.OAK_TRAPDOOR, Material.SPRUCE_TRAPDOOR };
+	public static final Material[] BUTTONS = { Material.ACACIA_BUTTON, Material.BIRCH_BUTTON, Material.DARK_OAK_BUTTON, Material.JUNGLE_BUTTON, Material.OAK_BUTTON, Material.SPRUCE_BUTTON, Material.STONE_BUTTON };
 
 	private boolean canFlickLevers;
 	private boolean canOpenDoors;
@@ -298,118 +301,108 @@ public class AirBlast extends AirAbility {
 		}
 
 		Block block = this.location.getBlock();
+		
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-			}
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				continue;
+			} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				continue;
+			} else if (affectedLevers.contains(testblock)) {
 				continue;
 			}
+			
+			if (Arrays.asList(DOORS).contains(testblock.getType())) {
+				if (testblock.getBlockData() instanceof Door) {
+					Door door = (Door) testblock.getBlockData();
+					BlockFace face = door.getFacing();
+					Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
+					double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
 
-			final Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.TRAP_DOOR };
-			if (Arrays.asList(doorTypes).contains(block.getType()) && !this.affectedLevers.contains(block) && this.canOpenDoors) {
-				if (block.getData() >= 8 && block.getType() != Material.TRAP_DOOR) {
-					block = block.getRelative(BlockFace.DOWN);
-				}
+					for (int i = 0; i < 3; i++) {
+						if (i == 1) {
+							continue;
+						}
+						
+						BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
 
-				this.handleDoorMechanics(block);
-			}
-			if ((block.getType() == Material.LEVER) && !this.affectedLevers.contains(block) && this.canFlickLevers) {
-				final Lever lever = new Lever(Material.LEVER, block.getData());
-				lever.setPowered(!lever.isPowered());
-				block.setData(lever.getData());
-
-				final Block supportBlock = block.getRelative(lever.getAttachedFace());
-				if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-					final BlockState initialSupportState = supportBlock.getState();
-					final BlockState supportState = supportBlock.getState();
-					supportState.setType(Material.AIR);
-					supportState.update(true, false);
-					initialSupportState.update(true);
-				}
-				this.affectedLevers.add(block);
-			} else if ((block.getType() == Material.STONE_BUTTON) && !this.affectedLevers.contains(block) && this.canPressButtons) {
-				final Button button = new Button(Material.STONE_BUTTON, block.getData());
-				if (!button.isPowered()) {
-					button.setPowered(!button.isPowered());
-					block.setData(button.getData());
-
-					final Block supportBlock = block.getRelative(button.getAttachedFace());
-					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-						final BlockState initialSupportState = supportBlock.getState();
-						final BlockState supportState = supportBlock.getState();
-						supportState.setType(Material.AIR);
-						supportState.update(true, false);
-						initialSupportState.update(true);
-					}
-
-					final Block btBlock = block;
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							button.setPowered(!button.isPowered());
-							btBlock.setData(button.getData());
-
-							final Block supportBlock = btBlock.getRelative(button.getAttachedFace());
-							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-								final BlockState initialSupportState = supportBlock.getState();
-								final BlockState supportState = supportBlock.getState();
-								supportState.setType(Material.AIR);
-								supportState.update(true, false);
-								initialSupportState.update(true);
+						if (bf == face) {
+							if (!door.isOpen()) {
+								return;
+							}
+						} else if (bf.getOppositeFace() == face) {
+							if (door.isOpen()) {
+								return;
 							}
 						}
-					}.runTaskLater(ProjectKorra.plugin, 10);
-
-					this.affectedLevers.add(block);
-				}
-			} else if ((block.getType() == Material.WOOD_BUTTON) && !this.affectedLevers.contains(block) && this.canPressButtons) {
-				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
-				if (!button.isPowered()) {
-					button.setPowered(!button.isPowered());
-					block.setData(button.getData());
-
-					final Block supportBlock = block.getRelative(button.getAttachedFace());
-					if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-						final BlockState initialSupportState = supportBlock.getState();
-						final BlockState supportState = supportBlock.getState();
-						supportState.setType(Material.AIR);
-						supportState.update(true, false);
-						initialSupportState.update(true);
 					}
-
-					final Block btBlock = block;
-
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							button.setPowered(!button.isPowered());
-							btBlock.setData(button.getData());
-
-							final Block supportBlock = btBlock.getRelative(button.getAttachedFace());
-							if (supportBlock != null && supportBlock.getType() != Material.AIR) {
-								final BlockState initialSupportState = supportBlock.getState();
-								final BlockState supportState = supportBlock.getState();
-								supportState.setType(Material.AIR);
-								supportState.update(true, false);
-								initialSupportState.update(true);
-							}
+					
+					door.setOpen(!door.isOpen());
+					testblock.setBlockData(door);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
+					affectedLevers.add(testblock);
+				}
+			} else if (Arrays.asList(TDOORS).contains(testblock.getType())) {
+				if (testblock.getBlockData() instanceof TrapDoor) {
+					TrapDoor tDoor = (TrapDoor) testblock.getBlockData();
+					
+					if (this.origin.getY() < block.getY()) {
+						if (!tDoor.isOpen()) {
+							return;
 						}
-					}.runTaskLater(ProjectKorra.plugin, 15);
+					} else {
+						if (tDoor.isOpen()) {
+							return;
+						}
+					}
+					
+					tDoor.setOpen(!tDoor.isOpen());
+					testblock.setBlockData(tDoor);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
+				}
+			} else if (Arrays.asList(BUTTONS).contains(testblock.getType())) {
+				if (testblock.getBlockData() instanceof Switch) {
+					final Switch button = (Switch) testblock.getBlockData();
+					if (!button.isPowered()) {
+						button.setPowered(true);
+						testblock.setBlockData(button);
+						affectedLevers.add(testblock);
+						
+						new BukkitRunnable() {
 
-					this.affectedLevers.add(block);
+							@Override
+							public void run() {
+								button.setPowered(false);
+								testblock.setBlockData(button);
+								affectedLevers.remove(testblock);
+								testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
+							}
+							
+						}.runTaskLater(ProjectKorra.plugin, 15);
+					}
+					
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
+				}
+			} else if (testblock.getType() == Material.LEVER) {
+				if (testblock.getBlockData() instanceof Switch) {
+					Switch lever = (Switch) testblock.getBlockData();
+					lever.setPowered(!lever.isPowered());
+					testblock.setBlockData(lever);
+					affectedLevers.add(testblock);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
 				}
 			}
 		}
+		
 		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !this.affectedLevers.contains(block) && this.canCoolLava) {
-			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
+			if (block.getType() == Material.LAVA) {
 				if (LavaFlow.isLavaFlowBlock(block)) {
 					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
-				} else if (block.getData() == 0x0) {
-					new TempBlock(block, Material.OBSIDIAN, (byte) 0);
+				} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
+					new TempBlock(block, Material.OBSIDIAN);
 				} else {
-					new TempBlock(block, Material.COBBLESTONE, (byte) 0);
+					new TempBlock(block, Material.COBBLESTONE);
 				}
 			}
 			this.remove();
@@ -432,6 +425,9 @@ public class AirBlast extends AirAbility {
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+				continue;
+			}
 			this.affect(entity);
 		}
 
@@ -456,52 +452,6 @@ public class AirBlast extends AirAbility {
 			}
 		}
 		return removed;
-	}
-
-	private void handleDoorMechanics(final Block block) {
-		boolean tDoor = false;
-		final boolean open = (block.getData() & 0x4) == 0x4;
-
-		if (block.getType() != Material.TRAP_DOOR) {
-			final Door door = (Door) block.getState().getData();
-			final BlockFace face = door.getFacing();
-			final Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
-			final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
-
-			for (int i = 0; i < 3; i++) {
-				if (i == 1) {
-					continue;
-				}
-				final BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
-
-				if (bf == face) {
-					if (open) {
-						return;
-					}
-				} else if (bf.getOppositeFace() == face) {
-					if (!open) {
-						return;
-					}
-				}
-			}
-		} else {
-			tDoor = true;
-
-			if (this.origin.getY() < block.getY()) {
-				if (!open) {
-					return;
-				}
-			} else {
-				if (open) {
-					return;
-				}
-			}
-		}
-
-		block.setData((byte) ((block.getData() & 0x4) == 0x4 ? (block.getData() & ~0x4) : (block.getData() | 0x4)));
-		final String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
-		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
-		this.affectedLevers.add(block);
 	}
 
 	@Override

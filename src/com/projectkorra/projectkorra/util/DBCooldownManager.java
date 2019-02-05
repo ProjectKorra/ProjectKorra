@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.util;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.storage.MySQL;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DBCooldownManager extends Manager {
 
@@ -33,7 +33,7 @@ public class DBCooldownManager extends Manager {
 			ProjectKorra.log.info("Creating pk_cooldowns table");
 			String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) PRIMARY KEY, cooldown_id INTEGER NOT NULL, value BIGINT);";
 			if (DBConnection.sql instanceof MySQL) {
-				query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) PRIMARY KEY, cooldown_id INTEGER NOT NULL, value BIGINT);";
+				query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 			}
 			DBConnection.sql.modifyQuery(query, false);
 		}

@@ -6,9 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -106,10 +104,6 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	private boolean canInstantiate() {
-		if (this.location.getBlock().getRelative(BlockFace.UP).getType() == Material.STATIONARY_LAVA) {
-			return false;
-		}
-
 		for (final Block block : this.affectedBlocks.keySet()) {
 			if (!this.isEarthbendable(block) || ALL_AFFECTED_BLOCKS.containsKey(block)) {
 				return false;

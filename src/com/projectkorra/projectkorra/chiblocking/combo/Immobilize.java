@@ -1,12 +1,5 @@
 package com.projectkorra.projectkorra.chiblocking.combo;
 
-import java.util.ArrayList;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
@@ -14,8 +7,15 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.MovementHandler;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class Immobilize extends ChiAbility implements ComboAbility {
 
@@ -38,6 +38,9 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 			this.remove();
 			return;
 		} else {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation()) || ((target instanceof Player) && Commands.invincible.contains(((Player) target).getName()))){
+				return;
+			}
 			paralyze(this.target, this.duration);
 			this.bPlayer.addCooldown(this);
 		}
@@ -117,10 +120,5 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
-	}
-
-	@Override
-	public String getInstructions() {
-		return "QuickStrike > SwiftKick > QuickStrike > QuickStrike";
 	}
 }

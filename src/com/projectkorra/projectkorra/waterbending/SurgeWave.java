@@ -1,11 +1,20 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempBlock.RevertTask;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,18 +24,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempBlock.RevertTask;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SurgeWave extends WaterAbility {
 
@@ -105,7 +107,7 @@ public class SurgeWave extends WaterAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
+			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 			this.waveBlocks.put(block, block);
 		}
 	}
@@ -147,23 +149,21 @@ public class SurgeWave extends WaterAbility {
 		}
 
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isRegionProtectedFromBuild(this.player, "PhaseChange", block.getLocation())) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
 			}
 
 			final Block oldBlock = block;
-			final TempBlock tblock = new TempBlock(block, block.getType(), (byte) 0);
-			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
-				tblock.setType(Material.ICE);
-			} else if (isPlant(block) && block.getType() != Material.LEAVES) {
-				block.breakNaturally();
-				tblock.setType(Material.ICE);
-			} else {
-				tblock.revertBlock();
+			if (!ElementalAbility.isAir(block.getType()) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
 				continue;
-			}
+			} else if (isPlant(block)) {
+				block.breakNaturally();
+			} 
+			
+			final TempBlock tblock = new TempBlock(block, Material.ICE);
+			
 			tblock.setRevertTask(new RevertTask() {
 
 				@Override
@@ -172,8 +172,10 @@ public class SurgeWave extends WaterAbility {
 				}
 
 			});
+			
 			tblock.setRevertTime(this.iceRevertTime + (new Random().nextInt(1000)));
 			this.frozenBlocks.put(block, oldBlock.getType());
+			
 			for (final Block sound : this.frozenBlocks.keySet()) {
 				if ((new Random()).nextInt(4) == 0) {
 					playWaterbendingSound(sound.getLocation());
@@ -232,6 +234,13 @@ public class SurgeWave extends WaterAbility {
 					new PlantRegrowth(this.player, this.sourceBlock);
 					this.sourceBlock.setType(Material.AIR);
 				}
+				
+				if (TempBlock.isTempBlock(this.sourceBlock)) {
+					TempBlock tb = TempBlock.get(this.sourceBlock);
+					if (Torrent.getFrozenBlocks().containsKey(tb)) {
+						Torrent.massThaw(tb);
+					}
+				}
 				this.addWater(this.sourceBlock);
 			}
 		}
@@ -261,7 +270,7 @@ public class SurgeWave extends WaterAbility {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
-				this.sourceBlock.getWorld().playEffect(this.location, Effect.SMOKE, 4, (int) this.range);
+				ParticleEffect.SMOKE_NORMAL.display(sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
 				return;
 			}
 
@@ -277,13 +286,13 @@ public class SurgeWave extends WaterAbility {
 				final Block blockl = this.location.getBlock();
 				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))) && blockl.getType() != Material.LEAVES)) {
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((ElementalAbility.isAir(blockl.getType()) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
 					for (double i = 0; i <= this.currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
 							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 							final Block block = this.location.clone().add(vec).getBlock();
 
-							if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || this.isWaterbendable(block)) {
+							if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || block.getType() == Material.FIRE) || this.isWaterbendable(block)) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							}
@@ -329,6 +338,9 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
+						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+							continue;
+						}
 						final Vector dir = direction.clone();
 						dir.setY(dir.getY() * this.knockup);
 						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.knockback))));

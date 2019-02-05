@@ -1,7 +1,13 @@
 package com.projectkorra.projectkorra.waterbending.multiabilities;
 
-import java.util.HashMap;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,14 +18,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
+import java.util.HashMap;
 
 public class WaterArmsWhip extends WaterAbility {
 
@@ -258,9 +257,9 @@ public class WaterArmsWhip extends WaterAbility {
 					break;
 				}
 
-				final byte b = (byte) Math.ceil(8 / (Math.pow(i, 1 / 3)));
+				final int j = (int) Math.ceil(8 / (Math.pow(i, 1 / 3)));
 				this.waterArms.addToArm(l2.getBlock(), this.arm);
-				this.waterArms.addBlock(l2.getBlock(), Material.STATIONARY_WATER, b, 40);
+				this.waterArms.addBlock(l2.getBlock(), Material.WATER, GeneralMethods.getWaterData(j), 40);
 
 				if (i == this.activeLength) {
 					this.end = l2.clone();
@@ -280,7 +279,7 @@ public class WaterArmsWhip extends WaterAbility {
 					}
 
 					this.waterArms.addToArm(this.end.getBlock(), this.arm);
-					this.waterArms.addBlock(this.end.getBlock(), Material.STATIONARY_WATER, (byte) 2, 40);
+					this.waterArms.addBlock(this.end.getBlock(), Material.WATER, GeneralMethods.getWaterData(5), 40);
 					this.performAction(this.end);
 				} else {
 					this.performAction(l2);
@@ -294,7 +293,7 @@ public class WaterArmsWhip extends WaterAbility {
 		switch (this.ability) {
 			case PULL:
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
 						continue;
 					}
 					final Vector vector = endOfArm.toVector().subtract(entity.getLocation().toVector());
@@ -303,7 +302,7 @@ public class WaterArmsWhip extends WaterAbility {
 				break;
 			case PUNCH:
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
 						continue;
 					}
 
@@ -324,6 +323,9 @@ public class WaterArmsWhip extends WaterAbility {
 				if (this.grabbedEntity == null) {
 					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && !GRABBED_ENTITIES.containsKey(entity)) {
+							if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+								continue;
+							}
 							GRABBED_ENTITIES.put((LivingEntity) entity, this);
 							this.grabbedEntity = (LivingEntity) entity;
 							this.grabbed = true;

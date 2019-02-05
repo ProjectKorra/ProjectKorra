@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.chiblocking;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -15,6 +14,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class Smokescreen extends ChiAbility {
 
@@ -55,7 +55,7 @@ public class Smokescreen extends ChiAbility {
 		for (int i = 0; i < 125; i++) {
 			final Location newLoc = new Location(loc.getWorld(), loc.getX() + x, loc.getY() + y, loc.getZ() + z);
 			for (int direction = 0; direction < 8; direction++) {
-				loc.getWorld().playEffect(newLoc, Effect.SMOKE, direction);
+				ParticleEffect.SMOKE_NORMAL.display(newLoc, 4, 0.5, 0.5, 0.5);
 			}
 			if (z == 2) {
 				z = -2;

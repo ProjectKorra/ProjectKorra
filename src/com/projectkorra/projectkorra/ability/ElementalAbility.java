@@ -3,11 +3,14 @@ package com.projectkorra.projectkorra.ability;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -24,7 +27,17 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
-
+	private static final Set<Material> TRANSPARENT = new HashSet<>();
+	
+	static {
+		TRANSPARENT.clear();
+		for (Material mat : Material.values()) {
+			if (GeneralMethods.isTransparent(mat)) {
+				TRANSPARENT.add(mat);
+			}
+		}
+	}
+	
 	public ElementalAbility(final Player player) {
 		super(player);
 	}
@@ -38,16 +51,15 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static Material[] getTransparentMaterials() {
-		return GeneralMethods.NON_OPAQUE;
+		return TRANSPARENT.toArray(new Material[TRANSPARENT.size()]);
 	}
 
 	public static HashSet<Material> getTransparentMaterialSet() {
-		final HashSet<Material> set = new HashSet<Material>();
-		for (final Material material : getTransparentMaterials()) {
-			set.add(material);
-		}
-
-		return set;
+		return new HashSet<>(TRANSPARENT);
+	}
+	
+	public static boolean isAir(final Material material) {
+		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR;
 	}
 
 	public static boolean isDay(final World world) {
@@ -91,7 +103,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isLava(final Material material) {
-		return material == Material.LAVA || material == Material.STATIONARY_LAVA;
+		return material == Material.LAVA;
 	}
 
 	public static boolean isSnow(final Block block) {
@@ -119,7 +131,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMetalBlock(final Block block) {
-		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.QUARTZ_ORE) {
+		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.NETHER_QUARTZ_ORE) {
 			return true;
 		}
 
@@ -205,11 +217,19 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isWater(final Block block) {
-		return block != null ? isWater(block.getType()) : null;
+		if (block == null) {
+			return false;
+		} else {
+			return isWater(block.getBlockData());
+		}
+	}
+	
+	public static boolean isWater(final BlockData data) {
+		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : isWater(data.getMaterial());
 	}
 
 	public static boolean isWater(final Material material) {
-		return material == Material.WATER || material == Material.STATIONARY_WATER;
+		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
 	}
 
 }

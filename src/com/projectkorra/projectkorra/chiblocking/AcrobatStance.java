@@ -33,8 +33,8 @@ public class AcrobatStance extends ChiAbility {
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.AcrobatStance.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Chi.AcrobatStance.Duration");
-		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
-		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
+		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") - 1;
+		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") - 1;
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 
@@ -49,7 +49,7 @@ public class AcrobatStance extends ChiAbility {
 		this.start();
 		this.bPlayer.setStance(this);
 		GeneralMethods.displayMovePreview(player);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 0.5F, 2F);
 	}
 
 	@Override
@@ -62,11 +62,11 @@ public class AcrobatStance extends ChiAbility {
 			return;
 		}
 
-		if (!this.player.hasPotionEffect(PotionEffectType.SPEED)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, this.speed, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.SPEED) || this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() < this.speed || (this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() == this.speed && this.player.getPotionEffect(PotionEffectType.SPEED).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, this.speed, true, false), true);
 		}
-		if (!this.player.hasPotionEffect(PotionEffectType.JUMP)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, this.jump, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.JUMP) || this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() < this.jump || (this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() == this.jump && this.player.getPotionEffect(PotionEffectType.JUMP).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, this.jump, true, false), true);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class AcrobatStance extends ChiAbility {
 		this.bPlayer.addCooldown(this);
 		this.bPlayer.setStance(null);
 		GeneralMethods.displayMovePreview(this.player);
-		this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+		this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 0.5F, 2F);
 		this.player.removePotionEffect(PotionEffectType.SPEED);
 		this.player.removePotionEffect(PotionEffectType.JUMP);
 	}

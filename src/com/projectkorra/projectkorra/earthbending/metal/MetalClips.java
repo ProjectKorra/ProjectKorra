@@ -1,34 +1,25 @@
 package com.projectkorra.projectkorra.earthbending.metal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MetalClips extends MetalAbility {
 
 	private static final Map<Entity, Integer> ENTITY_CLIPS_COUNT = new ConcurrentHashMap<>();
 	private static final Map<Entity, MetalClips> TARGET_TO_ABILITY = new ConcurrentHashMap<>();
-	private static final Material[] METAL_ITEMS = { Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, Material.IRON_SWORD, Material.IRON_HOE, Material.IRON_SPADE, Material.IRON_DOOR };
+	private static final Material[] METAL_ITEMS = { Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, Material.IRON_SWORD, Material.IRON_HOE, Material.IRON_SHOVEL, Material.IRON_DOOR };
 
 	private boolean isBeingWorn;
 	private boolean isControlling;
@@ -202,15 +193,11 @@ public class MetalClips extends MetalAbility {
 	}
 
 	public void resetArmor() {
-		if (!this.isMagnetized) {
-			this.bPlayer.addCooldown(this);
-		}
 		if (this.targetEntity == null || !TempArmor.hasTempArmor(this.targetEntity) || this.targetEntity.isDead()) {
 			return;
 		}
 
 		TempArmor.getVisibleTempArmor(this.targetEntity).revert();
-
 		this.dropIngots(this.targetEntity.getLocation());
 		this.isBeingWorn = false;
 	}
@@ -232,7 +219,7 @@ public class MetalClips extends MetalAbility {
 		dz = target.getZ() - location.getZ();
 		final Vector vector = new Vector(dx, dy, dz);
 		vector.normalize();
-		this.targetEntity.setVelocity(vector.multiply(this.metalClipsCount / 2).normalize());
+		this.targetEntity.setVelocity(vector.multiply(this.metalClipsCount / 2D));
 		this.remove();
 	}
 
@@ -270,7 +257,7 @@ public class MetalClips extends MetalAbility {
 			}
 			this.isControlling = false;
 			this.isMagnetized = false;
-			if (this.metalClipsCount < 4 && this.hasSnuck && this.abilityType == 0) {
+			if (this.metalClipsCount > 0 && this.hasSnuck && this.abilityType == 0) {
 				this.launch();
 			}
 		}
@@ -414,46 +401,47 @@ public class MetalClips extends MetalAbility {
 			}
 		}
 
-		for (int i = this.trackedIngots.size() - 1; i >= 0; i--) {
-			final Item ii = this.trackedIngots.get(i);
+		Iterator<Item> it = this.trackedIngots.iterator();
+		while (it.hasNext()) {
+			final Item ii = it.next();
 			if (ii.isOnGround()) {
-				this.trackedIngots.remove(i);
+				it.remove();
 				continue;
 			}
 
-			if (ii.getItemStack().getType() == Material.IRON_INGOT) {
-				if (GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2).size() == 0) {
-					this.remove();
-					return;
-				}
+			for (final Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 1.8)) {
+				if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId()) {
+					if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton)) {
+						if (this.targetEntity == null) {
+							this.targetEntity = (LivingEntity) e;
+							TARGET_TO_ABILITY.put(this.targetEntity, this);
+							this.formArmor();
+						} else if (this.targetEntity == e) {
+							this.formArmor();
+						} else {
+							if (TARGET_TO_ABILITY.get(this.targetEntity) == this) {
+								this.resetArmor();
+								this.metalClipsCount = 0;
+								ENTITY_CLIPS_COUNT.remove(this.targetEntity);
+								TARGET_TO_ABILITY.remove(this.targetEntity);
 
-				for (final Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
-					if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId()) {
-						if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton)) {
-							if (this.targetEntity == null) {
-								this.targetEntity = (LivingEntity) e;
+								this.targetEntity = (LivingEntity)e;
 								TARGET_TO_ABILITY.put(this.targetEntity, this);
 								this.formArmor();
-							} else if (this.targetEntity == e) {
-								this.formArmor();
 							} else {
-								this.dropIngots(e.getLocation());
 								TARGET_TO_ABILITY.get(this.targetEntity).remove();
 							}
-						} else {
-							DamageHandler.damageEntity(e, this.player, this.damage, this);
-							this.dropIngots(e.getLocation(), ii.getItemStack().getAmount());
-							this.remove();
 						}
-
-						ii.remove();
-						break;
+					} else {
+						DamageHandler.damageEntity(e, this.player, this.damage, this);
+						this.dropIngots(e.getLocation(), ii.getItemStack().getAmount());
 					}
+					it.remove();
+					ii.remove();
+					break;
 				}
 			}
 		}
-
-		this.removeDeadIngots();
 	}
 
 	public void dropIngots(final Location loc) {
@@ -465,20 +453,14 @@ public class MetalClips extends MetalAbility {
 		i.setPickupDelay(61);
 	}
 
-	public void removeDeadIngots() {
-		for (int i = 0; i < this.trackedIngots.size(); i++) {
-			final Item ii = this.trackedIngots.get(i);
-			if (ii.isDead()) {
-				this.trackedIngots.remove(ii);
-			}
-		}
-	}
-
 	@Override
 	public void remove() {
 		super.remove();
 
 		this.resetArmor();
+		if (!this.isMagnetized) {
+			this.bPlayer.addCooldown(this);
+		}
 		this.trackedIngots.clear();
 		this.metalClipsCount = 0;
 

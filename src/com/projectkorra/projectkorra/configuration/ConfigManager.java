@@ -1,9 +1,10 @@
 package com.projectkorra.projectkorra.configuration;
 
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+
 import java.io.File;
 import java.util.ArrayList;
-
-import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigManager {
 
@@ -269,9 +270,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Suffocate.Instructions", "Hold sneak while looking at a target to begin suffocating them. If the target goes out of range, you get damaged, or you release sneak, the ability will cancel.");
 			config.addDefault("Abilities.Air.Suffocate.DeathMessage", "{victim} was asphyxiated by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.Combo.Twister.Description", "Create a cyclone of air that travels along the ground grabbing nearby entities.");
+			config.addDefault("Abilities.Air.Combo.Twister.Instructions", "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
 			config.addDefault("Abilities.Air.Combo.AirStream.Description", "Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
+			config.addDefault("Abilities.Air.Combo.AirStream.Instructions", "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
 			config.addDefault("Abilities.Air.Combo.AirSweep.Description", "Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
 			config.addDefault("Abilities.Air.Combo.AirSweep.DeathMessage", "{victim} was swept away by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.Combo.AirSweep.Instructions", "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
 			config.addDefault("Abilities.Air.Passive.AirAgility.Description", "AirAgility is a passive ability which enables airbenders to run faster and jump higher.");
 			config.addDefault("Abilities.Air.Passive.AirSaturation.Description", "AirSaturation is a passive ability which causes airbenders' hunger to deplete at a slower rate.");
 			config.addDefault("Abilities.Air.Passive.GracefulDescent.Description", "GracefulDescent is a passive ability which allows airbenders to make a gentle landing, negating all fall damage on any surface.");
@@ -314,8 +318,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Instructions", "\n" + "(Spout) Left click to activate a spout beneath you and hold spacebar to go higher. If you wish to go lower, simply hold sneak. To disable this ability, left click once again." + "\n" + "(Wave) Left click a water source and hold sneak until water has formed around you. Then, release sneak to ride a water wave that transports you in the direction you're looking. To cancel this water wave, left click with WaterSpout.");
 			config.addDefault("Abilities.Water.Combo.IceBullet.Description", "Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 			config.addDefault("Abilities.Water.Combo.IceBullet.DeathMessage", "{victim}'s heart was frozen by {attacker}'s {ability}");
+			config.addDefault("Abilities.Water.Combo.IceBullet.Instructions", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 			config.addDefault("Abilities.Water.Combo.IceWave.Description", "PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
 			config.addDefault("Abilities.Water.Combo.IceWave.DeathMessage", "{victim} was frozen solid by {attacker}'s {ability}");
+			config.addDefault("Abilities.Water.Combo.IceWave.Instructions", "Create a WaterSpout Wave > PhaseChange (Left Click)");
 			config.addDefault("Abilities.Water.Passive.FastSwim.Description", "FastSwim is a passive ability for waterbenders allowing them to travel quickly through the water. Simple hold shift while underwater to propel yourself forward.");
 			config.addDefault("Abilities.Water.Passive.HydroSink.Description", "Hydrosink is a passive ability for waterbenders enabling them to softly land on any waterbendable surface, cancelling all damage.");
 
@@ -353,7 +359,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
 			config.addDefault("Abilities.Earth.Tremorsense.Instructions", "Simply left click while on an earthbendable block.");
 			config.addDefault("Abilities.Earth.Combo.EarthDome.Description", "EarthDome allows earthbenders to surround themselves or another entity in earth, temporarily preventing anything from entering or escaping the dome.");
+			config.addDefault("Abilities.Earth.Combo.EarthDome.Instructions", "(Self) RaiseEarth (Right click) > Shockwave (Right click)\\n(Projection) RaiseEarth(Right click) > Shockwave (Left click)");
 			config.addDefault("Abilities.Earth.Combo.EarthPillars.Description", "Send players and entities flying into the air and possibly stunning them by raising pillars of earth under their feet, dealing damage initally as well. This combo can also be used by falling from high off the ground and landing while on the Catapult ability");
+			config.addDefault("Abilities.Earth.Combo.EarthPillars.Instructions", "Shockwave (Tap sneak) > Shockwave (Hold sneak) > Catapult (Release sneak)");
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Description", "DensityShift is a passive ability which allows earthbenders to make a firm landing negating all fall damage on any earthbendable surface.");
 			config.addDefault("Abilities.Earth.Passive.FerroControl.Description", "FerroControl is a passive ability which allows metalbenders to simply open and close iron doors by sneaking.");
 
@@ -390,13 +398,18 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.WallOfFire.DeathMessage", "{victim} ran into {attacker}'s {ability}");
 			config.addDefault("Abilities.Fire.Combo.FireKick.Description", "A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.");
 			config.addDefault("Abilities.Fire.Combo.FireKick.DeathMessage", "{victim} was kicked to the floor, in flames, from {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.Combo.FireKick.Instructions", "FireBlast > FireBlast > (Hold sneak) > FireBlast");
 			config.addDefault("Abilities.Fire.Combo.FireSpin.Description", "A circular array of fire that causes damage and massive knockback to nearby enemies.");
 			config.addDefault("Abilities.Fire.Combo.FireSpin.DeathMessage", "{victim} was caught in {attacker}'s {ability} inferno");
+			config.addDefault("Abilities.Fire.Combo.FireSpin.Instructions", "FireBlast > FireBlast > FireShield (Left Click) > FireShield (Tap Shift)");
 			config.addDefault("Abilities.Fire.Combo.JetBlaze.Description", "Damages and burns all enemies in the proximity of your FireJet.");
 			config.addDefault("Abilities.Fire.Combo.JetBlaze.DeathMessage", "{victim} was lit ablaze by {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.Combo.JetBlaze.Instructions", "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet");
 			config.addDefault("Abilities.Fire.Combo.JetBlast.Description", "Create an explosive blast that propels your FireJet at higher speeds.");
+			config.addDefault("Abilities.Fire.Combo.JetBlast.Instructions", "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet");
 			config.addDefault("Abilities.Fire.Combo.FireWheel.Description", "A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
 			config.addDefault("Abilities.Fire.Combo.FireWheel.DeathMessage", "{victim} was incinerated by {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.Combo.FireWheel.Instructions", "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift");
 
 			config.addDefault("Commands.Help.Elements.Chi", "Chiblockers focus on bare handed combat, utilizing their agility and speed to stop any bender right in their path. Although they lack the ability to bend any of the other elements, they are great in combat, and a serious threat to any bender. Chiblocking was first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the Equalists in The Legend of Korra.\nEnter /b display Chi for a list of the available chi abilities.");
 			config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes.");
@@ -419,6 +432,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.SwiftKick.Instructions", "Jump and left click on a player to swift kick them.");
 			config.addDefault("Abilities.Chi.SwiftKick.DeathMessage", "{victim} was kicked to the floor by {attacker}'s {ability}");
 			config.addDefault("Abilities.Chi.Combo.Immobilize.Description", "Immobilizes the opponent for several seconds.");
+			config.addDefault("Abilities.Chi.Combo.Immobilize.Instructions", "QuickStrike > SwiftKick > QuickStrike > QuickStrike");
 			config.addDefault("Abilities.Chi.Passive.ChiAgility.Description", "ChiAgility is a passive ability which enables chiblockers to run faster and jump higher.");
 			config.addDefault("Abilities.Chi.Passive.ChiSaturation.Description", "ChiSaturation is a passive ability which causes chiblockers' hunger to deplete at a slower rate.");
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.Description", "Acrobatics is a passive ability which negates all fall damage based on a percent chance.");
@@ -430,67 +444,104 @@ public class ConfigManager {
 			config = defaultConfig.get();
 
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
-			earthBlocks.add("DIRT");
-			earthBlocks.add("MYCEL");
-			earthBlocks.add("GRASS");
-			earthBlocks.add("STONE");
-			earthBlocks.add("GRAVEL");
-			earthBlocks.add("CLAY");
-			earthBlocks.add("COAL_ORE");
-			earthBlocks.add("REDSTONE_ORE");
-			earthBlocks.add("LAPIS_ORE");
-			earthBlocks.add("DIAMOND_ORE");
-			earthBlocks.add("NETHERRACK");
-			earthBlocks.add("COBBLESTONE");
-			earthBlocks.add("STEP");
-			earthBlocks.add("GRASS_PATH");
+			earthBlocks.add(Material.DIRT.toString());
+			earthBlocks.add(Material.MYCELIUM.toString());
+			earthBlocks.add(Material.STONE.toString());
+			earthBlocks.add(Material.GRAVEL.toString());
+			earthBlocks.add(Material.CLAY.toString());
+			earthBlocks.add(Material.COAL_ORE.toString());
+			earthBlocks.add(Material.REDSTONE_ORE.toString());
+			earthBlocks.add(Material.LAPIS_ORE.toString());
+			earthBlocks.add(Material.DIAMOND_ORE.toString());
+			earthBlocks.add(Material.EMERALD_ORE.toString());
+			earthBlocks.add(Material.NETHERRACK.toString());
+			earthBlocks.add(Material.COBBLESTONE.toString());
+			earthBlocks.add(Material.STONE_SLAB.toString());
+			earthBlocks.add(Material.COBBLESTONE_SLAB.toString());
+			earthBlocks.add(Material.GRASS_BLOCK.toString());
+			earthBlocks.add(Material.GRASS_PATH.toString());
+			earthBlocks.add(Material.ANDESITE.toString());
+			earthBlocks.add(Material.GRANITE.toString());
+			earthBlocks.add(Material.DIORITE.toString());
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
-			metalBlocks.add("IRON_ORE");
-			metalBlocks.add("GOLD_ORE");
-			metalBlocks.add("QUARTZ_ORE");
-			metalBlocks.add("IRON_BLOCK");
-			metalBlocks.add("GOLD_BLOCK");
-			metalBlocks.add("QUARTZ_BLOCK");
+			metalBlocks.add(Material.IRON_ORE.toString());
+			metalBlocks.add(Material.GOLD_ORE.toString());
+			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
+			metalBlocks.add(Material.IRON_BLOCK.toString());
+			metalBlocks.add(Material.GOLD_BLOCK.toString());
+			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
 
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
-			sandBlocks.add("SAND");
-			sandBlocks.add("SANDSTONE");
-			sandBlocks.add("RED_SAND");
-			sandBlocks.add("RED_SANDSTONE");
+			sandBlocks.add(Material.SAND.toString());
+			sandBlocks.add(Material.SANDSTONE.toString());
+			sandBlocks.add(Material.SANDSTONE_SLAB.toString());
+			sandBlocks.add(Material.RED_SAND.toString());
+			sandBlocks.add(Material.RED_SANDSTONE.toString());
+			sandBlocks.add(Material.RED_SANDSTONE_SLAB.toString());
 
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
-			iceBlocks.add("ICE");
-			iceBlocks.add("PACKED_ICE");
+			iceBlocks.add(Material.ICE.toString());
+			iceBlocks.add(Material.PACKED_ICE.toString());
+			iceBlocks.add(Material.BLUE_ICE.toString());
+			iceBlocks.add(Material.FROSTED_ICE.toString());
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
-			plantBlocks.add("SAPLING");
-			plantBlocks.add("LEAVES");
-			plantBlocks.add("LEAVES_2");
-			plantBlocks.add("DEAD_BUSH");
-			plantBlocks.add("YELLOW_FLOWER");
-			plantBlocks.add("RED_ROSE");
-			plantBlocks.add("RED_MUSHROOM");
-			plantBlocks.add("BROWN_MUSHROOM");
-			plantBlocks.add("CACTUS");
-			plantBlocks.add("PUMPKIN");
-			plantBlocks.add("HUGE_MUSHROOM_1");
-			plantBlocks.add("HUGE_MUSHROOM_2");
-			plantBlocks.add("MELON_BLOCK");
-			plantBlocks.add("VINE");
-			plantBlocks.add("WATER_LILY");
-			plantBlocks.add("DOUBLE_PLANT");
-			plantBlocks.add("CROPS");
-			plantBlocks.add("LONG_GRASS");
-			plantBlocks.add("SUGAR_CANE_BLOCK");
-			plantBlocks.add("PUMPKIN_STEM");
-			plantBlocks.add("MELON_STEM");
+			plantBlocks.add(Material.ACACIA_SAPLING.toString());
+			plantBlocks.add(Material.BIRCH_SAPLING.toString());
+			plantBlocks.add(Material.DARK_OAK_SAPLING.toString());
+			plantBlocks.add(Material.JUNGLE_SAPLING.toString());
+			plantBlocks.add(Material.OAK_SAPLING.toString());
+			plantBlocks.add(Material.SPRUCE_SAPLING.toString());
+			plantBlocks.add(Material.ACACIA_LEAVES.toString());
+			plantBlocks.add(Material.BIRCH_LEAVES.toString());
+			plantBlocks.add(Material.DARK_OAK_LEAVES.toString());
+			plantBlocks.add(Material.JUNGLE_LEAVES.toString());
+			plantBlocks.add(Material.OAK_LEAVES.toString());
+			plantBlocks.add(Material.SPRUCE_LEAVES.toString());
+			plantBlocks.add(Material.DEAD_BUSH.toString());
+			plantBlocks.add(Material.ORANGE_TULIP.toString());
+			plantBlocks.add(Material.PINK_TULIP.toString());
+			plantBlocks.add(Material.RED_TULIP.toString());
+			plantBlocks.add(Material.WHITE_TULIP.toString());
+			plantBlocks.add(Material.ROSE_BUSH.toString());
+			plantBlocks.add(Material.BLUE_ORCHID.toString());
+			plantBlocks.add(Material.ALLIUM.toString());
+			plantBlocks.add(Material.DANDELION.toString());
+			plantBlocks.add(Material.LILAC.toString());
+			plantBlocks.add(Material.OXEYE_DAISY.toString());
+			plantBlocks.add(Material.AZURE_BLUET.toString());
+			plantBlocks.add(Material.PEONY.toString());
+			plantBlocks.add(Material.SUNFLOWER.toString());
+			plantBlocks.add(Material.POPPY.toString());
+			plantBlocks.add(Material.FERN.toString());
+			plantBlocks.add(Material.LARGE_FERN.toString());
+			plantBlocks.add(Material.RED_MUSHROOM.toString());
+			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.toString());
+			plantBlocks.add(Material.BROWN_MUSHROOM.toString());
+			plantBlocks.add(Material.BROWN_MUSHROOM_BLOCK.toString());
+			plantBlocks.add(Material.MUSHROOM_STEM.toString());
+			plantBlocks.add(Material.CACTUS.toString());
+			plantBlocks.add(Material.PUMPKIN.toString());
+			plantBlocks.add(Material.PUMPKIN_STEM.toString());
+			plantBlocks.add(Material.MELON.toString());
+			plantBlocks.add(Material.MELON_STEM.toString());
+			plantBlocks.add(Material.VINE.toString());
+			plantBlocks.add(Material.LILY_PAD.toString());
+			plantBlocks.add(Material.WHEAT.toString());
+			plantBlocks.add(Material.BEETROOTS.toString());
+			plantBlocks.add(Material.CARROTS.toString());
+			plantBlocks.add(Material.POTATOES.toString());
+			plantBlocks.add(Material.SUGAR_CANE.toString());
+			plantBlocks.add(Material.GRASS.toString());
+			plantBlocks.add(Material.TALL_GRASS.toString());
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
-			snowBlocks.add("SNOW");
+			snowBlocks.add(Material.SNOW.toString());
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
+			config.addDefault("Properties.DatabaseCooldowns", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
@@ -515,7 +566,9 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.RespectLWC", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
-			config.addDefault("Properties.RegionProtection.Kingdoms", true);
+			config.addDefault("Properties.RegionProtection.RespectKingdoms", true);
+			config.addDefault("Properties.RegionProtection.RespectPlotSquared", true);
+			config.addDefault("Properties.RegionProtection.RespectRedProtect", true);
 			config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
 
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
@@ -556,7 +609,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.EarthSound.Sound", "ENTITY_GHAST_SHOOT");
 			config.addDefault("Properties.Earth.EarthSound.Volume", 1);
 			config.addDefault("Properties.Earth.EarthSound.Pitch", 1);
-			config.addDefault("Properties.Earth.MetalSound.Sound", "ENTITY_IRONGOLEM_HURT");
+			config.addDefault("Properties.Earth.MetalSound.Sound", "ENTITY_IRON_GOLEM_HURT");
 			config.addDefault("Properties.Earth.MetalSound.Volume", 1);
 			config.addDefault("Properties.Earth.MetalSound.Pitch", 1.25);
 			config.addDefault("Properties.Earth.SandSound.Sound", "BLOCK_SAND_BREAK");
@@ -574,7 +627,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.FireSound.Sound", "BLOCK_FIRE_AMBIENT");
 			config.addDefault("Properties.Fire.FireSound.Volume", 1);
 			config.addDefault("Properties.Fire.FireSound.Pitch", 1);
-			config.addDefault("Properties.Fire.CombustionSound.Sound", "ENTITY_FIREWORK_BLAST");
+			config.addDefault("Properties.Fire.CombustionSound.Sound", "ENTITY_FIREWORK_ROCKET_BLAST");
 			config.addDefault("Properties.Fire.CombustionSound.Volume", 1);
 			config.addDefault("Properties.Fire.CombustionSound.Pitch", 0);
 			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
@@ -763,6 +816,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBurst.AngleTheta", 10);
 
 			config.addDefault("Abilities.Air.AirScooter.Enabled", true);
+			config.addDefault("Abilities.Air.AirScooter.ShowSitting", false);
 			config.addDefault("Abilities.Air.AirScooter.Speed", 0.675);
 			config.addDefault("Abilities.Air.AirScooter.Interval", 100);
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);
@@ -773,10 +827,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
 			config.addDefault("Abilities.Air.AirShield.Duration", 0);
-			config.addDefault("Abilities.Air.AirShield.Radius", 7);
+			config.addDefault("Abilities.Air.AirShield.MaxRadius", 7);
+			config.addDefault("Abilities.Air.AirShield.InitialRadius", 1);
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
 			config.addDefault("Abilities.Air.AirShield.Particles", 5);
+			config.addDefault("Abilities.Air.AirShield.DynamicCooldown", false);
 
 			config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 			config.addDefault("Abilities.Air.AirSpout.Cooldown", 0);
@@ -1307,6 +1363,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Speed", 0.8);
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
+			config.addDefault("Abilities.Fire.FireJet.ShowGliding", false);
 
 			config.addDefault("Abilities.Fire.FireManipulation.Enabled", false);
 
@@ -1431,8 +1488,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.AcrobatStance.Cooldown", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.Duration", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.ChiBlockBoost", 3);
-			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 1);
-			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 1);
+			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 3);
+			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 3);
 
 			config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 			config.addDefault("Abilities.Chi.HighJump.Height", 1.3);

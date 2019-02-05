@@ -1,8 +1,9 @@
 name: ProjectKorra
 author: ProjectKorra
+api-version: 1.13
 version: ${project.version}
 main: com.projectkorra.projectkorra.ProjectKorra
-softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms]
+softdepend: [PreciousStones, WorldGuard, WorldEdit, FactionsFramework, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms, PlotSquared, RedProtect]
 commands:
   projectkorra:
     aliases: [b,bending,mtla,tla,korra,pk,bend]
@@ -191,6 +192,14 @@ permissions:
       bending.ability.AirSweep: true
       bending.ability.AirStream: true
       bending.ability.Twister: true
+  bending.ability.Flight:
+    default: false
+    description: Grants access to Flight sub-abilities.
+    children:
+      bending.ability.Flight.Soar: true
+      bending.ability.Flight.Glide: true
+      bending.ability.Flight.Levitate: true
+      bending.ability.Flight.Ending: true
   bending.ability.WaterCombo:
     default: false
     description: Grants access to all WaterCombos.

@@ -1,12 +1,16 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Effect;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.*;
+import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,20 +19,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterManipulation extends WaterAbility {
 
@@ -209,7 +204,7 @@ public class WaterManipulation extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.sourceBlock.getWorld().playEffect(this.location, Effect.SMOKE, 4, (int) this.selectRange);
+					ParticleEffect.SMOKE_NORMAL.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
 					return;
 				}
 
@@ -278,6 +273,9 @@ public class WaterManipulation extends WaterAbility {
 				if (!this.displacing) {
 					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId()) {
+							if(GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+								continue;
+							}
 							final Location location = this.player.getEyeLocation();
 							final Vector vector = location.getDirection();
 							entity.setVelocity(vector.normalize().multiply(this.knockback));
@@ -308,9 +306,9 @@ public class WaterManipulation extends WaterAbility {
 				}
 				if (this.trail != null) {
 					this.trail2 = this.trail;
-					this.trail2.setType(Material.STATIONARY_WATER, (byte) 2);
+					this.trail2.setType(Material.WATER, GeneralMethods.getWaterData(6));
 				}
-				this.trail = new TempBlock(this.sourceBlock, Material.STATIONARY_WATER, (byte) 1);
+				this.trail = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(7));
 				this.sourceBlock = block;
 
 				if (this.location.distanceSquared(this.targetDestination) <= 1 || this.location.distanceSquared(this.firstDestination) > this.range * this.range) {
@@ -363,10 +361,10 @@ public class WaterManipulation extends WaterAbility {
 			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
 				PhaseChange.getFrozenBlocksAsBlock().remove(block);
 			}
-			new TempBlock(block, Material.WATER, (byte) 0);
+			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 		} else {
 			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(.5, .5, .5), 255.0);
+				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 			}
 		}
 
@@ -497,7 +495,7 @@ public class WaterManipulation extends WaterAbility {
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
-					final TempBlock tb = new TempBlock(block, Material.WATER, (byte) 0);
+					final TempBlock tb = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 
 					final WaterManipulation waterManip = new WaterManipulation(player, block);
 					waterManip.moveWater();

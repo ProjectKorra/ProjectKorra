@@ -1,37 +1,32 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.List;
-
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.material.MaterialData;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.List;
 
 public class EarthArmor extends EarthAbility {
 
 	private boolean formed;
-	private MaterialData headData;
-	private MaterialData legsData;
+	private Material headMaterial;
+	private Material legsMaterial;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
@@ -73,8 +68,8 @@ public class EarthArmor extends EarthAbility {
 		this.headBlock = this.getTargetEarthBlock((int) this.selectRange);
 		if (!GeneralMethods.isRegionProtectedFromBuild(this, this.headBlock.getLocation()) && this.getEarthbendableBlocksLength(this.headBlock, new Vector(0, -1, 0), 2) >= 2) {
 			this.legsBlock = this.headBlock.getRelative(BlockFace.DOWN);
-			this.headData = this.headBlock.getState().getData();
-			this.legsData = this.legsBlock.getState().getData();
+			this.headMaterial = this.headBlock.getType();
+			this.legsMaterial = this.legsBlock.getType();
 			this.headBlockLocation = this.headBlock.getLocation();
 			this.legsBlockLocation = this.legsBlock.getLocation();
 
@@ -115,10 +110,10 @@ public class EarthArmor extends EarthAbility {
 		final LeatherArmorMeta metaLegs = (LeatherArmorMeta) leggings.getItemMeta();
 		final LeatherArmorMeta metaBottom = (LeatherArmorMeta) boots.getItemMeta();
 
-		metaHead.setColor(Color.fromRGB(getColor(this.headData.getItemType(), this.headData.getData())));
-		metaChest.setColor(Color.fromRGB(getColor(this.headData.getItemType(), this.headData.getData())));
-		metaLegs.setColor(Color.fromRGB(getColor(this.legsData.getItemType(), this.legsData.getData())));
-		metaBottom.setColor(Color.fromRGB(getColor(this.legsData.getItemType(), this.legsData.getData())));
+		metaHead.setColor(Color.fromRGB(getColor(this.headMaterial)));
+		metaChest.setColor(Color.fromRGB(getColor(this.headMaterial)));
+		metaLegs.setColor(Color.fromRGB(getColor(this.legsMaterial)));
+		metaBottom.setColor(Color.fromRGB(getColor(this.legsMaterial)));
 
 		head.setItemMeta(metaHead);
 		chestplate.setItemMeta(metaChest);
@@ -184,17 +179,17 @@ public class EarthArmor extends EarthAbility {
 
 		if (this.isTransparent(newHeadBlock) && !newHeadBlock.isLiquid()) {
 			GeneralMethods.breakBlock(newHeadBlock);
-		} else if (!this.isEarthbendable(newHeadBlock) && !newHeadBlock.isLiquid() && newHeadBlock.getType() != Material.AIR) {
-			ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(this.headData.getItemType(), this.headData.getData()), 0.5F, 0.5F, 0.5F, 1, 32, newLegsBlock.getLocation(), 128);
+		} else if (!this.isEarthbendable(newHeadBlock) && !newHeadBlock.isLiquid() && !ElementalAbility.isAir(newHeadBlock.getType())) {
+			ParticleEffect.BLOCK_CRACK.display(newHeadBlock.getLocation(), 8, 0.5, 0.5, 0.5, newHeadBlock.getBlockData());
 			this.remove();
 			return false;
 		}
 
 		if (this.isTransparent(newLegsBlock) && !newLegsBlock.isLiquid()) {
 			GeneralMethods.breakBlock(newLegsBlock);
-		} else if (!this.isEarthbendable(newLegsBlock) && !newLegsBlock.isLiquid() && newLegsBlock.getType() != Material.AIR) {
+		} else if (!this.isEarthbendable(newLegsBlock) && !newLegsBlock.isLiquid() && !ElementalAbility.isAir(newLegsBlock.getType())) {
 			newLegsBlock.getLocation().getWorld().playSound(newLegsBlock.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
-			ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(this.legsData.getItemType(), this.legsData.getData()), 0.5F, 0.5F, 0.5F, 1, 32, newLegsBlock.getLocation(), 128);
+			ParticleEffect.BLOCK_CRACK.display(newHeadBlock.getLocation(), 8, 0.5, 0.5, 0.5, newLegsBlock.getBlockData());
 			this.remove();
 			return false;
 		}
@@ -205,14 +200,14 @@ public class EarthArmor extends EarthAbility {
 		}
 
 		if (!newHeadBlock.equals(this.headBlock)) {
-			new TempBlock(newHeadBlock, this.headData.getItemType(), this.headData.getData());
+			new TempBlock(newHeadBlock, this.headMaterial);
 			if (TempBlock.isTempBlock(this.headBlock)) {
 				TempBlock.revertBlock(this.headBlock, Material.AIR);
 			}
 		}
 
 		if (!newLegsBlock.equals(this.legsBlock)) {
-			new TempBlock(newLegsBlock, this.legsData.getItemType(), this.legsData.getData());
+			new TempBlock(newLegsBlock, this.legsMaterial);
 			if (TempBlock.isTempBlock(this.legsBlock)) {
 				TempBlock.revertBlock(this.legsBlock, Material.AIR);
 			}
@@ -234,8 +229,8 @@ public class EarthArmor extends EarthAbility {
 			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 
-			ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(this.headData.getItemType(), this.headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, this.player.getEyeLocation(), 128);
-			ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(this.legsData.getItemType(), this.legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, this.player.getLocation(), 128);
+			ParticleEffect.BLOCK_CRACK.display(player.getEyeLocation(), 8, 0.1, 0.1, 0.1, headMaterial.createBlockData());
+			ParticleEffect.BLOCK_CRACK.display(player.getLocation(), 8, 0.1F, 0.1F, 0.1F, legsMaterial.createBlockData());
 
 			this.bPlayer.addCooldown(this);
 			this.remove();
@@ -297,18 +292,18 @@ public class EarthArmor extends EarthAbility {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				EarthArmor.this.goldHearts = GeneralMethods.getAbsorbationHealth(EarthArmor.this.player);
-				if (EarthArmor.this.formed && EarthArmor.this.goldHearts < 0.9F) {
-					EarthArmor.this.bPlayer.addCooldown(abil);
+				abil.goldHearts = GeneralMethods.getAbsorbationHealth(EarthArmor.this.player);
+				if (abil.formed && abil.goldHearts < 0.9F) {
+					abil.bPlayer.addCooldown(abil);
 
-					EarthArmor.this.player.getLocation().getWorld().playSound(EarthArmor.this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-					EarthArmor.this.player.getLocation().getWorld().playSound(EarthArmor.this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-					EarthArmor.this.player.getLocation().getWorld().playSound(EarthArmor.this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 
-					ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(EarthArmor.this.headData.getItemType(), EarthArmor.this.headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, EarthArmor.this.player.getEyeLocation(), 128);
-					ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(EarthArmor.this.legsData.getItemType(), EarthArmor.this.legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, EarthArmor.this.player.getLocation(), 128);
+					ParticleEffect.BLOCK_CRACK.display(abil.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, abil.headMaterial.createBlockData());
+					ParticleEffect.BLOCK_CRACK.display(abil.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, abil.legsMaterial.createBlockData());
 
-					EarthArmor.this.remove();
+					abil.remove();
 				}
 			}
 		}.runTaskLater(ProjectKorra.plugin, 1L);
@@ -327,31 +322,34 @@ public class EarthArmor extends EarthAbility {
 		if (material == Material.GRASS) {
 			return 0xa86e45; // Default dirt brown.
 		}
-		if (material == Material.MYCEL) {
+		if (material == Material.MYCELIUM) {
 			return 0xa86e45; // Default dirt brown.
+		}
+		if (material == Material.GRASS_BLOCK) {
+			return 0xa86e45;
 		}
 		if (material == Material.CLAY) {
 			return 0xBAC2D1; // Dull gray-brown.
 		}
-		if (material == Material.STONE && damage == 0x0) {
+		if (material == Material.STONE || material == Material.STONE_BRICKS) {
 			return 0x9e9e9e; // Gray.
 		}
-		if (material == Material.STONE && (damage == 0x1 || damage == 0x2)) {
+		if (material == Material.GRANITE || material == Material.POLISHED_GRANITE) {
 			return 0xc69489; // Pink.
 		}
-		if (material == Material.STONE && (damage == 0x3 || damage == 0x4)) {
+		if (material == Material.DIORITE || material == Material.POLISHED_DIORITE) {
 			return 0xe3e3e5; // White.
 		}
-		if (material == Material.STONE && (damage == 0x5 || damage == 0x6)) {
+		if (material == Material.ANDESITE || material == Material.POLISHED_ANDESITE) {
 			return 0xa3a3a3; // Gray.
 		}
 		if (material == Material.COBBLESTONE) {
 			return 0x6B6B6B; // Dark Gray.
 		}
-		if (material == Material.SAND && damage == 0x0) {
+		if (material == Material.SAND) {
 			return 0xffffaf; // Sand yellow.
 		}
-		if (material == Material.SAND && damage == 0x1) {
+		if (material == Material.RED_SAND) {
 			return 0xb85f25; // Sand orange.
 		}
 		if (material == Material.SANDSTONE) {
@@ -367,7 +365,7 @@ public class EarthArmor extends EarthAbility {
 			return 0xa2a38f; // Gray-yellow.
 		}
 		if (material == Material.GOLD_BLOCK) {
-			return 0xF2F204; // Gold - Could be a tiny bit darker.
+			return 0xF1F103; // Gold - Could be a tiny bit darker.
 		}
 		if (material == Material.IRON_ORE) {
 			return 0xa39d91; // Gray-brown.
@@ -390,58 +388,58 @@ public class EarthArmor extends EarthAbility {
 		if (material == Material.NETHERRACK) {
 			return 0x9b3131; // Pinkish-red.
 		}
-		if (material == Material.QUARTZ_ORE) {
+		if (material == Material.NETHER_QUARTZ_ORE) {
 			return 0xb75656; // Pinkish-red.
 		}
 		if (material == Material.QUARTZ_BLOCK) {
 			return 0xfff4f4; // White.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x0) {
+		if (material == Material.WHITE_TERRACOTTA) {
 			return 0xCFAFA0; // White Stained Clay.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x1) {
+		if (material == Material.ORANGE_TERRACOTTA) {
 			return 0xA75329; // Orange.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x2) {
+		if (material == Material.MAGENTA_TERRACOTTA) {
 			return 0x95596E; // Magenta.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x3) {
+		if (material == Material.LIGHT_BLUE_TERRACOTTA) {
 			return 0x736E8A; // Light blue.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x4) {
+		if (material == Material.YELLOW_TERRACOTTA) {
 			return 0xBA8825; // Yellow.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x5) {
+		if (material == Material.LIME_TERRACOTTA) {
 			return 0x6B7736; // Lime.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x6) {
+		if (material == Material.PINK_TERRACOTTA) {
 			return 0xA24D4F; // Pink.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x7) {
+		if (material == Material.GRAY_TERRACOTTA) {
 			return 0x3A2923; // Gray.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x8) {
+		if (material == Material.LIGHT_GRAY_TERRACOTTA) {
 			return 0x876A61; // Light Gray.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0x9) {
+		if (material == Material.CYAN_TERRACOTTA) {
 			return 0x575B5B; // Cyan.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0xA) {
+		if (material == Material.PURPLE_TERRACOTTA) {
 			return 0x734453; // Purple.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0xB) {
+		if (material == Material.BLUE_TERRACOTTA) {
 			return 0x493A5A; // Blue.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0xC) {
+		if (material == Material.BROWN_TERRACOTTA) {
 			return 0x4C3223; // Brown.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0xD) {
+		if (material == Material.GREEN_TERRACOTTA) {
 			return 0x4B522A; // Green.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0xE) {
+		if (material == Material.RED_TERRACOTTA) {
 			return 0x8D3B2E; // Red.
 		}
-		if (material == Material.STAINED_CLAY && damage == 0xF) {
+		if (material == Material.BLACK_TERRACOTTA) {
 			return 0x251610; // Black.
 		}
 
@@ -457,8 +455,8 @@ public class EarthArmor extends EarthAbility {
 		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 
-		ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(this.headData.getItemType(), this.headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, this.player.getEyeLocation(), 128);
-		ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(this.legsData.getItemType(), this.legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, this.player.getLocation(), 128);
+		ParticleEffect.BLOCK_CRACK.display(player.getEyeLocation(), 8, 0.1, 0.1, 0.1, headMaterial.createBlockData());
+		ParticleEffect.BLOCK_CRACK.display(player.getLocation(), 8, 0.1F, 0.1F, 0.1F, legsMaterial.createBlockData());
 
 		this.bPlayer.addCooldown(this);
 		this.remove();
@@ -526,20 +524,20 @@ public class EarthArmor extends EarthAbility {
 		this.formed = formed;
 	}
 
-	public MaterialData getHeadData() {
-		return this.headData;
+	public Material getHeadMaterial() {
+		return this.headMaterial;
 	}
 
-	public void setHeadData(final MaterialData materialdata) {
-		this.headData = materialdata;
+	public void setHeadMaterial(final Material material) {
+		this.headMaterial = material;
 	}
 
-	public MaterialData getLegsData() {
-		return this.legsData;
+	public Material getLegsMaterial() {
+		return this.legsMaterial;
 	}
 
-	public void setLegsData(final MaterialData materialdata) {
-		this.legsData = materialdata;
+	public void setLegsMaterial(final Material material) {
+		this.legsMaterial = material;
 	}
 
 	public double getSelectRange() {

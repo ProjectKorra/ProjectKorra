@@ -138,7 +138,7 @@ public class Preset {
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = (HashMap<Integer, String>) preset.abilities.clone();
+		final HashMap<Integer, String> abilities = new HashMap<>(preset.abilities);
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
 			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
