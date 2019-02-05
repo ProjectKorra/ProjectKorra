@@ -1,8 +1,63 @@
 package com.projectkorra.projectkorra;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
@@ -21,16 +76,37 @@ import com.griefcraft.model.Protection;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.*;
+import com.palmergames.bukkit.towny.object.Coord;
+import com.palmergames.bukkit.towny.object.PlayerCache;
 import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
+import com.palmergames.bukkit.towny.object.TownyPermission;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import com.palmergames.bukkit.towny.object.TownyWorld;
+import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ability.*;
-import com.projectkorra.projectkorra.ability.util.*;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AddonAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
+import com.projectkorra.projectkorra.ability.util.CollisionManager;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.airbending.*;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
+import com.projectkorra.projectkorra.airbending.AirBlast;
+import com.projectkorra.projectkorra.airbending.AirShield;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.airbending.AirSuction;
+import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
@@ -42,8 +118,16 @@ import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.*;
+import com.projectkorra.projectkorra.util.ActionBar;
+import com.projectkorra.projectkorra.util.BlockCacheElement;
+import com.projectkorra.projectkorra.util.ColoredParticle;
+import com.projectkorra.projectkorra.util.MovementHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ReflectionHandler;
 import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
+import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempArmorStand;
+import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -55,6 +139,10 @@ import com.songoda.kingdoms.constants.land.Land;
 import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
 import com.songoda.kingdoms.constants.player.KingdomPlayer;
 import com.songoda.kingdoms.manager.game.GameManagement;
+
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
 import me.markeh.factionsframework.entities.FPlayer;
 import me.markeh.factionsframework.entities.FPlayers;
 import me.markeh.factionsframework.entities.Faction;
@@ -66,34 +154,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GeneralMethods {
 
@@ -1363,10 +1423,9 @@ public class GeneralMethods {
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
-		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.PlotSquared");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
-		final boolean respectBentoBox = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.BentoBox");
+		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectKingdoms");
+		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPlotSquared");
+		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1389,7 +1448,7 @@ public class GeneralMethods {
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
 		//final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin facsfw = pm.getPlugin("FactionsFramework ");
+		final Plugin facsfw = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
 		final Plugin lwc = pm.getPlugin("LWC");
@@ -1397,7 +1456,6 @@ public class GeneralMethods {
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
 		final Plugin plotsquared = pm.getPlugin("PlotSquared");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
-		final Plugin bentobox = pm.getPlugin("BentoBox");
 
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
@@ -1590,26 +1648,6 @@ public class GeneralMethods {
 				Region region = api.getRegion(location);
 				if (!(region != null && region.canBuild(player))) {
 					return true;
-				}
-			}
-
-			if (bentobox != null && respectBentoBox) {
-				BentoBox bentoBoxPlugin = BentoBox.getInstance();
-				if (bentoBoxPlugin.getIWM().inWorld(loc)) {
-					Optional<Island> island = bentoBoxPlugin.getIslands().getProtectedIslandAt(loc);
-					if (!(player.isOp() || player.hasPermission(bentoBoxPlugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass.BREAK_BLOCKS.everywhere"))){
-						if (island.isPresent()) {
-							if (!island.get().isAllowed(User.getInstance(player), bentoBoxPlugin.getFlagsManager().getFlagByID("BREAK_BLOCKS"))) {
-								return true;
-							}
-							if (!(player.hasPermission(bentoBoxPlugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass.BREAK_BLOCKS.island"))) {
-								return true;
-							}
-						}
-						if (!bentoBoxPlugin.getFlagsManager().getFlagByID("BREAK_BLOCKS").isSetForWorld(loc.getWorld())) {
-							return true;
-						}
-					}
 				}
 			}
 		}
