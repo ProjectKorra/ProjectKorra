@@ -938,34 +938,7 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius) {
-		final List<Entity> entities = new ArrayList<Entity>();
-		final World world = location.getWorld();
-
-		// To find chunks we use chunk coordinates (not block coordinates!)
-		final int smallX = (int) (location.getX() - radius) >> 4;
-		final int bigX = (int) (location.getX() + radius) >> 4;
-		final int smallZ = (int) (location.getZ() - radius) >> 4;
-		final int bigZ = (int) (location.getZ() + radius) >> 4;
-
-		for (int x = smallX; x <= bigX; x++) {
-			for (int z = smallZ; z <= bigZ; z++) {
-				if (world.isChunkLoaded(x, z)) {
-					entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
-				}
-			}
-		}
-
-		final Iterator<Entity> entityIterator = entities.iterator();
-		while (entityIterator.hasNext()) {
-			final Entity e = entityIterator.next();
-			if (e.getWorld().equals(location.getWorld()) && e.getLocation().distanceSquared(location) > radius * radius) {
-				entityIterator.remove();
-			} else if (e instanceof Player && (((Player) e).isDead() || ((Player) e).getGameMode().equals(GameMode.SPECTATOR))) {
-				entityIterator.remove();
-			}
-		}
-
-		return entities;
+		return new ArrayList<>(location.getWorld().getNearbyEntities(location, radius, radius, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)))));
 	}
 
 	public static long getGlobalCooldown() {
