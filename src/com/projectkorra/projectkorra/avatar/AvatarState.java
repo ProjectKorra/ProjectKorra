@@ -63,11 +63,6 @@ public class AvatarState extends AvatarAbility {
 	@Override
 	public void progress() {
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			if (this.player != null) {
-				if (this.bPlayer.isOnCooldown(this)) {
-					this.bPlayer.removeCooldown(this);
-				}
-			}
 			this.remove();
 			return;
 		}
