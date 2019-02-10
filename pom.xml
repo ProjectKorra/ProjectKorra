@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>1.8.7</version>
+  <version>1.8.8</version>
   <name>ProjectKorra</name>
   <repositories>
     <!-- WorldGuard and WorldEdit Repo -->
