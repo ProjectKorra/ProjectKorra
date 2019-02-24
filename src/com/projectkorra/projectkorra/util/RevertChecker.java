@@ -51,7 +51,7 @@ public class RevertChecker implements Runnable {
 		}
 	}
 
-	private Future<Set<HashMap<String,Integer>>> returnFuture;
+	private Future<Set<Map<String,Integer>>> returnFuture;
 
 	private void addToAirRevertQueue(final int i) {
 		if (!airRevertQueue.containsKey(i)) {
@@ -77,7 +77,7 @@ public class RevertChecker implements Runnable {
 
 			try {
 				this.returnFuture = this.plugin.getServer().getScheduler().callSyncMethod(this.plugin, new getOccupiedChunks(this.plugin.getServer()));
-				final Set<HashMap<String,Integer>> chunks = this.returnFuture.get();
+				final Set<Map<String,Integer>> chunks = this.returnFuture.get();
 
 				final Map<Block, Information> earth = new HashMap<>(EarthAbility.getMovedEarth());
 
@@ -88,7 +88,7 @@ public class RevertChecker implements Runnable {
 
 					final Information info = earth.get(block);
 
-					HashMap<String, Integer> chunkcoord = new HashMap<>();
+					Map<String, Integer> chunkcoord = new HashMap<>();
 					chunkcoord.put("x", block.getX() >> 4);
 					chunkcoord.put("z", block.getZ() >> 4);
 
@@ -107,7 +107,7 @@ public class RevertChecker implements Runnable {
 					final Information info = air.get(i);
 					final Block block = info.getBlock();
 
-					HashMap<String, Integer> chunkcoord = new HashMap<>();
+					Map<String, Integer> chunkcoord = new HashMap<>();
 					chunkcoord.put("x", block.getX() >> 4);
 					chunkcoord.put("z", block.getZ() >> 4);
 
@@ -122,7 +122,7 @@ public class RevertChecker implements Runnable {
 		}
 	}
 
-	private class getOccupiedChunks implements Callable<Set<HashMap<String,Integer>>> {
+	private class getOccupiedChunks implements Callable<Set<Map<String,Integer>>> {
 		private final Server server;
 
 		public getOccupiedChunks(final Server server) {
@@ -130,13 +130,13 @@ public class RevertChecker implements Runnable {
 		}
 
 		@Override
-		public Set<HashMap<String,Integer>> call() {
+		public Set<Map<String,Integer>> call() {
 			ProjectKorra.timing("RevertEarthCheckerGetOccupiedChunks").startTiming();
 
-			final Set<HashMap<String,Integer>> chunks = new HashSet<>();
+			final Set<Map<String,Integer>> chunks = new HashSet<>();
 
 			for (final Player player : this.server.getOnlinePlayers()) {
-				HashMap<String, Integer> chunkcoord = new HashMap<>();
+				Map<String, Integer> chunkcoord = new HashMap<>();
 				chunkcoord.put("x", player.getLocation().getBlockX() >> 4);
 				chunkcoord.put("z", player.getLocation().getBlockZ() >> 4);
 

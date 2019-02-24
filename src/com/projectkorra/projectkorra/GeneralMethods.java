@@ -1020,7 +1020,7 @@ public class GeneralMethods {
 		}
 		for (int i = max; i > 0; i--) {
 			if (player.hasPermission("bending.command.preset.create." + i)) {
-				return(i);
+				return i;
 			}
 		}
 		return 0;

@@ -35,19 +35,20 @@ public class TempBlock {
 	private RevertTask revertTask = null;
 	
 	public TempBlock(final Block block, final Material newtype) {
-		this(block, newtype, newtype.createBlockData());
+		this(block, newtype.createBlockData());
 	}
 
 	public TempBlock(final Block block, final Material newtype, final BlockData newdata) {
+		this(block, newdata);
+	}
+
+	public TempBlock(final Block block, final BlockData newdata) {
 		this.block = block;
 		this.newdata = newdata;
 		if (instances.containsKey(block)) {
 			final TempBlock temp = instances.get(block);
-			if (newtype != temp.block.getType()) {
-				temp.block.setType(newtype);
-			}
-			if (newdata != temp.block.getBlockData()) {
-				temp.block.setBlockData(newdata);
+			if (!newdata.equals(temp.block.getBlockData())) {
+				temp.block.setBlockData(newdata, newdata.getMaterial() != Material.WATER);
 				temp.newdata = newdata;
 			}
 			this.state = temp.state;
@@ -55,8 +56,7 @@ public class TempBlock {
 		} else {
 			this.state = block.getState();
 			instances.put(block, this);
-			block.setType(newtype);
-			block.setBlockData(newdata);
+			block.setBlockData(newdata, newdata.getMaterial() != Material.WATER);
 		}
 		if (this.state.getType() == Material.FIRE) {
 			this.state.setType(Material.AIR);
@@ -71,7 +71,7 @@ public class TempBlock {
 	}
 
 	public static boolean isTempBlock(final Block block) {
-		return block != null ? instances.containsKey(block) : false;
+		return block != null && instances.containsKey(block);
 	}
 
 	public static boolean isTouchingTempBlock(final Block block) {
@@ -88,15 +88,13 @@ public class TempBlock {
 		for (final Block block : instances.keySet()) {
 			revertBlock(block, Material.AIR);
 		}
-		if (REVERT_QUEUE != null) {
-			for (final TempBlock tempblock : REVERT_QUEUE) {
-				tempblock.state.update(true);
-				if (tempblock.revertTask != null) {
-					tempblock.revertTask.run();
-				}
+		for (final TempBlock tempblock : REVERT_QUEUE) {
+			tempblock.state.update(true);
+			if (tempblock.revertTask != null) {
+				tempblock.revertTask.run();
 			}
-			REVERT_QUEUE.clear();
 		}
+		REVERT_QUEUE.clear();
 	}
 
 	public static void removeBlock(final Block block) {
