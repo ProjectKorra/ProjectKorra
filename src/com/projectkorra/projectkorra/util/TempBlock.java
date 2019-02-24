@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -170,7 +171,9 @@ public class TempBlock {
 	}
 
 	public void revertBlock() {
-		this.state.update(true);
+		PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result ->
+			this.state.update(true)
+		);
 		instances.remove(this.block);
 		if (REVERT_QUEUE.contains(this)) {
 			REVERT_QUEUE.remove(this);

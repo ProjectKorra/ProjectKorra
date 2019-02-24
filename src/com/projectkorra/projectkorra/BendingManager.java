@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.UUID;
 
+import co.aikar.timings.lib.MCTiming;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -28,9 +29,19 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
 
+	private MCTiming TimingCoreAbilityProgressAll, TimingTempPotionProgressAll, TimingHandleDayNight, TimingHorizontalVelocityTrackerUpdateAll, TimingHandleCoolDowns, TimingTempArmorCleanup, TimingActionBarCheck;
+
 	public BendingManager() {
 		instance = this;
 		this.time = System.currentTimeMillis();
+
+		TimingCoreAbilityProgressAll = ProjectKorra.timing("CoreAbilityProgressAll");
+		TimingTempPotionProgressAll = ProjectKorra.timing("TempPotionProgressAll");
+		TimingHandleDayNight = ProjectKorra.timing("HandleDayNight");
+		TimingHorizontalVelocityTrackerUpdateAll = ProjectKorra.timing("HorizontalVelocityTrackerUpdateAll");
+		TimingHandleCoolDowns = ProjectKorra.timing("HandleCoolDowns");
+		TimingTempArmorCleanup = ProjectKorra.timing("TempArmorCleanup");
+		TimingActionBarCheck = ProjectKorra.timing("ActionBarCheck");
 	}
 
 	public static BendingManager getInstance() {
@@ -97,30 +108,45 @@ public class BendingManager implements Runnable {
 
 	@Override
 	public void run() {
-		try {
-			this.interval = System.currentTimeMillis() - this.time;
-			this.time = System.currentTimeMillis();
-			ProjectKorra.time_step = this.interval;
+		this.interval = System.currentTimeMillis() - this.time;
+		this.time = System.currentTimeMillis();
+		ProjectKorra.time_step = this.interval;
 
-			CoreAbility.progressAll();
-			TempPotionEffect.progressAll();
-			this.handleDayNight();
-			RevertChecker.revertAirBlocks();
-			HorizontalVelocityTracker.updateAll();
-			this.handleCooldowns();
-			TempArmor.cleanup();
+		TimingCoreAbilityProgressAll.startTiming();
+		CoreAbility.progressAll();
+		TimingCoreAbilityProgressAll.stopTiming();
 
-			for (final Player player : Bukkit.getOnlinePlayers()) {
-				if (Bloodbending.isBloodbent(player)) {
-					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
-				} else if (MetalClips.isControlled(player)) {
-					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
-				}
+		TimingTempPotionProgressAll.startTiming();
+		TempPotionEffect.progressAll();
+		TimingTempPotionProgressAll.stopTiming();
+
+		TimingHandleDayNight.startTiming();
+		this.handleDayNight();
+		TimingHandleDayNight.stopTiming();
+
+		RevertChecker.revertAirBlocks();
+
+		TimingHorizontalVelocityTrackerUpdateAll.startTiming();
+		HorizontalVelocityTracker.updateAll();
+		TimingHorizontalVelocityTrackerUpdateAll.stopTiming();
+
+		TimingHandleCoolDowns.startTiming();
+		this.handleCooldowns();
+		TimingHandleCoolDowns.stopTiming();
+
+		TimingTempArmorCleanup.startTiming();
+		TempArmor.cleanup();
+		TimingTempArmorCleanup.stopTiming();
+
+		TimingActionBarCheck.startTiming();
+		for (final Player player : Bukkit.getOnlinePlayers()) {
+			if (Bloodbending.isBloodbent(player)) {
+				ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
+			} else if (MetalClips.isControlled(player)) {
+				ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
 			}
 		}
-		catch (final Exception e) {
-			e.printStackTrace();
-		}
+		TimingActionBarCheck.stopTiming();
 	}
 
 	public static String getSunriseMessage() {

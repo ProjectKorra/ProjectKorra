@@ -164,10 +164,14 @@ public class WaterSpout extends WaterAbility {
 
 				this.displayWaterSpiral(location.clone().add(.5, 0, .5));
 				if (this.player.getLocation().getBlockY() > block.getY()) {
-					this.player.setFlying(false);
+					if (this.player.isFlying()) {
+						this.player.setFlying(false);
+					}
 				} else {
-					this.player.setAllowFlight(true);
-					this.player.setFlying(true);
+					if (!this.player.isFlying()) {
+						this.player.setAllowFlight(true);
+						this.player.setFlying(true);
+					}
 				}
 			} else {
 				this.bPlayer.addCooldown(this);

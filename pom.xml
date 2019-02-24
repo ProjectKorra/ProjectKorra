@@ -6,6 +6,12 @@
   <version>1.8.8</version>
   <name>ProjectKorra</name>
   <repositories>
+    <!-- local jar files, add more using: mvn install:install-file -Dfile=aaa.jar -DgroupId=aaa -DartifactId=aaa -Dversion=aaa -Dpackaging=jar -DlocalRepositoryPath=path/to/ProjectKorra/localrepo/ -->
+    <repository>
+      <id>project.local</id>
+      <name>project</name>
+      <url>file://${project.basedir}/localrepo/</url>
+    </repository>
     <!-- WorldGuard and WorldEdit Repo -->
     <repository>
       <id>sk89q-repo</id>
@@ -26,8 +32,30 @@
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
+    <!-- Aikars Repo -->
+    <repository>
+      <id>aikar</id>
+      <url>http://repo.aikar.co/nexus/content/groups/aikar/</url>
+    </repository>
+    <!-- Paper Repo -->
+    <repository>
+      <id>papermc</id>
+      <url>https://papermc.io/repo/repository/maven-public/</url>
+    </repository>
   </repositories>
   <dependencies>
+    <!-- PaperLib -->
+    <dependency>
+      <groupId>io.papermc</groupId>
+      <artifactId>paperlib</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <!-- Minecraft Timings -->
+    <dependency>
+      <groupId>co.aikar</groupId>
+      <artifactId>minecraft-timings</artifactId>
+      <version>1.0.4</version>
+    </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>
@@ -40,16 +68,16 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.8.1</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Factions -->
     <dependency>
       <groupId>me.markeh</groupId>
       <artifactId>factionsframework</artifactId>
       <version>1.2.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/FactionsFramework1.2.0.jar</systemPath>
-    </dependency>
-    <!-- GriefPrevention -->
+      <scope>provided</scope>
+  </dependency>
+  <!-- GriefPrevention -->
     <dependency>
       <groupId>com.github.TechFortress</groupId>
       <artifactId>GriefPrevention</artifactId>
@@ -60,9 +88,8 @@
     <dependency>
       <groupId>com.griefcraft</groupId>
       <artifactId>lwc</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Modern-LWC-2.1.2.jar</systemPath>
+      <version>2.1.2</version>
+      <scope>provided</scope>
     </dependency>
     <!-- NoCheatPlus -->
     <dependency>
@@ -85,17 +112,15 @@
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>
       <artifactId>residence</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Residence4.8.3.1.jar</systemPath>
+      <version>4.8.3.1</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Towny -->
     <dependency>
       <groupId>com.palmergames</groupId>
       <artifactId>Towny</artifactId>
       <version>0.93.0.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Towny.jar</systemPath>
+      <scope>provided</scope>
     </dependency>
     <!-- WorldEdit / WorldGuard -->
     <dependency>
@@ -126,25 +151,15 @@
     <dependency>
       <groupId>br.net.fabiozumbi12</groupId>
       <artifactId>RedProtect</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/RedProtect-7.5.5-b129-Universal.jar</systemPath>
-    </dependency>
-    <!-- PlotSquared -->
-    <dependency>
-      <groupId>com.github.intelletualsites</groupId>
-      <artifactId>plotsquared</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/PlotSquared-Bukkit-4.18.12.31-38a382f-2131.jar</systemPath>
+      <version>7.5.5</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Kingdoms -->
     <dependency>
       <groupId>com.songoda</groupId>
       <artifactId>kingdoms</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/FabledKingdoms-1.2.3.jar</systemPath>
+      <version>1.2.3</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
@@ -178,6 +193,32 @@
         <configuration>
           <outputDirectory>${dir}</outputDirectory>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.1</version>
+        <configuration>
+          <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+          <relocations>
+            <relocation>
+              <pattern>co.aikar.timings.lib</pattern>
+              <shadedPattern>com.projectkorra.timingslib</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>io.papermc.lib</pattern>
+              <shadedPattern>com.projectkorra.paperlib</shadedPattern>
+            </relocation>
+          </relocations>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra;
 
+import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.*;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -83,8 +84,35 @@ public class PKListener implements Listener {
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
+	private static MCTiming TimingPhysicsWaterManipulationCheck;
+	private static MCTiming TimingPhysicsEarthPassiveCheck;
+	private static MCTiming TimingPhysicsIlluminationTorchCheck;
+	private static MCTiming TimingPhysicsEarthAbilityCheck;
+	private static MCTiming TimingPhysicsAirTempBlockBelowFallingBlockCheck;
+
+	private static MCTiming TimingPlayerMoveMovementHandlerCheck;
+	private static MCTiming TimingPlayerMoveSpoutCheck;
+	private static MCTiming TimingPlayerMoveBloodbentCheck;
+	private static MCTiming TimingPlayerMoveAirChiPassiveCheck;
+	private static MCTiming TimingPlayerMoveFirePassiveCheck;
+	private static MCTiming TimingPlayerMoveJumpCheck;
+
 	public PKListener(final ProjectKorra plugin) {
+
 		this.plugin = plugin;
+
+		TimingPhysicsWaterManipulationCheck = plugin.timing("PhysicsWaterManipulationCheck");
+		TimingPhysicsEarthPassiveCheck = ProjectKorra.timing("PhysicsEarthPassiveCheck");
+		TimingPhysicsIlluminationTorchCheck = ProjectKorra.timing("PhysicsIlluminationTorchCheck");
+		TimingPhysicsEarthAbilityCheck = ProjectKorra.timing("PhysicsEarthAbilityCheck");
+		TimingPhysicsAirTempBlockBelowFallingBlockCheck = ProjectKorra.timing("PhysicsAirTempBlockBelowFallingBlockCheck");
+
+		TimingPlayerMoveMovementHandlerCheck = ProjectKorra.timing("PlayerMoveMovementHandlerCheck");
+		TimingPlayerMoveSpoutCheck = ProjectKorra.timing("PlayerMoveSpoutCheck");
+		TimingPlayerMoveBloodbentCheck = ProjectKorra.timing("PlayerMoveBloodbentCheck");
+		TimingPlayerMoveAirChiPassiveCheck = ProjectKorra.timing("PlayerMoveAirChiPassiveCheck");
+		TimingPlayerMoveFirePassiveCheck = ProjectKorra.timing("PlayerMoveFirePassiveCheck");
+		TimingPlayerMoveJumpCheck = ProjectKorra.timing("PlayerMoveJumpCheck");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -249,14 +277,43 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		final Block block = event.getBlock();
 
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.isIlluminationTorch(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+		TimingPhysicsWaterManipulationCheck.startTiming();
+		if (!WaterManipulation.canPhysicsChange(block)) {
 			event.setCancelled(true);
+			return;
 		}
+		TimingPhysicsWaterManipulationCheck.stopTiming();
+
+		TimingPhysicsEarthPassiveCheck.startTiming();
+		if (!EarthPassive.canPhysicsChange(block)) {
+			event.setCancelled(true);
+			return;
+		}
+		TimingPhysicsEarthPassiveCheck.stopTiming();
+
+		TimingPhysicsIlluminationTorchCheck.startTiming();
+		if (Illumination.isIlluminationTorch(block)) {
+			event.setCancelled(true);
+			return;
+		}
+		TimingPhysicsIlluminationTorchCheck.stopTiming();
+
+		TimingPhysicsEarthAbilityCheck.startTiming();
+		if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+			event.setCancelled(true);
+			return;
+		}
+		TimingPhysicsEarthAbilityCheck.stopTiming();
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
-		if (!event.isCancelled() && (block.getType() == Material.SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN)) && ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType())) {
+		TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming();
+		if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) &&
+				ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) &&
+				TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))
+		) {
 			event.setCancelled(true);
 		}
+		TimingPhysicsAirTempBlockBelowFallingBlockCheck.stopTiming();
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1064,14 +1121,24 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerMove(final PlayerMoveEvent event) {
+		if (event.getTo().getX() == event.getFrom().getX() && event.getTo().getY() == event.getFrom().getY() && event.getTo().getZ() == event.getFrom().getZ()) {
+			return;
+		}
+
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		TimingPlayerMoveMovementHandlerCheck.startTiming();
 		if (MovementHandler.isStopped(player)) {
 			if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
 				event.setCancelled(true);
-				return;
 			}
-		} else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
+			return;
+		}
+		TimingPlayerMoveMovementHandlerCheck.stopTiming();
+
+		TimingPlayerMoveSpoutCheck.startTiming();
+		if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
 			Vector vel = new Vector();
 			vel.setX(event.getTo().getX() - event.getFrom().getX());
 			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
@@ -1084,43 +1151,43 @@ public class PKListener implements Listener {
 				// apply the new velocity
 				event.getPlayer().setVelocity(vel);
 			}
-		} else if (Bloodbending.isBloodbent(player)) {
+			return;
+		}
+		TimingPlayerMoveSpoutCheck.stopTiming();
+
+		TimingPlayerMoveBloodbentCheck.startTiming();
+		if (Bloodbending.isBloodbent(player)) {
 			final BendingPlayer bender = Bloodbending.getBloodbender(player);
 			if (bender.isAvatarState()) {
 				event.setCancelled(true);
 				return;
 			}
 
-			double distance1 = 0;
-			double distance2 = 0;
 			final Location loc = Bloodbending.getBloodbendingLocation(player);
 			if (player.getWorld().equals(loc.getWorld())) {
-				distance1 = event.getFrom().distanceSquared(loc);
-				distance2 = event.getTo().distanceSquared(loc);
-			}
-
-			if (distance1 == 0 && distance2 == 0) {
-				return;
-			} else if (distance1 > distance2 || distance1 < distance2) {
 				if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
 					player.setVelocity(Bloodbending.getBloodbendingVector(player));
-					return;
 				}
 			}
-		} else {
-			if (bPlayer != null) {
-				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getY() != event.getFrom().getY() || event.getTo().getZ() != event.getFrom().getZ()) {
-					if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-						PassiveHandler.checkExhaustionPassives(player);
-					}
-				}
+			return;
+		}
+		TimingPlayerMoveBloodbentCheck.stopTiming();
 
-				if (event.getTo().getBlock() != event.getFrom().getBlock()) {
-					FirePassive.handle(player);
-				}
+		if (bPlayer != null) {
+			TimingPlayerMoveAirChiPassiveCheck.startTiming();
+			if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
+				PassiveHandler.checkExhaustionPassives(player);
 			}
+			TimingPlayerMoveAirChiPassiveCheck.stopTiming();
+
+			TimingPlayerMoveFirePassiveCheck.startTiming();
+			if (event.getTo().getBlock() != event.getFrom().getBlock()) {
+				FirePassive.handle(player);
+			}
+			TimingPlayerMoveFirePassiveCheck.stopTiming();
 		}
 
+		TimingPlayerMoveJumpCheck.startTiming();
 		if (event.getTo().getY() > event.getFrom().getY()) {
 			if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
 				final int current = player.getStatistic(Statistic.JUMP);
@@ -1137,6 +1204,7 @@ public class PKListener implements Listener {
 				}
 			}
 		}
+		TimingPlayerMoveJumpCheck.stopTiming();
 	}
 
 	@EventHandler

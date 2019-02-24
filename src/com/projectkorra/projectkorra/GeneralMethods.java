@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -62,13 +61,6 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.config.C;
-import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -1022,16 +1014,16 @@ public class GeneralMethods {
 	}
 
 	public static int getMaxPresets(final Player player) {
+		int max = ConfigManager.getConfig().getInt("Properties.MaxPresets");
 		if (player.isOp()) {
-			return 100;
+			return max;
 		}
-		int cap = 0;
-		for (int i = 0; i <= 10; i++) {
+		for (int i = max; i > 0; i--) {
 			if (player.hasPermission("bending.command.preset.create." + i)) {
-				cap = i;
+				return(i);
 			}
 		}
-		return cap;
+		return 0;
 	}
 
 	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
@@ -1397,7 +1389,6 @@ public class GeneralMethods {
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectKingdoms");
-		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPlotSquared");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
 
 		boolean isIgnite = false;
@@ -1427,7 +1418,6 @@ public class GeneralMethods {
 		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin plotsquared = pm.getPlugin("PlotSquared");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
 
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
@@ -1578,42 +1568,6 @@ public class GeneralMethods {
 					}
 				}
 
-			}
-
-			if (plotsquared != null && respectPlotSquared) {
-				com.github.intellectualsites.plotsquared.plot.object.Location plotLocation = BukkitUtil.getLocation(location);
-				PlotArea plotArea = plotLocation.getPlotArea();
-				if (plotArea != null) {
-					Plot plot = plotArea.getPlot(plotLocation);
-					PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-					if (plot != null) {
-						if (location.getBlock().getY() == 0) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
-								return true;
-							}
-						} else if ((location.getY() > plotArea.MAX_BUILD_HEIGHT || location.getY() < plotArea.MIN_BUILD_HEIGHT) && !Permissions
-								.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
-							return true;
-						}
-						if (!plot.hasOwner()) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-								return true;
-							}
-						}
-						if (!plot.isAdded(plotPlayer.getUUID())) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
-								return true;
-							}
-						} else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(com.github.intellectualsites.plotsquared.plot.flag.Flags.DONE)) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-								return true;
-							}
-						}
-					}
-					if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
-						return true;
-					}
-				}
 			}
 
 			if (redprotect != null && respectRedProtect) {
@@ -1879,9 +1833,7 @@ public class GeneralMethods {
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
-		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.PlotSquared");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
-		final boolean respectBentoBox = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.BentoBox");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
@@ -1892,9 +1844,7 @@ public class GeneralMethods {
 		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin plotsquared = pm.getPlugin("PlotSquared");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
-		final Plugin bentobox = pm.getPlugin("BentoBox");
 
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
@@ -1920,14 +1870,8 @@ public class GeneralMethods {
 		if (kingdoms != null && respectKingdoms) {
 			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
 		}
-		if (plotsquared != null && respectPlotSquared) {
-			writeToDebug("PlotSquared v" + plotsquared.getDescription().getVersion());
-		}
 		if (redprotect != null && respectRedProtect) {
 			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
-		}
-		if (bentobox != null && respectBentoBox) {
-			writeToDebug("BentoBox v" + bentobox.getDescription().getVersion());
 		}
 
 		writeToDebug("");
