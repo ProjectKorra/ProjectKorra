@@ -156,7 +156,7 @@ public class AirSuction extends AirAbility {
 			open = trap.isOpen();
 		}
 
-		final String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
+		final String sound = "block_wooden_" + (tDoor ? "trap" : "") + "door_" + (!open ? "open" : "close");
 		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
 		this.affectedDoors.add(block);
 	}

@@ -158,7 +158,7 @@ public class Tornado extends AirAbility {
 							}
 						}
 
-						final Vector velocity = entity.getVelocity();
+						final Vector velocity = entity.getVelocity().clone();
 						velocity.setX(vx);
 						velocity.setZ(vz);
 						velocity.setY(vy);

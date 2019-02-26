@@ -222,7 +222,9 @@ public class WaterArmsWhip extends WaterAbility {
 		}
 
 		this.useArm();
-		this.dragEntity(this.end);
+		if (this.end != null) { //not 100% sure if this null check is a root cause fix or not
+			this.dragEntity(this.end);
+		}
 	}
 
 	private boolean canPlaceBlock(final Block block) {
@@ -395,16 +397,7 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	public static void checkValidEntities() {
-		for (final LivingEntity livingEnt : GRABBED_ENTITIES.keySet()) {
-			final WaterArmsWhip whip = GRABBED_ENTITIES.get(livingEnt);
-			if (!whip.isRemoved()) {
-				if (whip.grabbedEntity == null) {
-					GRABBED_ENTITIES.remove(livingEnt);
-				}
-			} else {
-				GRABBED_ENTITIES.remove(livingEnt);
-			}
-		}
+		GRABBED_ENTITIES.entrySet().removeIf(entry -> entry.getValue().isRemoved() || entry.getValue().grabbedEntity == null);
 	}
 
 	@Override

@@ -324,19 +324,8 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (TempBlock.isTempBlock(event.getBlock())) {
-			final TempBlock tb = TempBlock.get(event.getBlock());
-			tb.revertBlock();
-			event.getBlock().setType(event.getItemInHand().getType());
-			if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
-				if (event.getItemInHand().getAmount() <= 0) {
-					event.getItemInHand().setType(Material.AIR);
-					event.getItemInHand().setAmount(1);
-				} else {
-					event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
-				}
-			}
-			return;
+		if (TempBlock.isTempBlock(event.getBlock()) && event.getItemInHand().getType() != Material.FLINT_AND_STEEL) {
+			TempBlock.removeBlock(event.getBlock());
 		}
 	}
 
@@ -461,10 +450,12 @@ public class PKListener implements Listener {
 		if (TempArmor.hasTempArmor(event.getEntity())) {
 			final TempArmor armor = TempArmor.getVisibleTempArmor(event.getEntity());
 
-			final List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
+			if (armor != null) {
+				final List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
+				event.getDrops().clear();
+				event.getDrops().addAll(newDrops);
+			}
 
-			event.getDrops().clear();
-			event.getDrops().addAll(newDrops);
 			if (MetalClips.isControlled(event.getEntity())) {
 				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
 			}
@@ -718,12 +709,14 @@ public class PKListener implements Listener {
 
 		String e = "Nonbender";
 		ChatColor c = ChatColor.WHITE;
-		if(player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))){
-			c = Element.AVATAR.getColor();
-			e = Element.AVATAR.getName();
-		} else if (bPlayer.getElements().size() > 0) {
-			c = bPlayer.getElements().get(0).getColor();
-			e = bPlayer.getElements().get(0).getName();
+		if (bPlayer != null) {
+			if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
+				c = Element.AVATAR.getColor();
+				e = Element.AVATAR.getName();
+			} else if (bPlayer.getElements().size() > 0) {
+				c = bPlayer.getElements().get(0).getColor();
+				e = bPlayer.getElements().get(0).getName();
+			}
 		}
 		final String element = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e);
 		event.setFormat(event.getFormat().replace("{element}", c + element + ChatColor.RESET).replace("{ELEMENT}", c + element + ChatColor.RESET).replace("{elementcolor}", c + "").replace("{ELEMENTCOLOR}", c + ""));
@@ -862,7 +855,7 @@ public class PKListener implements Listener {
 				return;
 			}
 
-			final String boundAbil = sourceBPlayer.getBoundAbilityName();
+			final Ability boundAbil = sourceBPlayer.getBoundAbility();
 
 			if (sourceBPlayer.getBoundAbility() != null) {
 				if (!sourceBPlayer.isOnCooldown(boundAbil)) {
@@ -871,15 +864,15 @@ public class PKListener implements Listener {
 							if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
 								if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
 									if (sourceBPlayer.isElementToggled(Element.CHI)) {
-										if (boundAbil.equalsIgnoreCase("Paralyze")) {
+										if (boundAbil.equals(CoreAbility.getAbility(Paralyze.class))) {
 											new Paralyze(sourcePlayer, entity);
-										} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
+										} else if (boundAbil.equals(CoreAbility.getAbility(QuickStrike.class))) {
 											new QuickStrike(sourcePlayer, entity);
 											e.setCancelled(true);
-										} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
+										} else if (boundAbil.equals(CoreAbility.getAbility(SwiftKick.class))) {
 											new SwiftKick(sourcePlayer, entity);
 											e.setCancelled(true);
-										} else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
+										} else if (boundAbil.equals(CoreAbility.getAbility(RapidPunch.class))) {
 											new RapidPunch(sourcePlayer, entity);
 											e.setCancelled(true);
 										}
