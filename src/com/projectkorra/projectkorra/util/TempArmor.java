@@ -1,6 +1,8 @@
 package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
@@ -111,7 +113,7 @@ public class TempArmor {
 		for (final ItemStack drop : drops) {
 			boolean match = false;
 			for (final ItemStack armorPiece : this.newArmor) {
-				if (armorPiece.isSimilar(drop)) {
+				if (armorPiece != null && armorPiece.isSimilar(drop)) {
 					match = true;
 					break;
 				}
@@ -282,5 +284,11 @@ public class TempArmor {
 			return Collections.emptyList();
 		}
 		return new ArrayList<>(INSTANCES.get(entity));
+	}
+
+	@Override
+	public String toString()
+	{
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

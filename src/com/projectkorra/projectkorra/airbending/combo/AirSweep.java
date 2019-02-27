@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.command.Commands;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -186,7 +187,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 						this.remove();
 						return;
 					}
-					if (!entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
+					if (!entity.equals(this.player) && !this.affectedEntities.contains(entity) && !(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 						this.affectedEntities.add(entity);
 						if (this.knockback != 0) {
 							final Vector force = fstream.getDirection();

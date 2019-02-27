@@ -362,6 +362,9 @@ public class WaterSpout extends WaterAbility {
 	public List<Location> getLocations() {
 		final ArrayList<Location> locations = new ArrayList<>();
 		final Location top = this.getLocation();
+		if (this.getBase() == null) {
+			return locations;
+		}
 		final Location iterLoc = this.getBase().getLocation();
 		final double ySpacing = 2;
 		while (iterLoc.getY() <= top.getY()) {

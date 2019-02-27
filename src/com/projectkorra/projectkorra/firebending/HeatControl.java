@@ -328,7 +328,10 @@ public class HeatControl extends FireAbility {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						MELTED_BLOCKS.get(block).revertBlock();
+						TempBlock melted = MELTED_BLOCKS.get(block);
+						if (melted != null) {
+							melted.revertBlock();
+						}
 						MELTED_BLOCKS.remove(block);
 					}
 				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);
