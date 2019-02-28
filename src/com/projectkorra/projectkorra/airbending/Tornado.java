@@ -167,10 +167,6 @@ public class Tornado extends AirAbility {
 						entity.setFallDistance(0);
 
 						breakBreathbendingHold(entity);
-
-						if (entity instanceof Player) {
-							flightHandler.createInstance((Player) entity, 50L, this.getName());
-						}
 					}
 				}
 			}

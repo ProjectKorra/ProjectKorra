@@ -230,9 +230,6 @@ public class AirSuction extends AirAbility {
 					GeneralMethods.setVelocity(entity, velocity);
 					new HorizontalVelocityTracker(entity, this.player, 200l, this);
 					entity.setFallDistance(0);
-					if (entity instanceof Player) {
-						flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
-					}
 	
 					if (entity.getFireTicks() > 0) {
 						entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);

@@ -224,9 +224,6 @@ public class AirSwipe extends AirAbility {
 							}
 							AirSwipe.this.affectedEntities.add(entity);
 						}
-						if (entity instanceof Player) {
-							flightHandler.createInstance((Player) entity, AirSwipe.this.player, 1000L, AirSwipe.this.getName());
-						}
 						breakBreathbendingHold(entity);
 						if (AirSwipe.this.elements.containsKey(fDirection)) {
 							AirSwipe.this.elements.remove(fDirection);
