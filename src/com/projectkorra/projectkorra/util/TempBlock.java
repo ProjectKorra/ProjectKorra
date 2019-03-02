@@ -12,9 +12,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TempBlock {
@@ -33,6 +31,7 @@ public class TempBlock {
 	private long revertTime;
 	private boolean inRevertQueue;
 	private RevertTask revertTask = null;
+	public static Set<Material> physicsblocks = new HashSet<>(Arrays.asList(Material.GLOWSTONE, Material.TORCH, Material.SEA_LANTERN, Material.BEACON, Material.REDSTONE_LAMP, Material.REDSTONE_TORCH, Material.MAGMA_BLOCK, Material.LAVA, Material.JACK_O_LANTERN, Material.END_ROD));
 	
 	public TempBlock(final Block block, final Material newtype) {
 		this(block, newtype.createBlockData());
@@ -48,7 +47,7 @@ public class TempBlock {
 		if (instances.containsKey(block)) {
 			final TempBlock temp = instances.get(block);
 			if (!newdata.equals(temp.block.getBlockData())) {
-				temp.block.setBlockData(newdata, newdata.getMaterial() != Material.WATER);
+				temp.block.setBlockData(newdata, physicsblocks.contains(newdata.getMaterial()));
 				temp.newdata = newdata;
 			}
 			this.state = temp.state;
@@ -56,7 +55,7 @@ public class TempBlock {
 		} else {
 			this.state = block.getState();
 			instances.put(block, this);
-			block.setBlockData(newdata, newdata.getMaterial() != Material.WATER);
+			block.setBlockData(newdata, physicsblocks.contains(newdata.getMaterial()));
 		}
 		if (this.state.getType() == Material.FIRE) {
 			this.state.setType(Material.AIR);
@@ -107,27 +106,23 @@ public class TempBlock {
 			instances.get(block).revertBlock();
 		} else {
 			if ((defaulttype == Material.LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block, true)) {
-				block.setType(Material.LAVA);
-				
 				BlockData data = Material.LAVA.createBlockData();
 				
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(0);
 				}
 				
-				block.setBlockData(data);
+				block.setBlockData(data, physicsblocks.contains(data.getMaterial()));
 			} else if ((defaulttype == Material.WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
-				block.setType(Material.WATER);
-				
 				BlockData data = Material.WATER.createBlockData();
 				
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(0);
 				}
 				
-				block.setBlockData(data);
+				block.setBlockData(data, physicsblocks.contains(data.getMaterial()));
 			} else {
-				block.setType(defaulttype);
+				block.setType(defaulttype, physicsblocks.contains(defaulttype));
 			}
 		}
 	}
@@ -185,13 +180,16 @@ public class TempBlock {
 	}
 
 	public void setType(final Material material) {
-		this.setType(material, material.createBlockData());
+		this.setType(material.createBlockData());
 	}
 
 	public void setType(final Material material, final BlockData data) {
+		this.setType(data);
+	}
+
+	public void setType(final BlockData data) {
 		this.newdata = data;
-		this.block.setType(material);
-		this.block.setBlockData(data);
+		this.block.setBlockData(data, physicsblocks.contains(data.getMaterial()));
 	}
 
 	public static void startReversion() {
