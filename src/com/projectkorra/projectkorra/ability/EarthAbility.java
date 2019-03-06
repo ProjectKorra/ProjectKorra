@@ -268,7 +268,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			info.setBlock(block);
 			info.setState(block.getState());
 		}
-		block.setType(Material.AIR);
+		block.setType(Material.AIR, false);
 		info.setTime(System.currentTimeMillis());
 		TEMP_AIR_LOCATIONS.put(info.getID(), info);
 	}
@@ -462,9 +462,11 @@ public abstract class EarthAbility extends ElementalAbility {
 			target.setType(Material.RED_SANDSTONE);
 		} else if (info.getState().getType() == Material.GRAVEL) {
 			target.setType(Material.STONE);
+		} else if (info.getState().getType().name().endsWith("CONCRETE_POWDER")) {
+			target.setType(Material.getMaterial(info.getState().getType().name().replace("_POWDER", "")));
 		} else {
 			target.setType(info.getState().getType());
-			target.setBlockData(info.getState().getBlockData());
+			target.setBlockData(info.getState().getBlockData(), false);
 		}
 
 		source.setType(Material.AIR);

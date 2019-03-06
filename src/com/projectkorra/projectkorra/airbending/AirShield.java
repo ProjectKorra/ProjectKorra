@@ -144,7 +144,7 @@ public class AirShield extends AirAbility {
 				vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
 				vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
-				final Vector velocity = entity.getVelocity();
+				final Vector velocity = entity.getVelocity().clone();
 				if (this.bPlayer.isAvatarState()) {
 					velocity.setX(AvatarState.getValue(vx));
 					velocity.setZ(AvatarState.getValue(vz));

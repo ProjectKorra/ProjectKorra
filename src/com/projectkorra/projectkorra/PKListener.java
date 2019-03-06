@@ -84,24 +84,14 @@ public class PKListener implements Listener {
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
-	private static MCTiming TimingPhysicsWaterManipulationCheck;
-	private static MCTiming TimingPhysicsEarthPassiveCheck;
-	private static MCTiming TimingPhysicsIlluminationTorchCheck;
-	private static MCTiming TimingPhysicsEarthAbilityCheck;
-	private static MCTiming TimingPhysicsAirTempBlockBelowFallingBlockCheck;
-
-	private static MCTiming TimingPlayerMoveMovementHandlerCheck;
-	private static MCTiming TimingPlayerMoveSpoutCheck;
-	private static MCTiming TimingPlayerMoveBloodbentCheck;
-	private static MCTiming TimingPlayerMoveAirChiPassiveCheck;
-	private static MCTiming TimingPlayerMoveFirePassiveCheck;
-	private static MCTiming TimingPlayerMoveJumpCheck;
+	private static MCTiming TimingPhysicsWaterManipulationCheck, TimingPhysicsEarthPassiveCheck, TimingPhysicsIlluminationTorchCheck, TimingPhysicsEarthAbilityCheck, TimingPhysicsAirTempBlockBelowFallingBlockCheck;
+	private static MCTiming TimingPlayerMoveMovementHandlerCheck, TimingPlayerMoveSpoutCheck, TimingPlayerMoveBloodbentCheck, TimingPlayerMoveAirChiPassiveCheck, TimingPlayerMoveFirePassiveCheck, TimingPlayerMoveJumpCheck;
 
 	public PKListener(final ProjectKorra plugin) {
 
 		this.plugin = plugin;
 
-		TimingPhysicsWaterManipulationCheck = plugin.timing("PhysicsWaterManipulationCheck");
+		TimingPhysicsWaterManipulationCheck = ProjectKorra.timing("PhysicsWaterManipulationCheck");
 		TimingPhysicsEarthPassiveCheck = ProjectKorra.timing("PhysicsEarthPassiveCheck");
 		TimingPhysicsIlluminationTorchCheck = ProjectKorra.timing("PhysicsIlluminationTorchCheck");
 		TimingPhysicsEarthAbilityCheck = ProjectKorra.timing("PhysicsEarthAbilityCheck");
