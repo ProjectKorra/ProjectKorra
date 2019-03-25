@@ -310,7 +310,7 @@ public class HeatControl extends FireAbility {
 		if (TempBlock.isTempBlock(block)) {
 			final TempBlock tb = TempBlock.get(block);
 			if (PhaseChange.getFrozenBlocksMap().containsKey(tb)) {
-				PhaseChange.thaw(tb);
+				new PhaseChange(player, PhaseChange.PhaseChangeType.MELT).melt(tb.getBlock());
 			}
 		}
 
