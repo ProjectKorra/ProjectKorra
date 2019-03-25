@@ -88,7 +88,7 @@ public class TempBlock {
 			revertBlock(block, Material.AIR);
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
-			tempblock.state.update(true);
+			tempblock.state.update(true, physicsblocks.contains(tempblock.state.getType()));
 			if (tempblock.revertTask != null) {
 				tempblock.revertTask.run();
 			}
@@ -166,7 +166,7 @@ public class TempBlock {
 
 	public void revertBlock() {
 		PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result ->
-			this.state.update(true)
+			this.state.update(true, physicsblocks.contains(this.state.getType()))
 		);
 		instances.remove(this.block);
 		REVERT_QUEUE.remove(this);

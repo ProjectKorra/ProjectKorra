@@ -101,6 +101,11 @@ public class AirStream extends AirAbility implements ComboAbility {
 			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, getTransparentMaterials());
 		}
 
+		if (this.currentLoc.equals(this.destination)) {
+			this.remove();
+			return;
+		}
+
 		this.direction = GeneralMethods.getDirection(this.currentLoc, this.destination).normalize();
 		this.currentLoc.add(this.direction.clone().multiply(this.speed));
 

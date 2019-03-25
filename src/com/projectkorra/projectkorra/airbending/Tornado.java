@@ -127,8 +127,13 @@ public class Tornado extends AirAbility {
 
 						mag = Math.sqrt(x * x + z * z);
 
-						vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
-						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+						if (mag == 0.0) {
+							vx = 0.0;
+							vz = 0.0;
+						} else {
+							vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
+							vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+						}
 
 						if (entity instanceof Player) {
 							vy = 0.05 * this.playerPushFactor;

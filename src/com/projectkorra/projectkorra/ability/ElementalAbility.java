@@ -219,6 +219,8 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isWater(final Block block) {
 		if (block == null) {
 			return false;
+		} else if(isWater(block.getType())) {
+			return true;
 		} else {
 			return isWater(block.getBlockData());
 		}

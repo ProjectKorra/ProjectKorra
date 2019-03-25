@@ -457,15 +457,14 @@ public abstract class EarthAbility extends ElementalAbility {
 		MOVED_EARTH.put(target, info);
 
 		if (info.getState().getType() == Material.SAND) {
-			target.setType(Material.SANDSTONE);
+			target.setType(Material.SANDSTONE, false);
 		} else if (info.getState().getType() == Material.RED_SAND) {
-			target.setType(Material.RED_SANDSTONE);
+			target.setType(Material.RED_SANDSTONE, false);
 		} else if (info.getState().getType() == Material.GRAVEL) {
-			target.setType(Material.STONE);
+			target.setType(Material.STONE, false);
 		} else if (info.getState().getType().name().endsWith("CONCRETE_POWDER")) {
-			target.setType(Material.getMaterial(info.getState().getType().name().replace("_POWDER", "")));
+			target.setType(Material.getMaterial(info.getState().getType().name().replace("_POWDER", "")), false);
 		} else {
-			target.setType(info.getState().getType());
 			target.setBlockData(info.getState().getBlockData(), false);
 		}
 

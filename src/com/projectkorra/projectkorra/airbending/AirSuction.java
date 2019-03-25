@@ -188,7 +188,7 @@ public class AirSuction extends AirAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(this.player, "AirSuction", this.location)) {
 				this.remove();
 				return;
-			} else if (this.location.distanceSquared(this.origin) > this.range * this.range || this.location.distanceSquared(this.origin) <= 1) {
+			} else if (!this.location.getWorld().equals(this.origin.getWorld()) || this.location.distanceSquared(this.origin) > this.range * this.range || this.location.distanceSquared(this.origin) <= 1) {
 				this.remove();
 				return;
 			}
