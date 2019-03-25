@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.waterbending.blood;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -120,7 +119,7 @@ public class Bloodbending extends BloodAbility {
 						return;
 					}
 				}
-			} else if (!this.canBeUsedOnUndeadMobs && isUndead(this.target)) {
+			} else if (!this.canBeUsedOnUndeadMobs && GeneralMethods.isUndead(this.target)) {
 				return;
 			}
 
@@ -172,7 +171,7 @@ public class Bloodbending extends BloodAbility {
 
 		if (!this.canBeUsedOnUndeadMobs) {
 			for (final Entity entity : TARGETED_ENTITIES.keySet()) {
-				if (isUndead(entity)) {
+				if (GeneralMethods.isUndead(entity)) {
 					TARGETED_ENTITIES.remove(entity);
 				}
 			}

@@ -1599,7 +1599,25 @@ public class GeneralMethods {
 
 	/** Checks if an entity is Undead **/
 	public static boolean isUndead(final Entity entity) {
-		return entity != null && (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE);
+		if (entity == null) {
+			return false;
+		}
+		switch(entity.getType()){
+			case SKELETON:
+			case STRAY:
+			case WITHER_SKELETON:
+			case WITHER:
+			case ZOMBIE:
+			case HUSK:
+			case ZOMBIE_VILLAGER:
+			case PIG_ZOMBIE:
+			case DROWNED:
+			case ZOMBIE_HORSE:
+			case SKELETON_HORSE:
+			case PHANTOM:
+				return true;
+		}
+		return false;
 	}
 
 	public static boolean isWeapon(final Material mat) {

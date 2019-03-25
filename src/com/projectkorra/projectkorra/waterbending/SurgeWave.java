@@ -232,7 +232,7 @@ public class SurgeWave extends WaterAbility {
 
 				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 					new PlantRegrowth(this.player, this.sourceBlock);
-					this.sourceBlock.setType(Material.AIR);
+					this.sourceBlock.setType(Material.AIR, false);
 				}
 				
 				if (TempBlock.isTempBlock(this.sourceBlock)) {
@@ -412,7 +412,7 @@ public class SurgeWave extends WaterAbility {
 	public static void removeAllCleanup() {
 		for (final SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			for (final Block block : surgeWave.waveBlocks.keySet()) {
-				block.setType(Material.AIR);
+				block.setType(Material.AIR, false);
 				surgeWave.waveBlocks.remove(block);
 			}
 			for (final Block block : surgeWave.frozenBlocks.keySet()) {

@@ -206,30 +206,6 @@ public abstract class ElementalAbility extends CoreAbility {
 		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation());
 	}
 
-	public static boolean isUndead(final Entity entity) {
-		if (entity == null) {
-			return false;
-		}
-
-		//https://minecraft.gamepedia.com/Undead
-		Set<EntityType> undead = new HashSet<>(Arrays.asList(
-				EntityType.SKELETON,
-				EntityType.STRAY,
-				EntityType.WITHER_SKELETON,
-				EntityType.WITHER,
-				EntityType.ZOMBIE,
-				EntityType.HUSK,
-				EntityType.ZOMBIE_VILLAGER,
-				EntityType.PIG_ZOMBIE,
-				EntityType.DROWNED,
-				EntityType.ZOMBIE_HORSE,
-				EntityType.SKELETON_HORSE,
-				EntityType.PHANTOM
-		));
-
-		return undead.contains(entity.getType());
-	}
-
 	public static boolean isWater(final Block block) {
 		if (block == null) {
 			return false;
