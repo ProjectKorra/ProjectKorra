@@ -131,8 +131,6 @@ public class RevertChecker implements Runnable {
 
 		@Override
 		public Set<Map<String,Integer>> call() {
-			ProjectKorra.timing("RevertEarthCheckerGetOccupiedChunks").startTiming();
-
 			final Set<Map<String,Integer>> chunks = new HashSet<>();
 
 			for (final Player player : this.server.getOnlinePlayers()) {
@@ -143,7 +141,6 @@ public class RevertChecker implements Runnable {
 				chunks.add(chunkcoord);
 			}
 
-			ProjectKorra.timing("RevertEarthCheckerGetOccupiedChunks").stopTiming();
 			return chunks;
 
 		}

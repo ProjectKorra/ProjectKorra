@@ -112,41 +112,41 @@ public class BendingManager implements Runnable {
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
 
-		TimingCoreAbilityProgressAll.startTiming();
-		CoreAbility.progressAll();
-		TimingCoreAbilityProgressAll.stopTiming();
+		try(MCTiming timing = TimingCoreAbilityProgressAll.startTiming()) {
+			CoreAbility.progressAll();
+		}
 
-		TimingTempPotionProgressAll.startTiming();
-		TempPotionEffect.progressAll();
-		TimingTempPotionProgressAll.stopTiming();
+		try(MCTiming timing = TimingTempPotionProgressAll.startTiming()) {
+			TempPotionEffect.progressAll();
+		}
 
-		TimingHandleDayNight.startTiming();
-		this.handleDayNight();
-		TimingHandleDayNight.stopTiming();
+		try(MCTiming timing = TimingHandleDayNight.startTiming()) {
+			this.handleDayNight();
+		}
 
 		RevertChecker.revertAirBlocks();
 
-		TimingHorizontalVelocityTrackerUpdateAll.startTiming();
-		HorizontalVelocityTracker.updateAll();
-		TimingHorizontalVelocityTrackerUpdateAll.stopTiming();
+		try(MCTiming timing = TimingHorizontalVelocityTrackerUpdateAll.startTiming()) {
+			HorizontalVelocityTracker.updateAll();
+		}
 
-		TimingHandleCoolDowns.startTiming();
-		this.handleCooldowns();
-		TimingHandleCoolDowns.stopTiming();
+		try(MCTiming timing = TimingHandleCoolDowns.startTiming()) {
+			this.handleCooldowns();
+		}
 
-		TimingTempArmorCleanup.startTiming();
-		TempArmor.cleanup();
-		TimingTempArmorCleanup.stopTiming();
+		try(MCTiming timing = TimingTempArmorCleanup.startTiming()) {
+			TempArmor.cleanup();
+		}
 
-		TimingActionBarCheck.startTiming();
-		for (final Player player : Bukkit.getOnlinePlayers()) {
-			if (Bloodbending.isBloodbent(player)) {
-				ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
-			} else if (MetalClips.isControlled(player)) {
-				ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
+		try(MCTiming timing = TimingActionBarCheck.startTiming()) {
+			for (final Player player : Bukkit.getOnlinePlayers()) {
+				if (Bloodbending.isBloodbent(player)) {
+					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
+				} else if (MetalClips.isControlled(player)) {
+					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
+				}
 			}
 		}
-		TimingActionBarCheck.stopTiming();
 	}
 
 	public static String getSunriseMessage() {

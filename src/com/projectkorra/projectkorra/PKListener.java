@@ -267,43 +267,43 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		final Block block = event.getBlock();
 
-		TimingPhysicsWaterManipulationCheck.startTiming();
-		if (!WaterManipulation.canPhysicsChange(block)) {
-			event.setCancelled(true);
-			return;
+		try(MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
+			if (!WaterManipulation.canPhysicsChange(block)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
-		TimingPhysicsWaterManipulationCheck.stopTiming();
 
-		TimingPhysicsEarthPassiveCheck.startTiming();
-		if (!EarthPassive.canPhysicsChange(block)) {
-			event.setCancelled(true);
-			return;
+		try(MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
+			if (!EarthPassive.canPhysicsChange(block)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
-		TimingPhysicsEarthPassiveCheck.stopTiming();
 
-		TimingPhysicsIlluminationTorchCheck.startTiming();
-		if (Illumination.isIlluminationTorch(block)) {
-			event.setCancelled(true);
-			return;
+		try(MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
+			if (Illumination.isIlluminationTorch(block)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
-		TimingPhysicsIlluminationTorchCheck.stopTiming();
 
-		TimingPhysicsEarthAbilityCheck.startTiming();
-		if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
-			event.setCancelled(true);
-			return;
+		try(MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
+			if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
-		TimingPhysicsEarthAbilityCheck.stopTiming();
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
-		TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming();
-		if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) &&
-				ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) &&
-				TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))
-		) {
-			event.setCancelled(true);
+		try(MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
+			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) &&
+					ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) &&
+					TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))
+			) {
+				event.setCancelled(true);
+			}
 		}
-		TimingPhysicsAirTempBlockBelowFallingBlockCheck.stopTiming();
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1116,83 +1116,83 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		TimingPlayerMoveMovementHandlerCheck.startTiming();
-		if (MovementHandler.isStopped(player)) {
-			if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
-				event.setCancelled(true);
-			}
-			return;
-		}
-		TimingPlayerMoveMovementHandlerCheck.stopTiming();
-
-		TimingPlayerMoveSpoutCheck.startTiming();
-		if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
-			Vector vel = new Vector();
-			vel.setX(event.getTo().getX() - event.getFrom().getX());
-			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
-
-			final double currspeed = vel.length();
-			final double maxspeed = .2;
-			if (currspeed > maxspeed) {
-				// apply only if moving set a factor
-				vel = vel.normalize().multiply(maxspeed);
-				// apply the new velocity
-				event.getPlayer().setVelocity(vel);
-			}
-			return;
-		}
-		TimingPlayerMoveSpoutCheck.stopTiming();
-
-		TimingPlayerMoveBloodbentCheck.startTiming();
-		if (Bloodbending.isBloodbent(player)) {
-			final BendingPlayer bender = Bloodbending.getBloodbender(player);
-			if (bender.isAvatarState()) {
-				event.setCancelled(true);
+		try(MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
+			if (MovementHandler.isStopped(player)) {
+				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
+					event.setCancelled(true);
+				}
 				return;
 			}
-
-			final Location loc = Bloodbending.getBloodbendingLocation(player);
-			if (player.getWorld().equals(loc.getWorld())) {
-				if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
-					player.setVelocity(Bloodbending.getBloodbendingVector(player));
-				}
-			}
-			return;
 		}
-		TimingPlayerMoveBloodbentCheck.stopTiming();
+
+		try(MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
+			if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
+				Vector vel = new Vector();
+				vel.setX(event.getTo().getX() - event.getFrom().getX());
+				vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
+
+				final double currspeed = vel.length();
+				final double maxspeed = .2;
+				if (currspeed > maxspeed) {
+					// apply only if moving set a factor
+					vel = vel.normalize().multiply(maxspeed);
+					// apply the new velocity
+					event.getPlayer().setVelocity(vel);
+				}
+				return;
+			}
+		}
+
+		try(MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
+			if (Bloodbending.isBloodbent(player)) {
+				final BendingPlayer bender = Bloodbending.getBloodbender(player);
+				if (bender.isAvatarState()) {
+					event.setCancelled(true);
+					return;
+				}
+
+				final Location loc = Bloodbending.getBloodbendingLocation(player);
+				if (player.getWorld().equals(loc.getWorld())) {
+					if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
+						player.setVelocity(Bloodbending.getBloodbendingVector(player));
+					}
+				}
+				return;
+			}
+		}
 
 		if (bPlayer != null) {
-			TimingPlayerMoveAirChiPassiveCheck.startTiming();
-			if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-				PassiveHandler.checkExhaustionPassives(player);
+			try(MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
+				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
+					PassiveHandler.checkExhaustionPassives(player);
+				}
 			}
-			TimingPlayerMoveAirChiPassiveCheck.stopTiming();
 
-			TimingPlayerMoveFirePassiveCheck.startTiming();
-			if (event.getTo().getBlock() != event.getFrom().getBlock()) {
-				FirePassive.handle(player);
+			try(MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
+				if (event.getTo().getBlock() != event.getFrom().getBlock()) {
+					FirePassive.handle(player);
+				}
 			}
-			TimingPlayerMoveFirePassiveCheck.stopTiming();
 		}
 
-		TimingPlayerMoveJumpCheck.startTiming();
-		if (event.getTo().getY() > event.getFrom().getY()) {
-			if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
-				final int current = player.getStatistic(Statistic.JUMP);
-				final int last = JUMPS.get(player);
+		try(MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
+			if (event.getTo().getY() > event.getFrom().getY()) {
+				if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
+					final int current = player.getStatistic(Statistic.JUMP);
+					final int last = JUMPS.get(player);
 
-				if (last != current) {
-					JUMPS.put(player, current);
+					if (last != current) {
+						JUMPS.put(player, current);
 
-					final double yDif = event.getTo().getY() - event.getFrom().getY();
+						final double yDif = event.getTo().getY() - event.getFrom().getY();
 
-					if ((yDif < 0.035 || yDif > 0.037) && (yDif < 0.116 || yDif > 0.118)) {
-						Bukkit.getServer().getPluginManager().callEvent(new PlayerJumpEvent(player, yDif));
+						if ((yDif < 0.035 || yDif > 0.037) && (yDif < 0.116 || yDif > 0.118)) {
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerJumpEvent(player, yDif));
+						}
 					}
 				}
 			}
 		}
-		TimingPlayerMoveJumpCheck.stopTiming();
 	}
 
 	@EventHandler
