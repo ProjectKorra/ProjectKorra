@@ -8,10 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -97,19 +94,15 @@ public class Bloodbending extends BloodAbility {
 			for (int i = 0; i < this.range; i++) {
 				final Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
-				if (entities.contains(player)) {
-					entities.remove(player);
-				}
-				for (final Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
-					if (!(iterator.next() instanceof LivingEntity)) {
-						iterator.remove();
-					}
-				}
-				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
+
+				entities.remove(player);
+				entities.removeIf(e -> !(e instanceof LivingEntity) || e instanceof ArmorStand);
+
+				if (!entities.isEmpty() && !entities.contains(player)) {
 					break;
 				}
 			}
-			if (entities == null || entities.isEmpty()) {
+			if (entities.isEmpty()) {
 				return;
 			}
 			this.target = entities.get(0);

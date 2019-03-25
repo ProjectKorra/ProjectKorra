@@ -209,11 +209,25 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isUndead(final Entity entity) {
 		if (entity == null) {
 			return false;
-		} else if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE) {
-			return true;
 		}
 
-		return false;
+		//https://minecraft.gamepedia.com/Undead
+		Set<EntityType> undead = new HashSet<>(Arrays.asList(
+				EntityType.SKELETON,
+				EntityType.STRAY,
+				EntityType.WITHER_SKELETON,
+				EntityType.WITHER,
+				EntityType.ZOMBIE,
+				EntityType.HUSK,
+				EntityType.ZOMBIE_VILLAGER,
+				EntityType.PIG_ZOMBIE,
+				EntityType.DROWNED,
+				EntityType.ZOMBIE_HORSE,
+				EntityType.SKELETON_HORSE,
+				EntityType.PHANTOM
+		));
+
+		return undead.contains(entity.getType());
 	}
 
 	public static boolean isWater(final Block block) {

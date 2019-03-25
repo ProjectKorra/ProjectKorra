@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -67,6 +69,12 @@ public class HorizontalVelocityTracker {
 			return;
 		}
 
+		if (System.currentTimeMillis() > (this.fireTime + 30000)) {
+			ProjectKorra.log.info("removed HorizontalVelocityTracker over 30 seconds: " + this.toString());
+			this.remove();
+			return;
+		}
+
 		this.lastVelocity = this.thisVelocity.clone();
 		this.thisVelocity = this.entity.getVelocity().clone();
 
@@ -124,5 +132,11 @@ public class HorizontalVelocityTracker {
 			return instances.get(e).hasBeenDamaged;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString()
+	{
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }
