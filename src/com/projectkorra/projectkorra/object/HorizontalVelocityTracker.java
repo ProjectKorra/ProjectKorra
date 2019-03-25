@@ -70,7 +70,7 @@ public class HorizontalVelocityTracker {
 		}
 
 		if (System.currentTimeMillis() > (this.fireTime + 30000)) {
-			ProjectKorra.log.info("removed HorizontalVelocityTracker over 30 seconds: " + this.toString());
+			ProjectKorra.log.info("removed HorizontalVelocityTracker lasting over 30 seconds: " + this.instigator.getName() + " using " + this.abil.getName() + " on " + this.entity);
 			this.remove();
 			return;
 		}
