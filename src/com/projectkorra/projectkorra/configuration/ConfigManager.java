@@ -1214,6 +1214,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
 			config.addDefault("Abilities.Earth.EarthTunnel.IgnoreOres", false);
 			config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
+			config.addDefault("Abilities.Earth.EarthTunnel.BlocksPerInterval", 1);
 
 			config.addDefault("Abilities.Earth.Extraction.Enabled", true);
 			config.addDefault("Abilities.Earth.Extraction.SelectRange", 5);

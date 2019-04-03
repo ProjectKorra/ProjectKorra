@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 public class EarthTunnel extends EarthAbility {
 
 	private long interval;
+	private int blocksPerInterval;
 	private long time;
 	@Attribute("Depth")
 	private double depth;
@@ -53,6 +54,7 @@ public class EarthTunnel extends EarthAbility {
 		this.range = getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
+		this.blocksPerInterval = getConfig().getInt("Abilities.Earth.EarthTunnel.BlocksPerInterval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
 		this.ignoreOres = getConfig().getBoolean("Abilities.Earth.EarthTunnel.IgnoreOres");
@@ -94,66 +96,68 @@ public class EarthTunnel extends EarthAbility {
 
 		if (System.currentTimeMillis() - this.time >= this.interval) {
 			this.time = System.currentTimeMillis();
-			if (Math.abs(Math.toDegrees(this.player.getEyeLocation().getDirection().angle(this.direction))) > 20 || !this.player.isSneaking()) {
-				this.bPlayer.addCooldown(this);
-				this.remove();
-				return;
-			} else {
-				while ((!isEarth(this.block) && !isSand(this.block)) || (ignoreOres && this.isOre(this.block))) {
-					if (!this.isTransparent(this.block) && (ignoreOres && !this.isOre(this.block))) {
+			for (int i = 1; i <= blocksPerInterval; i++) {
+				if (Math.abs(Math.toDegrees(this.player.getEyeLocation().getDirection().angle(this.direction))) > 20 || !this.player.isSneaking()) {
+					this.bPlayer.addCooldown(this);
+					this.remove();
+					return;
+				} else {
+					while ((!isEarth(this.block) && !isSand(this.block)) || (ignoreOres && this.isOre(this.block))) {
+						if (!this.isTransparent(this.block) && (ignoreOres && !this.isOre(this.block))) {
+							this.remove();
+							return;
+						}
+
+						if (this.angle >= 360) {
+							this.angle = 0;
+							if (this.radius >= this.maxRadius) {
+								this.radius = this.radiusIncrement;
+								if (this.depth >= this.range) {
+									this.bPlayer.addCooldown(this);
+									this.remove();
+									return;
+								} else {
+									this.depth += 0.5;
+								}
+							} else {
+								this.radius += this.radiusIncrement;
+							}
+						} else {
+							this.angle += 20;
+						}
+
+						final Vector vec = GeneralMethods.getOrthogonalVector(this.direction, this.angle, this.radius);
+						this.block = this.location.clone().add(this.direction.clone().normalize().multiply(this.depth)).add(vec).getBlock();
+					}
+
+					if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
+						this.bPlayer.addCooldown(this);
 						this.remove();
 						return;
 					}
 
-					if (this.angle >= 360) {
-						this.angle = 0;
-						if (this.radius >= this.maxRadius) {
-							this.radius = this.radiusIncrement;
-							if (this.depth >= this.range) {
-								this.bPlayer.addCooldown(this);
-								this.remove();
-								return;
-							} else {
-								this.depth += 0.5;
-							}
+					if (this.revert) {
+						if (getMovedEarth().containsKey(this.block)) {
+							this.block.setType(Material.AIR);
 						} else {
-							this.radius += this.radiusIncrement;
-						}
-					} else {
-						this.angle += 20;
-					}
-
-					final Vector vec = GeneralMethods.getOrthogonalVector(this.direction, this.angle, this.radius);
-					this.block = this.location.clone().add(this.direction.clone().normalize().multiply(this.depth)).add(vec).getBlock();
-				}
-
-				if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
-					this.bPlayer.addCooldown(this);
-					this.remove();
-					return;
-				}
-
-				if (this.revert) {
-					if (getMovedEarth().containsKey(this.block)) {
-						this.block.setType(Material.AIR);
-					} else {
-						airBlocks.put(new TempBlock(this.block, Material.AIR), System.currentTimeMillis());
-						if (isPlant(this.block.getRelative(BlockFace.UP)) || isSnow(this.block.getRelative(BlockFace.UP))) {
-							final Block above = this.block.getRelative(BlockFace.UP);
-							final Block above2 = above.getRelative(BlockFace.UP);
-							if (isPlant(above) || isSnow(above)) {
-								airBlocks.put(new TempBlock(above, Material.AIR), System.currentTimeMillis());
-								if (isPlant(above2) && above2.getType().equals(Material.TALL_GRASS)) {
-									airBlocks.put(new TempBlock(above2, Material.AIR), System.currentTimeMillis());
+							airBlocks.put(new TempBlock(this.block, Material.AIR), System.currentTimeMillis());
+							if (isPlant(this.block.getRelative(BlockFace.UP)) || isSnow(this.block.getRelative(BlockFace.UP))) {
+								final Block above = this.block.getRelative(BlockFace.UP);
+								final Block above2 = above.getRelative(BlockFace.UP);
+								if (isPlant(above) || isSnow(above)) {
+									airBlocks.put(new TempBlock(above, Material.AIR), System.currentTimeMillis());
+									if (isPlant(above2) && above2.getType().equals(Material.TALL_GRASS)) {
+										airBlocks.put(new TempBlock(above2, Material.AIR), System.currentTimeMillis());
+									}
 								}
 							}
 						}
-					}
-				} else {
-					if (this.dropLootIfNotRevert) {
-						this.block.breakNaturally();
 					} else {
-						this.block.setType(Material.AIR);
+						if (this.dropLootIfNotRevert) {
+							this.block.breakNaturally();
+						} else {
+							this.block.setType(Material.AIR);
+						}
 					}
 				}
 			}
