@@ -37,6 +37,7 @@ public class EarthTunnel extends EarthAbility {
 	private double radiusIncrement;
 	private boolean revert;
 	private boolean dropLootIfNotRevert;
+	private boolean ignoreOres;
 	private Block block;
 	private Location origin;
 	private Location location;
@@ -54,6 +55,7 @@ public class EarthTunnel extends EarthAbility {
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
+		this.ignoreOres = getConfig().getBoolean("Abilities.Earth.EarthTunnel.IgnoreOres");
 
 		this.time = System.currentTimeMillis();
 
@@ -97,8 +99,8 @@ public class EarthTunnel extends EarthAbility {
 				this.remove();
 				return;
 			} else {
-				while ((!isEarth(this.block) && !isSand(this.block))) {
-					if (!this.isTransparent(this.block)) {
+				while ((!isEarth(this.block) && !isSand(this.block)) || (ignoreOres && this.isOre(this.block))) {
+					if (!this.isTransparent(this.block) && (ignoreOres && !this.isOre(this.block))) {
 						this.remove();
 						return;
 					}
@@ -156,6 +158,21 @@ public class EarthTunnel extends EarthAbility {
 				}
 			}
 		}
+	}
+
+	private boolean isOre(Block block) {
+		switch (block.getType()) {
+			case IRON_ORE:
+			case GOLD_ORE:
+			case DIAMOND_ORE:
+			case REDSTONE_ORE:
+			case COAL_ORE:
+			case EMERALD_ORE:
+			case LAPIS_ORE:
+			case NETHER_QUARTZ_ORE:
+				return true;
+		}
+		return false;
 	}
 
 	@Override
