@@ -43,6 +43,7 @@ import com.projectkorra.projectkorra.util.*;
 import com.projectkorra.projectkorra.util.FlightHandler.Flight;
 import com.projectkorra.projectkorra.waterbending.*;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
@@ -985,6 +986,14 @@ public class PKListener implements Listener {
 			}
 		}
 
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("IceBlast")) {
+				if (CoreAbility.hasAbility(player, IceBullet.class)) {
+					CoreAbility.getAbility(player, IceBullet.class).doRightClick();
+				}
+			}
+		}
+
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
@@ -1024,6 +1033,7 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
+
 		if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
 			if (event.getRightClicked() instanceof Player) {
 				final Player target = (Player) event.getRightClicked();
@@ -1560,7 +1570,11 @@ public class PKListener implements Listener {
 					if (abil.equalsIgnoreCase("Bloodbending")) {
 						Bloodbending.launch(player);
 					} else if (abil.equalsIgnoreCase("IceBlast")) {
-						IceBlast.activate(player);
+						if (CoreAbility.hasAbility(player, IceBullet.class)) {
+							CoreAbility.getAbility(player, IceBullet.class).doLeftClick();
+						} else {
+							IceBlast.activate(player);
+						}
 					} else if (abil.equalsIgnoreCase("IceSpike")) {
 						IceSpikeBlast.activate(player);
 					} else if (abil.equalsIgnoreCase("OctopusForm")) {

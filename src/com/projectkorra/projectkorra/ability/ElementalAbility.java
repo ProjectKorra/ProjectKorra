@@ -115,7 +115,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMeltable(final Block block) {
-		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) {
+		if (isIce(block) || isSnow(block)) {
 			return true;
 		}
 
