@@ -2138,6 +2138,34 @@ public class GeneralMethods {
 		return loc.getWorld().spawnFallingBlock(loc, data);
 	}
 
+	public static boolean playerHeadIsInBlock(Player player, Block block) {
+		return playerHeadIsInBlock(player, block, false);
+	}
+
+	public static boolean playerHeadIsInBlock(Player player, Block block, boolean exact) {
+		double checkDistance;
+		if (exact){
+			checkDistance = 0.5;
+		} else {
+			checkDistance = 0.75;
+		}
+		return (player.getEyeLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getEyeLocation().getX() - block.getLocation().add(0.5,0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getEyeLocation().getZ() - block.getLocation().add(0.5,0.0, 0.5).getZ()) < checkDistance));
+	}
+
+	public static boolean playerFeetIsInBlock(Player player, Block block) {
+		return playerFeetIsInBlock(player, block, false);
+	}
+
+	public static boolean playerFeetIsInBlock(Player player, Block block, boolean exact) {
+		double checkDistance;
+		if (exact){
+			checkDistance = 0.5;
+		} else {
+			checkDistance = 0.75;
+		}
+		return (player.getLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getLocation().getX() - block.getLocation().add(0.5,0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getLocation().getZ() - block.getLocation().add(0.5,0.0, 0.5).getZ()) < checkDistance));
+	}
+
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
 		ChatColor color;
 		try {

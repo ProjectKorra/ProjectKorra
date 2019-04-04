@@ -147,12 +147,26 @@ public class SurgeWave extends WaterAbility {
 		if (freezeradius > this.maxFreezeRadius) {
 			freezeradius = this.maxFreezeRadius;
 		}
-
-		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
+		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.frozenLocation, freezeradius);
+		ICE_SETTING: for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
+			}
+
+			for (Entity entity : trapped) {
+				if (entity instanceof Player) {
+					if (Commands.invincible.contains(((Player) entity).getName())) {
+						return;
+					}
+					if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
+						continue ICE_SETTING;
+					}
+					if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
+						continue ICE_SETTING;
+					}
+				}
 			}
 
 			final Block oldBlock = block;
