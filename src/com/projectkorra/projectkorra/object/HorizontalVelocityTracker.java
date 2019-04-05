@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -43,6 +44,10 @@ public class HorizontalVelocityTracker {
 
 	public HorizontalVelocityTracker(final Entity e, final Player instigator, final long delay, final Ability ability) {
 		if (!ProjectKorra.plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled")) {
+			return;
+		}
+
+		if (!(e instanceof LivingEntity)) {
 			return;
 		}
 
