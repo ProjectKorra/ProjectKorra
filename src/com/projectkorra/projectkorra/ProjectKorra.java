@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
+import com.projectkorra.projectkorra.hooks.PlaceholderAPIHook;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.*;
@@ -140,6 +141,10 @@ public class ProjectKorra extends JavaPlugin {
 
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(cacheTime);
+
+		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+			new PlaceholderAPIHook(this).hook();
+		}
 	}
 
 	@Override
