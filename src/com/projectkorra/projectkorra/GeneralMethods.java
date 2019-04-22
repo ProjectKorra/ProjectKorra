@@ -1455,9 +1455,19 @@ public class GeneralMethods {
 						return true;
 					}
 				}
-
-				if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
-					return true;
+				StateFlag bendingflag = (StateFlag)WorldGuard.getInstance().getFlagRegistry().get("bending");
+				if (bendingflag != null) {
+					StateFlag.State bendingflagstate = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), bendingflag);
+					if(bendingflagstate == null && !wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)){
+						return true;
+					}
+					if (bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY)){
+						return true;
+					}
+				} else {
+					if(!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)){
+						return true;
+					}
 				}
 			}
 

@@ -16,6 +16,10 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.*;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
@@ -163,6 +167,18 @@ public class ProjectKorra extends JavaPlugin {
 		Manager.shutdown();
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
+		}
+	}
+
+	@Override
+	public void onLoad() {
+		if(Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+			FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+			try {
+				registry.register(new StateFlag("bending", true));
+			} catch (FlagConflictException e) {
+				ProjectKorra.log.severe("unable to register WorldGuard Flag");
+			}
 		}
 	}
 
