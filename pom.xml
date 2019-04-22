@@ -215,11 +215,11 @@
           <relocations>
             <relocation>
               <pattern>co.aikar.timings.lib</pattern>
-              <shadedPattern>com.projectkorra.timingslib</shadedPattern>
+              <shadedPattern>timingslib.projectkorra</shadedPattern>
             </relocation>
             <relocation>
               <pattern>io.papermc.lib</pattern>
-              <shadedPattern>com.projectkorra.paperlib</shadedPattern>
+              <shadedPattern>paperlib.projectkorra</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
