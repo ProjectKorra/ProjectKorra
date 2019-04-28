@@ -175,7 +175,7 @@ public class ProjectKorra extends JavaPlugin {
 		if(Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
 			FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
 			try {
-				registry.register(new StateFlag("bending", true));
+				registry.register(new StateFlag("bending", false));
 			} catch (FlagConflictException e) {
 				ProjectKorra.log.severe("unable to register WorldGuard Flag");
 			}

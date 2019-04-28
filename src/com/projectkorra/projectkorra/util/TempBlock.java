@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -54,6 +55,9 @@ public class TempBlock {
 			instances.put(block, temp);
 		} else {
 			this.state = block.getState();
+			if(this.state instanceof Container) {
+				return;
+			}
 			instances.put(block, this);
 			block.setBlockData(newdata, physicsblocks.contains(newdata.getMaterial()));
 		}
