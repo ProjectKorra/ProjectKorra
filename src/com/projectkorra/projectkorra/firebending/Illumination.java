@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.util.MaterialSetTag;
-import com.projectkorra.projectkorra.util.MaterialTags;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -122,7 +120,7 @@ public class Illumination extends FireAbility {
 			return;
 		} else if (Tag.LEAVES.isTagged(standBlock.getType())) {
 			return;
-		} else if (MaterialTags.FENCES.isTagged(standingBlock) || MaterialTags.FENCE_GATES.isTagged(standingBlock)) {
+		} else if (standingBlock.getType().name().endsWith("_FENCE") || standingBlock.getType().name().endsWith("_FENCE_GATE") || standingBlock.getType().name().endsWith("_WALL") || standingBlock.getType() == Material.IRON_BARS || standingBlock.getType().name().endsWith("_PANE")) {
 			return;
 		}
 
