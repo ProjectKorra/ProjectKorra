@@ -5,18 +5,21 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import me.clip.placeholderapi.external.EZPlaceholderHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import static java.util.stream.Collectors.joining;
 
-public class PlaceholderAPIHook extends EZPlaceholderHook {
+public class PlaceholderAPIHook extends PlaceholderExpansion {
+
+	private ProjectKorra plugin;
 
 	public PlaceholderAPIHook(ProjectKorra plugin) {
-		super(plugin, "projectkorra");
+		this.plugin = plugin;
 	}
-
+	
+	@Override
 	public String onPlaceholderRequest(Player player, String params) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) { return ""; }
@@ -51,4 +54,28 @@ public class PlaceholderAPIHook extends EZPlaceholderHook {
 		return null;
 	}
 
+	@Override
+	public boolean persist(){
+		return true;
+	}
+
+	@Override
+	public boolean canRegister(){
+		return true;
+	}
+
+	@Override
+	public String getAuthor(){
+		return plugin.getDescription().getAuthors().toString();
+	}
+
+	@Override
+	public String getIdentifier(){
+		return "ProjectKorra";
+	}
+
+	@Override
+	public String getVersion(){
+		return plugin.getDescription().getVersion();
+	}
 }

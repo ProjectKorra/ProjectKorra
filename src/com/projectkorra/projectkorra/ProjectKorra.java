@@ -144,7 +144,7 @@ public class ProjectKorra extends JavaPlugin {
 		GeneralMethods.startCacheCleaner(cacheTime);
 
 		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-			new PlaceholderAPIHook(this).hook();
+			new PlaceholderAPIHook(this).register();
 		}
 	}
 
