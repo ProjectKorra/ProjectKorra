@@ -18,7 +18,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 	public PlaceholderAPIHook(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public String onPlaceholderRequest(Player player, String params) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);

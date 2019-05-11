@@ -340,8 +340,13 @@ public class GeneralMethods {
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
 				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
-				new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
-				ProjectKorra.log.info("Created new BendingPlayer for " + player);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
+						ProjectKorra.log.info("Created new BendingPlayer for " + player);
+					}
+				}.runTask(ProjectKorra.plugin);
 			} else {
 				// The player has at least played before.
 				final String player2 = rs2.getString("player");
