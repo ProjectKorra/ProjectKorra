@@ -2297,4 +2297,25 @@ public class GeneralMethods {
 			e.printStackTrace();
 		}
 	}
+
+	public static boolean locationEqualsIgnoreDirection(Location loc1, Location loc2) {
+		return loc1.getWorld().equals(loc2.getWorld()) && loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
+	}
+
+	public static boolean isLightEmitting(Material material) {
+		switch (material) {
+			case GLOWSTONE:
+			case TORCH:
+			case SEA_LANTERN:
+			case BEACON:
+			case REDSTONE_LAMP:
+			case REDSTONE_TORCH:
+			case MAGMA_BLOCK:
+			case LAVA:
+			case JACK_O_LANTERN:
+			case END_ROD:
+				return true;
+		}
+		return false;
+	}
 }

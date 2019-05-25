@@ -32,7 +32,6 @@ public class TempBlock {
 	private long revertTime;
 	private boolean inRevertQueue;
 	private RevertTask revertTask = null;
-	public static Set<Material> physicsblocks = new HashSet<>(Arrays.asList(Material.GLOWSTONE, Material.TORCH, Material.SEA_LANTERN, Material.BEACON, Material.REDSTONE_LAMP, Material.REDSTONE_TORCH, Material.MAGMA_BLOCK, Material.LAVA, Material.JACK_O_LANTERN, Material.END_ROD));
 	
 	public TempBlock(final Block block, final Material newtype) {
 		this(block, newtype.createBlockData());
@@ -48,7 +47,7 @@ public class TempBlock {
 		if (instances.containsKey(block)) {
 			final TempBlock temp = instances.get(block);
 			if (!newdata.equals(temp.block.getBlockData())) {
-				temp.block.setBlockData(newdata, physicsblocks.contains(newdata.getMaterial()));
+				temp.block.setBlockData(newdata, GeneralMethods.isLightEmitting(newdata.getMaterial()));
 				temp.newdata = newdata;
 			}
 			this.state = temp.state;
@@ -59,7 +58,7 @@ public class TempBlock {
 				return;
 			}
 			instances.put(block, this);
-			block.setBlockData(newdata, physicsblocks.contains(newdata.getMaterial()));
+			block.setBlockData(newdata, GeneralMethods.isLightEmitting(newdata.getMaterial()));
 		}
 		if (this.state.getType() == Material.FIRE) {
 			this.state.setType(Material.AIR);
@@ -92,7 +91,7 @@ public class TempBlock {
 			revertBlock(block, Material.AIR);
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
-			tempblock.state.update(true, physicsblocks.contains(tempblock.state.getType()));
+			tempblock.state.update(true, GeneralMethods.isLightEmitting(tempblock.state.getType()));
 			if (tempblock.revertTask != null) {
 				tempblock.revertTask.run();
 			}
@@ -116,7 +115,7 @@ public class TempBlock {
 					((Levelled) data).setLevel(0);
 				}
 				
-				block.setBlockData(data, physicsblocks.contains(data.getMaterial()));
+				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 			} else if ((defaulttype == Material.WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				BlockData data = Material.WATER.createBlockData();
 				
@@ -124,9 +123,9 @@ public class TempBlock {
 					((Levelled) data).setLevel(0);
 				}
 				
-				block.setBlockData(data, physicsblocks.contains(data.getMaterial()));
+				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 			} else {
-				block.setType(defaulttype, physicsblocks.contains(defaulttype));
+				block.setType(defaulttype, GeneralMethods.isLightEmitting(defaulttype));
 			}
 		}
 	}
@@ -170,7 +169,7 @@ public class TempBlock {
 
 	public void revertBlock() {
 		PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result ->
-			this.state.update(true, physicsblocks.contains(this.state.getType()))
+			this.state.update(true, GeneralMethods.isLightEmitting(this.state.getType()))
 		);
 		instances.remove(this.block);
 		REVERT_QUEUE.remove(this);
@@ -193,7 +192,7 @@ public class TempBlock {
 
 	public void setType(final BlockData data) {
 		this.newdata = data;
-		this.block.setBlockData(data, physicsblocks.contains(data.getMaterial()));
+		this.block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 	}
 
 	public static void startReversion() {
