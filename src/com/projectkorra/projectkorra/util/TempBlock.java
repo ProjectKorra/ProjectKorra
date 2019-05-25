@@ -37,6 +37,7 @@ public class TempBlock {
 		this(block, newtype.createBlockData());
 	}
 
+	@Deprecated
 	public TempBlock(final Block block, final Material newtype, final BlockData newdata) {
 		this(block, newdata);
 	}
@@ -186,6 +187,7 @@ public class TempBlock {
 		this.setType(material.createBlockData());
 	}
 
+	@Deprecated
 	public void setType(final Material material, final BlockData data) {
 		this.setType(data);
 	}
