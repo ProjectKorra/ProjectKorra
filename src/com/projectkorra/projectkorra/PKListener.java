@@ -68,6 +68,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -1765,6 +1766,15 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPickupItem(final EntityPickupItemEvent event) {
+		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+			if (metalClips.getTrackedIngots().contains(event.getItem())) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onInventoryPickupItem(final InventoryPickupItemEvent event) {
 		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);

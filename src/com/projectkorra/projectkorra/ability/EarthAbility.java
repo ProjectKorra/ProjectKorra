@@ -128,7 +128,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer) {
-		if (this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (!TempBlock.isTempBlock(block) && this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			boolean up = false;
 			boolean down = false;
 			final Vector norm = direction.clone().normalize();
@@ -154,7 +154,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			if (DensityShift.isPassiveSand(block)) {
 				DensityShift.revertSand(block);
 			}
-			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
+			if (TempBlock.isTempBlock(affectedblock)) {
 				TempBlock.get(affectedblock).revertBlock();
 			}
 			if (LavaFlow.isLavaFlowBlock(block)){
