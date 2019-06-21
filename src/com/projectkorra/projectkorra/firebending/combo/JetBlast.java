@@ -101,6 +101,14 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	}
 
 	@Override
+	public void remove() {
+		for(FireComboStream task : tasks) {
+			task.remove();
+		}
+		super.remove();
+	}
+
+	@Override
 	public boolean isSneakAbility() {
 		return false;
 	}

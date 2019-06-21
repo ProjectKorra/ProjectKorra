@@ -156,7 +156,7 @@ public class AirSuction extends AirAbility {
 			open = trap.isOpen();
 		}
 
-		final String sound = "BLOCK_WOODEN_" + (tDoor ? "TRAP" : "") + "DOOR_" + (!open ? "OPEN" : "CLOSE");
+		final String sound = "block_wooden_" + (tDoor ? "trap" : "") + "door_" + (!open ? "open" : "close");
 		block.getWorld().playSound(block.getLocation(), sound, 0.5f, 0);
 		this.affectedDoors.add(block);
 	}
@@ -188,7 +188,7 @@ public class AirSuction extends AirAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(this.player, "AirSuction", this.location)) {
 				this.remove();
 				return;
-			} else if (this.location.distanceSquared(this.origin) > this.range * this.range || this.location.distanceSquared(this.origin) <= 1) {
+			} else if (!this.location.getWorld().equals(this.origin.getWorld()) || this.location.distanceSquared(this.origin) > this.range * this.range || this.location.distanceSquared(this.origin) <= 1) {
 				this.remove();
 				return;
 			}
@@ -230,9 +230,6 @@ public class AirSuction extends AirAbility {
 					GeneralMethods.setVelocity(entity, velocity);
 					new HorizontalVelocityTracker(entity, this.player, 200l, this);
 					entity.setFallDistance(0);
-					if (entity instanceof Player) {
-						flightHandler.createInstance((Player) entity, this.player, 5000L, this.getName());
-					}
 	
 					if (entity.getFireTicks() > 0) {
 						entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);

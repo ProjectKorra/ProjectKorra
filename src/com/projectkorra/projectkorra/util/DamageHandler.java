@@ -28,7 +28,7 @@ public class DamageHandler {
 	 * @param damage The amount of damage to deal
 	 */
 	public static void damageEntity(final Entity entity, Player source, double damage, final Ability ability, boolean ignoreArmor) {
-		if (TempArmor.hasTempArmor((LivingEntity) entity)) {
+		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			ignoreArmor = true;
 		}
 		if (ability == null) {

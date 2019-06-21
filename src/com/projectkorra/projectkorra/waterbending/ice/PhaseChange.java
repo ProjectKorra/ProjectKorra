@@ -455,12 +455,6 @@ public class PhaseChange extends IceAbility {
 		return PLAYER_BY_BLOCK;
 	}
 
-	public static List<TempBlock> getFrozenBlocksAsTempBlock() {
-		final List<TempBlock> list = new ArrayList<>();
-		list.addAll(PLAYER_BY_BLOCK.keySet());
-		return list;
-	}
-
 	public static List<Block> getFrozenBlocksAsBlock() {
 		final List<Block> list = new ArrayList<>();
 		for (final TempBlock tb : PLAYER_BY_BLOCK.keySet()) {

@@ -323,8 +323,7 @@ public class EarthGrab extends EarthAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (this.mode == GrabMode.TRAP) {
-			this.bPlayer.addCooldown(this);
+		if (this.mode == GrabMode.TRAP && this.initiated) {
 			this.mHandler.reset();
 			this.trap.remove();
 			if (TempArmor.getTempArmorList(this.target).contains(this.armor)) {

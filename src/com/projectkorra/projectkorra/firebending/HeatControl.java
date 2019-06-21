@@ -309,8 +309,8 @@ public class HeatControl extends FireAbility {
 
 		if (TempBlock.isTempBlock(block)) {
 			final TempBlock tb = TempBlock.get(block);
-			if (PhaseChange.getFrozenBlocksAsTempBlock().contains(tb)) {
-				PhaseChange.thaw(tb);
+			if (PhaseChange.getFrozenBlocksMap().containsKey(tb)) {
+				new PhaseChange(player, PhaseChange.PhaseChangeType.MELT).melt(tb.getBlock());
 			}
 		}
 
@@ -328,7 +328,10 @@ public class HeatControl extends FireAbility {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						MELTED_BLOCKS.get(block).revertBlock();
+						TempBlock melted = MELTED_BLOCKS.get(block);
+						if (melted != null) {
+							melted.revertBlock();
+						}
 						MELTED_BLOCKS.remove(block);
 					}
 				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);

@@ -130,8 +130,22 @@ public class Torrent extends WaterAbility {
 			return;
 		}
 		final List<Block> ice = GeneralMethods.getBlocksAroundPoint(this.location, this.layer);
-		for (final Block block : ice) {
+		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.location, this.layer);
+		ICE_SETTING: for (final Block block : ice) {
 			if (isTransparent(this.player, block) && block.getType() != Material.ICE) {
+				for (Entity entity : trapped) {
+					if (entity instanceof Player) {
+						if (Commands.invincible.contains(((Player) entity).getName())) {
+							return;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
+							continue ICE_SETTING;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
+							continue ICE_SETTING;
+						}
+					}
+				}
 				final TempBlock tblock = new TempBlock(block, Material.ICE);
 				FROZEN_BLOCKS.put(tblock, Pair.of(this.player, this.getId()));
 				if (this.revert) {

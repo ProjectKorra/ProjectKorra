@@ -89,8 +89,21 @@ public class AirSpout extends AirAbility {
 	}
 
 	private void allowFlight() {
-		this.player.setAllowFlight(true);
-		this.player.setFlying(true);
+		if (!this.player.getAllowFlight()) {
+			this.player.setAllowFlight(true);
+		}
+		if (!this.player.isFlying()) {
+			this.player.setFlying(true);
+		}
+	}
+
+	private void removeFlight() {
+		if (this.player.isFlying()) {
+			this.player.setFlying(false);
+		}
+		if (this.player.getAllowFlight()) {
+			this.player.setAllowFlight(false);
+		}
 	}
 
 	private boolean isWithinMaxSpoutHeight(final double threshold) {
@@ -164,11 +177,6 @@ public class AirSpout extends AirAbility {
 	public void remove() {
 		super.remove();
 		flightHandler.removeInstance(this.player, this.getName());
-	}
-
-	private void removeFlight() {
-		this.player.setAllowFlight(false);
-		this.player.setFlying(false);
 	}
 
 	private void rotateAirColumn(final Block block) {

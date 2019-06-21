@@ -551,6 +551,7 @@ public class ConfigManager {
 			config.addDefault("Properties.TogglePassivesWithAllBending", true);
 			config.addDefault("Properties.SeaLevel", 62);
 			config.addDefault("Properties.ChooseCooldown", 0L);
+			config.addDefault("Properties.MaxPresets", 10);
 
 			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 			config.addDefault("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock", false);
@@ -579,6 +580,8 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.Sound.Pitch", 2);
 
 			config.addDefault("Properties.Water.DynamicSourcing", true);
+			config.addDefault("Properties.Water.FreezePlayerHead", true);
+			config.addDefault("Properties.Water.FreezePlayerFeet", true);
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
@@ -761,6 +764,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage", 5);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Damage", 4);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Range", 30);
+			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Cooldown", 0);
+			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Damage", 4);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Range", 30);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Push", 0.9);
@@ -954,6 +959,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBlast.CollisionRadius", 1.5);
 			config.addDefault("Abilities.Water.IceBlast.Interval", 20);
 			config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
+			config.addDefault("Abilities.Water.IceBlast.AllowSnow", false);
 
 			config.addDefault("Abilities.Water.IceSpike.Enabled", true);
 			config.addDefault("Abilities.Water.IceSpike.Cooldown", 2000);
@@ -1151,6 +1157,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBullet.AnimationSpeed", 1);
 			config.addDefault("Abilities.Water.IceBullet.ShootTime", 10000);
 			config.addDefault("Abilities.Water.IceBullet.Cooldown", 10000);
+			config.addDefault("Abilities.Water.IceBullet.ShotCooldown", 500);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Enabled", true);
@@ -1211,7 +1218,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 			config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
+			config.addDefault("Abilities.Earth.EarthTunnel.IgnoreOres", false);
 			config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
+			config.addDefault("Abilities.Earth.EarthTunnel.BlocksPerInterval", 1);
 
 			config.addDefault("Abilities.Earth.Extraction.Enabled", true);
 			config.addDefault("Abilities.Earth.Extraction.SelectRange", 5);

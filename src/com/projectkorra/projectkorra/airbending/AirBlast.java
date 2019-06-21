@@ -262,9 +262,6 @@ public class AirBlast extends AirAbility {
 				new HorizontalVelocityTracker(entity, this.player, 200l, this);
 			}
 
-			if (!isUser && entity instanceof Player) {
-				flightHandler.createInstance((Player) entity, this.player, 1000L, this.getName());
-			}
 			if (entity.getFireTicks() > 0) {
 				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
 			}

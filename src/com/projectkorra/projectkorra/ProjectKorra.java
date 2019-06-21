@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra;
 
+import co.aikar.timings.lib.MCTiming;
+import co.aikar.timings.lib.TimingManager;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.*;
@@ -9,6 +11,8 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
+import com.projectkorra.projectkorra.hooks.PlaceholderAPIHook;
+import com.projectkorra.projectkorra.hooks.WorldGuardFlag;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.*;
@@ -32,11 +36,14 @@ public class ProjectKorra extends JavaPlugin {
 	public static long time_step = 1;
 	public Updater updater;
 	private BukkitTask revertChecker;
+	private static TimingManager timingManager;
 
 	@Override
 	public void onEnable() {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
+
+		timingManager = TimingManager.of(this);
 
 		new ConfigManager();
 		new GeneralMethods(this);
@@ -135,6 +142,10 @@ public class ProjectKorra extends JavaPlugin {
 
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(cacheTime);
+
+		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+			new PlaceholderAPIHook(this).register();
+		}
 	}
 
 	@Override
@@ -153,6 +164,13 @@ public class ProjectKorra extends JavaPlugin {
 		Manager.shutdown();
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
+		}
+	}
+
+	@Override
+	public void onLoad() {
+		if(Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+			WorldGuardFlag.registerBendingWorldGuardFlag();
 		}
 	}
 
@@ -179,4 +197,7 @@ public class ProjectKorra extends JavaPlugin {
 		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
 	}
 
+	public static MCTiming timing(String name) {
+		return timingManager.of(name);
+	}
 }

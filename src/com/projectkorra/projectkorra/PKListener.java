@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra;
 
+import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.*;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -42,6 +43,7 @@ import com.projectkorra.projectkorra.util.*;
 import com.projectkorra.projectkorra.util.FlightHandler.Flight;
 import com.projectkorra.projectkorra.waterbending.*;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
@@ -66,6 +68,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -83,8 +86,25 @@ public class PKListener implements Listener {
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
+	private static MCTiming TimingPhysicsWaterManipulationCheck, TimingPhysicsEarthPassiveCheck, TimingPhysicsIlluminationTorchCheck, TimingPhysicsEarthAbilityCheck, TimingPhysicsAirTempBlockBelowFallingBlockCheck;
+	private static MCTiming TimingPlayerMoveMovementHandlerCheck, TimingPlayerMoveSpoutCheck, TimingPlayerMoveBloodbentCheck, TimingPlayerMoveAirChiPassiveCheck, TimingPlayerMoveFirePassiveCheck, TimingPlayerMoveJumpCheck;
+
 	public PKListener(final ProjectKorra plugin) {
+
 		this.plugin = plugin;
+
+		TimingPhysicsWaterManipulationCheck = ProjectKorra.timing("PhysicsWaterManipulationCheck");
+		TimingPhysicsEarthPassiveCheck = ProjectKorra.timing("PhysicsEarthPassiveCheck");
+		TimingPhysicsIlluminationTorchCheck = ProjectKorra.timing("PhysicsIlluminationTorchCheck");
+		TimingPhysicsEarthAbilityCheck = ProjectKorra.timing("PhysicsEarthAbilityCheck");
+		TimingPhysicsAirTempBlockBelowFallingBlockCheck = ProjectKorra.timing("PhysicsAirTempBlockBelowFallingBlockCheck");
+
+		TimingPlayerMoveMovementHandlerCheck = ProjectKorra.timing("PlayerMoveMovementHandlerCheck");
+		TimingPlayerMoveSpoutCheck = ProjectKorra.timing("PlayerMoveSpoutCheck");
+		TimingPlayerMoveBloodbentCheck = ProjectKorra.timing("PlayerMoveBloodbentCheck");
+		TimingPlayerMoveAirChiPassiveCheck = ProjectKorra.timing("PlayerMoveAirChiPassiveCheck");
+		TimingPlayerMoveFirePassiveCheck = ProjectKorra.timing("PlayerMoveFirePassiveCheck");
+		TimingPlayerMoveJumpCheck = ProjectKorra.timing("PlayerMoveJumpCheck");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -249,13 +269,42 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		final Block block = event.getBlock();
 
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.isIlluminationTorch(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
-			event.setCancelled(true);
+		try(MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
+			if (!WaterManipulation.canPhysicsChange(block)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		try(MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
+			if (!EarthPassive.canPhysicsChange(block)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		try(MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
+			if (Illumination.isIlluminationTorch(block)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		try(MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
+			if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
-		if (!event.isCancelled() && (block.getType() == Material.SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN)) && ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType())) {
-			event.setCancelled(true);
+		try(MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
+			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) &&
+					ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) &&
+					TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))
+			) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -267,19 +316,13 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (TempBlock.isTempBlock(event.getBlock())) {
-			final TempBlock tb = TempBlock.get(event.getBlock());
-			tb.revertBlock();
-			event.getBlock().setType(event.getItemInHand().getType());
-			if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
-				if (event.getItemInHand().getAmount() <= 0) {
-					event.getItemInHand().setType(Material.AIR);
-					event.getItemInHand().setAmount(1);
-				} else {
-					event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
-				}
+		if (TempBlock.isTempBlock(event.getBlockPlaced()) && event.getItemInHand().getType() != Material.FLINT_AND_STEEL) {
+			// EarthTunnel has its own list of airBlocks TempBlocks, so we need to either not allow placing in Earth Tunnels, or remove the tempblock from Earth Tunnels airBlocks list so it doesn't revert. Here we just don't allow placing
+			if (EarthTunnel.airBlocks.containsKey(TempBlock.get(event.getBlockPlaced()))) {
+				event.setCancelled(true);
+				return;
 			}
-			return;
+			TempBlock.removeBlock(event.getBlockPlaced());
 		}
 	}
 
@@ -367,7 +410,9 @@ public class PKListener implements Listener {
 		}
 
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
-			event.setDamage(DamageModifier.ARMOR, 0);
+			if (event.isApplicable(DamageModifier.ARMOR)) {
+				event.setDamage(DamageModifier.ARMOR, 0);
+			}
 		}
 
 		if (entity instanceof Player) {
@@ -404,10 +449,12 @@ public class PKListener implements Listener {
 		if (TempArmor.hasTempArmor(event.getEntity())) {
 			final TempArmor armor = TempArmor.getVisibleTempArmor(event.getEntity());
 
-			final List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
+			if (armor != null) {
+				final List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
+				event.getDrops().clear();
+				event.getDrops().addAll(newDrops);
+			}
 
-			event.getDrops().clear();
-			event.getDrops().addAll(newDrops);
 			if (MetalClips.isControlled(event.getEntity())) {
 				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
 			}
@@ -661,12 +708,14 @@ public class PKListener implements Listener {
 
 		String e = "Nonbender";
 		ChatColor c = ChatColor.WHITE;
-		if(player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))){
-			c = Element.AVATAR.getColor();
-			e = Element.AVATAR.getName();
-		} else if (bPlayer.getElements().size() > 0) {
-			c = bPlayer.getElements().get(0).getColor();
-			e = bPlayer.getElements().get(0).getName();
+		if (bPlayer != null) {
+			if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
+				c = Element.AVATAR.getColor();
+				e = Element.AVATAR.getName();
+			} else if (bPlayer.getElements().size() > 0) {
+				c = bPlayer.getElements().get(0).getColor();
+				e = bPlayer.getElements().get(0).getName();
+			}
 		}
 		final String element = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e);
 		event.setFormat(event.getFormat().replace("{element}", c + element + ChatColor.RESET).replace("{ELEMENT}", c + element + ChatColor.RESET).replace("{elementcolor}", c + "").replace("{ELEMENTCOLOR}", c + ""));
@@ -805,7 +854,7 @@ public class PKListener implements Listener {
 				return;
 			}
 
-			final String boundAbil = sourceBPlayer.getBoundAbilityName();
+			final Ability boundAbil = sourceBPlayer.getBoundAbility();
 
 			if (sourceBPlayer.getBoundAbility() != null) {
 				if (!sourceBPlayer.isOnCooldown(boundAbil)) {
@@ -814,15 +863,15 @@ public class PKListener implements Listener {
 							if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
 								if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
 									if (sourceBPlayer.isElementToggled(Element.CHI)) {
-										if (boundAbil.equalsIgnoreCase("Paralyze")) {
+										if (boundAbil.equals(CoreAbility.getAbility(Paralyze.class))) {
 											new Paralyze(sourcePlayer, entity);
-										} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
+										} else if (boundAbil.equals(CoreAbility.getAbility(QuickStrike.class))) {
 											new QuickStrike(sourcePlayer, entity);
 											e.setCancelled(true);
-										} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
+										} else if (boundAbil.equals(CoreAbility.getAbility(SwiftKick.class))) {
 											new SwiftKick(sourcePlayer, entity);
 											e.setCancelled(true);
-										} else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
+										} else if (boundAbil.equals(CoreAbility.getAbility(RapidPunch.class))) {
 											new RapidPunch(sourcePlayer, entity);
 											e.setCancelled(true);
 										}
@@ -940,6 +989,14 @@ public class PKListener implements Listener {
 			}
 		}
 
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("IceBlast")) {
+				if (CoreAbility.hasAbility(player, IceBullet.class)) {
+					CoreAbility.getAbility(player, IceBullet.class).doRightClick();
+				}
+			}
+		}
+
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
@@ -979,6 +1036,7 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
+
 		if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
 			if (event.getRightClicked() instanceof Player) {
 				final Player target = (Player) event.getRightClicked();
@@ -1064,75 +1122,86 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerMove(final PlayerMoveEvent event) {
+		if (event.getTo().getX() == event.getFrom().getX() && event.getTo().getY() == event.getFrom().getY() && event.getTo().getZ() == event.getFrom().getZ()) {
+			return;
+		}
+
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (MovementHandler.isStopped(player)) {
-			if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
-				event.setCancelled(true);
+
+		try(MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
+			if (MovementHandler.isStopped(player)) {
+				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
+					event.setCancelled(true);
+				}
 				return;
 			}
-		} else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
-			Vector vel = new Vector();
-			vel.setX(event.getTo().getX() - event.getFrom().getX());
-			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
+		}
 
-			final double currspeed = vel.length();
-			final double maxspeed = .2;
-			if (currspeed > maxspeed) {
-				// apply only if moving set a factor
-				vel = vel.normalize().multiply(maxspeed);
-				// apply the new velocity
-				event.getPlayer().setVelocity(vel);
-			}
-		} else if (Bloodbending.isBloodbent(player)) {
-			final BendingPlayer bender = Bloodbending.getBloodbender(player);
-			if (bender.isAvatarState()) {
-				event.setCancelled(true);
+		try(MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
+			if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
+				Vector vel = new Vector();
+				vel.setX(event.getTo().getX() - event.getFrom().getX());
+				vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
+
+				final double currspeed = vel.length();
+				final double maxspeed = .2;
+				if (currspeed > maxspeed) {
+					// apply only if moving set a factor
+					vel = vel.normalize().multiply(maxspeed);
+					// apply the new velocity
+					event.getPlayer().setVelocity(vel);
+				}
 				return;
 			}
+		}
 
-			double distance1 = 0;
-			double distance2 = 0;
-			final Location loc = Bloodbending.getBloodbendingLocation(player);
-			if (player.getWorld().equals(loc.getWorld())) {
-				distance1 = event.getFrom().distanceSquared(loc);
-				distance2 = event.getTo().distanceSquared(loc);
-			}
-
-			if (distance1 == 0 && distance2 == 0) {
-				return;
-			} else if (distance1 > distance2 || distance1 < distance2) {
-				if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
-					player.setVelocity(Bloodbending.getBloodbendingVector(player));
+		try(MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
+			if (Bloodbending.isBloodbent(player)) {
+				final BendingPlayer bender = Bloodbending.getBloodbender(player);
+				if (bender.isAvatarState()) {
+					event.setCancelled(true);
 					return;
 				}
-			}
-		} else {
-			if (bPlayer != null) {
-				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getY() != event.getFrom().getY() || event.getTo().getZ() != event.getFrom().getZ()) {
-					if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-						PassiveHandler.checkExhaustionPassives(player);
+
+				final Location loc = Bloodbending.getBloodbendingLocation(player);
+				if (player.getWorld().equals(loc.getWorld())) {
+					if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
+						player.setVelocity(Bloodbending.getBloodbendingVector(player));
 					}
 				}
+				return;
+			}
+		}
 
+		if (bPlayer != null) {
+			try(MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
+				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
+					PassiveHandler.checkExhaustionPassives(player);
+				}
+			}
+
+			try(MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
 				if (event.getTo().getBlock() != event.getFrom().getBlock()) {
 					FirePassive.handle(player);
 				}
 			}
 		}
 
-		if (event.getTo().getY() > event.getFrom().getY()) {
-			if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
-				final int current = player.getStatistic(Statistic.JUMP);
-				final int last = JUMPS.get(player);
+		try(MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
+			if (event.getTo().getY() > event.getFrom().getY()) {
+				if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
+					final int current = player.getStatistic(Statistic.JUMP);
+					final int last = JUMPS.get(player);
 
-				if (last != current) {
-					JUMPS.put(player, current);
+					if (last != current) {
+						JUMPS.put(player, current);
 
-					final double yDif = event.getTo().getY() - event.getFrom().getY();
+						final double yDif = event.getTo().getY() - event.getFrom().getY();
 
-					if ((yDif < 0.035 || yDif > 0.037) && (yDif < 0.116 || yDif > 0.118)) {
-						Bukkit.getServer().getPluginManager().callEvent(new PlayerJumpEvent(player, yDif));
+						if ((yDif < 0.035 || yDif > 0.037) && (yDif < 0.116 || yDif > 0.118)) {
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerJumpEvent(player, yDif));
+						}
 					}
 				}
 			}
@@ -1504,7 +1573,11 @@ public class PKListener implements Listener {
 					if (abil.equalsIgnoreCase("Bloodbending")) {
 						Bloodbending.launch(player);
 					} else if (abil.equalsIgnoreCase("IceBlast")) {
-						IceBlast.activate(player);
+						if (CoreAbility.hasAbility(player, IceBullet.class)) {
+							CoreAbility.getAbility(player, IceBullet.class).doLeftClick();
+						} else {
+							IceBlast.activate(player);
+						}
 					} else if (abil.equalsIgnoreCase("IceSpike")) {
 						IceSpikeBlast.activate(player);
 					} else if (abil.equalsIgnoreCase("OctopusForm")) {
@@ -1693,6 +1766,15 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPickupItem(final EntityPickupItemEvent event) {
+		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+			if (metalClips.getTrackedIngots().contains(event.getItem())) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onInventoryPickupItem(final InventoryPickupItemEvent event) {
 		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);

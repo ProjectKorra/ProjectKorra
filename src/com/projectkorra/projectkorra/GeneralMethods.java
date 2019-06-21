@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -62,13 +61,6 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.config.C;
-import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -348,8 +340,13 @@ public class GeneralMethods {
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
 				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
-				new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
-				ProjectKorra.log.info("Created new BendingPlayer for " + player);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
+						ProjectKorra.log.info("Created new BendingPlayer for " + player);
+					}
+				}.runTask(ProjectKorra.plugin);
 			} else {
 				// The player has at least played before.
 				final String player2 = rs2.getString("player");
@@ -938,34 +935,7 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius) {
-		final List<Entity> entities = new ArrayList<Entity>();
-		final World world = location.getWorld();
-
-		// To find chunks we use chunk coordinates (not block coordinates!)
-		final int smallX = (int) (location.getX() - radius) >> 4;
-		final int bigX = (int) (location.getX() + radius) >> 4;
-		final int smallZ = (int) (location.getZ() - radius) >> 4;
-		final int bigZ = (int) (location.getZ() + radius) >> 4;
-
-		for (int x = smallX; x <= bigX; x++) {
-			for (int z = smallZ; z <= bigZ; z++) {
-				if (world.isChunkLoaded(x, z)) {
-					entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
-				}
-			}
-		}
-
-		final Iterator<Entity> entityIterator = entities.iterator();
-		while (entityIterator.hasNext()) {
-			final Entity e = entityIterator.next();
-			if (e.getWorld().equals(location.getWorld()) && e.getLocation().distanceSquared(location) > radius * radius) {
-				entityIterator.remove();
-			} else if (e instanceof Player && (((Player) e).isDead() || ((Player) e).getGameMode().equals(GameMode.SPECTATOR))) {
-				entityIterator.remove();
-			}
-		}
-
-		return entities;
+		return new ArrayList<>(location.getWorld().getNearbyEntities(location, radius, radius, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)))));
 	}
 
 	public static long getGlobalCooldown() {
@@ -1049,16 +1019,16 @@ public class GeneralMethods {
 	}
 
 	public static int getMaxPresets(final Player player) {
+		int max = ConfigManager.getConfig().getInt("Properties.MaxPresets");
 		if (player.isOp()) {
-			return 100;
+			return max;
 		}
-		int cap = 0;
-		for (int i = 0; i <= 10; i++) {
+		for (int i = max; i > 0; i--) {
 			if (player.hasPermission("bending.command.preset.create." + i)) {
-				cap = i;
+				return i;
 			}
 		}
-		return cap;
+		return 0;
 	}
 
 	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
@@ -1424,7 +1394,6 @@ public class GeneralMethods {
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectKingdoms");
-		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPlotSquared");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
 
 		boolean isIgnite = false;
@@ -1454,7 +1423,6 @@ public class GeneralMethods {
 		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin plotsquared = pm.getPlugin("PlotSquared");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
 
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
@@ -1492,9 +1460,19 @@ public class GeneralMethods {
 						return true;
 					}
 				}
-
-				if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
-					return true;
+				StateFlag bendingflag = (StateFlag)WorldGuard.getInstance().getFlagRegistry().get("bending");
+				if (bendingflag != null) {
+					StateFlag.State bendingflagstate = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), bendingflag);
+					if(bendingflagstate == null && !wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)){
+						return true;
+					}
+					if (bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY)){
+						return true;
+					}
+				} else {
+					if(!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)){
+						return true;
+					}
 				}
 			}
 
@@ -1607,42 +1585,6 @@ public class GeneralMethods {
 
 			}
 
-			if (plotsquared != null && respectPlotSquared) {
-				com.github.intellectualsites.plotsquared.plot.object.Location plotLocation = BukkitUtil.getLocation(location);
-				PlotArea plotArea = plotLocation.getPlotArea();
-				if (plotArea != null) {
-					Plot plot = plotArea.getPlot(plotLocation);
-					PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-					if (plot != null) {
-						if (location.getBlock().getY() == 0) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
-								return true;
-							}
-						} else if ((location.getY() > plotArea.MAX_BUILD_HEIGHT || location.getY() < plotArea.MIN_BUILD_HEIGHT) && !Permissions
-								.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
-							return true;
-						}
-						if (!plot.hasOwner()) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-								return true;
-							}
-						}
-						if (!plot.isAdded(plotPlayer.getUUID())) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
-								return true;
-							}
-						} else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(com.github.intellectualsites.plotsquared.plot.flag.Flags.DONE)) {
-							if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-								return true;
-							}
-						}
-					}
-					if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
-						return true;
-					}
-				}
-			}
-
 			if (redprotect != null && respectRedProtect) {
 				RedProtectAPI api = RedProtect.get().getAPI();
 				Region region = api.getRegion(location);
@@ -1672,7 +1614,25 @@ public class GeneralMethods {
 
 	/** Checks if an entity is Undead **/
 	public static boolean isUndead(final Entity entity) {
-		return entity != null && (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE);
+		if (entity == null) {
+			return false;
+		}
+		switch(entity.getType()){
+			case SKELETON:
+			case STRAY:
+			case WITHER_SKELETON:
+			case WITHER:
+			case ZOMBIE:
+			case HUSK:
+			case ZOMBIE_VILLAGER:
+			case PIG_ZOMBIE:
+			case DROWNED:
+			case ZOMBIE_HORSE:
+			case SKELETON_HORSE:
+			case PHANTOM:
+				return true;
+		}
+		return false;
 	}
 
 	public static boolean isWeapon(final Material mat) {
@@ -1906,9 +1866,7 @@ public class GeneralMethods {
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
-		final boolean respectPlotSquared = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.PlotSquared");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
-		final boolean respectBentoBox = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.BentoBox");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
@@ -1919,9 +1877,7 @@ public class GeneralMethods {
 		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin plotsquared = pm.getPlugin("PlotSquared");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
-		final Plugin bentobox = pm.getPlugin("BentoBox");
 
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
@@ -1947,14 +1903,8 @@ public class GeneralMethods {
 		if (kingdoms != null && respectKingdoms) {
 			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
 		}
-		if (plotsquared != null && respectPlotSquared) {
-			writeToDebug("PlotSquared v" + plotsquared.getDescription().getVersion());
-		}
 		if (redprotect != null && respectRedProtect) {
 			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
-		}
-		if (bentobox != null && respectBentoBox) {
-			writeToDebug("BentoBox v" + bentobox.getDescription().getVersion());
 		}
 
 		writeToDebug("");
@@ -2203,6 +2153,34 @@ public class GeneralMethods {
 		return loc.getWorld().spawnFallingBlock(loc, data);
 	}
 
+	public static boolean playerHeadIsInBlock(Player player, Block block) {
+		return playerHeadIsInBlock(player, block, false);
+	}
+
+	public static boolean playerHeadIsInBlock(Player player, Block block, boolean exact) {
+		double checkDistance;
+		if (exact){
+			checkDistance = 0.5;
+		} else {
+			checkDistance = 0.75;
+		}
+		return (player.getEyeLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getEyeLocation().getX() - block.getLocation().add(0.5,0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getEyeLocation().getZ() - block.getLocation().add(0.5,0.0, 0.5).getZ()) < checkDistance));
+	}
+
+	public static boolean playerFeetIsInBlock(Player player, Block block) {
+		return playerFeetIsInBlock(player, block, false);
+	}
+
+	public static boolean playerFeetIsInBlock(Player player, Block block, boolean exact) {
+		double checkDistance;
+		if (exact){
+			checkDistance = 0.5;
+		} else {
+			checkDistance = 0.75;
+		}
+		return (player.getLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getLocation().getX() - block.getLocation().add(0.5,0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getLocation().getZ() - block.getLocation().add(0.5,0.0, 0.5).getZ()) < checkDistance));
+	}
+
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
 		ChatColor color;
 		try {
@@ -2318,5 +2296,26 @@ public class GeneralMethods {
 		catch (final IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean locationEqualsIgnoreDirection(Location loc1, Location loc2) {
+		return loc1.getWorld().equals(loc2.getWorld()) && loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
+	}
+
+	public static boolean isLightEmitting(Material material) {
+		switch (material) {
+			case GLOWSTONE:
+			case TORCH:
+			case SEA_LANTERN:
+			case BEACON:
+			case REDSTONE_LAMP:
+			case REDSTONE_TORCH:
+			case MAGMA_BLOCK:
+			case LAVA:
+			case JACK_O_LANTERN:
+			case END_ROD:
+				return true;
+		}
+		return false;
 	}
 }

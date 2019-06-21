@@ -196,7 +196,7 @@ public class AirSwipe extends AirAbility {
 
 	private void affectPeople(final Location location, final Vector direction) {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, this.radius);
-		final Vector fDirection = direction;
+		final Vector fDirection = direction.clone();
 
 		for (int i = 0; i < entities.size(); i++) {
 			final Entity entity = entities.get(i);
@@ -218,19 +218,14 @@ public class AirSwipe extends AirAbility {
 							GeneralMethods.setVelocity(entity, fDirection.multiply(AirSwipe.this.pushFactor));
 
 						}
-						if (entity instanceof LivingEntity && !AirSwipe.this.affectedEntities.contains(entity)) {
+						if (!AirSwipe.this.affectedEntities.contains(entity)) {
 							if (AirSwipe.this.damage != 0) {
 								DamageHandler.damageEntity(entity, AirSwipe.this.damage, abil);
 							}
 							AirSwipe.this.affectedEntities.add(entity);
 						}
-						if (entity instanceof Player) {
-							flightHandler.createInstance((Player) entity, AirSwipe.this.player, 1000L, AirSwipe.this.getName());
-						}
 						breakBreathbendingHold(entity);
-						if (AirSwipe.this.elements.containsKey(fDirection)) {
-							AirSwipe.this.elements.remove(fDirection);
-						}
+						AirSwipe.this.elements.remove(direction);
 					} else if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && !(entity instanceof LivingEntity)) {
 
 						GeneralMethods.setVelocity(entity, fDirection.multiply(AirSwipe.this.pushFactor));

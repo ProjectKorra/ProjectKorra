@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.command.Commands;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -139,7 +140,11 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			this.destination = this.player.getLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(10));
 			final Vector origToDest = GeneralMethods.getDirection(this.origin, this.destination);
 			for (double i = 0; i < 30; i++) {
-				final Vector vec = GeneralMethods.getDirection(this.player.getLocation(), this.origin.clone().add(origToDest.clone().multiply(i / 30)));
+				final Location endLoc = this.origin.clone().add(origToDest.clone().multiply(i / 30));
+				if (GeneralMethods.locationEqualsIgnoreDirection(this.player.getLocation(), endLoc)) {
+					continue;
+				}
+				final Vector vec = GeneralMethods.getDirection(this.player.getLocation(), endLoc);
 
 				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation(), this.range, this.speed);
 				fs.setDensity(1);
@@ -186,7 +191,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 						this.remove();
 						return;
 					}
-					if (!entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
+					if (!entity.equals(this.player) && !this.affectedEntities.contains(entity) && !(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 						this.affectedEntities.add(entity);
 						if (this.knockback != 0) {
 							final Vector force = fstream.getDirection();

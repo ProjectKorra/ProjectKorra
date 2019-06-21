@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
@@ -419,7 +420,17 @@ public class WaterSpoutWave extends WaterAbility {
 					if(GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())){
 						continue;
 					}
-
+					if (entity instanceof Player){
+						if(Commands.invincible.contains(((Player) entity).getName())) {
+							return;
+						}
+						if(!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)){
+							continue;
+						}
+						if(!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)){
+							continue;
+						}
+					}
 					if (ElementalAbility.isAir(block.getType()) || block.getType() == Material.ICE || this.isWaterbendable(block)) {
 						if (!FROZEN_BLOCKS.containsKey(block)) {
 							final TempBlock tblock = new TempBlock(block, Material.ICE);
