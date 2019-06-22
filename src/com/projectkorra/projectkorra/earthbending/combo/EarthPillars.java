@@ -86,6 +86,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 			}
 
 			if (this.entities.isEmpty()) {
+				remove();
 				return;
 			}
 			firstTime = false;

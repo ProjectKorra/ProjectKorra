@@ -364,15 +364,25 @@ public class EarthBlast extends EarthAbility {
 		}
 
 		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range, new ArrayList<Entity>());
-		if (target == null) {
-			this.destination = this.getTargetEarthBlock((int) this.range).getLocation();
-			this.firstDestination = this.sourceBlock.getLocation().clone();
-			this.firstDestination.setY(this.destination.getY());
+		if (target != null) {
+			this.destination = target.getLocation();
 		} else {
-			this.destination = ((LivingEntity) target).getEyeLocation();
-			this.firstDestination = this.sourceBlock.getLocation().clone();
-			this.firstDestination.setY(this.destination.getY());
-			this.destination = GeneralMethods.getPointOnLine(this.firstDestination, this.destination, this.range);
+			this.destination = getTargetLocation();
+		}
+		
+		if (this.sourceBlock == null) {
+			return;
+		}
+		this.location = this.sourceBlock.getLocation();
+		if (this.destination.distanceSquared(this.location) < 1) {
+			return;
+		}
+
+		this.firstDestination = this.location.clone();
+		if (this.destination.getY() - this.location.getY() > 2) {
+			this.firstDestination.setY(this.destination.getY() - 1);
+		} else {
+			this.firstDestination.add(0, 2, 0);
 		}
 
 		if (this.destination.distanceSquared(this.location) <= 1) {
