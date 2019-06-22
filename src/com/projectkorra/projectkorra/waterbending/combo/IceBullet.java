@@ -49,6 +49,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private double animationSpeed;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	private long shotcooldown;
 	private long time;
 	private String name;
 	private AbilityState state;
@@ -74,6 +75,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		this.range = getConfig().getDouble("Abilities.Water.IceBullet.Range");
 		this.radius = getConfig().getDouble("Abilities.Water.IceBullet.Radius");
 		this.cooldown = getConfig().getLong("Abilities.Water.IceBullet.Cooldown");
+		this.shotcooldown = getConfig().getLong("Abilities.Water.IceBullet.ShotCooldown");
 		this.shootTime = getConfig().getLong("Abilities.Water.IceBullet.ShootTime");
 		this.maxShots = getConfig().getInt("Abilities.Water.IceBullet.MaxShots");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.IceBullet.AnimationSpeed");
@@ -92,7 +94,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		this.radius *= aug;
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Water.IceBullet.Cooldown");
 			this.damage = AvatarState.getValue(this.damage);
 			this.range = AvatarState.getValue(this.range);
 			this.shootTime = AvatarState.getValue(this.shootTime);
@@ -145,34 +147,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			}
 		}
 		return locations;
-	}
-
-	public static class IceBulletLeftClick extends IceBullet {
-
-		public IceBulletLeftClick(final Player player) {
-			super(player);
-			this.setName("IceBulletLeftClick");
-		}
-
-		@Override
-		public String getName() {
-			return "IceBullet";
-		}
-
-	}
-
-	public static class IceBulletRightClick extends IceBullet {
-
-		public IceBulletRightClick(final Player player) {
-			super(player);
-			this.setName("IceBulletRightClick");
-		}
-
-		@Override
-		public String getName() {
-			return "IceBullet";
-		}
-
 	}
 
 	public void manageShots() {
@@ -250,30 +224,13 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			return;
 		}
 
-		if (this.name.equalsIgnoreCase("IceBulletLeftClick") || this.name.equalsIgnoreCase("IceBulletRightClick")) {
-			final Collection<IceBullet> bullets = CoreAbility.getAbilities(this.player, IceBullet.class);
-			if (bullets.size() == 0) {
-				return;
-			}
-			for (final IceBullet bullet : bullets) {
-				if (this.name.equalsIgnoreCase("IceBulletLeftClick")) {
-					if (bullet.leftClicks <= bullet.rightClicks) {
-						bullet.leftClicks += 1;
-					}
-				} else if (bullet.leftClicks >= bullet.rightClicks) {
-					bullet.rightClicks += 1;
-				}
-			}
-			return;
-		}
-
 		if (this.origin == null) {
-			if (this.bPlayer.isOnCooldown("IceBullet") && !this.bPlayer.isAvatarState()) {
+			if (this.bPlayer.isOnCooldown("IceBullet")) {
 				this.remove();
 				return;
 			}
 
-			final Block waterBlock = BlockSource.getWaterSourceBlock(this.player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
+			final Block waterBlock = BlockSource.getWaterSourceBlock(this.player, this.range, ClickType.SHIFT_DOWN, true, true, this.bPlayer.canPlantbend());
 			if (waterBlock == null) {
 				this.remove();
 				return;
@@ -283,7 +240,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			this.origin = waterBlock.getLocation();
 			this.location = this.origin.clone();
 			this.state = AbilityState.ICE_BULLET_FORMING;
-			this.bPlayer.addCooldown("IceBullet", this.cooldown);
 			this.direction = new Vector(1, 0, 1);
 			this.waterGrabber = new WaterSourceGrabber(this.player, this.origin.clone());
 		} else if (this.waterGrabber.getState() == WaterSourceGrabber.AnimationState.FAILED) {
@@ -312,7 +268,15 @@ public class IceBullet extends IceAbility implements ComboAbility {
 				}
 
 				if (timeDiff < this.shootTime) {
-					if (this.shots < this.rightClicks + this.leftClicks) {
+					if (this.rightClicks > 0 || this.leftClicks > 0) {
+						if (this.leftClicks > 0) {
+							this.leftClicks = 0;
+							this.bPlayer.addCooldown("IceBullet Left", this.shotcooldown);
+						} else if (this.rightClicks > 0){
+							this.rightClicks = 0;
+							this.bPlayer.addCooldown("IceBullet Right", this.shotcooldown);
+						}
+
 						this.shots++;
 						final Vector vec = this.player.getEyeLocation().getDirection().normalize();
 						final Location loc = this.player.getEyeLocation().add(vec.clone().multiply(this.radius + 1.3));
@@ -335,6 +299,19 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		} else {
 			this.waterGrabber.progress();
 		}
+	}
+
+	public void doLeftClick() {
+		if (this.bPlayer.isOnCooldown("IceBullet Left")) {
+			return;
+		}
+		this.leftClicks++;
+	}
+	public void doRightClick() {
+		if (this.bPlayer.isOnCooldown("IceBullet Right")) {
+			return;
+		}
+		this.rightClicks++;
 	}
 
 	@Override

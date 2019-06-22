@@ -37,14 +37,12 @@ public class AirStream extends AirAbility implements ComboAbility {
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
-	private Set<Player> flights;
 
 	public AirStream(final Player player) {
 		super(player);
 
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
-		this.flights = new HashSet<>();
 
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
@@ -103,6 +101,11 @@ public class AirStream extends AirAbility implements ComboAbility {
 			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, getTransparentMaterials());
 		}
 
+		if (GeneralMethods.locationEqualsIgnoreDirection(this.currentLoc, this.destination)) {
+			this.remove();
+			return;
+		}
+
 		this.direction = GeneralMethods.getDirection(this.currentLoc, this.destination).normalize();
 		this.currentLoc.add(this.direction.clone().multiply(this.speed));
 
@@ -155,11 +158,6 @@ public class AirStream extends AirAbility implements ComboAbility {
 			}
 			if (!entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
 				this.affectedEntities.add(entity);
-				if (entity instanceof Player) {
-					final Player ep = (Player) entity;
-					flightHandler.createInstance(ep, this.player, this.getName());
-					this.flights.add(ep);
-				}
 			}
 		}
 
@@ -179,10 +177,6 @@ public class AirStream extends AirAbility implements ComboAbility {
 		for (final BukkitRunnable task : this.tasks) {
 			task.cancel();
 		}
-		for (final Player flyer : this.flights) {
-			flightHandler.removeInstance(flyer, this.getName());
-		}
-		this.flights.clear();
 	}
 
 	@Override
@@ -301,10 +295,6 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
-	}
-
-	public Set<Player> getFlights() {
-		return this.flights;
 	}
 
 	public void setCooldown(final long cooldown) {

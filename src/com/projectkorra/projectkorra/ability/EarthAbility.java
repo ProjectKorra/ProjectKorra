@@ -128,7 +128,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer) {
-		if (this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (!TempBlock.isTempBlock(block) && this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			boolean up = false;
 			boolean down = false;
 			final Vector norm = direction.clone().normalize();
@@ -154,7 +154,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			if (DensityShift.isPassiveSand(block)) {
 				DensityShift.revertSand(block);
 			}
-			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
+			if (TempBlock.isTempBlock(affectedblock)) {
 				TempBlock.get(affectedblock).revertBlock();
 			}
 			if (LavaFlow.isLavaFlowBlock(block)){
@@ -268,7 +268,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			info.setBlock(block);
 			info.setState(block.getState());
 		}
-		block.setType(Material.AIR);
+		block.setType(Material.AIR, false);
 		info.setTime(System.currentTimeMillis());
 		TEMP_AIR_LOCATIONS.put(info.getID(), info);
 	}
@@ -457,17 +457,18 @@ public abstract class EarthAbility extends ElementalAbility {
 		MOVED_EARTH.put(target, info);
 
 		if (info.getState().getType() == Material.SAND) {
-			target.setType(Material.SANDSTONE);
+			target.setType(Material.SANDSTONE, false);
 		} else if (info.getState().getType() == Material.RED_SAND) {
-			target.setType(Material.RED_SANDSTONE);
+			target.setType(Material.RED_SANDSTONE, false);
 		} else if (info.getState().getType() == Material.GRAVEL) {
-			target.setType(Material.STONE);
+			target.setType(Material.STONE, false);
+		} else if (info.getState().getType().name().endsWith("CONCRETE_POWDER")) {
+			target.setType(Material.getMaterial(info.getState().getType().name().replace("_POWDER", "")), false);
 		} else {
-			target.setType(info.getState().getType());
-			target.setBlockData(info.getState().getBlockData());
+			target.setBlockData(info.getState().getBlockData(), false);
 		}
 
-		source.setType(Material.AIR);
+		source.setType(Material.AIR, false);
 	}
 
 	public static void playEarthbendingSound(final Location loc) {
@@ -559,7 +560,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		if (MOVED_EARTH.containsKey(block)) {
 			final Information info = MOVED_EARTH.get(block);
 			if (block.getType() == Material.SANDSTONE && info.getType() == Material.SAND) {
-				block.setType(Material.SAND);
+				block.setType(Material.SAND, false);
 			}
 			if (RaiseEarth.blockInAllAffectedBlocks(block)) {
 				EarthAbility.revertBlock(block);
@@ -589,7 +590,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 			return;
 		} else {
-			info.getState().update(true);
+			info.getState().update(true, false);
 			TEMP_AIR_LOCATIONS.remove(i);
 		}
 	}
@@ -609,7 +610,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 
 			if (block.equals(sourceblock)) {
-				info.getState().update(true);
+				info.getState().update(true, false);
 				if (RaiseEarth.blockInAllAffectedBlocks(sourceblock)) {
 					EarthAbility.revertBlock(sourceblock);
 				}
@@ -627,20 +628,19 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 
 			if (ElementalAbility.isAir(sourceblock.getType()) || sourceblock.isLiquid()) {
-				info.getState().update(true);
+				info.getState().update(true, false);
 			} else {
 
 			}
 
 			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block, false)) {
-				block.setType(Material.WATER);
 				BlockData data = Material.WATER.createBlockData();
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(7);
 				}
-				block.setBlockData(data);
+				block.setBlockData(data, false);
 			} else {
-				block.setType(Material.AIR);
+				block.setType(Material.AIR, false);
 			}
 
 			if (RaiseEarth.blockInAllAffectedBlocks(sourceblock)) {

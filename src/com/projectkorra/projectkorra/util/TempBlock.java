@@ -2,18 +2,18 @@ package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TempBlock {
@@ -34,28 +34,32 @@ public class TempBlock {
 	private RevertTask revertTask = null;
 	
 	public TempBlock(final Block block, final Material newtype) {
-		this(block, newtype, newtype.createBlockData());
+		this(block, newtype.createBlockData());
 	}
 
+	@Deprecated
 	public TempBlock(final Block block, final Material newtype, final BlockData newdata) {
+		this(block, newdata);
+	}
+
+	public TempBlock(final Block block, final BlockData newdata) {
 		this.block = block;
 		this.newdata = newdata;
 		if (instances.containsKey(block)) {
 			final TempBlock temp = instances.get(block);
-			if (newtype != temp.block.getType()) {
-				temp.block.setType(newtype);
-			}
-			if (newdata != temp.block.getBlockData()) {
-				temp.block.setBlockData(newdata);
+			if (!newdata.equals(temp.block.getBlockData())) {
+				temp.block.setBlockData(newdata, GeneralMethods.isLightEmitting(newdata.getMaterial()));
 				temp.newdata = newdata;
 			}
 			this.state = temp.state;
 			instances.put(block, temp);
 		} else {
 			this.state = block.getState();
+			if(this.state instanceof Container) {
+				return;
+			}
 			instances.put(block, this);
-			block.setType(newtype);
-			block.setBlockData(newdata);
+			block.setBlockData(newdata, GeneralMethods.isLightEmitting(newdata.getMaterial()));
 		}
 		if (this.state.getType() == Material.FIRE) {
 			this.state.setType(Material.AIR);
@@ -70,7 +74,7 @@ public class TempBlock {
 	}
 
 	public static boolean isTempBlock(final Block block) {
-		return block != null ? instances.containsKey(block) : false;
+		return block != null && instances.containsKey(block);
 	}
 
 	public static boolean isTouchingTempBlock(final Block block) {
@@ -87,18 +91,17 @@ public class TempBlock {
 		for (final Block block : instances.keySet()) {
 			revertBlock(block, Material.AIR);
 		}
-		if (REVERT_QUEUE != null) {
-			for (final TempBlock tempblock : REVERT_QUEUE) {
-				tempblock.state.update(true);
-				if (tempblock.revertTask != null) {
-					tempblock.revertTask.run();
-				}
+		for (final TempBlock tempblock : REVERT_QUEUE) {
+			tempblock.state.update(true, GeneralMethods.isLightEmitting(tempblock.state.getType()));
+			if (tempblock.revertTask != null) {
+				tempblock.revertTask.run();
 			}
-			REVERT_QUEUE.clear();
 		}
+		REVERT_QUEUE.clear();
 	}
 
 	public static void removeBlock(final Block block) {
+		REVERT_QUEUE.remove(instances.get(block));
 		instances.remove(block);
 	}
 
@@ -107,27 +110,23 @@ public class TempBlock {
 			instances.get(block).revertBlock();
 		} else {
 			if ((defaulttype == Material.LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block, true)) {
-				block.setType(Material.LAVA);
-				
 				BlockData data = Material.LAVA.createBlockData();
 				
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(0);
 				}
 				
-				block.setBlockData(data);
+				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 			} else if ((defaulttype == Material.WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
-				block.setType(Material.WATER);
-				
 				BlockData data = Material.WATER.createBlockData();
 				
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(0);
 				}
 				
-				block.setBlockData(data);
+				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 			} else {
-				block.setType(defaulttype);
+				block.setType(defaulttype, GeneralMethods.isLightEmitting(defaulttype));
 			}
 		}
 	}
@@ -170,11 +169,11 @@ public class TempBlock {
 	}
 
 	public void revertBlock() {
-		this.state.update(true);
+		PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result ->
+			this.state.update(true, GeneralMethods.isLightEmitting(this.state.getType()))
+		);
 		instances.remove(this.block);
-		if (REVERT_QUEUE.contains(this)) {
-			REVERT_QUEUE.remove(this);
-		}
+		REVERT_QUEUE.remove(this);
 		if (this.revertTask != null) {
 			this.revertTask.run();
 		}
@@ -185,13 +184,17 @@ public class TempBlock {
 	}
 
 	public void setType(final Material material) {
-		this.setType(material, material.createBlockData());
+		this.setType(material.createBlockData());
 	}
 
+	@Deprecated
 	public void setType(final Material material, final BlockData data) {
+		this.setType(data);
+	}
+
+	public void setType(final BlockData data) {
 		this.newdata = data;
-		this.block.setType(material);
-		this.block.setBlockData(data);
+		this.block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 	}
 
 	public static void startReversion() {

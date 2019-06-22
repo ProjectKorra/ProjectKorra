@@ -215,9 +215,14 @@ public class CollisionInitializer {
 			return;
 		}
 		this.largeAbilities.add(largeAbility);
+		for (final CoreAbility otherLargeAbility : this.largeAbilities) {
+			this.collisionManager.addCollision(new Collision(largeAbility, otherLargeAbility, true, true));
+		}
+
 		for (final CoreAbility smallAbility : this.smallAbilities) {
 			this.collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
 		}
+
 	}
 
 	/**
@@ -252,11 +257,9 @@ public class CollisionInitializer {
 	}
 
 	/**
-	 * An ability that collides with other small abilities. (EarthBlast,
-	 * FireBlast). Two colliding small abilities will remove each other. A small
-	 * ability is removed when it collides with a large ability.
+	 * Cancel interaction between two abilities
 	 *
-	 * @param smallAbility the small CoreAbility
+	 * @param ignoreAbility the small CoreAbility
 	 */
 	public void addIgnoreAbility(final CoreAbility ignoreAbility) {
 		if (ignoreAbility == null) {

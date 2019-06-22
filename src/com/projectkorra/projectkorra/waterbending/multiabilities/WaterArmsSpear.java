@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.command.Commands;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -229,8 +230,22 @@ public class WaterArmsSpear extends WaterAbility {
 			}
 			return;
 		}
-		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.spearSphereRadius)) {
+		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.location, this.spearSphereRadius);
+		ICE_SETTING: for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.spearSphereRadius)) {
 			if (isTransparent(this.player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
+				for (Entity entity : trapped) {
+					if (entity instanceof Player) {
+						if (Commands.invincible.contains(((Player) entity).getName())) {
+							return;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block, true)) {
+							continue ICE_SETTING;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block, true)) {
+							continue ICE_SETTING;
+						}
+					}
+				}
 				playIcebendingSound(block.getLocation());
 				new TempBlock(block, Material.ICE);
 				getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));

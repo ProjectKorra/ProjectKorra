@@ -115,7 +115,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMeltable(final Block block) {
-		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) {
+		if (isIce(block) || isSnow(block)) {
 			return true;
 		}
 
@@ -206,19 +206,11 @@ public abstract class ElementalAbility extends CoreAbility {
 		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation());
 	}
 
-	public static boolean isUndead(final Entity entity) {
-		if (entity == null) {
-			return false;
-		} else if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public static boolean isWater(final Block block) {
 		if (block == null) {
 			return false;
+		} else if(isWater(block.getType())) {
+			return true;
 		} else {
 			return isWater(block.getBlockData());
 		}

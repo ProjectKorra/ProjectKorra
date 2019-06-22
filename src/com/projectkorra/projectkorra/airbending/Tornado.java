@@ -127,8 +127,13 @@ public class Tornado extends AirAbility {
 
 						mag = Math.sqrt(x * x + z * z);
 
-						vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
-						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+						if (mag == 0.0) {
+							vx = 0.0;
+							vz = 0.0;
+						} else {
+							vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
+							vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+						}
 
 						if (entity instanceof Player) {
 							vy = 0.05 * this.playerPushFactor;
@@ -158,7 +163,7 @@ public class Tornado extends AirAbility {
 							}
 						}
 
-						final Vector velocity = entity.getVelocity();
+						final Vector velocity = entity.getVelocity().clone();
 						velocity.setX(vx);
 						velocity.setZ(vz);
 						velocity.setY(vy);
@@ -167,10 +172,6 @@ public class Tornado extends AirAbility {
 						entity.setFallDistance(0);
 
 						breakBreathbendingHold(entity);
-
-						if (entity instanceof Player) {
-							flightHandler.createInstance((Player) entity, 50L, this.getName());
-						}
 					}
 				}
 			}

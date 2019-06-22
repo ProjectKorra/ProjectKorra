@@ -147,12 +147,26 @@ public class SurgeWave extends WaterAbility {
 		if (freezeradius > this.maxFreezeRadius) {
 			freezeradius = this.maxFreezeRadius;
 		}
-
-		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
+		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.frozenLocation, freezeradius);
+		ICE_SETTING: for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
+			}
+
+			for (Entity entity : trapped) {
+				if (entity instanceof Player) {
+					if (Commands.invincible.contains(((Player) entity).getName())) {
+						return;
+					}
+					if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
+						continue ICE_SETTING;
+					}
+					if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
+						continue ICE_SETTING;
+					}
+				}
 			}
 
 			final Block oldBlock = block;
@@ -232,7 +246,7 @@ public class SurgeWave extends WaterAbility {
 
 				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 					new PlantRegrowth(this.player, this.sourceBlock);
-					this.sourceBlock.setType(Material.AIR);
+					this.sourceBlock.setType(Material.AIR, false);
 				}
 				
 				if (TempBlock.isTempBlock(this.sourceBlock)) {
@@ -412,7 +426,7 @@ public class SurgeWave extends WaterAbility {
 	public static void removeAllCleanup() {
 		for (final SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			for (final Block block : surgeWave.waveBlocks.keySet()) {
-				block.setType(Material.AIR);
+				block.setType(Material.AIR, false);
 				surgeWave.waveBlocks.remove(block);
 			}
 			for (final Block block : surgeWave.frozenBlocks.keySet()) {

@@ -49,6 +49,7 @@ public class IceBlast extends IceAbility {
 	private Location location;
 	private Location firstDestination;
 	private Location destination;
+	private boolean allowSnow;
 	public TempBlock source;
 
 	public IceBlast(final Player player) {
@@ -61,6 +62,7 @@ public class IceBlast extends IceAbility {
 		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
 		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
 		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
+		this.allowSnow = getConfig().getBoolean("Abilities.Water.IceBlast.AllowSnow");
 
 		this.damage = getNightFactor(this.damage, player.getWorld());
 
@@ -69,14 +71,14 @@ public class IceBlast extends IceAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Water.IceBlast.Cooldown");
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceBlast.Range");
 			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceBlast.Damage");
 		}
 
 		block(player);
 		this.range = getNightFactor(this.range, player.getWorld());
-		final Block sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.SHIFT_DOWN, false, true, false, false, false);
+		final Block sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.SHIFT_DOWN, false, true, false, this.allowSnow, false);
 		final IceBlast oldAbil = getAbility(player, IceBlast.class);
 		if (oldAbil != null) {
 			oldAbil.setSourceBlock(sourceBlock == null ? oldAbil.getSourceBlock() : sourceBlock);

@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
+import co.aikar.timings.lib.MCTiming;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -248,7 +249,11 @@ public abstract class CoreAbility implements Ability {
 						abil.modifyAttributes();
 						abil.attributesModified = true;
 					}
-					abil.progress();
+
+					try(MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
+						abil.progress();
+					}
+
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 				}
 				catch (final Exception e) {
