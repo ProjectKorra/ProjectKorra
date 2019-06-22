@@ -257,7 +257,7 @@ public class IceSpikeBlast extends IceAbility {
 		if (target == null) {
 			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, true, getTransparentMaterials());
 		} else {
-			this.destination = target.getEyeLocation();
+			this.destination = target.getLocation();
 		}
 
 		if (this.sourceBlock == null) {
