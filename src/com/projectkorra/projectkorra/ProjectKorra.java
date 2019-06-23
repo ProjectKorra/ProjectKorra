@@ -5,6 +5,9 @@ import java.util.logging.Logger;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 
+import co.aikar.timings.lib.MCTiming;
+import co.aikar.timings.lib.TimingManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
@@ -34,9 +37,6 @@ import com.projectkorra.projectkorra.util.StatisticsManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
-
-import co.aikar.timings.lib.MCTiming;
-import co.aikar.timings.lib.TimingManager;
 
 public class ProjectKorra extends JavaPlugin {
 

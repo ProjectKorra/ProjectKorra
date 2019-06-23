@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
+import sun.reflect.ReflectionFactory;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -27,6 +29,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
+
+import co.aikar.timings.lib.MCTiming;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -57,9 +61,6 @@ import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.TimeUtil;
-
-import co.aikar.timings.lib.MCTiming;
-import sun.reflect.ReflectionFactory;
 
 /**
  * CoreAbility provides default implementation of an Ability, including methods

@@ -14,12 +14,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
+import sun.reflect.ReflectionFactory;
+
 import org.bukkit.plugin.Plugin;
 
 import com.projectkorra.projectkorra.event.AbilityLoadEvent;
 import com.projectkorra.projectkorra.util.FileExtensionFilter;
-
-import sun.reflect.ReflectionFactory;
 
 public class AddonAbilityLoader<T> {
 

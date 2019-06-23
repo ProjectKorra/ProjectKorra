@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import sun.reflect.ReflectionFactory;
+
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-
-import sun.reflect.ReflectionFactory;
 
 public class AbilityLoader<T> {
 
