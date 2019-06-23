@@ -1,10 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +13,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthTunnel extends EarthAbility {
@@ -29,6 +24,7 @@ public class EarthTunnel extends EarthAbility {
 	private double depth;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	private long revertTime;
 	private double radius;
 	private double angle;
 	@Attribute(Attribute.RADIUS)
@@ -44,8 +40,6 @@ public class EarthTunnel extends EarthAbility {
 	private Location location;
 	private Vector direction;
 
-	public static Map<TempBlock, Long> airBlocks = new ConcurrentHashMap<TempBlock, Long>();
-
 	public EarthTunnel(final Player player) {
 		super(player);
 
@@ -58,6 +52,7 @@ public class EarthTunnel extends EarthAbility {
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
 		this.ignoreOres = getConfig().getBoolean("Abilities.Earth.EarthTunnel.IgnoreOres");
+		this.revertTime = getConfig().getLong("Properties.Earth.RevertCheckTime");
 
 		this.time = System.currentTimeMillis();
 
@@ -140,14 +135,14 @@ public class EarthTunnel extends EarthAbility {
 						if (getMovedEarth().containsKey(this.block)) {
 							this.block.setType(Material.AIR);
 						} else {
-							airBlocks.put(new TempBlock(this.block, Material.AIR), System.currentTimeMillis());
+							new TempBlock(this.block, Material.AIR).setRevertTime(revertTime);
 							if (isPlant(this.block.getRelative(BlockFace.UP)) || isSnow(this.block.getRelative(BlockFace.UP))) {
 								final Block above = this.block.getRelative(BlockFace.UP);
 								final Block above2 = above.getRelative(BlockFace.UP);
 								if (isPlant(above) || isSnow(above)) {
-									airBlocks.put(new TempBlock(above, Material.AIR), System.currentTimeMillis());
+									new TempBlock(above, Material.AIR).setRevertTime(revertTime);
 									if (isPlant(above2) && above2.getType().equals(Material.TALL_GRASS)) {
-										airBlocks.put(new TempBlock(above2, Material.AIR), System.currentTimeMillis());
+										new TempBlock(above2, Material.AIR).setRevertTime(revertTime);
 									}
 								}
 							}
@@ -165,17 +160,24 @@ public class EarthTunnel extends EarthAbility {
 	}
 
 	private boolean isOre(final Block block) {
-		switch (block.getType()) {
-			case IRON_ORE:
-			case GOLD_ORE:
-			case DIAMOND_ORE:
-			case REDSTONE_ORE:
-			case COAL_ORE:
-			case EMERALD_ORE:
-			case LAPIS_ORE:
-			case NETHER_QUARTZ_ORE:
-				return true;
+		if (block.getType() == Material.IRON_ORE) {
+			return true;
+		} else if (block.getType() == Material.GOLD_ORE) {
+			return true;
+		} else if (block.getType() == Material.DIAMOND_ORE) {
+			return true;
+		} else if (block.getType() == Material.REDSTONE_ORE) {
+			return true;
+		} else if (block.getType() == Material.COAL_ORE) {
+			return true;
+		} else if (block.getType() == Material.EMERALD_ORE) {
+			return true;
+		} else if (block.getType() == Material.LAPIS_ORE) {
+			return true;
+		} else if (block.getType() == Material.NETHER_QUARTZ_ORE) {
+			return true;
 		}
+		
 		return false;
 	}
 
@@ -202,15 +204,6 @@ public class EarthTunnel extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-
-	@Override
-	public List<Location> getLocations() {
-		final ArrayList<Location> locations = new ArrayList<>();
-		for (final TempBlock tblock : airBlocks.keySet()) {
-			locations.add(tblock.getLocation());
-		}
-		return locations;
 	}
 
 	public long getInterval() {
@@ -303,17 +296,6 @@ public class EarthTunnel extends EarthAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
-	}
-
-	public static void revertAirBlocks() {
-		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthTunnel.Revert")) {
-			for (final TempBlock tempBlock : EarthTunnel.airBlocks.keySet()) {
-				if (EarthTunnel.airBlocks.get(tempBlock) + ConfigManager.defaultConfig.get().getLong("Properties.Earth.RevertCheckTime") <= System.currentTimeMillis()) {
-					tempBlock.revertBlock();
-					EarthTunnel.airBlocks.remove(tempBlock);
-				}
-			}
-		}
 	}
 
 }
