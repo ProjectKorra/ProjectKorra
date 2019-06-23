@@ -1,11 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Set;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,9 +12,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
 
 public class AirShield extends AirAbility {
 
@@ -44,14 +45,14 @@ public class AirShield extends AirAbility {
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.MaxRadius");
 		this.initialRadius = getConfig().getDouble("Abilities.Air.AirShield.InitialRadius");
 		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
-		this.radius = initialRadius;
+		this.radius = this.initialRadius;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirShield.Duration");
 		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
 		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
 		this.dynamicCooldown = getConfig().getBoolean("Abilities.Air.AirShield.DynamicCooldown"); //any unused duration from shield is removed from the cooldown
-		if (duration == 0) {
+		if (this.duration == 0) {
 			this.dynamicCooldown = false;
 		}
 		this.random = new Random();
@@ -99,8 +100,8 @@ public class AirShield extends AirAbility {
 			return;
 		} else if (!this.bPlayer.isAvatarState() || !this.isToggledByAvatarState) {
 			if (!this.player.isSneaking() || !this.bPlayer.canBend(this)) {
-				if (dynamicCooldown) {
-					Long reducedCooldown = cooldown - (duration - (System.currentTimeMillis() - this.getStartTime()));
+				if (this.dynamicCooldown) {
+					Long reducedCooldown = this.cooldown - (this.duration - (System.currentTimeMillis() - this.getStartTime()));
 					if (reducedCooldown < 0L) {
 						reducedCooldown = 0L;
 					}
@@ -164,14 +165,14 @@ public class AirShield extends AirAbility {
 				entity.setFallDistance(0);
 			}
 		}
-		
+
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 		}
-		
+
 		final Set<Integer> keys = this.angles.keySet();
 		for (final int i : keys) {
 			double x, y, z;

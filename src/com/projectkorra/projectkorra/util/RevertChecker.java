@@ -8,7 +8,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
-import io.papermc.lib.PaperLib;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,6 +16,8 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+
+import io.papermc.lib.PaperLib;
 
 public class RevertChecker implements Runnable {
 
@@ -35,23 +36,19 @@ public class RevertChecker implements Runnable {
 
 	public static void revertAirBlocks() {
 		for (final int ID : airRevertQueue.keySet()) {
-			PaperLib.getChunkAtAsync(EarthAbility.getTempAirLocations().get(ID).getState().getBlock().getLocation()).thenAccept(result ->
-				EarthAbility.revertAirBlock(ID)
-			);
+			PaperLib.getChunkAtAsync(EarthAbility.getTempAirLocations().get(ID).getState().getBlock().getLocation()).thenAccept(result -> EarthAbility.revertAirBlock(ID));
 			RevertChecker.airRevertQueue.remove(ID);
 		}
 	}
 
 	public static void revertEarthBlocks() {
 		for (final Block block : earthRevertQueue.keySet()) {
-			PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result ->
-				EarthAbility.revertBlock(block)
-			);
+			PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result -> EarthAbility.revertBlock(block));
 			earthRevertQueue.remove(block);
 		}
 	}
 
-	private Future<Set<Map<String,Integer>>> returnFuture;
+	private Future<Set<Map<String, Integer>>> returnFuture;
 
 	private void addToAirRevertQueue(final int i) {
 		if (!airRevertQueue.containsKey(i)) {
@@ -77,7 +74,7 @@ public class RevertChecker implements Runnable {
 
 			try {
 				this.returnFuture = this.plugin.getServer().getScheduler().callSyncMethod(this.plugin, new getOccupiedChunks(this.plugin.getServer()));
-				final Set<Map<String,Integer>> chunks = this.returnFuture.get();
+				final Set<Map<String, Integer>> chunks = this.returnFuture.get();
 
 				final Map<Block, Information> earth = new HashMap<>(EarthAbility.getMovedEarth());
 
@@ -88,7 +85,7 @@ public class RevertChecker implements Runnable {
 
 					final Information info = earth.get(block);
 
-					Map<String, Integer> chunkcoord = new HashMap<>();
+					final Map<String, Integer> chunkcoord = new HashMap<>();
 					chunkcoord.put("x", block.getX() >> 4);
 					chunkcoord.put("z", block.getZ() >> 4);
 
@@ -107,7 +104,7 @@ public class RevertChecker implements Runnable {
 					final Information info = air.get(i);
 					final Block block = info.getBlock();
 
-					Map<String, Integer> chunkcoord = new HashMap<>();
+					final Map<String, Integer> chunkcoord = new HashMap<>();
 					chunkcoord.put("x", block.getX() >> 4);
 					chunkcoord.put("z", block.getZ() >> 4);
 
@@ -115,14 +112,13 @@ public class RevertChecker implements Runnable {
 						this.addToAirRevertQueue(i);
 					}
 				}
-			}
-			catch (final Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private class getOccupiedChunks implements Callable<Set<Map<String,Integer>>> {
+	private class getOccupiedChunks implements Callable<Set<Map<String, Integer>>> {
 		private final Server server;
 
 		public getOccupiedChunks(final Server server) {
@@ -130,11 +126,11 @@ public class RevertChecker implements Runnable {
 		}
 
 		@Override
-		public Set<Map<String,Integer>> call() {
-			final Set<Map<String,Integer>> chunks = new HashSet<>();
+		public Set<Map<String, Integer>> call() {
+			final Set<Map<String, Integer>> chunks = new HashSet<>();
 
 			for (final Player player : this.server.getOnlinePlayers()) {
-				Map<String, Integer> chunkcoord = new HashMap<>();
+				final Map<String, Integer> chunkcoord = new HashMap<>();
 				chunkcoord.put("x", player.getLocation().getBlockX() >> 4);
 				chunkcoord.put("z", player.getLocation().getBlockZ() >> 4);
 

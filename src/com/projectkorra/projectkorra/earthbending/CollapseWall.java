@@ -97,8 +97,7 @@ public class CollapseWall extends EarthAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public Location getLocation() {

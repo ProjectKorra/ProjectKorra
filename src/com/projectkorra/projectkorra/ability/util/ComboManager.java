@@ -71,8 +71,7 @@ public class ComboManager {
 					final Class<?> clazz = (Class<?>) comboAbil.getComboType();
 					try {
 						ReflectionHandler.instantiateObject(clazz, player);
-					}
-					catch (final Exception e) {
+					} catch (final Exception e) {
 						e.printStackTrace();
 					}
 				} else {

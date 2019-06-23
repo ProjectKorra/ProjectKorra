@@ -1,14 +1,21 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 
 public class TempArmor {
 
@@ -81,16 +88,11 @@ public class TempArmor {
 
 		if (!INSTANCES.containsKey(entity)) {
 			ORIGINAL.put(entity, this.oldArmor);
-			final PriorityQueue<TempArmor> queue = new PriorityQueue<>(10, new Comparator<TempArmor>() {
-
-				@Override
-				public int compare(final TempArmor a, final TempArmor b) {
-					final long current = System.currentTimeMillis();
-					final long remainingA = a.getStartTime() + a.getDuration() - current;
-					final long remainingB = b.getStartTime() + b.getDuration() - current;
-					return (int) (remainingA - remainingB);
-				}
-
+			final PriorityQueue<TempArmor> queue = new PriorityQueue<>(10, (a, b) -> {
+				final long current = System.currentTimeMillis();
+				final long remainingA = a.getStartTime() + a.getDuration() - current;
+				final long remainingB = b.getStartTime() + b.getDuration() - current;
+				return (int) (remainingA - remainingB);
 			});
 
 			INSTANCES.put(entity, queue);
@@ -287,8 +289,7 @@ public class TempArmor {
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

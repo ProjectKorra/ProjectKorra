@@ -1,16 +1,14 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.*;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang3.tuple.Pair;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,8 +17,20 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class Torrent extends WaterAbility {
 
@@ -133,7 +143,7 @@ public class Torrent extends WaterAbility {
 		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.location, this.layer);
 		ICE_SETTING: for (final Block block : ice) {
 			if (isTransparent(this.player, block) && block.getType() != Material.ICE) {
-				for (Entity entity : trapped) {
+				for (final Entity entity : trapped) {
 					if (entity instanceof Player) {
 						if (Commands.invincible.contains(((Player) entity).getName())) {
 							return;
@@ -179,24 +189,24 @@ public class Torrent extends WaterAbility {
 				if (this.player.isSneaking()) {
 					this.sourceSelected = false;
 					this.settingUp = true;
-					
-					if (TempBlock.isTempBlock(sourceBlock)) {
-						TempBlock origin = TempBlock.get(sourceBlock);
-						
+
+					if (TempBlock.isTempBlock(this.sourceBlock)) {
+						final TempBlock origin = TempBlock.get(this.sourceBlock);
+
 						if (FROZEN_BLOCKS.containsKey(origin)) {
 							massThaw(origin);
 						} else if (isBendableWaterTempBlock(origin)) {
 							origin.revertBlock();
 						}
-					} 
-					
+					}
+
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
 					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
 						this.sourceBlock.setType(Material.AIR);
 					}
-					
+
 					this.source = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(0));
 					this.location = this.sourceBlock.getLocation();
 				} else {
@@ -555,7 +565,7 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			return;
 		}
 		double x, z, vx, vz, mag;
@@ -594,7 +604,7 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))){
+		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 			return;
 		}
 		if (direction.getY() > this.knockup) {
@@ -655,28 +665,30 @@ public class Torrent extends WaterAbility {
 		block.revertBlock();
 		FROZEN_BLOCKS.remove(block);
 	}
-	
+
 	/**
-	 * Thaws the entire mass of ice created by a torrent that the given block is part of
+	 * Thaws the entire mass of ice created by a torrent that the given block is
+	 * part of
+	 *
 	 * @param origin part of the ice mass created by a torrent
 	 */
 	public static void massThaw(final TempBlock origin) {
 		if (FROZEN_BLOCKS.containsKey(origin)) {
-			Player creator = FROZEN_BLOCKS.get(origin).getLeft();
-			int id = FROZEN_BLOCKS.get(origin).getRight();
-			
-			for (TempBlock tb : FROZEN_BLOCKS.keySet()) {
+			final Player creator = FROZEN_BLOCKS.get(origin).getLeft();
+			final int id = FROZEN_BLOCKS.get(origin).getRight();
+
+			for (final TempBlock tb : FROZEN_BLOCKS.keySet()) {
 				if (tb.equals(origin)) {
 					continue;
 				}
-				
-				Player check = FROZEN_BLOCKS.get(tb).getLeft();
-				int id2 = FROZEN_BLOCKS.get(tb).getRight();
+
+				final Player check = FROZEN_BLOCKS.get(tb).getLeft();
+				final int id2 = FROZEN_BLOCKS.get(tb).getRight();
 				if (creator.equals(check) && id == id2) {
 					thaw(tb);
 				}
 			}
-			
+
 			thaw(origin);
 		}
 	}
@@ -944,8 +956,8 @@ public class Torrent extends WaterAbility {
 	}
 
 	public static Map<TempBlock, Player> getFrozenBlocks() {
-		Map<TempBlock, Player> blocks = new HashMap<>();
-		for (TempBlock tb : FROZEN_BLOCKS.keySet()) {
+		final Map<TempBlock, Player> blocks = new HashMap<>();
+		for (final TempBlock tb : FROZEN_BLOCKS.keySet()) {
 			blocks.put(tb, FROZEN_BLOCKS.get(tb).getLeft());
 		}
 		return blocks;

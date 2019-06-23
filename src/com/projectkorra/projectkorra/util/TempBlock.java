@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import io.papermc.lib.PaperLib;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,13 +15,14 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+
+import io.papermc.lib.PaperLib;
 
 public class TempBlock {
-
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
-	public static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<>(100, new Comparator<TempBlock>() {
+	public static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<TempBlock>(100, new Comparator<TempBlock>() {
 		@Override
 		public int compare(final TempBlock t1, final TempBlock t2) {
 			return (int) (t1.revertTime - t2.revertTime);
@@ -32,7 +35,7 @@ public class TempBlock {
 	private long revertTime;
 	private boolean inRevertQueue;
 	private RevertTask revertTask = null;
-	
+
 	public TempBlock(final Block block, final Material newtype) {
 		this(block, newtype.createBlockData());
 	}
@@ -55,7 +58,7 @@ public class TempBlock {
 			instances.put(block, temp);
 		} else {
 			this.state = block.getState();
-			if(this.state instanceof Container) {
+			if (this.state instanceof Container) {
 				return;
 			}
 			instances.put(block, this);
@@ -110,20 +113,20 @@ public class TempBlock {
 			instances.get(block).revertBlock();
 		} else {
 			if ((defaulttype == Material.LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block, true)) {
-				BlockData data = Material.LAVA.createBlockData();
-				
+				final BlockData data = Material.LAVA.createBlockData();
+
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(0);
 				}
-				
+
 				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 			} else if ((defaulttype == Material.WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
-				BlockData data = Material.WATER.createBlockData();
-				
+				final BlockData data = Material.WATER.createBlockData();
+
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(0);
 				}
-				
+
 				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 			} else {
 				block.setType(defaulttype, GeneralMethods.isLightEmitting(defaulttype));
@@ -134,7 +137,7 @@ public class TempBlock {
 	public Block getBlock() {
 		return this.block;
 	}
-	
+
 	public BlockData getBlockData() {
 		return this.newdata;
 	}
@@ -169,9 +172,7 @@ public class TempBlock {
 	}
 
 	public void revertBlock() {
-		PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result ->
-			this.state.update(true, GeneralMethods.isLightEmitting(this.state.getType()))
-		);
+		PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> this.state.update(true, GeneralMethods.isLightEmitting(this.state.getType())));
 		instances.remove(this.block);
 		REVERT_QUEUE.remove(this);
 		if (this.revertTask != null) {

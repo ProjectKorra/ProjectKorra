@@ -1,22 +1,134 @@
 package com.projectkorra.projectkorra;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import co.aikar.timings.lib.MCTiming;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.FluidLevelChangeEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.event.entity.ItemMergeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ability.*;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AddonAbility;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.AvatarAbility;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.airbending.*;
+import com.projectkorra.projectkorra.airbending.AirBlast;
+import com.projectkorra.projectkorra.airbending.AirBurst;
+import com.projectkorra.projectkorra.airbending.AirScooter;
+import com.projectkorra.projectkorra.airbending.AirShield;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.airbending.AirSuction;
+import com.projectkorra.projectkorra.airbending.AirSwipe;
+import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.chiblocking.*;
+import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
+import com.projectkorra.projectkorra.chiblocking.HighJump;
+import com.projectkorra.projectkorra.chiblocking.Paralyze;
+import com.projectkorra.projectkorra.chiblocking.QuickStrike;
+import com.projectkorra.projectkorra.chiblocking.RapidPunch;
+import com.projectkorra.projectkorra.chiblocking.Smokescreen;
+import com.projectkorra.projectkorra.chiblocking.SwiftKick;
+import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.chiblocking.passive.Acrobatics;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.*;
+import com.projectkorra.projectkorra.earthbending.Catapult;
+import com.projectkorra.projectkorra.earthbending.Collapse;
+import com.projectkorra.projectkorra.earthbending.CollapseWall;
+import com.projectkorra.projectkorra.earthbending.EarthArmor;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.earthbending.EarthGrab;
 import com.projectkorra.projectkorra.earthbending.EarthGrab.GrabMode;
+import com.projectkorra.projectkorra.earthbending.EarthSmash;
+import com.projectkorra.projectkorra.earthbending.EarthTunnel;
+import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.earthbending.RaiseEarthWall;
+import com.projectkorra.projectkorra.earthbending.Shockwave;
+import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.earthbending.combo.EarthPillars;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow.AbilityType;
@@ -30,18 +142,44 @@ import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
-import com.projectkorra.projectkorra.firebending.*;
+import com.projectkorra.projectkorra.firebending.Blaze;
+import com.projectkorra.projectkorra.firebending.BlazeArc;
+import com.projectkorra.projectkorra.firebending.BlazeRing;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.FireBlastCharged;
+import com.projectkorra.projectkorra.firebending.FireBurst;
+import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.firebending.FireManipulation;
 import com.projectkorra.projectkorra.firebending.FireManipulation.FireManipulationType;
+import com.projectkorra.projectkorra.firebending.FireShield;
+import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.firebending.HeatControl.HeatControlType;
+import com.projectkorra.projectkorra.firebending.Illumination;
+import com.projectkorra.projectkorra.firebending.WallOfFire;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.util.*;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.FlightHandler.Flight;
-import com.projectkorra.projectkorra.waterbending.*;
+import com.projectkorra.projectkorra.util.MovementHandler;
+import com.projectkorra.projectkorra.util.PassiveHandler;
+import com.projectkorra.projectkorra.util.StatisticsManager;
+import com.projectkorra.projectkorra.util.StatisticsMethods;
+import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.OctopusForm;
+import com.projectkorra.projectkorra.waterbending.SurgeWall;
+import com.projectkorra.projectkorra.waterbending.SurgeWave;
+import com.projectkorra.projectkorra.waterbending.Torrent;
+import com.projectkorra.projectkorra.waterbending.WaterBubble;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
@@ -52,30 +190,6 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeTyp
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
-import org.bukkit.Statistic;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.*;
 
 public class PKListener implements Listener {
 	ProjectKorra plugin;
@@ -155,7 +269,7 @@ public class PKListener implements Listener {
 			TempBlock.revertBlock(block, Material.AIR);
 		} else if (DensityShift.isPassiveSand(block)) {
 			DensityShift.revertSand(block);
-		} else if (WaterBubble.isAir(block)){
+		} else if (WaterBubble.isAir(block)) {
 			event.setCancelled(true);
 		}
 	}
@@ -164,7 +278,7 @@ public class PKListener implements Listener {
 	public void onBlockFlowTo(final BlockFromToEvent event) {
 		final Block toblock = event.getToBlock();
 		final Block fromblock = event.getBlock();
-		
+
 		if (TempBlock.isTempBlock(fromblock) || TempBlock.isTempBlock(toblock)) {
 			event.setCancelled(true);
 		} else {
@@ -175,7 +289,7 @@ public class PKListener implements Listener {
 				if (!event.isCancelled()) {
 					event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
 				}
-	
+
 				if (!event.isCancelled()) {
 					if (Illumination.isIlluminationTorch(toblock)) {
 						toblock.setType(Material.AIR);
@@ -186,8 +300,8 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onFluidLevelChange(FluidLevelChangeEvent event) {
-		if (TempBlock.isTempBlock(event.getBlock())){
+	public void onFluidLevelChange(final FluidLevelChangeEvent event) {
+		if (TempBlock.isTempBlock(event.getBlock())) {
 			event.setCancelled(true);
 		} else if (TempBlock.isTouchingTempBlock(event.getBlock())) {
 			event.setCancelled(true);
@@ -229,8 +343,7 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onBlockIgnite(final BlockIgniteEvent event) {
-	}
+	public void onBlockIgnite(final BlockIgniteEvent event) {}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockMeltEvent(final BlockFadeEvent event) {
@@ -269,28 +382,28 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		final Block block = event.getBlock();
 
-		try(MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
+		try (MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
 			if (!WaterManipulation.canPhysicsChange(block)) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		try(MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
+		try (MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
 			if (!EarthPassive.canPhysicsChange(block)) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		try(MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
+		try (MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
 			if (Illumination.isIlluminationTorch(block)) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		try(MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
+		try (MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
 			if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 				event.setCancelled(true);
 				return;
@@ -298,11 +411,8 @@ public class PKListener implements Listener {
 		}
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
-		try(MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
-			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) &&
-					ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) &&
-					TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))
-			) {
+		try (MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
+			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))) {
 				event.setCancelled(true);
 			}
 		}
@@ -378,8 +488,7 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onEntityDamageBlock(final EntityDamageByBlockEvent event) {
-	}
+	public void onEntityDamageBlock(final EntityDamageByBlockEvent event) {}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
@@ -1081,30 +1190,23 @@ public class PKListener implements Listener {
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
-
-			@Override
-			public void run() {
-				PassiveManager.registerPassives(player);
-				GeneralMethods.removeUnusableAbilities(player.getName());
-			}
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
+			PassiveManager.registerPassives(player);
+			GeneralMethods.removeUnusableAbilities(player.getName());
 		}, 5);
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
-				@Override
-				public void run() {
-					ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-					color = color == null ? ChatColor.GOLD : color;
-					final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
-					final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
-					if (!topBorder.isEmpty()) {
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
-					}
-					player.sendMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
-					if (!bottomBorder.isEmpty()) {
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
-					}
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
+				ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+				color = color == null ? ChatColor.GOLD : color;
+				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
+				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
+				if (!topBorder.isEmpty()) {
+					player.sendMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
+				}
+				player.sendMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+				if (!bottomBorder.isEmpty()) {
+					player.sendMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
 				}
 			}, 20 * 4);
 		}
@@ -1129,7 +1231,7 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		try(MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
+		try (MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
 			if (MovementHandler.isStopped(player)) {
 				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
 					event.setCancelled(true);
@@ -1138,7 +1240,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		try(MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
+		try (MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
 			if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
 				Vector vel = new Vector();
 				vel.setX(event.getTo().getX() - event.getFrom().getX());
@@ -1156,7 +1258,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		try(MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
+		try (MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
 			if (Bloodbending.isBloodbent(player)) {
 				final BendingPlayer bender = Bloodbending.getBloodbender(player);
 				if (bender.isAvatarState()) {
@@ -1175,20 +1277,20 @@ public class PKListener implements Listener {
 		}
 
 		if (bPlayer != null) {
-			try(MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
+			try (MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
 					PassiveHandler.checkExhaustionPassives(player);
 				}
 			}
 
-			try(MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
+			try (MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
 				if (event.getTo().getBlock() != event.getFrom().getBlock()) {
 					FirePassive.handle(player);
 				}
 			}
 		}
 
-		try(MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
+		try (MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
 			if (event.getTo().getY() > event.getFrom().getY()) {
 				if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
 					final int current = player.getStatistic(Statistic.JUMP);
@@ -1315,17 +1417,17 @@ public class PKListener implements Listener {
 
 		final CoreAbility coreAbil = bPlayer.getBoundAbility();
 		final String abil = bPlayer.getBoundAbilityName();
-		
+
 		if (coreAbil == null || !coreAbil.isSneakAbility()) {
 			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
 				new FerroControl(player);
 			}
-			
+
 			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FastSwim.class))) {
 				new FastSwim(player);
 			}
 		}
-		
+
 		if (coreAbil == null) {
 			return;
 		}
@@ -1495,7 +1597,7 @@ public class PKListener implements Listener {
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_AIR) {
 			return;
 		}
-		if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.isCancelled()){
+		if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.isCancelled()) {
 			return;
 		}
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -1766,7 +1868,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPickupItem(final EntityPickupItemEvent event) {
-		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);
 			}
@@ -1775,7 +1877,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryPickupItem(final InventoryPickupItemEvent event) {
-		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);
 			}
@@ -1784,7 +1886,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onItemMerge(final ItemMergeEvent event) {
-		for (MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getEntity()) || metalClips.getTrackedIngots().contains(event.getTarget())) {
 				event.setCancelled(true);
 			}
@@ -1792,8 +1894,8 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockPistonExtendEvent(final BlockPistonExtendEvent event){
-		for (Block b : event.getBlocks()) {
+	public void onBlockPistonExtendEvent(final BlockPistonExtendEvent event) {
+		for (final Block b : event.getBlocks()) {
 			if (TempBlock.isTempBlock(b)) {
 				event.setCancelled(true);
 				break;
@@ -1802,8 +1904,8 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockPistonRetractEvent(final BlockPistonRetractEvent event){
-		for (Block b : event.getBlocks()) {
+	public void onBlockPistonRetractEvent(final BlockPistonRetractEvent event) {
+		for (final Block b : event.getBlocks()) {
 			if (TempBlock.isTempBlock(b)) {
 				event.setCancelled(true);
 				break;

@@ -117,8 +117,8 @@ public class WaterReturn extends WaterAbility {
 		if (inventory.contains(Material.GLASS_BOTTLE)) {
 			final int index = inventory.first(Material.GLASS_BOTTLE);
 			final ItemStack item = inventory.getItem(index);
-			
-			ItemStack water = waterBottleItem();
+
+			final ItemStack water = waterBottleItem();
 
 			if (item.getAmount() == 1) {
 				inventory.setItem(index, water);
@@ -191,14 +191,14 @@ public class WaterReturn extends WaterAbility {
 			}
 		}
 	}
-	
+
 	public static ItemStack waterBottleItem() {
-		ItemStack water = new ItemStack(Material.POTION);
-		PotionMeta meta = (PotionMeta) water.getItemMeta();
-		
+		final ItemStack water = new ItemStack(Material.POTION);
+		final PotionMeta meta = (PotionMeta) water.getItemMeta();
+
 		meta.setBasePotionData(new PotionData(PotionType.WATER));
 		water.setItemMeta(meta);
-		
+
 		return water;
 	}
 

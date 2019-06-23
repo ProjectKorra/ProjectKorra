@@ -310,9 +310,9 @@ public class FireBlastCharged extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		bPlayer.addCooldown(this);
+		this.bPlayer.addCooldown(this);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "FireBlast";
@@ -325,7 +325,7 @@ public class FireBlastCharged extends FireAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override

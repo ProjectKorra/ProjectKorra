@@ -70,14 +70,11 @@ public class WhoCommand extends PKCommand {
 					in.close();
 					WhoCommand.this.staff.clear();
 					WhoCommand.this.staff.putAll(updatedstaff);
-				}
-				catch (final SocketException e) {
+				} catch (final SocketException e) {
 					ProjectKorra.log.info("Could not update staff list.");
-				}
-				catch (final MalformedURLException e) {
+				} catch (final MalformedURLException e) {
 					e.printStackTrace();
-				}
-				catch (final IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -175,8 +172,7 @@ public class WhoCommand extends PKCommand {
 						count++;
 						try {
 							Thread.sleep(delay);
-						}
-						catch (final InterruptedException e) {
+						} catch (final InterruptedException e) {
 							e.printStackTrace();
 							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + WhoCommand.this.databaseOverload);
 							break;

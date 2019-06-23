@@ -73,13 +73,13 @@ public class HelpCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.hasItems()) {
-				strings.add(itemsUsage);
+				strings.add(this.itemsUsage);
 			}
 			if (GeneralMethods.hasRPG()) {
-				strings.add(rpgUsage);
+				strings.add(this.rpgUsage);
 			}
 			if (GeneralMethods.hasSpirits()) {
-				strings.add(spiritsUsage);
+				strings.add(this.spiritsUsage);
 			}
 			Collections.sort(strings);
 			Collections.reverse(strings);
@@ -105,13 +105,13 @@ public class HelpCommand extends PKCommand {
 				strings.add(command.getProperUse());
 			}
 			if (GeneralMethods.hasItems()) {
-				strings.add(itemsUsage);
+				strings.add(this.itemsUsage);
 			}
 			if (GeneralMethods.hasRPG()) {
-				strings.add(rpgUsage);
+				strings.add(this.rpgUsage);
 			}
 			if (GeneralMethods.hasSpirits()) {
-				strings.add(spiritsUsage);
+				strings.add(this.spiritsUsage);
 			}
 			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", Integer.valueOf(arg), true)) {
 				if (firstMessage) {

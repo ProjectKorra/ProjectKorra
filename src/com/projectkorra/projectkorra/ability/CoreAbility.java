@@ -1,15 +1,57 @@
 package com.projectkorra.projectkorra.ability;
 
-import co.aikar.timings.lib.MCTiming;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.jar.JarFile;
+
+import sun.reflect.ReflectionFactory;
+
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
+
+import co.aikar.timings.lib.MCTiming;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.util.*;
+import com.projectkorra.projectkorra.ability.util.AbilityLoader;
+import com.projectkorra.projectkorra.ability.util.AddonAbilityLoader;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.ability.util.CollisionManager;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.AttributePriority;
@@ -19,28 +61,6 @@ import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.TimeUtil;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import sun.reflect.ReflectionFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.jar.JarFile;
 
 /**
  * CoreAbility provides default implementation of an Ability, including methods
@@ -101,13 +121,13 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public CoreAbility() {
-		for (Field field : getClass().getDeclaredFields()) {
+		for (final Field field : this.getClass().getDeclaredFields()) {
 			if (field.isAnnotationPresent(Attribute.class)) {
-				Attribute attribute = field.getAnnotation(Attribute.class);
-				if (!ATTRIBUTE_FIELDS.containsKey(getClass())) {
-					ATTRIBUTE_FIELDS.put(getClass(), new HashMap<>());
+				final Attribute attribute = field.getAnnotation(Attribute.class);
+				if (!ATTRIBUTE_FIELDS.containsKey(this.getClass())) {
+					ATTRIBUTE_FIELDS.put(this.getClass(), new HashMap<>());
 				}
-				ATTRIBUTE_FIELDS.get(getClass()).put(attribute.value(), field);
+				ATTRIBUTE_FIELDS.get(this.getClass()).put(attribute.value(), field);
 			}
 		}
 	}
@@ -250,25 +270,22 @@ public abstract class CoreAbility implements Ability {
 						abil.attributesModified = true;
 					}
 
-					try(MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
+					try (MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
 						abil.progress();
 					}
 
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
-				}
-				catch (final Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 					Bukkit.getLogger().severe(abil.toString());
 					try {
 						abil.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + abil.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
-					}
-					catch (final Exception me) {
+					} catch (final Exception me) {
 						Bukkit.getLogger().severe("unable to notify ability user of error");
 					}
 					try {
 						abil.remove();
-					}
-					catch (final Exception re) {
+					} catch (final Exception re) {
 						Bukkit.getLogger().severe("unable to fully remove ability of above error");
 					}
 				}
@@ -575,16 +592,13 @@ public abstract class CoreAbility implements Ability {
 						final AddonAbility addon = (AddonAbility) ability;
 						addon.load();
 					}
-				}
-				catch (final Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
-				}
-				catch (final Error e) {
+				} catch (final Error e) {
 					e.printStackTrace();
 				}
 			}
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -640,13 +654,12 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility) coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 					PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 				}
-			}
-			catch (Exception | Error e) {
+			} catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
 				e.printStackTrace();
 				ABILITIES_BY_NAME.remove(name.toLowerCase());
@@ -709,12 +722,11 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility) coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 				}
-			}
-			catch (Exception | Error e) {
+			} catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
 				e.printStackTrace();
 				addon.stop();
@@ -816,16 +828,16 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public String getMovePreview(final Player player) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		String displayedMessage = "";
 		if (bPlayer.isOnCooldown(this)) {
-			final long cooldown = bPlayer.getCooldown(getName()) - System.currentTimeMillis();
-			displayedMessage = getElement().getColor() + "" + ChatColor.STRIKETHROUGH + getName() + "" + getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
+			final long cooldown = bPlayer.getCooldown(this.getName()) - System.currentTimeMillis();
+			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName() + "" + this.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
 		} else {
-			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(getName())) {
-				displayedMessage = getElement().getColor() + "" + ChatColor.UNDERLINE + getName();
+			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName())) {
+				displayedMessage = this.getElement().getColor() + "" + ChatColor.UNDERLINE + this.getName();
 			} else {
-				displayedMessage = getElement().getColor() + getName();
+				displayedMessage = this.getElement().getColor() + this.getName();
 			}
 		}
 		return displayedMessage;
@@ -956,70 +968,66 @@ public abstract class CoreAbility implements Ability {
 		return locations;
 	}
 
-	public CoreAbility addAttributeModifier(String attribute, Number value, AttributeModifier modification) {
-		return addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
+	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modification) {
+		return this.addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
 	}
 
-	public CoreAbility addAttributeModifier(String attribute, Number value, AttributeModifier modificationType, AttributePriority priority) {
+	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority) {
 		Validate.notNull(attribute, "attribute cannot be null");
 		Validate.notNull(value, "value cannot be null");
 		Validate.notNull(modificationType, "modifierMethod cannot be null");
 		Validate.notNull(priority, "priority cannot be null");
-		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(getClass()) && ATTRIBUTE_FIELDS.get(getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + getName());
-		if (!attributeModifiers.containsKey(attribute)) {
-			attributeModifiers.put(attribute, new HashMap<>());
+		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + this.getName());
+		if (!this.attributeModifiers.containsKey(attribute)) {
+			this.attributeModifiers.put(attribute, new HashMap<>());
 		}
-		if (!attributeModifiers.get(attribute).containsKey(priority)) {
-			attributeModifiers.get(attribute).put(priority, new HashSet<>());
+		if (!this.attributeModifiers.get(attribute).containsKey(priority)) {
+			this.attributeModifiers.get(attribute).put(priority, new HashSet<>());
 		}
-		attributeModifiers.get(attribute).get(priority).add(Pair.of(value, modificationType));
+		this.attributeModifiers.get(attribute).get(priority).add(Pair.of(value, modificationType));
 		return this;
 	}
 
-	public CoreAbility setAttribute(String attribute, Object value) {
+	public CoreAbility setAttribute(final String attribute, final Object value) {
 		Validate.notNull(attribute, "attribute cannot be null");
 		Validate.notNull(value, "value cannot be null");
-		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(getClass()) && ATTRIBUTE_FIELDS.get(getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + getName());
-		attributeValues.put(attribute, value);
+		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + this.getName());
+		this.attributeValues.put(attribute, value);
 		return this;
 	}
 
 	private void modifyAttributes() {
-		for (String attribute : attributeModifiers.keySet()) {
-			Field field = ATTRIBUTE_FIELDS.get(getClass()).get(attribute);
-			boolean accessibility = field.isAccessible();
+		for (final String attribute : this.attributeModifiers.keySet()) {
+			final Field field = ATTRIBUTE_FIELDS.get(this.getClass()).get(attribute);
+			final boolean accessibility = field.isAccessible();
 			field.setAccessible(true);
 			try {
-				for (AttributePriority priority : AttributePriority.values()) {
-					if (attributeModifiers.get(attribute).containsKey(priority)) {
-						for (Pair<Number, AttributeModifier> pair : attributeModifiers.get(attribute).get(priority)) {
-							Object get = field.get(this);
+				for (final AttributePriority priority : AttributePriority.values()) {
+					if (this.attributeModifiers.get(attribute).containsKey(priority)) {
+						for (final Pair<Number, AttributeModifier> pair : this.attributeModifiers.get(attribute).get(priority)) {
+							final Object get = field.get(this);
 							Validate.isTrue(get instanceof Number, "The field " + field.getName() + " cannot algebraically be modified.");
-							Number oldValue = (Number) field.get(this);
-							Number newValue = pair.getRight().performModification(oldValue, pair.getLeft());
+							final Number oldValue = (Number) field.get(this);
+							final Number newValue = pair.getRight().performModification(oldValue, pair.getLeft());
 							field.set(this, newValue);
 						}
 					}
 				}
-			}
-			catch (IllegalArgumentException | IllegalAccessException e) {
+			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
-			}
-			finally {
+			} finally {
 				field.setAccessible(accessibility);
 			}
 		}
-		attributeValues.forEach((attribute, value) -> {
-			Field field = ATTRIBUTE_FIELDS.get(getClass()).get(attribute);
-			boolean accessibility = field.isAccessible();
+		this.attributeValues.forEach((attribute, value) -> {
+			final Field field = ATTRIBUTE_FIELDS.get(this.getClass()).get(attribute);
+			final boolean accessibility = field.isAccessible();
 			field.setAccessible(true);
 			try {
 				field.set(this, value);
-			}
-			catch (IllegalArgumentException | IllegalAccessException e) {
+			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
-			}
-			finally {
+			} finally {
 				field.setAccessible(accessibility);
 			}
 		});
@@ -1087,8 +1095,7 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 

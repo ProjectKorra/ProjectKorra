@@ -57,8 +57,7 @@ public class RaiseEarth extends EarthAbility {
 			this.origin = this.block.getLocation();
 			this.location = this.origin.clone();
 			this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), this.height);
-		}
-		catch (final IllegalStateException e) {
+		} catch (final IllegalStateException e) {
 			return;
 		}
 

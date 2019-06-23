@@ -19,12 +19,13 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 /**
  * bStats collects some data for plugin authors.
@@ -91,9 +92,7 @@ public class Metrics {
 			config.options().header("bStats collects some data for plugin authors like how many servers are using their plugins.\n" + "To honor their work, you should not disable it.\n" + "This has nearly no effect on the server performance!\n" + "Check out https://bStats.org/ to learn more :)").copyDefaults(true);
 			try {
 				config.save(configFile);
-			}
-			catch (final IOException ignored) {
-			}
+			} catch (final IOException ignored) {}
 		}
 
 		// Load the data.
@@ -107,9 +106,7 @@ public class Metrics {
 					service.getField("B_STATS_VERSION"); // Our identifier :)
 					found = true; // We aren't the first.
 					break;
-				}
-				catch (final NoSuchFieldException ignored) {
-				}
+				} catch (final NoSuchFieldException ignored) {}
 			}
 			// Register our service.
 			Bukkit.getServicesManager().register(Metrics.class, this, plugin, ServicePriority.Normal);
@@ -146,12 +143,7 @@ public class Metrics {
 				}
 				// Nevertheless we want our code to run in the Bukkit main thread, so we have to use the Bukkit scheduler.
 				// Don't be afraid! The connection to the bStats server is still async, only the stats collection is sync.
-				Bukkit.getScheduler().runTask(Metrics.this.plugin, new Runnable() {
-					@Override
-					public void run() {
-						Metrics.this.submitData();
-					}
-				});
+				Bukkit.getScheduler().runTask(Metrics.this.plugin, (Runnable) () -> Metrics.this.submitData());
 			}
 		}, 1000 * 60 * 5, 1000 * 60 * 30);
 		// Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start.
@@ -233,33 +225,26 @@ public class Metrics {
 		for (final Class<?> service : Bukkit.getServicesManager().getKnownServices()) {
 			try {
 				service.getField("B_STATS_VERSION"); // Our identifier.
-			}
-			catch (final NoSuchFieldException ignored) {
+			} catch (final NoSuchFieldException ignored) {
 				continue; // Continue "searching".
 			}
 			// Found one!
 			try {
 				pluginData.add(service.getMethod("getPluginData").invoke(Bukkit.getServicesManager().load(service)));
-			}
-			catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-			}
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
 		}
 
 		data.put("plugins", pluginData);
 
 		// Create a new thread for the connection to the bStats server.
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					// Send the data.
-					sendData(data);
-				}
-				catch (final Exception e) {
-					// Something went wrong! :(
-					if (logFailedRequests) {
-						Metrics.this.plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + Metrics.this.plugin.getName(), e);
-					}
+		new Thread(() -> {
+			try {
+				// Send the data.
+				sendData(data);
+			} catch (final Exception e) {
+				// Something went wrong! :(
+				if (logFailedRequests) {
+					Metrics.this.plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + Metrics.this.plugin.getName(), e);
 				}
 			}
 		}).start();
@@ -350,8 +335,7 @@ public class Metrics {
 					return null;
 				}
 				chart.put("data", data);
-			}
-			catch (final Throwable t) {
+			} catch (final Throwable t) {
 				if (logFailedRequests) {
 					Bukkit.getLogger().log(Level.WARNING, "Failed to get data for custom chart with id " + this.chartId, t);
 				}

@@ -69,8 +69,7 @@ public class BindCommand extends PKCommand {
 		if (args.size() == 2) {
 			try {
 				this.bind(sender, args.get(0), Integer.parseInt(args.get(1)));
-			}
-			catch (final NumberFormatException ex) {
+			} catch (final NumberFormatException ex) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 			}
 		}

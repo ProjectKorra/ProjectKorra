@@ -64,8 +64,7 @@ public class Blaze extends FireAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public Location getLocation() {

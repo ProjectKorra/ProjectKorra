@@ -21,7 +21,6 @@ public class WarriorStance extends ChiAbility {
 	private int strength;
 	@Attribute("Resistance")
 	private int resistance;
-	
 
 	public WarriorStance(final Player player) {
 		super(player);
@@ -53,7 +52,7 @@ public class WarriorStance extends ChiAbility {
 			this.remove();
 			return;
 		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
-			remove();
+			this.remove();
 			return;
 		}
 

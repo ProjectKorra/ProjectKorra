@@ -45,8 +45,7 @@ public class StatisticsManager extends Manager implements Runnable {
 	private final Set<UUID> STORAGE = new HashSet<>();
 	private final int INTERVAL = 5;
 
-	private StatisticsManager() {
-	}
+	private StatisticsManager() {}
 
 	@Override
 	public void onActivate() {
@@ -91,8 +90,7 @@ public class StatisticsManager extends Manager implements Runnable {
 					if (!rs.next()) {
 						DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
 					}
-				}
-				catch (final SQLException e) {
+				} catch (final SQLException e) {
 					e.printStackTrace();
 				}
 			}
@@ -104,8 +102,7 @@ public class StatisticsManager extends Manager implements Runnable {
 				this.KEYS_BY_NAME.put(rs.getString("statName"), rs.getInt("id"));
 				this.KEYS_BY_ID.put(rs.getInt("id"), rs.getString("statName"));
 			}
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -118,8 +115,7 @@ public class StatisticsManager extends Manager implements Runnable {
 				this.STATISTICS.get(uuid).put(rs.getInt("statId"), rs.getLong("statValue"));
 				this.DELTA.get(uuid).put(rs.getInt("statId"), 0L);
 			}
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -138,8 +134,7 @@ public class StatisticsManager extends Manager implements Runnable {
 				} else {
 					DBConnection.sql.modifyQuery("UPDATE pk_stats SET statValue = statValue + " + statValue + " WHERE uuid = '" + uuid.toString() + "' AND statId = " + statId + ";", async);
 				}
-			}
-			catch (final SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -162,8 +157,7 @@ public class StatisticsManager extends Manager implements Runnable {
 				if (rs.next()) {
 					return rs.getLong("statValue");
 				}
-			}
-			catch (final SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 			return 0;
@@ -192,8 +186,7 @@ public class StatisticsManager extends Manager implements Runnable {
 					final long statValue = rs.getLong("statValue");
 					map.put(statId, statValue);
 				}
-			}
-			catch (final SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 			return map;

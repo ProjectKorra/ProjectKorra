@@ -1,5 +1,17 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
+
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -7,17 +19,6 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpout extends WaterAbility {
 
@@ -82,7 +83,7 @@ public class WaterSpout extends WaterAbility {
 		if (!this.isWithinMaxSpoutHeight(topBlock.getLocation(), heightRemoveThreshold)) {
 			return;
 		}
-		flightHandler.createInstance(player, this.getName());
+		this.flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		this.spoutableWaterHeight(player.getLocation()); // Sets base.
 		this.start();
@@ -189,7 +190,7 @@ public class WaterSpout extends WaterAbility {
 			AFFECTED_BLOCKS.remove(tb.getBlock());
 			tb.revertBlock();
 		}
-		flightHandler.removeInstance(this.player, this.getName());
+		this.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	public void revertBaseBlock() {

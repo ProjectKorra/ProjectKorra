@@ -34,12 +34,10 @@ public class SQLite extends Database {
 			this.printInfo("Connection established!");
 
 			return this.connection;
-		}
-		catch (final ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			this.printErr("JDBC driver not found!", true);
 			return null;
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			this.printErr("SQLite exception during connection.", true);
 			return null;
 		}

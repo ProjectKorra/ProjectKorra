@@ -142,11 +142,9 @@ public abstract class AirAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Air.Sound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}

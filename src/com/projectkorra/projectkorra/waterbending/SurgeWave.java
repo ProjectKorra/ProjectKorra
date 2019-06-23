@@ -1,5 +1,20 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
@@ -12,23 +27,8 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempBlock.RevertTask;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class SurgeWave extends WaterAbility {
 
@@ -155,7 +155,7 @@ public class SurgeWave extends WaterAbility {
 				continue;
 			}
 
-			for (Entity entity : trapped) {
+			for (final Entity entity : trapped) {
 				if (entity instanceof Player) {
 					if (Commands.invincible.contains(((Player) entity).getName())) {
 						return;
@@ -174,22 +174,15 @@ public class SurgeWave extends WaterAbility {
 				continue;
 			} else if (isPlant(block)) {
 				block.breakNaturally();
-			} 
-			
+			}
+
 			final TempBlock tblock = new TempBlock(block, Material.ICE);
-			
-			tblock.setRevertTask(new RevertTask() {
 
-				@Override
-				public void run() {
-					SurgeWave.this.frozenBlocks.remove(block);
-				}
+			tblock.setRevertTask(() -> SurgeWave.this.frozenBlocks.remove(block));
 
-			});
-			
 			tblock.setRevertTime(this.iceRevertTime + (new Random().nextInt(1000)));
 			this.frozenBlocks.put(block, oldBlock.getType());
-			
+
 			for (final Block sound : this.frozenBlocks.keySet()) {
 				if ((new Random()).nextInt(4) == 0) {
 					playWaterbendingSound(sound.getLocation());
@@ -248,9 +241,9 @@ public class SurgeWave extends WaterAbility {
 					new PlantRegrowth(this.player, this.sourceBlock);
 					this.sourceBlock.setType(Material.AIR, false);
 				}
-				
+
 				if (TempBlock.isTempBlock(this.sourceBlock)) {
-					TempBlock tb = TempBlock.get(this.sourceBlock);
+					final TempBlock tb = TempBlock.get(this.sourceBlock);
 					if (Torrent.getFrozenBlocks().containsKey(tb)) {
 						Torrent.massThaw(tb);
 					}
@@ -284,7 +277,7 @@ public class SurgeWave extends WaterAbility {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
-				ParticleEffect.SMOKE_NORMAL.display(sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
+				ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
 				return;
 			}
 
@@ -352,7 +345,7 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
-						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))){
+						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 							continue;
 						}
 						final Vector dir = direction.clone();

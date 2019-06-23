@@ -40,17 +40,17 @@ public class Catapult extends EarthAbility {
 		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
 			return;
 		}
-		
+
 		this.bentBlockData = b.getBlockData();
-		
+
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		
+
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
 		}
-		
+
 		this.charging = sneak;
 		this.start();
 	}
@@ -81,13 +81,13 @@ public class Catapult extends EarthAbility {
 			this.remove();
 			return;
 		}
-		
+
 		final Block b = this.player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
 			this.remove();
 			return;
 		}
-		
+
 		this.bentBlockData = b.getBlockData();
 
 		if (this.charging) {
@@ -98,8 +98,8 @@ public class Catapult extends EarthAbility {
 					this.stage++;
 					this.stageStart = System.currentTimeMillis();
 					final Random random = new Random();
-					ParticleEffect.BLOCK_DUST.display(this.player.getLocation(), 15, random.nextFloat(), random.nextFloat(), random.nextFloat(), bentBlockData);
-					ParticleEffect.BLOCK_DUST.display(this.player.getLocation().add(0, 0.5, 0), 10, random.nextFloat(), random.nextFloat(), random.nextFloat(), bentBlockData);
+					ParticleEffect.BLOCK_DUST.display(this.player.getLocation(), 15, random.nextFloat(), random.nextFloat(), random.nextFloat(), this.bentBlockData);
+					ParticleEffect.BLOCK_DUST.display(this.player.getLocation().add(0, 0.5, 0), 10, random.nextFloat(), random.nextFloat(), random.nextFloat(), this.bentBlockData);
 					this.player.getWorld().playEffect(this.player.getLocation(), Effect.GHAST_SHOOT, 0, 10);
 				}
 			}

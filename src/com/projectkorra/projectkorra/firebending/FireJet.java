@@ -1,19 +1,20 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import static com.projectkorra.projectkorra.firebending.Illumination.isIlluminationTorch;
+
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
-
-import static com.projectkorra.projectkorra.firebending.Illumination.isIlluminationTorch;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireJet extends FireAbility {
 
@@ -56,17 +57,7 @@ public class FireJet extends FireAbility {
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (BlazeArc.isIgnitable(player, block) ||
-				ElementalAbility.isAir(block.getType()) ||
-				block.getType() == Material.STONE_SLAB ||
-				block.getType() == Material.ACACIA_SLAB ||
-				block.getType() == Material.BIRCH_SLAB ||
-				block.getType() == Material.DARK_OAK_SLAB ||
-				block.getType() == Material.JUNGLE_SLAB ||
-				block.getType() == Material.OAK_SLAB ||
-				block.getType() == Material.SPRUCE_SLAB ||
-				isIlluminationTorch(block) ||
-				this.bPlayer.isAvatarState()) {
+		if (BlazeArc.isIgnitable(player, block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
 				if (ElementalAbility.isAir(block.getType())) {
@@ -77,13 +68,13 @@ public class FireJet extends FireAbility {
 				block.setType(Material.FIRE);
 			}
 
-			flightHandler.createInstance(player, this.getName());
+			this.flightHandler.createInstance(player, this.getName());
 			player.setAllowFlight(true);
 			this.time = System.currentTimeMillis();
 
 			this.start();
-			if (showGliding) {
-				previousGlidingState = player.isGliding();
+			if (this.showGliding) {
+				this.previousGlidingState = player.isGliding();
 				player.setGliding(true);
 			}
 			this.bPlayer.addCooldown(this);
@@ -122,10 +113,10 @@ public class FireJet extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (showGliding) {
-			this.player.setGliding(previousGlidingState);
+		if (this.showGliding) {
+			this.player.setGliding(this.previousGlidingState);
 		}
-		flightHandler.removeInstance(this.player, this.getName());
+		this.flightHandler.removeInstance(this.player, this.getName());
 		this.player.setFallDistance(0);
 	}
 

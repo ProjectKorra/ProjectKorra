@@ -15,8 +15,7 @@ public enum AttributeModifier {
 			return oldValue.intValue() + modifier.intValue();
 		}
 		return 0;
-	}),
-	SUBTRACTION((oldValue, modifier) -> {
+	}), SUBTRACTION((oldValue, modifier) -> {
 		if (oldValue instanceof Double || modifier instanceof Double) {
 			return oldValue.doubleValue() - modifier.doubleValue();
 		} else if (oldValue instanceof Float || modifier instanceof Float) {
@@ -27,8 +26,7 @@ public enum AttributeModifier {
 			return oldValue.intValue() - modifier.intValue();
 		}
 		return 0;
-	}),
-	MULTIPLICATION((oldValue, modifier) -> {
+	}), MULTIPLICATION((oldValue, modifier) -> {
 		if (oldValue instanceof Double || modifier instanceof Double) {
 			return oldValue.doubleValue() * modifier.doubleValue();
 		} else if (oldValue instanceof Float || modifier instanceof Float) {
@@ -39,8 +37,7 @@ public enum AttributeModifier {
 			return oldValue.intValue() * modifier.intValue();
 		}
 		return 0;
-	}),
-	DIVISION((oldValue, modifier) -> {
+	}), DIVISION((oldValue, modifier) -> {
 		if (oldValue instanceof Double || modifier instanceof Double) {
 			return oldValue.doubleValue() / modifier.doubleValue();
 		} else if (oldValue instanceof Float || modifier instanceof Float) {
@@ -55,15 +52,15 @@ public enum AttributeModifier {
 
 	private AttributeModifierMethod modifier;
 
-	private AttributeModifier(AttributeModifierMethod modifier) {
+	private AttributeModifier(final AttributeModifierMethod modifier) {
 		this.modifier = modifier;
 	}
 
 	public AttributeModifierMethod getModifier() {
-		return modifier;
+		return this.modifier;
 	}
 
-	public Number performModification(Number oldValue, Number modifier) {
+	public Number performModification(final Number oldValue, final Number modifier) {
 		Validate.isTrue(!(this == DIVISION && modifier.doubleValue() == 0), "modifier cannot be 0");
 		return this.modifier.performModification(oldValue, modifier);
 	}

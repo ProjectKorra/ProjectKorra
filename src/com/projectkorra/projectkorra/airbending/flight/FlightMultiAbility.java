@@ -113,14 +113,14 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		MultiAbilityManager.bindMultiAbility(player, "Flight");
-		flightHandler.createInstance(player, ID);
+		this.flightHandler.createInstance(player, ID);
 		this.hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		this.prevDir = player.getEyeLocation().getDirection().clone();
 		this.duration = getConfig().getLong("Abilities.Air.Flight.Duration");
 		this.cooldown = getConfig().getLong("Abilities.Air.Flight.Cooldown");
 		this.baseSpeed = getConfig().getDouble("Abilities.Air.Flight.BaseSpeed");
-		
+
 		this.speed = 1;
 		this.slowSpeed = this.baseSpeed / 2;
 		this.fastSpeed = this.baseSpeed * 2;
@@ -130,7 +130,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
@@ -221,7 +221,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 				}
 
 				this.prevDir = this.player.getEyeLocation().getDirection().clone();
-				
+
 				for (final Entity e : GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.speed)) {
 					if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId() && !this.player.getPassengers().contains(e)) {
 						if (!GeneralMethods.isRegionProtectedFromBuild(this.player, e.getLocation())) {
@@ -320,7 +320,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		if (this.player.isOnline() && !this.player.isDead()) {
 			this.player.eject();
 		}
-		flightHandler.removeInstance(this.player, ID);
+		this.flightHandler.removeInstance(this.player, ID);
 		this.player.setGliding(this.hadGlide);
 	}
 

@@ -20,8 +20,7 @@ public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {

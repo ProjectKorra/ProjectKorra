@@ -1,13 +1,14 @@
 package com.projectkorra.projectkorra.avatar;
 
-import com.projectkorra.projectkorra.ability.AvatarAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.HashMap;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
+import com.projectkorra.projectkorra.ability.AvatarAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AvatarState extends AvatarAbility {
 
@@ -80,20 +81,20 @@ public class AvatarState extends AvatarAbility {
 
 	private void addPotionEffects() {
 		if (this.regenEnabled) {
-			addProgressPotionEffect(PotionEffectType.REGENERATION, this.regenPower);
+			this.addProgressPotionEffect(PotionEffectType.REGENERATION, this.regenPower);
 		}
 		if (this.speedEnabled) {
-			addProgressPotionEffect(PotionEffectType.SPEED, this.speedPower);
+			this.addProgressPotionEffect(PotionEffectType.SPEED, this.speedPower);
 		}
 		if (this.resistanceEnabled) {
-			addProgressPotionEffect(PotionEffectType.DAMAGE_RESISTANCE, this.resistancePower);
+			this.addProgressPotionEffect(PotionEffectType.DAMAGE_RESISTANCE, this.resistancePower);
 		}
 		if (this.fireResistanceEnabled) {
-			addProgressPotionEffect(PotionEffectType.FIRE_RESISTANCE, this.fireResistancePower);
+			this.addProgressPotionEffect(PotionEffectType.FIRE_RESISTANCE, this.fireResistancePower);
 		}
 	}
 
-	private void addProgressPotionEffect(PotionEffectType effect, int power) {
+	private void addProgressPotionEffect(final PotionEffectType effect, final int power) {
 		if (!this.player.hasPotionEffect(effect) || this.player.getPotionEffect(effect).getAmplifier() < power || (this.player.getPotionEffect(effect).getAmplifier() == power && this.player.getPotionEffect(effect).getDuration() == 1)) {
 			this.player.addPotionEffect(new PotionEffect(effect, 10, power, true, false), true);
 		}

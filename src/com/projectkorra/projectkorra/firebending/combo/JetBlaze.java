@@ -117,7 +117,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 
 	@Override
 	public void remove() {
-		for(FireComboStream task : tasks) {
+		for (final FireComboStream task : this.tasks) {
 			task.remove();
 		}
 		super.remove();

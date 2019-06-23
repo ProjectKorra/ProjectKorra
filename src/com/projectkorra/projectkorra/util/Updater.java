@@ -71,12 +71,10 @@ public class Updater {
 								break;
 							}
 						}
-					}
-					catch (final IOException e) {
+					} catch (final IOException e) {
 						e.printStackTrace();
 					}
-				}
-				catch (final IOException e) {
+				} catch (final IOException e) {
 					plugin.getLogger().info("Could not connect to projectkorra.com");
 				}
 				this.checkUpdate();

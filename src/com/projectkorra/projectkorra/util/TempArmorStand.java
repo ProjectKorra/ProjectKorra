@@ -11,7 +11,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 
 /**
  * Object to represent an ArmorStand that is not used for normal functionality
- * 
+ *
  * @author Simplicitee
  *
  */

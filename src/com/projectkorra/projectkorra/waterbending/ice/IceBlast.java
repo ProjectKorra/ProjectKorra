@@ -182,7 +182,7 @@ public class IceBlast extends IceAbility {
 		AirAbility.breakBreathbendingHold(entity);
 
 		for (int x = 0; x < 30; x++) {
-			ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random()/4, Math.random()/4, Math.random()/4, new ItemStack(Material.ICE));
+			ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random() / 4, Math.random() / 4, Math.random() / 4, new ItemStack(Material.ICE));
 		}
 	}
 
@@ -317,8 +317,8 @@ public class IceBlast extends IceAbility {
 			}
 
 			for (int x = 0; x < 10; x++) {
-				ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random()/2, Math.random()/2, Math.random()/2, new ItemStack(Material.ICE));
-				ParticleEffect.SNOW_SHOVEL.display(this.location, 5, Math.random()/2, Math.random()/2, Math.random()/2, 0);
+				ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, new ItemStack(Material.ICE));
+				ParticleEffect.SNOW_SHOVEL.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
 			}
 			if ((new Random()).nextInt(4) == 0) {
 				playIcebendingSound(this.location);

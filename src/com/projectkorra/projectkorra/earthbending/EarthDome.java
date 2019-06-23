@@ -38,7 +38,7 @@ public class EarthDome extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthDome.Cooldown");
 		this.checked = new HashSet<>();
 
-		start();
+		this.start();
 	}
 
 	public EarthDome(final Player player) {
@@ -70,7 +70,7 @@ public class EarthDome extends EarthAbility {
 	@Override
 	public void progress() {
 		for (int i = 0; i < 2; i++) {
-			for (final Location check : this.getCircle(center, this.radius + i, 10)) {
+			for (final Location check : this.getCircle(this.center, this.radius + i, 10)) {
 				Block currBlock = check.getBlock();
 				if (this.checked.contains(currBlock)) {
 					continue;
@@ -81,7 +81,7 @@ public class EarthDome extends EarthAbility {
 					continue;
 				}
 
-				new RaiseEarth(player, currBlock.getLocation(), Math.round(this.height - i));
+				new RaiseEarth(this.player, currBlock.getLocation(), Math.round(this.height - i));
 				this.checked.add(currBlock);
 			}
 
@@ -103,7 +103,7 @@ public class EarthDome extends EarthAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override
