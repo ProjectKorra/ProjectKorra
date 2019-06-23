@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -25,48 +26,47 @@ public abstract class Manager implements Listener {
 
 	/**
 	 * Register a new {@link Manager} instance.
-	 * 
+	 *
 	 * @param managerClass {@link Class} of the {@link Manager} to be registered
 	 * @throws NullPointerException if managerClass is null
 	 * @throws IllegalArgumentException if managerClass has already been
 	 *             registered
 	 */
-	public static void registerManager(Class<? extends Manager> managerClass) {
+	public static void registerManager(final Class<? extends Manager> managerClass) {
 		Validate.notNull(managerClass, "Manager class cannot be null");
 		Validate.isTrue(!MANAGERS.containsKey(managerClass), "Manager has already been registered");
 		try {
-			Constructor<? extends Manager> constructor = managerClass.getDeclaredConstructor();
-			boolean accessible = constructor.isAccessible();
+			final Constructor<? extends Manager> constructor = managerClass.getDeclaredConstructor();
+			final boolean accessible = constructor.isAccessible();
 			constructor.setAccessible(true);
-			Manager manager = constructor.newInstance();
+			final Manager manager = constructor.newInstance();
 			constructor.setAccessible(accessible);
 			manager.activate();
 			MANAGERS.put(managerClass, manager);
-		}
-		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Get a registered {@link Manager} by its {@link Class}.
-	 * 
+	 *
 	 * @param managerClass {@link Class} of the registered {@link Manager}
 	 * @return instance of the {@link Manager} class
 	 * @throws NullPointerException if managerClass is null
 	 * @throws IllegalArgumentException if managerClass has not yet been
 	 *             registered
 	 */
-	public static <T extends Manager> T getManager(Class<T> managerClass) {
+	public static <T extends Manager> T getManager(final Class<T> managerClass) {
 		Validate.notNull(managerClass, "Manager class cannot be null");
 		Validate.isTrue(MANAGERS.containsKey(managerClass), "Manager has not yet been registered");
-		Manager registered = MANAGERS.get(managerClass);
+		final Manager registered = MANAGERS.get(managerClass);
 		return managerClass.cast(registered);
 	}
 
 	/**
 	 * Get this plugin instance
-	 * 
+	 *
 	 * @return {@link ProjectKorra} plugin instance
 	 */
 	protected ProjectKorra getPlugin() {
@@ -78,7 +78,7 @@ public abstract class Manager implements Listener {
 	 */
 	public final void activate() {
 		Bukkit.getPluginManager().registerEvents(this, ProjectKorra.plugin);
-		onActivate();
+		this.onActivate();
 	}
 
 	/**
@@ -93,7 +93,7 @@ public abstract class Manager implements Listener {
 	 */
 	public final void deactivate() {
 		HandlerList.unregisterAll(this);
-		onDeactivate();
+		this.onDeactivate();
 	}
 
 	/**

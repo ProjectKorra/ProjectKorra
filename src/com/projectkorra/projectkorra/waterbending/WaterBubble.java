@@ -1,11 +1,12 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,8 +14,12 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterBubble extends WaterAbility {
 
@@ -43,7 +48,7 @@ public class WaterBubble extends WaterAbility {
 			final WaterBubble bubble = CoreAbility.getAbility(player, this.getClass());
 
 			if (bubble.location.getWorld().equals(player.getWorld())) {
-				if (bubble.location.distanceSquared(player.getLocation()) < maxRadius * maxRadius) {
+				if (bubble.location.distanceSquared(player.getLocation()) < this.maxRadius * this.maxRadius) {
 					if (bubble.removing) {
 						bubble.removing = false;
 					}
@@ -55,7 +60,7 @@ public class WaterBubble extends WaterAbility {
 				}
 			}
 			bubble.removing = true;
-		} else if (requireAir && !(!player.getEyeLocation().getBlock().getType().isSolid() && !player.getEyeLocation().getBlock().isLiquid())) {
+		} else if (this.requireAir && !(!player.getEyeLocation().getBlock().getType().isSolid() && !player.getEyeLocation().getBlock().isLiquid())) {
 			return;
 		}
 
@@ -72,10 +77,10 @@ public class WaterBubble extends WaterAbility {
 	}
 
 	public void setFields() {
-		clickDuration = ConfigManager.defaultConfig.get().getLong("Abilities.Water.WaterBubble.ClickDuration");
-		maxRadius = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius");
-		speed = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Speed");
-		requireAir = ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterBubble.MustStartAboveWater");
+		this.clickDuration = ConfigManager.defaultConfig.get().getLong("Abilities.Water.WaterBubble.ClickDuration");
+		this.maxRadius = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius");
+		this.speed = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Speed");
+		this.requireAir = ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterBubble.MustStartAboveWater");
 	}
 
 	@Override
@@ -89,28 +94,28 @@ public class WaterBubble extends WaterAbility {
 			this.removing = true;
 		}
 
-		if (System.currentTimeMillis() - this.lastActivation > clickDuration && !this.isShift) {
+		if (System.currentTimeMillis() - this.lastActivation > this.clickDuration && !this.isShift) {
 			this.removing = true;
 		}
 
 		if (this.removing) {
-			this.radius -= speed;
+			this.radius -= this.speed;
 
 			if (this.radius <= 0.1) {
 				this.radius = 0.1;
 				this.remove();
 			}
 		} else {
-			this.radius += speed;
+			this.radius += this.speed;
 
-			if (this.radius > maxRadius) {
-				this.radius = maxRadius;
+			if (this.radius > this.maxRadius) {
+				this.radius = this.maxRadius;
 			}
 		}
 
 		final List<Block> list = new ArrayList<Block>();
 
-		if (this.radius < maxRadius || !this.location.getBlock().equals(this.player.getLocation().getBlock())) {
+		if (this.radius < this.maxRadius || !this.location.getBlock().equals(this.player.getLocation().getBlock())) {
 
 			for (double x = -this.radius; x < this.radius; x += 0.5) {
 				for (double y = -this.radius; y < this.radius; y += 0.5) {
@@ -123,7 +128,7 @@ public class WaterBubble extends WaterAbility {
 									if (!TempBlock.isTempBlock(b)) {
 										this.waterOrigins.put(b, b.getState());
 										if (b.getBlockData() instanceof Waterlogged) {
-											Waterlogged logged = (Waterlogged) b.getBlockData();
+											final Waterlogged logged = (Waterlogged) b.getBlockData();
 											logged.setWaterlogged(false);
 											b.setBlockData(logged);
 										} else if (isWater(b.getType())) {
@@ -146,7 +151,7 @@ public class WaterBubble extends WaterAbility {
 
 			for (final Block b : set) {
 				if (b.getBlockData() instanceof Waterlogged) {
-					Waterlogged logged = (Waterlogged) b.getBlockData();
+					final Waterlogged logged = (Waterlogged) b.getBlockData();
 					logged.setWaterlogged(true);
 					b.setBlockData(logged);
 				} else if (ElementalAbility.isAir(b.getType())) {
@@ -186,7 +191,7 @@ public class WaterBubble extends WaterAbility {
 
 		for (final Block b : this.waterOrigins.keySet()) {
 			if (b.getBlockData() instanceof Waterlogged) {
-				Waterlogged logged = (Waterlogged) b.getBlockData();
+				final Waterlogged logged = (Waterlogged) b.getBlockData();
 				logged.setWaterlogged(true);
 				b.setBlockData(logged);
 			} else if (ElementalAbility.isAir(b.getType())) {
@@ -194,7 +199,7 @@ public class WaterBubble extends WaterAbility {
 				b.setBlockData(this.waterOrigins.get(b).getBlockData());
 			}
 		}
-		
+
 		this.waterOrigins.clear();
 	}
 

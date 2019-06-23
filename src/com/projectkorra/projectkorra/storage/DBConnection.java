@@ -1,11 +1,11 @@
 package com.projectkorra.projectkorra.storage;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 
 public class DBConnection {
 
@@ -49,8 +49,7 @@ public class DBConnection {
 						sql.getConnection().setAutoCommit(true);
 						ProjectKorra.log.info("Database Updated.");
 					}
-				}
-				catch (final SQLException e) {
+				} catch (final SQLException e) {
 					e.printStackTrace();
 				}
 			}
@@ -94,8 +93,7 @@ public class DBConnection {
 						ProjectKorra.log.info("Database Updated.");
 					}
 
-				}
-				catch (final SQLException e) {
+				} catch (final SQLException e) {
 					e.printStackTrace();
 				}
 			}

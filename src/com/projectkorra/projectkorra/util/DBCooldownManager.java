@@ -1,17 +1,16 @@
 package com.projectkorra.projectkorra.util;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.storage.MySQL;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public class DBCooldownManager extends Manager {
 
-	private DBCooldownManager() {
-	}
+	private DBCooldownManager() {}
 
 	@Override
 	public void onActivate() {
@@ -47,8 +46,7 @@ public class DBCooldownManager extends Manager {
 				DBConnection.sql.modifyQuery("INSERT INTO pk_cooldown_ids (cooldown_name) VALUES ('" + cooldown + "')", async);
 				return this.getCooldownId(cooldown, async);
 			}
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -59,8 +57,7 @@ public class DBCooldownManager extends Manager {
 			if (rs.next()) {
 				return rs.getString("cooldown_name");
 			}
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 		return "";

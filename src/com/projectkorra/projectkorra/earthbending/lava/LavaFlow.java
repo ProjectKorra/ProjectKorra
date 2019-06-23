@@ -1,12 +1,11 @@
 package com.projectkorra.projectkorra.earthbending.lava;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.LavaAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,11 +14,17 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.LavaAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class LavaFlow extends LavaAbility {
 
@@ -383,9 +388,9 @@ public class LavaFlow extends LavaAbility {
 	 */
 	public void createLava(final Block block) {
 		if (isEarth(block) || isSand(block) || isMetal(block)) {
-			if (EarthAbility.getMovedEarth().containsKey(block)){
-				Information info = EarthAbility.getMovedEarth().get(block);
-				if(!info.getBlock().equals(block)) {
+			if (EarthAbility.getMovedEarth().containsKey(block)) {
+				final Information info = EarthAbility.getMovedEarth().get(block);
+				if (!info.getBlock().equals(block)) {
 					return;
 				}
 			}

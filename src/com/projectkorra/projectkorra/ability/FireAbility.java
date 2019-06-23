@@ -1,5 +1,21 @@
 package com.projectkorra.projectkorra.ability;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -8,18 +24,11 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class FireAbility extends ElementalAbility {
 
 	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
-	
+
 	public FireAbility(final Player player) {
 		super(player);
 	}
@@ -77,7 +86,7 @@ public abstract class FireAbility extends ElementalAbility {
 		loc.getBlock().setType(Material.FIRE);
 		TEMP_FIRE.put(loc, info);
 	}
-	
+
 	public double getDayFactor(final double value) {
 		return this.player != null ? value * getDayFactor() : 1;
 	}
@@ -141,11 +150,9 @@ public abstract class FireAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -164,11 +171,9 @@ public abstract class FireAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -191,11 +196,9 @@ public abstract class FireAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}

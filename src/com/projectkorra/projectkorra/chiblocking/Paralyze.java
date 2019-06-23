@@ -46,7 +46,7 @@ public class Paralyze extends ChiAbility {
 					return;
 				}
 			}
-			paralyze(this.target);
+			this.paralyze(this.target);
 			this.bPlayer.addCooldown(this);
 		}
 		this.remove();
@@ -63,7 +63,7 @@ public class Paralyze extends ChiAbility {
 			}
 		}
 		final MovementHandler mh = new MovementHandler((LivingEntity) entity, CoreAbility.getAbility(Paralyze.class));
-		mh.stopWithDuration(duration / 1000 * 20, Element.CHI.getColor() + "* Paralyzed *");
+		mh.stopWithDuration(this.duration / 1000 * 20, Element.CHI.getColor() + "* Paralyzed *");
 		entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 2, 0);
 	}
 
@@ -101,6 +101,6 @@ public class Paralyze extends ChiAbility {
 	}
 
 	public long getDuration() {
-		return duration;
+		return this.duration;
 	}
 }

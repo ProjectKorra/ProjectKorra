@@ -12,7 +12,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public class FastSwim extends WaterAbility implements PassiveAbility {
-	
+
 	private long cooldown;
 	private double swimSpeed;
 	private long duration;
@@ -22,7 +22,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
-		
+
 		if (player.isSneaking()) { // the sneak event calls before they actually start sneaking
 			return;
 		}
@@ -30,31 +30,31 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
 		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 		this.duration = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Duration");
-		
-		start();
+
+		this.start();
 	}
 
 	@Override
 	public void progress() {
 		if (!this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this) || CoreAbility.hasAbility(this.player, WaterSpout.class) || CoreAbility.hasAbility(this.player, EarthArmor.class) || CoreAbility.hasAbility(this.player, WaterArms.class)) {
-			remove();
+			this.remove();
 			return;
 		}
-		
+
 		if (this.duration > 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
 			this.bPlayer.addCooldown(this);
-			remove();
+			this.remove();
 			return;
 		}
-		
+
 		if (this.bPlayer.getBoundAbility() == null || (this.bPlayer.getBoundAbility() != null && !this.bPlayer.getBoundAbility().isSneakAbility())) {
 			if (this.player.isSneaking()) {
 				if (isWater(this.player.getLocation().getBlock()) && !this.bPlayer.isOnCooldown(this)) {
-					player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
+					this.player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
 				}
 			} else {
 				this.bPlayer.addCooldown(this);
-				remove();
+				this.remove();
 			}
 		}
 	}

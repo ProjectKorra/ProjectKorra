@@ -1,18 +1,19 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AirSpout extends AirAbility {
 
@@ -53,7 +54,7 @@ public class AirSpout extends AirAbility {
 			return;
 		}
 
-		flightHandler.createInstance(player, this.getName());
+		this.flightHandler.createInstance(player, this.getName());
 
 		if (this.bPlayer.isAvatarState()) {
 			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
@@ -176,7 +177,7 @@ public class AirSpout extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		flightHandler.removeInstance(this.player, this.getName());
+		this.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	private void rotateAirColumn(final Block block) {

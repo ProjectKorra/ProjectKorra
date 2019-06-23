@@ -11,8 +11,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -28,16 +26,16 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
 	private static final Set<Material> TRANSPARENT = new HashSet<>();
-	
+
 	static {
 		TRANSPARENT.clear();
-		for (Material mat : Material.values()) {
+		for (final Material mat : Material.values()) {
 			if (GeneralMethods.isTransparent(mat)) {
 				TRANSPARENT.add(mat);
 			}
 		}
 	}
-	
+
 	public ElementalAbility(final Player player) {
 		super(player);
 	}
@@ -57,7 +55,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static HashSet<Material> getTransparentMaterialSet() {
 		return new HashSet<>(TRANSPARENT);
 	}
-	
+
 	public static boolean isAir(final Material material) {
 		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR;
 	}
@@ -209,13 +207,13 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isWater(final Block block) {
 		if (block == null) {
 			return false;
-		} else if(isWater(block.getType())) {
+		} else if (isWater(block.getType())) {
 			return true;
 		} else {
 			return isWater(block.getBlockData());
 		}
 	}
-	
+
 	public static boolean isWater(final BlockData data) {
 		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : isWater(data.getMaterial());
 	}

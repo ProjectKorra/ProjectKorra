@@ -1,5 +1,23 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -12,19 +30,6 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpoutWave extends WaterAbility {
 
@@ -208,10 +213,10 @@ public class WaterSpoutWave extends WaterAbility {
 					new PlantRegrowth(this.player, this.origin.getBlock());
 					this.origin.getBlock().setType(Material.AIR);
 				}
-				
+
 				if (TempBlock.isTempBlock(this.origin.getBlock())) {
-					TempBlock tb = TempBlock.get(this.origin.getBlock());
-					
+					final TempBlock tb = TempBlock.get(this.origin.getBlock());
+
 					if (Torrent.getFrozenBlocks().containsKey(tb)) {
 						Torrent.massThaw(tb);
 					} else if (!isBendableWaterTempBlock(tb)) {
@@ -417,17 +422,17 @@ public class WaterSpoutWave extends WaterAbility {
 					if (block.getLocation().distanceSquared(entity.getLocation().getBlock().getLocation()) > radius * radius) {
 						continue;
 					}
-					if(GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())){
+					if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						continue;
 					}
-					if (entity instanceof Player){
-						if(Commands.invincible.contains(((Player) entity).getName())) {
+					if (entity instanceof Player) {
+						if (Commands.invincible.contains(((Player) entity).getName())) {
 							return;
 						}
-						if(!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)){
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
 							continue;
 						}
-						if(!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)){
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
 							continue;
 						}
 					}

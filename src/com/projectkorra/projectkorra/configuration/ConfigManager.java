@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.configuration;
 
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.io.File;
 import java.util.ArrayList;
+
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigManager {
 

@@ -1,5 +1,26 @@
 package com.projectkorra.projectkorra.firebending;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -15,18 +36,6 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.*;
 
 public class HeatControl extends FireAbility {
 
@@ -328,7 +337,7 @@ public class HeatControl extends FireAbility {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						TempBlock melted = MELTED_BLOCKS.get(block);
+						final TempBlock melted = MELTED_BLOCKS.get(block);
 						if (melted != null) {
 							melted.revertBlock();
 						}
@@ -359,7 +368,7 @@ public class HeatControl extends FireAbility {
 
 		final Block b = lava.get(this.randy.nextInt(lava.size()));
 
-		Material tempRevertMaterial = Material.MAGMA_BLOCK;
+		final Material tempRevertMaterial = Material.MAGMA_BLOCK;
 
 		final TempBlock tempBlock;
 		if (TempBlock.isTempBlock(b)) {

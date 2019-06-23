@@ -1,19 +1,10 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
-import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
-import com.projectkorra.projectkorra.firebending.Illumination;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.Information;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,10 +19,19 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class EarthAbility extends ElementalAbility {
 
@@ -157,7 +157,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			if (TempBlock.isTempBlock(affectedblock)) {
 				TempBlock.get(affectedblock).revertBlock();
 			}
-			if (LavaFlow.isLavaFlowBlock(block)){
+			if (LavaFlow.isLavaFlowBlock(block)) {
 				LavaFlow.removeBlock(block);
 			}
 
@@ -186,7 +186,7 @@ public abstract class EarthAbility extends ElementalAbility {
 					final Block topblock = affectedblock.getRelative(BlockFace.UP);
 					if (!isAir(topblock.getType())) {
 						GeneralMethods.breakBlock(affectedblock);
-					} else if (!affectedblock.isLiquid() && !isAir(affectedblock.getType())){
+					} else if (!affectedblock.isLiquid() && !isAir(affectedblock.getType())) {
 						moveEarthBlock(affectedblock, topblock);
 					}
 				} else {
@@ -277,10 +277,10 @@ public abstract class EarthAbility extends ElementalAbility {
 		if (amount <= 0) {
 			return;
 		}
-		
-		Material sand = red ? Material.RED_SAND : Material.SAND;
-		Material stone = red ? Material.RED_SANDSTONE : Material.SANDSTONE;
-		
+
+		final Material sand = red ? Material.RED_SAND : Material.SAND;
+		final Material stone = red ? Material.RED_SANDSTONE : Material.SANDSTONE;
+
 		ParticleEffect.BLOCK_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, sand.createBlockData());
 		ParticleEffect.BLOCK_CRACK.display(loc, amount, xOffset, yOffset, zOffset, speed, stone.createBlockData());
 	}
@@ -480,11 +480,9 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.EarthSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -499,11 +497,9 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MetalSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -518,11 +514,9 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.SandSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -537,11 +531,9 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.LavaSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -634,7 +626,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 
 			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block, false)) {
-				BlockData data = Material.WATER.createBlockData();
+				final BlockData data = Material.WATER.createBlockData();
 				if (data instanceof Levelled) {
 					((Levelled) data).setLevel(7);
 				}

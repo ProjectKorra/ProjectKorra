@@ -21,13 +21,13 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 	public FerroControl(final Player player) {
 		super(player);
 
-		start();
+		this.start();
 	}
 
 	@Override
 	public void progress() {
 		if (!this.player.isSneaking() || !this.bPlayer.canUsePassive(this) || !this.bPlayer.canBendPassive(this)) {
-			remove();
+			this.remove();
 			return;
 		}
 
@@ -36,19 +36,19 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 
 		if (this.block != null) {
 			if (this.block.getType() == Material.IRON_DOOR && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
-				Door door = (Door) this.block.getBlockData();
-				
+				final Door door = (Door) this.block.getBlockData();
+
 				door.setOpen(!door.isOpen());
 				this.block.setBlockData(door);
-				
+
 				open = door.isOpen();
 				used = true;
 			} else if (this.block.getType() == Material.IRON_TRAPDOOR && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
-				TrapDoor trap = (TrapDoor) this.block.getBlockData();
-				
+				final TrapDoor trap = (TrapDoor) this.block.getBlockData();
+
 				trap.setOpen(!trap.isOpen());
 				this.block.setBlockData(trap);
-				
+
 				open = trap.isOpen();
 				used = true;
 				tDoor = true;
@@ -61,7 +61,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 			this.block.getWorld().playSound(this.block.getLocation(), Sound.valueOf(sound), 0.5f, 0);
 			this.bPlayer.addCooldown(this, 200);
 		}
-		remove();
+		this.remove();
 	}
 
 	@Override

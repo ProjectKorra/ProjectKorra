@@ -31,32 +31,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
@@ -78,6 +52,41 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.songoda.kingdoms.constants.land.Land;
+import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
+import com.songoda.kingdoms.constants.player.KingdomPlayer;
+import com.songoda.kingdoms.manager.game.GameManagement;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -122,15 +131,6 @@ import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.songoda.kingdoms.constants.land.Land;
-import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
-import com.songoda.kingdoms.constants.player.KingdomPlayer;
-import com.songoda.kingdoms.manager.game.GameManagement;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
@@ -163,8 +163,7 @@ public class GeneralMethods {
 		try {
 			getAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
 			setAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -539,8 +538,7 @@ public class GeneralMethods {
 					}
 				}.runTask(ProjectKorra.plugin);
 			}
-		}
-		catch (final SQLException ex) {
+		} catch (final SQLException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -557,7 +555,7 @@ public class GeneralMethods {
 		if (readFile.exists()) {
 			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile)); BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-				 DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
+					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -565,8 +563,7 @@ public class GeneralMethods {
 						writer.write(line + "\n");
 					}
 				}
-			}
-			catch (final IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -592,9 +589,9 @@ public class GeneralMethods {
 		if (red <= 0) {
 			red = 1 / 255.0F;
 		}
-		loc.setX(loc.getX() + (Math.random()*2 - 1) * xOffset);
-		loc.setY(loc.getY() + (Math.random()*2 - 1) * yOffset);
-		loc.setZ(loc.getZ() + (Math.random()*2 - 1) * zOffset);
+		loc.setX(loc.getX() + (Math.random() * 2 - 1) * xOffset);
+		loc.setY(loc.getY() + (Math.random() * 2 - 1) * yOffset);
+		loc.setZ(loc.getZ() + (Math.random() * 2 - 1) * zOffset);
 
 		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
 			type = ParticleEffect.RED_DUST;
@@ -677,8 +674,7 @@ public class GeneralMethods {
 			final Object entityplayer = ActionBar.getHandle.invoke(player);
 			final Object hearts = getAbsorption.invoke(entityplayer);
 			return (float) hearts;
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
@@ -689,8 +685,7 @@ public class GeneralMethods {
 		try {
 			final Object entityplayer = ActionBar.getHandle.invoke(player);
 			setAbsorption.invoke(entityplayer, hearts);
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -1019,7 +1014,7 @@ public class GeneralMethods {
 	}
 
 	public static int getMaxPresets(final Player player) {
-		int max = ConfigManager.getConfig().getInt("Properties.MaxPresets");
+		final int max = ConfigManager.getConfig().getInt("Properties.MaxPresets");
 		if (player.isOp()) {
 			return max;
 		}
@@ -1089,16 +1084,16 @@ public class GeneralMethods {
 		return null;
 	}
 
-	public static BlockData getLavaData(int level) {
-		BlockData data = Material.LAVA.createBlockData();
+	public static BlockData getLavaData(final int level) {
+		final BlockData data = Material.LAVA.createBlockData();
 		if (data instanceof Levelled) {
 			((Levelled) data).setLevel(level);
 		}
 		return data;
 	}
 
-	public static BlockData getWaterData(int level) {
-		BlockData data = Material.WATER.createBlockData();
+	public static BlockData getWaterData(final int level) {
+		final BlockData data = Material.WATER.createBlockData();
 		if (data instanceof Levelled) {
 			((Levelled) data).setLevel(level);
 		}
@@ -1137,12 +1132,12 @@ public class GeneralMethods {
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
-	
+
 	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
 
-		HashSet<Material> trans = new HashSet<Material>();
+		final HashSet<Material> trans = new HashSet<Material>();
 		trans.add(Material.AIR);
 		trans.add(Material.CAVE_AIR);
 		trans.add(Material.VOID_AIR);
@@ -1152,15 +1147,15 @@ public class GeneralMethods {
 				trans.add(material);
 			}
 		}
-		
-		Location location = origin.clone();
-		Vector vec = direction.normalize().multiply(0.2);
-		
+
+		final Location location = origin.clone();
+		final Vector vec = direction.normalize().multiply(0.2);
+
 		for (double i = 0; i < range; i += 0.2) {
 			location.add(vec);
-			
-			Block block = location.getBlock();
-			
+
+			final Block block = location.getBlock();
+
 			if (trans.contains(block.getType())) {
 				continue;
 			} else if (ignoreTempBlocks && (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block))) {
@@ -1300,7 +1295,7 @@ public class GeneralMethods {
 
 			//At this point it should either be water or lava
 			if (blocki.getBlockData() instanceof Levelled) {
-				Levelled level = (Levelled) blocki.getBlockData();
+				final Levelled level = (Levelled) blocki.getBlockData();
 				if (level.getLevel() == 0) {
 					sources++;
 				}
@@ -1455,52 +1450,45 @@ public class GeneralMethods {
 					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions) {
 						return true;
 					}
-					StateFlag.State tntflag = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT);
+					final StateFlag.State tntflag = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT);
 					if (tntflag != null && tntflag.equals(StateFlag.State.DENY)) {
 						return true;
 					}
 				}
-				StateFlag bendingflag = (StateFlag)WorldGuard.getInstance().getFlagRegistry().get("bending");
+				final StateFlag bendingflag = (StateFlag) WorldGuard.getInstance().getFlagRegistry().get("bending");
 				if (bendingflag != null) {
-					StateFlag.State bendingflagstate = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), bendingflag);
-					if(bendingflagstate == null && !wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)){
+					final StateFlag.State bendingflagstate = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), bendingflag);
+					if (bendingflagstate == null && !wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
 						return true;
 					}
-					if (bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY)){
+					if (bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY)) {
 						return true;
 					}
 				} else {
-					if(!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)){
+					if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
 						return true;
 					}
 				}
 			}
 
-			/* outdated plugin
-			if (psp != null && respectPreciousStones) {
-				final PreciousStones ps = (PreciousStones) psp;
-
-				if (isIgnite) {
-					if (ps.getForceFieldManager().hasSourceField(location, FieldFlag.PREVENT_FIRE)) {
-						return true;
-					}
-				}
-				if (isExplosive) {
-					if (ps.getForceFieldManager().hasSourceField(location, FieldFlag.PREVENT_EXPLOSIONS)) {
-						return true;
-					}
-				}
-
-				if (!PreciousStones.API().canBreak(player, location)) {
-					return true;
-				}
-			}
-			*/
+			/*
+			 * outdated plugin if (psp != null && respectPreciousStones) { final
+			 * PreciousStones ps = (PreciousStones) psp;
+			 *
+			 * if (isIgnite) { if
+			 * (ps.getForceFieldManager().hasSourceField(location,
+			 * FieldFlag.PREVENT_FIRE)) { return true; } } if (isExplosive) { if
+			 * (ps.getForceFieldManager().hasSourceField(location,
+			 * FieldFlag.PREVENT_EXPLOSIONS)) { return true; } }
+			 *
+			 * if (!PreciousStones.API().canBreak(player, location)) { return
+			 * true; } }
+			 */
 
 			if (facsfw != null && respectFactions) {
-				FPlayer fPlayer = FPlayers.getBySender(player);
-				Faction faction = Factions.getFactionAt(location);
-				Rel relation = fPlayer.getRelationTo(faction);
+				final FPlayer fPlayer = FPlayers.getBySender(player);
+				final Faction faction = Factions.getFactionAt(location);
+				final Rel relation = fPlayer.getRelationTo(faction);
 
 				if (!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)) {
 					return true;
@@ -1524,8 +1512,7 @@ public class GeneralMethods {
 						if (((status == TownBlockStatus.ENEMY) && TownyWarConfig.isAllowingAttacks())) {
 							try {
 								TownyWar.callAttackCellEvent(twn, player, location.getBlock(), worldCoord);
-							}
-							catch (final Exception e) {
+							} catch (final Exception e) {
 								TownyMessaging.sendErrorMsg(player, e.getMessage());
 							}
 							return true;
@@ -1539,8 +1526,7 @@ public class GeneralMethods {
 							TownyMessaging.sendErrorMsg(player, cache.getBlockErrMsg());
 						}
 					}
-				}
-				catch (final Exception e1) {
+				} catch (final Exception e1) {
 					TownyMessaging.sendErrorMsg(player, TownySettings.getLangString("msg_err_not_configured"));
 				}
 			}
@@ -1571,11 +1557,11 @@ public class GeneralMethods {
 			}
 
 			if (kingdoms != null && respectKingdoms) {
-				KingdomPlayer kPlayer = GameManagement.getPlayerManager().getOfflineKingdomPlayer(player).getKingdomPlayer();
+				final KingdomPlayer kPlayer = GameManagement.getPlayerManager().getOfflineKingdomPlayer(player).getKingdomPlayer();
 				if (kPlayer.getKingdom() != null) {
-					SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
-					Land land = GameManagement.getLandManager().getOrLoadLand(chunkLocation);
-					UUID owner = land.getOwnerUUID();
+					final SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
+					final Land land = GameManagement.getLandManager().getOrLoadLand(chunkLocation);
+					final UUID owner = land.getOwnerUUID();
 					if (owner != null) {
 						if (!kPlayer.getKingdom().getKing().equals(owner)) {
 							return true;
@@ -1586,8 +1572,8 @@ public class GeneralMethods {
 			}
 
 			if (redprotect != null && respectRedProtect) {
-				RedProtectAPI api = RedProtect.get().getAPI();
-				Region region = api.getRegion(location);
+				final RedProtectAPI api = RedProtect.get().getAPI();
+				final Region region = api.getRegion(location);
 				if (!(region != null && region.canBuild(player))) {
 					return true;
 				}
@@ -1617,7 +1603,7 @@ public class GeneralMethods {
 		if (entity == null) {
 			return false;
 		}
-		switch(entity.getType()){
+		switch (entity.getType()) {
 			case SKELETON:
 			case STRAY:
 			case WITHER_SKELETON:
@@ -1961,15 +1947,13 @@ public class GeneralMethods {
 							} else if (obj instanceof Map) {
 								writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?, ?>) obj).size());
 							}
-						}
-						catch (final Exception e) {
+						} catch (final Exception e) {
 
 						}
 					}
 				}
 			}
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 
@@ -2153,40 +2137,39 @@ public class GeneralMethods {
 		return loc.getWorld().spawnFallingBlock(loc, data);
 	}
 
-	public static boolean playerHeadIsInBlock(Player player, Block block) {
+	public static boolean playerHeadIsInBlock(final Player player, final Block block) {
 		return playerHeadIsInBlock(player, block, false);
 	}
 
-	public static boolean playerHeadIsInBlock(Player player, Block block, boolean exact) {
+	public static boolean playerHeadIsInBlock(final Player player, final Block block, final boolean exact) {
 		double checkDistance;
-		if (exact){
+		if (exact) {
 			checkDistance = 0.5;
 		} else {
 			checkDistance = 0.75;
 		}
-		return (player.getEyeLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getEyeLocation().getX() - block.getLocation().add(0.5,0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getEyeLocation().getZ() - block.getLocation().add(0.5,0.0, 0.5).getZ()) < checkDistance));
+		return (player.getEyeLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getEyeLocation().getX() - block.getLocation().add(0.5, 0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getEyeLocation().getZ() - block.getLocation().add(0.5, 0.0, 0.5).getZ()) < checkDistance));
 	}
 
-	public static boolean playerFeetIsInBlock(Player player, Block block) {
+	public static boolean playerFeetIsInBlock(final Player player, final Block block) {
 		return playerFeetIsInBlock(player, block, false);
 	}
 
-	public static boolean playerFeetIsInBlock(Player player, Block block, boolean exact) {
+	public static boolean playerFeetIsInBlock(final Player player, final Block block, final boolean exact) {
 		double checkDistance;
-		if (exact){
+		if (exact) {
 			checkDistance = 0.5;
 		} else {
 			checkDistance = 0.75;
 		}
-		return (player.getLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getLocation().getX() - block.getLocation().add(0.5,0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getLocation().getZ() - block.getLocation().add(0.5,0.0, 0.5).getZ()) < checkDistance));
+		return (player.getLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getLocation().getX() - block.getLocation().add(0.5, 0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getLocation().getZ() - block.getLocation().add(0.5, 0.0, 0.5).getZ()) < checkDistance));
 	}
 
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
 		ChatColor color;
 		try {
 			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		}
-		catch (final IllegalArgumentException exception) {
+		} catch (final IllegalArgumentException exception) {
 			color = ChatColor.GOLD;
 		}
 
@@ -2292,17 +2275,16 @@ public class GeneralMethods {
 			pw.flush();
 			pw.close();
 
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static boolean locationEqualsIgnoreDirection(Location loc1, Location loc2) {
+	public static boolean locationEqualsIgnoreDirection(final Location loc1, final Location loc2) {
 		return loc1.getWorld().equals(loc2.getWorld()) && loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
 	}
 
-	public static boolean isLightEmitting(Material material) {
+	public static boolean isLightEmitting(final Material material) {
 		switch (material) {
 			case GLOWSTONE:
 			case TORCH:

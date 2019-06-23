@@ -1,5 +1,14 @@
 package com.projectkorra.projectkorra.earthbending.passive;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
@@ -8,18 +17,10 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempBlock.RevertTask;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class DensityShift extends EarthAbility implements PassiveAbility {
 	private static final Set<TempBlock> SAND_BLOCKS = new HashSet<>();
+
 	public DensityShift(final Player player) {
 		super(player);
 	}
@@ -45,20 +46,13 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 						if (affectedBlock.getType() == Material.RED_SANDSTONE) {
 							sand = Material.RED_SAND;
 						}
-						
-						TempBlock tb = new TempBlock(affectedBlock, sand);
+
+						final TempBlock tb = new TempBlock(affectedBlock, sand);
 
 						if (!SAND_BLOCKS.contains(tb)) {
 							SAND_BLOCKS.add(tb);
 							tb.setRevertTime(getDuration());
-							tb.setRevertTask(new RevertTask() {
-
-								@Override
-								public void run() {
-									SAND_BLOCKS.remove(tb);
-								}
-								
-							});
+							tb.setRevertTask(() -> SAND_BLOCKS.remove(tb));
 						}
 					}
 				}
@@ -105,8 +99,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {

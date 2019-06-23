@@ -1,27 +1,28 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 
 public class Tornado extends AirAbility {
 
 	@Attribute(Attribute.COOLDOWN)
-	private long cooldown;
+	private final long cooldown;
 	@Attribute(Attribute.DURATION)
-	private long duration;
+	private final long duration;
 	private int numberOfStreams;
 	private int particleCount;
 	@Attribute(Attribute.SPEED)
@@ -69,7 +70,7 @@ public class Tornado extends AirAbility {
 			}
 		}
 
-		flightHandler.createInstance(player, this.getName());
+		this.flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		this.start();
 	}
@@ -96,7 +97,7 @@ public class Tornado extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		flightHandler.removeInstance(this.player, this.getName());
+		this.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	private void rotateTornado() {

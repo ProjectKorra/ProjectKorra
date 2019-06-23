@@ -137,8 +137,7 @@ public class EarthBlast extends EarthAbility {
 		for (int j = 0; j < this.getEarthbendableBlocks().size(); j++) {
 			try {
 				trans[i] = Material.valueOf(this.getEarthbendableBlocks().get(j));
-			}
-			catch (final IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				continue;
 			}
 			i++;
@@ -367,9 +366,9 @@ public class EarthBlast extends EarthAbility {
 		if (target != null) {
 			this.destination = target.getLocation();
 		} else {
-			this.destination = getTargetLocation();
+			this.destination = this.getTargetLocation();
 		}
-		
+
 		if (this.sourceBlock == null) {
 			return;
 		}

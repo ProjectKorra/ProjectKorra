@@ -96,14 +96,14 @@ public class EarthTunnel extends EarthAbility {
 
 		if (System.currentTimeMillis() - this.time >= this.interval) {
 			this.time = System.currentTimeMillis();
-			for (int i = 1; i <= blocksPerInterval; i++) {
+			for (int i = 1; i <= this.blocksPerInterval; i++) {
 				if (Math.abs(Math.toDegrees(this.player.getEyeLocation().getDirection().angle(this.direction))) > 20 || !this.player.isSneaking()) {
 					this.bPlayer.addCooldown(this);
 					this.remove();
 					return;
 				} else {
-					while ((!isEarth(this.block) && !isSand(this.block)) || (ignoreOres && this.isOre(this.block))) {
-						if (!this.isTransparent(this.block) && (ignoreOres && !this.isOre(this.block))) {
+					while ((!isEarth(this.block) && !isSand(this.block)) || (this.ignoreOres && this.isOre(this.block))) {
+						if (!this.isTransparent(this.block) && (this.ignoreOres && !this.isOre(this.block))) {
 							this.remove();
 							return;
 						}
@@ -164,7 +164,7 @@ public class EarthTunnel extends EarthAbility {
 		}
 	}
 
-	private boolean isOre(Block block) {
+	private boolean isOre(final Block block) {
 		switch (block.getType()) {
 			case IRON_ORE:
 			case GOLD_ORE:

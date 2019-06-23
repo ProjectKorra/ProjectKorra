@@ -1,5 +1,20 @@
 package com.projectkorra.projectkorra.waterbending.ice;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Snow;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
@@ -10,16 +25,6 @@ import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.Snow;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PhaseChange extends IceAbility {
 
@@ -371,7 +376,7 @@ public class PhaseChange extends IceAbility {
 
 			if (b.getType() == Material.SNOW) {
 				if (b.getBlockData() instanceof Snow) {
-					Snow snow = (Snow) b.getBlockData();
+					final Snow snow = (Snow) b.getBlockData();
 					if (snow.getLayers() == snow.getMinimumLayers()) {
 						tb.revertBlock();
 						new TempBlock(b, Material.AIR).setRevertTime(120 * 1000L);
@@ -389,7 +394,7 @@ public class PhaseChange extends IceAbility {
 		} else if (isWater(b)) {
 			// Figure out what to do here also.
 		} else if (isIce(b)) {
-			if (allowMeltFlow) {
+			if (this.allowMeltFlow) {
 				b.setType(Material.WATER);
 				b.setBlockData(GeneralMethods.getWaterData(0));
 			} else {
@@ -398,7 +403,7 @@ public class PhaseChange extends IceAbility {
 			this.melted_blocks.add(b);
 		} else if (b.getType() == Material.SNOW_BLOCK || b.getType() == Material.SNOW) {
 			if (b.getBlockData() instanceof Snow) {
-				Snow snow = (Snow) b.getBlockData();
+				final Snow snow = (Snow) b.getBlockData();
 				if (snow.getLayers() == snow.getMinimumLayers()) {
 					new TempBlock(b, Material.AIR).setRevertTime(120 * 1000L);
 				} else {

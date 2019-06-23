@@ -47,8 +47,7 @@ public class AbilityLoader<T> {
 
 			this.jar = new JarFile(new File(s));
 
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -102,8 +101,7 @@ public class AbilityLoader<T> {
 				loadables.add(loadable);
 				final AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(this.plugin, loadable, this.jar);
 				this.plugin.getServer().getPluginManager().callEvent(event);
-			}
-			catch (Exception | Error e) {
+			} catch (Exception | Error e) {
 				continue;
 			}
 		}

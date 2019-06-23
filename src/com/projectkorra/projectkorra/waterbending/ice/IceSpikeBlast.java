@@ -221,7 +221,7 @@ public class IceSpikeBlast extends IceAbility {
 			}
 
 			this.sourceBlock = block;
-			this.source = new TempBlock(this.sourceBlock, sourceType);
+			this.source = new TempBlock(this.sourceBlock, this.sourceType);
 			this.source.setRevertTime(130);
 		} else if (this.prepared) {
 			if (this.sourceBlock != null) {
@@ -241,7 +241,7 @@ public class IceSpikeBlast extends IceAbility {
 		if (this.source != null) {
 			this.source.revertBlock();
 		}
-		progressing = false;
+		this.progressing = false;
 	}
 
 	private void returnWater() {
@@ -285,10 +285,10 @@ public class IceSpikeBlast extends IceAbility {
 			this.sourceBlock.setType(Material.AIR);
 		} else if (isWater(this.sourceBlock)) {
 			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
-				sourceBlock.setType(Material.AIR);
+				this.sourceBlock.setType(Material.AIR);
 			}
 		} else if (TempBlock.isTempBlock(this.sourceBlock)) {
-			TempBlock tb = TempBlock.get(this.sourceBlock);
+			final TempBlock tb = TempBlock.get(this.sourceBlock);
 			if (isBendableWaterTempBlock(tb)) {
 				tb.revertBlock();
 			}

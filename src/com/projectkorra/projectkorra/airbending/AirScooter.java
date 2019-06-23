@@ -1,9 +1,8 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.ArrayList;
+import java.util.Random;
+
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -15,8 +14,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AirScooter extends AirAbility {
 
@@ -62,7 +63,7 @@ public class AirScooter extends AirAbility {
 		this.random = new Random();
 		this.angles = new ArrayList<>();
 
-		flightHandler.createInstance(player, this.getName());
+		this.flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		player.setFlying(true);
 
@@ -73,18 +74,18 @@ public class AirScooter extends AirAbility {
 			this.angles.add((double) (60 * i));
 		}
 		if (player.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
-			useslime = false;
+			this.useslime = false;
 		}
-		if (useslime) {
-			slime = (Slime) player.getWorld().spawnEntity(player.getLocation(), EntityType.SLIME);
-			if (slime != null) {
-				slime.setSize(1);
-				slime.setSilent(true);
-				slime.setInvulnerable(true);
-				slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
-				slime.addPassenger(player);
+		if (this.useslime) {
+			this.slime = (Slime) player.getWorld().spawnEntity(player.getLocation(), EntityType.SLIME);
+			if (this.slime != null) {
+				this.slime.setSize(1);
+				this.slime.setSilent(true);
+				this.slime.setInvulnerable(true);
+				this.slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
+				this.slime.addPassenger(player);
 			} else {
-				useslime = false;
+				this.useslime = false;
 			}
 		}
 
@@ -143,7 +144,7 @@ public class AirScooter extends AirAbility {
 			return;
 		}
 
-		if (useslime && (slime == null || !slime.getPassengers().contains(player))){
+		if (this.useslime && (this.slime == null || !this.slime.getPassengers().contains(this.player))) {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
@@ -155,7 +156,7 @@ public class AirScooter extends AirAbility {
 		 * checks the players speed and ends the move if they are going too slow
 		 */
 		if (System.currentTimeMillis() > this.getStartTime() + this.interval) {
-			if (useslime) {
+			if (this.useslime) {
 				if (this.slime.getVelocity().length() < this.speed * 0.3) {
 					this.remove();
 					return;
@@ -173,7 +174,7 @@ public class AirScooter extends AirAbility {
 		 * lowers the player based on their distance from the ground.
 		 */
 		final double distance = this.player.getLocation().getY() - this.floorblock.getY();
-		final double dx = Math.abs(distance - 2.4);
+		Math.abs(distance - 2.4);
 		if (distance > 2.75) {
 			velocity.setY(-.25);
 		} else if (distance < 2) {
@@ -199,10 +200,10 @@ public class AirScooter extends AirAbility {
 
 		this.player.setSprinting(false);
 		this.player.removePotionEffect(PotionEffectType.SPEED);
-		if (useslime) {
-			slime.setVelocity(velocity);
+		if (this.useslime) {
+			this.slime.setVelocity(velocity);
 		} else {
-			player.setVelocity(velocity);
+			this.player.setVelocity(velocity);
 		}
 
 		if (this.random.nextInt(4) == 0) {
@@ -216,10 +217,10 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (slime != null) {
-			slime.remove();
+		if (this.slime != null) {
+			this.slime.remove();
 		}
-		flightHandler.removeInstance(this.player, this.getName());
+		this.flightHandler.removeInstance(this.player, this.getName());
 		this.bPlayer.addCooldown(this);
 	}
 

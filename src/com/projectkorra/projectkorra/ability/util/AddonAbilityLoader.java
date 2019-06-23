@@ -45,8 +45,7 @@ public class AddonAbilityLoader<T> {
 		for (final File file : this.files) {
 			try {
 				urls.add(file.toURI().toURL());
-			}
-			catch (final MalformedURLException e) {
+			} catch (final MalformedURLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -79,8 +78,7 @@ public class AddonAbilityLoader<T> {
 					Class<?> clazz = null;
 					try {
 						clazz = Class.forName(className, true, this.loader);
-					}
-					catch (Exception | Error e) {
+					} catch (Exception | Error e) {
 						continue;
 					}
 
@@ -98,18 +96,15 @@ public class AddonAbilityLoader<T> {
 					this.plugin.getServer().getPluginManager().callEvent(event);
 				}
 
-			}
-			catch (Exception | Error e) {
+			} catch (Exception | Error e) {
 				e.printStackTrace();
 				this.plugin.getLogger().log(Level.WARNING, "Unknown cause");
 				this.plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");
-			}
-			finally {
+			} finally {
 				if (jarFile != null) {
 					try {
 						jarFile.close();
-					}
-					catch (final IOException e) {
+					} catch (final IOException e) {
 						e.printStackTrace();
 					}
 				}

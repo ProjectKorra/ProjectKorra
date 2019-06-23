@@ -1,15 +1,12 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempArmor;
-import com.projectkorra.projectkorra.util.TempBlock;
-import org.bukkit.*;
+import java.util.List;
+
+import org.bukkit.Color;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -20,7 +17,15 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.List;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthArmor extends EarthAbility {
 
@@ -229,8 +234,8 @@ public class EarthArmor extends EarthAbility {
 			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 
-			ParticleEffect.BLOCK_CRACK.display(player.getEyeLocation(), 8, 0.1, 0.1, 0.1, headMaterial.createBlockData());
-			ParticleEffect.BLOCK_CRACK.display(player.getLocation(), 8, 0.1F, 0.1F, 0.1F, legsMaterial.createBlockData());
+			ParticleEffect.BLOCK_CRACK.display(this.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, this.headMaterial.createBlockData());
+			ParticleEffect.BLOCK_CRACK.display(this.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, this.legsMaterial.createBlockData());
 
 			this.bPlayer.addCooldown(this);
 			this.remove();
@@ -455,8 +460,8 @@ public class EarthArmor extends EarthAbility {
 		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 
-		ParticleEffect.BLOCK_CRACK.display(player.getEyeLocation(), 8, 0.1, 0.1, 0.1, headMaterial.createBlockData());
-		ParticleEffect.BLOCK_CRACK.display(player.getLocation(), 8, 0.1F, 0.1F, 0.1F, legsMaterial.createBlockData());
+		ParticleEffect.BLOCK_CRACK.display(this.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, this.headMaterial.createBlockData());
+		ParticleEffect.BLOCK_CRACK.display(this.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, this.legsMaterial.createBlockData());
 
 		this.bPlayer.addCooldown(this);
 		this.remove();

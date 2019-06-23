@@ -89,9 +89,9 @@ public class BlazeArc extends FireAbility {
 				return;
 			}
 
-			Block ignitable = getIgnitable(block);
+			final Block ignitable = getIgnitable(block);
 			if (ignitable != null) {
-				ignite(ignitable);
+				this.ignite(ignitable);
 			}
 		}
 	}
@@ -122,15 +122,15 @@ public class BlazeArc extends FireAbility {
 
 	public static Block getIgnitable(final Block block) {
 		Block top = block;
-		
+
 		for (int i = 0; i < 2; i++) {
 			if (GeneralMethods.isSolid(top.getRelative(BlockFace.DOWN))) {
 				break;
 			}
-			
+
 			top = top.getRelative(BlockFace.DOWN);
 		}
-		
+
 		if (top.getType() == Material.FIRE) {
 			return top;
 		} else if (top.getType().isBurnable()) {
@@ -141,7 +141,7 @@ public class BlazeArc extends FireAbility {
 			return null;
 		}
 	}
-	
+
 	public static boolean isIgnitable(final Player player, final Block block) {
 		if (!BendingPlayer.getBendingPlayer(player).hasElement(Element.FIRE)) {
 			return false;

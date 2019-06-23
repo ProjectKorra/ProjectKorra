@@ -1,13 +1,14 @@
 package com.projectkorra.projectkorra.airbending.passive;
 
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirAgility extends AirAbility implements PassiveAbility {
 
@@ -16,10 +17,6 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 	private int jumpPower;
 	@Attribute(Attribute.SPEED)
 	private int speedPower;
-
-	// Instance related variables.
-	private boolean jumpActivate;
-	private boolean speedActivate;
 
 	public AirAgility(final Player player) {
 		super(player);

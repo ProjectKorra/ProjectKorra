@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -98,26 +96,23 @@ public class Commands {
 		new VersionCommand();
 		new WhoCommand();
 
-		final CommandExecutor exe = new CommandExecutor() {
-			@Override
-			public boolean onCommand(final CommandSender s, final Command c, final String label, final String[] args) {
-				if (Arrays.asList(commandaliases).contains(label.toLowerCase())) {
-					if (args.length > 0) {
-						final List<String> sendingArgs = Arrays.asList(args).subList(1, args.length);
-						for (final PKCommand command : PKCommand.instances.values()) {
-							if (Arrays.asList(command.getAliases()).contains(args[0].toLowerCase())) {
-								command.execute(s, sendingArgs);
-								return true;
-							}
+		final CommandExecutor exe = (s, c, label, args) -> {
+			if (Arrays.asList(commandaliases).contains(label.toLowerCase())) {
+				if (args.length > 0) {
+					final List<String> sendingArgs = Arrays.asList(args).subList(1, args.length);
+					for (final PKCommand command : PKCommand.instances.values()) {
+						if (Arrays.asList(command.getAliases()).contains(args[0].toLowerCase())) {
+							command.execute(s, sendingArgs);
+							return true;
 						}
 					}
-
-					PKCommand.instances.get("help").execute(s, new ArrayList<String>());
-					return true;
 				}
 
-				return false;
+				PKCommand.instances.get("help").execute(s, new ArrayList<String>());
+				return true;
 			}
+
+			return false;
 		};
 		projectkorra.setExecutor(exe);
 		projectkorra.setTabCompleter(new BendingTabComplete());

@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending.plant;
 
-import com.projectkorra.projectkorra.ability.ElementalAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -9,6 +8,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PlantAbility;
 
 public class PlantRegrowth extends PlantAbility {

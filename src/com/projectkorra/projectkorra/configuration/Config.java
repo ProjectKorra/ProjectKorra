@@ -40,8 +40,7 @@ public class Config {
 			try {
 				this.file.getParentFile().mkdir();
 				this.plugin.getLogger().info("Generating new directory for " + this.file.getName() + "!");
-			}
-			catch (final Exception e) {
+			} catch (final Exception e) {
 				this.plugin.getLogger().info("Failed to generate directory!");
 				e.printStackTrace();
 			}
@@ -51,8 +50,7 @@ public class Config {
 			try {
 				this.file.createNewFile();
 				this.plugin.getLogger().info("Generating new " + this.file.getName() + "!");
-			}
-			catch (final Exception e) {
+			} catch (final Exception e) {
 				this.plugin.getLogger().info("Failed to generate " + this.file.getName() + "!");
 				e.printStackTrace();
 			}
@@ -76,8 +74,7 @@ public class Config {
 		this.create();
 		try {
 			this.config.load(this.file);
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -91,8 +88,7 @@ public class Config {
 		try {
 			this.config.options().copyDefaults(true);
 			this.config.save(this.file);
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}

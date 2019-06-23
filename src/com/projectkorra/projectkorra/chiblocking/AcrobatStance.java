@@ -58,7 +58,7 @@ public class AcrobatStance extends ChiAbility {
 			this.remove();
 			return;
 		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
-			remove();
+			this.remove();
 			return;
 		}
 
@@ -121,11 +121,11 @@ public class AcrobatStance extends ChiAbility {
 	public void setJump(final int jump) {
 		this.jump = jump;
 	}
-	
+
 	public long getDuration() {
 		return this.duration;
 	}
-	
+
 	public void setDuration(final long duration) {
 		this.duration = duration;
 	}
