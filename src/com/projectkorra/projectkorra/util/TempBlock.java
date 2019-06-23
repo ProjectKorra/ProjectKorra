@@ -21,7 +21,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import io.papermc.lib.PaperLib;
 
 public class TempBlock {
-
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
 	public static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<TempBlock>(100, new Comparator<TempBlock>() {
 		@Override

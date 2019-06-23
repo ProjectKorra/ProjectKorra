@@ -1471,20 +1471,6 @@ public class GeneralMethods {
 				}
 			}
 
-			/*
-			 * outdated plugin if (psp != null && respectPreciousStones) { final
-			 * PreciousStones ps = (PreciousStones) psp;
-			 *
-			 * if (isIgnite) { if
-			 * (ps.getForceFieldManager().hasSourceField(location,
-			 * FieldFlag.PREVENT_FIRE)) { return true; } } if (isExplosive) { if
-			 * (ps.getForceFieldManager().hasSourceField(location,
-			 * FieldFlag.PREVENT_EXPLOSIONS)) { return true; } }
-			 *
-			 * if (!PreciousStones.API().canBreak(player, location)) { return
-			 * true; } }
-			 */
-
 			if (facsfw != null && respectFactions) {
 				final FPlayer fPlayer = FPlayers.getBySender(player);
 				final Faction faction = Factions.getFactionAt(location);
