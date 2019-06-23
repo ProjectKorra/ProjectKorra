@@ -426,13 +426,8 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (TempBlock.isTempBlock(event.getBlockPlaced()) && event.getItemInHand().getType() != Material.FLINT_AND_STEEL) {
-			// EarthTunnel has its own list of airBlocks TempBlocks, so we need to either not allow placing in Earth Tunnels, or remove the tempblock from Earth Tunnels airBlocks list so it doesn't revert. Here we just don't allow placing
-			if (EarthTunnel.airBlocks.containsKey(TempBlock.get(event.getBlockPlaced()))) {
-				event.setCancelled(true);
-				return;
-			}
-			TempBlock.removeBlock(event.getBlockPlaced());
+		if (TempBlock.isTempBlock(event.getBlock()) && event.getItemInHand().getType() != Material.FLINT_AND_STEEL) {
+			TempBlock.removeBlock(event.getBlock());
 		}
 	}
 
