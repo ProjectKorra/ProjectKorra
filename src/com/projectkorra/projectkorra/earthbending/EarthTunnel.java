@@ -160,25 +160,19 @@ public class EarthTunnel extends EarthAbility {
 	}
 
 	private boolean isOre(final Block block) {
-		if (block.getType() == Material.IRON_ORE) {
-			return true;
-		} else if (block.getType() == Material.GOLD_ORE) {
-			return true;
-		} else if (block.getType() == Material.DIAMOND_ORE) {
-			return true;
-		} else if (block.getType() == Material.REDSTONE_ORE) {
-			return true;
-		} else if (block.getType() == Material.COAL_ORE) {
-			return true;
-		} else if (block.getType() == Material.EMERALD_ORE) {
-			return true;
-		} else if (block.getType() == Material.LAPIS_ORE) {
-			return true;
-		} else if (block.getType() == Material.NETHER_QUARTZ_ORE) {
-			return true;
+		switch (block.getType()) {
+			case COAL_ORE:
+			case IRON_ORE:
+			case GOLD_ORE:
+			case LAPIS_ORE:
+			case REDSTONE_ORE:
+			case DIAMOND_ORE:
+			case EMERALD_ORE:
+			case NETHER_QUARTZ_ORE:
+				return true;
+			default: 
+				return false;
 		}
-		
-		return false;
 	}
 
 	@Override
