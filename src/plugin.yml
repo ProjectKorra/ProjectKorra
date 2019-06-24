@@ -28,7 +28,6 @@ permissions:
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true
       bending.ability.MetalClips.throw: true
-      bending.command.import: true
       bending.command.toggle.all: true
       bending.admin.toggle: true
       bending.command.invincible: true
