@@ -58,7 +58,7 @@ public class TempBlock {
 			instances.put(block, temp);
 		} else {
 			this.state = block.getState();
-			if (this.state instanceof Container) {
+			if (this.state instanceof Container || this.state.getType() == Material.JUKEBOX) {
 				return;
 			}
 			instances.put(block, this);
