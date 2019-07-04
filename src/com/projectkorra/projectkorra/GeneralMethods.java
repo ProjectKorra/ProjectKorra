@@ -2082,15 +2082,12 @@ public class GeneralMethods {
 	public static void setVelocity(final Entity entity, final Vector velocity) {
 		if (entity instanceof TNTPrimed) {
 			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
-				entity.setVelocity(velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
+				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier"));
 			}
-			return;
-		}
-		if (entity instanceof FallingBlock) {
+		} else if (entity instanceof FallingBlock) {
 			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
-				entity.setVelocity(velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
+				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier"));
 			}
-			return;
 		}
 
 		// Attempt to stop velocity from going over the packet cap.
