@@ -862,6 +862,41 @@ public class GeneralMethods {
 		}
 		return circleblocks;
 	}
+	
+	/**
+	 * Gets the closest entity within the specified radius around a point
+	 * @param center point to check around
+	 * @param radius distance from center to check within
+	 * @return null if not found
+	 */
+	public static Entity getClosestEntity(Location center, double radius) {
+		List<Entity> list = getEntitiesAroundPoint(center, radius);
+		
+		if (list.isEmpty()) {
+			return null;
+		} else {
+			return list.get(0);
+		}
+	}
+	
+	/**
+	 * Gets the closest LivingEntity within the specified radius around a point
+	 * @param center point to check around
+	 * @param radius distance from center to check within
+	 * @return null if not found
+	 */
+	public static LivingEntity getClosestLivingEntity(Location center, double radius) {
+		LivingEntity le = null;
+		
+		for (Entity e : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
+			if (e instanceof LivingEntity) {
+				le = (LivingEntity) e;
+				break;
+			}
+		}
+		
+		return le;
+	}
 
 	public static String getCurrentDate() {
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -1589,6 +1624,7 @@ public class GeneralMethods {
 		if (entity == null) {
 			return false;
 		}
+		
 		switch (entity.getType()) {
 			case SKELETON:
 			case STRAY:
@@ -1603,8 +1639,9 @@ public class GeneralMethods {
 			case SKELETON_HORSE:
 			case PHANTOM:
 				return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 
 	public static boolean isWeapon(final Material mat) {
@@ -2283,7 +2320,8 @@ public class GeneralMethods {
 			case JACK_O_LANTERN:
 			case END_ROD:
 				return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 }
