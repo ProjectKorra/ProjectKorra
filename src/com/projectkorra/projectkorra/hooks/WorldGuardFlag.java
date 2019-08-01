@@ -9,10 +9,11 @@ import com.projectkorra.projectkorra.ProjectKorra;
 public class WorldGuardFlag {
 	public static void registerBendingWorldGuardFlag() {
 		final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+
 		try {
 			registry.register(new StateFlag("bending", false));
 		} catch (final Exception e) {
-			ProjectKorra.log.severe("Unable to register bending WorldGuard Flag");
+			ProjectKorra.log.severe("Unable to register bending WorldGuard flag: " + e);
 		}
 	}
 }
