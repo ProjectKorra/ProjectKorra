@@ -194,7 +194,7 @@ public class PhaseChange extends IceAbility {
 			return;
 		}
 
-		if (this.meltLoc.distance(loc) < 1) {
+		if (this.meltLoc.getWorld().equals(loc.getWorld()) && this.meltLoc.distance(loc) < 1) {
 			return;
 		}
 
