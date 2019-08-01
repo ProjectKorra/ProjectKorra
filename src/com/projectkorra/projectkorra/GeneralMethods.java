@@ -862,6 +862,50 @@ public class GeneralMethods {
 		}
 		return circleblocks;
 	}
+	
+	/**
+	 * Gets the closest entity within the specified radius around a point
+	 * @param center point to check around
+	 * @param radius distance from center to check within
+	 * @return null if not found
+	 */
+	public static Entity getClosestEntity(Location center, double radius) {
+		Entity found = null;
+		double distance = radius * radius;
+		
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
+			double check = center.distance(entity.getLocation());
+			
+			if (check < distance) {
+				found = entity;
+				distance = check;
+			}
+		}
+		
+		return found;
+	}
+	
+	/**
+	 * Gets the closest LivingEntity within the specified radius around a point
+	 * @param center point to check around
+	 * @param radius distance from center to check within
+	 * @return null if not found
+	 */
+	public static LivingEntity getClosestLivingEntity(Location center, double radius) {
+		LivingEntity le = null;
+		double distance = radius * radius;
+		
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
+			double check = center.distance(entity.getLocation());
+			
+			if (entity instanceof LivingEntity && check < distance) {
+				le = (LivingEntity) entity;
+				distance = check;
+			}
+		}
+		
+		return le;
+	}
 
 	public static String getCurrentDate() {
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -1589,6 +1633,7 @@ public class GeneralMethods {
 		if (entity == null) {
 			return false;
 		}
+		
 		switch (entity.getType()) {
 			case SKELETON:
 			case STRAY:
@@ -1603,8 +1648,9 @@ public class GeneralMethods {
 			case SKELETON_HORSE:
 			case PHANTOM:
 				return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 
 	public static boolean isWeapon(final Material mat) {
@@ -2283,7 +2329,8 @@ public class GeneralMethods {
 			case JACK_O_LANTERN:
 			case END_ROD:
 				return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 }
