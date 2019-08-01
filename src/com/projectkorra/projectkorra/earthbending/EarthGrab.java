@@ -151,11 +151,11 @@ public class EarthGrab extends EarthAbility {
 			top.setType(Material.AIR);
 		}
 
-		int currentcheck = 0;
-		while (!this.isEarthbendable(top) && currentcheck < 5) {
-			if (this.isTransparent(top)) {
-				top = top.getRelative(BlockFace.DOWN);
-				currentcheck++;
+		if (!this.isEarthbendable(top)) {
+			Block under = top.getRelative(BlockFace.DOWN);
+
+			if (this.isTransparent(top) && this.isEarthbendable(under)) {
+				top = under;
 			} else {
 				this.remove();
 				return;
