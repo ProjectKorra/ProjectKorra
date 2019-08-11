@@ -54,6 +54,7 @@ public class BendingPlayer {
 	private boolean tremorSense;
 	private boolean illumination;
 	private boolean chiBlocked;
+	private boolean isAvatarState;
 	private long slowTime;
 	private final Player player;
 	private final UUID uuid;
@@ -88,6 +89,7 @@ public class BendingPlayer {
 		this.tremorSense = true;
 		this.illumination = true;
 		this.chiBlocked = false;
+		this.isAvatarState = false;
 		this.cooldowns = this.loadCooldowns();
 		this.toggledElements = new ConcurrentHashMap<Element, Boolean>();
 		for (final Element e : Element.getAllElements()) {
@@ -696,7 +698,7 @@ public class BendingPlayer {
 	}
 
 	public boolean isAvatarState() {
-		return CoreAbility.hasAbility(this.player, AvatarState.class);
+		return CoreAbility.hasAbility(this.player, AvatarState.class) || this.isAvatarState;
 	}
 
 	public boolean isBloodbent() {
@@ -834,6 +836,18 @@ public class BendingPlayer {
 		for (int i = 1; i <= 9; i++) {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + this.uuid + "'");
 		}
+	}
+
+	/**
+	 * Sets the {@link BendingPlayer}'s AvatarState status to true or false
+	 * without the need of activating the AvatarState class. Can be used
+	 * to access the AvatarState config values of stock abilities while bypassing
+	 * the requirement of the AvatarState permission.
+	 *
+	 * @param status The new value of the isAvatarState variable
+	 */
+	public void setAvatarState(final boolean status) {
+		this.isAvatarState = status;
 	}
 
 	/**
