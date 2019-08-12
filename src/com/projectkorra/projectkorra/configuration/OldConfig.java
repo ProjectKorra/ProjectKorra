@@ -11,7 +11,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
  * A config utility class for Project Korra. To get the config itself use
  * {@link #get()}.
  */
-public class Config {
+public class OldConfig {
 
 	private final ProjectKorra plugin;
 
@@ -23,7 +23,7 @@ public class Config {
 	 *
 	 * @param file The file to create/load
 	 */
-	public Config(final File file) {
+	public OldConfig(final File file) {
 		this.plugin = ProjectKorra.plugin;
 		this.file = new File(this.plugin.getDataFolder() + File.separator + file);
 		this.config = YamlConfiguration.loadConfiguration(this.file);

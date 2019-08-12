@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class ConfigType {
+public class OldConfigType {
 
 	private static final HashMap<String, ConfigType> ALL_TYPES = new HashMap<>();
 
@@ -16,7 +16,7 @@ public class ConfigType {
 
 	private final String string;
 
-	public ConfigType(final String string) {
+	public OldConfigType(final String string) {
 		this.string = string;
 		ALL_TYPES.put(string, this);
 	}

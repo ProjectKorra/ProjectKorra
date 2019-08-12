@@ -28,7 +28,6 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
@@ -41,6 +40,7 @@ import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
  * Class that presents a player and stores all bending information about the
  * player.
  */
+@SuppressWarnings("rawtypes")
 public class BendingPlayer {
 
 	/**
@@ -534,10 +534,6 @@ public class BendingPlayer {
 		final OfflinePlayer oPlayer = player != null ? Bukkit.getOfflinePlayer(player.getUniqueId()) : null;
 
 		return getBendingPlayer(oPlayer);
-	}
-
-	private static FileConfiguration getConfig() {
-		return ConfigManager.getConfig();
 	}
 
 	public CoreAbility getBoundAbility() {

@@ -1,16 +1,16 @@
 package com.projectkorra.projectkorra.ability;
 
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.avatar.AvatarStateConfig;
 
-public abstract class AvatarAbility extends ElementalAbility {
+public abstract class AvatarAbility extends ElementalAbility<AvatarStateConfig> {
 
-	public AvatarAbility(final Player player) {
-		super(player);
+	public AvatarAbility(final AvatarStateConfig config, final Player player) {
+		super(config, player);
 	}
 
 	@Override
@@ -29,19 +29,9 @@ public abstract class AvatarAbility extends ElementalAbility {
 	}
 
 	public static void playAvatarSound(final Location loc) {
-		if (getConfig().getBoolean("Abilities.Avatar.AvatarState.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Volume");
-			final float pitch = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Pitch");
-
-			Sound sound = Sound.BLOCK_ANVIL_LAND;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Abilities.Avatar.AvatarState.Sound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Abilities.Avatar.AvatarState.Sound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		AvatarStateConfig avatar = ConfigManager.getConfig(AvatarStateConfig.class);
+		if (avatar.PlaySound) {
+			loc.getWorld().playSound(loc, avatar.SoundType, avatar.SoundVolume, avatar.SoundPitch);
 		}
 	}
 

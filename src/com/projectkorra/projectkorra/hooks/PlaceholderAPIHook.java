@@ -9,10 +9,12 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.ChatPropertiesConfig;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
+@SuppressWarnings("rawtypes")
 public class PlaceholderAPIHook extends PlaceholderExpansion {
 
 	private final ProjectKorra plugin;
@@ -36,18 +38,17 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 			}
 			return coreAbil.getElement().getColor() + coreAbil.getName();
 		} else if (params.equals("element") || params.equals("elementcolor")) {
-			String e = "Nonbender";
+			String e = ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix);
 			ChatColor c = ChatColor.WHITE;
 			if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 				c = Element.AVATAR.getColor();
-				e = Element.AVATAR.getName();
+				e = ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).AvatarPrefix);
 			} else if (bPlayer.getElements().size() > 0) {
 				c = bPlayer.getElements().get(0).getColor();
-				e = bPlayer.getElements().get(0).getName();
+				e = bPlayer.getElements().get(0).getPrefix();
 			}
-			final String element = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e);
 			if (params.equals("element")) {
-				return c + element + ChatColor.RESET;
+				return c + e + ChatColor.RESET;
 			} else if (params.equals("elementcolor")) {
 				return c + "";
 			}

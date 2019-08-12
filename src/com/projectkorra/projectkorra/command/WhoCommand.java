@@ -37,7 +37,7 @@ public class WhoCommand extends PKCommand {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	final Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
+	final Map<String, String> staff = new HashMap<>();
 
 	private final String databaseOverload, noPlayersOnline, playerOffline;
 
@@ -159,7 +159,7 @@ public class WhoCommand extends PKCommand {
 
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
-			final BukkitRunnable runnable = new BukkitRunnable() {
+			new BukkitRunnable() {
 				@Override
 				public void run() {
 					int count = 0;
@@ -180,8 +180,7 @@ public class WhoCommand extends PKCommand {
 					}
 					WhoCommand.this.whoPlayer(sender, playerName);
 				}
-			};
-			runnable.runTaskAsynchronously(ProjectKorra.plugin);
+			}.runTaskAsynchronously(ProjectKorra.plugin);
 			return;
 		}
 
@@ -326,10 +325,6 @@ public class WhoCommand extends PKCommand {
 
 			if (this.staff.containsKey(uuid.toString())) {
 				sender.sendMessage(this.staff.get(uuid.toString()));
-			}
-
-			if (player.getPlayer() != null && player.getPlayer().hasPermission("bending.donor")) {
-				sender.sendMessage(Element.AVATAR.getColor() + "Server Donor");
 			}
 		}
 

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,13 +16,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.EarthPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 
 /**
  * ElementalAbility is used to hold methods that should be accessible by every
  * Air, Water, Earth, Fire, Chi, or AvatarAbility. This class is mainly used to
  * keep CoreAbility from becoming too cluttered.
  */
-public abstract class ElementalAbility extends CoreAbility {
+public abstract class ElementalAbility<C extends AbilityConfig> extends CoreAbility<C> {
 	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
@@ -36,16 +41,16 @@ public abstract class ElementalAbility extends CoreAbility {
 		}
 	}
 
-	public ElementalAbility(final Player player) {
-		super(player);
+	public ElementalAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	public boolean isTransparent(final Block block) {
 		return isTransparent(this.player, this.getName(), block);
 	}
 
-	public List<String> getEarthbendableBlocks() {
-		return getConfig().getStringList("Properties.Earth.EarthBlocks");
+	public List<Material> getEarthbendableBlocks() {
+		return Arrays.asList(ConfigManager.getConfig(EarthPropertiesConfig.class).EarthBlocks);
 	}
 
 	public static Material[] getTransparentMaterials() {
@@ -78,7 +83,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isEarth(final Material material) {
-		return getConfig().getStringList("Properties.Earth.EarthBlocks").contains(material.toString());
+		return Stream.of(ConfigManager.getConfig(EarthPropertiesConfig.class).EarthBlocks).anyMatch(material::equals);
 	}
 
 	public static boolean isFullMoon(final World world) {
@@ -93,7 +98,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isIce(final Material material) {
-		return getConfig().getStringList("Properties.Water.IceBlocks").contains(material.toString());
+		return Stream.of(ConfigManager.getConfig(WaterPropertiesConfig.class).IceBlocks).anyMatch(material::equals);
 	}
 
 	public static boolean isLava(final Block block) {
@@ -109,7 +114,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSnow(final Material material) {
-		return getConfig().getStringList("Properties.Water.SnowBlocks").contains(material.toString());
+		return Stream.of(ConfigManager.getConfig(WaterPropertiesConfig.class).SnowBlocks).anyMatch(material::equals);
 	}
 
 	public static boolean isMeltable(final Block block) {
@@ -125,15 +130,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMetal(final Material material) {
-		return getConfig().getStringList("Properties.Earth.MetalBlocks").contains(material.toString());
-	}
-
-	public static boolean isMetalBlock(final Block block) {
-		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.NETHER_QUARTZ_ORE) {
-			return true;
-		}
-
-		return false;
+		return Stream.of(ConfigManager.getConfig(EarthPropertiesConfig.class).MetalBlocks).anyMatch(material::equals);
 	}
 
 	public static boolean isNegativeEffect(final PotionEffectType effect) {
@@ -175,7 +172,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isPlant(final Material material) {
-		return getConfig().getStringList("Properties.Water.PlantBlocks").contains(material.toString());
+		return Stream.of(ConfigManager.getConfig(WaterPropertiesConfig.class).PlantBlocks).anyMatch(material::equals);
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
@@ -193,7 +190,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSand(final Material material) {
-		return getConfig().getStringList("Properties.Earth.SandBlocks").contains(material.toString());
+		return Stream.of(ConfigManager.getConfig(EarthPropertiesConfig.class).SandBlocks).anyMatch(material::equals);
 	}
 
 	public static boolean isTransparent(final Player player, final Block block) {
@@ -219,7 +216,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isWater(final Material material) {
-		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
+		return Stream.of(ConfigManager.getConfig(WaterPropertiesConfig.class).IceBlocks).anyMatch(material::equals);
 	}
 
 }

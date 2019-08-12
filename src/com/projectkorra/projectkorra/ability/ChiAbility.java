@@ -3,11 +3,12 @@ package com.projectkorra.projectkorra.ability;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public abstract class ChiAbility extends ElementalAbility {
+public abstract class ChiAbility<C extends AbilityConfig> extends ElementalAbility<C> {
 
-	public ChiAbility(final Player player) {
-		super(player);
+	public ChiAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	@Override

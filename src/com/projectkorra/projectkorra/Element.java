@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.ChatPropertiesConfig;
 
 public class Element {
 
@@ -40,12 +43,12 @@ public class Element {
 
 	private static final HashMap<String, Element> ALL_ELEMENTS = new HashMap<>(); // Must be initialized first.
 
-	public static final Element AIR = new Element("Air");
-	public static final Element WATER = new Element("Water");
-	public static final Element EARTH = new Element("Earth");
-	public static final Element FIRE = new Element("Fire");
-	public static final Element CHI = new Element("Chi", ElementType.BLOCKING);
-	public static final Element AVATAR = new Element("Avatar", null);
+	public static final Element AIR = new Element("Air", () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AirPrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AirColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AirSubColor);
+	public static final Element WATER = new Element("Water", () -> ConfigManager.getConfig(ChatPropertiesConfig.class).WaterPrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).WaterColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).WaterSubColor);
+	public static final Element EARTH = new Element("Earth", () -> ConfigManager.getConfig(ChatPropertiesConfig.class).EarthPrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).EarthColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).EarthSubColor);
+	public static final Element FIRE = new Element("Fire", () -> ConfigManager.getConfig(ChatPropertiesConfig.class).FirePrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).FireColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).FireSubColor);
+	public static final Element CHI = new Element("Chi", ElementType.BLOCKING, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).ChiPrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).ChiColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).ChiColor);
+	public static final Element AVATAR = new Element("Avatar", null, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AvatarPrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AvatarColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AvatarColor);
 	public static final SubElement FLIGHT = new SubElement("Flight", AIR, ElementType.NO_SUFFIX);
 	public static final SubElement SPIRITUAL = new SubElement("Spiritual", AIR, ElementType.NO_SUFFIX);
 	public static final SubElement BLOOD = new SubElement("Blood", WATER);
@@ -65,6 +68,10 @@ public class Element {
 	private final String name;
 	private final ElementType type;
 	private final Plugin plugin;
+	
+	private final Supplier<String> prefixSupplier;
+	private final Supplier<ChatColor> colorSupplier;
+	private final Supplier<ChatColor> subColorSupplier;
 
 	/**
 	 * To be used when creating a new Element. Do not use for comparing
@@ -72,8 +79,8 @@ public class Element {
 	 *
 	 * @param name Name of the new Element.
 	 */
-	public Element(final String name) {
-		this(name, ElementType.BENDING, ProjectKorra.plugin);
+	public Element(final String name, Supplier<String> prefixSupplier, Supplier<ChatColor> colorSupplier, Supplier<ChatColor> subColorSupplier) {
+		this(name, ElementType.BENDING, ProjectKorra.plugin, prefixSupplier, colorSupplier, subColorSupplier);
 	}
 
 	/**
@@ -84,8 +91,8 @@ public class Element {
 	 * @param type ElementType specifies if its a regular element or chi style
 	 *            element.
 	 */
-	public Element(final String name, final ElementType type) {
-		this(name, type, ProjectKorra.plugin);
+	public Element(final String name, final ElementType type, Supplier<String> prefixSupplier, Supplier<ChatColor> colorSupplier, Supplier<ChatColor> subColorSupplier) {
+		this(name, type, ProjectKorra.plugin, prefixSupplier, colorSupplier, subColorSupplier);
 	}
 
 	/**
@@ -97,29 +104,28 @@ public class Element {
 	 *            element.
 	 * @param plugin The plugin that is adding the element.
 	 */
-	public Element(final String name, final ElementType type, final Plugin plugin) {
+	public Element(final String name, final ElementType type, final Plugin plugin, Supplier<String> prefixSupplier, Supplier<ChatColor> colorSupplier, Supplier<ChatColor> subColorSupplier) {
 		this.name = name;
 		this.type = type;
 		this.plugin = plugin;
+		
+		this.prefixSupplier = prefixSupplier;
+		this.colorSupplier = colorSupplier;
+		this.subColorSupplier = subColorSupplier;
+		
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
 	}
 
 	public String getPrefix() {
-		String name_ = this.name;
-		if (this instanceof SubElement) {
-			name_ = ((SubElement) this).parentElement.name;
-		}
-		return this.getColor() + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_)) + " ";
+		return this.getColor() + ChatColor.translateAlternateColorCodes('&', prefixSupplier.get()) + " ";
 	}
 
 	public ChatColor getColor() {
-		final String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.name) : this.plugin.getConfig().getString("Chat.Colors." + this.name);
-		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
+		return Optional.ofNullable(colorSupplier.get()).orElse(ChatColor.WHITE);
 	}
 
 	public ChatColor getSubColor() {
-		final String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.name + "Sub") : this.plugin.getConfig().getString("Chat.Colors." + this.name + "Sub");
-		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
+		return Optional.ofNullable(subColorSupplier.get()).orElse(ChatColor.WHITE);
 	}
 
 	public String getName() {
@@ -331,14 +337,18 @@ public class Element {
 		 * @param plugin The plugin that is adding the element.
 		 */
 		public SubElement(final String name, final Element parentElement, final ElementType type, final Plugin plugin) {
-			super(name, type, plugin);
+			super(name, type, plugin, parentElement.prefixSupplier, parentElement.subColorSupplier, parentElement.subColorSupplier);
 			this.parentElement = parentElement;
+		}
+		
+		@Override
+		public String getPrefix() {
+			return this.getColor() + ChatColor.translateAlternateColorCodes('&', parentElement.prefixSupplier.get()) + " ";
 		}
 
 		@Override
 		public ChatColor getColor() {
-			final String color = this.getPlugin().getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.parentElement.name + "Sub") : this.getPlugin().getConfig().getString("Chat.Colors." + this.parentElement.name + "Sub");
-			return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
+			return parentElement.getSubColor();
 		}
 
 		public Element getParentElement() {

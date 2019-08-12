@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -18,19 +16,20 @@ import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.FirePropertiesConfig;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public abstract class FireAbility extends ElementalAbility {
+public abstract class FireAbility<C extends AbilityConfig> extends ElementalAbility<C> {
 
 	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
 
-	public FireAbility(final Player player) {
-		super(player);
+	public FireAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * place a temp fire block.
 	 */
 	public static boolean canFireGrief() {
-		return getConfig().getBoolean("Properties.Fire.FireGriefing");
+		return ConfigManager.getConfig(FirePropertiesConfig.class).Griefing;
 	}
 
 	/**
@@ -74,7 +73,7 @@ public abstract class FireAbility extends ElementalAbility {
 			return;
 		}
 		Information info = new Information();
-		final long time = getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks"));
+		final long time = ConfigManager.getConfig(FirePropertiesConfig.class).RevertTicks + (long) ((new Random()).nextDouble() * ConfigManager.getConfig(FirePropertiesConfig.class).RevertTicks);
 		if (TEMP_FIRE.containsKey(loc)) {
 			info = TEMP_FIRE.get(loc);
 		} else {
@@ -92,7 +91,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static double getDayFactor() {
-		return getConfig().getDouble("Properties.Fire.DayFactor");
+		return ConfigManager.getConfig(FirePropertiesConfig.class).DayFactor;
 	}
 
 	/**
@@ -111,10 +110,6 @@ public abstract class FireAbility extends ElementalAbility {
 			return value * getDayFactor();
 		}
 		return value;
-	}
-
-	public static ChatColor getSubChatColor() {
-		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.FireSub"));
 	}
 
 	public static boolean isIgnitable(final Block block) {
@@ -142,40 +137,22 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playCombustionSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
-
-			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		FirePropertiesConfig fire = ConfigManager.getConfig(FirePropertiesConfig.class);
+		
+		if (fire.PlaySound) {
+			loc.getWorld().playSound(loc, fire.CombustionSoundType, fire.CombustionSoundVolume, fire.CombustionSoundPitch);
 		}
 	}
 
 	public static void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+		ConfigManager.getConfig(FirePropertiesConfig.class).Particles.display(loc, amount, xOffset, yOffset, zOffset);
 	}
 
 	public static void playFirebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
-
-			Sound sound = Sound.BLOCK_FIRE_AMBIENT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		FirePropertiesConfig fire = ConfigManager.getConfig(FirePropertiesConfig.class);
+		
+		if (fire.PlaySound) {
+			loc.getWorld().playSound(loc, fire.SoundType, fire.SoundVolume, fire.SoundPitch);
 		}
 	}
 
@@ -188,19 +165,10 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
-
-			Sound sound = Sound.ENTITY_CREEPER_HURT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		FirePropertiesConfig fire = ConfigManager.getConfig(FirePropertiesConfig.class);
+		
+		if (fire.PlaySound) {
+			loc.getWorld().playSound(loc, fire.LightningSoundType, fire.LightningSoundVolume, fire.LightningSoundPitch);
 		}
 	}
 

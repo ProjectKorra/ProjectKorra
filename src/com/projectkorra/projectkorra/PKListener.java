@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import co.aikar.timings.lib.MCTiming;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -115,7 +113,9 @@ import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.chiblocking.passive.Acrobatics;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.ChatPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.Catapult;
 import com.projectkorra.projectkorra.earthbending.Collapse;
 import com.projectkorra.projectkorra.earthbending.CollapseWall;
@@ -191,6 +191,9 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 
+import co.aikar.timings.lib.MCTiming;
+
+@SuppressWarnings({ "unused", "deprecation", "rawtypes" })
 public class PKListener implements Listener {
 	ProjectKorra plugin;
 
@@ -436,8 +439,7 @@ public class PKListener implements Listener {
 		final Player player = event.getTarget();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		PassiveManager.registerPassives(player);
-		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-		if (chatEnabled) {
+		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
 			final Element element = event.getElement();
 			String prefix = "";
 
@@ -450,7 +452,7 @@ public class PKListener implements Listener {
 			} else if (element != null) {
 				prefix = element.getPrefix();
 			} else {
-				prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+				prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
 			}
 
 			player.setDisplayName(player.getName());
@@ -770,7 +772,7 @@ public class PKListener implements Listener {
 	public void onEntityBendingDeath(final EntityBendingDeathEvent event) {
 		BENDING_ENTITY_DEATH.put(event.getEntity(), event.getAbility());
 		if (event.getEntity() instanceof Player) {
-			if (ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled")) {
+			if (ConfigManager.getConfig(GeneralPropertiesConfig.class).DeathMessages) {
 				final Ability ability = event.getAbility();
 				if (ability == null) {
 					return;
@@ -810,21 +812,20 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		String e = "Nonbender";
+		String e = ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix);
 		ChatColor c = ChatColor.WHITE;
 		if (bPlayer != null) {
 			if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
-				c = Element.AVATAR.getColor();
-				e = Element.AVATAR.getName();
+				c = ConfigManager.getConfig(ChatPropertiesConfig.class).AvatarColor;
+				e = ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).AvatarPrefix);
 			} else if (bPlayer.getElements().size() > 0) {
 				c = bPlayer.getElements().get(0).getColor();
-				e = bPlayer.getElements().get(0).getName();
+				e = bPlayer.getElements().get(0).getPrefix();
 			}
 		}
-		final String element = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e);
-		event.setFormat(event.getFormat().replace("{element}", c + element + ChatColor.RESET).replace("{ELEMENT}", c + element + ChatColor.RESET).replace("{elementcolor}", c + "").replace("{ELEMENTCOLOR}", c + ""));
+		event.setFormat(event.getFormat().replace("{element}", c + e + ChatColor.RESET).replace("{ELEMENT}", c + e + ChatColor.RESET).replace("{elementcolor}", c + "").replace("{ELEMENTCOLOR}", c + ""));
 
-		if (!ConfigManager.languageConfig.get().getBoolean("Chat.Enable")) {
+		if (!ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
 			return;
 		}
 
@@ -835,12 +836,12 @@ public class PKListener implements Listener {
 		}
 
 		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
-			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Colors.Avatar"));
+			color = ConfigManager.getConfig(ChatPropertiesConfig.class).AvatarColor;
 		} else if (bPlayer.getElements().size() > 0) {
 			color = bPlayer.getElements().get(0).getColor();
 		}
 
-		String format = ConfigManager.languageConfig.get().getString("Chat.Format");
+		String format = ConfigManager.getConfig(ChatPropertiesConfig.class).Format;
 		format = format.replace("<message>", "%2$s");
 		format = format.replace("<name>", color + player.getDisplayName() + ChatColor.RESET);
 		event.setFormat(format);

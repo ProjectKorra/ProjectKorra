@@ -3,11 +3,12 @@ package com.projectkorra.projectkorra.ability;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public abstract class IceAbility extends WaterAbility implements SubAbility {
+public abstract class IceAbility<C extends AbilityConfig> extends WaterAbility<C> implements SubAbility {
 
-	public IceAbility(final Player player) {
-		super(player);
+	public IceAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	@Override

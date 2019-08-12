@@ -55,7 +55,9 @@ import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.AttributePriority;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.Config;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
@@ -78,7 +80,8 @@ import com.projectkorra.projectkorra.util.TimeUtil;
  * @see #registerAddonAbilities(String)
  * @see #registerPluginAbilities(JavaPlugin, String)
  */
-public abstract class CoreAbility implements Ability {
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public abstract class CoreAbility<C extends AbilityConfig> implements Ability {
 
 	private static final Set<CoreAbility> INSTANCES = Collections.newSetFromMap(new ConcurrentHashMap<CoreAbility, Boolean>());
 	private static final Map<Class<? extends CoreAbility>, Map<UUID, Map<Integer, CoreAbility>>> INSTANCES_BY_PLAYER = new ConcurrentHashMap<>();
@@ -90,7 +93,8 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
-
+	
+	protected final C config;
 	protected Player player;
 	protected BendingPlayer bPlayer;
 	protected FlightHandler flightHandler;
@@ -120,7 +124,8 @@ public abstract class CoreAbility implements Ability {
 	 * @see #ABILITIES_BY_NAME
 	 * @see #getAbility(String)
 	 */
-	public CoreAbility() {
+	public CoreAbility(C config) {
+		this.config = config;
 		for (final Field field : this.getClass().getDeclaredFields()) {
 			if (field.isAnnotationPresent(Attribute.class)) {
 				final Attribute attribute = field.getAnnotation(Attribute.class);
@@ -138,11 +143,13 @@ public abstract class CoreAbility implements Ability {
 	 * @param player the non-null player that created this instance
 	 * @see #start()
 	 */
-	public CoreAbility(final Player player) {
+	public CoreAbility(final C config, final Player player) {
 		if (player == null || !this.isEnabled()) {
+			this.config = config;
 			return;
 		}
-
+		
+		this.config = config;
 		this.player = player;
 		this.bPlayer = BendingPlayer.getBendingPlayer(player);
 		this.flightHandler = Manager.getManager(FlightHandler.class);
@@ -776,56 +783,17 @@ public abstract class CoreAbility implements Ability {
 
 	@Override
 	public boolean isEnabled() {
-		if (this instanceof AddonAbility) {
-			return true;
-		}
-
-		String elementName = this.getElement().getName();
-		if (this.getElement() instanceof SubElement) {
-			elementName = ((SubElement) this.getElement()).getParentElement().getName();
-		}
-
-		String tag = null;
-		if (this instanceof ComboAbility) {
-			tag = "Abilities." + elementName + "." + elementName + "Combo." + this.getName() + ".Enabled";
-		} else if (this instanceof PassiveAbility) {
-			tag = "Abilities." + elementName + ".Passive." + this.getName() + ".Enabled";
-		} else {
-			tag = "Abilities." + elementName + "." + this.getName() + ".Enabled";
-		}
-
-		if (getConfig().isBoolean(tag)) {
-			return getConfig().getBoolean(tag);
-		} else {
-			return true;
-		}
+		return config.Enabled;
 	}
 
 	@Override
 	public String getInstructions() {
-
-		String elementName = this.getElement().getName();
-		if (this.getElement() instanceof SubElement) {
-			elementName = ((SubElement) this.getElement()).getParentElement().getName();
-		}
-		if (this instanceof ComboAbility) {
-			elementName = elementName + ".Combo";
-		}
-		return ConfigManager.languageConfig.get().contains("Abilities." + elementName + "." + this.getName() + ".Instructions") ? ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Instructions") : "";
+		return config.Instructions;
 	}
 
 	@Override
 	public String getDescription() {
-		String elementName = this.getElement().getName();
-		if (this.getElement() instanceof SubElement) {
-			elementName = ((SubElement) this.getElement()).getParentElement().getName();
-		}
-		if (this instanceof PassiveAbility) {
-			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + this.getName() + ".Description");
-		} else if (this instanceof ComboAbility) {
-			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Combo." + this.getName() + ".Description");
-		}
-		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Description");
+		return config.Description;
 	}
 
 	public String getMovePreview(final Player player) {
@@ -1032,20 +1000,6 @@ public abstract class CoreAbility implements Ability {
 				field.setAccessible(accessibility);
 			}
 		});
-	}
-
-	/**
-	 * @return the current FileConfiguration for the plugin
-	 */
-	public static FileConfiguration getConfig() {
-		return ConfigManager.getConfig();
-	}
-
-	/**
-	 * @return the language.yml for the plugin
-	 */
-	public static FileConfiguration getLanguageConfig() {
-		return ConfigManager.languageConfig.get();
 	}
 
 	/**

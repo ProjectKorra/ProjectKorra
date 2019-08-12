@@ -31,37 +31,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.api.ResidenceInterface;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
-import com.google.common.reflect.ClassPath;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.Coord;
-import com.palmergames.bukkit.towny.object.PlayerCache;
-import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.palmergames.bukkit.towny.object.TownyWorld;
-import com.palmergames.bukkit.towny.object.WorldCoord;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
-import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
-import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.songoda.kingdoms.constants.land.Land;
-import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
-import com.songoda.kingdoms.constants.player.KingdomPlayer;
-import com.songoda.kingdoms.manager.game.GameManagement;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -87,6 +56,27 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.api.ResidenceInterface;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.ResidencePermissions;
+import com.google.common.reflect.ClassPath;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Protection;
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.TownyMessaging;
+import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.object.Coord;
+import com.palmergames.bukkit.towny.object.PlayerCache;
+import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
+import com.palmergames.bukkit.towny.object.TownyPermission;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import com.palmergames.bukkit.towny.object.TownyWorld;
+import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
+import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -108,7 +98,9 @@ import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.ChatPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
@@ -131,6 +123,15 @@ import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.songoda.kingdoms.constants.land.Land;
+import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
+import com.songoda.kingdoms.constants.player.KingdomPlayer;
+import com.songoda.kingdoms.manager.game.GameManagement;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
@@ -147,6 +148,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
+@SuppressWarnings("rawtypes")
 public class GeneralMethods {
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
@@ -648,7 +650,7 @@ public class GeneralMethods {
 	}
 
 	public static void displayMovePreview(final Player player, final int slot) {
-		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+		if (!ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingPreview) {
 			return;
 		}
 
@@ -978,7 +980,7 @@ public class GeneralMethods {
 	}
 
 	public static long getGlobalCooldown() {
-		return ConfigManager.defaultConfig.get().getLong("Properties.GlobalCooldown");
+		return ConfigManager.getConfig(GeneralPropertiesConfig.class).GlobalCooldown;
 	}
 
 	/**
@@ -1058,14 +1060,15 @@ public class GeneralMethods {
 	}
 
 	public static int getMaxPresets(final Player player) {
-		final int max = ConfigManager.getConfig().getInt("Properties.MaxPresets");
+		int max = ConfigManager.getConfig(GeneralPropertiesConfig.class).MaxPresets;
 		if (player.isOp()) {
 			return max;
 		}
-		for (int i = max; i > 0; i--) {
-			if (player.hasPermission("bending.command.preset.create." + i)) {
-				return i;
+		while (max > 0) {
+			if (player.hasPermission("bending.command.preset.create." + max)) {
+				return max;
 			}
+			max--;
 		}
 		return 0;
 	}
@@ -1351,7 +1354,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isImportEnabled() {
-		return ConfigManager.defaultConfig.get().getBoolean("Properties.ImportEnabled");
+		return ConfigManager.getConfig(GeneralPropertiesConfig.class).ImportEnabled;
 	}
 
 	public static boolean isInteractable(final Block block) {
@@ -1424,17 +1427,6 @@ public class GeneralMethods {
 	}
 
 	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
-		final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
-		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		//final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
-		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectKingdoms");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
-
 		boolean isIgnite = false;
 		boolean isExplosive = false;
 		boolean isHarmless = false;
@@ -1445,17 +1437,16 @@ public class GeneralMethods {
 			isHarmless = coreAbil.isHarmlessAbility();
 		}
 
-		if (ability == null && allowHarmless) {
+		if (ability == null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_AllowHarmlessAbilities) {
 			return false;
 		}
-		if (isHarmless && allowHarmless) {
+		if (isHarmless && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_AllowHarmlessAbilities) {
 			return false;
 		}
 
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		//final Plugin psp = pm.getPlugin("PreciousStones");
 		final Plugin facsfw = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
@@ -1467,7 +1458,7 @@ public class GeneralMethods {
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
 
-			if (lwc != null && respectLWC) {
+			if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectLWC) {
 				final LWCPlugin lwcp = (LWCPlugin) lwc;
 				final LWC lwc2 = lwcp.getLWC();
 				final Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
@@ -1477,7 +1468,7 @@ public class GeneralMethods {
 					}
 				}
 			}
-			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
+			if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
 				final WorldGuard wg = WorldGuard.getInstance();
 				if (!player.isOnline()) {
 					return true;
@@ -1515,7 +1506,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (facsfw != null && respectFactions) {
+			if (facsfw != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectFactions) {
 				final FPlayer fPlayer = FPlayers.getBySender(player);
 				final Faction faction = Factions.getFactionAt(location);
 				final Rel relation = fPlayer.getRelationTo(faction);
@@ -1525,7 +1516,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (twnp != null && respectTowny) {
+			if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectTowny) {
 				final Towny twn = (Towny) twnp;
 
 				WorldCoord worldCoord;
@@ -1561,7 +1552,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (gpp != null && respectGriefPrevention) {
+			if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) {
 					type = Material.AIR;
@@ -1575,18 +1566,18 @@ public class GeneralMethods {
 				}
 			}
 
-			if (residence != null && respectResidence) {
+			if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectResidence) {
 				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
 				final ClaimedResidence claim = res.getByLoc(location);
 				if (claim != null) {
 					final ResidencePermissions perms = claim.getPermissions();
-					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
+					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_ResidenceFlag)) {
 						return true;
 					}
 				}
 			}
 
-			if (kingdoms != null && respectKingdoms) {
+			if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectKingdoms) {
 				final KingdomPlayer kPlayer = GameManagement.getPlayerManager().getOfflineKingdomPlayer(player).getKingdomPlayer();
 				if (kPlayer.getKingdom() != null) {
 					final SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
@@ -1601,7 +1592,7 @@ public class GeneralMethods {
 
 			}
 
-			if (redprotect != null && respectRedProtect) {
+			if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectRedProtect) {
 				final RedProtectAPI api = RedProtect.get().getAPI();
 				final Region region = api.getRegion(location);
 				if (!(region != null && region.canBuild(player))) {
@@ -1674,9 +1665,7 @@ public class GeneralMethods {
 		Element element = null;
 		String prefix = "";
 
-		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-
-		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
 		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 			prefix = Element.AVATAR.getPrefix();
 		} else if (bPlayer.getElements().size() > 0) {
@@ -1684,7 +1673,7 @@ public class GeneralMethods {
 			prefix = element.getPrefix();
 		}
 
-		if (chatEnabled) {
+		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
@@ -1721,9 +1710,7 @@ public class GeneralMethods {
 			DBConnection.sql.close();
 		}
 		GeneralMethods.stopBending();
-		ConfigManager.defaultConfig.reload();
-		ConfigManager.languageConfig.reload();
-		ConfigManager.presetConfig.reload();
+		ConfigManager.clearCache();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
@@ -1876,19 +1863,9 @@ public class GeneralMethods {
 		writeToDebug("Supported Plugins");
 		writeToDebug("====================");
 
-		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
-		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		final Plugin psp = pm.getPlugin("PreciousStones");
 		final Plugin fcp = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
@@ -1897,31 +1874,28 @@ public class GeneralMethods {
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
 
-		if (wgp != null && respectWorldGuard) {
+		if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
 		}
-		if (psp != null && respectPreciousStones) {
-			writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
-		}
-		if (fcp != null && respectFactions) {
+		if (fcp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectFactions) {
 			writeToDebug("FactionsFramework v" + fcp.getDescription().getVersion());
 		}
-		if (twnp != null && respectTowny) {
+		if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectTowny) {
 			writeToDebug("Towny v" + twnp.getDescription().getVersion());
 		}
-		if (gpp != null && respectGriefPrevention) {
+		if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectGriefPrevention) {
 			writeToDebug("GriefPrevention v" + gpp.getDescription().getVersion());
 		}
-		if (lwc != null && respectLWC) {
+		if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectLWC) {
 			writeToDebug("LWC v" + lwc.getDescription().getVersion());
 		}
-		if (residence != null && respectResidence) {
+		if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectResidence) {
 			writeToDebug("Residence v" + residence.getDescription().getVersion());
 		}
-		if (kingdoms != null && respectKingdoms) {
+		if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectKingdoms) {
 			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
 		}
-		if (redprotect != null && respectRedProtect) {
+		if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectRedProtect) {
 			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
 		}
 
@@ -2127,12 +2101,12 @@ public class GeneralMethods {
 
 	public static void setVelocity(final Entity entity, final Vector velocity) {
 		if (entity instanceof TNTPrimed) {
-			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
-				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier"));
+			if (ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_TNT) {
+				velocity.multiply(ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_TNT_StrengthMultiplier);
 			}
 		} else if (entity instanceof FallingBlock) {
-			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
-				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier"));
+			if (ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_Normal) {
+				velocity.multiply(ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_Normal_StrengthMultiplier);
 			}
 		}
 
@@ -2195,20 +2169,13 @@ public class GeneralMethods {
 	}
 
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
-		ChatColor color;
-		try {
-			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		} catch (final IllegalArgumentException exception) {
-			color = ChatColor.GOLD;
-		}
-
-		final String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		final String prefix = ChatColor.GOLD + "ProjectKorra ";
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
 		} else {
 			final TextComponent prefixComponent = new TextComponent(prefix);
 			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
-			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra!\n" + color + "Click for more info.").create()));
+			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD + "Bending brought to you by ProjectKorra!\n" + ChatColor.GOLD + "Click for more info.").create()));
 
 			/*
 			 * The commented code below does not work due to an issue with

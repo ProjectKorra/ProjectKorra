@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class ConfigManager {
+public class OldConfigManager {
 
 	public static Config presetConfig;
 	public static Config defaultConfig;
 	public static Config languageConfig;
 
-	public ConfigManager() {
+	public OldConfigManager() {
 		presetConfig = new Config(new File("presets.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		languageConfig = new Config(new File("language.yml"));

@@ -3,11 +3,12 @@ package com.projectkorra.projectkorra.ability;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public abstract class MetalAbility extends EarthAbility implements SubAbility {
+public abstract class MetalAbility<C extends AbilityConfig> extends EarthAbility<C> implements SubAbility {
 
-	public MetalAbility(final Player player) {
-		super(player);
+	public MetalAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	@Override

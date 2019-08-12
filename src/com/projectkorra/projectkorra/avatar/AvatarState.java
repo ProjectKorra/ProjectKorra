@@ -9,6 +9,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.avatar.AvatarStateConfig;
 
 public class AvatarState extends AvatarAbility {
 
@@ -21,15 +23,14 @@ public class AvatarState extends AvatarAbility {
 	private int regenPower;
 	private int speedPower;
 	private int resistancePower;
-	private int fireResistancePower;
 	@Attribute(Attribute.DURATION)
 	private long duration;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double factor;
 
-	public AvatarState(final Player player) {
-		super(player);
+	public AvatarState(final AvatarStateConfig config, final Player player) {
+		super(config, player);
 
 		final AvatarState oldAbil = getAbility(player, AvatarState.class);
 		if (oldAbil != null) {
@@ -39,17 +40,16 @@ public class AvatarState extends AvatarAbility {
 			return;
 		}
 
-		this.regenEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled");
-		this.speedEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled");
-		this.resistanceEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Enabled");
-		this.fireResistanceEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled");
-		this.regenPower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Power") - 1;
-		this.speedPower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.Speed.Power") - 1;
-		this.resistancePower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power") - 1;
-		this.fireResistancePower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power") - 1;
-		this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Duration");
-		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");
-		this.factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
+		this.regenEnabled = config.RegenerationEnabled;
+		this.speedEnabled = config.SpeedEnabled;
+		this.resistanceEnabled = config.ResistanceEnabled;
+		this.fireResistanceEnabled = config.FireResistanceEnabled;
+		this.regenPower = config.RegenerationPower - 1;
+		this.speedPower = config.SpeedPower - 1;
+		this.resistancePower = config.ResistancePower - 1;
+		this.duration = config.Duration;
+		this.cooldown = config.Cooldown;
+		this.factor = config.PowerMultiplier;
 
 		playAvatarSound(player.getLocation());
 
@@ -90,7 +90,7 @@ public class AvatarState extends AvatarAbility {
 			this.addProgressPotionEffect(PotionEffectType.DAMAGE_RESISTANCE, this.resistancePower);
 		}
 		if (this.fireResistanceEnabled) {
-			this.addProgressPotionEffect(PotionEffectType.FIRE_RESISTANCE, this.fireResistancePower);
+			this.addProgressPotionEffect(PotionEffectType.FIRE_RESISTANCE, 0);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class AvatarState extends AvatarAbility {
 	}
 
 	public static double getValue(final double value) {
-		final double factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
+		final double factor = ConfigManager.getConfig(AvatarStateConfig.class).PowerMultiplier;
 		return factor * value;
 	}
 
@@ -196,14 +196,6 @@ public class AvatarState extends AvatarAbility {
 
 	public void setResistancePower(final int resistancePower) {
 		this.resistancePower = resistancePower;
-	}
-
-	public int getFireResistancePower() {
-		return this.fireResistancePower;
-	}
-
-	public void setFireResistancePower(final int fireResistancePower) {
-		this.fireResistancePower = fireResistancePower;
 	}
 
 	public long getDuration() {
