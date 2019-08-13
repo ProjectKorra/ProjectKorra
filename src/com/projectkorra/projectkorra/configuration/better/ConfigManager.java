@@ -53,7 +53,7 @@ public class ConfigManager {
 			CONFIG_CACHE.put(clazz, defaultConfig);
 			
 			File file = new File(JavaPlugin.getPlugin(ProjectKorra.class).getDataFolder(), "config");
-			file.mkdir();
+			file.mkdirs();
 			
 			for (String parent : defaultConfig.getParents()) {
 				file = new File(file, parent);

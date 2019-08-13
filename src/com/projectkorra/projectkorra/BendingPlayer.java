@@ -9,15 +9,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -28,6 +27,8 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
@@ -245,7 +246,6 @@ public class BendingPlayer {
 			return false;
 		}
 
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		final Location playerLoc = this.player.getLocation();
 
 		if (!this.player.isOnline() || this.player.isDead()) {
@@ -258,7 +258,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (Stream.of(ConfigManager.getConfig(GeneralPropertiesConfig.class).DisabledWorlds).anyMatch(this.player.getWorld().getName()::equalsIgnoreCase)) {
 			return false;
 		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;
@@ -267,7 +267,7 @@ public class BendingPlayer {
 		}
 
 		if (!ignoreCooldowns && this.cooldowns.containsKey(this.name)) {
-			if (this.cooldowns.get(this.name).getCooldown() + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+			if (this.cooldowns.get(this.name).getCooldown() + ConfigManager.getConfig(GeneralPropertiesConfig.class).GlobalCooldown >= System.currentTimeMillis()) {
 				return false;
 			}
 
@@ -300,11 +300,10 @@ public class BendingPlayer {
 			return false; // If the passive is disabled.
 		}
 		final Element element = ability.getElement();
-		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+		if (Commands.isToggledForAll && ConfigManager.getConfig(GeneralPropertiesConfig.class).TogglePassivesWithAllBending) {
 			return false;
 		}
 
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 
 		if (element == null || this.player == null) {
 			return false;
@@ -312,7 +311,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (Stream.of(ConfigManager.getConfig(GeneralPropertiesConfig.class).DisabledWorlds).anyMatch(this.player.getWorld().getName()::equalsIgnoreCase)) {
 			return false;
 		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
 			return false;

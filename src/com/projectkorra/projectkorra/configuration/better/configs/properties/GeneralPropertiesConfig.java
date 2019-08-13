@@ -26,6 +26,8 @@ public class GeneralPropertiesConfig implements Config {
 	
 	public final long GlobalCooldown = 0;
 	
+	public final boolean TogglePassivesWithAllBending = true;
+	
 	public final int MaxPresets = 0;
 	
 	public final boolean ImportEnabled = false;
@@ -39,6 +41,8 @@ public class GeneralPropertiesConfig implements Config {
 	public final boolean DeathMessages = true;
 	
 	public final boolean ApplyHorizontalCollisionBarrierBlockDamage = true;
+	
+	public final String[] DisabledWorlds = {};
 	
 	@Override
 	public String getName() {

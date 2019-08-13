@@ -11,6 +11,9 @@ public class FirePropertiesConfig implements Config {
 	public final long RevertTicks = 0;
 	public final double DayFactor = 0;
 	
+	public final String DayMessage = "";
+	public final String NightMessage = "";
+	
 	public final ParticleEffect Particles = ParticleEffect.FLAME;
 	
 	public final boolean PlaySound = true;

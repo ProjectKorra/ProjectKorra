@@ -1,5 +1,9 @@
 package com.projectkorra.projectkorra.object;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,31 +14,28 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.google.gson.Gson;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
 
 /**
- * A savable association of abilities and hotbar slots, stored per player.
- *
- * @author kingbirdy
- *
+ * A persistent association of abilities and hotbar slots, stored per player.
  */
+@SuppressWarnings("rawtypes")
 public class Preset {
 
 	/**
 	 * ConcurrentHashMap that stores a list of every Player's {@link Preset
 	 * presets}, keyed to their UUID
 	 */
-	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
-	public static FileConfiguration config = ConfigManager.presetConfig.get();
-	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<String, ArrayList<String>>();
+	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<>();
+	public static Map<String, ExternalPreset> externalPresets = new HashMap<>();
 	static String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";
 	static String loadNameQuery = "SELECT * FROM pk_presets WHERE uuid = ? AND name = ?";
 	static String deleteQuery = "DELETE FROM pk_presets WHERE uuid = ? AND name = ?";
@@ -42,9 +43,9 @@ public class Preset {
 	static String updateQuery1 = "UPDATE pk_presets SET slot";
 	static String updateQuery2 = " = ? WHERE uuid = ? AND name = ?";
 
-	private final UUID uuid;
-	private final HashMap<Integer, String> abilities;
-	private final String name;
+	private final transient UUID uuid;
+	private final transient String[] abilities;
+	private final transient String name;
 
 	/**
 	 * Creates a new {@link Preset}
@@ -54,7 +55,7 @@ public class Preset {
 	 * @param abilities A HashMap of the abilities to be saved in the Preset,
 	 *            keyed to the slot they're bound to
 	 */
-	public Preset(final UUID uuid, final String name, final HashMap<Integer, String> abilities) {
+	public Preset(final UUID uuid, final String name, final String[] abilities) {
 		this.uuid = uuid;
 		this.name = name;
 		this.abilities = abilities;
@@ -62,6 +63,32 @@ public class Preset {
 			presets.put(uuid, new ArrayList<Preset>());
 		}
 		presets.get(uuid).add(this);
+	}
+	
+	public static final class ExternalPreset extends Preset {
+		
+		private final String Name = null;
+		private final String[] Abilities = null;
+		
+		public ExternalPreset() {
+			super(null, null, null);
+		}
+		
+		@Override
+		public String getName() {
+			return Name;
+		}
+		
+		@Override
+		public String[] getAbilities() {
+			return Abilities;
+		}
+		
+		@Override
+		public void delete() {}
+		
+		@Override
+		public void save(final Player player) {}
 	}
 
 	/**
@@ -94,14 +121,11 @@ public class Preset {
 					if (rs.next()) { // Presets exist.
 						int i = 0;
 						do {
-							final HashMap<Integer, String> moves = new HashMap<Integer, String>();
-							for (int total = 1; total <= 9; total++) {
-								final String slot = rs.getString("slot" + total);
-								if (slot != null) {
-									moves.put(total, slot);
-								}
+							String[] abilities = new String[9];
+							for (int slot = 0; slot < 9; slot++) {
+								abilities[slot] = rs.getString("slot" + (slot + 1));
 							}
-							new Preset(uuid, rs.getString("name"), moves);
+							new Preset(uuid, rs.getString("name"), abilities);
 							i++;
 						} while (rs.next());
 						ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
@@ -136,16 +160,19 @@ public class Preset {
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = new HashMap<>(preset.abilities);
+		String[] abilities = preset.getAbilities();
 		boolean boundAll = true;
-		for (int i = 1; i <= 9; i++) {
-			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+		HashMap<Integer, String> bindings = new HashMap<>();
+		for (int i = 0; i < abilities.length; i++) {
+			final CoreAbility coreAbil = CoreAbility.getAbility(abilities[i]);
 			if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
-				abilities.remove(i);
+				abilities[i] = null;
 				boundAll = false;
+			} else {
+				bindings.put(i + 1, abilities[i]);
 			}
 		}
-		bPlayer.setAbilities(abilities);
+		bPlayer.setAbilities(bindings);
 		return boundAll;
 	}
 
@@ -189,15 +216,20 @@ public class Preset {
 	}
 
 	public static void loadExternalPresets() {
-		final HashMap<String, ArrayList<String>> presets = new HashMap<String, ArrayList<String>>();
-		for (final String name : config.getKeys(false)) {
-			if (!presets.containsKey(name)) {
-				if (!config.getStringList(name).isEmpty() && config.getStringList(name).size() <= 9) {
-					presets.put(name.toLowerCase(), (ArrayList<String>) config.getStringList(name));
+		Gson gson = new Gson();
+		File directory = new File(JavaPlugin.getPlugin(ProjectKorra.class).getDataFolder(), "presets");
+		if (directory.exists() && directory.isDirectory()) {
+			for (File f : directory.listFiles((parent, name) -> name.endsWith(".json"))) {
+				try (BufferedReader reader = Files.newBufferedReader(f.toPath())) {
+					ExternalPreset preset = gson.fromJson(reader, ExternalPreset.class);
+					externalPresets.put(preset.getName().toLowerCase(), preset);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
+		} else {
+			directory.mkdirs();
 		}
-		externalPresets = presets;
 	}
 
 	public static boolean externalPresetExists(final String name) {
@@ -214,10 +246,10 @@ public class Preset {
 	 *
 	 * @param player The Player who's Preset should be gotten
 	 * @param name The name of the Preset who's contents should be gotten
-	 * @return HashMap of ability names keyed to hotbar slots, if the Preset
+	 * @return String array of ability names indexed by hotbar slots, if the Preset
 	 *         exists, or null otherwise
 	 */
-	public static HashMap<Integer, String> getPresetContents(final Player player, final String name) {
+	public static String[] getPresetContents(final Player player, final String name) {
 		if (!presets.containsKey(player.getUniqueId())) {
 			return null;
 		}
@@ -230,33 +262,13 @@ public class Preset {
 	}
 
 	public static boolean bindExternalPreset(final Player player, final String name) {
-		boolean boundAll = true;
-		int slot = 0;
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-
 		if (externalPresetExists(name.toLowerCase())) {
-			for (final String ability : externalPresets.get(name.toLowerCase())) {
-				slot++;
-				final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-				if (coreAbil != null) {
-					abilities.put(slot, coreAbil.getName());
-				}
-			}
-
-			for (int i = 1; i <= 9; i++) {
-				final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
-				if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
-					abilities.remove(i);
-					boundAll = false;
-				}
-			}
-			bPlayer.setAbilities(abilities);
-			return boundAll;
+			return bindPreset(player, externalPresets.get(name.toLowerCase()));
 		}
 		return false;
 	}
@@ -284,6 +296,10 @@ public class Preset {
 	public String getName() {
 		return this.name;
 	}
+	
+	public String[] getAbilities() {
+		return this.abilities;
+	}
 
 	/**
 	 * Saves the Preset to the database.
@@ -303,15 +319,17 @@ public class Preset {
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
-		for (final Integer i : this.abilities.keySet()) {
+		for (int i = 0; i < abilities.length; i++) {
+			final String ability = abilities[i];
+			final int slot = i + 1;
 			new BukkitRunnable() {
 				PreparedStatement ps;
 
 				@Override
 				public void run() {
 					try {
-						this.ps = DBConnection.sql.getConnection().prepareStatement(updateQuery1 + i + updateQuery2);
-						this.ps.setString(1, Preset.this.abilities.get(i));
+						this.ps = DBConnection.sql.getConnection().prepareStatement(updateQuery1 + slot + updateQuery2);
+						this.ps.setString(1, ability);
 						this.ps.setString(2, Preset.this.uuid.toString());
 						this.ps.setString(3, Preset.this.name);
 						this.ps.execute();

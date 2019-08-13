@@ -1198,21 +1198,9 @@ public class PKListener implements Listener {
 			GeneralMethods.removeUnusableAbilities(player.getName());
 		}, 5);
 
-		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-				ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-				color = color == null ? ChatColor.GOLD : color;
-				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
-				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
-				if (!topBorder.isEmpty()) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
-				}
-				player.sendMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
-				if (!bottomBorder.isEmpty()) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
-				}
-			}, 20 * 4);
-		}
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
+			player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+		}, 20 * 4);
 	}
 
 	@EventHandler
@@ -1567,7 +1555,7 @@ public class PKListener implements Listener {
 		final int slot = event.getNewSlot() + 1;
 		GeneralMethods.displayMovePreview(player, slot);
 
-		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+		if (!ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingPreview) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 			if (waterArms != null) {
 				waterArms.displayBoundMsg(event.getNewSlot() + 1);
