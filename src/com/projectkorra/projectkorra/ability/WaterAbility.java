@@ -19,7 +19,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.SourcedWaterAbilityConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.SourcedWaterAbilityConfig;
 import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;

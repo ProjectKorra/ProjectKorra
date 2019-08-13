@@ -24,11 +24,12 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSwipeConfig;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class AirSwipe extends AirAbility {
+public class AirSwipe extends AirAbility<AirSwipeConfig> {
 
 	// Limiting the entities reduces the risk of crashing.
 	private static final int MAX_AFFECTABLE_ENTITIES = 10;
@@ -59,12 +60,12 @@ public class AirSwipe extends AirAbility {
 	private Map<Vector, Location> elements;
 	private ArrayList<Entity> affectedEntities;
 
-	public AirSwipe(final Player player) {
-		this(player, false);
+	public AirSwipe(final AirSwipeConfig config, final Player player) {
+		this(config, player, false);
 	}
 
-	public AirSwipe(final Player player, final boolean charging) {
-		super(player);
+	public AirSwipe(final AirSwipeConfig config, final Player player, final boolean charging) {
+		super(config, player);
 
 		if (CoreAbility.hasAbility(player, AirSwipe.class)) {
 			for (final AirSwipe ability : CoreAbility.getAbilities(player, AirSwipe.class)) {
@@ -78,17 +79,17 @@ public class AirSwipe extends AirAbility {
 
 		this.charging = charging;
 		this.origin = player.getEyeLocation();
-		this.particles = getConfig().getInt("Abilities.Air.AirSwipe.Particles");
-		this.arc = getConfig().getInt("Abilities.Air.AirSwipe.Arc");
-		this.arcIncrement = getConfig().getInt("Abilities.Air.AirSwipe.StepSize");
-		this.maxChargeTime = getConfig().getLong("Abilities.Air.AirSwipe.MaxChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirSwipe.Cooldown");
-		this.damage = getConfig().getDouble("Abilities.Air.AirSwipe.Damage");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirSwipe.Push");
-		this.speed = getConfig().getDouble("Abilities.Air.AirSwipe.Speed") * (ProjectKorra.time_step / 1000.0);
-		this.range = getConfig().getDouble("Abilities.Air.AirSwipe.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.AirSwipe.Radius");
-		this.maxChargeFactor = getConfig().getDouble("Abilities.Air.AirSwipe.ChargeFactor");
+		this.particles = config.AnimationParticleAmount;
+		this.arc = config.Arc;
+		this.arcIncrement = config.StepSize;
+		this.maxChargeTime = config.MaxChargeTime;
+		this.cooldown = config.Cooldown;
+		this.damage = config.Damage;
+		this.pushFactor = config.PushFactor;
+		this.speed = config.Speed * (ProjectKorra.time_step / 1000.0);
+		this.range = config.Range;
+		this.radius = config.Radius;
+		this.maxChargeFactor = config.MaxChargeFactor;
 		this.random = new Random();
 		this.elements = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
@@ -108,11 +109,11 @@ public class AirSwipe extends AirAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage");
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Push");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Range");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius");
+			this.cooldown = config.AvatarState_Cooldown;
+			this.damage = config.AvatarState_Damage;
+			this.pushFactor = config.AvatarState_PushFactor;
+			this.range = config.AvatarState_Range;
+			this.radius = config.AvatarState_Radius;
 		}
 
 		this.start();

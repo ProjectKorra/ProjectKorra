@@ -1,4 +1,6 @@
-package com.projectkorra.projectkorra.configuration.better.configs.abilities;
+package com.projectkorra.projectkorra.configuration.better.configs.abilities.earth;
+
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
 public class EarthDomeConfig extends AbilityConfig {
 

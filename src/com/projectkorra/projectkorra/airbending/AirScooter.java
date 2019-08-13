@@ -18,8 +18,9 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirScooterConfig;
 
-public class AirScooter extends AirAbility {
+public class AirScooter extends AirAbility<AirScooterConfig> {
 
 	@Attribute(Attribute.SPEED)
 	private double speed;
@@ -40,8 +41,8 @@ public class AirScooter extends AirAbility {
 
 	private double phi = 0;
 
-	public AirScooter(final Player player) {
-		super(player);
+	public AirScooter(final AirScooterConfig config, final Player player) {
+		super(config, player);
 
 		if (check(player)) {
 			return;
@@ -53,13 +54,13 @@ public class AirScooter extends AirAbility {
 			return;
 		}
 
-		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
-		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");
-		this.radius = getConfig().getDouble("Abilities.Air.AirScooter.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Air.AirScooter.Duration");
-		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
-		this.useslime = getConfig().getBoolean("Abilities.Air.AirScooter.ShowSitting");
+		this.speed = config.Speed;
+		this.interval = config.Interval;
+		this.radius = config.Radius;
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
+		this.maxHeightFromGround = config.MaxHeightFromGround;
+		this.useslime = config.ShowSitting;
 		this.random = new Random();
 		this.angles = new ArrayList<>();
 

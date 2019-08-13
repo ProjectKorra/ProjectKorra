@@ -29,12 +29,14 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBlastConfig;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class AirBlast extends AirAbility {
+public class AirBlast extends AirAbility<AirBlastConfig> {
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
@@ -73,8 +75,8 @@ public class AirBlast extends AirAbility {
 	private ArrayList<Block> affectedLevers;
 	private ArrayList<Entity> affectedEntities;
 
-	public AirBlast(final Player player) {
-		super(player);
+	public AirBlast(final AirBlastConfig config, final Player player) {
+		super(config, player);
 		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		} else if (player.getEyeLocation().getBlock().isLiquid()) {
@@ -104,8 +106,8 @@ public class AirBlast extends AirAbility {
 		this.start();
 	}
 
-	public AirBlast(final Player player, final Location location, final Vector direction, final double modifiedPushFactor, final AirBurst burst) {
-		super(player);
+	public AirBlast(final AirBlastConfig config, final Player player, final Location location, final Vector direction, final double modifiedPushFactor, final AirBurst burst) {
+		super(config, player);
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
@@ -125,8 +127,8 @@ public class AirBlast extends AirAbility {
 		this.canFlickLevers = false;
 
 		if (this.bPlayer.isAvatarState()) {
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
-			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
+			this.pushFactor = config.AvatarState_PushFactor_Self;
+			this.pushFactorForOthers = config.AvatarState_PushFactor_Others;
 		}
 
 		this.pushFactor *= modifiedPushFactor;
@@ -135,18 +137,17 @@ public class AirBlast extends AirAbility {
 	}
 
 	private void setFields() {
-		this.particles = getConfig().getInt("Abilities.Air.AirBlast.Particles");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.AirBlast.Speed");
-		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.AirBlast.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBlast.Push.Entities");
-		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirBlast.Push.Self");
-		this.canFlickLevers = getConfig().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
-		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
-		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
-		this.canCoolLava = getConfig().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
+		this.particles = config.AnimationParticleAmount;
+		this.cooldown = config.Cooldown;
+		this.range = config.Range;
+		this.speed = config.Speed;
+		this.radius = config.Radius;
+		this.pushFactor = config.PushFactor_Self;
+		this.pushFactorForOthers = config.AvatarState_PushFactor_Others;
+		this.canFlickLevers = config.CanFlickLevers;
+		this.canOpenDoors = config.CanOpenDoors;
+		this.canPressButtons = config.CanPushButtons;
+		this.canCoolLava = config.CanCoolLava;
 
 		this.isFromOtherOrigin = false;
 		this.showParticles = true;
@@ -643,11 +644,11 @@ public class AirBlast extends AirAbility {
 	}
 
 	public static int getSelectParticles() {
-		return getConfig().getInt("Abilities.Air.AirBlast.SelectParticles");
+		return ConfigManager.getConfig(AirBlastConfig.class).SelectionParticleAmount;
 	}
 
 	public static double getSelectRange() {
-		return getConfig().getInt("Abilities.Air.AirBlast.SelectRange");
+		return ConfigManager.getConfig(AirBlastConfig.class).SelectionRange;
 	}
 
 }

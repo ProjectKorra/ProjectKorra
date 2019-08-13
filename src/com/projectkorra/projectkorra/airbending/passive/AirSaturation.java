@@ -5,15 +5,16 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSaturationConfig;
 
-public class AirSaturation extends AirAbility implements PassiveAbility {
-	public AirSaturation(final Player player) {
-		super(player);
+public class AirSaturation extends AirAbility<AirSaturationConfig> implements PassiveAbility {
+	public AirSaturation(final AirSaturationConfig config, final Player player) {
+		super(config, player);
 	}
 
 	public static double getExhaustionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Air.Passive.Factor");
+		return ConfigManager.getConfig(AirSaturationConfig.class).ExhaustionFactor;
 	}
 
 	@Override

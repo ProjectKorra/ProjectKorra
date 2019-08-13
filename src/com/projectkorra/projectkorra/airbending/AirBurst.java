@@ -12,8 +12,11 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBlastConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBurstConfig;
 
-public class AirBurst extends AirAbility {
+public class AirBurst extends AirAbility<AirBurstConfig> {
 
 	private boolean isCharged;
 	private boolean isFallBurst;
@@ -34,8 +37,8 @@ public class AirBurst extends AirAbility {
 	private ArrayList<AirBlast> blasts;
 	private ArrayList<Entity> affectedEntities;
 
-	public AirBurst(final Player player, final boolean isFallBurst) {
-		super(player);
+	public AirBurst(final AirBurstConfig config, final Player player, final boolean isFallBurst) {
+		super(config, player);
 		if (this.bPlayer.isOnCooldown(this)) {
 			this.remove();
 			return;
@@ -49,21 +52,21 @@ public class AirBurst extends AirAbility {
 		this.isFallBurst = isFallBurst;
 		this.isCharged = false;
 		this.playerFallDistance = player.getFallDistance();
-		this.chargeTime = getConfig().getLong("Abilities.Air.AirBurst.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirBurst.Cooldown");
-		this.fallThreshold = getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBurst.PushFactor");
-		this.damage = getConfig().getDouble("Abilities.Air.AirBurst.Damage");
-		this.blastAnglePhi = getConfig().getDouble("Abilities.Air.AirBurst.AnglePhi");
-		this.blastAngleTheta = getConfig().getDouble("Abilities.Air.AirBurst.AngleTheta");
-		this.sneakParticles = getConfig().getInt("Abilities.Air.AirBurst.SneakParticles");
-		this.particlePercentage = getConfig().getDouble("Abilities.Air.AirBurst.ParticlePercentage");
+		this.chargeTime = config.ChargeTime;
+		this.cooldown = config.Cooldown;
+		this.fallThreshold = config.FallHeightThreshold;
+		this.pushFactor = config.PushFactor;
+		this.damage = config.Damage;
+		this.blastAnglePhi = config.AnglePhi;
+		this.blastAngleTheta = config.AngleTheta;
+		this.sneakParticles = config.ChargeParticles;
+		this.particlePercentage = config.ParticlePercentage;
 		this.blasts = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 
 		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBurst.Damage");
+			this.chargeTime = config.AvatarState_ChargeTime;
+			this.damage = config.AvatarState_Damage;
 		}
 		this.start();
 	}
@@ -124,7 +127,7 @@ public class AirBurst extends AirAbility {
 				z = r * Math.cos(rtheta);
 
 				final Vector direction = new Vector(x, z, y);
-				final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
+				final AirBlast blast = new AirBlast(ConfigManager.getConfig(AirBlastConfig.class), this.player, location, direction.normalize(), this.pushFactor, this);
 				blast.setDamage(this.damage);
 			}
 		}
@@ -158,7 +161,7 @@ public class AirBurst extends AirAbility {
 
 					final Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
-						final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
+						final AirBlast blast = new AirBlast(ConfigManager.getConfig(AirBlastConfig.class), this.player, location, direction.normalize(), this.pushFactor, this);
 						blast.setDamage(this.damage);
 					}
 				}
@@ -201,7 +204,7 @@ public class AirBurst extends AirAbility {
 					z = r * Math.cos(rtheta);
 
 					final Vector direction = new Vector(x, z, y);
-					final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
+					final AirBlast blast = new AirBlast(ConfigManager.getConfig(AirBlastConfig.class), this.player, location, direction.normalize(), this.pushFactor, this);
 
 					blast.setDamage(this.damage);
 					blast.setShowParticles(false);

@@ -12,7 +12,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.avatar.AvatarStateConfig;
 
-public class AvatarState extends AvatarAbility {
+public class AvatarState extends AvatarAbility<AvatarStateConfig> {
 
 	private static final HashMap<String, Long> START_TIMES = new HashMap<>();
 

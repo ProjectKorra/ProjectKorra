@@ -15,9 +15,11 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirStreamConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class AirStream extends AirAbility implements ComboAbility {
+public class AirStream extends AirAbility<AirStreamConfig> implements ComboAbility {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -37,8 +39,8 @@ public class AirStream extends AirAbility implements ComboAbility {
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
 
-	public AirStream(final Player player) {
-		super(player);
+	public AirStream(final AirStreamConfig config, final Player player) {
+		super(config, player);
 
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -51,17 +53,17 @@ public class AirStream extends AirAbility implements ComboAbility {
 			return;
 		}
 
-		this.range = getConfig().getDouble("Abilities.Air.AirStream.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.AirStream.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirStream.Cooldown");
-		this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirStream.EntityCarry.Height");
-		this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirStream.EntityCarry.Duration");
+		this.range = config.Range;
+		this.speed = config.Speed;
+		this.cooldown = config.Cooldown;
+		this.airStreamMaxEntityHeight = config.EntityCarryHeight;
+		this.airStreamEntityCarryDuration = config.EntityCarryDuration;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.Range");
-			this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Height");
-			this.airStreamEntityCarryDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Duration");
+			this.range = config.AvatarState_Range;
+			this.airStreamMaxEntityHeight = config.AvatarState_EntityCarryHeight;
+			this.airStreamEntityCarryDuration = config.AvatarState_EntityCarryDuration;
 		}
 
 		this.bPlayer.addCooldown(this);
@@ -200,7 +202,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new AirStream(player);
+		return new AirStream(ConfigManager.getConfig(AirStreamConfig.class), player);
 	}
 
 	@Override

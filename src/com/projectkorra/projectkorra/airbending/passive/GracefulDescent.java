@@ -5,11 +5,12 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.GracefulDescentConfig;
 
-public class GracefulDescent extends AirAbility implements PassiveAbility {
+public class GracefulDescent extends AirAbility<GracefulDescentConfig> implements PassiveAbility {
 
-	public GracefulDescent(final Player player) {
-		super(player);
+	public GracefulDescent(final GracefulDescentConfig config, final Player player) {
+		super(config, player);
 	}
 
 	@Override

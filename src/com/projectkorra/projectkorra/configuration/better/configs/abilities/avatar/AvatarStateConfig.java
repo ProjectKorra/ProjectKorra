@@ -9,7 +9,6 @@ public class AvatarStateConfig extends AbilityConfig {
 	public final double PowerMultiplier = 0;
 	
 	public final long Duration = 0;
-	
 	public final long Cooldown = 0;
 	
 	public final boolean RegenerationEnabled = true;
@@ -28,7 +27,7 @@ public class AvatarStateConfig extends AbilityConfig {
 	public final float SoundVolume = 0;
 	public final float SoundPitch = 0;
 	
-	public AvatarStateConfig(boolean enabled, String description, String instructions) {
+	public AvatarStateConfig() {
 		super(true, "", "");
 	}
 

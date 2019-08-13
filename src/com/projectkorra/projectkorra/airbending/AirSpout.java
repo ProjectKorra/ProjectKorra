@@ -14,8 +14,9 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSpoutConfig;
 
-public class AirSpout extends AirAbility {
+public class AirSpout extends AirAbility<AirSpoutConfig> {
 
 	private static final Integer[] DIRECTIONS = { 0, 1, 2, 3, 5, 6, 7, 8 };
 
@@ -29,8 +30,8 @@ public class AirSpout extends AirAbility {
 	@Attribute(Attribute.HEIGHT)
 	private double height;
 
-	public AirSpout(final Player player) {
-		super(player);
+	public AirSpout(final AirSpoutConfig config, final Player player) {
+		super(config, player);
 
 		final AirSpout spout = getAbility(player, AirSpout.class);
 		if (spout != null) {
@@ -43,11 +44,11 @@ public class AirSpout extends AirAbility {
 		}
 
 		this.angle = 0;
-		this.cooldown = getConfig().getLong("Abilities.Air.AirSpout.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Air.AirSpout.Duration");
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
 		this.animTime = System.currentTimeMillis();
-		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
-		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
+		this.interval = config.Interval;
+		this.height = config.Height;
 
 		final double heightRemoveThreshold = 2;
 		if (!this.isWithinMaxSpoutHeight(heightRemoveThreshold)) {
@@ -57,7 +58,7 @@ public class AirSpout extends AirAbility {
 		this.flightHandler.createInstance(player, this.getName());
 
 		if (this.bPlayer.isAvatarState()) {
-			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
+			this.height = config.AvatarState_Height;
 		}
 
 		this.start();

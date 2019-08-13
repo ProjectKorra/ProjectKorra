@@ -124,8 +124,8 @@ public abstract class CoreAbility<C extends AbilityConfig> implements Ability {
 	 * @see #ABILITIES_BY_NAME
 	 * @see #getAbility(String)
 	 */
-	public CoreAbility(C config) {
-		this.config = config;
+	public CoreAbility() {
+		this.config = null;
 		for (final Field field : this.getClass().getDeclaredFields()) {
 			if (field.isAnnotationPresent(Attribute.class)) {
 				final Attribute attribute = field.getAnnotation(Attribute.class);

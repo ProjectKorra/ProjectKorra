@@ -1,4 +1,6 @@
-package com.projectkorra.projectkorra.configuration.better.configs.abilities;
+package com.projectkorra.projectkorra.configuration.better.configs.abilities.water;
+
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
 public abstract class SourcedWaterAbilityConfig extends AbilityConfig {
 	
