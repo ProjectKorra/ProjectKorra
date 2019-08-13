@@ -8,7 +8,13 @@ import com.projectkorra.projectkorra.configuration.better.Config;
 public class EarthPropertiesConfig implements Config {
 
 	public final Material[] EarthBlocks = {};
+	
 	public final boolean RevertEarthbending = true;
+	public final long RevertCheckTime = 0;
+	public final boolean SafeRevert = true;
+	
+	public final boolean DynamicSourcing = true;
+	public final double MaxSelectRange = 0;
 	
 	public final boolean PlaySound = true;
 	public final Sound SoundType = Sound.ENTITY_GHAST_SHOOT;

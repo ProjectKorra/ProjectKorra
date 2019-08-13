@@ -99,6 +99,7 @@ import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.BindCommandConfig;
 import com.projectkorra.projectkorra.configuration.better.configs.properties.ChatPropertiesConfig;
 import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
@@ -216,7 +217,7 @@ public class GeneralMethods {
 		bPlayer.getAbilities().put(slot, ability);
 
 		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
 		}
 		saveAbility(bPlayer, slot, ability);
 	}

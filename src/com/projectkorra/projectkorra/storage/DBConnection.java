@@ -5,7 +5,8 @@ import java.sql.SQLException;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 
 public class DBConnection {
 
@@ -19,12 +20,13 @@ public class DBConnection {
 	private static boolean isOpen = false;
 
 	public static void init() {
-		DBConnection.host = ConfigManager.getConfig().getString("Storage.MySQL.host");
-		DBConnection.port = ConfigManager.getConfig().getInt("Storage.MySQL.port");
-		DBConnection.pass = ConfigManager.getConfig().getString("Storage.MySQL.pass");
-		DBConnection.db = ConfigManager.getConfig().getString("Storage.MySQL.db");
-		DBConnection.user = ConfigManager.getConfig().getString("Storage.MySQL.user");
-		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
+		GeneralPropertiesConfig config = ConfigManager.getConfig(GeneralPropertiesConfig.class);
+		DBConnection.host = config.MySQL_Host;
+		DBConnection.port = config.MySQL_Port;
+		DBConnection.pass = config.MySQL_Password;
+		DBConnection.db = config.MySQL_Database;
+		DBConnection.user = config.MySQL_User;
+		if (config.UseMySQL) {
 			sql = new MySQL(ProjectKorra.log, "Establishing MySQL Connection...", host, port, user, pass, db);
 			if (((MySQL) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");

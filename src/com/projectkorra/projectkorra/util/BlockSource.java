@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -12,7 +11,9 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.EarthPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -23,21 +24,17 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
  * For example, Surge has two different ways to select a source, one involving
  * shift and another involving left clicks.
  */
+@SuppressWarnings("rawtypes")
 public class BlockSource {
 	/**
 	 * An enum representation of the source types available for bending
 	 * abilities.
-	 *
-	 * @author kingbirdy
 	 */
 	public static enum BlockSourceType {
 		WATER, ICE, PLANT, EARTH, METAL, LAVA, SNOW
 	}
 
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
-	private static FileConfiguration config = ConfigManager.defaultConfig.get();
-	// The player should never need to grab source blocks from farther than this.
-	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.SelectRange");
 
 	/**
 	 * Updates all of the player's sources.
@@ -58,7 +55,7 @@ public class BlockSource {
 		}
 
 		if (coreAbil instanceof WaterAbility) {
-			final Block waterBlock = WaterAbility.getWaterSourceBlock(player, MAX_RANGE, true);
+			final Block waterBlock = WaterAbility.getWaterSourceBlock(player, ConfigManager.getConfig(WaterPropertiesConfig.class).MaxSelectRange, true);
 			if (waterBlock != null) {
 				putSource(player, waterBlock, BlockSourceType.WATER, clickType);
 				if (ElementalAbility.isPlant(waterBlock)) {
@@ -72,7 +69,7 @@ public class BlockSource {
 				}
 			}
 		} else if (coreAbil instanceof EarthAbility) {
-			final Block earthBlock = EarthAbility.getEarthSourceBlock(player, null, MAX_RANGE);
+			final Block earthBlock = EarthAbility.getEarthSourceBlock(player, null, ConfigManager.getConfig(EarthPropertiesConfig.class).MaxSelectRange);
 			if (earthBlock != null) {
 				putSource(player, earthBlock, BlockSourceType.EARTH, clickType);
 				if (ElementalAbility.isMetal(earthBlock)) {
@@ -82,7 +79,7 @@ public class BlockSource {
 
 			// We need to handle lava differently, since getEarthSourceBlock doesn't account for lava.
 			// We should only select the lava source if it is closer than the earth.
-			final Block lavaBlock = EarthAbility.getLavaSourceBlock(player, MAX_RANGE);
+			final Block lavaBlock = EarthAbility.getLavaSourceBlock(player, ConfigManager.getConfig(EarthPropertiesConfig.class).MaxSelectRange);
 			final double earthDist = earthBlock != null ? earthBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
 			final double lavaDist = lavaBlock != null ? lavaBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
 			if (lavaBlock != null && lavaDist <= earthDist) {
@@ -251,8 +248,7 @@ public class BlockSource {
 				sourceBlock = null;
 			}
 		}
-		final boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing");
-		if (dynamic && sourceBlock == null) {
+		if (ConfigManager.getConfig(WaterPropertiesConfig.class).DynamicSourcing && sourceBlock == null) {
 			if (allowWater && sourceBlock == null) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
 			}
@@ -306,8 +302,7 @@ public class BlockSource {
 	 */
 	public static Block getEarthSourceBlock(final Player player, final double range, final ClickType clickType, final boolean allowNearbySubstitute) {
 		Block sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
-		final boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Earth.DynamicSourcing");
-		if (dynamic && sourceBlock == null && allowNearbySubstitute) {
+		if (ConfigManager.getConfig(EarthPropertiesConfig.class).DynamicSourcing && sourceBlock == null && allowNearbySubstitute) {
 			final BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
 
 			if (blockInfo == null) {

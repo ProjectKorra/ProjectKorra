@@ -16,11 +16,13 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.BindCommandConfig;
 
 /**
  * Executor for /bending bind. Extends {@link PKCommand}.
  */
+@SuppressWarnings("rawtypes")
 public class BindCommand extends PKCommand {
 
 	private final String abilityDoesntExist;
@@ -33,16 +35,16 @@ public class BindCommand extends PKCommand {
 	private final String unbindable;
 
 	public BindCommand() {
-		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[] { "bind", "b" });
+		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.getConfig(BindCommandConfig.class).Description, new String[] { "bind", "b" });
 
-		this.abilityDoesntExist = ConfigManager.languageConfig.get().getString("Commands.Bind.AbilityDoesntExist");
-		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Bind.WrongNumber");
-		this.loadingInfo = ConfigManager.languageConfig.get().getString("Commands.Bind.LoadingInfo");
-		this.toggledElementOff = ConfigManager.languageConfig.get().getString("Commands.Bind.ElementToggledOff");
-		this.noElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElement");
-		this.noElementAE = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElementAE");
-		this.noSubElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoSubElement");
-		this.unbindable = ConfigManager.languageConfig.get().getString("Commands.Bind.Unbindable");
+		this.abilityDoesntExist = ConfigManager.getConfig(BindCommandConfig.class).AbilityDoesntExistMessage;
+		this.wrongNumber = ConfigManager.getConfig(BindCommandConfig.class).WrongNumberMessage;
+		this.loadingInfo = ConfigManager.getConfig(BindCommandConfig.class).LoadingInfoMessage;
+		this.toggledElementOff = ConfigManager.getConfig(BindCommandConfig.class).ElementToggledOffMessage;
+		this.noElement = ConfigManager.getConfig(BindCommandConfig.class).NoElementMessage;
+		this.noElementAE = ConfigManager.getConfig(BindCommandConfig.class).NoElementMessageAE;
+		this.noSubElement = ConfigManager.getConfig(BindCommandConfig.class).NoSubElementMessage;
+		this.unbindable = ConfigManager.getConfig(BindCommandConfig.class).UnbindableMessage;
 	}
 
 	@Override

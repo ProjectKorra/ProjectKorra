@@ -14,6 +14,10 @@ public class WaterPropertiesConfig implements Config {
 	public final String DayMessage = "";
 	public final String NightMessage = "";
 	
+	public final boolean DynamicSourcing = true;
+	
+	public final double MaxSelectRange = 0;
+	
 	public final boolean PlaySound = true;
 	public final Sound SoundType = Sound.BLOCK_WATER_AMBIENT;
 	public final float SoundVolume = 0;

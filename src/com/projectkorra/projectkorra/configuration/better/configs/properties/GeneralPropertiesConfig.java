@@ -22,6 +22,13 @@ public class GeneralPropertiesConfig implements Config {
 	
 	public final boolean DatabaseCooldowns = true;
 	
+	public final boolean UseMySQL = false;
+	public final String MySQL_Host = "";
+	public final int MySQL_Port = 3306;
+	public final String MySQL_User = "";
+	public final String MySQL_Password = "";
+	public final String MySQL_Database = "";
+	
 	public final boolean BendingPreview = true;
 	
 	public final long GlobalCooldown = 0;
