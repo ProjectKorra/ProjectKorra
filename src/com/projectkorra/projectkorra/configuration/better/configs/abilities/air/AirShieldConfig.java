@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class AirShieldConfig extends AbilityConfig {
 
+	public final long Cooldown = 0;
 	public final double MaxRadius = 0;
 	public final double InitialRadius = 0;
 	public final long Duration = 0;
@@ -11,7 +12,6 @@ public class AirShieldConfig extends AbilityConfig {
 	public final int Streams = 0;
 	public final int AnimationParticleAmount = 0;
 	public final boolean DynamicCooldown = true;
-	public final long Cooldown = 0;
 	
 	public final boolean AvatarState_Toggle = true;
 	

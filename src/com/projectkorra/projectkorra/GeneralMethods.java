@@ -1438,10 +1438,10 @@ public class GeneralMethods {
 			isHarmless = coreAbil.isHarmlessAbility();
 		}
 
-		if (ability == null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_AllowHarmlessAbilities) {
+		if (ability == null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
 			return false;
 		}
-		if (isHarmless && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_AllowHarmlessAbilities) {
+		if (isHarmless && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
 			return false;
 		}
 
@@ -1459,7 +1459,7 @@ public class GeneralMethods {
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
 
-			if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectLWC) {
+			if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectLWC) {
 				final LWCPlugin lwcp = (LWCPlugin) lwc;
 				final LWC lwc2 = lwcp.getLWC();
 				final Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
@@ -1469,7 +1469,7 @@ public class GeneralMethods {
 					}
 				}
 			}
-			if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
+			if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
 				final WorldGuard wg = WorldGuard.getInstance();
 				if (!player.isOnline()) {
 					return true;
@@ -1507,7 +1507,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (facsfw != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectFactions) {
+			if (facsfw != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectFactions) {
 				final FPlayer fPlayer = FPlayers.getBySender(player);
 				final Faction faction = Factions.getFactionAt(location);
 				final Rel relation = fPlayer.getRelationTo(faction);
@@ -1517,7 +1517,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectTowny) {
+			if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectTowny) {
 				final Towny twn = (Towny) twnp;
 
 				WorldCoord worldCoord;
@@ -1553,7 +1553,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectGriefPrevention) {
+			if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) {
 					type = Material.AIR;
@@ -1567,18 +1567,18 @@ public class GeneralMethods {
 				}
 			}
 
-			if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectResidence) {
+			if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectResidence) {
 				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
 				final ClaimedResidence claim = res.getByLoc(location);
 				if (claim != null) {
 					final ResidencePermissions perms = claim.getPermissions();
-					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_ResidenceFlag)) {
+					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.ResidenceFlag)) {
 						return true;
 					}
 				}
 			}
 
-			if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectKingdoms) {
+			if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectKingdoms) {
 				final KingdomPlayer kPlayer = GameManagement.getPlayerManager().getOfflineKingdomPlayer(player).getKingdomPlayer();
 				if (kPlayer.getKingdom() != null) {
 					final SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
@@ -1593,7 +1593,7 @@ public class GeneralMethods {
 
 			}
 
-			if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectRedProtect) {
+			if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectRedProtect) {
 				final RedProtectAPI api = RedProtect.get().getAPI();
 				final Region region = api.getRegion(location);
 				if (!(region != null && region.canBuild(player))) {
@@ -1875,28 +1875,28 @@ public class GeneralMethods {
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
 
-		if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectWorldGuard) {
+		if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
 		}
-		if (fcp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectFactions) {
+		if (fcp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectFactions) {
 			writeToDebug("FactionsFramework v" + fcp.getDescription().getVersion());
 		}
-		if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectTowny) {
+		if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectTowny) {
 			writeToDebug("Towny v" + twnp.getDescription().getVersion());
 		}
-		if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectGriefPrevention) {
+		if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectGriefPrevention) {
 			writeToDebug("GriefPrevention v" + gpp.getDescription().getVersion());
 		}
-		if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectLWC) {
+		if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectLWC) {
 			writeToDebug("LWC v" + lwc.getDescription().getVersion());
 		}
-		if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectResidence) {
+		if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectResidence) {
 			writeToDebug("Residence v" + residence.getDescription().getVersion());
 		}
-		if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectKingdoms) {
+		if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectKingdoms) {
 			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
 		}
-		if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection_RespectRedProtect) {
+		if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectRedProtect) {
 			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
 		}
 

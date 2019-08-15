@@ -50,34 +50,37 @@ public class ConfigManager {
 		
 		try {
 			C defaultConfig = clazz.newInstance();
-			CONFIG_CACHE.put(clazz, defaultConfig);
 			
-			File file = new File(JavaPlugin.getPlugin(ProjectKorra.class).getDataFolder(), "config");
-			file.mkdirs();
-			
-			for (String parent : defaultConfig.getParents()) {
-				file = new File(file, parent);
-				file.mkdir();
-			}
-			
-			file = new File(file, defaultConfig.getName() + ".json");
-			
-			if (file.exists()) {
-				try {
-					C config = loadConfig(file, clazz);
-					
-					CONFIG_CACHE.put(clazz, config);
-					return config;
-				} catch (IOException e) {
-					e.printStackTrace();
-					
-					return defaultConfig;
+			if (defaultConfig.getName() != null && defaultConfig.getParents() != null) {
+				CONFIG_CACHE.put(clazz, defaultConfig);
+
+				File file = new File(JavaPlugin.getPlugin(ProjectKorra.class).getDataFolder(), "config");
+				file.mkdirs();
+
+				for (String parent : defaultConfig.getParents()) {
+					file = new File(file, parent);
+					file.mkdir();
 				}
-			} else {
-				try {
-					saveConfig(file, defaultConfig);
-				} catch (IOException e) {
-					e.printStackTrace();
+
+				file = new File(file, defaultConfig.getName() + ".json");
+
+				if (file.exists()) {
+					try {
+						C config = loadConfig(file, clazz);
+
+						CONFIG_CACHE.put(clazz, config);
+						return config;
+					} catch (IOException e) {
+						e.printStackTrace();
+
+						return defaultConfig;
+					}
+				} else {
+					try {
+						saveConfig(file, defaultConfig);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			

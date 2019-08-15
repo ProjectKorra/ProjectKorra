@@ -8,7 +8,7 @@ public class AirAgilityConfig extends AbilityConfig {
 	public final int SpeedPower = 0;
 	
 	public AirAgilityConfig() {
-		super(true, "", "");
+		super(true, "", null);
 	}
 
 	@Override

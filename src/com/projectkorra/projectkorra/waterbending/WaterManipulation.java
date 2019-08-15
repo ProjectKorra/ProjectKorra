@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterManipulationConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -30,7 +31,8 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class WaterManipulation extends WaterAbility {
+@SuppressWarnings("deprecation")
+public class WaterManipulation extends WaterAbility<WaterManipulationConfig> {
 
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
@@ -67,25 +69,25 @@ public class WaterManipulation extends WaterAbility {
 	private Vector targetDirection;
 	private final HashSet<Byte> waterTypes;
 
-	public WaterManipulation(final Player player) {
-		this(player, prepare(player, getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange")));
+	public WaterManipulation(final WaterManipulationConfig config, final Player player) {
+		this(config, player, prepare(player, config.SelectRange));
 	}
 
-	public WaterManipulation(final Player player, final Block source) {
-		super(player);
+	public WaterManipulation(final WaterManipulationConfig config, final Player player, final Block source) {
+		super(config, player);
 
 		this.progressing = false;
 		this.falling = false;
 		this.settingUp = false;
 		this.displacing = false;
-		this.collisionRadius = getConfig().getDouble("Abilities.Water.WaterManipulation.CollisionRadius");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
-		this.selectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
-		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
-		this.knockback = getConfig().getDouble("Abilities.Water.WaterManipulation.Knockback");
-		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
-		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
-		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
+		this.collisionRadius = config.CollisionRadius;
+		this.cooldown = config.Cooldown;
+		this.selectRange = config.SelectRange;
+		this.range = config.Range;
+		this.knockback = config.Knockback;
+		this.damage = config.Damage;
+		this.speed = config.Speed;
+		this.deflectRange = config.DeflectRange;
 		this.waterTypes = new HashSet<Byte>();
 
 		this.interval = (long) (1000. / this.speed);
@@ -286,7 +288,7 @@ public class WaterManipulation extends WaterAbility {
 							entity.setVelocity(vector.normalize().multiply(this.knockback));
 
 							if (this.bPlayer.isAvatarState()) {
-								this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
+								this.damage = config.AvatarState_Damage;
 							}
 							this.damage = this.getNightFactor(this.damage);
 							DamageHandler.damageEntity(entity, this.damage, this);
@@ -465,7 +467,7 @@ public class WaterManipulation extends WaterAbility {
 		return location;
 	}
 
-	public static void moveWater(final Player player) {
+	public static void moveWater(final WaterManipulationConfig config, final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -502,7 +504,7 @@ public class WaterManipulation extends WaterAbility {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
 					final TempBlock tb = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 
-					final WaterManipulation waterManip = new WaterManipulation(player, block);
+					final WaterManipulation waterManip = new WaterManipulation(config, player, block);
 					waterManip.moveWater();
 					if (!waterManip.progressing) {
 						block.setType(Material.AIR);

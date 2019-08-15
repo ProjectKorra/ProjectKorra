@@ -19,7 +19,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.SourcedWaterAbilityConfig;
 import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -36,22 +35,6 @@ public abstract class WaterAbility<C extends AbilityConfig> extends ElementalAbi
 
 	public WaterAbility(final C config, final Player player) {
 		super(config, player);
-	}
-
-	public boolean canAutoSource() {
-		if (config instanceof SourcedWaterAbilityConfig) {
-			return ((SourcedWaterAbilityConfig) config).CanAutoSource;
-		}
-		
-		return false;
-	}
-
-	public boolean canDynamicSource() {
-		if (config instanceof SourcedWaterAbilityConfig) {
-			return ((SourcedWaterAbilityConfig) config).CanDynamicSource;
-		}
-		
-		return false;
 	}
 
 	@Override

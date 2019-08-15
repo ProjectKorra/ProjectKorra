@@ -4,9 +4,9 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class AirStreamConfig extends AbilityConfig {
 
+	public final long Cooldown = 0;
 	public final double Range = 0;
 	public final double Speed = 0;
-	public final long Cooldown = 0;
 	
 	public final double EntityCarryHeight = 0;
 	public final long EntityCarryDuration = 0;

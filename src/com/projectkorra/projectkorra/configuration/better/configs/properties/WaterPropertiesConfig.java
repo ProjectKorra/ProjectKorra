@@ -18,12 +18,17 @@ public class WaterPropertiesConfig implements Config {
 	
 	public final double MaxSelectRange = 0;
 	
+	public final long PlantRegrowTime = 0;
+	
 	public final boolean PlaySound = true;
 	public final Sound SoundType = Sound.BLOCK_WATER_AMBIENT;
 	public final float SoundVolume = 0;
 	public final float SoundPitch = 0;
 	
 	public final Material[] IceBlocks = {};
+	
+	public final boolean FreezePlayerHead = true;
+	public final boolean FreezePlayerFeet = true;
 	
 	public final Sound IceSoundType = Sound.ITEM_FLINTANDSTEEL_USE;
 	public final float IceSoundVolume = 0;

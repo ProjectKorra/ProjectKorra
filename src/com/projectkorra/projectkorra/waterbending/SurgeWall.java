@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.SurgeConfig;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -27,9 +28,9 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class SurgeWall extends WaterAbility {
+@SuppressWarnings("deprecation")
+public class SurgeWall extends WaterAbility<SurgeConfig> {
 
-	private static final String RANGE_CONFIG = "Abilities.Water.Surge.Wall.Range";
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();
 	public static final List<TempBlock> SOURCE_BLOCKS = new ArrayList<>();
@@ -57,14 +58,14 @@ public class SurgeWall extends WaterAbility {
 	private Vector targetDirection;
 	private Map<Block, Material> oldTemps;
 
-	public SurgeWall(final Player player) {
-		super(player);
+	public SurgeWall(final SurgeConfig config, final Player player) {
+		super(config, player);
 
-		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
-		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Water.Surge.Wall.Duration");
-		this.range = getConfig().getDouble(RANGE_CONFIG);
-		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.interval = config.WallConfig.Interval;
+		this.cooldown = config.WallConfig.Cooldown;
+		this.duration = config.WallConfig.Duration;
+		this.range = config.WallConfig.Range;
+		this.radius = config.WallConfig.Radius;
 		this.locations = new ArrayList<>();
 		this.oldTemps = new HashMap<>();
 
@@ -75,7 +76,7 @@ public class SurgeWall extends WaterAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius");
+			this.radius = config.WallConfig.AvatarState_Radius;
 		}
 
 		final SurgeWall wall = getAbility(player, SurgeWall.class);
@@ -104,7 +105,7 @@ public class SurgeWall extends WaterAbility {
 				final TempBlock tempBlock = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 				SOURCE_BLOCKS.add(tempBlock);
 
-				wave = new SurgeWave(player);
+				wave = new SurgeWave(config, player);
 				wave.setCanHitSelf(false);
 				wave.moveWater();
 
@@ -411,20 +412,19 @@ public class SurgeWall extends WaterAbility {
 		return false;
 	}
 
-	public static void form(final Player player) {
+	public static void form(final SurgeConfig config, final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
 		}
 
-		final int range = getConfig().getInt(RANGE_CONFIG);
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 
 		if (wave != null) {
 			if (wave.isProgressing() && !wave.isFreezing()) {
 				// Freeze the wave.
-				new SurgeWave(player);
+				new SurgeWave(config, player);
 			} else if (wave.isActivateFreeze()) {
 				wave.remove();
 				return;
@@ -432,7 +432,7 @@ public class SurgeWall extends WaterAbility {
 		}
 
 		if (wall == null) {
-			final Block source = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
+			final Block source = BlockSource.getWaterSourceBlock(player, config.WallConfig.Range, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
 
 			if (wave == null && source == null && WaterReturn.hasWaterBottle(player)) {
 				if (bPlayer.isOnCooldown("SurgeWall")) {
@@ -446,7 +446,7 @@ public class SurgeWall extends WaterAbility {
 					final TempBlock tempBlock = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 					SOURCE_BLOCKS.add(tempBlock);
 
-					wall = new SurgeWall(player);
+					wall = new SurgeWall(config, player);
 					wall.moveWater();
 
 					if (!wall.progressing) {
@@ -465,12 +465,12 @@ public class SurgeWall extends WaterAbility {
 
 			// If SurgeWall isn't being created, then try to source SurgeWave.
 			if (!bPlayer.isOnCooldown("SurgeWave")) {
-				wave = new SurgeWave(player);
+				wave = new SurgeWave(config, player);
 			}
 			return;
 		} else {
-			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, range))) {
-				wave = new SurgeWave(player);
+			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, (int) config.WallConfig.Range))) {
+				wave = new SurgeWave(config, player);
 				return;
 			}
 		}

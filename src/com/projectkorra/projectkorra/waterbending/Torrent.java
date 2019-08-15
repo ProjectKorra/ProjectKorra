@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,6 +23,9 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.TorrentConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -32,7 +34,8 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class Torrent extends WaterAbility {
+@SuppressWarnings({ "deprecation", "unused" })
+public class Torrent extends WaterAbility<TorrentConfig> {
 
 	private static final double CLEANUP_RANGE = 50;
 	private static final Map<TempBlock, Pair<Player, Integer>> FROZEN_BLOCKS = new ConcurrentHashMap<>();
@@ -79,26 +82,26 @@ public class Torrent extends WaterAbility {
 	private ArrayList<TempBlock> launchedBlocks;
 	private ArrayList<Entity> hurtEntities;
 
-	public Torrent(final Player player) {
-		super(player);
+	public Torrent(final TorrentConfig config, final Player player) {
+		super(config, player);
 
 		this.layer = 0;
 		this.startAngle = 0;
-		this.maxLayer = getConfig().getInt("Abilities.Water.Torrent.MaxLayer");
-		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Knockback");
-		this.angle = getConfig().getDouble("Abilities.Water.Torrent.Angle");
-		this.radius = getConfig().getDouble("Abilities.Water.Torrent.Radius");
-		this.knockup = getConfig().getDouble("Abilities.Water.Torrent.Knockup");
-		this.interval = getConfig().getLong("Abilities.Water.Torrent.Interval");
-		this.damage = getConfig().getDouble("Abilities.Water.Torrent.InitialDamage");
-		this.successiveDamage = getConfig().getDouble("Abilities.Water.Torrent.SuccessiveDamage");
-		this.maxHits = getConfig().getInt("Abilities.Water.Torrent.MaxHits");
-		this.deflectDamage = getConfig().getDouble("Abilities.Water.Torrent.DeflectDamage");
-		this.range = getConfig().getDouble("Abilities.Water.Torrent.Range");
-		this.selectRange = getConfig().getDouble("Abilities.Water.Torrent.SelectRange");
-		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Cooldown");
-		this.revert = getConfig().getBoolean("Abilities.Water.Torrent.Revert");
-		this.revertTime = getConfig().getLong("Abilities.Water.Torrent.RevertTime");
+		this.maxLayer = config.MaxLayer;
+		this.knockback = config.Knockback;
+		this.angle = config.Angle;
+		this.radius = config.Radius;
+		this.knockup = config.Knockup;
+		this.interval = config.Interval;
+		this.damage = config.InitialDamage;
+		this.successiveDamage = config.SuccessiveDamage;
+		this.maxHits = config.MaxHits;
+		this.deflectDamage = config.DeflectDamage;
+		this.range = config.Range;
+		this.selectRange = config.SelectRange;
+		this.cooldown = config.Cooldown;
+		this.revert = config.Revert;
+		this.revertTime = config.RevertTime;
 		this.blocks = new ArrayList<>();
 		this.launchedBlocks = new ArrayList<>();
 		this.hurtEntities = new ArrayList<>();
@@ -119,10 +122,10 @@ public class Torrent extends WaterAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.Push");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.InitialDamage");
-			this.successiveDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.SuccessiveDamage");
-			this.maxHits = getConfig().getInt("Abilities.Avatar.AvatarState.Water.Torrent.MaxHits");
+			this.knockback = config.AvatarState_Knockback;
+			this.damage = config.AvatarState_InitialDamage;
+			this.successiveDamage = config.AvatarState_SuccessiveDamage;
+			this.maxHits = config.AvatarState_MaxHits;
 		}
 
 		this.time = System.currentTimeMillis();
@@ -148,10 +151,10 @@ public class Torrent extends WaterAbility {
 						if (Commands.invincible.contains(((Player) entity).getName())) {
 							return;
 						}
-						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
+						if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerHead && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
 							continue ICE_SETTING;
 						}
-						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
+						if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerFeet && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
 							continue ICE_SETTING;
 						}
 					}
@@ -302,7 +305,7 @@ public class Torrent extends WaterAbility {
 			}
 
 			if (this.formed && !this.player.isSneaking() && !this.launch) {
-				new TorrentWave(this.player, this.radius);
+				new TorrentWave(config, this.player, this.radius);
 				this.remove();
 				return;
 			}
@@ -531,7 +534,7 @@ public class Torrent extends WaterAbility {
 		new WaterReturn(this.player, location.getBlock());
 	}
 
-	public static void create(final Player player) {
+	public static void create(final TorrentConfig config, final Player player) {
 		if (hasAbility(player, Torrent.class)) {
 			return;
 		}
@@ -544,7 +547,7 @@ public class Torrent extends WaterAbility {
 					block.setType(Material.WATER);
 					block.setBlockData(GeneralMethods.getWaterData(0));
 				}
-				final Torrent tor = new Torrent(player);
+				final Torrent tor = new Torrent(config, player);
 
 				if (tor.sourceSelected || tor.settingUp) {
 					WaterReturn.emptyWaterBottle(player);

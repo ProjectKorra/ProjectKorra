@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class AirSuctionConfig extends AbilityConfig {
 	
+	public final long Cooldown = 0;
 	public final int AnimationParticleAmount = 0;
 	public final int SelectionParticleAmount = 0;
 	public final double PushFactor = 0;
@@ -11,7 +12,6 @@ public class AirSuctionConfig extends AbilityConfig {
 	public final double Range = 0;
 	public final double SelectionRange = 0;
 	public final double Radius = 0;
-	public final long Cooldown = 0;
 	
 	public final double AvatarState_PushFactor = 0;
 	

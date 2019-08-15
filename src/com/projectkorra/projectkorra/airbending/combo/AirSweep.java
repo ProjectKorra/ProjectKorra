@@ -18,13 +18,12 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSweepConfig;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
-public class AirSweep extends AirAbility<AirSweepConfig> implements ComboAbility {
+public class AirSweep extends AirAbility<AirSweepConfig> implements ComboAbility<AirSweepConfig> {
 
 	private int progressCounter;
 	@Attribute(Attribute.COOLDOWN)
@@ -243,8 +242,8 @@ public class AirSweep extends AirAbility<AirSweepConfig> implements ComboAbility
 	}
 
 	@Override
-	public Object createNewComboInstance(final Player player) {
-		return new AirSweep(ConfigManager.getConfig(AirSweepConfig.class), player);
+	public Object createNewComboInstance(final AirSweepConfig config, final Player player) {
+		return new AirSweep(config, player);
 	}
 
 	@Override

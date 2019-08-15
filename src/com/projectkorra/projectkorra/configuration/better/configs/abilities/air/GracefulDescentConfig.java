@@ -5,7 +5,7 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 public class GracefulDescentConfig extends AbilityConfig {
 
 	public GracefulDescentConfig() {
-		super(true, "", "");
+		super(true, "", null);
 	}
 
 	@Override

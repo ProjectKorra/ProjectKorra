@@ -19,11 +19,15 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterArmsConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
 
-public class WaterArmsSpear extends WaterAbility {
+@SuppressWarnings({ "deprecation", "unused" })
+public class WaterArmsSpear extends WaterAbility<WaterArmsConfig> {
 
 	private static final Map<Block, Long> ICE_BLOCKS = new ConcurrentHashMap<Block, Long>();
 
@@ -57,24 +61,24 @@ public class WaterArmsSpear extends WaterAbility {
 	private WaterArms waterArms;
 	private final List<Location> spearLocations;
 
-	public WaterArmsSpear(final Player player, final boolean freeze) {
-		super(player);
+	public WaterArmsSpear(final WaterArmsConfig config, final Player player, final boolean freeze) {
+		super(config, player);
 		this.canFreeze = freeze;
 
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
-		this.spearDamageEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
-		this.spearLength = getConfig().getInt("Abilities.Water.WaterArms.Spear.Length");
-		this.spearRange = getConfig().getInt("Abilities.Water.WaterArms.Spear.Range");
-		this.spearRangeNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
-		this.spearRangeFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
-		this.spearSphereRadius = getConfig().getInt("Abilities.Water.WaterArms.Spear.SphereRadius");
-		this.spearSphereNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal");
-		this.spearSphereFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon");
-		this.spearDuration = getConfig().getLong("Abilities.Water.WaterArms.Spear.Duration");
-		this.spearDurationNight = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
-		this.spearDurationFullMoon = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Spear");
-		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
+		this.usageCooldownEnabled = config.SpearConfig.UsageCooldownEnabled;
+		this.spearDamageEnabled = config.SpearConfig.DamageEnabled;
+		this.spearLength = config.SpearConfig.Length;
+		this.spearRange = config.SpearConfig.RangeDay;
+		this.spearRangeNight = config.SpearConfig.RangeNight;
+		this.spearRangeFullMoon = config.SpearConfig.RangeFullMoon;
+		this.spearSphereRadius = config.SpearConfig.SphereRadiusDay;
+		this.spearSphereNight = config.SpearConfig.SphereRadiusNight;
+		this.spearSphereFullMoon = config.SpearConfig.SphereRadiusFullMoon;
+		this.spearDuration = config.SpearConfig.DurationDay;
+		this.spearDurationNight = config.SpearConfig.DurationNight;
+		this.spearDurationFullMoon = config.SpearConfig.DurationFullMoon;
+		this.usageCooldown = config.SpearConfig.UsageCooldown;
+		this.spearDamage = config.SpearConfig.Damage;
 		this.spearLocations = new ArrayList<>();
 
 		this.getNightAugments();
@@ -238,10 +242,10 @@ public class WaterArmsSpear extends WaterAbility {
 						if (Commands.invincible.contains(((Player) entity).getName())) {
 							return;
 						}
-						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block, true)) {
+						if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerHead && GeneralMethods.playerHeadIsInBlock((Player) entity, block, true)) {
 							continue ICE_SETTING;
 						}
-						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block, true)) {
+						if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerFeet && GeneralMethods.playerFeetIsInBlock((Player) entity, block, true)) {
 							continue ICE_SETTING;
 						}
 					}

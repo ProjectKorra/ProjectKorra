@@ -6,28 +6,13 @@ public class GeneralPropertiesConfig implements Config {
 
 	public final boolean UpdateChecker = true;
 	
-	public final double RegionProtection_CacheBlockTime = 0;
-	public final boolean RegionProtection_RespectResidence = true;
-	public final String RegionProtection_ResidenceFlag = "";
-	public final boolean RegionProtection_AllowHarmlessAbilities = true;
-	public final boolean RegionProtection_RespectWorldGuard = true;
-	public final boolean RegionProtection_RespectFactions = true;
-	public final boolean RegionProtection_RespectTowny = true;
-	public final boolean RegionProtection_RespectGriefPrevention = true;
-	public final boolean RegionProtection_RespectLWC = true;
-	public final boolean RegionProtection_RespectKingdoms = true;
-	public final boolean RegionProtection_RespectRedProtect = true;
+	public final RegionProtectionConfig RegionProtection = new RegionProtectionConfig();
 	
 	public final boolean Statistics = true;
 	
 	public final boolean DatabaseCooldowns = true;
 	
-	public final boolean UseMySQL = false;
-	public final String MySQL_Host = "";
-	public final int MySQL_Port = 3306;
-	public final String MySQL_User = "";
-	public final String MySQL_Password = "";
-	public final String MySQL_Database = "";
+	public final MySQLConfig MySQL = new MySQLConfig();
 	
 	public final boolean BendingPreview = true;
 	
@@ -50,6 +35,43 @@ public class GeneralPropertiesConfig implements Config {
 	public final boolean ApplyHorizontalCollisionBarrierBlockDamage = true;
 	
 	public final String[] DisabledWorlds = {};
+	
+	public static final class RegionProtectionConfig {
+		
+		public final double CacheBlockTime = 0;
+		
+		public final boolean RespectResidence = true;
+		public final String ResidenceFlag = "";
+		
+		public final boolean AllowHarmlessAbilities = true;
+		
+		public final boolean RespectWorldGuard = true;
+		
+		public final boolean RespectFactions = true;
+		
+		public final boolean RespectTowny = true;
+		
+		public final boolean RespectGriefPrevention = true;
+		
+		public final boolean RespectLWC = true;
+		
+		public final boolean RespectKingdoms = true;
+		
+		public final boolean RespectRedProtect = true;
+		
+	}
+	
+	public static final class MySQLConfig {
+		
+		public final boolean Enabled = false;
+		
+		public final String Host = "";
+		public final int Port = 3306;
+		public final String Username = "";
+		public final String Password = "";
+		public final String Database = "";
+		
+	}
 	
 	@Override
 	public String getName() {

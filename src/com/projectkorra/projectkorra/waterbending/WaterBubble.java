@@ -18,10 +18,10 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterBubbleConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class WaterBubble extends WaterAbility {
+public class WaterBubble extends WaterAbility<WaterBubbleConfig> {
 
 	@Attribute("Click" + Attribute.DURATION)
 	private long clickDuration;
@@ -39,8 +39,8 @@ public class WaterBubble extends WaterAbility {
 	private Location location;
 	private long lastActivation; // When the last click happened.
 
-	public WaterBubble(final Player player, final boolean isShift) {
-		super(player);
+	public WaterBubble(final WaterBubbleConfig config, final Player player, final boolean isShift) {
+		super(config, player);
 
 		this.setFields();
 
@@ -77,10 +77,10 @@ public class WaterBubble extends WaterAbility {
 	}
 
 	public void setFields() {
-		this.clickDuration = ConfigManager.defaultConfig.get().getLong("Abilities.Water.WaterBubble.ClickDuration");
-		this.maxRadius = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius");
-		this.speed = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Speed");
-		this.requireAir = ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterBubble.MustStartAboveWater");
+		this.clickDuration = config.ClickDuration;
+		this.maxRadius = config.Radius;
+		this.speed = config.Speed;
+		this.requireAir = config.MustStartAboveWater;
 	}
 
 	@Override

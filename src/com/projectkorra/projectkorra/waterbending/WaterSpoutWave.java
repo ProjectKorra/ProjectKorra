@@ -26,12 +26,18 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceWaveConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterSpoutConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterSpoutConfig.WaterSpoutWaveConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
-public class WaterSpoutWave extends WaterAbility {
+@SuppressWarnings({ "deprecation", "unused" })
+public class WaterSpoutWave extends WaterAbility<WaterSpoutConfig> {
 
 	public static enum AbilityType {
 		CLICK, SHIFT, RELEASE
@@ -81,26 +87,26 @@ public class WaterSpoutWave extends WaterAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
 
-	public WaterSpoutWave(final Player player, final AbilityType type) {
-		super(player);
+	public WaterSpoutWave(final WaterSpoutConfig config, final Player player, final AbilityType type) {
+		super(config, player);
 
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
 		this.collidable = false;
-		this.plant = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
-		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
-		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
-		this.thawRadius = getConfig().getDouble("Abilities.Water.IceWave.ThawRadius");
-		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
-		this.selectRange = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.SelectRange");
-		this.speed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
-		this.damage = getConfig().getDouble("Abilities.Water.IceWave.Damage");
-		this.chargeTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
-		this.flightDuration = getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightDuration");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
-		this.revertSphereTime = getConfig().getLong("Abilities.Water.IceWave.RevertSphereTime");
-		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.IceWave.RevertSphere");
+		this.plant = config.WaveConfig.AllowPlantSource;
+		this.radius = config.WaveConfig.Radius;
+		this.waveRadius = config.WaveConfig.WaveRadius;
+		this.thawRadius = 0;
+		this.animationSpeed = config.WaveConfig.AnimationSpeed;
+		this.selectRange = config.WaveConfig.SelectRange;
+		this.speed = config.WaveConfig.Speed;
+		this.damage = 0;
+		this.chargeTime = config.WaveConfig.ChargeTime;
+		this.flightDuration = config.WaveConfig.FlightDuration;
+		this.cooldown = config.WaveConfig.Cooldown;
+		this.revertSphereTime = 0;
+		this.revertIceSphere = false;
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -113,8 +119,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = 0;
-			this.flightDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterWave.FlightDuration");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceWave.Damage");
+			this.flightDuration = config.WaveConfig.AvatarState_FlightDuration;
 			this.cooldown = 0;
 		}
 
@@ -429,10 +434,10 @@ public class WaterSpoutWave extends WaterAbility {
 						if (Commands.invincible.contains(((Player) entity).getName())) {
 							return;
 						}
-						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
+						if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerHead && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
 							continue;
 						}
-						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
+						if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerFeet && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
 							continue;
 						}
 					}
@@ -579,8 +584,19 @@ public class WaterSpoutWave extends WaterAbility {
 		return this.iceWave;
 	}
 
-	public void setIceWave(final boolean iceWave) {
-		this.iceWave = iceWave;
+	public void setIceWave(final IceWaveConfig iceConfig) {
+		this.iceWave = iceConfig != null;
+		
+		if (iceConfig != null) {
+			this.thawRadius = iceConfig.ThawRadius;
+			this.damage = iceConfig.Damage;
+			this.revertSphereTime = iceConfig.RevertSphereTime;
+			this.revertIceSphere = iceConfig.RevertSphere;
+			
+			if (this.bPlayer.isAvatarState()) {
+				this.damage = iceConfig.AvatarState_Damage;
+			}
+		}
 	}
 
 	public boolean isIceOnly() {
@@ -590,10 +606,10 @@ public class WaterSpoutWave extends WaterAbility {
 	public void setIceOnly(final boolean iceOnly) {
 		this.iceOnly = iceOnly;
 	}
-
+	
 	@Override
 	public boolean isEnabled() {
-		return getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
+		return config.WaveConfig.Enabled;
 	}
 
 	public boolean isMoving() {

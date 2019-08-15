@@ -18,9 +18,10 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceSpikeConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class IceSpikePillarField extends IceAbility {
+public class IceSpikePillarField extends IceAbility<IceSpikeConfig> {
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
@@ -34,21 +35,21 @@ public class IceSpikePillarField extends IceAbility {
 	private double knockup;
 	private Vector thrownForce;
 
-	public IceSpikePillarField(final Player player) {
-		super(player);
+	public IceSpikePillarField(final IceSpikeConfig config, final Player player) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown("IceSpikePillarField")) {
 			return;
 		}
 
-		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
-		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
-		this.knockup = getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup");
+		this.damage = config.FieldConfig.Damage;
+		this.radius = config.FieldConfig.Radius;
+		this.cooldown = config.FieldConfig.Cooldown;
+		this.knockup = config.FieldConfig.Knockup;
 
 		if (this.bPlayer.isAvatarState()) {
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius");
+			this.damage = config.FieldConfig.AvatarState_Damage;
+			this.radius = config.FieldConfig.AvatarState_Radius;
 		}
 
 		this.numberOfSpikes = (int) (((this.radius) * (this.radius)) / 4);
@@ -118,7 +119,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-				final IceSpikePillar pillar = new IceSpikePillar(this.player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
+				final IceSpikePillar pillar = new IceSpikePillar(config, this.player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
 				pillar.inField = true;
 				iceBlocks.remove(targetBlock);
 			} else {

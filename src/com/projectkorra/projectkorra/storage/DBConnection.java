@@ -21,12 +21,12 @@ public class DBConnection {
 
 	public static void init() {
 		GeneralPropertiesConfig config = ConfigManager.getConfig(GeneralPropertiesConfig.class);
-		DBConnection.host = config.MySQL_Host;
-		DBConnection.port = config.MySQL_Port;
-		DBConnection.pass = config.MySQL_Password;
-		DBConnection.db = config.MySQL_Database;
-		DBConnection.user = config.MySQL_User;
-		if (config.UseMySQL) {
+		DBConnection.host = config.MySQL.Host;
+		DBConnection.port = config.MySQL.Port;
+		DBConnection.pass = config.MySQL.Password;
+		DBConnection.db = config.MySQL.Database;
+		DBConnection.user = config.MySQL.Username;
+		if (config.MySQL.Enabled) {
 			sql = new MySQL(ProjectKorra.log, "Establishing MySQL Connection...", host, port, user, pass, db);
 			if (((MySQL) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");

@@ -12,11 +12,12 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceWaveConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 
-public class IceWave extends IceAbility implements ComboAbility {
+public class IceWave extends IceAbility<IceWaveConfig> implements ComboAbility<IceWaveConfig> {
 
 	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 
@@ -24,8 +25,8 @@ public class IceWave extends IceAbility implements ComboAbility {
 	private long cooldown;
 	private Location origin;
 
-	public IceWave(final Player player) {
-		super(player);
+	public IceWave(final IceWaveConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
@@ -36,7 +37,7 @@ public class IceWave extends IceAbility implements ComboAbility {
 			return;
 		}
 
-		this.cooldown = getConfig().getLong("Abilities.Water.IceWave.Cooldown");
+		this.cooldown = config.Cooldown;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
@@ -62,7 +63,7 @@ public class IceWave extends IceAbility implements ComboAbility {
 			this.origin = this.player.getLocation();
 
 			final WaterSpoutWave wave = WaterSpoutWave.getType(this.player, WaterSpoutWave.AbilityType.RELEASE).get(0);
-			wave.setIceWave(true);
+			wave.setIceWave(config);
 		} else if (!WaterSpoutWave.containsType(this.player, WaterSpoutWave.AbilityType.RELEASE)) {
 			this.remove();
 			return;
@@ -114,8 +115,8 @@ public class IceWave extends IceAbility implements ComboAbility {
 	}
 
 	@Override
-	public Object createNewComboInstance(final Player player) {
-		return new IceWave(player);
+	public Object createNewComboInstance(final IceWaveConfig config, final Player player) {
+		return new IceWave(config, player);
 	}
 
 	@Override

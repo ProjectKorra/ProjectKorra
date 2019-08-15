@@ -19,6 +19,9 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.OctopusFormConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.PhaseChangeConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -29,16 +32,17 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeTyp
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class OctopusForm extends WaterAbility {
+@SuppressWarnings("deprecation")
+public class OctopusForm extends WaterAbility<OctopusFormConfig> {
 
 	private boolean sourceSelected;
 	private boolean settingUp;
 	private boolean forming;
 	private boolean formed;
 	@Attribute(Attribute.RANGE)
-	private int range;
+	private double range;
 	@Attribute(Attribute.DAMAGE)
-	private int damage;
+	private double damage;
 	private int currentAnimationStep;
 	private int stepCounter;
 	private int totalStepCount;
@@ -68,8 +72,8 @@ public class OctopusForm extends WaterAbility {
 	private ArrayList<TempBlock> newBlocks;
 	private PhaseChange pc;
 
-	public OctopusForm(final Player player) {
-		super(player);
+	public OctopusForm(final OctopusFormConfig config, final Player player) {
+		super(config, player);
 
 		final OctopusForm oldOctopus = getAbility(player, OctopusForm.class);
 		if (oldOctopus != null) {
@@ -95,30 +99,30 @@ public class OctopusForm extends WaterAbility {
 		this.currentAnimationStep = 1;
 		this.stepCounter = 1;
 		this.totalStepCount = 3;
-		this.range = getConfig().getInt("Abilities.Water.OctopusForm.Range");
-		this.damage = getConfig().getInt("Abilities.Water.OctopusForm.Damage");
-		this.interval = getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
-		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
-		this.usageCooldown = getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown");
-		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
-		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Water.OctopusForm.Duration");
-		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
+		this.range = config.SelectionRange;
+		this.damage = config.Damage;
+		this.interval = config.FormDelay;
+		this.attackRange = config.AttackRange;
+		this.usageCooldown = config.UsageCooldown;
+		this.knockback = config.Knockback;
+		this.radius = config.Radius;
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
+		this.angleIncrement = config.AngleIncrement;
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
 		if (hasAbility(player, PhaseChange.class)) {
 			this.pc = getAbility(player, PhaseChange.class);
 		} else {
-			this.pc = new PhaseChange(player, PhaseChangeType.CUSTOM);
+			this.pc = new PhaseChange(ConfigManager.getConfig(PhaseChangeConfig.class), player, PhaseChangeType.CUSTOM);
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.Damage");
-			this.attackRange = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.AttackRange");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Knockback");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius");
+			this.damage = config.AvatarState_Damage;
+			this.attackRange = config.AvatarState_AttackRange;
+			this.knockback = config.AvatarState_Knockback;
+			this.radius = config.AvatarState_Radius;
 		}
 		this.time = System.currentTimeMillis();
 		this.startTime = System.currentTimeMillis();
@@ -146,7 +150,7 @@ public class OctopusForm extends WaterAbility {
 		}
 	}
 
-	public static void form(final Player player) {
+	public static void form(final OctopusFormConfig config, final Player player) {
 		final OctopusForm oldForm = getAbility(player, OctopusForm.class);
 
 		if (oldForm != null) {
@@ -158,7 +162,7 @@ public class OctopusForm extends WaterAbility {
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setBlockData(GeneralMethods.getWaterData(0));
-				final OctopusForm form = new OctopusForm(player);
+				final OctopusForm form = new OctopusForm(config, player);
 				form.setSourceBlock(block);
 				form.form();
 
@@ -564,19 +568,19 @@ public class OctopusForm extends WaterAbility {
 		this.formed = formed;
 	}
 
-	public int getRange() {
+	public double getRange() {
 		return this.range;
 	}
 
-	public void setRange(final int range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return this.damage;
 	}
 
-	public void setDamage(final int damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 

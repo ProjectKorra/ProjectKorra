@@ -4,10 +4,10 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class AirSpoutConfig extends AbilityConfig {
 
+	public final long Cooldown = 0;
 	public final long Duration = 0;
 	public final long Interval = 0;
 	public final double Height = 0;
-	public final long Cooldown = 0;
 	
 	public final double AvatarState_Height = 0;
 	

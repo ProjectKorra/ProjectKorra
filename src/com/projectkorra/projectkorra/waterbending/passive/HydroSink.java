@@ -10,16 +10,18 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.HydroSinkConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class HydroSink extends WaterAbility implements PassiveAbility {
-	public HydroSink(final Player player) {
-		super(player);
+public class HydroSink extends WaterAbility<HydroSinkConfig> implements PassiveAbility {
+	public HydroSink(final HydroSinkConfig config, final Player player) {
+		super(config, player);
 	}
 
 	public static boolean applyNoFall(final Player player) {
-		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+		if (Commands.isToggledForAll && ConfigManager.getConfig(GeneralPropertiesConfig.class).TogglePassivesWithAllBending) {
 			return false;
 		}
 

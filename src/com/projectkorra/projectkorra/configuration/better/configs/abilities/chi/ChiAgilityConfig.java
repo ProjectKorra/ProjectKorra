@@ -8,7 +8,7 @@ public class ChiAgilityConfig extends AbilityConfig {
 	public final int SpeedPower = 0;
 	
 	public ChiAgilityConfig() {
-		super(true, "", "");
+		super(true, "", null);
 	}
 
 	@Override

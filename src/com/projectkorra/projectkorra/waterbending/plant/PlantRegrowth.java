@@ -10,8 +10,11 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PlantAbility;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.EmptyAbilityConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 
-public class PlantRegrowth extends PlantAbility {
+public class PlantRegrowth extends PlantAbility<EmptyAbilityConfig> {
 
 	private BlockData data;
 	private long time;
@@ -20,9 +23,9 @@ public class PlantRegrowth extends PlantAbility {
 	private Block block;
 
 	public PlantRegrowth(final Player player, final Block block) {
-		super(player);
+		super(new EmptyAbilityConfig(), player);
 
-		this.regrowTime = getConfig().getLong("Abilities.Water.Plantbending.RegrowTime");
+		this.regrowTime = ConfigManager.getConfig(WaterPropertiesConfig.class).PlantRegrowTime;
 		if (this.regrowTime != 0) {
 			this.block = block;
 			this.type = block.getType();

@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class SuffocateConfig extends AbilityConfig {
 	
+	public final long Cooldown = 0;
 	public final boolean RequireConstantAim = true;
 	public final double ConstantAimRadius = 0;
 	public final boolean CanSuffocateUndead = false;
@@ -12,7 +13,6 @@ public class SuffocateConfig extends AbilityConfig {
 	public final long ChargeTime = 0;
 	public final double Range = 0;
 	public final double AnimationRadius = 0;
-	public final long Cooldown = 0;
 	public final double Damage = 0;
 	public final double DamageInitialDelay = 0;
 	public final double DamageInterval = 0;

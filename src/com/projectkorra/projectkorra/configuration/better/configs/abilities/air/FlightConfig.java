@@ -4,8 +4,8 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class FlightConfig extends AbilityConfig {
 
-	public final long Duration = 0;
 	public final long Cooldown = 0;
+	public final long Duration = 0;
 	public final double BaseSpeed = 0;
 	
 	public FlightConfig() {

@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class AirSwipeConfig extends AbilityConfig {
 	
+	public final long Cooldown = 0;
 	public final int AnimationParticleAmount = 0;
 	public final int Arc = 0;
 	public final int StepSize = 0;
@@ -14,7 +15,6 @@ public class AirSwipeConfig extends AbilityConfig {
 	public final double Range = 0;
 	public final double Radius = 0;
 	public final double MaxChargeFactor = 0;
-	public final long Cooldown = 0;
 	
 	public final long AvatarState_Cooldown = 0;
 	public final double AvatarState_Damage = 0;

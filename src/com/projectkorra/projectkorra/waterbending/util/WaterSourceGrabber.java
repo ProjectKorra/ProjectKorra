@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
+@SuppressWarnings("deprecation")
 public class WaterSourceGrabber {
 
 	/*

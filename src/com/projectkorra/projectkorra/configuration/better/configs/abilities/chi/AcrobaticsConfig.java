@@ -7,7 +7,7 @@ public class AcrobaticsConfig extends AbilityConfig {
 	public final double FallReductionFactor = 0;
 	
 	public AcrobaticsConfig() {
-		super(true, "", "");
+		super(true, "", null);
 	}
 
 	@Override

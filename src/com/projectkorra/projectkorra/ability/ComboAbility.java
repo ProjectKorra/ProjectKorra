@@ -5,16 +5,11 @@ import java.util.ArrayList;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public interface ComboAbility {
+public interface ComboAbility<C extends AbilityConfig> {
 
-	/**
-	 * Accessor Method to get the instructions for using this combo.
-	 *
-	 * @return The steps for the combo.
-	 */
-
-	public abstract Object createNewComboInstance(Player player);
+	public abstract Object createNewComboInstance(C config, Player player);
 
 	/**
 	 * Returns the list of abilities which constitute the combo.

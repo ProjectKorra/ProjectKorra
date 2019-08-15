@@ -7,7 +7,7 @@ public class ChiSaturationConfig extends AbilityConfig {
 	public final double ExhaustionFactor = 0;
 	
 	public ChiSaturationConfig() {
-		super(true, "", "");
+		super(true, "", null);
 	}
 
 	@Override

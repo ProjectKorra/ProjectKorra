@@ -15,13 +15,14 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterArmsConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
 
-public class WaterArmsFreeze extends IceAbility {
+public class WaterArmsFreeze extends IceAbility<WaterArmsConfig> {
 
 	private boolean cancelled;
 	private boolean usageCooldownEnabled;
@@ -37,13 +38,13 @@ public class WaterArmsFreeze extends IceAbility {
 	private Vector direction;
 	private WaterArms waterArms;
 
-	public WaterArmsFreeze(final Player player) {
-		super(player);
+	public WaterArmsFreeze(final WaterArmsConfig config, final Player player) {
+		super(config, player);
 
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
-		this.iceRange = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Range");
-		this.iceDamage = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Freeze");
+		this.usageCooldownEnabled = config.FreezeConfig.UsageCooldownEnabled;
+		this.iceRange = config.FreezeConfig.Range;
+		this.iceDamage = config.FreezeConfig.Damage;
+		this.usageCooldown = config.FreezeConfig.UsageCooldown;
 		this.direction = player.getEyeLocation().getDirection();
 
 		this.createInstance();

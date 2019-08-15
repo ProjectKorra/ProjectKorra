@@ -20,7 +20,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterArmsConfig;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -29,7 +29,8 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip.W
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class WaterArms extends WaterAbility {
+@SuppressWarnings("deprecation")
+public class WaterArms extends WaterAbility<WaterArmsConfig> {
 
 	/**
 	 * Arm Enum value for deciding which arm is being used.
@@ -53,7 +54,7 @@ public class WaterArms extends WaterAbility {
 	@Attribute("InitialLength")
 	private int initLength;
 	@Attribute(Attribute.SELECT_RANGE)
-	private int sourceGrabRange;
+	private double sourceGrabRange;
 	@Attribute("MaxPunches")
 	private int maxPunches;
 	@Attribute("MaxIceBlasts")
@@ -73,23 +74,23 @@ public class WaterArms extends WaterAbility {
 	private List<Block> right, left;
 	private Set<TempBlock> external;
 
-	public WaterArms(final Player player) {
-		super(player);
+	public WaterArms(final WaterArmsConfig config, final Player player) {
+		super(config, player);
 
 		this.fullSource = true;
 		this.leftArmConsumed = false;
 		this.rightArmConsumed = false;
-		this.canUsePlantSource = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.AllowPlantSource");
-		this.lightningEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Lightning.Enabled");
-		this.lightningKill = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Lightning.KillUser");
-		this.initLength = getConfig().getInt("Abilities.Water.WaterArms.Arms.InitialLength");
-		this.sourceGrabRange = getConfig().getInt("Abilities.Water.WaterArms.Arms.SourceGrabRange");
-		this.maxPunches = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAttacks");
-		this.maxIceBlasts = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxIceShots");
-		this.maxUses = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldown");
-		this.lightningDamage = getConfig().getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
-		this.sneakMsg = ConfigManager.languageConfig.get().getString("Abilities.Water.WaterArms.SneakMessage");
+		this.canUsePlantSource = config.AllowPlantSource;
+		this.lightningEnabled = config.LightningVulnerability;
+		this.lightningKill = config.LightningInstaKill;
+		this.initLength = config.InitialLength;
+		this.sourceGrabRange = config.SourceGrabRange;
+		this.maxPunches = config.MaxAttacks;
+		this.maxIceBlasts = config.MaxIceShots;
+		this.maxUses = config.MaxAlternateUsage;
+		this.cooldown = config.Cooldown;
+		this.lightningDamage = config.LightningDamage;
+		this.sneakMsg = config.SneakMessage;
 		this.lengthReduction = 0;
 		this.selectedSlot = 0;
 		this.freezeSlot = 4;
@@ -109,35 +110,35 @@ public class WaterArms extends WaterAbility {
 				switch (player.getInventory().getHeldItemSlot()) {
 					case 0:
 						if (player.hasPermission("bending.ability.WaterArms.Pull")) {
-							new WaterArmsWhip(player, Whip.PULL);
+							new WaterArmsWhip(config, player, Whip.PULL);
 						}
 						break;
 					case 1:
 						if (player.hasPermission("bending.ability.WaterArms.Punch")) {
-							new WaterArmsWhip(player, Whip.PUNCH);
+							new WaterArmsWhip(config, player, Whip.PUNCH);
 						}
 						break;
 					case 2:
 						if (player.hasPermission("bending.ability.WaterArms.Grapple")) {
-							new WaterArmsWhip(player, Whip.GRAPPLE);
+							new WaterArmsWhip(config, player, Whip.GRAPPLE);
 						}
 						break;
 					case 3:
 						if (player.hasPermission("bending.ability.WaterArms.Grab")) {
-							new WaterArmsWhip(player, Whip.GRAB);
+							new WaterArmsWhip(config, player, Whip.GRAB);
 						}
 						break;
 					case 4:
 						if (player.hasPermission("bending.ability.WaterArms.Freeze") && this.bPlayer.canIcebend()) {
-							new WaterArmsFreeze(player);
+							new WaterArmsFreeze(config, player);
 						}
 						break;
 					case 5:
 						if (player.hasPermission("bending.ability.WaterArms.Spear")) {
 							if (this.bPlayer.canIcebend()) {
-								new WaterArmsSpear(player, true);
+								new WaterArmsSpear(config, player, true);
 							} else {
-								new WaterArmsSpear(player, false);
+								new WaterArmsSpear(config, player, false);
 							}
 						}
 						break;
@@ -403,7 +404,7 @@ public class WaterArms extends WaterAbility {
 								FireAbility.playLightningbendingParticle(l1);
 							}
 							if (this.lightningKill) {
-								DamageHandler.damageEntity(this.player, 60D, lightning);
+								DamageHandler.damageEntity(this.player, this.player.getMaxHealth() * 3, lightning);
 							} else {
 								DamageHandler.damageEntity(this.player, this.lightningDamage, lightning);
 							}
@@ -695,11 +696,11 @@ public class WaterArms extends WaterAbility {
 		this.initLength = initLength;
 	}
 
-	public int getSourceGrabRange() {
+	public double getSourceGrabRange() {
 		return this.sourceGrabRange;
 	}
 
-	public void setSourceGrabRange(final int sourceGrabRange) {
+	public void setSourceGrabRange(final double sourceGrabRange) {
 		this.sourceGrabRange = sourceGrabRange;
 	}
 

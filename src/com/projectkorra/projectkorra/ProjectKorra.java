@@ -141,11 +141,11 @@ public class ProjectKorra extends JavaPlugin {
 		});
 
 		if (Bukkit.getPluginManager().getPlugin("Residence") != null) {
-			FlagPermissions.addFlag(GENERAL_PROPERTIES.RegionProtection_ResidenceFlag);
+			FlagPermissions.addFlag(GENERAL_PROPERTIES.RegionProtection.ResidenceFlag);
 		}
 
 		GeneralMethods.deserializeFile();
-		GeneralMethods.startCacheCleaner(GENERAL_PROPERTIES.RegionProtection_CacheBlockTime);
+		GeneralMethods.startCacheCleaner(GENERAL_PROPERTIES.RegionProtection.CacheBlockTime);
 
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			new PlaceholderAPIHook(this).register();

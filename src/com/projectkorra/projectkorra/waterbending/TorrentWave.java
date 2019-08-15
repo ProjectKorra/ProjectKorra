@@ -17,10 +17,12 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.TorrentConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class TorrentWave extends WaterAbility {
+@SuppressWarnings("deprecation")
+public class TorrentWave extends WaterAbility<TorrentConfig> {
 
 	private long time;
 	private long interval;
@@ -40,24 +42,24 @@ public class TorrentWave extends WaterAbility {
 	private ArrayList<Entity> affectedEntities;
 	private Map<Integer, ConcurrentHashMap<Integer, Double>> heights;
 
-	public TorrentWave(final Player player, final double radius) {
-		this(player, player.getEyeLocation(), radius);
+	public TorrentWave(final TorrentConfig config, final Player player, final double radius) {
+		this(config, player, player.getEyeLocation(), radius);
 	}
 
-	public TorrentWave(final Player player, final Location location, final double radius) {
-		super(player);
+	public TorrentWave(final TorrentConfig config, final Player player, final Location location, final double radius) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown("TorrentWave")) {
 			return;
 		}
 
 		this.radius = radius;
-		this.interval = getConfig().getLong("Abilities.Water.Torrent.Wave.Interval");
-		this.maxHeight = getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
-		this.maxRadius = getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius");
-		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback");
-		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Wave.Cooldown");
-		this.growSpeed = getConfig().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed");
+		this.interval = config.WaveConfig.Interval;
+		this.maxHeight = config.WaveConfig.Height;
+		this.maxRadius = config.WaveConfig.Radius;
+		this.knockback = config.WaveConfig.Knockback;
+		this.cooldown = config.WaveConfig.Cooldown;
+		this.growSpeed = config.WaveConfig.GrowSpeed;
 		this.origin = location.clone();
 		this.time = System.currentTimeMillis();
 		this.heights = new ConcurrentHashMap<>();

@@ -22,14 +22,15 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceSpikeConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
-public class IceSpikePillar extends IceAbility {
+public class IceSpikePillar extends IceAbility<IceSpikeConfig> {
 
 	/** The list of blocks IceSpike uses */
-	private final Map<Block, TempBlock> ice_blocks = new HashMap<Block, TempBlock>();
+	private final Map<Block, TempBlock> ice_blocks = new HashMap<>();
 
 	@Attribute(Attribute.HEIGHT)
 	private int height;
@@ -62,8 +63,8 @@ public class IceSpikePillar extends IceAbility {
 	private ArrayList<LivingEntity> damaged;
 	protected boolean inField = false; // If it's part of a field or not.
 
-	public IceSpikePillar(final Player player) {
-		super(player);
+	public IceSpikePillar(final IceSpikeConfig config, final Player player) {
+		super(config, player);
 		this.setFields();
 
 		if (this.bPlayer.isOnCooldown("IceSpikePillar")) {
@@ -110,8 +111,8 @@ public class IceSpikePillar extends IceAbility {
 		}
 	}
 
-	public IceSpikePillar(final Player player, final Location origin, final int damage, final Vector throwing, final long aoecooldown) {
-		super(player);
+	public IceSpikePillar(final IceSpikeConfig config, final Player player, final Location origin, final int damage, final Vector throwing, final long aoecooldown) {
+		super(config, player);
 		this.setFields();
 
 		this.cooldown = aoecooldown;
@@ -132,26 +133,26 @@ public class IceSpikePillar extends IceAbility {
 
 	private void setFields() {
 		this.direction = new Vector(0, 1, 0);
-		this.speed = getConfig().getDouble("Abilities.Water.IceSpike.Speed");
-		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.SlowCooldown");
-		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.SlowPower");
-		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.SlowDuration");
-		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Damage");
-		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Range");
-		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
-		this.height = getConfig().getInt("Abilities.Water.IceSpike.Height");
-		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Push"), 0);
+		this.speed = config.Speed;
+		this.slowCooldown = config.SlowCooldown;
+		this.slowPower = config.SlowPower;
+		this.slowDuration = config.SlowDuration;
+		this.damage = config.Damage;
+		this.range = config.Range;
+		this.cooldown = config.Cooldown;
+		this.height = config.Height;
+		this.thrownForce = new Vector(0, config.Push, 0);
 		this.damaged = new ArrayList<>();
 
 		this.interval = (long) (1000. / this.speed);
 
 		if (this.bPlayer.isAvatarState()) {
-			this.slowPower = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowPower");
-			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowDuration");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Range");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Height");
-			this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Push"), 0);
+			this.slowPower = config.AvatarState_SlowPower;
+			this.slowDuration = config.AvatarState_SlowDuration;
+			this.damage = config.AvatarState_Damage;
+			this.range = config.AvatarState_Range;
+			this.height = config.AvatarState_Height;
+			this.thrownForce.setY(config.AvatarState_Push);
 		}
 	}
 

@@ -2,26 +2,25 @@ package com.projectkorra.projectkorra.configuration.better.configs.abilities.wat
 
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public class WaterManipulationConfig extends AbilityConfig {
+public class BloodbendingConfig extends AbilityConfig {
 
 	public final long Cooldown = 0;
-	public final double SelectRange = 0;
-	public final double CollisionRadius = 0;
+	public final long Duration = 0;
 	public final double Range = 0;
 	public final double Knockback = 0;
-	public final double Damage = 0;
-	public final double Speed = 0;
-	public final double DeflectRange = 0;
 	
-	public final double AvatarState_Damage = 0;
+	public final boolean CanOnlyBeUsedAtNight = true;
+	public final boolean CanBeUsedOnUndeadMobs = false;
+	public final boolean CanOnlyBeUsedDuringFullMoon = true;
+	public final boolean CanBloodbendOtherBloodbenders = false;
 	
-	public WaterManipulationConfig() {
+	public BloodbendingConfig() {
 		super(true, "", "");
 	}
 
 	@Override
 	public String getName() {
-		return "WaterManipulation";
+		return "Bloodbending";
 	}
 
 	@Override
