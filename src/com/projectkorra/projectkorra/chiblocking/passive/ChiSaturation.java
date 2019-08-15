@@ -5,15 +5,16 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.ChiSaturationConfig;
 
-public class ChiSaturation extends ChiAbility implements PassiveAbility {
-	public ChiSaturation(final Player player) {
-		super(player);
+public class ChiSaturation extends ChiAbility<ChiSaturationConfig> implements PassiveAbility {
+	public ChiSaturation(final ChiSaturationConfig config, final Player player) {
+		super(config, player);
 	}
 
 	public static double getExhaustionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.ChiSaturation.ExhaustionFactor");
+		return ConfigManager.getConfig(ChiSaturationConfig.class).ExhaustionFactor;
 	}
 
 	@Override

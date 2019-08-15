@@ -8,9 +8,9 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.ChiAgilityConfig;
 
-public class ChiAgility extends ChiAbility implements PassiveAbility {
+public class ChiAgility extends ChiAbility<ChiAgilityConfig> implements PassiveAbility {
 
 	// Configurable variables.
 	@Attribute("Jump")
@@ -18,14 +18,14 @@ public class ChiAgility extends ChiAbility implements PassiveAbility {
 	@Attribute(Attribute.SPEED)
 	private int speedPower;
 
-	public ChiAgility(final Player player) {
-		super(player);
+	public ChiAgility(final ChiAgilityConfig config, final Player player) {
+		super(config, player);
 		this.setFields();
 	}
 
 	public void setFields() {
-		this.jumpPower = ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.JumpPower") - 1;
-		this.speedPower = ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.SpeedPower") - 1;
+		this.jumpPower = config.JumpPower - 1;
+		this.speedPower = config.SpeedPower - 1;
 	}
 
 	@Override

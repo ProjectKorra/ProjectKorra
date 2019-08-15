@@ -9,9 +9,10 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.RapidPunchConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
-public class RapidPunch extends ChiAbility {
+public class RapidPunch extends ChiAbility<RapidPunchConfig> {
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
@@ -24,16 +25,16 @@ public class RapidPunch extends ChiAbility {
 	private final long last = 0;
 	private Entity target;
 
-	public RapidPunch(final Player sourceplayer, final Entity targetentity) {
-		super(sourceplayer);
+	public RapidPunch(final RapidPunchConfig config, final Player sourceplayer, final Entity targetentity) {
+		super(config, sourceplayer);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 
-		this.damage = getConfig().getDouble("Abilities.Chi.RapidPunch.Damage");
-		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
-		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
-		this.interval = getConfig().getLong("Abilities.Chi.RapidPunch.Interval");
+		this.damage = config.DamagePerPunch;
+		this.punches = config.TotalPunches;
+		this.cooldown = config.Cooldown;
+		this.interval = config.Interval;
 		this.target = targetentity;
 		this.bPlayer.addCooldown(this);
 		this.start();

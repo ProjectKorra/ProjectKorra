@@ -7,26 +7,27 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.QuickStrikeConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
-public class QuickStrike extends ChiAbility {
+public class QuickStrike extends ChiAbility<QuickStrikeConfig> {
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	@Attribute("ChiBlockChance")
-	private int blockChance;
+	private double blockChance;
 	private Entity target;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 
-	public QuickStrike(final Player sourceplayer, final Entity targetentity) {
-		super(sourceplayer);
+	public QuickStrike(final QuickStrikeConfig config, final Player sourceplayer, final Entity targetentity) {
+		super(config, sourceplayer);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		this.damage = getConfig().getDouble("Abilities.Chi.QuickStrike.Damage");
-		this.cooldown = getConfig().getLong("Abilities.Chi.QuickStrike.Cooldown");
-		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
+		this.damage = config.Damage;
+		this.cooldown = config.Cooldown;
+		this.blockChance = config.ChiBlockChance;
 		this.target = targetentity;
 		if (this.target == null) {
 			return;
@@ -89,11 +90,11 @@ public class QuickStrike extends ChiAbility {
 		this.damage = damage;
 	}
 
-	public int getBlockChance() {
+	public double getBlockChance() {
 		return this.blockChance;
 	}
 
-	public void setBlockChance(final int blockChance) {
+	public void setBlockChance(final double blockChance) {
 		this.blockChance = blockChance;
 	}
 
