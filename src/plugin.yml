@@ -258,6 +258,3 @@ permissions:
     children:
       bending.ability.FastSwim: true
       bending.ability.HydroSink: true
-  bending.donor:
-    default: false
-    description: Grants the Donor tag.
