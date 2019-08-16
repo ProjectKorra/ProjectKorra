@@ -15,11 +15,12 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.ImmobilizeConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
-public class Immobilize extends ChiAbility<ImmobilizeConfig> implements ComboAbility<ImmobilizeConfig> {
+public class Immobilize extends ChiAbility<ImmobilizeConfig> implements ComboAbility {
 
 	@Attribute(Attribute.DURATION)
 	private long duration;
@@ -89,8 +90,8 @@ public class Immobilize extends ChiAbility<ImmobilizeConfig> implements ComboAbi
 	}
 
 	@Override
-	public Object createNewComboInstance(final ImmobilizeConfig config, final Player player) {
-		return new Immobilize(config, player);
+	public Object createNewComboInstance(final Player player) {
+		return new Immobilize(ConfigManager.getConfig(ImmobilizeConfig.class), player);
 	}
 
 	@Override

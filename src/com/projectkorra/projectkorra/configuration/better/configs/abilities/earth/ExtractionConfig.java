@@ -2,25 +2,25 @@ package com.projectkorra.projectkorra.configuration.better.configs.abilities.ear
 
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public class EarthDomeConfig extends AbilityConfig {
+public class ExtractionConfig extends AbilityConfig {
 
 	public final long Cooldown = 0;
-	public final int Height = 0;
-	public final double Radius = 0;
-	public final double Range = 0;
+	public final int SelectRange = 0;
+	public final int DoubleLootChance = 0;
+	public final int TripleLootChance = 0;
 	
-	public EarthDomeConfig() {
+	public ExtractionConfig() {
 		super(true, "", "");
 	}
 
 	@Override
 	public String getName() {
-		return "EarthDome";
+		return "Extraction";
 	}
 
 	@Override
 	public String[] getParents() {
-		return new String[] { "Abilities", "Earth", "Combos" };
+		return new String[] { "Abilities", "Earth" };
 	}
 
 }

@@ -12,10 +12,11 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.CollapseConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class Collapse extends EarthAbility {
+public class Collapse extends EarthAbility<CollapseConfig> {
 
 	private int distance;
 	@Attribute(Attribute.HEIGHT)
@@ -33,8 +34,8 @@ public class Collapse extends EarthAbility {
 	private Block block;
 	private Map<Block, Block> affectedBlocks;
 
-	public Collapse(final Player player) {
-		super(player);
+	public Collapse(final CollapseConfig config, final Player player) {
+		super(config, player);
 		this.setFields();
 
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("CollapsePillar")) {
@@ -52,7 +53,7 @@ public class Collapse extends EarthAbility {
 		this.loadAffectedBlocks();
 
 		if (this.bPlayer.isAvatarState()) {
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height");
+			this.height = config.ColumnConfig.AvatarState_Height;
 		}
 		if (this.distance != 0) {
 			this.start();
@@ -63,8 +64,8 @@ public class Collapse extends EarthAbility {
 		}
 	}
 
-	public Collapse(final Player player, final Location origin) {
-		super(player);
+	public Collapse(final CollapseConfig config, final Player player, final Location origin) {
+		super(config, player);
 		this.setFields();
 		this.origin = origin;
 		this.player = player;
@@ -82,10 +83,10 @@ public class Collapse extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.height = this.bPlayer.isAvatarState() ? getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height") : getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
-		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
-		this.speed = getConfig().getDouble("Abilities.Earth.Collapse.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Column.Cooldown");
+		this.height = this.bPlayer.isAvatarState() ? config.ColumnConfig.AvatarState_Height : config.ColumnConfig.Height;
+		this.selectRange = config.SelectRange;
+		this.speed = config.Speed;
+		this.cooldown = config.ColumnConfig.Cooldown;
 		this.direction = new Vector(0, -1, 0);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 	}

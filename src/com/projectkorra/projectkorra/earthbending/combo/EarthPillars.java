@@ -17,12 +17,15 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthPillarsConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.RaiseEarthConfig;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class EarthPillars extends EarthAbility implements ComboAbility {
+public class EarthPillars extends EarthAbility<EarthPillarsConfig> implements ComboAbility {
 
 	@Attribute(Attribute.RADIUS)
 	private double radius;
@@ -35,8 +38,8 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	private boolean firstTime;
 	private Map<RaiseEarth, LivingEntity> entities;
 
-	public EarthPillars(final Player player, final boolean fall) {
-		super(player);
+	public EarthPillars(final EarthPillarsConfig config, final Player player, final boolean fall) {
+		super(config, player);
 		this.setFields(fall);
 
 		if (!this.bPlayer.canBendIgnoreBinds(this) || !isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
@@ -55,14 +58,14 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	}
 
 	private void setFields(final boolean fall) {
-		this.radius = getConfig().getDouble("Abilities.Earth.EarthPillars.Radius");
-		this.damage = getConfig().getDouble("Abilities.Earth.EarthPillars.Damage.Value");
-		this.knockup = getConfig().getDouble("Abilities.Earth.EarthPillars.Knockup");
-		this.damaging = getConfig().getBoolean("Abilities.Earth.EarthPillars.Damage.Enabled");
+		this.radius = config.Radius;
+		this.damage = config.Damage;
+		this.knockup = config.Knockup;
+		this.damaging = config.DealsDamage;
 		this.entities = new HashMap<>();
 
 		if (fall) {
-			this.fallThreshold = getConfig().getDouble("Abilities.Earth.EarthPillars.FallThreshold");
+			this.fallThreshold = config.FallHeightThreshold;
 			this.damaging = true;
 			this.damage *= this.knockup;
 			this.radius = this.fallThreshold;
@@ -71,7 +74,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 	}
 
 	public void affect(final LivingEntity lent) {
-		final RaiseEarth re = new RaiseEarth(this.player, lent.getLocation().clone().subtract(0, 1, 0), 3);
+		final RaiseEarth re = new RaiseEarth(ConfigManager.getConfig(RaiseEarthConfig.class), this.player, lent.getLocation().clone().subtract(0, 1, 0), 3);
 		this.entities.put(re, lent);
 	}
 
@@ -134,7 +137,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 
 	@Override
 	public long getCooldown() {
-		return getConfig().getLong("Abilities.Earth.EarthPillars.Cooldown");
+		return config.Cooldown;
 	}
 
 	@Override
@@ -149,7 +152,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new EarthPillars(player, false);
+		return new EarthPillars(ConfigManager.getConfig(EarthPillarsConfig.class), player, false);
 	}
 
 	@Override

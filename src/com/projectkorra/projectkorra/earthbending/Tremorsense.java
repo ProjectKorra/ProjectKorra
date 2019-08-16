@@ -16,8 +16,10 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.TremorsenseConfig;
 
-public class Tremorsense extends EarthAbility {
+@SuppressWarnings("deprecation")
+public class Tremorsense extends EarthAbility<TremorsenseConfig> {
 
 	@Deprecated
 	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<Block, Player>();
@@ -33,8 +35,8 @@ public class Tremorsense extends EarthAbility {
 	@Attribute(Attribute.RANGE)
 	private int stickyRange;
 
-	public Tremorsense(final Player player, final boolean clicked) {
-		super(player);
+	public Tremorsense(final TremorsenseConfig config, final Player player, final boolean clicked) {
+		super(config, player);
 
 		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
@@ -53,11 +55,11 @@ public class Tremorsense extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.maxDepth = getConfig().getInt("Abilities.Earth.Tremorsense.MaxDepth");
-		this.radius = getConfig().getInt("Abilities.Earth.Tremorsense.Radius");
-		this.lightThreshold = (byte) getConfig().getInt("Abilities.Earth.Tremorsense.LightThreshold");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Tremorsense.Cooldown");
-		this.stickyRange = getConfig().getInt("Abilities.Earth.Tremorsense.StickyRange");
+		this.maxDepth = config.MaxDepth;
+		this.radius = config.Radius;
+		this.lightThreshold = config.LightThreshold;
+		this.cooldown = config.Cooldown;
+		this.stickyRange = config.StickyRange;
 	}
 
 	private void activate() {
@@ -148,11 +150,11 @@ public class Tremorsense extends EarthAbility {
 		}
 	}
 
-	public static void manage(final Server server) {
+	public static void manage(final TremorsenseConfig config, final Server server) {
 		for (final Player player : server.getOnlinePlayers()) {
 
 			if (canTremorSense(player) && !hasAbility(player, Tremorsense.class)) {
-				new Tremorsense(player, false);
+				new Tremorsense(config, player, false);
 			}
 		}
 	}

@@ -25,6 +25,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceBulletConfig;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -35,7 +36,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterSourceGrabber;
 
 @SuppressWarnings("deprecation")
-public class IceBullet extends IceAbility<IceBulletConfig> implements ComboAbility<IceBulletConfig> {
+public class IceBullet extends IceAbility<IceBulletConfig> implements ComboAbility {
 
 	public static enum AbilityState {
 		ICE_PILLAR_RISING, ICE_BULLET_FORMING
@@ -343,8 +344,8 @@ public class IceBullet extends IceAbility<IceBulletConfig> implements ComboAbili
 	}
 
 	@Override
-	public Object createNewComboInstance(final IceBulletConfig config, final Player player) {
-		return new IceBullet(config, player);
+	public Object createNewComboInstance(final Player player) {
+		return new IceBullet(ConfigManager.getConfig(IceBulletConfig.class), player);
 	}
 
 	@Override

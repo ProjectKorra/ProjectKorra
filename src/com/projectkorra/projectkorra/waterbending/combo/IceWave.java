@@ -12,12 +12,13 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceWaveConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 
-public class IceWave extends IceAbility<IceWaveConfig> implements ComboAbility<IceWaveConfig> {
+public class IceWave extends IceAbility<IceWaveConfig> implements ComboAbility {
 
 	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 
@@ -115,8 +116,8 @@ public class IceWave extends IceAbility<IceWaveConfig> implements ComboAbility<I
 	}
 
 	@Override
-	public Object createNewComboInstance(final IceWaveConfig config, final Player player) {
-		return new IceWave(config, player);
+	public Object createNewComboInstance(final Player player) {
+		return new IceWave(ConfigManager.getConfig(IceWaveConfig.class), player);
 	}
 
 	@Override

@@ -12,11 +12,11 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.RaiseEarthConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class RaiseEarth extends EarthAbility {
+public class RaiseEarth extends EarthAbility<RaiseEarthConfig> {
 
 	private static final Map<Block, Block> ALL_AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
@@ -37,8 +37,8 @@ public class RaiseEarth extends EarthAbility {
 	private Location location;
 	private ConcurrentHashMap<Block, Block> affectedBlocks;
 
-	public RaiseEarth(final Player player) {
-		super(player);
+	public RaiseEarth(final RaiseEarthConfig config, final Player player) {
+		super(config, player);
 		this.setFields();
 
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("RaiseEarthPillar")) {
@@ -47,7 +47,7 @@ public class RaiseEarth extends EarthAbility {
 
 		try {
 			if (this.bPlayer.isAvatarState()) {
-				this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height");
+				this.height = config.ColumnConfig.AvatarState_Height;
 			}
 			this.block = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK);
 			if (this.block == null) {
@@ -70,12 +70,12 @@ public class RaiseEarth extends EarthAbility {
 		}
 	}
 
-	public RaiseEarth(final Player player, final Location origin) {
-		this(player, origin, ConfigManager.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height"));
+	public RaiseEarth(final RaiseEarthConfig config, final Player player, final Location origin) {
+		this(config, player, origin, config.ColumnConfig.Height);
 	}
 
-	public RaiseEarth(final Player player, final Location origin, final int height) {
-		super(player);
+	public RaiseEarth(final RaiseEarthConfig config, final Player player, final Location origin, final int height) {
+		super(config, player);
 		this.setFields();
 
 		this.height = height;
@@ -93,10 +93,10 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.speed = getConfig().getDouble("Abilities.Earth.RaiseEarth.Speed");
-		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
-		this.selectRange = getConfig().getDouble("Abilities.Earth.RaiseEarth.Column.SelectRange");
-		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Column.Cooldown");
+		this.speed = config.ColumnConfig.Speed;
+		this.height = config.ColumnConfig.Height;
+		this.selectRange = config.ColumnConfig.SelectRange;
+		this.cooldown = config.ColumnConfig.Cooldown;
 		this.direction = new Vector(0, 1, 0);
 		this.interval = (long) (1000.0 / this.speed);
 		this.affectedBlocks = new ConcurrentHashMap<>();

@@ -2,25 +2,26 @@ package com.projectkorra.projectkorra.configuration.better.configs.abilities.ear
 
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public class EarthDomeConfig extends AbilityConfig {
+public class TremorsenseConfig extends AbilityConfig {
 
 	public final long Cooldown = 0;
-	public final int Height = 0;
-	public final double Radius = 0;
-	public final double Range = 0;
+	public final byte LightThreshold = 0;
+	public final int MaxDepth = 0;
+	public final int StickyRange = 0;
+	public final int Radius = 0;
 	
-	public EarthDomeConfig() {
+	public TremorsenseConfig() {
 		super(true, "", "");
 	}
 
 	@Override
 	public String getName() {
-		return "EarthDome";
+		return "Tremorsense";
 	}
 
 	@Override
 	public String[] getParents() {
-		return new String[] { "Abilities", "Earth", "Combos" };
+		return new String[] { "Abilities", "Earth" };
 	}
 
 }

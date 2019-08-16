@@ -2,20 +2,22 @@ package com.projectkorra.projectkorra.configuration.better.configs.abilities.ear
 
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
-public class EarthDomeConfig extends AbilityConfig {
+public class EarthPillarsConfig extends AbilityConfig {
 
 	public final long Cooldown = 0;
-	public final int Height = 0;
 	public final double Radius = 0;
-	public final double Range = 0;
+	public final double Knockup = 0;
+	public final double Damage = 0;
+	public final boolean DealsDamage = true;
+	public final double FallHeightThreshold = 0;
 	
-	public EarthDomeConfig() {
+	public EarthPillarsConfig() {
 		super(true, "", "");
 	}
 
 	@Override
 	public String getName() {
-		return "EarthDome";
+		return "EarthPillars";
 	}
 
 	@Override

@@ -15,18 +15,20 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.DensityShiftConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class DensityShift extends EarthAbility implements PassiveAbility {
+public class DensityShift extends EarthAbility<DensityShiftConfig> implements PassiveAbility {
 	private static final Set<TempBlock> SAND_BLOCKS = new HashSet<>();
 
-	public DensityShift(final Player player) {
-		super(player);
+	public DensityShift(final DensityShiftConfig config, final Player player) {
+		super(config, player);
 	}
 
-	public static boolean softenLanding(final Player player) {
-		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+	public static boolean softenLanding(final DensityShiftConfig config, final Player player) {
+		if (Commands.isToggledForAll && ConfigManager.getConfig(GeneralPropertiesConfig.class).TogglePassivesWithAllBending) {
 			return false;
 		}
 
@@ -34,7 +36,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return false;
-		} else if (bPlayer.canMetalbend() && ElementalAbility.isMetalBlock(block)) {
+		} else if (bPlayer.canMetalbend() && ElementalAbility.isMetal(block)) {
 			return true;
 		}
 
@@ -51,7 +53,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 
 						if (!SAND_BLOCKS.contains(tb)) {
 							SAND_BLOCKS.add(tb);
-							tb.setRevertTime(getDuration());
+							tb.setRevertTime(config.Duration);
 							tb.setRevertTask(() -> SAND_BLOCKS.remove(tb));
 						}
 					}
@@ -92,10 +94,6 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 
 	public static Set<TempBlock> getSandBlocks() {
 		return SAND_BLOCKS;
-	}
-
-	public static long getDuration() {
-		return ConfigManager.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	}
 
 	@Override

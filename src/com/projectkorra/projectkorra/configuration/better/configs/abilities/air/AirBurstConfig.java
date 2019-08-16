@@ -4,11 +4,11 @@ import com.projectkorra.projectkorra.configuration.better.configs.abilities.Abil
 
 public class AirBurstConfig extends AbilityConfig {
 
+	public final long Cooldown = 0;
 	public final long ChargeTime = 0;
 	public final double FallHeightThreshold = 0;
 	public final double PushFactor = 0;
 	public final double Damage = 0;
-	public final long Cooldown = 0;
 	public final double AnglePhi = 0;
 	public final double AngleTheta = 0;
 	public final int ChargeParticles = 0;

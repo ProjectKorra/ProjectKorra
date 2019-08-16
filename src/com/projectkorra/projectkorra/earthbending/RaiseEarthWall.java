@@ -9,10 +9,11 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.RaiseEarthConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class RaiseEarthWall extends EarthAbility {
+public class RaiseEarthWall extends EarthAbility<RaiseEarthConfig> {
 
 	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
@@ -24,20 +25,20 @@ public class RaiseEarthWall extends EarthAbility {
 	private long cooldown;
 	private Location location;
 
-	public RaiseEarthWall(final Player player) {
-		super(player);
-		this.selectRange = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.SelectRange");
-		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Height");
-		this.width = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Width");
-		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Wall.Cooldown");
+	public RaiseEarthWall(final RaiseEarthConfig config, final Player player) {
+		super(config, player);
+		this.selectRange = config.WallConfig.SelectRange;
+		this.height = config.WallConfig.Height;
+		this.width = config.WallConfig.Width;
+		this.cooldown = config.WallConfig.Cooldown;
 
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("RaiseEarthWall")) {
 			return;
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
-			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
+			this.height = config.WallConfig.AvatarState_Height;
+			this.width = config.WallConfig.AvatarState_Width;
 		}
 
 		this.start();
@@ -105,7 +106,7 @@ public class RaiseEarthWall extends EarthAbility {
 					block = block.getRelative(BlockFace.DOWN);
 					if (this.isEarthbendable(block)) {
 						shouldAddCooldown = true;
-						new RaiseEarth(this.player, block.getLocation(), this.height);
+						new RaiseEarth(config, this.player, block.getLocation(), this.height);
 					} else if (!this.isTransparent(block)) {
 						break;
 					}
@@ -115,14 +116,14 @@ public class RaiseEarthWall extends EarthAbility {
 					block = block.getRelative(BlockFace.UP);
 					if (this.isTransparent(block)) {
 						shouldAddCooldown = true;
-						new RaiseEarth(this.player, block.getRelative(BlockFace.DOWN).getLocation(), this.height);
+						new RaiseEarth(config, this.player, block.getRelative(BlockFace.DOWN).getLocation(), this.height);
 					} else if (!this.isEarthbendable(block)) {
 						break;
 					}
 				}
 			} else if (this.isEarthbendable(block)) {
 				shouldAddCooldown = true;
-				new RaiseEarth(this.player, block.getLocation(), this.height);
+				new RaiseEarth(config, this.player, block.getLocation(), this.height);
 			}
 		}
 

@@ -132,7 +132,6 @@ import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.earthbending.combo.EarthPillars;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow.AbilityType;
-import com.projectkorra.projectkorra.earthbending.lava.LavaSurge;
 import com.projectkorra.projectkorra.earthbending.metal.Extraction;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
@@ -285,9 +284,7 @@ public class PKListener implements Listener {
 		if (TempBlock.isTempBlock(fromblock) || TempBlock.isTempBlock(toblock)) {
 			event.setCancelled(true);
 		} else {
-			if (ElementalAbility.isLava(fromblock)) {
-				event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
-			} else if (ElementalAbility.isWater(fromblock)) {
+			if (ElementalAbility.isWater(fromblock)) {
 				event.setCancelled(WaterBubble.isAir(toblock));
 				if (!event.isCancelled()) {
 					event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
@@ -465,13 +462,6 @@ public class PKListener implements Listener {
 		final Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
-		}
-
-		if (event.getEntityType() == EntityType.FALLING_BLOCK) {
-			if (LavaSurge.getAllFallingBlocks().contains(entity)) {
-				LavaSurge.getAllFallingBlocks().remove(entity);
-				event.setCancelled(true);
-			}
 		}
 	}
 
@@ -1723,11 +1713,6 @@ public class PKListener implements Listener {
 							clips.shootMetal();
 						} else if (clips.getMetalClipsCount() == 4 && clips.isCanUse4Clips()) {
 							clips.crush();
-						}
-					} else if (abil.equalsIgnoreCase("LavaSurge")) {
-						final LavaSurge surge = CoreAbility.getAbility(player, LavaSurge.class);
-						if (surge != null) {
-							surge.launch();
 						}
 					} else if (abil.equalsIgnoreCase("LavaFlow")) {
 						new LavaFlow(player, AbilityType.CLICK);

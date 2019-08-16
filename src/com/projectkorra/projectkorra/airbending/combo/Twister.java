@@ -14,10 +14,11 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
 import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.TwisterConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class Twister extends AirAbility<TwisterConfig> implements ComboAbility<TwisterConfig> {
+public class Twister extends AirAbility<TwisterConfig> implements ComboAbility {
 
 	public static enum AbilityState {
 		TWISTER_MOVING, TWISTER_STATIONARY
@@ -180,8 +181,8 @@ public class Twister extends AirAbility<TwisterConfig> implements ComboAbility<T
 	}
 
 	@Override
-	public Object createNewComboInstance(final TwisterConfig config, final Player player) {
-		return new Twister(config, player);
+	public Object createNewComboInstance(final Player player) {
+		return new Twister(ConfigManager.getConfig(TwisterConfig.class), player);
 	}
 
 	@Override

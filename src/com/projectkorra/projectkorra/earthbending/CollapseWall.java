@@ -12,10 +12,11 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.CollapseConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class CollapseWall extends EarthAbility {
+public class CollapseWall extends EarthAbility<CollapseConfig> {
 
 	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
@@ -29,22 +30,22 @@ public class CollapseWall extends EarthAbility {
 	private Map<Block, Block> blocks;
 	private Map<Block, Integer> baseBlocks;
 
-	public CollapseWall(final Player player) {
-		super(player);
+	public CollapseWall(final CollapseConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("CollapseWall")) {
 			return;
 		}
 
-		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
-		this.height = getConfig().getInt("Abilities.Earth.Collapse.Wall.Height");
-		this.radius = getConfig().getDouble("Abilities.Earth.Collapse.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Wall.Cooldown");
+		this.selectRange = config.SelectRange;
+		this.height = config.WallConfig.Height;
+		this.radius = config.WallConfig.Radius;
+		this.cooldown = config.WallConfig.Cooldown;
 		this.blocks = new ConcurrentHashMap<>();
 		this.baseBlocks = new ConcurrentHashMap<>();
 
 		if (this.bPlayer.isAvatarState()) {
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height");
+			this.height = config.WallConfig.AvatarState_Height;
 		}
 
 		final Block sblock = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.SHIFT_DOWN);
@@ -64,7 +65,7 @@ public class CollapseWall extends EarthAbility {
 			this.bPlayer.addCooldown("CollapseWall", this.cooldown);
 		}
 		for (final Block block : this.baseBlocks.keySet()) {
-			new Collapse(player, block.getLocation());
+			new Collapse(config, player, block.getLocation());
 		}
 	}
 

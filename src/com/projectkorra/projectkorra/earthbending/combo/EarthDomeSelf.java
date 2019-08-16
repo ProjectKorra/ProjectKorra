@@ -8,15 +8,17 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthDomeConfig;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class EarthDomeSelf extends EarthAbility implements ComboAbility {
+public class EarthDomeSelf extends EarthAbility<EarthDomeConfig> implements ComboAbility {
 
-	public EarthDomeSelf(final Player player) {
-		super(player);
+	public EarthDomeSelf(final EarthDomeConfig config, final Player player) {
+		super(config, player);
 
-		new EarthDome(player);
+		new EarthDome(config, player);
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new EarthDomeSelf(player);
+		return new EarthDomeSelf(ConfigManager.getConfig(EarthDomeConfig.class), player);
 	}
 
 	@Override

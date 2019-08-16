@@ -13,9 +13,10 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthTunnelConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class EarthTunnel extends EarthAbility {
+public class EarthTunnel extends EarthAbility<EarthTunnelConfig> {
 
 	private long interval;
 	private int blocksPerInterval;
@@ -40,19 +41,19 @@ public class EarthTunnel extends EarthAbility {
 	private Location location;
 	private Vector direction;
 
-	public EarthTunnel(final Player player) {
-		super(player);
+	public EarthTunnel(final EarthTunnelConfig config, final Player player) {
+		super(config, player);
 
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthTunnel.Cooldown");
-		this.maxRadius = getConfig().getDouble("Abilities.Earth.EarthTunnel.MaxRadius");
-		this.range = getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
-		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
-		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
-		this.blocksPerInterval = getConfig().getInt("Abilities.Earth.EarthTunnel.BlocksPerInterval");
-		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
-		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
-		this.ignoreOres = getConfig().getBoolean("Abilities.Earth.EarthTunnel.IgnoreOres");
-		this.revertTime = getConfig().getLong("Properties.Earth.RevertCheckTime");
+		this.cooldown = config.Cooldown;
+		this.maxRadius = config.MaxRadius;
+		this.range = config.Range;
+		this.radius = config.InitialRadius;
+		this.interval = config.Interval;
+		this.blocksPerInterval = config.BlocksPerInterval;
+		this.revert = config.Revert;
+		this.dropLootIfNotRevert = config.DropLootIfNotRevert;
+		this.ignoreOres = config.IgnoreOres;
+		this.revertTime = config.RevertCheckTime;
 
 		this.time = System.currentTimeMillis();
 
@@ -73,7 +74,7 @@ public class EarthTunnel extends EarthAbility {
 			return;
 		}
 		if (this.bPlayer.isAvatarState()) {
-			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
+			this.maxRadius = config.AvatarState_MaxRadius;
 		}
 
 		this.radiusIncrement = this.radius;
