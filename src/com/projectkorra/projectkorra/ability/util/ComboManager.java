@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.earthbending.combo.EarthDomeOthers;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
 
+@SuppressWarnings("rawtypes")
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 20 * 60;
 	private static final Map<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();

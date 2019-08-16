@@ -13,22 +13,25 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.CopyCommandConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.CommandPropertiesConfig;
 
-public class CopyCommand extends PKCommand {
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class CopyCommand extends PKCommand<CopyCommandConfig> {
 
 	private final String playerNotFound;
 	private final String copied;
 	private final String failedToBindAll;
 	private final String copiedOther;
 
-	public CopyCommand() {
-		super("copy", "/bending copy <Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Copy.Description"), new String[] { "copy", "co" });
+	public CopyCommand(final CopyCommandConfig config) {
+		super(config, "copy", "/bending copy <Player> [Player]", config.Description, new String[] { "copy", "co" });
 
-		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Copy.PlayerNotFound");
-		this.copied = ConfigManager.languageConfig.get().getString("Commands.Copy.SuccessfullyCopied");
-		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Copy.FailedToBindAll");
-		this.copiedOther = ConfigManager.languageConfig.get().getString("Commands.Copy.Other.SuccessfullyCopied");
+		this.playerNotFound = config.PlayerNotFound;
+		this.copied = config.SuccessfullyCopied;
+		this.failedToBindAll = config.FailedToBindAll;
+		this.copiedOther = config.SuccessfullyCopied_Other;
 	}
 
 	@Override
@@ -90,9 +93,9 @@ public class CopyCommand extends PKCommand {
 		}
 		if (orig.isPermaRemoved()) {
 			if (self) {
-				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved);
 			} else {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved_Other);
 			}
 			return false;
 		}

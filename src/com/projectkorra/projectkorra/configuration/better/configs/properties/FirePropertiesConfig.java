@@ -7,6 +7,8 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FirePropertiesConfig implements Config {
 
+	public final String Description = "";
+	
 	public final boolean Griefing = true;
 	public final long RevertTicks = 0;
 	public final double DayFactor = 0;

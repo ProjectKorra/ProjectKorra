@@ -13,7 +13,9 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.AddCommandConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.CommandPropertiesConfig;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
@@ -21,7 +23,7 @@ import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 /**
  * Executor for /bending add. Extends {@link PKCommand}.
  */
-public class AddCommand extends PKCommand {
+public class AddCommand extends PKCommand<AddCommandConfig> {
 
 	private final String playerNotFound;
 	private final String invalidElement;
@@ -38,23 +40,23 @@ public class AddCommand extends PKCommand {
 	private final String alreadyHasAllElementsOther;
 	private final String alreadyHasAllElements;
 
-	public AddCommand() {
-		super("add", "/bending add <Element/SubElement> [Player]", ConfigManager.languageConfig.get().getString("Commands.Add.Description"), new String[] { "add", "a" });
+	public AddCommand(final AddCommandConfig config) {
+		super(config, "add", "/bending add <Element/SubElement> [Player]", config.Description, new String[] { "add", "a" });
 
-		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Add.PlayerNotFound");
-		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Add.InvalidElement");
-		this.addedOtherCFW = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAddedCFW");
-		this.addedOtherAE = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAddedAE");
-		this.addedCFW = ConfigManager.languageConfig.get().getString("Commands.Add.SuccessfullyAddedCFW");
-		this.addedAE = ConfigManager.languageConfig.get().getString("Commands.Add.SuccessfullyAddedAE");
-		this.addedOtherAll = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAddedAll");
-		this.addedAll = ConfigManager.languageConfig.get().getString("Commands.Add.SuccessfullyAddedAll");
-		this.alreadyHasElementOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.AlreadyHasElement");
-		this.alreadyHasElement = ConfigManager.languageConfig.get().getString("Commands.Add.AlreadyHasElement");
-		this.alreadyHasSubElementOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.AlreadyHasSubElement");
-		this.alreadyHasSubElement = ConfigManager.languageConfig.get().getString("Commands.Add.AlreadyHasSubElement");
-		this.alreadyHasAllElementsOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.AlreadyHasAllElements");
-		this.alreadyHasAllElements = ConfigManager.languageConfig.get().getString("Commands.Add.AlreadyHasAllElements");
+		this.playerNotFound = config.PlayerNotFound;
+		this.invalidElement = config.InvalidElement;
+		this.addedOtherCFW = config.SuccessfullyAddedCFW_Other;
+		this.addedOtherAE = config.SuccessfullyAddedAE_Other;
+		this.addedCFW = config.SuccessfullyAddedCFW;
+		this.addedAE = config.SuccessfullyAddedAE;
+		this.addedOtherAll = config.SuccessfullyAddedAll_Other;
+		this.addedAll = config.SuccessfullyAddedAll;
+		this.alreadyHasElementOther = config.AlreadyHasElement_Other;
+		this.alreadyHasElement = config.AlreadyHasElement;
+		this.alreadyHasSubElementOther = config.AlreadyHasSubElement_Other;
+		this.alreadyHasSubElement = config.AlreadyHasSubElement;
+		this.alreadyHasAllElementsOther = config.AlreadyHasAllElements_Other;
+		this.alreadyHasAllElements = config.AlreadyHasAllElements;
 	}
 
 	@Override
@@ -94,7 +96,7 @@ public class AddCommand extends PKCommand {
 			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(target);
 		} else if (bPlayer.isPermaRemoved()) { // ignore permabanned users.
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved_Other);
 			return;
 		}
 

@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
  *
  * @see CollisionManager
  */
+@SuppressWarnings("rawtypes")
 public class Collision {
 	private CoreAbility abilityFirst;
 	private CoreAbility abilitySecond;

@@ -16,12 +16,20 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.HelpCommandConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.AirPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.AvatarPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.ChiPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.EarthPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.FirePropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
  */
-public class HelpCommand extends PKCommand {
+@SuppressWarnings("rawtypes")
+public class HelpCommand extends PKCommand<HelpCommandConfig> {
 
 	private final String required;
 	private final String optional;
@@ -39,24 +47,24 @@ public class HelpCommand extends PKCommand {
 	private final String spiritsUsage;
 	private final String itemsUsage;
 
-	public HelpCommand() {
-		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
+	public HelpCommand(final HelpCommandConfig config) {
+		super(config, "help", "/bending help <Page/Topic>", config.Description, new String[] { "help", "h" });
 
-		this.required = ConfigManager.languageConfig.get().getString("Commands.Help.Required");
-		this.optional = ConfigManager.languageConfig.get().getString("Commands.Help.Optional");
-		this.properUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ProperUsage");
-		this.learnMore = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.LearnMore");
-		this.air = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Air");
-		this.water = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Water");
-		this.earth = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Earth");
-		this.fire = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Fire");
-		this.chi = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Chi");
-		this.avatar = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Avatar");
-		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
-		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
-		this.rpgUsage = ConfigManager.languageConfig.get().getString("Command.Help.RPGUsage");
-		this.spiritsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.SpiritsUsage");
-		this.itemsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ItemsUsage");
+		this.required = config.Required;
+		this.optional = config.Optional;
+		this.properUsage = config.ProperUsage;
+		this.learnMore = config.LearnMore;
+		this.air = ConfigManager.getConfig(AirPropertiesConfig.class).Description;
+		this.water = ConfigManager.getConfig(WaterPropertiesConfig.class).Description;
+		this.earth = ConfigManager.getConfig(EarthPropertiesConfig.class).Description;
+		this.fire = ConfigManager.getConfig(FirePropertiesConfig.class).Description;
+		this.chi = ConfigManager.getConfig(ChiPropertiesConfig.class).Description;
+		this.avatar = ConfigManager.getConfig(AvatarPropertiesConfig.class).Description;
+		this.invalidTopic = config.InvalidTopic;
+		this.usage = config.Usage;
+		this.rpgUsage = config.RPGUsage;
+		this.spiritsUsage = config.SpiritsUsage;
+		this.itemsUsage = config.ItemsUsage;
 	}
 
 	@Override

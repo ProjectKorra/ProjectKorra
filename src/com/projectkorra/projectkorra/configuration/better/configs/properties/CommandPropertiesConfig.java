@@ -2,16 +2,17 @@ package com.projectkorra.projectkorra.configuration.better.configs.properties;
 
 import com.projectkorra.projectkorra.configuration.better.Config;
 
-public class ChiPropertiesConfig implements Config {
+public class CommandPropertiesConfig implements Config {
 
-	public final String Description = "";
+	public final String NoPermission = "";
+	public final String MustBePlayer = "";
 	
-	public final double BlockChiChance = 0;
-	public final long BlockChiDuration = 0;
+	public final String BendingPermanentlyRemoved = "";
+	public final String BendingPermanentlyRemoved_Other = "";
 	
 	@Override
 	public String getName() {
-		return "Chi";
+		return "Command";
 	}
 
 	@Override

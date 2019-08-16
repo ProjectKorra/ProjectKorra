@@ -14,15 +14,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.CommandConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.CommandPropertiesConfig;
 
 /**
  * Abstract representation of a command executor. Implements {@link SubCommand}.
  *
- * @author kingbirdy
  *
  */
-public abstract class PKCommand implements SubCommand {
+@SuppressWarnings("rawtypes")
+public abstract class PKCommand<C extends CommandConfig> implements SubCommand<C> {
 
 	protected String noPermissionMessage, mustBePlayerMessage;
 
@@ -44,18 +46,24 @@ public abstract class PKCommand implements SubCommand {
 	 */
 	private final String[] aliases;
 	/**
+	 * Language config of the command
+	 */
+	protected final C config;
+	/**
 	 * List of all command executors which extends PKCommand
 	 */
 	public static Map<String, PKCommand> instances = new HashMap<String, PKCommand>();
 
-	public PKCommand(final String name, final String properUse, final String description, final String[] aliases) {
+	public PKCommand(final C config, final String name, final String properUse, final String description, final String[] aliases) {
 		this.name = name;
 		this.properUse = properUse;
 		this.description = description;
 		this.aliases = aliases;
+		this.config = config;
 
-		this.noPermissionMessage = ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.NoPermission");
-		this.mustBePlayerMessage = ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.MustBePlayer");
+		CommandPropertiesConfig properties = ConfigManager.getConfig(CommandPropertiesConfig.class);
+		this.noPermissionMessage = ChatColor.RED + properties.NoPermission;
+		this.mustBePlayerMessage = ChatColor.RED + properties.MustBePlayer;
 
 		instances.put(name, this);
 	}
@@ -78,6 +86,11 @@ public abstract class PKCommand implements SubCommand {
 	@Override
 	public String[] getAliases() {
 		return this.aliases;
+	}
+	
+	@Override
+	public C getLanguageConfig() {
+		return this.config;
 	}
 
 	@Override

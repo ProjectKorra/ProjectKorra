@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 
+@SuppressWarnings("rawtypes")
 public class TempArmor {
 
 	private static Map<LivingEntity, PriorityQueue<TempArmor>> INSTANCES = new ConcurrentHashMap<>();

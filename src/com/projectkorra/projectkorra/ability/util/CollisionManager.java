@@ -33,6 +33,7 @@ import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
  * cancelled, abilityFirst.handleCollision, and finally
  * abilitySecond.handleCollision.
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class CollisionManager {
 
 	/*

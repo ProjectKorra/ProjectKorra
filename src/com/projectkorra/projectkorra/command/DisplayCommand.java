@@ -20,12 +20,15 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.DisplayCommandConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.CommandPropertiesConfig;
 
 /**
  * Executor for /bending display. Extends {@link PKCommand}.
  */
-public class DisplayCommand extends PKCommand {
+@SuppressWarnings("rawtypes")
+public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 
 	private final String noCombosAvailable;
 	private final String noPassivesAvailable;
@@ -34,15 +37,15 @@ public class DisplayCommand extends PKCommand {
 	private final String noAbilitiesAvailable;
 	private final String noBinds;
 
-	public DisplayCommand() {
-		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
+	public DisplayCommand(final DisplayCommandConfig config) {
+		super(config, "display", "/bending display <Element>", config.Description, new String[] { "display", "dis", "d" });
 
-		this.noCombosAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoCombosAvailable");
-		this.noPassivesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoPassivesAvailable");
-		this.noAbilitiesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoAbilitiesAvailable");
-		this.invalidArgument = ConfigManager.languageConfig.get().getString("Commands.Display.InvalidArgument");
-		this.playersOnly = ConfigManager.languageConfig.get().getString("Commands.Display.PlayersOnly");
-		this.noBinds = ConfigManager.languageConfig.get().getString("Commands.Display.NoBinds");
+		this.noCombosAvailable = config.NoCombosAvailable;
+		this.noPassivesAvailable = config.NoPassivesAvailable;
+		this.noAbilitiesAvailable = config.NoAbilitiesAvailable;
+		this.invalidArgument = config.InvalidArgument;
+		this.playersOnly = ConfigManager.getConfig(CommandPropertiesConfig.class).MustBePlayer;
+		this.noBinds = config.NoBinds;
 	}
 
 	@Override

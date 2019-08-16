@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -13,13 +12,15 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.PresetCommandConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.CommandPropertiesConfig;
 import com.projectkorra.projectkorra.object.Preset;
 
 /**
  * Executor for /bending preset. Extends {@link PKCommand}.
  */
-public class PresetCommand extends PKCommand {
+public class PresetCommand extends PKCommand<PresetCommandConfig> {
 
 	private static final String[] createaliases = { "create", "c", "save" };
 	private static final String[] deletealiases = { "delete", "d", "del" };
@@ -41,23 +42,23 @@ public class PresetCommand extends PKCommand {
 	private final String createdNewPreset;
 	private final String cantEditBinds;
 
-	public PresetCommand() {
-		super("preset", "/bending preset <Bind/Create/Delete/List> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
+	public PresetCommand(final PresetCommandConfig config) {
+		super(config, "preset", "/bending preset <Bind/Create/Delete/List> [Preset]", config.Description, new String[] { "preset", "presets", "pre", "set", "p" });
 
-		this.noPresets = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresets");
-		this.noPresetName = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresetName");
-		this.deletePreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Delete");
-		this.noPresetNameExternal = ConfigManager.languageConfig.get().getString("Commands.Preset.External.NoPresetName");
-		this.bendingRemoved = ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved");
-		this.bound = ConfigManager.languageConfig.get().getString("Commands.Preset.SuccesfullyBound");
-		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Preset.FailedToBindAll");
-		this.bendingRemovedOther = ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved");
-		this.boundOtherConfirm = ConfigManager.languageConfig.get().getString("Commands.Preset.Other.SuccesfullyBoundConfirm");
-		this.succesfullyCopied = ConfigManager.languageConfig.get().getString("Commands.Preset.SuccesfullyCopied");
-		this.reachedMax = ConfigManager.languageConfig.get().getString("Commands.Preset.MaxPresets");
-		this.alreadyExists = ConfigManager.languageConfig.get().getString("Commands.Preset.AlreadyExists");
-		this.createdNewPreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Created");
-		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Preset.CantEditBinds");
+		this.noPresets = config.NoPresets;
+		this.noPresetName = config.NoPresetName;
+		this.deletePreset = config.Delete;
+		this.noPresetNameExternal = config.NoPresetName_External;
+		this.bendingRemoved = ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved;
+		this.bound = config.SuccessfullyBound;
+		this.failedToBindAll = config.FailedToBindAll;
+		this.bendingRemovedOther = ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved_Other;
+		this.boundOtherConfirm = config.SuccessfullyBound_Other;
+		this.succesfullyCopied = config.SuccessfullyCopied;
+		this.reachedMax = config.MaxPresets;
+		this.alreadyExists = config.AlreadyExists;
+		this.createdNewPreset = config.Created;
+		this.cantEditBinds = config.CantEditBinds;
 	}
 
 	@Override
@@ -173,7 +174,7 @@ public class PresetCommand extends PKCommand {
 					}
 					return;
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound"));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + config.PlayerNotFound);
 				}
 			} else if (this.hasPermission(sender, "bind.assign") && Preset.presetExists(player, name)) {
 				if (!Preset.presetExists(player, name)) {
@@ -203,7 +204,7 @@ public class PresetCommand extends PKCommand {
 					}
 					return;
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound"));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + config.PlayerNotFound);
 				}
 			}
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && this.hasPermission(sender, "create")) { // bending preset create name.

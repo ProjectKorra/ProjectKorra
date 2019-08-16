@@ -14,7 +14,10 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.ChooseCommandConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.CommandPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
@@ -23,7 +26,7 @@ import com.projectkorra.projectkorra.util.TimeUtil;
 /**
  * Executor for /bending choose. Extends {@link PKCommand}.
  */
-public class ChooseCommand extends PKCommand {
+public class ChooseCommand extends PKCommand<ChooseCommandConfig> {
 
 	private final String invalidElement;
 	private final String playerNotFound;
@@ -34,17 +37,17 @@ public class ChooseCommand extends PKCommand {
 	private final String chosenOtherAE;
 	private final long cooldown;
 
-	public ChooseCommand() {
-		super("choose", "/bending choose <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
+	public ChooseCommand(final ChooseCommandConfig config) {
+		super(config, "choose", "/bending choose <Element> [Player]", config.Description, new String[] { "choose", "ch" });
 
-		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Choose.PlayerNotFound");
-		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Choose.InvalidElement");
-		this.onCooldown = ConfigManager.languageConfig.get().getString("Commands.Choose.OnCooldown");
-		this.chosenCFW = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosenCFW");
-		this.chosenAE = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosenAE");
-		this.chosenOtherCFW = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosenCFW");
-		this.chosenOtherAE = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosenAE");
-		this.cooldown = ConfigManager.defaultConfig.get().getLong("Properties.ChooseCooldown");
+		this.playerNotFound = config.PlayerNotFound;
+		this.invalidElement = config.InvalidElement;
+		this.onCooldown = config.OnCooldown;
+		this.chosenCFW = config.SuccessfullyChosenCFW;
+		this.chosenAE = config.SuccessfullyChosenAE;
+		this.chosenOtherCFW = config.SuccessfullyChosenCFW_Other;
+		this.chosenOtherAE = config.SuccessfullyChosenAE_Other;
+		this.cooldown = ConfigManager.getConfig(GeneralPropertiesConfig.class).ChooseCooldown;
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class ChooseCommand extends PKCommand {
 				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			}
 			if (bPlayer.isPermaRemoved()) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved);
 				return;
 			}
 			if (!bPlayer.getElements().isEmpty() && !sender.hasPermission("bending.command.rechoose")) {

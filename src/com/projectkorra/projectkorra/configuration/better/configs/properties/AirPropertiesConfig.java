@@ -7,6 +7,8 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class AirPropertiesConfig implements Config {
 
+	public final String Description = "";
+	
 	public final ParticleEffect Particles = ParticleEffect.SPELL;
 	
 	public final boolean PlaySound = true;

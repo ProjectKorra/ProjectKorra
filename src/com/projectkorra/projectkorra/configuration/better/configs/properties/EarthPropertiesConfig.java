@@ -7,6 +7,8 @@ import com.projectkorra.projectkorra.configuration.better.Config;
 
 public class EarthPropertiesConfig implements Config {
 
+	public final String Description = "";
+	
 	public final Material[] EarthBlocks = {};
 	
 	public final boolean RevertEarthbending = true;

@@ -60,6 +60,7 @@ import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
  * @see Collision
  * @see CollisionManager
  */
+@SuppressWarnings("rawtypes")
 public class CollisionInitializer {
 
 	private final CollisionManager collisionManager;

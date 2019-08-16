@@ -12,8 +12,8 @@ import org.bukkit.command.TabCompleter;
 /**
  * Completes tabbing for the bending command/subcommands.
  *
- * @author StrangeOne101
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class BendingTabComplete implements TabCompleter {
 
 	@Override

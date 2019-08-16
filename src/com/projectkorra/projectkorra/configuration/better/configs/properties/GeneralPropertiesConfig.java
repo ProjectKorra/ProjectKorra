@@ -18,6 +18,8 @@ public class GeneralPropertiesConfig implements Config {
 	
 	public final long GlobalCooldown = 0;
 	
+	public final long ChooseCooldown = 0;
+	
 	public final boolean TogglePassivesWithAllBending = true;
 	
 	public final int MaxPresets = 0;

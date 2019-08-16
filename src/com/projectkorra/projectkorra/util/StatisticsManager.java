@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.storage.MySQL;
 import com.projectkorra.projectkorra.storage.SQLite;
 
+@SuppressWarnings("rawtypes")
 public class StatisticsManager extends Manager implements Runnable {
 
 	/**

@@ -12,7 +12,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.RemoveCommandConfig;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
@@ -20,22 +20,22 @@ import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 /**
  * Executor for /bending remove. Extends {@link PKCommand}.
  */
-public class RemoveCommand extends PKCommand {
+public class RemoveCommand extends PKCommand<RemoveCommandConfig> {
 
 	private final String succesfullyRemovedElementSelf, wrongElementSelf, invalidElement, playerOffline, wrongElementTarget, succesfullyRemovedElementTarget, succesfullyRemovedElementTargetConfirm, succesfullyRemovedAllElementsTarget, succesfullyRemovedAllElementsTargetConfirm;
 
-	public RemoveCommand() {
-		super("remove", "/bending remove <Player> [Element]", ConfigManager.languageConfig.get().getString("Commands.Remove.Description"), new String[] { "remove", "rm" });
+	public RemoveCommand(final RemoveCommandConfig config) {
+		super(config, "remove", "/bending remove <Player> [Element]", config.Description, new String[] { "remove", "rm" });
 
-		this.succesfullyRemovedElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.RemovedElement");
-		this.succesfullyRemovedAllElementsTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedAllElements");
-		this.succesfullyRemovedAllElementsTargetConfirm = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedAllElementsConfirm");
-		this.succesfullyRemovedElementTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedElement");
-		this.succesfullyRemovedElementTargetConfirm = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedElementConfirm");
-		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Remove.InvalidElement");
-		this.wrongElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.WrongElement");
-		this.wrongElementTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.WrongElement");
-		this.playerOffline = ConfigManager.languageConfig.get().getString("Commands.Remove.PlayerOffline");
+		this.succesfullyRemovedElementSelf = config.RemovedElement;
+		this.succesfullyRemovedAllElementsTarget = config.RemovedAllElements_ByOther;
+		this.succesfullyRemovedAllElementsTargetConfirm = config.RemovedAllElements_Other;
+		this.succesfullyRemovedElementTarget = config.RemovedElement_ByOther;
+		this.succesfullyRemovedElementTargetConfirm = config.RemovedAllElements_Other;
+		this.invalidElement = config.InvalidElement;
+		this.wrongElementSelf = config.WrongElement;
+		this.wrongElementTarget = config.WrongElement_Other;
+		this.playerOffline = config.PlayerOffline;
 	}
 
 	@Override

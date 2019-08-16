@@ -7,6 +7,8 @@ import com.projectkorra.projectkorra.configuration.better.Config;
 
 public class WaterPropertiesConfig implements Config {
 
+	public final String Description = "";
+	
 	public final Material[] WaterBlocks = {};
 	
 	public final double NightFactor = 0;

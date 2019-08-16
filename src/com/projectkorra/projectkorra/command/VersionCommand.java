@@ -7,15 +7,15 @@ import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.VersionCommandConfig;
 
 /**
  * Executor for /bending version. Extends {@link PKCommand}.
  */
-public class VersionCommand extends PKCommand {
+public class VersionCommand extends PKCommand<VersionCommandConfig> {
 
-	public VersionCommand() {
-		super("version", "/bending version", ConfigManager.languageConfig.get().getString("Commands.Version.Description"), new String[] { "version", "v" });
+	public VersionCommand(final VersionCommandConfig config) {
+		super(config, "version", "/bending version", config.Description, new String[] { "version", "v" });
 	}
 
 	@Override

@@ -10,14 +10,14 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.PermaremoveCommandConfig;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 
 /**
  * Executor for /bending permaremove. Extends {@link PKCommand}.
  */
-public class PermaremoveCommand extends PKCommand {
+public class PermaremoveCommand extends PKCommand<PermaremoveCommandConfig> {
 
 	private final String playerIsOffline;
 	private final String restored;
@@ -25,14 +25,14 @@ public class PermaremoveCommand extends PKCommand {
 	private final String removed;
 	private final String removedConfirm;
 
-	public PermaremoveCommand() {
-		super("permaremove", "/bending permaremove <Player>", ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Description"), new String[] { "permaremove", "premove", "permremove", "pr" });
+	public PermaremoveCommand(final PermaremoveCommandConfig config) {
+		super(config, "permaremove", "/bending permaremove <Player>", config.Description, new String[] { "permaremove", "premove", "permremove", "pr" });
 
-		this.playerIsOffline = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.PlayerOffline");
-		this.restored = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Restored");
-		this.restoredConfirm = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.RestoredConfirm");
-		this.removed = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Removed");
-		this.removedConfirm = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.RemovedConfirm");
+		this.playerIsOffline = config.PlayerOffline;
+		this.restored = config.Restored;
+		this.restoredConfirm = config.Restored_Other;
+		this.removed = config.Removed;
+		this.removedConfirm = config.Removed_Other;
 	}
 
 	@Override

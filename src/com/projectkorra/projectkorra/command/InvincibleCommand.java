@@ -6,15 +6,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.InvincibleCommandConfig;
 
 /**
  * Executor for /bending invincible. Extends {@link PKCommand}.
  */
-public class InvincibleCommand extends PKCommand {
+public class InvincibleCommand extends PKCommand<InvincibleCommandConfig> {
 
-	public InvincibleCommand() {
-		super("invincible", "/bending invincible", ConfigManager.languageConfig.get().getString("Commands.Invincible.Description"), new String[] { "invincible", "inv", "i" });
+	public InvincibleCommand(final InvincibleCommandConfig config) {
+		super(config, "invincible", "/bending invincible", config.Description, new String[] { "invincible", "inv", "i" });
 
 	}
 
@@ -26,10 +26,10 @@ public class InvincibleCommand extends PKCommand {
 
 		if (!Commands.invincible.contains(sender.getName())) {
 			Commands.invincible.add(sender.getName());
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOn"));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + config.ToggledOn);
 		} else {
 			Commands.invincible.remove(sender.getName());
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOff"));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + config.ToggledOff);
 		}
 	}
 

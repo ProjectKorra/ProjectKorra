@@ -7,41 +7,38 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.ToggleCommandConfig;
 
 /**
  * Executor for /bending toggle. Extends {@link PKCommand}.
  */
-public class ToggleCommand extends PKCommand {
+public class ToggleCommand extends PKCommand<ToggleCommandConfig> {
 
 	private final String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, toggledOffSingleElement, toggledOnSingleElement, wrongElementOther, toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound;
 
-	public ToggleCommand() {
-		super("toggle", "/bending toggle <All/Element/Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
+	public ToggleCommand(final ToggleCommandConfig config) {
+		super(config, "toggle", "/bending toggle <All/Element/Player> [Player]", config.Description, new String[] { "toggle", "t" });
 
-		final FileConfiguration c = ConfigManager.languageConfig.get();
-
-		this.toggledOffForAll = c.getString("Commands.Toggle.All.ToggledOffForAll");
-		this.toggleOffSelf = c.getString("Commands.Toggle.ToggledOff");
-		this.toggleOnSelf = c.getString("Commands.Toggle.ToggledOn");
-		this.toggleOffAll = c.getString("Commands.Toggle.All.ToggleOff");
-		this.toggleOnAll = c.getString("Commands.Toggle.All.ToggleOn");
-		this.toggledOffSingleElement = c.getString("Commands.Toggle.ToggleOffSingleElement");
-		this.toggledOnSingleElement = c.getString("Commands.Toggle.ToggleOnSingleElement");
-		this.wrongElementOther = c.getString("Commands.Toggle.Other.WrongElement");
-		this.toggledOnOtherElementConfirm = c.getString("Commands.Toggle.Other.ToggledOnElementConfirm");
-		this.toggledOffOtherElementConfirm = c.getString("Commands.Toggle.Other.ToggledOffElementConfirm");
-		this.toggledOnOtherElement = c.getString("Commands.Toggle.Other.ToggledOnElementByOther");
-		this.toggledOffOtherElement = c.getString("Commands.Toggle.Other.ToggledOffElementByOther");
-		this.wrongElement = c.getString("Commands.Toggle.WrongElement");
-		this.notFound = c.getString("Commands.Toggle.Other.PlayerNotFound");
+		this.toggledOffForAll = config.ToggledOffForAll;
+		this.toggleOffSelf = config.ToggledOff;
+		this.toggleOnSelf = config.ToggledOn;
+		this.toggleOffAll = config.ToggledOff_All;
+		this.toggleOnAll = config.ToggledOn_All;
+		this.toggledOffSingleElement = config.ToggledOffSingleElement;
+		this.toggledOnSingleElement = config.ToggledOnSingleElement;
+		this.wrongElementOther = config.WrongElement_Other;
+		this.toggledOnOtherElementConfirm = config.ToggledOn_Other;
+		this.toggledOffOtherElementConfirm = config.ToggledOff_Other;
+		this.toggledOnOtherElement = config.ToggledOn_ByOther;
+		this.toggledOffOtherElement = config.ToggledOff_ByOther;
+		this.wrongElement = config.WrongElement;
+		this.notFound = config.PlayerNotFound;
 	}
 
 	@Override

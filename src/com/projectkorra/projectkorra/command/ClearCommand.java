@@ -11,12 +11,12 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.ClearCommandConfig;
 
 /**
  * Executor for /bending clear. Extends {@link PKCommand}.
  */
-public class ClearCommand extends PKCommand {
+public class ClearCommand extends PKCommand<ClearCommandConfig> {
 
 	private final String cantEditBinds;
 	private final String cleared;
@@ -24,14 +24,14 @@ public class ClearCommand extends PKCommand {
 	private final String clearedSlot;
 	private final String alreadyEmpty;
 
-	public ClearCommand() {
-		super("clear", "/bending clear [Slot]", ConfigManager.languageConfig.get().getString("Commands.Clear.Description"), new String[] { "clear", "cl", "c" });
+	public ClearCommand(final ClearCommandConfig config) {
+		super(config, "clear", "/bending clear [Slot]", config.Description, new String[] { "clear", "cl", "c" });
 
-		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Clear.CantEditBinds");
-		this.cleared = ConfigManager.languageConfig.get().getString("Commands.Clear.Cleared");
-		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Clear.WrongNumber");
-		this.clearedSlot = ConfigManager.languageConfig.get().getString("Commands.Clear.ClearedSlot");
-		this.alreadyEmpty = ConfigManager.languageConfig.get().getString("Commands.Clear.AlreadyEmpty");
+		this.cantEditBinds = config.CantEditBinds;
+		this.cleared = config.Cleared;
+		this.wrongNumber = config.WrongNumber;
+		this.clearedSlot = config.ClearedSlot;
+		this.alreadyEmpty = config.AlreadyEmpty;
 	}
 
 	@Override

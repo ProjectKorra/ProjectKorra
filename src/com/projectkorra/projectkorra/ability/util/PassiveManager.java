@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 
+@SuppressWarnings({ "rawtypes", "unlikely-arg-type" })
 public class PassiveManager {
 
 	private static final Map<String, CoreAbility> PASSIVES = new HashMap<>();

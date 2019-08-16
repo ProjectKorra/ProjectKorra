@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,25 +29,26 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.commands.WhoCommandConfig;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
  */
-public class WhoCommand extends PKCommand {
+@SuppressWarnings({ "rawtypes", "deprecation" })
+public class WhoCommand extends PKCommand<WhoCommandConfig> {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	final Map<String, String> staff = new HashMap<>();
+	final Map<String, String> staff = Collections.synchronizedMap(new HashMap<>());
 
 	private final String databaseOverload, noPlayersOnline, playerOffline;
 
-	public WhoCommand() {
-		super("who", "/bending who [Page/Player]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
+	public WhoCommand(final WhoCommandConfig config) {
+		super(config, "who", "/bending who [Page/Player]", config.Description, new String[] { "who", "w" });
 
-		this.databaseOverload = ConfigManager.languageConfig.get().getString("Commands.Who.DatabaseOverload");
-		this.noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
-		this.playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
+		this.databaseOverload = config.DatabaseOverload;
+		this.noPlayersOnline = config.NoPlayersOnline;
+		this.playerOffline = config.PlayerOffline;
 
 		new BukkitRunnable() {
 			@Override

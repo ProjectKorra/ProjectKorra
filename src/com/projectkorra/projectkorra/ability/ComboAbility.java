@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
 
 public interface ComboAbility {
 

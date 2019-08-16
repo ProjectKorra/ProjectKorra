@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
+import com.projectkorra.projectkorra.configuration.better.configs.commands.CommandConfig;
+
 /**
  * Interface representation of a command executor.
  */
-public interface SubCommand {
+public interface SubCommand<C extends CommandConfig> {
 	/**
 	 * Gets the name of the command.
 	 *
@@ -36,6 +38,12 @@ public interface SubCommand {
 	 * @return the description
 	 */
 	public String getDescription();
+	
+	/**
+	 * Gets the language config of the command.
+	 * @return the config
+	 */
+	public C getLanguageConfig();
 
 	/**
 	 * Outputs the correct usage, and optionally the description, of a command
