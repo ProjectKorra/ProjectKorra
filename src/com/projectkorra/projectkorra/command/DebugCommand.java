@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.DebugCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.DebugCommandConfig;
 
 /**
  * Executor for /bending debug. Extends {@link PKCommand}.

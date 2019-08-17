@@ -27,7 +27,7 @@ import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbili
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.FlightConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.FlightConfig;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -393,5 +393,10 @@ public class FlightMultiAbility extends FlightAbility<FlightConfig> implements M
 			return requestedMap.get(requester.getUniqueId()).equals(requested.getUniqueId());
 		}
 		return false;
+	}
+	
+	@Override
+	public Class<FlightConfig> getConfigType() {
+		return FlightConfig.class;
 	}
 }

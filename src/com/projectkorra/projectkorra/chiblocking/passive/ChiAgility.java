@@ -8,7 +8,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.ChiAgilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.ChiAgilityConfig;
 
 public class ChiAgility extends ChiAbility<ChiAgilityConfig> implements PassiveAbility {
 
@@ -85,6 +85,11 @@ public class ChiAgility extends ChiAbility<ChiAgilityConfig> implements PassiveA
 
 	public int getSpeedPower() {
 		return this.speedPower;
+	}
+	
+	@Override
+	public Class<ChiAgilityConfig> getConfigType() {
+		return ChiAgilityConfig.class;
 	}
 
 }

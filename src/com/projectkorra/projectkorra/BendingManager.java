@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.FirePropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.FirePropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.ActionBar;

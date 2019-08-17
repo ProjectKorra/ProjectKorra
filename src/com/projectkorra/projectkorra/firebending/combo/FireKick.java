@@ -17,8 +17,8 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireKickConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireKickConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireKick extends FireAbility<FireKickConfig> implements ComboAbility {
@@ -210,5 +210,10 @@ public class FireKick extends FireAbility<FireKickConfig> implements ComboAbilit
 
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+	
+	@Override
+	public Class<FireKickConfig> getConfigType() {
+		return FireKickConfig.class;
 	}
 }

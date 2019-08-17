@@ -26,9 +26,9 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.HeatControlConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.PhaseChangeConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.HeatControlConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.PhaseChangeConfig;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -493,7 +493,11 @@ public class HeatControl extends FireAbility<HeatControlConfig> {
 
 	public static Collection<TempBlock> getMeltedBlocks() {
 		return MELTED_BLOCKS.values();
-
+	}
+	
+	@Override
+	public Class<HeatControlConfig> getConfigType() {
+		return HeatControlConfig.class;
 	}
 
 }

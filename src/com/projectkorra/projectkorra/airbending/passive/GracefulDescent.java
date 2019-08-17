@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.GracefulDescentConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.GracefulDescentConfig;
 
 public class GracefulDescent extends AirAbility<GracefulDescentConfig> implements PassiveAbility {
 
@@ -51,5 +51,10 @@ public class GracefulDescent extends AirAbility<GracefulDescentConfig> implement
 	@Override
 	public boolean isProgressable() {
 		return false;
+	}
+	
+	@Override
+	public Class<GracefulDescentConfig> getConfigType() {
+		return GracefulDescentConfig.class;
 	}
 }

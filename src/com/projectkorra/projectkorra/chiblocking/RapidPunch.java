@@ -9,7 +9,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.RapidPunchConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.RapidPunchConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class RapidPunch extends ChiAbility<RapidPunchConfig> {
@@ -124,6 +124,11 @@ public class RapidPunch extends ChiAbility<RapidPunchConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<RapidPunchConfig> getConfigType() {
+		return RapidPunchConfig.class;
 	}
 
 }

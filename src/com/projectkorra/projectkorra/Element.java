@@ -10,8 +10,8 @@ import java.util.function.Supplier;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.ChatPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.ChatPropertiesConfig;
 
 public class Element {
 

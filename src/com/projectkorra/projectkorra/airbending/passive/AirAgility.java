@@ -8,7 +8,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirAgilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirAgilityConfig;
 
 public class AirAgility extends AirAbility<AirAgilityConfig> implements PassiveAbility {
 
@@ -86,5 +86,9 @@ public class AirAgility extends AirAbility<AirAgilityConfig> implements PassiveA
 	public int getSpeedPower() {
 		return this.speedPower;
 	}
-
+	
+	@Override
+	public Class<AirAgilityConfig> getConfigType() {
+		return AirAgilityConfig.class;
+	}
 }

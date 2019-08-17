@@ -15,8 +15,8 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirStreamConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirStreamConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class AirStream extends AirAbility<AirStreamConfig> implements ComboAbility {
@@ -300,5 +300,10 @@ public class AirStream extends AirAbility<AirStreamConfig> implements ComboAbili
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<AirStreamConfig> getConfigType() {
+		return AirStreamConfig.class;
 	}
 }

@@ -22,8 +22,8 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBlastConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBurstConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireBurstConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -429,6 +429,11 @@ public class FireBlast extends FireAbility<FireBlastConfig> {
 		if (config != null) {
 			this.fireBurstIgnite = config.Ignite;
 		}
+	}
+	
+	@Override
+	public Class<FireBlastConfig> getConfigType() {
+		return FireBlastConfig.class;
 	}
 
 }

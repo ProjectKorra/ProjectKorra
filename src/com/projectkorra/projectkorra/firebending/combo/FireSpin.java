@@ -18,8 +18,8 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireSpinConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireSpinConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireSpin extends FireAbility<FireSpinConfig> implements ComboAbility {
@@ -213,5 +213,10 @@ public class FireSpin extends FireAbility<FireSpinConfig> implements ComboAbilit
 
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+	
+	@Override
+	public Class<FireSpinConfig> getConfigType() {
+		return FireSpinConfig.class;
 	}
 }

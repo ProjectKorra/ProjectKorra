@@ -14,7 +14,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireManipulationConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireManipulationConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -228,5 +228,10 @@ public class FireManipulation extends FireAbility<FireManipulationConfig> {
 	@Override
 	public double getCollisionRadius() {
 		return 0.4;
+	}
+	
+	@Override
+	public Class<FireManipulationConfig> getConfigType() {
+		return FireManipulationConfig.class;
 	}
 }

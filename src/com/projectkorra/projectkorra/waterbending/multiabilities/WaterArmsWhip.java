@@ -17,7 +17,7 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterArmsConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterArmsConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
@@ -670,6 +670,11 @@ public class WaterArmsWhip extends WaterAbility<WaterArmsConfig> {
 
 	public static HashMap<LivingEntity, WaterArmsWhip> getGrabbedEntities() {
 		return GRABBED_ENTITIES;
+	}
+	
+	@Override
+	public Class<WaterArmsConfig> getConfigType() {
+		return WaterArmsConfig.class;
 	}
 
 }

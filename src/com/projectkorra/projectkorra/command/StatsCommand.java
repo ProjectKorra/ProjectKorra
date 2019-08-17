@@ -20,7 +20,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.StatsCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.StatsCommandConfig;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Statistic;
 import com.projectkorra.projectkorra.util.StatisticsMethods;

@@ -9,8 +9,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.avatar.AvatarStateConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.avatar.AvatarStateConfig;
 
 public class AvatarState extends AvatarAbility<AvatarStateConfig> {
 
@@ -220,6 +220,11 @@ public class AvatarState extends AvatarAbility<AvatarStateConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<AvatarStateConfig> getConfigType() {
+		return AvatarStateConfig.class;
 	}
 
 }

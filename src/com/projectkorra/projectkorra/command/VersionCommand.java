@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.VersionCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.VersionCommandConfig;
 
 /**
  * Executor for /bending version. Extends {@link PKCommand}.

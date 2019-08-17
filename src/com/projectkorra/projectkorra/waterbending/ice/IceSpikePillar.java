@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceSpikeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceSpikeConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -450,6 +450,11 @@ public class IceSpikePillar extends IceAbility<IceSpikeConfig> {
 
 	public Block getBaseBlock() {
 		return this.base_block;
+	}
+	
+	@Override
+	public Class<IceSpikeConfig> getConfigType() {
+		return IceSpikeConfig.class;
 	}
 
 }

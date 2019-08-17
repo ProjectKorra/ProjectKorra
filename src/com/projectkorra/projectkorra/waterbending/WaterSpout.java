@@ -17,7 +17,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterSpoutConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterSpoutConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -459,6 +459,11 @@ public class WaterSpout extends WaterAbility<WaterSpoutConfig> {
 
 	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
+	}
+	
+	@Override
+	public Class<WaterSpoutConfig> getConfigType() {
+		return WaterSpoutConfig.class;
 	}
 
 }

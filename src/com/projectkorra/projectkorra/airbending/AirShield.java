@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirShieldConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirShieldConfig;
 
 public class AirShield extends AirAbility<AirShieldConfig> {
 
@@ -285,5 +285,10 @@ public class AirShield extends AirAbility<AirShieldConfig> {
 
 	public HashMap<Integer, Integer> getAngles() {
 		return this.angles;
+	}
+	
+	@Override
+	public Class<AirShieldConfig> getConfigType() {
+		return AirShieldConfig.class;
 	}
 }

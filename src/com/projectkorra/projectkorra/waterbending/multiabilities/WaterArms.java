@@ -20,7 +20,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterArmsConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterArmsConfig;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -758,5 +758,10 @@ public class WaterArms extends WaterAbility<WaterArmsConfig> {
 		} else {
 			this.right.add(block);
 		}
+	}
+	
+	@Override
+	public Class<WaterArmsConfig> getConfigType() {
+		return WaterArmsConfig.class;
 	}
 }

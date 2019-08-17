@@ -13,9 +13,9 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.CopyCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.CommandPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class CopyCommand extends PKCommand<CopyCommandConfig> {

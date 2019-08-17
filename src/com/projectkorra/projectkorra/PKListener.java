@@ -112,68 +112,69 @@ import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.chiblocking.passive.Acrobatics;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBlastConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBurstConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirScooterConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirShieldConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSpoutConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSuctionConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSwipeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.FlightConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.SuffocateConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.TornadoConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.avatar.AvatarStateConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.AcrobatStanceConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.HighJumpConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.ParalyzeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.QuickStrikeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.RapidPunchConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.SmokescreenConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.SwiftKickConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.WarriorStanceConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.CatapultConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.CollapseConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.DensityShiftConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthArmorConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthBlastConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthGrabConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthPillarsConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthSmashConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthTunnelConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.ExtractionConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.FerroControlConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.LavaFlowConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.MetalClipsConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.RaiseEarthConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.ShockwaveConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.TremorsenseConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.BlazeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.CombustionConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBlastConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBurstConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireJetConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireManipulationConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireShieldConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.HeatControlConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.IlluminationConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.LightningConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.WallOfFireConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.BloodbendingConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.FastSwimConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.HealingWatersConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceBlastConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceSpikeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.OctopusFormConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.PhaseChangeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.SurgeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.TorrentConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterArmsConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterBubbleConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterManipulationConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterSpoutConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.ChatPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirBurstConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirScooterConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirShieldConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSpoutConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSuctionConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSwipeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.FlightConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.SuffocateConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.TornadoConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.avatar.AvatarStateConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.AcrobatStanceConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.HighJumpConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.ParalyzeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.QuickStrikeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.RapidPunchConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.SmokescreenConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.SwiftKickConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.WarriorStanceConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.CatapultConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.CollapseConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.DensityShiftConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthArmorConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthGrabConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthPillarsConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthSmashConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthTunnelConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ExtractionConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.FerroControlConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.LavaFlowConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.MetalClipsConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.RaiseEarthConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ShockwaveConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.TremorsenseConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.BlazeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.CombustionConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireBurstConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireJetConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireManipulationConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireShieldConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.HeatControlConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.IlluminationConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.LightningConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.WallOfFireConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.BloodbendingConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.FastSwimConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.HealingWatersConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceSpikeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.OctopusFormConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.PhaseChangeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.SurgeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.TorrentConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterArmsConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterBubbleConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterManipulationConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterSpoutConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.ChatPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.Catapult;
 import com.projectkorra.projectkorra.earthbending.Collapse;
 import com.projectkorra.projectkorra.earthbending.CollapseWall;
@@ -250,7 +251,7 @@ import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 
 import co.aikar.timings.lib.MCTiming;
 
-@SuppressWarnings({ "unused", "deprecation", "rawtypes" })
+@SuppressWarnings({ "unused", "deprecation", "rawtypes", "unchecked" })
 public class PKListener implements Listener {
 	ProjectKorra plugin;
 
@@ -1076,7 +1077,7 @@ public class PKListener implements Listener {
 
 		if (event.getEntity().getKiller() != null) {
 			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
-				String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
+				String message = ConfigManager.getConfig(GeneralPropertiesConfig.class).DefaultDeathMessage;
 				final String ability = BENDING_PLAYER_DEATH.get(event.getEntity());
 				final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
 				final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
@@ -1088,25 +1089,13 @@ public class PKListener implements Listener {
 				}
 
 				if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
-					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
+					if (coreAbil != null && ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType()).HorizontalVelocityDeathMessage != null) {
+						message = ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType()).HorizontalVelocityDeathMessage;
 					}
-				} else if (element != null) {
-					if (element instanceof SubElement) {
-						element = ((SubElement) element).getParentElement();
-					}
-					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
-					} else if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
-					}
-				} else {
-					if (isAvatarAbility) {
-						if (ConfigManager.languageConfig.get().contains("Abilities.Avatar." + tempAbility + ".DeathMessage")) {
-							message = ConfigManager.languageConfig.get().getString("Abilities.Avatar." + tempAbility + ".DeathMessage");
-						}
-					} else if (ConfigManager.languageConfig.get().contains("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage");
+				} else if (coreAbil != null) {
+					AbilityConfig conf = ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType());
+					if (conf.DeathMessage != null) {
+						message = conf.DeathMessage;
 					}
 				}
 				message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);

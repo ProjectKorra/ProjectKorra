@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthBlastConfig;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -670,5 +670,10 @@ public class EarthBlast extends EarthAbility<EarthBlastConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<EarthBlastConfig> getConfigType() {
+		return EarthBlastConfig.class;
 	}
 }

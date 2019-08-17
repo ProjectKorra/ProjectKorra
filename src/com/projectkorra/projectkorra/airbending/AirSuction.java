@@ -23,8 +23,8 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSuctionConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSuctionConfig;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
@@ -409,6 +409,11 @@ public class AirSuction extends AirAbility<AirSuctionConfig> {
 
 	public static double getSelectRange() {
 		return ConfigManager.getConfig(AirSuctionConfig.class).SelectionRange;
+	}
+	
+	@Override
+	public Class<AirSuctionConfig> getConfigType() {
+		return AirSuctionConfig.class;
 	}
 
 }

@@ -13,8 +13,8 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.JetBlazeConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.JetBlazeConfig;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -152,5 +152,10 @@ public class JetBlaze extends FireAbility<JetBlazeConfig> implements ComboAbilit
 
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return this.affectedEntities;
+	}
+	
+	@Override
+	public Class<JetBlazeConfig> getConfigType() {
+		return JetBlazeConfig.class;
 	}
 }

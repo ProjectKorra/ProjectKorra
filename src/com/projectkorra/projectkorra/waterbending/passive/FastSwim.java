@@ -6,8 +6,8 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.FastSwimConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.FastSwimConfig;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
@@ -97,5 +97,10 @@ public class FastSwim extends WaterAbility<FastSwimConfig> implements PassiveAbi
 	@Override
 	public boolean isProgressable() {
 		return true;
+	}
+	
+	@Override
+	public Class<FastSwimConfig> getConfigType() {
+		return FastSwimConfig.class;
 	}
 }

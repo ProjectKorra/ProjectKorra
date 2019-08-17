@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.TremorsenseConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.TremorsenseConfig;
 
 @SuppressWarnings("deprecation")
 public class Tremorsense extends EarthAbility<TremorsenseConfig> {
@@ -234,6 +234,11 @@ public class Tremorsense extends EarthAbility<TremorsenseConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<TremorsenseConfig> getConfigType() {
+		return TremorsenseConfig.class;
 	}
 
 }

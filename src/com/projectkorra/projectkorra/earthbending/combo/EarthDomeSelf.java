@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthDomeConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthDomeConfig;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ClickType;
 
@@ -60,5 +60,10 @@ public class EarthDomeSelf extends EarthAbility<EarthDomeConfig> implements Comb
 		combo.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
 		combo.add(new AbilityInformation("Shockwave", ClickType.RIGHT_CLICK_BLOCK));
 		return combo;
+	}
+	
+	@Override
+	public Class<EarthDomeConfig> getConfigType() {
+		return EarthDomeConfig.class;
 	}
 }

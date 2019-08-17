@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireBlastConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -487,6 +487,11 @@ public class FireBlastCharged extends FireAbility<FireBlastConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<FireBlastConfig> getConfigType() {
+		return FireBlastConfig.class;
 	}
 
 }

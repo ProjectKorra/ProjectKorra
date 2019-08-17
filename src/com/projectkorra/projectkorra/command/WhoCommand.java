@@ -29,7 +29,7 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.WhoCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.WhoCommandConfig;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.

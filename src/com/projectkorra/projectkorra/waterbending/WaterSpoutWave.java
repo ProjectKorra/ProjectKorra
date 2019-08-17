@@ -26,11 +26,10 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceWaveConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterSpoutConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterSpoutConfig.WaterSpoutWaveConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceWaveConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterSpoutConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
@@ -751,5 +750,10 @@ public class WaterSpoutWave extends WaterAbility<WaterSpoutConfig> {
 	@Override
 	public boolean allowBreakPlants() {
 		return false;
+	}
+	
+	@Override
+	public Class<WaterSpoutConfig> getConfigType() {
+		return WaterSpoutConfig.class;
 	}
 }

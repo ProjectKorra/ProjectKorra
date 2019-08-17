@@ -10,25 +10,25 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.AddCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.BindCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.CheckCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.ChooseCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.ClearCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.CopyCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.DebugCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.DisplayCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.HelpCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.InvincibleCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.PermaremoveCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.PresetCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.ReloadCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.RemoveCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.StatsCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.ToggleCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.VersionCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.WhoCommandConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.AddCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.CheckCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ChooseCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ClearCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.DebugCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.DisplayCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.HelpCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.InvincibleCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.PermaremoveCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.PresetCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ReloadCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.RemoveCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.StatsCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ToggleCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.VersionCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.WhoCommandConfig;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Commands {

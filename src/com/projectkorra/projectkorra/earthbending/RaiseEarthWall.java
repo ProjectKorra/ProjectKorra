@@ -9,7 +9,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.RaiseEarthConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.RaiseEarthConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
@@ -191,6 +191,11 @@ public class RaiseEarthWall extends EarthAbility<RaiseEarthConfig> {
 
 	public void setSelectRange(final int selectRange) {
 		this.selectRange = selectRange;
+	}
+	
+	@Override
+	public Class<RaiseEarthConfig> getConfigType() {
+		return RaiseEarthConfig.class;
 	}
 
 }

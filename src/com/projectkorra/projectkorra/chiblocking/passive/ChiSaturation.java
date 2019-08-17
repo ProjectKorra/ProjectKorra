@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.ChiSaturationConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.ChiSaturationConfig;
 
 public class ChiSaturation extends ChiAbility<ChiSaturationConfig> implements PassiveAbility {
 	public ChiSaturation(final ChiSaturationConfig config, final Player player) {
@@ -53,5 +53,10 @@ public class ChiSaturation extends ChiAbility<ChiSaturationConfig> implements Pa
 	@Override
 	public boolean isProgressable() {
 		return false;
+	}
+	
+	@Override
+	public Class<ChiSaturationConfig> getConfigType() {
+		return ChiSaturationConfig.class;
 	}
 }

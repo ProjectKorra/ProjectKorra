@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceSpikeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceSpikeConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -602,6 +602,11 @@ public class IceSpikeBlast extends IceAbility<IceSpikeConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<IceSpikeConfig> getConfigType() {
+		return IceSpikeConfig.class;
 	}
 
 }

@@ -6,7 +6,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.BlazeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.BlazeConfig;
 
 public class BlazeRing extends FireAbility<BlazeConfig> {
 
@@ -104,6 +104,11 @@ public class BlazeRing extends FireAbility<BlazeConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<BlazeConfig> getConfigType() {
+		return BlazeConfig.class;
 	}
 
 }

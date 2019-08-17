@@ -21,7 +21,7 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterManipulationConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterManipulationConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -797,6 +797,11 @@ public class WaterManipulation extends WaterAbility<WaterManipulationConfig> {
 
 	public void setCollisionRadius(final double collisionRadius) {
 		this.collisionRadius = collisionRadius;
+	}
+	
+	@Override
+	public Class<WaterManipulationConfig> getConfigType() {
+		return WaterManipulationConfig.class;
 	}
 
 }

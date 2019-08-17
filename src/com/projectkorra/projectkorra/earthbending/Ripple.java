@@ -19,7 +19,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.ShockwaveConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ShockwaveConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Ripple extends EarthAbility<ShockwaveConfig> {
@@ -439,6 +439,11 @@ public class Ripple extends EarthAbility<ShockwaveConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<ShockwaveConfig> getConfigType() {
+		return ShockwaveConfig.class;
 	}
 
 }

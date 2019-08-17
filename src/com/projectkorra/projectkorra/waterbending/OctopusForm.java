@@ -19,9 +19,9 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.OctopusFormConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.PhaseChangeConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.OctopusFormConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.PhaseChangeConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -714,6 +714,11 @@ public class OctopusForm extends WaterAbility<OctopusFormConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<OctopusFormConfig> getConfigType() {
+		return OctopusFormConfig.class;
 	}
 
 }

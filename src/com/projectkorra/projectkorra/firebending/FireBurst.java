@@ -14,9 +14,9 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBlastConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBurstConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireBurstConfig;
 
 public class FireBurst extends FireAbility<FireBurstConfig> {
 
@@ -264,6 +264,11 @@ public class FireBurst extends FireAbility<FireBurstConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<FireBurstConfig> getConfigType() {
+		return FireBurstConfig.class;
 	}
 
 }

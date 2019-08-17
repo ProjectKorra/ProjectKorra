@@ -12,9 +12,9 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBlastConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBurstConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirBurstConfig;
 
 public class AirBurst extends AirAbility<AirBurstConfig> {
 
@@ -327,5 +327,10 @@ public class AirBurst extends AirAbility<AirBurstConfig> {
 
 	public ArrayList<Entity> getAffectedEntities() {
 		return this.affectedEntities;
+	}
+	
+	@Override
+	public Class<AirBurstConfig> getConfigType() {
+		return AirBurstConfig.class;
 	}
 }

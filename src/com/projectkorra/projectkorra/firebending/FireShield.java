@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireShieldConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireShieldConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -288,6 +288,11 @@ public class FireShield extends FireAbility<FireShieldConfig> {
 
 	public void setShieldCooldown(final long cooldown) {
 		this.shieldCooldown = cooldown;
+	}
+	
+	@Override
+	public Class<FireShieldConfig> getConfigType() {
+		return FireShieldConfig.class;
 	}
 
 }

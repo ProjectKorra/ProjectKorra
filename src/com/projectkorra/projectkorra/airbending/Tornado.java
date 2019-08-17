@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.TornadoConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.TornadoConfig;
 
 public class Tornado extends AirAbility<TornadoConfig> {
 
@@ -322,5 +322,10 @@ public class Tornado extends AirAbility<TornadoConfig> {
 
 	public Map<Integer, Integer> getAngles() {
 		return this.angles;
+	}
+	
+	@Override
+	public Class<TornadoConfig> getConfigType() {
+		return TornadoConfig.class;
 	}
 }

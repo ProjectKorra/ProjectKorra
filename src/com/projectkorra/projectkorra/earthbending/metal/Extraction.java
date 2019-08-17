@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.ExtractionConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ExtractionConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Extraction extends MetalAbility<ExtractionConfig> {
@@ -159,6 +159,11 @@ public class Extraction extends MetalAbility<ExtractionConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<ExtractionConfig> getConfigType() {
+		return ExtractionConfig.class;
 	}
 
 }

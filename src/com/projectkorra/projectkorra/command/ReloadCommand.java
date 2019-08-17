@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.ReloadCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ReloadCommandConfig;
 
 /**
  * Executor for /bending reload. Extends {@link PKCommand}.

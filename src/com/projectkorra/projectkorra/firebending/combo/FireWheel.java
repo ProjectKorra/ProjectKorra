@@ -18,8 +18,8 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireWheelConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireWheelConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -186,5 +186,10 @@ public class FireWheel extends FireAbility<FireWheelConfig> implements ComboAbil
 
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return this.affectedEntities;
+	}
+	
+	@Override
+	public Class<FireWheelConfig> getConfigType() {
+		return FireWheelConfig.class;
 	}
 }

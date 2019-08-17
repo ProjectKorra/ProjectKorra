@@ -29,8 +29,8 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirBlastConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirBlastConfig;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -649,6 +649,11 @@ public class AirBlast extends AirAbility<AirBlastConfig> {
 
 	public static double getSelectRange() {
 		return ConfigManager.getConfig(AirBlastConfig.class).SelectionRange;
+	}
+	
+	@Override
+	public Class<AirBlastConfig> getConfigType() {
+		return AirBlastConfig.class;
 	}
 
 }

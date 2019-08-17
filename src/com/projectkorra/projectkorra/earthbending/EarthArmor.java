@@ -23,9 +23,9 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthArmorConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthArmorConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -613,6 +613,11 @@ public class EarthArmor extends EarthAbility<EarthArmorConfig> {
 
 	public void setMaxGoldHearts(final int maxGoldHearts) {
 		this.maxGoldHearts = maxGoldHearts;
+	}
+	
+	@Override
+	public Class<EarthArmorConfig> getConfigType() {
+		return EarthArmorConfig.class;
 	}
 
 }

@@ -8,7 +8,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.SwiftKickConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.SwiftKickConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class SwiftKick extends ChiAbility<SwiftKickConfig> {
@@ -102,6 +102,11 @@ public class SwiftKick extends ChiAbility<SwiftKickConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<SwiftKickConfig> getConfigType() {
+		return SwiftKickConfig.class;
 	}
 
 }

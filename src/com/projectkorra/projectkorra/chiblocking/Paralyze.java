@@ -13,7 +13,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.ParalyzeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.ParalyzeConfig;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class Paralyze extends ChiAbility<ParalyzeConfig> {
@@ -103,5 +103,10 @@ public class Paralyze extends ChiAbility<ParalyzeConfig> {
 
 	public long getDuration() {
 		return this.duration;
+	}
+	
+	@Override
+	public Class<ParalyzeConfig> getConfigType() {
+		return ParalyzeConfig.class;
 	}
 }

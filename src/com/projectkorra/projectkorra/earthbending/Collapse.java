@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.CollapseConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.CollapseConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
@@ -250,5 +250,10 @@ public class Collapse extends EarthAbility<CollapseConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<CollapseConfig> getConfigType() {
+		return CollapseConfig.class;
 	}
 }

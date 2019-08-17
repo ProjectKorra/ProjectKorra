@@ -12,8 +12,8 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceWaveConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceWaveConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
@@ -126,5 +126,10 @@ public class IceWave extends IceAbility<IceWaveConfig> implements ComboAbility {
 		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
 		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
 		return iceWave;
+	}
+	
+	@Override
+	public Class<IceWaveConfig> getConfigType() {
+		return IceWaveConfig.class;
 	}
 }

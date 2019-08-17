@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.WaterBubbleConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterBubbleConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterBubble extends WaterAbility<WaterBubbleConfig> {
@@ -217,6 +217,11 @@ public class WaterBubble extends WaterAbility<WaterBubbleConfig> {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Class<WaterBubbleConfig> getConfigType() {
+		return WaterBubbleConfig.class;
 	}
 
 }

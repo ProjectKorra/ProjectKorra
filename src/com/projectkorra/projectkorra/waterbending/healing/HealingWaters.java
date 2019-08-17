@@ -20,7 +20,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.HealingWatersConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.HealingWatersConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -356,6 +356,11 @@ public class HealingWaters extends HealingAbility<HealingWatersConfig> {
 	@Override
 	public Location getLocation() {
 		return this.location;
+	}
+	
+	@Override
+	public Class<HealingWatersConfig> getConfigType() {
+		return HealingWatersConfig.class;
 	}
 
 }

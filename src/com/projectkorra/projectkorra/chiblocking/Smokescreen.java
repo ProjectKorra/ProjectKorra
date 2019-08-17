@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.SmokescreenConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.SmokescreenConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class Smokescreen extends ChiAbility<SmokescreenConfig> {
@@ -151,6 +151,11 @@ public class Smokescreen extends ChiAbility<SmokescreenConfig> {
 
 	public static Map<String, Smokescreen> getBlindedToAbility() {
 		return BLINDED_TO_ABILITY;
+	}
+	
+	@Override
+	public Class<SmokescreenConfig> getConfigType() {
+		return SmokescreenConfig.class;
 	}
 
 }

@@ -16,10 +16,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.EarthPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
 
 /**
  * ElementalAbility is used to hold methods that should be accessible by every

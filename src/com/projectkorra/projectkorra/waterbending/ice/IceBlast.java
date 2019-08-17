@@ -20,7 +20,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.IceBlastConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceBlastConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -492,6 +492,11 @@ public class IceBlast extends IceAbility<IceBlastConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<IceBlastConfig> getConfigType() {
+		return IceBlastConfig.class;
 	}
 
 }

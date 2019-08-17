@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.MetalClipsConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.MetalClipsConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
 
@@ -675,6 +675,11 @@ public class MetalClips extends MetalAbility<MetalClipsConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<MetalClipsConfig> getConfigType() {
+		return MetalClipsConfig.class;
 	}
 
 }

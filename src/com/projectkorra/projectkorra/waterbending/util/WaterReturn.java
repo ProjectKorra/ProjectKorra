@@ -15,7 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.EmptyAbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.EmptyAbilityConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
@@ -268,6 +268,11 @@ public class WaterReturn extends WaterAbility<EmptyAbilityConfig> {
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
+	}
+	
+	@Override
+	public Class<EmptyAbilityConfig> getConfigType() {
+		return EmptyAbilityConfig.class;
 	}
 
 }

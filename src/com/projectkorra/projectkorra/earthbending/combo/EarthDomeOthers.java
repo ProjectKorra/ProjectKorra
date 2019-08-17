@@ -11,7 +11,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthDomeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthDomeConfig;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -127,5 +127,10 @@ public class EarthDomeOthers extends EarthAbility<EarthDomeConfig> {
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
+	}
+	
+	@Override
+	public Class<EarthDomeConfig> getConfigType() {
+		return EarthDomeConfig.class;
 	}
 }

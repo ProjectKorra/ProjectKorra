@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSpoutConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSpoutConfig;
 
 public class AirSpout extends AirAbility<AirSpoutConfig> {
 
@@ -278,6 +278,11 @@ public class AirSpout extends AirAbility<AirSpoutConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<AirSpoutConfig> getConfigType() {
+		return AirSpoutConfig.class;
 	}
 
 }

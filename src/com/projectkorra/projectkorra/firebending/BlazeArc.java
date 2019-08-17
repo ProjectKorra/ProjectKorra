@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.BlazeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.BlazeConfig;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class BlazeArc extends FireAbility<BlazeConfig> {
@@ -283,6 +283,11 @@ public class BlazeArc extends FireAbility<BlazeConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<BlazeConfig> getConfigType() {
+		return BlazeConfig.class;
 	}
 
 }

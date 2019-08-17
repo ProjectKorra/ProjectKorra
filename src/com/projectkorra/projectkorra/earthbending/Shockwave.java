@@ -6,7 +6,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.ShockwaveConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ShockwaveConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class Shockwave extends EarthAbility<ShockwaveConfig> {
@@ -188,6 +188,11 @@ public class Shockwave extends EarthAbility<ShockwaveConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<ShockwaveConfig> getConfigType() {
+		return ShockwaveConfig.class;
 	}
 
 }

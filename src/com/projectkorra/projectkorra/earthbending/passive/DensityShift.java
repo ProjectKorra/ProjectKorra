@@ -15,9 +15,9 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.DensityShiftConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.GeneralPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.DensityShiftConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class DensityShift extends EarthAbility<DensityShiftConfig> implements PassiveAbility {
@@ -132,5 +132,10 @@ public class DensityShift extends EarthAbility<DensityShiftConfig> implements Pa
 	@Override
 	public boolean isProgressable() {
 		return false;
+	}
+	
+	@Override
+	public Class<DensityShiftConfig> getConfigType() {
+		return DensityShiftConfig.class;
 	}
 }

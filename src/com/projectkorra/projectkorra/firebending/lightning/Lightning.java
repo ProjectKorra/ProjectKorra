@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.LightningConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.LightningConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
@@ -841,6 +841,11 @@ public class Lightning extends LightningAbility<LightningConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<LightningConfig> getConfigType() {
+		return LightningConfig.class;
 	}
 
 }

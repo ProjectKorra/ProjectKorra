@@ -17,7 +17,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.TorrentConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.TorrentConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -317,6 +317,11 @@ public class TorrentWave extends WaterAbility<TorrentConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<TorrentConfig> getConfigType() {
+		return TorrentConfig.class;
 	}
 
 }

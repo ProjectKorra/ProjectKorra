@@ -13,7 +13,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthTunnelConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthTunnelConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthTunnel extends EarthAbility<EarthTunnelConfig> {
@@ -291,6 +291,11 @@ public class EarthTunnel extends EarthAbility<EarthTunnelConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<EarthTunnelConfig> getConfigType() {
+		return EarthTunnelConfig.class;
 	}
 
 }

@@ -13,9 +13,9 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthDomeConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.RaiseEarthConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthDomeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.RaiseEarthConfig;
 
 public class EarthDome extends EarthAbility<EarthDomeConfig> {
 
@@ -122,6 +122,11 @@ public class EarthDome extends EarthAbility<EarthDomeConfig> {
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
+	}
+	
+	@Override
+	public Class<EarthDomeConfig> getConfigType() {
+		return EarthDomeConfig.class;
 	}
 
 }

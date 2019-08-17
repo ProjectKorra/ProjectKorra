@@ -10,7 +10,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.WarriorStanceConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.WarriorStanceConfig;
 
 @SuppressWarnings("rawtypes")
 public class WarriorStance extends ChiAbility<WarriorStanceConfig> {
@@ -126,6 +126,11 @@ public class WarriorStance extends ChiAbility<WarriorStanceConfig> {
 
 	public void setDuration(final long duration) {
 		this.duration = duration;
+	}
+	
+	@Override
+	public Class<WarriorStanceConfig> getConfigType() {
+		return WarriorStanceConfig.class;
 	}
 
 }

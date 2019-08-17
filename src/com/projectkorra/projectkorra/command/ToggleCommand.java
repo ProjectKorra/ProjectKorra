@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.configuration.configs.commands.ToggleCommandConfig;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.ToggleCommandConfig;
 
 /**
  * Executor for /bending toggle. Extends {@link PKCommand}.

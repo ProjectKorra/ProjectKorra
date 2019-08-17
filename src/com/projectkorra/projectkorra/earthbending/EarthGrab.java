@@ -32,7 +32,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthGrabConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthGrabConfig;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
@@ -384,5 +384,10 @@ public class EarthGrab extends EarthAbility<EarthGrabConfig> {
 
 	public LivingEntity getTarget() {
 		return this.target;
+	}
+	
+	@Override
+	public Class<EarthGrabConfig> getConfigType() {
+		return EarthGrabConfig.class;
 	}
 }

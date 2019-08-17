@@ -14,7 +14,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.CatapultConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.CatapultConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class Catapult extends EarthAbility<CatapultConfig> {
@@ -183,5 +183,10 @@ public class Catapult extends EarthAbility<CatapultConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<CatapultConfig> getConfigType() {
+		return CatapultConfig.class;
 	}
 }

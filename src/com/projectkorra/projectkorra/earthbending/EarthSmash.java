@@ -20,7 +20,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthSmashConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthSmashConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -975,6 +975,11 @@ public class EarthSmash extends EarthAbility<EarthSmashConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<EarthSmashConfig> getConfigType() {
+		return EarthSmashConfig.class;
 	}
 
 }

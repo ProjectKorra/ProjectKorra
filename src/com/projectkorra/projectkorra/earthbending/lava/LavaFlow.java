@@ -20,7 +20,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.LavaFlowConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.LavaFlowConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Information;
@@ -946,6 +946,11 @@ public class LavaFlow extends LavaAbility<LavaFlowConfig> {
 
 	public ArrayList<BukkitRunnable> getTasks() {
 		return this.tasks;
+	}
+	
+	@Override
+	public Class<LavaFlowConfig> getConfigType() {
+		return LavaFlowConfig.class;
 	}
 
 }

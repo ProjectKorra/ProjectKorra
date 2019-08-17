@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.ClearCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ClearCommandConfig;
 
 /**
  * Executor for /bending clear. Extends {@link PKCommand}.

@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.CheckCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.CheckCommandConfig;
 
 /**
  * Executor for /bending check. Extends {@link PKCommand}.

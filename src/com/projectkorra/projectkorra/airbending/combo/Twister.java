@@ -14,8 +14,8 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.TwisterConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.TwisterConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class Twister extends AirAbility<TwisterConfig> implements ComboAbility {
@@ -193,5 +193,10 @@ public class Twister extends AirAbility<TwisterConfig> implements ComboAbility {
 		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
 		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
 		return twister;
+	}
+	
+	@Override
+	public Class<TwisterConfig> getConfigType() {
+		return TwisterConfig.class;
 	}
 }

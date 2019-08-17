@@ -15,7 +15,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.WallOfFireConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.WallOfFireConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -363,6 +363,11 @@ public class WallOfFire extends FireAbility<WallOfFireConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<WallOfFireConfig> getConfigType() {
+		return WallOfFireConfig.class;
 	}
 
 }

@@ -16,14 +16,14 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.HelpCommandConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.AirPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.AvatarPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.ChiPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.EarthPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.FirePropertiesConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.HelpCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.AirPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.AvatarPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.ChiPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.FirePropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.

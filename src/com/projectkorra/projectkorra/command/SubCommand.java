@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import com.projectkorra.projectkorra.configuration.better.configs.commands.CommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.CommandConfig;
 
 /**
  * Interface representation of a command executor.

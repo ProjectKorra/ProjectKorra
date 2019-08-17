@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.BloodbendingConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.BloodbendingConfig;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -443,6 +443,11 @@ public class Bloodbending extends BloodAbility<BloodbendingConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<BloodbendingConfig> getConfigType() {
+		return BloodbendingConfig.class;
 	}
 
 }

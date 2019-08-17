@@ -4,9 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.avatar.AvatarStateConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.avatar.AvatarStateConfig;
 
 public abstract class AvatarAbility<C extends AbilityConfig> extends ElementalAbility<C> {
 

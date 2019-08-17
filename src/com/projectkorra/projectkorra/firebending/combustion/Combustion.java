@@ -15,7 +15,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.CombustionConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.CombustionConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -285,6 +285,11 @@ public class Combustion extends CombustionAbility<CombustionConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<CombustionConfig> getConfigType() {
+		return CombustionConfig.class;
 	}
 
 }

@@ -17,9 +17,9 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.EarthPillarsConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.RaiseEarthConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthPillarsConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.RaiseEarthConfig;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -163,5 +163,10 @@ public class EarthPillars extends EarthAbility<EarthPillarsConfig> implements Co
 		earthPillars.add(new AbilityInformation("Shockwave", ClickType.SHIFT_DOWN));
 		earthPillars.add(new AbilityInformation("Catapult", ClickType.SHIFT_UP));
 		return earthPillars;
+	}
+	
+	@Override
+	public Class<EarthPillarsConfig> getConfigType() {
+		return EarthPillarsConfig.class;
 	}
 }

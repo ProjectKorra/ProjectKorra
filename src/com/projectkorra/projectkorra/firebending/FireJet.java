@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireJetConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireJetConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireJet extends FireAbility<FireJetConfig> {
@@ -180,6 +180,11 @@ public class FireJet extends FireAbility<FireJetConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<FireJetConfig> getConfigType() {
+		return FireJetConfig.class;
 	}
 
 }

@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.IlluminationConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.IlluminationConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Illumination extends FireAbility<IlluminationConfig> {
@@ -208,6 +208,11 @@ public class Illumination extends FireAbility<IlluminationConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<IlluminationConfig> getConfigType() {
+		return IlluminationConfig.class;
 	}
 
 }

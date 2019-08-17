@@ -19,7 +19,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.SurgeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.SurgeConfig;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -667,6 +667,11 @@ public class SurgeWall extends WaterAbility<SurgeConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<SurgeConfig> getConfigType() {
+		return SurgeConfig.class;
 	}
 
 }

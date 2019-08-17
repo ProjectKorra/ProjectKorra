@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirScooterConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirScooterConfig;
 
 public class AirScooter extends AirAbility<AirScooterConfig> {
 
@@ -325,5 +325,10 @@ public class AirScooter extends AirAbility<AirScooterConfig> {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<AirScooterConfig> getConfigType() {
+		return AirScooterConfig.class;
 	}
 }

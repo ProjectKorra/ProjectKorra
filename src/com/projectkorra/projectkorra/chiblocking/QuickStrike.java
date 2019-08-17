@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.QuickStrikeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.QuickStrikeConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class QuickStrike extends ChiAbility<QuickStrikeConfig> {
@@ -104,5 +104,10 @@ public class QuickStrike extends ChiAbility<QuickStrikeConfig> {
 
 	public void setTarget(final Entity target) {
 		this.target = target;
+	}
+	
+	@Override
+	public Class<QuickStrikeConfig> getConfigType() {
+		return QuickStrikeConfig.class;
 	}
 }

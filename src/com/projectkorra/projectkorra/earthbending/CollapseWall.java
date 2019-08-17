@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.earth.CollapseConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.CollapseConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
@@ -158,6 +158,11 @@ public class CollapseWall extends EarthAbility<CollapseConfig> {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<CollapseConfig> getConfigType() {
+		return CollapseConfig.class;
 	}
 
 }

@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.AcrobaticsConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.AcrobaticsConfig;
 
 public class Acrobatics extends ChiAbility<AcrobaticsConfig> implements PassiveAbility {
 	public Acrobatics(final AcrobaticsConfig config, final Player player) {
@@ -53,5 +53,10 @@ public class Acrobatics extends ChiAbility<AcrobaticsConfig> implements PassiveA
 	@Override
 	public boolean isProgressable() {
 		return false;
+	}
+	
+	@Override
+	public Class<AcrobaticsConfig> getConfigType() {
+		return AcrobaticsConfig.class;
 	}
 }

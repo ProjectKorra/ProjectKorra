@@ -13,9 +13,9 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Suffocate;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.AirPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.AirPropertiesConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public abstract class AirAbility<C extends AbilityConfig> extends ElementalAbility<C> {

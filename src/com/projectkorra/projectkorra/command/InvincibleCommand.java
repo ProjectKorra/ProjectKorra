@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.InvincibleCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.InvincibleCommandConfig;
 
 /**
  * Executor for /bending invincible. Extends {@link PKCommand}.

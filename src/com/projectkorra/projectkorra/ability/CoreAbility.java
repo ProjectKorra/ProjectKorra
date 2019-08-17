@@ -48,7 +48,7 @@ import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.AttributePriority;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
@@ -765,6 +765,8 @@ public abstract class CoreAbility<C extends AbilityConfig> implements Ability {
 	public int getId() {
 		return this.id;
 	}
+	
+	public abstract Class<C> getConfigType();
 
 	@Override
 	public boolean isHiddenAbility() {

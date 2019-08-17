@@ -10,7 +10,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.chi.AcrobatStanceConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.AcrobatStanceConfig;
 
 @SuppressWarnings("rawtypes")
 public class AcrobatStance extends ChiAbility<AcrobatStanceConfig> {
@@ -146,6 +146,11 @@ public class AcrobatStance extends ChiAbility<AcrobatStanceConfig> {
 
 	public void setParalyzeDodgeBoost(final double paralyzeDodgeBoost) {
 		this.paralyzeDodgeBoost = paralyzeDodgeBoost;
+	}
+	
+	@Override
+	public Class<AcrobatStanceConfig> getConfigType() {
+		return AcrobatStanceConfig.class;
 	}
 
 }

@@ -19,7 +19,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.PhaseChangeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.PhaseChangeConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -564,5 +564,10 @@ public class PhaseChange extends IceAbility<PhaseChangeConfig> {
 
 	public List<PhaseChangeType> getActiveTypes() {
 		return this.active_types;
+	}
+	
+	@Override
+	public Class<PhaseChangeConfig> getConfigType() {
+		return PhaseChangeConfig.class;
 	}
 }

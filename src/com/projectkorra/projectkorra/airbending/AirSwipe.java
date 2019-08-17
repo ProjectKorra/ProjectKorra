@@ -24,7 +24,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.air.AirSwipeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSwipeConfig;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -450,6 +450,11 @@ public class AirSwipe extends AirAbility<AirSwipeConfig> {
 
 	public void setArcIncrement(final int arcIncrement) {
 		this.arcIncrement = arcIncrement;
+	}
+	
+	@Override
+	public Class<AirSwipeConfig> getConfigType() {
+		return AirSwipeConfig.class;
 	}
 
 }

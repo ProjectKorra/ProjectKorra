@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.PlantAbility;
-import com.projectkorra.projectkorra.configuration.better.ConfigManager;
-import com.projectkorra.projectkorra.configuration.better.configs.abilities.EmptyAbilityConfig;
-import com.projectkorra.projectkorra.configuration.better.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.EmptyAbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
 
 public class PlantRegrowth extends PlantAbility<EmptyAbilityConfig> {
 
@@ -139,6 +139,11 @@ public class PlantRegrowth extends PlantAbility<EmptyAbilityConfig> {
 
 	public void setBlock(final Block block) {
 		this.block = block;
+	}
+	
+	@Override
+	public Class<EmptyAbilityConfig> getConfigType() {
+		return EmptyAbilityConfig.class;
 	}
 
 }

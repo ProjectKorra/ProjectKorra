@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.better.configs.commands.BindCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
 
 /**
  * Executor for /bending bind. Extends {@link PKCommand}.
