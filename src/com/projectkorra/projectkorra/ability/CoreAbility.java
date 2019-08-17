@@ -355,7 +355,7 @@ public abstract class CoreAbility implements Ability {
 	 * Returns a "fake" instance for a CoreAbility with the specific class.
 	 *
 	 * @param clazz the class for the type of CoreAbility to be returned
-	 * @return a "fake" CoreAbility instance or null
+	 * @return a "fake" CoreAbility instance or null if the ability doesn't exist or <b>isn't enabled</b>
 	 */
 	public static CoreAbility getAbility(final Class<? extends CoreAbility> clazz) {
 		return clazz != null ? ABILITIES_BY_CLASS.get(clazz) : null;
@@ -652,12 +652,12 @@ public abstract class CoreAbility implements Ability {
 				}
 
 				if (coreAbil instanceof PassiveAbility) {
+					PassiveAbility passive = (PassiveAbility) coreAbil;
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
-						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
+					if (!PassiveManager.getPassiveClasses().containsKey(passive)) {
+						PassiveManager.getPassiveClasses().put(passive, coreAbil.getClass());
 					}
-					PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 				}
 			} catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
@@ -720,10 +720,11 @@ public abstract class CoreAbility implements Ability {
 				}
 
 				if (coreAbil instanceof PassiveAbility) {
+					PassiveAbility passive = (PassiveAbility) coreAbil;
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
-						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
+					if (!PassiveManager.getPassiveClasses().containsKey(passive)) {
+						PassiveManager.getPassiveClasses().put(passive, coreAbil.getClass());
 					}
 				}
 			} catch (Exception | Error e) {

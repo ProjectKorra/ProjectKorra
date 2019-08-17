@@ -30,7 +30,7 @@ public class DBCooldownManager extends Manager {
 		// Create pk_cooldowns table.
 		if (!DBConnection.sql.tableExists("pk_cooldowns")) {
 			ProjectKorra.log.info("Creating pk_cooldowns table");
-			String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) PRIMARY KEY, cooldown_id INTEGER NOT NULL, value BIGINT);";
+			String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 			if (DBConnection.sql instanceof MySQL) {
 				query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 			}
