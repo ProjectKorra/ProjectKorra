@@ -34,7 +34,10 @@ public class PassiveHandler {
 	}
 
 	public static void checkExhaustionPassives(final Player player) {
-		if (!CoreAbility.getAbility(AirSaturation.class).isEnabled() && !CoreAbility.getAbility(ChiSaturation.class).isEnabled()) {
+		CoreAbility airsat = CoreAbility.getAbility(AirSaturation.class);
+		CoreAbility chisat = CoreAbility.getAbility(ChiSaturation.class);
+		
+		if ((airsat == null || !airsat.isEnabled()) && (chisat == null || !chisat.isEnabled())) {
 			return;
 		}
 
@@ -55,11 +58,11 @@ public class PassiveHandler {
 			return;
 		}
 
-		if (!PassiveManager.hasPassive(player, CoreAbility.getAbility(AirSaturation.class))) {
+		if (!PassiveManager.hasPassive(player, airsat)) {
 			air = 0;
 		}
 
-		if (!PassiveManager.hasPassive(player, CoreAbility.getAbility(ChiSaturation.class))) {
+		if (!PassiveManager.hasPassive(player, chisat)) {
 			chi = 0;
 		}
 
