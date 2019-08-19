@@ -1589,13 +1589,13 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSlotChange(final PlayerItemHeldEvent event) {
 		final Player player = event.getPlayer();
-		final int slot = event.getNewSlot() + 1;
+		final int slot = event.getNewSlot();
 		GeneralMethods.displayMovePreview(player, slot);
 
 		if (!ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingPreview) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 			if (waterArms != null) {
-				waterArms.displayBoundMsg(event.getNewSlot() + 1);
+				waterArms.displayBoundMsg(event.getNewSlot());
 				return;
 			}
 		}

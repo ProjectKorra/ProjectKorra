@@ -124,7 +124,7 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 		}
 
 		final String name = coreAbil != null ? coreAbil.getName() : null;
-		GeneralMethods.bindAbility((Player) sender, name, slot);
+		GeneralMethods.bindAbility((Player) sender, name, slot - 1);
 	}
 
 	@Override

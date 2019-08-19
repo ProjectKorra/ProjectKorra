@@ -188,7 +188,7 @@ public class GeneralMethods {
 	 * @see #bindAbility(Player, String, int)
 	 */
 	public static void bindAbility(final Player player, final String ability) {
-		final int slot = player.getInventory().getHeldItemSlot() + 1;
+		final int slot = player.getInventory().getHeldItemSlot();
 		bindAbility(player, ability, slot);
 	}
 
@@ -212,10 +212,10 @@ public class GeneralMethods {
 		if (bPlayer == null) {
 			return;
 		}
-		bPlayer.getAbilities()[slot - 1] = ability;
+		bPlayer.getAbilities()[slot] = ability;
 
 		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", ability).replace("{slot}", String.valueOf(slot + 1)));
 		}
 		saveAbility(bPlayer, slot, ability);
 	}
@@ -498,7 +498,7 @@ public class GeneralMethods {
 	}
 
 	public static void displayMovePreview(final Player player) {
-		displayMovePreview(player, player.getInventory().getHeldItemSlot() + 1);
+		displayMovePreview(player, player.getInventory().getHeldItemSlot());
 	}
 
 	public static void displayMovePreview(final Player player, final int slot) {
@@ -510,7 +510,7 @@ public class GeneralMethods {
 		if (bPlayer == null) {
 			return;
 		}
-		String displayedMessage = bPlayer.getAbilities()[slot - 1];
+		String displayedMessage = bPlayer.getAbilities()[slot];
 		final CoreAbility ability = CoreAbility.getAbility(displayedMessage);
 
 		if (ability != null && bPlayer != null) {
@@ -1841,7 +1841,7 @@ public class GeneralMethods {
 		}
 		final String[] abilities = bPlayer.getAbilities();
 
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities[slot - 1] == null ? null : abilities[slot - 1]) + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + (slot + 1) + " = '" + (abilities[slot] == null ? null : abilities[slot - 1]) + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void saveElements(final BendingPlayer bPlayer, List<Element> e) {

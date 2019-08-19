@@ -314,13 +314,13 @@ public class WhoCommand extends PKCommand<WhoCommandConfig> {
 			final UUID uuid = player.getUniqueId();
 			if (bPlayer != null) {
 				sender.sendMessage("Abilities: ");
-				for (int i = 1; i <= 9; i++) {
-					final String ability = bPlayer.getAbilities()[i - 1];
+				for (int i = 0; i < 9; i++) {
+					final String ability = bPlayer.getAbilities()[i];
 					final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 					if (coreAbil == null) {
 						continue;
 					} else {
-						sender.sendMessage(i + " - " + coreAbil.getElement().getColor() + ability);
+						sender.sendMessage((i + 1) + " - " + coreAbil.getElement().getColor() + ability);
 					}
 				}
 			}

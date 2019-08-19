@@ -216,7 +216,7 @@ public class MultiAbilityManager {
 				}
 			}
 			if (lastNonNull > -1) {
-				GeneralMethods.saveAbility(bPlayer, lastNonNull + 1, prevBinds[lastNonNull]);
+				GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds[lastNonNull]);
 			}
 
 			if (player.isOnline()) {
