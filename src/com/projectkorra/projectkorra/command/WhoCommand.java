@@ -315,7 +315,7 @@ public class WhoCommand extends PKCommand<WhoCommandConfig> {
 			if (bPlayer != null) {
 				sender.sendMessage("Abilities: ");
 				for (int i = 1; i <= 9; i++) {
-					final String ability = bPlayer.getAbilities().get(i);
+					final String ability = bPlayer.getAbilities()[i - 1];
 					final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 					if (coreAbil == null) {
 						continue;

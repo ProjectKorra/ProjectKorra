@@ -23,13 +23,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -214,7 +212,7 @@ public class GeneralMethods {
 		if (bPlayer == null) {
 			return;
 		}
-		bPlayer.getAbilities().put(slot, ability);
+		bPlayer.getAbilities()[slot - 1] = ability;
 
 		if (coreAbil != null) {
 			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
@@ -338,206 +336,61 @@ public class GeneralMethods {
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-		final ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
+		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'")) {
+			if (!rs.next()) { // Data doesn't exist, we want a completely new player.
 				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
+						new BendingPlayer(uuid, player, new ArrayList<>(), new ArrayList<>(), new String[9], false);
 						ProjectKorra.log.info("Created new BendingPlayer for " + player);
 					}
 				}.runTask(ProjectKorra.plugin);
 			} else {
 				// The player has at least played before.
-				final String player2 = rs2.getString("player");
+				final String player2 = rs.getString("player");
 				if (!player.equalsIgnoreCase(player2)) {
 					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
 					// They have changed names.
 					ProjectKorra.log.info("Updating Player Name for " + player);
 				}
-				final String subelement = rs2.getString("subelement");
-				final String element = rs2.getString("element");
-				final String permaremoved = rs2.getString("permaremoved");
-				boolean p = false;
-				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null && !element.equals("NULL")) {
-					final boolean hasAddon = element.contains(";");
-					final String[] split = element.split(";");
-					if (split[0] != null) { // Player has an element.
-						if (split[0].contains("a")) {
-							elements.add(Element.AIR);
-						}
-						if (split[0].contains("w")) {
-							elements.add(Element.WATER);
-						}
-						if (split[0].contains("e")) {
-							elements.add(Element.EARTH);
-						}
-						if (split[0].contains("f")) {
-							elements.add(Element.FIRE);
-						}
-						if (split[0].contains("c")) {
-							elements.add(Element.CHI);
-						}
-						if (hasAddon) {
-							/*
-							 * Because plugins which depend on ProjectKorra
-							 * would be loaded after ProjectKorra, addon
-							 * elements would = null. To work around this, we
-							 * keep trying to load in the elements from the
-							 * database until it successfully loads everything
-							 * in, or it times out.
-							 */
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon elements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
-										ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon elements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null) {
-												elements.add(Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
+				final String permarem = rs.getString("permaremoved");
+				boolean permaremoved = permarem != null && permarem.equals("true");
+				final List<Element> elements = new ArrayList<>();
+				final List<SubElement> subelements = new ArrayList<>();
+				final String[] abilities = new String[9];
+				
+				for (int i = 0; i < 9; i++) {
+					final String ability = rs.getString("slot" + (i + 1));
+					if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
+						abilities[i] = ability;
 					}
 				}
-				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
-				boolean shouldSave = false;
-				if (subelement != null && !subelement.equals("NULL")) {
-					final boolean hasAddon = subelement.contains(";");
-					final String[] split = subelement.split(";");
-					if (subelement.equals("-")) {
-						final Player playero = Bukkit.getPlayer(uuid);
-						for (final SubElement sub : Element.getAllSubElements()) {
-							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
-								subelements.add(sub);
-								shouldSave = true && playero != null;
-							}
+				
+				try (ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_player_elements WHERE uuid = '" + uuid.toString() + "';")) {
+					while (rs2.next()) {
+						String elementName = rs2.getString("element");
+						String subElement = rs2.getString("sub_element");
+						boolean isSub = subElement != null && subElement.equals("true");
+						
+						Element element = Element.fromString(elementName);
+						
+						if (element == null) {
+							continue;
 						}
-					} else if (split[0] != null) {
-						if (split[0].contains("m")) {
-							subelements.add(Element.METAL);
-						}
-						if (split[0].contains("v")) {
-							subelements.add(Element.LAVA);
-						}
-						if (split[0].contains("s")) {
-							subelements.add(Element.SAND);
-						}
-						if (split[0].contains("c")) {
-							subelements.add(Element.COMBUSTION);
-						}
-						if (split[0].contains("l")) {
-							subelements.add(Element.LIGHTNING);
-						}
-						if (split[0].contains("t")) {
-							subelements.add(Element.SPIRITUAL);
-						}
-						if (split[0].contains("f")) {
-							subelements.add(Element.FLIGHT);
-						}
-						if (split[0].contains("i")) {
-							subelements.add(Element.ICE);
-						}
-						if (split[0].contains("h")) {
-							subelements.add(Element.HEALING);
-						}
-						if (split[0].contains("b")) {
-							subelements.add(Element.BLOOD);
-						}
-						if (split[0].contains("p")) {
-							subelements.add(Element.PLANT);
-						}
-						if (hasAddon) {
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon subelements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
-										ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon subelements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
-												subelements.add((SubElement) Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
-					}
-				}
-
-				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-				final ConcurrentHashMap<Integer, String> abilitiesClone = new ConcurrentHashMap<Integer, String>(abilities);
-				for (int i = 1; i <= 9; i++) {
-					final String ability = rs2.getString("slot" + i);
-					abilitiesClone.put(i, ability);
-				}
-				final long startTime = System.currentTimeMillis();
-				final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if (abilitiesClone.isEmpty()) {
-							// All abilities loaded.
-							this.cancel();
-						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
-							ProjectKorra.log.severe("These abilities have taken too long to load in, resulting in users having lost them if bound.");
-							this.cancel();
+						
+						if (isSub) {
+							subelements.add((SubElement)element);
 						} else {
-							for (final int slot : abilitiesClone.keySet()) {
-								final String ability = abilitiesClone.get(slot);
-								if (ability.equalsIgnoreCase("null")) {
-									abilitiesClone.remove(slot);
-									continue;
-								} else if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
-									abilities.put(slot, ability);
-									abilitiesClone.remove(slot);
-									continue;
-								}
-							}
+							elements.add(element);
 						}
 					}
-				}.runTaskTimer(ProjectKorra.plugin, 0, 20);
+				}
 
-				p = (permaremoved != null && (permaremoved.equals("true")));
-
-				final boolean boolean_p = p;
-				final boolean shouldSave_ = shouldSave;
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
-						if (shouldSave_) {
-							saveSubElements(BendingPlayer.getBendingPlayer(player));
-						}
+						new BendingPlayer(uuid, player, elements, subelements, abilities, permaremoved);
 					}
 				}.runTask(ProjectKorra.plugin);
 			}
@@ -659,7 +512,7 @@ public class GeneralMethods {
 		if (bPlayer == null) {
 			return;
 		}
-		String displayedMessage = bPlayer.getAbilities().get(slot);
+		String displayedMessage = bPlayer.getAbilities()[slot - 1];
 		final CoreAbility ability = CoreAbility.getAbility(displayedMessage);
 
 		if (ability != null && bPlayer != null) {
@@ -1681,8 +1534,8 @@ public class GeneralMethods {
 
 		// Handle the AirSpout/WaterSpout login glitches.
 		if (player.getGameMode() != GameMode.CREATIVE) {
-			final HashMap<Integer, String> bound = bPlayer.getAbilities();
-			for (final String str : bound.values()) {
+			final String[] bound = bPlayer.getAbilities();
+			for (final String str : bound) {
 				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
 					final Player fplayer = player;
 					new BukkitRunnable() {
@@ -1786,12 +1639,12 @@ public class GeneralMethods {
 		}
 
 		// Remove all bound abilities that will become unusable.
-		final HashMap<Integer, String> slots = bPlayer.getAbilities();
-		final HashMap<Integer, String> finalAbilities = new HashMap<Integer, String>();
-		for (final int i : slots.keySet()) {
-			if (bPlayer.canBind(CoreAbility.getAbility(slots.get(i)))) {
+		String[] currentAbilities = bPlayer.getAbilities();
+		String[] finalAbilities = new String[9];
+		for (int i = 0; i < 9; i++) {
+			if (bPlayer.canBind(CoreAbility.getAbility(currentAbilities[i]))) {
 				// The player will still be able to use this given Ability, do not remove it from their binds.
-				finalAbilities.put(i, slots.get(i));
+				finalAbilities[i] = currentAbilities[i];
 			}
 		}
 
@@ -1988,107 +1841,62 @@ public class GeneralMethods {
 		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID()))) {
 			return;
 		}
-		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
+		final String[] abilities = bPlayer.getAbilities();
 
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities[slot - 1] == null ? null : abilities[slot - 1]) + "' WHERE uuid = '" + uuid + "'");
 	}
 
-	public static void saveElements(final BendingPlayer bPlayer) {
+	public static void saveElementsNew(final BendingPlayer bPlayer, List<Element> e) {
 		if (bPlayer == null) {
 			return;
 		}
 		final String uuid = bPlayer.getUUIDString();
 
-		final StringBuilder elements = new StringBuilder();
-		if (bPlayer.hasElement(Element.AIR)) {
-			elements.append("a");
-		}
-		if (bPlayer.hasElement(Element.WATER)) {
-			elements.append("w");
-		}
-		if (bPlayer.hasElement(Element.EARTH)) {
-			elements.append("e");
-		}
-		if (bPlayer.hasElement(Element.FIRE)) {
-			elements.append("f");
-		}
-		if (bPlayer.hasElement(Element.CHI)) {
-			elements.append("c");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getElements()) {
-			if (Arrays.asList(Element.getAddonElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					elements.append(";");
-				}
-				elements.append(element.getName() + ",");
-			}
-		}
-
-		if (elements.length() == 0) {
-			elements.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
+		StringBuilder queryBuilder = new StringBuilder();
+		e.forEach(element -> {
+			queryBuilder.append("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element.getName().toLowerCase() + "', '" + String.valueOf(e instanceof SubElement) + "');");
+		});
+		final String query = queryBuilder.toString();
+		
+		DBConnection.sql.modifyQuery(query);
 	}
-
-	public static void saveSubElements(final BendingPlayer bPlayer) {
+	
+	public static void saveElement(final BendingPlayer bPlayer, Element e) {
+		if (bPlayer == null) {
+			return;
+		}
+		
+		final String uuid = bPlayer.getUUIDString();
+		final String element = e.getName().toLowerCase();
+		final boolean subElement = e instanceof SubElement;
+		
+		DBConnection.sql.modifyQuery("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element + "', '" + String.valueOf(subElement) + "');");
+	}
+	
+	public static void deleteElements(final BendingPlayer bPlayer, List<Element> e) {
 		if (bPlayer == null) {
 			return;
 		}
 		final String uuid = bPlayer.getUUIDString();
 
-		final StringBuilder subs = new StringBuilder();
-		if (bPlayer.hasSubElement(Element.METAL)) {
-			subs.append("m");
+		StringBuilder queryBuilder = new StringBuilder();
+		e.forEach(element -> {
+			queryBuilder.append("DELETE FROM pk_player_elements WHERE uuid='" + uuid + "' AND element='" + element.getName().toLowerCase() + "';");
+		});
+		final String query = queryBuilder.toString();
+		
+		DBConnection.sql.modifyQuery(query);
+	}
+	
+	public static void deleteElement(final BendingPlayer bPlayer, Element e) {
+		if (bPlayer == null) {
+			return;
 		}
-		if (bPlayer.hasSubElement(Element.LAVA)) {
-			subs.append("v");
-		}
-		if (bPlayer.hasSubElement(Element.SAND)) {
-			subs.append("s");
-		}
-		if (bPlayer.hasSubElement(Element.COMBUSTION)) {
-			subs.append("c");
-		}
-		if (bPlayer.hasSubElement(Element.LIGHTNING)) {
-			subs.append("l");
-		}
-		if (bPlayer.hasSubElement(Element.SPIRITUAL)) {
-			subs.append("t");
-		}
-		if (bPlayer.hasSubElement(Element.FLIGHT)) {
-			subs.append("f");
-		}
-		if (bPlayer.hasSubElement(Element.ICE)) {
-			subs.append("i");
-		}
-		if (bPlayer.hasSubElement(Element.HEALING)) {
-			subs.append("h");
-		}
-		if (bPlayer.hasSubElement(Element.BLOOD)) {
-			subs.append("b");
-		}
-		if (bPlayer.hasSubElement(Element.PLANT)) {
-			subs.append("p");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getSubElements()) {
-			if (Arrays.asList(Element.getAddonSubElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					subs.append(";");
-				}
-				subs.append(element.getName() + ",");
-			}
-		}
-
-		if (subs.length() == 0) {
-			subs.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
+		
+		final String uuid = bPlayer.getUUIDString();
+		final String element = e.getName().toLowerCase();
+		
+		DBConnection.sql.modifyQuery("DELETE FROM pk_player_elements WHERE uuid='" + uuid + "' AND element='" + element + "';");
 	}
 
 	public static void savePermaRemoved(final BendingPlayer bPlayer) {
@@ -2097,7 +1905,7 @@ public class GeneralMethods {
 		}
 		final String uuid = bPlayer.getUUIDString();
 		final boolean permaRemoved = bPlayer.isPermaRemoved();
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + String.valueOf(permaRemoved) + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void setVelocity(final Entity entity, final Vector velocity) {
@@ -2297,5 +2105,11 @@ public class GeneralMethods {
 			default:
 				return false;
 		}
+	}
+	
+	public static boolean isVowel(char c) {
+		String vowels = "aeiou";
+		
+		return vowels.indexOf(Character.toLowerCase(c)) != -1;
 	}
 }

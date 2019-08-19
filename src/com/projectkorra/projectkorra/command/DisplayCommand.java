@@ -1,10 +1,11 @@
 package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -322,9 +323,9 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		}
-		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
+		final String[] abilities = bPlayer.getAbilities();
 
-		if (abilities.isEmpty()) {
+		if (Stream.of(abilities).allMatch(Objects::isNull)) {
 			sender.sendMessage(ChatColor.RED + this.noBinds);
 			return;
 		}
@@ -332,7 +333,7 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 		sender.sendMessage(ChatColor.WHITE + (ChatColor.BOLD + "Abilities"));
 
 		for (int i = 1; i <= 9; i++) {
-			final String ability = abilities.get(i);
+			final String ability = abilities[i - 1];
 			final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 			if (coreAbil != null && !ability.equalsIgnoreCase("null")) {
 				String message = i + ". " + coreAbil.getElement().getColor() + ability;

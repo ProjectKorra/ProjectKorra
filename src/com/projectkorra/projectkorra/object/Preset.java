@@ -162,17 +162,14 @@ public class Preset {
 
 		String[] abilities = preset.getAbilities();
 		boolean boundAll = true;
-		HashMap<Integer, String> bindings = new HashMap<>();
 		for (int i = 0; i < abilities.length; i++) {
 			final CoreAbility coreAbil = CoreAbility.getAbility(abilities[i]);
 			if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
 				abilities[i] = null;
 				boundAll = false;
-			} else {
-				bindings.put(i + 1, abilities[i]);
 			}
 		}
-		bPlayer.setAbilities(bindings);
+		bPlayer.setAbilities(abilities);
 		return boundAll;
 	}
 

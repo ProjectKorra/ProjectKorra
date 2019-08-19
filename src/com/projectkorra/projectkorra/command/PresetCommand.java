@@ -223,9 +223,7 @@ public class PresetCommand extends PKCommand<PresetCommandConfig> {
 			}
 			String[] abilities = new String[9];
 			for (int slot = 0; slot < 9; slot++) {
-				if (bPlayer.getAbilities().containsKey(slot + 1)) {
-					abilities[slot] = bPlayer.getAbilities().get(slot + 1);
-				}
+				abilities[slot] = bPlayer.getAbilities()[slot];
 			}
 
 			final Preset preset = new Preset(player.getUniqueId(), name, abilities);

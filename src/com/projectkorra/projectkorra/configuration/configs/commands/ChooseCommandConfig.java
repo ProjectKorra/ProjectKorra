@@ -5,10 +5,10 @@ public class ChooseCommandConfig extends CommandConfig {
 	public final String PlayerNotFound = "";
 	public final String InvalidElement = "";
 	public final String OnCooldown = "";
-	public final String SuccessfullyChosenCFW_Other = "";
-	public final String SuccessfullyChosenCFW = "";
-	public final String SuccessfullyChosenAE_Other = "";
-	public final String SuccessfullyChosenAE = "";
+	public final String SuccessfullyChosen_Other = "";
+	public final String SuccessfullyChosen = "";
+	public final String SuccessfullyChosenVowel_Other = "";
+	public final String SuccessfullyChosenVowel = "";
 	
 	public ChooseCommandConfig() {
 		super("");

@@ -11,16 +11,14 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.ChooseCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
-import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.util.TimeUtil;
 
 /**
@@ -31,10 +29,10 @@ public class ChooseCommand extends PKCommand<ChooseCommandConfig> {
 	private final String invalidElement;
 	private final String playerNotFound;
 	private final String onCooldown;
-	private final String chosenCFW;
-	private final String chosenAE;
-	private final String chosenOtherCFW;
-	private final String chosenOtherAE;
+	private final String chosen;
+	private final String chosenVowel;
+	private final String chosenOther;
+	private final String chosenOtherVowel;
 	private final long cooldown;
 
 	public ChooseCommand(final ChooseCommandConfig config) {
@@ -43,10 +41,10 @@ public class ChooseCommand extends PKCommand<ChooseCommandConfig> {
 		this.playerNotFound = config.PlayerNotFound;
 		this.invalidElement = config.InvalidElement;
 		this.onCooldown = config.OnCooldown;
-		this.chosenCFW = config.SuccessfullyChosenCFW;
-		this.chosenAE = config.SuccessfullyChosenAE;
-		this.chosenOtherCFW = config.SuccessfullyChosenCFW_Other;
-		this.chosenOtherAE = config.SuccessfullyChosenAE_Other;
+		this.chosen = config.SuccessfullyChosen;
+		this.chosenVowel = config.SuccessfullyChosenVowel;
+		this.chosenOther = config.SuccessfullyChosen_Other;
+		this.chosenOtherVowel = config.SuccessfullyChosenVowel_Other;
 		this.cooldown = ConfigManager.getConfig(GeneralPropertiesConfig.class).ChooseCooldown;
 	}
 
@@ -163,51 +161,29 @@ public class ChooseCommand extends PKCommand<ChooseCommandConfig> {
 		if (bPlayer == null) {
 			return;
 		}
-		if (element instanceof SubElement) {
-			final SubElement sub = (SubElement) element;
-			bPlayer.addSubElement(sub);
-			final ChatColor color = sub != null ? sub.getColor() : ChatColor.WHITE;
-			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				GeneralMethods.sendBrandingMessage(sender, color + this.chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+		
+		bPlayer.setElement(element);
+
+		final ChatColor color = element != null ? element.getColor() : ChatColor.WHITE;
+		boolean vowel = GeneralMethods.isVowel(ChatColor.stripColor(element.getName()).charAt(0));
+		
+		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+			if (vowel) {
+				GeneralMethods.sendBrandingMessage(sender, color + this.chosenOtherVowel.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
 			} else {
-				GeneralMethods.sendBrandingMessage(target, color + this.chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
+				GeneralMethods.sendBrandingMessage(sender, color + this.chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
 			}
-			GeneralMethods.saveSubElements(bPlayer);
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
-			bPlayer.setElement(element);
-			bPlayer.getSubElements().clear();
-			for (final SubElement sub : Element.getAllSubElements()) {
-				if (bPlayer.hasElement(sub.getParentElement()) && bPlayer.hasSubElementPermission(sub)) {
-					bPlayer.addSubElement(sub);
-				}
-			}
-
-			final ChatColor color = element != null ? element.getColor() : ChatColor.WHITE;
-			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				if (element != Element.AIR && element != Element.EARTH) {
-					GeneralMethods.sendBrandingMessage(sender, color + this.chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
-				} else {
-					GeneralMethods.sendBrandingMessage(sender, color + this.chosenOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
-				}
+			if (vowel) {
+				GeneralMethods.sendBrandingMessage(target, color + this.chosenVowel.replace("{element}", element.getName() + element.getType().getBender()));
 			} else {
-				if (element != Element.AIR && element != Element.EARTH) {
-					GeneralMethods.sendBrandingMessage(target, color + this.chosenCFW.replace("{element}", element.getName() + element.getType().getBender()));
-				} else {
-					GeneralMethods.sendBrandingMessage(target, color + this.chosenAE.replace("{element}", element.getName() + element.getType().getBender()));
-				}
+				GeneralMethods.sendBrandingMessage(target, color + this.chosen.replace("{element}", element.getName() + element.getType().getBender()));
 			}
-			GeneralMethods.saveElements(bPlayer);
-			GeneralMethods.saveSubElements(bPlayer);
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
-
+		
+		GeneralMethods.saveElement(bPlayer, element);
+		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		GeneralMethods.removeUnusableAbilities(target.getName());
-
-	}
-
-	public static boolean isVowel(final char c) {
-		return "AEIOUaeiou".indexOf(c) != -1;
 	}
 
 	@Override

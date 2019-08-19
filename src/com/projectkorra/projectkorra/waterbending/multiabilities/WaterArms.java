@@ -470,7 +470,7 @@ public class WaterArms extends WaterAbility<WaterArmsConfig> {
 	}
 
 	public void displayBoundMsg(final int slot) {
-		final String name = this.bPlayer.getAbilities().get(slot);
+		final String name = this.bPlayer.getAbilities()[slot - 1];
 		if (name != null) {
 			this.player.sendMessage(this.getElement().getColor() + this.sneakMsg + " " + name);
 		}

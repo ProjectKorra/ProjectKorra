@@ -49,7 +49,7 @@ public class ClearCommand extends PKCommand<ClearCommandConfig> {
 			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		}
 		if (args.size() == 0) {
-			bPlayer.getAbilities().clear();
+			Arrays.fill(bPlayer.getAbilities(), null);
 			for (int i = 1; i <= 9; i++) {
 				GeneralMethods.saveAbility(bPlayer, i, null);
 			}
@@ -60,8 +60,8 @@ public class ClearCommand extends PKCommand<ClearCommandConfig> {
 				if (slot < 1 || slot > 9) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 				}
-				if (bPlayer.getAbilities().get(slot) != null) {
-					bPlayer.getAbilities().remove(slot);
+				if (bPlayer.getAbilities()[slot - 1] != null) {
+					bPlayer.getAbilities()[slot - 1] = null;
 					GeneralMethods.saveAbility(bPlayer, slot, null);
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {

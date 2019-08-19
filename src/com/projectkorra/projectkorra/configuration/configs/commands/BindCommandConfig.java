@@ -8,8 +8,9 @@ public class BindCommandConfig extends CommandConfig {
 	public final String LoadingInfoMessage = "";
 	public final String ElementToggledOffMessage = "";
 	public final String NoElementMessage = "";
-	public final String NoElementMessageAE = "";
+	public final String NoElementMessageVowel = "";
 	public final String NoSubElementMessage = "";
+	public final String NoSubElementMessageVowel = "";
 	public final String UnbindableMessage = "";
 	
 	public BindCommandConfig() {

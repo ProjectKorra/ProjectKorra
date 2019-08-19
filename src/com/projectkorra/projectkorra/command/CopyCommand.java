@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -17,7 +16,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings("rawtypes")
 public class CopyCommand extends PKCommand<CopyCommandConfig> {
 
 	private final String playerNotFound;
@@ -100,15 +99,16 @@ public class CopyCommand extends PKCommand<CopyCommandConfig> {
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
+		final String[] abilities = orig.getAbilities().clone();
 		boolean boundAll = true;
-		for (int i = 1; i <= 9; i++) {
-			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+		for (int i = 0; i < 9; i++) {
+			final CoreAbility coreAbil = CoreAbility.getAbility(abilities[i]);
 			if (coreAbil != null && !target.canBind(coreAbil)) {
-				abilities.remove(i);
+				abilities[i] = null;
 				boundAll = false;
 			}
 		}
+		
 		target.setAbilities(abilities);
 		return boundAll;
 	}

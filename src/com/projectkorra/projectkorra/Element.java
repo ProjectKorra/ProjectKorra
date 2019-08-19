@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -41,7 +42,7 @@ public class Element {
 		}
 	}
 
-	private static final HashMap<String, Element> ALL_ELEMENTS = new HashMap<>(); // Must be initialized first.
+	private static final Map<String, Element> ALL_ELEMENTS = new HashMap<>(); // Must be initialized first.
 
 	public static final Element AIR = new Element("Air", () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AirPrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AirColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).AirSubColor);
 	public static final Element WATER = new Element("Water", () -> ConfigManager.getConfig(ChatPropertiesConfig.class).WaterPrefix, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).WaterColor, () -> ConfigManager.getConfig(ChatPropertiesConfig.class).WaterSubColor);

@@ -2,8 +2,7 @@ package com.projectkorra.projectkorra;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,9 +60,9 @@ public class BendingPlayer {
 	private final String name;
 	private ChiAbility stance;
 	private final DBCooldownManager cooldownManager;
-	private final ArrayList<Element> elements;
-	private final ArrayList<SubElement> subelements;
-	private HashMap<Integer, String> abilities;
+	private final List<Element> elements;
+	private final List<SubElement> subelements;
+	private final String[] abilities;
 	private final Map<String, Cooldown> cooldowns;
 	private final Map<Element, Boolean> toggledElements;
 
@@ -76,12 +75,13 @@ public class BendingPlayer {
 	 * @param abilities The known abilities
 	 * @param permaRemoved The permanent removed status
 	 */
-	public BendingPlayer(final UUID uuid, final String playerName, final ArrayList<Element> elements, final ArrayList<SubElement> subelements, final HashMap<Integer, String> abilities, final boolean permaRemoved) {
+	public BendingPlayer(final UUID uuid, final String playerName, final List<Element> elements, final List<SubElement> subelements, final String[] abilities, final boolean permaRemoved) {
 		this.uuid = uuid;
 		this.name = playerName;
 		this.cooldownManager = Manager.getManager(DBCooldownManager.class);
 		this.elements = elements;
 		this.subelements = subelements;
+		this.abilities = new String[9];
 		this.setAbilities(abilities);
 		this.permaRemoved = permaRemoved;
 		this.player = Bukkit.getPlayer(uuid);
@@ -493,7 +493,7 @@ public class BendingPlayer {
 	 *
 	 * @return map of abilities
 	 */
-	public HashMap<Integer, String> getAbilities() {
+	public String[] getAbilities() {
 		return this.abilities;
 	}
 
@@ -545,8 +545,8 @@ public class BendingPlayer {
 	 * @return The Ability name bounded to the slot
 	 */
 	public String getBoundAbilityName() {
-		final int slot = this.player.getInventory().getHeldItemSlot() + 1;
-		final String name = this.getAbilities().get(slot);
+		final int slot = this.player.getInventory().getHeldItemSlot();
+		final String name = this.getAbilities()[slot];
 
 		return name != null ? name : "";
 	}
@@ -823,11 +823,14 @@ public class BendingPlayer {
 	 *
 	 * @param abilities The abilities to set/save
 	 */
-	public void setAbilities(final HashMap<Integer, String> abilities) {
-		this.abilities = abilities;
+	public void setAbilities(final String[] abilities) {
+		if (abilities.length < this.abilities.length) {
+			Arrays.fill(abilities, null);
+		}
+		System.arraycopy(abilities, 0, this.abilities, 0, abilities.length);
 
-		for (int i = 1; i <= 9; i++) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + this.uuid + "'");
+		for (int i = 0; i < 9; i++) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + (i + 1) + " = '" + this.abilities[i] + "' WHERE uuid = '" + this.uuid + "'");
 		}
 	}
 

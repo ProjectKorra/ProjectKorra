@@ -31,7 +31,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 		}
 
 		if (params.startsWith("slot")) {
-			final String ability = bPlayer.getAbilities().get(Integer.parseInt(params.substring(params.length() - 1)));
+			final String ability = bPlayer.getAbilities()[Integer.parseInt(params.substring(params.length() - 1)) - 1];
 			final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 			if (coreAbil == null) {
 				return "";

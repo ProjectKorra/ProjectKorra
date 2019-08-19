@@ -29,8 +29,9 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 	private final String loadingInfo;
 	private final String toggledElementOff;
 	private final String noElement;
-	private final String noElementAE;
+	private final String noElementVowel;
 	private final String noSubElement;
+	private final String noSubElementVowel;
 	private final String unbindable;
 
 	public BindCommand(final BindCommandConfig config) {
@@ -41,8 +42,9 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 		this.loadingInfo = config.LoadingInfoMessage;
 		this.toggledElementOff = config.ElementToggledOffMessage;
 		this.noElement = config.NoElementMessage;
-		this.noElementAE = config.NoElementMessageAE;
+		this.noElementVowel = config.NoElementMessageVowel;
 		this.noSubElement = config.NoSubElementMessage;
+		this.noSubElementVowel = config.NoSubElementMessageVowel;
 		this.unbindable = config.UnbindableMessage;
 	}
 
@@ -94,12 +96,24 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 				if (coreAbil.getElement() instanceof SubElement) {
 					final SubElement sub = (SubElement) coreAbil.getElement();
 					if (!bPlayer.hasElement(sub.getParentElement())) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ("AEIOUaeiou".indexOf(sub.getParentElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+						if (GeneralMethods.isVowel(ChatColor.stripColor(sub.getParentElement().getName()).charAt(0))) {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+						}
 					} else {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+						if (GeneralMethods.isVowel(ChatColor.stripColor(sub.getName()).charAt(0))) {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElementVowel.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+						}
 					}
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ("AEIOUaeiou".indexOf(coreAbil.getElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					if (GeneralMethods.isVowel(ChatColor.stripColor(coreAbil.getElement().getName()).charAt(0))) {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					} else {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					}
 				}
 			} else {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + super.noPermissionMessage);
@@ -119,7 +133,7 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 			return new ArrayList<String>();
 		}
 
-		List<String> abilities = new ArrayList<String>();
+		List<String> abilities = new ArrayList<>();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		if (args.size() == 0) {
 			if (bPlayer != null) {

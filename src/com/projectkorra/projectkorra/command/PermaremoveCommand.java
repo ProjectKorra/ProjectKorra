@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.configs.commands.PermaremoveCommandConfig;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
@@ -75,8 +77,12 @@ public class PermaremoveCommand extends PKCommand<PermaremoveCommandConfig> {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 			}
 		} else {
+			List<Element> removed = new LinkedList<>();
+			removed.addAll(bPlayer.getElements());
+			removed.addAll(bPlayer.getSubElements());
 			bPlayer.getElements().clear();
-			GeneralMethods.saveElements(bPlayer);
+			bPlayer.getSubElements().clear();
+			GeneralMethods.deleteElements(bPlayer, removed);
 			bPlayer.setPermaRemoved(true);
 			GeneralMethods.savePermaRemoved(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
