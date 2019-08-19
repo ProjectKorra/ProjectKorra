@@ -336,9 +336,10 @@ public class GeneralMethods {
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'")) {
+		ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
+		try {
 			if (!rs.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
+				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null');");
 				new BukkitRunnable() {
 					@Override
 					public void run() {
@@ -350,12 +351,11 @@ public class GeneralMethods {
 				// The player has at least played before.
 				final String player2 = rs.getString("player");
 				if (!player.equalsIgnoreCase(player2)) {
-					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
+					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "';");
 					// They have changed names.
 					ProjectKorra.log.info("Updating Player Name for " + player);
 				}
-				final String permarem = rs.getString("permaremoved");
-				boolean permaremoved = permarem != null && permarem.equals("true");
+				final boolean permaremoved = rs.getBoolean("permaremoved");
 				final List<Element> elements = new ArrayList<>();
 				final List<SubElement> subelements = new ArrayList<>();
 				final String[] abilities = new String[9];
@@ -367,23 +367,21 @@ public class GeneralMethods {
 					}
 				}
 				
-				try (ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_player_elements WHERE uuid = '" + uuid.toString() + "';")) {
-					while (rs2.next()) {
-						String elementName = rs2.getString("element");
-						String subElement = rs2.getString("sub_element");
-						boolean isSub = subElement != null && subElement.equals("true");
-						
-						Element element = Element.fromString(elementName);
-						
-						if (element == null) {
-							continue;
-						}
-						
-						if (isSub) {
-							subelements.add((SubElement)element);
-						} else {
-							elements.add(element);
-						}
+				ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_player_elements WHERE uuid = '" + uuid.toString() + "';");
+				while (rs2.next()) {
+					String elementName = rs2.getString("element");
+					boolean isSub = rs2.getBoolean("sub_element");
+					
+					Element element = Element.fromString(elementName);
+					
+					if (element == null) {
+						continue;
+					}
+					
+					if (isSub) {
+						subelements.add((SubElement)element);
+					} else {
+						elements.add(element);
 					}
 				}
 
@@ -1854,7 +1852,7 @@ public class GeneralMethods {
 
 		StringBuilder queryBuilder = new StringBuilder();
 		e.forEach(element -> {
-			queryBuilder.append("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element.getName().toLowerCase() + "', '" + String.valueOf(e instanceof SubElement) + "');");
+			queryBuilder.append("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element.getName().toLowerCase() + "', " + String.valueOf(e instanceof SubElement) + ");");
 		});
 		final String query = queryBuilder.toString();
 		
@@ -1870,7 +1868,7 @@ public class GeneralMethods {
 		final String element = e.getName().toLowerCase();
 		final boolean subElement = e instanceof SubElement;
 		
-		DBConnection.sql.modifyQuery("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element + "', '" + String.valueOf(subElement) + "');");
+		DBConnection.sql.modifyQuery("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element + "', " + String.valueOf(subElement) + ");");
 	}
 	
 	public static void deleteElements(final BendingPlayer bPlayer, List<Element> e) {
@@ -1905,7 +1903,7 @@ public class GeneralMethods {
 		}
 		final String uuid = bPlayer.getUUIDString();
 		final boolean permaRemoved = bPlayer.isPermaRemoved();
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + String.valueOf(permaRemoved) + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = " + String.valueOf(permaRemoved) + " WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void setVelocity(final Entity entity, final Vector velocity) {

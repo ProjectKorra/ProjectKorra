@@ -82,7 +82,7 @@ public class BendingPlayer {
 		this.elements = elements;
 		this.subelements = subelements;
 		this.abilities = new String[9];
-		this.setAbilities(abilities);
+		System.arraycopy(abilities, 0, this.abilities, 0, abilities.length);
 		this.permaRemoved = permaRemoved;
 		this.player = Bukkit.getPlayer(uuid);
 		this.toggled = true;

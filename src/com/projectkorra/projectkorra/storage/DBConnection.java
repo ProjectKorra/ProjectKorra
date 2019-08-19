@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.storage;
 
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -37,14 +38,27 @@ public class DBConnection {
 			ProjectKorra.log.info("Database connection established.");
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table");
-				final String query = "CREATE TABLE `pk_players` (`uuid` varchar(36) NOT NULL, `player` varchar(16) NOT NULL, `permaremoved` varchar(5), `slot1` varchar(255), `slot2` varchar(255), `slot3` varchar(255), `slot4` varchar(255), `slot5` varchar(255), `slot6` varchar(255), `slot7` varchar(255), `slot8` varchar(255), `slot9` varchar(255), PRIMARY KEY (uuid));";
+				final String query = "CREATE TABLE `pk_players` (`uuid` varchar(36) NOT NULL, `player` varchar(16) NOT NULL, `permaremoved` bool, `slot1` varchar(255), `slot2` varchar(255), `slot3` varchar(255), `slot4` varchar(255), `slot5` varchar(255), `slot6` varchar(255), `slot7` varchar(255), `slot8` varchar(255), `slot9` varchar(255), PRIMARY KEY (uuid));";
 				sql.modifyQuery(query, false);
 			} else {
 				try {
 					final DatabaseMetaData md = sql.connection.getMetaData();
 					boolean elementColumn = md.getColumns(null, null, "pk_players", "element").next();
 					boolean subElementColumn = md.getColumns(null, null, "pk_players", "subelement").next();
-					if (elementColumn || subElementColumn) {
+					boolean permaremoveTextColumn = false;
+					
+					{
+						ResultSet pr = md.getColumns(null, null, "pk_players", "permaremoved");
+						if (pr.next()) {
+							String type = pr.getString("TYPE_NAME");
+							
+							if (type.toLowerCase().contains("varchar")) {
+								permaremoveTextColumn = true;
+							}
+						}
+					}
+					
+					if (elementColumn || subElementColumn || permaremoveTextColumn) {
 						ProjectKorra.log.info("Updating Database...");
 						sql.getConnection().setAutoCommit(false);
 						if (elementColumn) {
@@ -52,6 +66,10 @@ public class DBConnection {
 						}
 						if (subElementColumn) {
 							sql.modifyQuery("ALTER TABLE `pk_players` DROP subelement;", false);
+						}
+						if (permaremoveTextColumn) {
+							sql.modifyQuery("ALTER TABLE `pk_players` DROP permaremoved;", false);
+							sql.modifyQuery("ALTER TABLE `pk_players` ADD permaremoved BOOL AFTER player;", false);
 						}
 						sql.getConnection().commit();
 						sql.getConnection().setAutoCommit(true);
@@ -63,7 +81,7 @@ public class DBConnection {
 			}
 			if (!sql.tableExists("pk_player_elements")) {
 				ProjectKorra.log.info("Creating pk_player_elements table");
-				final String query = "CREATE TABLE `pk_player_elements` (`uuid` varchar(36) NOT NULL, `element` varchar(36) NOT NULL, `sub_element` varchar(5) NOT NULL, PRIMARY KEY (`uuid`, `element`));";
+				final String query = "CREATE TABLE `pk_player_elements` (`uuid` varchar(36) NOT NULL, `element` varchar(36) NOT NULL, `sub_element` bool NOT NULL, PRIMARY KEY (`uuid`, `element`));";
 				sql.modifyQuery(query, false);
 			}
 			if (!sql.tableExists("pk_presets")) {
@@ -91,14 +109,27 @@ public class DBConnection {
 			isOpen = true;
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table.");
-				final String query = "CREATE TABLE `pk_players` (`uuid` TEXT(36) PRIMARY KEY, `player` TEXT(16), `permaremoved` TEXT(5), `slot1` TEXT(255), `slot2` TEXT(255), `slot3` TEXT(255), `slot4` TEXT(255), `slot5` TEXT(255), `slot6` TEXT(255), `slot7` TEXT(255), `slot8` TEXT(255), `slot9` TEXT(255));";
+				final String query = "CREATE TABLE `pk_players` (`uuid` TEXT(36) PRIMARY KEY, `player` TEXT(16), `permaremoved` INTEGER(1), `slot1` TEXT(255), `slot2` TEXT(255), `slot3` TEXT(255), `slot4` TEXT(255), `slot5` TEXT(255), `slot6` TEXT(255), `slot7` TEXT(255), `slot8` TEXT(255), `slot9` TEXT(255));";
 				sql.modifyQuery(query, false);
 			} else {
 				try {
 					final DatabaseMetaData md = sql.connection.getMetaData();
 					boolean elementColumn = md.getColumns(null, null, "pk_players", "element").next();
 					boolean subElementColumn = md.getColumns(null, null, "pk_players", "subelement").next();
-					if (elementColumn || subElementColumn) {
+					boolean permaremoveTextColumn = false;
+					
+					{
+						ResultSet pr = md.getColumns(null, null, "pk_players", "permaremoved");
+						if (pr.next()) {
+							String type = pr.getString("TYPE_NAME");
+							
+							if (type.toLowerCase().contains("text")) {
+								permaremoveTextColumn = true;
+							}
+						}
+					}
+					
+					if (elementColumn || subElementColumn || permaremoveTextColumn) {
 						ProjectKorra.log.info("Updating Database...");
 						sql.getConnection().setAutoCommit(false);
 						if (elementColumn) {
@@ -106,6 +137,10 @@ public class DBConnection {
 						}
 						if (subElementColumn) {
 							sql.modifyQuery("ALTER TABLE `pk_players` DROP subelement;", false);
+						}
+						if (permaremoveTextColumn) {
+							sql.modifyQuery("ALTER TABLE `pk_players` DROP permaremoved;", false);
+							sql.modifyQuery("ALTER TABLE `pk_players` ADD permaremoved INTEGER(1) AFTER player;", false);
 						}
 						sql.getConnection().commit();
 						sql.getConnection().setAutoCommit(true);
@@ -117,7 +152,7 @@ public class DBConnection {
 			}
 			if (!sql.tableExists("pk_player_elements")) {
 				ProjectKorra.log.info("Creating pk_player_elements table");
-				final String query = "CREATE TABLE `pk_player_elements` (`uuid` TEXT(36) NOT NULL, `element` TEXT(36) NOT NULL, `sub_element` TEXT(5) NOT NULL, PRIMARY KEY (`uuid`, `element`));";
+				final String query = "CREATE TABLE `pk_player_elements` (`uuid` TEXT(36) NOT NULL, `element` TEXT(36) NOT NULL, `sub_element` INTEGER(1) NOT NULL, PRIMARY KEY (`uuid`, `element`));";
 				sql.modifyQuery(query, false);
 			}
 			if (!sql.tableExists("pk_presets")) {
