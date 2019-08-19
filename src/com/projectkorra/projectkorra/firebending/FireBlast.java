@@ -22,12 +22,14 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBlastConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBurstConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
-public class FireBlast extends FireAbility {
+public class FireBlast extends FireAbility<FireBlastConfig> {
 
 	private static final int MAX_TICKS = 10000;
 
@@ -60,8 +62,8 @@ public class FireBlast extends FireAbility {
 	private Vector direction;
 	private List<Block> safeBlocks;
 
-	public FireBlast(final Location location, final Vector direction, final Player player, final int damage, final List<Block> safeBlocks) {
-		super(player);
+	public FireBlast(final FireBlastConfig config, final Location location, final Vector direction, final Player player, final double damage, final List<Block> safeBlocks) {
+		super(config, player);
 
 		if (location.getBlock().isLiquid()) {
 			return;
@@ -69,7 +71,6 @@ public class FireBlast extends FireAbility {
 
 		this.setFields();
 		this.safeBlocks = safeBlocks;
-		this.damage = damage;
 
 		this.location = location.clone();
 		this.origin = location.clone();
@@ -80,8 +81,8 @@ public class FireBlast extends FireAbility {
 		this.start();
 	}
 
-	public FireBlast(final Player player) {
-		super(player);
+	public FireBlast(final FireBlastConfig config, final Player player) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown("FireBlast")) {
 			return;
@@ -90,8 +91,7 @@ public class FireBlast extends FireAbility {
 		}
 
 		this.setFields();
-		this.isFireBurst = false;
-		this.damage = this.getDayFactor(getConfig().getDouble("Abilities.Fire.FireBlast.Damage"));
+		this.damage = this.getDayFactor(config.Damage);
 		this.safeBlocks = new ArrayList<>();
 		this.range = this.getDayFactor(this.range);
 		this.location = player.getEyeLocation();
@@ -104,19 +104,21 @@ public class FireBlast extends FireAbility {
 	}
 
 	private void setFields() {
-		this.isFireBurst = true;
+		this.isFireBurst = false;
 		this.powerFurnace = true;
 		this.showParticles = true;
-		this.fireBurstIgnite = getConfig().getBoolean("Abilities.Fire.FireBurst.Ignite");
-		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
-		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
-		this.knockback = getConfig().getDouble("Abilities.Fire.FireBlast.Knockback");
-		this.flameRadius = getConfig().getDouble("Abilities.Fire.FireBlast.FlameParticleRadius");
-		this.smokeRadius = getConfig().getDouble("Abilities.Fire.FireBlast.SmokeParticleRadius");
+
+		this.fireBurstIgnite = false;
+		this.dissipate = config.Dissipate;
+		this.cooldown = config.Cooldown;
+		this.range = config.Range;
+		this.speed = config.Speed;
+		this.collisionRadius = config.CollisionRadius;
+		this.fireTicks = config.FireTicks;
+		this.knockback = config.Knockback;
+		this.flameRadius = config.FlameParticleRadius;
+		this.smokeRadius = config.SmokeParticleRadius;
+		
 		this.random = new Random();
 	}
 
@@ -421,8 +423,12 @@ public class FireBlast extends FireAbility {
 		return this.isFireBurst;
 	}
 
-	public void setFireBurst(final boolean isFireBurst) {
-		this.isFireBurst = isFireBurst;
+	public void setFireBurst(final FireBurstConfig config) {
+		this.isFireBurst = config != null;
+		
+		if (config != null) {
+			this.fireBurstIgnite = config.Ignite;
+		}
 	}
 
 }

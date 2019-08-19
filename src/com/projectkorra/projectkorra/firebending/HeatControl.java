@@ -26,6 +26,9 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.HeatControlConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.water.PhaseChangeConfig;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -37,7 +40,7 @@ import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
 
-public class HeatControl extends FireAbility {
+public class HeatControl extends FireAbility<HeatControlConfig> {
 
 	public enum HeatControlType {
 		COOK, EXTINGUISH, MELT, SOLIDIFY
@@ -80,8 +83,8 @@ public class HeatControl extends FireAbility {
 	private Location solidifyLocation;
 	private Random randy;
 
-	public HeatControl(final Player player, final HeatControlType heatControlType) {
-		super(player);
+	public HeatControl(final HeatControlConfig config, final Player player, final HeatControlType heatControlType) {
+		super(config, player);
 
 		this.heatControlType = heatControlType;
 		this.setFields();
@@ -89,7 +92,7 @@ public class HeatControl extends FireAbility {
 		if (this.heatControlType == HeatControlType.COOK) {
 			if (!isCookable(player.getInventory().getItemInMainHand().getType())) {
 				this.remove();
-				new HeatControl(player, HeatControlType.SOLIDIFY);
+				new HeatControl(config, player, HeatControlType.SOLIDIFY);
 				return;
 			}
 			this.start();
@@ -116,7 +119,7 @@ public class HeatControl extends FireAbility {
 				return;
 			} else if (getLavaBlock(player, this.solidifyRange) == null) {
 				this.remove();
-				new HeatControl(player, HeatControlType.EXTINGUISH);
+				new HeatControl(config, player, HeatControlType.EXTINGUISH);
 				return;
 			}
 
@@ -129,24 +132,24 @@ public class HeatControl extends FireAbility {
 	public void setFields() {
 		if (this.heatControlType == HeatControlType.COOK) {
 			this.cookTime = System.currentTimeMillis();
-			this.cookInterval = getConfig().getLong("Abilities.Fire.HeatControl.Cook.Interval");
+			this.cookInterval = config.CookConfig.Interval;
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
-			this.extinguishCooldown = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
-			this.extinguishRadius = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius");
+			this.extinguishCooldown = config.ExtinguishConfig.Cooldown;
+			this.extinguishRadius = config.ExtinguishConfig.Radius;
 			this.extinguishRadius = this.getDayFactor(this.extinguishRadius);
 		} else if (this.heatControlType == HeatControlType.MELT) {
-			this.meltRange = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Range");
-			this.meltRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Radius");
+			this.meltRange = config.MeltConfig.Range;
+			this.meltRadius = config.MeltConfig.Radius;
 			this.meltRange = this.getDayFactor(this.meltRange);
 			this.meltRadius = this.getDayFactor(this.meltRadius);
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			this.solidifyRadius = 1;
 			this.solidifyDelay = 50;
 			this.solidifyLastBlockTime = 0;
-			this.solidifyMaxRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
-			this.solidifyRange = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
-			this.solidifyRevert = getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert");
-			this.solidifyRevertTime = getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
+			this.solidifyMaxRadius = config.SolidifyConfig.MaxRadius;
+			this.solidifyRange = config.SolidifyConfig.Range;
+			this.solidifyRevert = config.SolidifyConfig.Revert;
+			this.solidifyRevertTime = config.SolidifyConfig.RevertTime;
 			this.randy = new Random();
 		}
 	}
@@ -319,7 +322,7 @@ public class HeatControl extends FireAbility {
 		if (TempBlock.isTempBlock(block)) {
 			final TempBlock tb = TempBlock.get(block);
 			if (PhaseChange.getFrozenBlocksMap().containsKey(tb)) {
-				new PhaseChange(player, PhaseChange.PhaseChangeType.MELT).melt(tb.getBlock());
+				new PhaseChange(ConfigManager.getConfig(PhaseChangeConfig.class), player, PhaseChange.PhaseChangeType.MELT).melt(tb.getBlock());
 			}
 		}
 

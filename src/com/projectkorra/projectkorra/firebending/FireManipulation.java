@@ -14,10 +14,11 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireManipulationConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class FireManipulation extends FireAbility {
+public class FireManipulation extends FireAbility<FireManipulationConfig> {
 
 	public static enum FireManipulationType {
 		SHIFT, CLICK;
@@ -49,8 +50,8 @@ public class FireManipulation extends FireAbility {
 	private Location origin;
 	private Location focalPoint;
 
-	public FireManipulation(final Player player, final FireManipulationType fireManipulationType) {
-		super(player);
+	public FireManipulation(final FireManipulationConfig config, final Player player, final FireManipulationType fireManipulationType) {
+		super(config, player);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
@@ -62,17 +63,17 @@ public class FireManipulation extends FireAbility {
 
 	public void setFields() {
 		if (this.fireManipulationType == FireManipulationType.SHIFT) {
-			this.streamCooldown = getConfig().getLong("Abilities.Fire.FireManipulation.Stream.Cooldown");
-			this.streamRange = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Range");
-			this.streamDamage = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Damage");
-			this.streamSpeed = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Speed");
-			this.streamParticles = getConfig().getInt("Abilities.Fire.FireManipulation.Stream.Particles");
+			this.streamCooldown = config.StreamConfig.Cooldown;
+			this.streamRange = config.StreamConfig.Range;
+			this.streamDamage = config.StreamConfig.Damage;
+			this.streamSpeed = config.StreamConfig.Speed;
+			this.streamParticles = config.StreamConfig.Particles;
 
-			this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireManipulation.Shield.Cooldown");
-			this.shieldRange = getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Range");
-			this.shieldDamage = getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Damage");
-			this.shieldParticles = getConfig().getInt("Abilities.Fire.FireManipulation.Shield.Particles");
-			this.maxDuration = getConfig().getLong("Abilities.Fire.FireManipulation.Shield.MaxDuration");
+			this.shieldCooldown = config.ShieldConfig.Cooldown;
+			this.shieldRange = config.ShieldConfig.Range;
+			this.shieldDamage = config.ShieldConfig.Damage;
+			this.shieldParticles = config.ShieldConfig.Particles;
+			this.maxDuration = config.ShieldConfig.MaxDuration;
 			this.points = new ConcurrentHashMap<>();
 		} else if (this.fireManipulationType == FireManipulationType.CLICK) {
 

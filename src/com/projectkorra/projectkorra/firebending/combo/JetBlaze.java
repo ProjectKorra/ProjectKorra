@@ -13,11 +13,13 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.JetBlazeConfig;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class JetBlaze extends FireAbility implements ComboAbility {
+public class JetBlaze extends FireAbility<JetBlazeConfig> implements ComboAbility {
 
 	private boolean firstTime;
 	private int progressCounter;
@@ -36,8 +38,8 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 	@Attribute(Attribute.DURATION)
 	private long duration;
 
-	public JetBlaze(final Player player) {
-		super(player);
+	public JetBlaze(final JetBlazeConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
@@ -48,16 +50,16 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.JetBlaze.Damage");
-		this.duration = getConfig().getLong("Abilities.Fire.JetBlaze.Duration");
-		this.speed = getConfig().getDouble("Abilities.Fire.JetBlaze.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.JetBlaze.FireTicks");
+		this.damage = config.Damage;
+		this.duration = config.Duration;
+		this.speed = config.Speed;
+		this.cooldown = config.Cooldown;
+		this.fireTicks = config.FireTicks;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.Damage");
-			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.FireTicks");
+			this.damage = config.AvatarState_Damage;
+			this.fireTicks = config.AvatarState_FireTicks;
 		}
 
 		this.start();
@@ -65,7 +67,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new JetBlaze(player);
+		return new JetBlaze(ConfigManager.getConfig(JetBlazeConfig.class), player);
 	}
 
 	@Override

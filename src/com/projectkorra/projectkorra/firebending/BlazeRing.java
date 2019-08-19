@@ -6,8 +6,9 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.BlazeConfig;
 
-public class BlazeRing extends FireAbility {
+public class BlazeRing extends FireAbility<BlazeConfig> {
 
 	@Attribute(Attribute.RANGE)
 	private int range;
@@ -16,16 +17,16 @@ public class BlazeRing extends FireAbility {
 	private double angleIncrement;
 	private Location location;
 
-	public BlazeRing(final Player player) {
-		super(player);
+	public BlazeRing(final BlazeConfig config, final Player player) {
+		super(config, player);
 
-		this.range = getConfig().getInt("Abilities.Fire.Blaze.Ring.Range");
-		this.angleIncrement = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Angle");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
+		this.range = config.RingConfig.Range;
+		this.angleIncrement = config.RingConfig.Angle;
+		this.cooldown = config.RingConfig.Cooldown;
 		this.location = player.getLocation();
 
 		if (this.bPlayer.isAvatarState()) {
-			this.range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
+			this.range = config.RingConfig.AvatarState_Range;
 		}
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("BlazeRing")) {
 			return;
@@ -45,7 +46,7 @@ public class BlazeRing extends FireAbility {
 			direction.setX(vx);
 			direction.setZ(vz);
 
-			new BlazeArc(player, this.location, direction, this.range);
+			new BlazeArc(config, player, this.location, direction, this.range);
 		}
 
 		this.start();

@@ -18,12 +18,14 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireWheelConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class FireWheel extends FireAbility implements ComboAbility {
+public class FireWheel extends FireAbility<FireWheelConfig> implements ComboAbility {
 
 	private Location origin;
 	private Location location;
@@ -43,20 +45,20 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	private double damage;
 	private ArrayList<LivingEntity> affectedEntities;
 
-	public FireWheel(final Player player) {
-		super(player);
+	public FireWheel(final FireWheelConfig config, final Player player) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown("FireWheel") && !this.bPlayer.isAvatarState()) {
 			this.remove();
 			return;
 		}
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireWheel.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireWheel.Range");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireWheel.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
-		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
+		this.damage = config.Damage;
+		this.range = config.Range;
+		this.speed = config.Speed;
+		this.cooldown = config.Cooldown;
+		this.fireTicks = config.FireTicks;
+		this.height = config.Height;
 
 		this.bPlayer.addCooldown(this);
 		this.affectedEntities = new ArrayList<LivingEntity>();
@@ -73,11 +75,11 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Range");
-			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
-			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
+			this.damage = config.AvatarState_Damage;
+			this.range = config.AvatarState_Range;
+			this.speed = config.AvatarState_Speed;
+			this.fireTicks = config.AvatarState_FireTicks;
+			this.height = config.AvatarState_Height;
 		}
 
 		this.radius = this.height - 1;
@@ -88,7 +90,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new FireWheel(player);
+		return new FireWheel(ConfigManager.getConfig(FireWheelConfig.class), player);
 	}
 
 	@Override

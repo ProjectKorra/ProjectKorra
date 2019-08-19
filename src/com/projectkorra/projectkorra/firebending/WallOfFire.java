@@ -15,12 +15,13 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.WallOfFireConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class WallOfFire extends FireAbility {
+public class WallOfFire extends FireAbility<WallOfFireConfig> {
 
 	private boolean active;
 	private int damageTick;
@@ -47,20 +48,20 @@ public class WallOfFire extends FireAbility {
 	private Location origin;
 	private List<Block> blocks;
 
-	public WallOfFire(final Player player) {
-		super(player);
+	public WallOfFire(final WallOfFireConfig config, final Player player) {
+		super(config, player);
 
 		this.active = true;
-		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
-		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
-		this.range = getConfig().getInt("Abilities.Fire.WallOfFire.Range");
-		this.height = getConfig().getInt("Abilities.Fire.WallOfFire.Height");
-		this.width = getConfig().getInt("Abilities.Fire.WallOfFire.Width");
-		this.damage = getConfig().getDouble("Abilities.Fire.WallOfFire.Damage");
-		this.cooldown = getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown");
-		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
-		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.WallOfFire.FireTicks");
+		this.maxAngle = config.MaxAngle;
+		this.interval = config.Interval;
+		this.range = config.Range;
+		this.height = config.Height;
+		this.width = config.Width;
+		this.damage = config.Damage;
+		this.cooldown = config.Cooldown;
+		this.damageInterval = config.DamageInterval;
+		this.duration = config.Duration;
+		this.fireTicks = config.FireTicks;
 		this.random = new Random();
 		this.blocks = new ArrayList<>();
 
@@ -80,11 +81,11 @@ public class WallOfFire extends FireAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Width");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Height");
-			this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.WallOfFire.Duration");
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Damage");
-			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.WallOfFire.FireTicks");
+			this.width = config.AvatarState_Width;
+			this.height = config.AvatarState_Height;
+			this.duration = config.AvatarState_Duration;
+			this.damage = config.AvatarState_Damage;
+			this.fireTicks = config.AvatarState_FireTicks;
 		}
 
 		this.time = System.currentTimeMillis();

@@ -14,9 +14,10 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.IlluminationConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class Illumination extends FireAbility {
+public class Illumination extends FireAbility<IlluminationConfig> {
 
 	private static final Map<TempBlock, Player> BLOCKS = new ConcurrentHashMap<>();
 
@@ -25,17 +26,17 @@ public class Illumination extends FireAbility {
 	private long cooldown;
 	@Attribute(Attribute.RANGE)
 	private double range;
-	private int lightThreshold;
+	private byte lightThreshold;
 	private Material normalType;
 	private TempBlock block;
-	private int oldLevel;
+	private byte oldLevel;
 
-	public Illumination(final Player player) {
-		super(player);
+	public Illumination(final IlluminationConfig config, final Player player) {
+		super(config, player);
 
-		this.range = this.getDayFactor(getConfig().getDouble("Abilities.Fire.Illumination.Range"));
-		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
-		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
+		this.range = this.getDayFactor(config.Range);
+		this.cooldown = config.Cooldown;
+		this.lightThreshold = config.LightThreshold;
 
 		final Illumination oldIllumination = getAbility(player, Illumination.class);
 		if (oldIllumination != null) {

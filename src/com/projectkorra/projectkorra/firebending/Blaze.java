@@ -7,8 +7,9 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.BlazeConfig;
 
-public class Blaze extends FireAbility {
+public class Blaze extends FireAbility<BlazeConfig> {
 
 	@Attribute("Arc")
 	private int arc;
@@ -19,13 +20,13 @@ public class Blaze extends FireAbility {
 	@Attribute(Attribute.SPEED)
 	private double speed;
 
-	public Blaze(final Player player) {
-		super(player);
+	public Blaze(final BlazeConfig config, final Player player) {
+		super(config, player);
 
 		this.speed = 2;
-		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Cooldown");
-		this.arc = getConfig().getInt("Abilities.Fire.Blaze.Arc");
-		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Range");
+		this.cooldown = config.Cooldown;
+		this.arc = config.Arc;
+		this.range = config.Range;
 
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("BlazeArc")) {
 			return;
@@ -50,7 +51,7 @@ public class Blaze extends FireAbility {
 			direction.setX(vx);
 			direction.setZ(vz);
 
-			new BlazeArc(player, location, direction, this.range);
+			new BlazeArc(config, player, location, direction, this.range);
 		}
 
 		this.start();

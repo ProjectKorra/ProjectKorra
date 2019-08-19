@@ -22,10 +22,11 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBlastConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class FireBlastCharged extends FireAbility {
+public class FireBlastCharged extends FireAbility<FireBlastConfig> {
 
 	private static final Map<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
 
@@ -56,8 +57,8 @@ public class FireBlastCharged extends FireAbility {
 	private Location location;
 	private Vector direction;
 
-	public FireBlastCharged(final Player player) {
-		super(player);
+	public FireBlastCharged(final FireBlastConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBend(this) || hasAbility(player, FireBlastCharged.class)) {
 			return;
@@ -65,18 +66,18 @@ public class FireBlastCharged extends FireAbility {
 
 		this.charged = false;
 		this.launched = false;
-		this.canDamageBlocks = getConfig().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");
-		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Charged.Cooldown");
+		this.canDamageBlocks = config.ChargedConfig.DamageBlocks;
+		this.dissipate = config.ChargedConfig.Dissipate;
+		this.chargeTime = config.ChargedConfig.ChargeTime;
+		this.cooldown = config.ChargedConfig.Cooldown;
 		this.time = System.currentTimeMillis();
 		this.interval = 25;
-		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius");
-		this.maxDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range");
-		this.damageRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
-		this.explosionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.ExplosionRadius");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
+		this.collisionRadius = config.ChargedConfig.CollisionRadius;
+		this.maxDamage = config.ChargedConfig.Damage;
+		this.range = config.ChargedConfig.Range;
+		this.damageRadius = config.ChargedConfig.DamageRadius;
+		this.explosionRadius = config.ChargedConfig.ExplosionRadius;
+		this.fireTicks = config.ChargedConfig.FireTicks;
 		this.innerRadius = this.damageRadius / 2;
 
 		if (isDay(player.getWorld())) {
@@ -85,8 +86,8 @@ public class FireBlastCharged extends FireAbility {
 			this.range = this.getDayFactor(this.range);
 		}
 		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");
-			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.Damage");
+			this.chargeTime = config.ChargedConfig.AvatarState_ChargeTime;
+			this.maxDamage = config.ChargedConfig.AvatarState_ChargeTime;
 		}
 
 		if (!player.getEyeLocation().getBlock().isLiquid()) {

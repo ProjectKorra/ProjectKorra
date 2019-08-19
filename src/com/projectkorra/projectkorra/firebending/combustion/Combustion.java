@@ -15,10 +15,11 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.CombustionConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class Combustion extends CombustionAbility {
+public class Combustion extends CombustionAbility<CombustionConfig> {
 
 	private static final int MAX_TICKS = 10000;
 
@@ -41,21 +42,21 @@ public class Combustion extends CombustionAbility {
 	private Location origin;
 	private Vector direction;
 
-	public Combustion(final Player player) {
-		super(player);
+	public Combustion(final CombustionConfig config, final Player player) {
+		super(config, player);
 
 		if (hasAbility(player, Combustion.class) || !this.bPlayer.canBend(this)) {
 			return;
 		}
 
 		this.ticks = 0;
-		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-		this.explosivePower = (float) getConfig().getDouble("Abilities.Fire.Combustion.ExplosivePower");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
-		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
-		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
-		this.speed = getConfig().getDouble("Abilities.Fire.Combustion.Speed");
-		this.range = getConfig().getDouble("Abilities.Fire.Combustion.Range");
+		this.breakBlocks = config.BreakBlocks;
+		this.explosivePower = config.ExplosivePower;
+		this.cooldown = config.Cooldown;
+		this.damage = config.Damage;
+		this.radius = config.Radius;
+		this.speed = config.Speed;
+		this.range = config.Range;
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.origin.clone();

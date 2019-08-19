@@ -16,10 +16,11 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireShieldConfig;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class FireShield extends FireAbility {
+public class FireShield extends FireAbility<FireShieldConfig> {
 
 	private boolean shield;
 	@Attribute("IgniteEntities")
@@ -44,23 +45,23 @@ public class FireShield extends FireAbility {
 	private Random random;
 	private int increment = 20;
 
-	public FireShield(final Player player) {
-		this(player, false);
+	public FireShield(final FireShieldConfig config, final Player player) {
+		this(config, player, false);
 	}
 
-	public FireShield(final Player player, final boolean shield) {
-		super(player);
+	public FireShield(final FireShieldConfig config, final Player player, final boolean shield) {
+		super(config, player);
 
 		this.shield = shield;
 		this.ignite = true;
-		this.discCooldown = getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown");
-		this.discDuration = getConfig().getLong("Abilities.Fire.FireShield.Disc.Duration");
-		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius");
-		this.discFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Disc.FireTicks");
-		this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown");
-		this.shieldDuration = getConfig().getLong("Abilities.Fire.FireShield.Shield.Duration");
-		this.shieldRadius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
-		this.shieldFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Shield.FireTicks");
+		this.discCooldown = config.DiscConfig.Cooldown;
+		this.discDuration = config.DiscConfig.Duration;
+		this.discRadius = config.DiscConfig.Radius;
+		this.discFireTicks = config.DiscConfig.FireTicks;
+		this.shieldCooldown = config.ShieldConfig.Cooldown;
+		this.shieldDuration = config.ShieldConfig.Duration;
+		this.shieldRadius = config.ShieldConfig.Radius;
+		this.shieldFireTicks = config.ShieldConfig.FireTicks;
 		this.random = new Random();
 
 		if (hasAbility(player, FireShield.class) || this.bPlayer.isOnCooldown("FireShield")) {

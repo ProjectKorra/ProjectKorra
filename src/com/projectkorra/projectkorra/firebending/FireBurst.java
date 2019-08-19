@@ -14,17 +14,20 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.better.ConfigManager;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBlastConfig;
+import com.projectkorra.projectkorra.configuration.better.configs.abilities.fire.FireBurstConfig;
 
-public class FireBurst extends FireAbility {
+public class FireBurst extends FireAbility<FireBurstConfig> {
 
 	@Attribute("Charged")
 	private boolean charged;
 	@Attribute(Attribute.DAMAGE)
-	private int damage;
+	private double damage;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
 	@Attribute(Attribute.RANGE)
-	private long range;
+	private double range;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angleTheta;
@@ -32,17 +35,17 @@ public class FireBurst extends FireAbility {
 	private double particlesPercentage;
 	private ArrayList<FireBlast> blasts;
 
-	public FireBurst(final Player player) {
-		super(player);
+	public FireBurst(final FireBurstConfig config, final Player player) {
+		super(config, player);
 
 		this.charged = false;
-		this.damage = getConfig().getInt("Abilities.Fire.FireBurst.Damage");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
-		this.range = getConfig().getLong("Abilities.Fire.FireBurst.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBurst.Cooldown");
-		this.angleTheta = getConfig().getDouble("Abilities.Fire.FireBurst.AngleTheta");
-		this.anglePhi = getConfig().getDouble("Abilities.Fire.FireBurst.AnglePhi");
-		this.particlesPercentage = getConfig().getDouble("Abilities.Fire.FireBurst.ParticlesPercentage");
+		this.damage = config.Damage;
+		this.chargeTime = config.ChargeTime;
+		this.range = config.Range;
+		this.cooldown = config.Cooldown;
+		this.angleTheta = config.AngleTheta;
+		this.anglePhi = config.AnglePhi;
+		this.particlesPercentage = config.ParticlesPercentage;
 		this.blasts = new ArrayList<>();
 
 		if (!this.bPlayer.canBend(this) || hasAbility(player, FireBurst.class)) {
@@ -53,9 +56,9 @@ public class FireBurst extends FireAbility {
 			this.chargeTime /= getDayFactor();
 		}
 		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown");
+			this.chargeTime = config.AvatarState_ChargeTime;
+			this.damage = config.AvatarState_Damage;
+			this.cooldown = config.AvatarState_Cooldown;
 		}
 
 		this.start();
@@ -90,8 +93,9 @@ public class FireBurst extends FireAbility {
 					final Vector direction = new Vector(x, z, y);
 
 					if (direction.angle(vector) <= angle) {
-						final FireBlast fblast = new FireBlast(location, direction.normalize(), this.player, this.damage, safeBlocks);
+						final FireBlast fblast = new FireBlast(ConfigManager.getConfig(FireBlastConfig.class), location, direction.normalize(), this.player, this.damage, safeBlocks);
 						fblast.setRange(this.range);
+						fblast.setFireBurst(config);
 					}
 				}
 			}
@@ -159,10 +163,11 @@ public class FireBurst extends FireAbility {
 					z = r * Math.cos(rtheta);
 
 					final Vector direction = new Vector(x, z, y);
-					final FireBlast fblast = new FireBlast(location, direction.normalize(), this.player, this.damage, safeblocks);
+					final FireBlast fblast = new FireBlast(ConfigManager.getConfig(FireBlastConfig.class), location, direction.normalize(), this.player, this.damage, safeblocks);
 
 					fblast.setRange(this.range);
 					fblast.setShowParticles(false);
+					fblast.setFireBurst(config);
 					this.blasts.add(fblast);
 				}
 			}
@@ -205,11 +210,11 @@ public class FireBurst extends FireAbility {
 		this.charged = charged;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return this.damage;
 	}
 
-	public void setDamage(final int damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 
@@ -221,11 +226,11 @@ public class FireBurst extends FireAbility {
 		this.chargeTime = chargeTime;
 	}
 
-	public long getRange() {
+	public double getRange() {
 		return this.range;
 	}
 
-	public void setRange(final long range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
