@@ -118,7 +118,7 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 				}
 			}
 			if (added.size() > 0) {
-				GeneralMethods.saveElementsNew(bPlayer, added);
+				GeneralMethods.saveElements(bPlayer, added);
 				
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.addedOtherAll.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.YELLOW) + elements);
@@ -210,7 +210,7 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 			if (added.size() == 1) {
 				GeneralMethods.saveElement(bPlayer, added.get(0));
 			} else {
-				GeneralMethods.saveElementsNew(bPlayer, added);
+				GeneralMethods.saveElements(bPlayer, added);
 			}
 			
 			for (Element elem : added) {

@@ -1846,7 +1846,7 @@ public class GeneralMethods {
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities[slot - 1] == null ? null : abilities[slot - 1]) + "' WHERE uuid = '" + uuid + "'");
 	}
 
-	public static void saveElementsNew(final BendingPlayer bPlayer, List<Element> e) {
+	public static void saveElements(final BendingPlayer bPlayer, List<Element> e) {
 		if (bPlayer == null) {
 			return;
 		}
