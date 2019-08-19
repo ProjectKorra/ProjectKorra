@@ -13,6 +13,9 @@ public class FireBlastConfig extends AbilityConfig {
 	public final double FireTicks = 0;
 	public final double Knockback = 0;
 	
+	public final double FlameParticleRadius = 0;
+	public final double SmokeParticleRadius = 0;
+	
 	public final ChargedConfig ChargedConfig = new ChargedConfig();
 	
 	public static class ChargedConfig {
