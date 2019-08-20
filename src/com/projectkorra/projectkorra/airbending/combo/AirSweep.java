@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -131,22 +132,22 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 		if (this.origin == null) {
 			this.direction = this.player.getEyeLocation().getDirection().normalize();
-			this.origin = this.player.getLocation().add(this.direction.clone().multiply(10));
+			this.origin = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0).add(this.direction.clone().multiply(10));
 		}
 		if (this.progressCounter < 8) {
 			return;
 		}
 		if (this.destination == null) {
-			this.destination = this.player.getLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(10));
+			this.destination = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0).add(GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0).getDirection().normalize().multiply(10));
 			final Vector origToDest = GeneralMethods.getDirection(this.origin, this.destination);
 			for (double i = 0; i < 30; i++) {
 				final Location endLoc = this.origin.clone().add(origToDest.clone().multiply(i / 30));
-				if (GeneralMethods.locationEqualsIgnoreDirection(this.player.getLocation(), endLoc)) {
+				if (GeneralMethods.locationEqualsIgnoreDirection(GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0), endLoc)) {
 					continue;
 				}
-				final Vector vec = GeneralMethods.getDirection(this.player.getLocation(), endLoc);
+				final Vector vec = GeneralMethods.getDirection(GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0), endLoc);
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation(), this.range, this.speed);
+				final FireComboStream fs = new FireComboStream(this.player, this, vec, GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0), this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
@@ -191,18 +192,22 @@ public class AirSweep extends AirAbility implements ComboAbility {
 						this.remove();
 						return;
 					}
-					if (!entity.equals(this.player) && !this.affectedEntities.contains(entity) && !(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
-						this.affectedEntities.add(entity);
+					if (!entity.equals(this.player) && !(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 						if (this.knockback != 0) {
-							final Vector force = fstream.getDirection();
-							entity.setVelocity(force.multiply(this.knockback));
+							final Vector force = fstream.getLocation().getDirection();
+							GeneralMethods.setVelocity(entity, force.clone().multiply(this.knockback));
+							new HorizontalVelocityTracker(entity, this.player, 200l, this);
+							entity.setFallDistance(0);
 						}
-						if (this.damage != 0) {
-							if (entity instanceof LivingEntity) {
-								if (fstream.getAbility().getName().equalsIgnoreCase("AirSweep")) {
-									DamageHandler.damageEntity(entity, this.damage, this);
-								} else {
-									DamageHandler.damageEntity(entity, this.damage, this);
+						if(!this.affectedEntities.contains(entity)) {
+							this.affectedEntities.add(entity);
+							if (this.damage != 0) {
+								if (entity instanceof LivingEntity) {
+									if (fstream.getAbility().getName().equalsIgnoreCase("AirSweep")) {
+										DamageHandler.damageEntity(entity, this.damage, this);
+									} else {
+										DamageHandler.damageEntity(entity, this.damage, this);
+									}
 								}
 							}
 						}

@@ -77,7 +77,7 @@ public class AirSwipe extends AirAbility {
 		}
 
 		this.charging = charging;
-		this.origin = player.getEyeLocation();
+		this.origin = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0);
 		this.particles = getConfig().getInt("Abilities.Air.AirSwipe.Particles");
 		this.arc = getConfig().getInt("Abilities.Air.AirSwipe.Arc");
 		this.arcIncrement = getConfig().getInt("Abilities.Air.AirSwipe.StepSize");
