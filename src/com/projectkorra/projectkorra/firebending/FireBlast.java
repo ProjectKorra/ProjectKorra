@@ -52,6 +52,8 @@ public class FireBlast extends FireAbility {
 	private double fireTicks;
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
+	private double flameRadius;
+	private double smokeRadius;
 	private Random random;
 	private Location location;
 	private Location origin;
@@ -113,13 +115,15 @@ public class FireBlast extends FireAbility {
 		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
 		this.knockback = getConfig().getDouble("Abilities.Fire.FireBlast.Knockback");
+		this.flameRadius = getConfig().getDouble("Abilities.Fire.FireBlast.FlameParticleRadius");
+		this.smokeRadius = getConfig().getDouble("Abilities.Fire.FireBlast.SmokeParticleRadius");
 		this.random = new Random();
 	}
 
 	private void advanceLocation() {
 		if (this.showParticles) {
-			ParticleEffect.FLAME.display(this.location, 6, 0.275, 0.275, 0.275, 0);
-			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, 0.3, 0.3, 0.3, 0);
+			ParticleEffect.FLAME.display(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius, 0);
+			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, this.smokeRadius, this.smokeRadius, this.smokeRadius, 0);
 		}
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
