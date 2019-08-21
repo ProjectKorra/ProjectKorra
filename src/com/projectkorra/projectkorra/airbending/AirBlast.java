@@ -141,8 +141,8 @@ public class AirBlast extends AirAbility {
 		this.speed = getConfig().getDouble("Abilities.Air.AirBlast.Speed");
 		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
 		this.radius = getConfig().getDouble("Abilities.Air.AirBlast.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBlast.Push.Entities");
-		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirBlast.Push.Self");
+		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBlast.Push.Self");
+		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirBlast.Push.Entities");
 		this.canFlickLevers = getConfig().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
 		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
 		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
@@ -212,70 +212,66 @@ public class AirBlast extends AirAbility {
 	}
 
 	private void affect(final Entity entity) {
-		final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
-
-		if (!isUser || this.isFromOtherOrigin) {
-			this.pushFactor = this.pushFactorForOthers;
-			final Vector velocity = entity.getVelocity();
-			final double max = this.speed / this.speedFactor;
-			double factor = this.pushFactor;
-
-			final Vector push = this.direction.clone();
-			if (Math.abs(push.getY()) > max && !isUser) {
-				if (push.getY() < 0) {
-					push.setY(-max);
-				} else {
-					push.setY(max);
-				}
-			}
-			if (this.location.getWorld().equals(this.origin.getWorld())) {
-				factor *= 1 - this.location.distance(this.origin) / (2 * this.range);
-			}
-
-			if (isUser && GeneralMethods.isSolid(this.player.getLocation().add(0, -.5, 0).getBlock())) {
-				factor *= .5;
-			}
-
-			final double comp = velocity.dot(push.clone().normalize());
-			if (comp > factor) {
-				velocity.multiply(.5);
-				velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
-			} else if (comp + factor * .5 > factor) {
-				velocity.add(push.clone().multiply(factor - comp));
-			} else {
-				velocity.add(push.clone().multiply(factor * .5));
-			}
-
-			if (entity instanceof Player) {
-				if (Commands.invincible.contains(((Player) entity).getName())) {
-					return;
-				}
-			}
-
-			if (Double.isNaN(velocity.length())) {
+		if (entity instanceof Player) {
+			if (Commands.invincible.contains(((Player) entity).getName())) {
 				return;
 			}
+		}
+		
+		final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
+		double knockback = this.pushFactorForOthers;
 
-			GeneralMethods.setVelocity(entity, velocity);
-			if (this.source != null) {
-				new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
+		if (isUser) {
+			if (isFromOtherOrigin) {
+				knockback = this.pushFactor;
 			} else {
-				new HorizontalVelocityTracker(entity, this.player, 200l, this);
+				return;
 			}
+		}
 
-			if (entity.getFireTicks() > 0) {
-				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
+		final double max = this.speed / this.speedFactor;
+
+		final Vector push = this.direction.clone();
+		if (Math.abs(push.getY()) > max && !isUser) {
+			if (push.getY() < 0) {
+				push.setY(-max);
+			} else {
+				push.setY(max);
 			}
+		}
 
-			entity.setFireTicks(0);
-			breakBreathbendingHold(entity);
+		if (this.location.getWorld().equals(this.origin.getWorld())) {
+			knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
+		}
+		
+		if (GeneralMethods.isSolid(entity.getLocation().add(0, -.5, 0).getBlock())) {
+			knockback *= .5;
+		}
+		
+		if (!this.affectedEntities.contains(entity)) {
+			GeneralMethods.setVelocity(entity, push.multiply(knockback));
+			
+			this.affectedEntities.add(entity);
+		}
+		
+		if (this.source != null) {
+			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
+		} else {
+			new HorizontalVelocityTracker(entity, this.player, 200l, this);
+		}
 
-			if (this.source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity))) {
+		if (entity.getFireTicks() > 0) {
+			entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
+		}
+
+		entity.setFireTicks(0);
+		breakBreathbendingHold(entity);
+
+		if (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player)) {
+			if (this.source != null) {
 				DamageHandler.damageEntity(entity, this.damage, this.source);
-				this.affectedEntities.add(entity);
-			} else if (this.source == null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity))) {
+			} else {
 				DamageHandler.damageEntity(entity, this.damage, this);
-				this.affectedEntities.add(entity);
 			}
 		}
 	}
