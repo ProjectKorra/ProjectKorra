@@ -140,14 +140,15 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		if (this.destination == null) {
 			this.destination = GeneralMethods.getMainHandLocation(player).add(GeneralMethods.getMainHandLocation(player).getDirection().normalize().multiply(10));
 			final Vector origToDest = GeneralMethods.getDirection(this.origin, this.destination);
+			final Location hand = GeneralMethods.getMainHandLocation(player);
 			for (double i = 0; i < 30; i++) {
 				final Location endLoc = this.origin.clone().add(origToDest.clone().multiply(i / 30));
-				if (GeneralMethods.locationEqualsIgnoreDirection(GeneralMethods.getMainHandLocation(player), endLoc)) {
+				if (GeneralMethods.locationEqualsIgnoreDirection(hand, endLoc)) {
 					continue;
 				}
-				final Vector vec = GeneralMethods.getDirection(GeneralMethods.getMainHandLocation(player), endLoc);
+				final Vector vec = GeneralMethods.getDirection(hand, endLoc);
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, GeneralMethods.getMainHandLocation(player), this.range, this.speed);
+				final FireComboStream fs = new FireComboStream(this.player, this, vec, hand, this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
@@ -203,11 +204,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 							this.affectedEntities.add(entity);
 							if (this.damage != 0) {
 								if (entity instanceof LivingEntity) {
-									if (fstream.getAbility().getName().equalsIgnoreCase("AirSweep")) {
-										DamageHandler.damageEntity(entity, this.damage, this);
-									} else {
-										DamageHandler.damageEntity(entity, this.damage, this);
-									}
+									DamageHandler.damageEntity(entity, this.damage, this);
 								}
 							}
 						}
