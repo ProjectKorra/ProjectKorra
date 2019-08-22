@@ -225,6 +225,12 @@ public class AirSuction extends AirAbility {
 				if (this.location.getWorld().equals(this.origin.getWorld())) {
 					knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
 				}
+				
+				push.normalize().multiply(knockback);
+				
+				if (Math.abs(entity.getVelocity().dot(push)) > knockback) {
+					push.add(entity.getVelocity());
+				}
 
 				GeneralMethods.setVelocity(entity, push.normalize().multiply(knockback));
 				new HorizontalVelocityTracker(entity, this.player, 200l, this);
