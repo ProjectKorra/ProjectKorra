@@ -229,7 +229,7 @@ public class AirSuction extends AirAbility {
 				push.normalize().multiply(knockback);
 				
 				if (Math.abs(entity.getVelocity().dot(push)) > knockback) {
-					push.add(entity.getVelocity());
+					push.normalize().add(entity.getVelocity()).multiply(knockback);
 				}
 
 				GeneralMethods.setVelocity(entity, push.normalize().multiply(knockback));
