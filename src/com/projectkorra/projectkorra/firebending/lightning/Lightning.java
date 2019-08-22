@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra.firebending.lightning;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.firebending.FireJet;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -179,6 +181,9 @@ public class Lightning extends LightningAbility {
 			return;
 		} else if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
+			return;
+		} else if (CoreAbility.hasAbility(player, FireJet.class)){
+			this.removeWithTasks();
 			return;
 		}
 
