@@ -132,22 +132,22 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 		if (this.origin == null) {
 			this.direction = this.player.getEyeLocation().getDirection().normalize();
-			this.origin = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0).add(this.direction.clone().multiply(10));
+			this.origin = GeneralMethods.getMainHandLocation(player).add(this.direction.clone().multiply(10));
 		}
 		if (this.progressCounter < 8) {
 			return;
 		}
 		if (this.destination == null) {
-			this.destination = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0).add(GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0).getDirection().normalize().multiply(10));
+			this.destination = GeneralMethods.getMainHandLocation(player).add(GeneralMethods.getMainHandLocation(player).getDirection().normalize().multiply(10));
 			final Vector origToDest = GeneralMethods.getDirection(this.origin, this.destination);
 			for (double i = 0; i < 30; i++) {
 				final Location endLoc = this.origin.clone().add(origToDest.clone().multiply(i / 30));
-				if (GeneralMethods.locationEqualsIgnoreDirection(GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0), endLoc)) {
+				if (GeneralMethods.locationEqualsIgnoreDirection(GeneralMethods.getMainHandLocation(player), endLoc)) {
 					continue;
 				}
-				final Vector vec = GeneralMethods.getDirection(GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0), endLoc);
+				final Vector vec = GeneralMethods.getDirection(GeneralMethods.getMainHandLocation(player), endLoc);
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0), this.range, this.speed);
+				final FireComboStream fs = new FireComboStream(this.player, this, vec, GeneralMethods.getMainHandLocation(player), this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
