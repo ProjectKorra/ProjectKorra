@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.earthbending;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -15,10 +14,9 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class RaiseEarth extends EarthAbility {
-
-	private static final Map<Block, Block> ALL_AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
 	private int distance;
 	@Attribute(Attribute.HEIGHT)
@@ -104,7 +102,7 @@ public class RaiseEarth extends EarthAbility {
 
 	private boolean canInstantiate() {
 		for (final Block block : this.affectedBlocks.keySet()) {
-			if (!this.isEarthbendable(block) || ALL_AFFECTED_BLOCKS.containsKey(block)) {
+			if (!this.isEarthbendable(block) || TempBlock.isTempBlock(block)) {
 				return false;
 			}
 		}
@@ -143,11 +141,15 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	public static boolean blockInAllAffectedBlocks(final Block block) {
-		return ALL_AFFECTED_BLOCKS.containsKey(block);
+		for (RaiseEarth raiseEarth : getAbilities(RaiseEarth.class)) {
+			if (raiseEarth.affectedBlocks.contains(block)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void revertAffectedBlock(final Block block) {
-		ALL_AFFECTED_BLOCKS.remove(block);
 		for (final RaiseEarth raiseEarth : getAbilities(RaiseEarth.class)) {
 			raiseEarth.affectedBlocks.remove(block);
 		}

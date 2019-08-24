@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -71,7 +72,6 @@ public class EarthBlast extends EarthAbility {
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage");
-
 		}
 
 		if (this.prepare()) {
@@ -380,8 +380,12 @@ public class EarthBlast extends EarthAbility {
 		this.firstDestination = this.location.clone();
 		if (this.destination.getY() - this.location.getY() > 2) {
 			this.firstDestination.setY(this.destination.getY() - 1);
-		} else {
+		} else if (this.location.getY() > player.getEyeLocation().getY() && this.location.getBlock().getRelative(BlockFace.UP).isPassable()) {
+			this.firstDestination.subtract(0, 2, 0);
+		} else if (this.location.getBlock().getRelative(BlockFace.UP).isPassable() && this.location.getBlock().getRelative(BlockFace.UP, 2).isPassable()) {
 			this.firstDestination.add(0, 2, 0);
+		} else {
+			this.firstDestination.add(GeneralMethods.getDirection(this.location, this.destination).normalize().setY(0));
 		}
 
 		if (this.destination.distanceSquared(this.location) <= 1) {
