@@ -876,7 +876,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 500);
-			config.addDefault("Abilities.Air.Suffocate.Cooldown", 0);
+			config.addDefault("Abilities.Air.Suffocate.Cooldown", 6500);
 			config.addDefault("Abilities.Air.Suffocate.Range", 20);
 			config.addDefault("Abilities.Air.Suffocate.Damage", 2);
 			config.addDefault("Abilities.Air.Suffocate.DamageInitialDelay", 2);

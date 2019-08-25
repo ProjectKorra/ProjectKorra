@@ -1,4 +1,4 @@
-package com.projectkorra.projectkorra.airbending;
+	package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +142,6 @@ public class Suffocate extends AirAbility {
 			}
 		}
 
-		this.bPlayer.addCooldown(this);
 		this.start();
 	}
 
@@ -171,7 +170,7 @@ public class Suffocate extends AirAbility {
 			if (this.player.getWorld().equals(this.targets.get(0).getWorld())) {
 				dist = this.player.getEyeLocation().distance(this.targets.get(0).getEyeLocation());
 			}
-			final Location targetLoc = this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().normalize().multiply(dist));
+			final Location targetLoc = GeneralMethods.getTargetedLocation(player, dist, false, getTransparentMaterials());
 			final List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, this.constantAimRadius);
 
 			for (int i = 0; i < this.targets.size(); i++) {
@@ -336,6 +335,7 @@ public class Suffocate extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
+		this.bPlayer.addCooldown(this);
 		for (int i = 0; i < this.tasks.size(); i++) {
 			this.tasks.get(i).cancel();
 			this.tasks.remove(i);
