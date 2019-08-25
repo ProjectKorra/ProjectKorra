@@ -802,8 +802,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.SelectParticles", 4);
 			config.addDefault("Abilities.Air.AirBlast.Particles", 6);
 			config.addDefault("Abilities.Air.AirBlast.Cooldown", 500);
-			config.addDefault("Abilities.Air.AirBlast.Push.Self", 2.5);
-			config.addDefault("Abilities.Air.AirBlast.Push.Entities", 3.5);
+			config.addDefault("Abilities.Air.AirBlast.Push.Self", 2.0);
+			config.addDefault("Abilities.Air.AirBlast.Push.Entities", 1.6);
 			config.addDefault("Abilities.Air.AirBlast.CanFlickLevers", true);
 			config.addDefault("Abilities.Air.AirBlast.CanOpenDoors", true);
 			config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
@@ -850,7 +850,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSuction.Range", 20);
 			config.addDefault("Abilities.Air.AirSuction.SelectRange", 10);
 			config.addDefault("Abilities.Air.AirSuction.Radius", 2);
-			config.addDefault("Abilities.Air.AirSuction.Push", 2.5);
+			config.addDefault("Abilities.Air.AirSuction.Push.Self", 2.0);
+			config.addDefault("Abilities.Air.AirSuction.Push.Others", 1.3);
 			config.addDefault("Abilities.Air.AirSuction.Cooldown", 500);
 			config.addDefault("Abilities.Air.AirSuction.Particles", 6);
 			config.addDefault("Abilities.Air.AirSuction.SelectParticles", 6);

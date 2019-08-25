@@ -81,6 +81,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -1105,6 +1106,16 @@ public class GeneralMethods {
 	public static Location getRightSide(final Location location, final double distance) {
 		final float angle = location.getYaw() / 60;
 		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
+	}
+
+	public static Location getMainHandLocation(final Player player) {
+		Location loc;
+		if (player.getMainHand() == MainHand.LEFT) {
+			loc = GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, 1.2, 0);
+		} else {
+			loc = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0);
+		}
+		return loc;
 	}
 
 	public static Plugin getProbending() {
