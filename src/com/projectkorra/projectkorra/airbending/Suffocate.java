@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -251,7 +251,7 @@ public class Suffocate extends AirAbility {
 		Location targetLocation = target.getEyeLocation();
 
 		if (new Random().nextInt(this.bubbleInterval) == 1) {
-			target.getWorld().spawnParticle(Particle.BUBBLE_COLUMN_UP, targetLocation.add(target.getEyeLocation().getDirection().multiply(0.5)), 1, 0, 0, 0, 0);
+			ParticleEffect.BUBBLE_COLUMN_UP.display(targetLocation.add(target.getEyeLocation().getDirection().multiply(0.5)), 1, 0, 0, 0, 0);
 		}
 
 		if (movePoint) {
@@ -265,17 +265,17 @@ public class Suffocate extends AirAbility {
 			}
 
 			if (this.point.getBlock().getType().equals(Material.WATER)) {
-				player.getWorld().spawnParticle(Particle.WATER_BUBBLE, this.point, 2, 0.1, 0.1, 0.1, 0);
+				ParticleEffect.WATER_BUBBLE.display(this.point, 2, 0.1, 0.1, 0.1, 0);
 			} else {
-				getAirbendingParticles().display(this.point, 5, 0.2, 0.2, 0.2, 0);
+				getAirbendingParticles().display(this.point, 3, 0.1, 0.1, 0.1, 0);
 			}
 		}
 	}
 
-	private Location advanceLocationToPoint(Vector vector, Location point1, Location point2) {
-		vector.add(point2.toVector()).subtract(point1.toVector()).multiply(0.5).normalize();
-		point1.add(vector.clone().multiply(0.5));
-		return point1;
+	private Location advanceLocationToPoint(Vector vector, Location start, Location destination) {
+		vector.add(destination.toVector()).subtract(start.toVector()).multiply(0.5).normalize();
+		start.add(vector.clone().multiply(0.5));
+		return start;
 	}
 
 	/** Stops an entity from being suffocated **/

@@ -893,6 +893,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Suffocate.AnimationRadius", 2.0);
 			config.addDefault("Abilities.Air.Suffocate.AnimationParticleAmount", 1);
 			config.addDefault("Abilities.Air.Suffocate.AnimationSpeed", 1.0);
+			config.addDefault("Abilities.Air.Suffocate.UnderwaterBubbleInterval", 5);
 
 			config.addDefault("Abilities.Air.Tornado.Enabled", true);
 			config.addDefault("Abilities.Air.Tornado.Cooldown", 0);
