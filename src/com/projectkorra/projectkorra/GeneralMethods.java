@@ -1187,8 +1187,8 @@ public class GeneralMethods {
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
-
-	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
+	
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... nonOpaque2) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
 
@@ -1208,6 +1208,11 @@ public class GeneralMethods {
 
 		for (double i = 0; i < range; i += 0.2) {
 			location.add(vec);
+			
+			if (checkDiagonals && checkDiagonalWall(location, vec)) {
+				location.subtract(vec);
+				break;
+			}
 
 			final Block block = location.getBlock();
 
@@ -1224,12 +1229,16 @@ public class GeneralMethods {
 		return location;
 	}
 
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
+		return getTargetedLocation(player, range, ignoreTempBlocks, true, nonOpaque2);
+	}
+
 	public static Location getTargetedLocation(final Player player, final double range, final Material... nonOpaque2) {
 		return getTargetedLocation(player, range, false, nonOpaque2);
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
-		return getTargetedLocation(player, range, Material.AIR);
+		return getTargetedLocation(player, range);
 	}
 
 	public static Block getTopBlock(final Location loc, final int range) {
