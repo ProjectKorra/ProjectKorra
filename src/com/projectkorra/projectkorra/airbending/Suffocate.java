@@ -1,4 +1,4 @@
-	package com.projectkorra.projectkorra.airbending;
+package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
 import java.util.List;
