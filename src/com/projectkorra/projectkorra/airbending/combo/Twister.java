@@ -27,8 +27,6 @@ public class Twister extends AirAbility<TwisterConfig> implements ComboAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long time;
-	@Attribute(Attribute.DAMAGE)
-	private double damage;
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	@Attribute(Attribute.RANGE)
@@ -71,7 +69,7 @@ public class Twister extends AirAbility<TwisterConfig> implements ComboAbility {
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = config.AvatarState_Height;
+			this.twisterHeight = config.AvatarState_Height;
 			this.range = config.AvatarState_Range;
 		}
 

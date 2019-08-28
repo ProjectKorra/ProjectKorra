@@ -6,8 +6,8 @@ public class ChiPropertiesConfig implements Config {
 
 	public final String Description = "";
 	
-	public final double BlockChiChance = 0;
-	public final long BlockChiDuration = 0;
+	public final double BlockChiChance = 25;
+	public final long BlockChiDuration = 1000;
 	
 	@Override
 	public String getName() {
