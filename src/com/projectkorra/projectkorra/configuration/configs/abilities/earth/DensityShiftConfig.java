@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class DensityShiftConfig extends AbilityConfig {
 
-	public final long Duration = 0;
+	public final long Duration = 500;
 	
 	public DensityShiftConfig() {
 		super(true, "", null);

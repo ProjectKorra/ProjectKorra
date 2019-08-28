@@ -4,24 +4,24 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class IceSpikeConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;//
-	public final int Height = 0;//
-	public final double Damage = 0;//
-	public final double Range = 0;//
-	public final double Speed = 0;//
-	public final double Push = 0;//
+	public final long Cooldown = 2000;//
+	public final int Height = 3;//
+	public final double Damage = 2;//
+	public final double Range = 20;//
+	public final double Speed = 25;//
+	public final double Push = .5;//
 	
-	public final long SlowCooldown = 0;
-	public final int SlowPower = 0;
-	public final int SlowDuration = 0;
+	public final long SlowCooldown = 2000;
+	public final int SlowPower = 1;
+	public final int SlowDuration = 1000;
 	
-	public final double AvatarState_Damage = 0;
-	public final double AvatarState_Range = 0;
-	public final int AvatarState_Height = 0;
-	public final double AvatarState_Push = 0;
+	public final double AvatarState_Damage = 3;
+	public final double AvatarState_Range = 20;
+	public final int AvatarState_Height = 3;
+	public final double AvatarState_Push = 1;
 	
-	public final int AvatarState_SlowPower = 0;
-	public final int AvatarState_SlowDuration = 0;
+	public final int AvatarState_SlowPower = 2;
+	public final int AvatarState_SlowDuration = 2000;
 	
 	public final BlastConfig BlastConfig = new BlastConfig();
 	
@@ -29,36 +29,36 @@ public class IceSpikeConfig extends AbilityConfig {
 	
 	public static class BlastConfig {
 		
-		public final long Cooldown = 0;
-		public final long Interval = 0;
-		public final double Damage = 0;
-		public final double Range = 0;
-		public final double CollisionRadius = 0;
-		public final double DeflectRange = 0;
+		public final long Cooldown = 1000;
+		public final long Interval = 100;
+		public final double Damage = 2;
+		public final double Range = 25;
+		public final double CollisionRadius = 1.5;
+		public final double DeflectRange = 15;
 		
-		public final double ProjectileRange = 0;
+		public final double ProjectileRange = 25;
 		
-		public final long SlowCooldown = 0;
-		public final int SlowPotency = 0;
-		public final int SlowDuration = 0;
+		public final long SlowCooldown = 1000;
+		public final int SlowPotency = 1;
+		public final int SlowDuration = 500;
 		
-		public final double AvatarState_Damage = 0;
-		public final double AvatarState_Range = 0;
+		public final double AvatarState_Damage = 3;
+		public final double AvatarState_Range = 20;
 		
-		public final int AvatarState_SlowPotency = 0;
-		public final int AvatarState_SlowDuration = 0;
+		public final int AvatarState_SlowPotency = 2;
+		public final int AvatarState_SlowDuration = 2000;
 		
 	}
 	
 	public static class FieldConfig {
 		
-		public final long Cooldown = 0;
-		public final double Damage = 0;
-		public final double Radius = 0;
-		public final double Knockup = 0;
+		public final long Cooldown = 3000;
+		public final double Damage = 4;
+		public final double Radius = 9;
+		public final double Knockup = .5;
 		
-		public final double AvatarState_Damage = 0;
-		public final double AvatarState_Radius = 0;
+		public final double AvatarState_Damage = 5;
+		public final double AvatarState_Radius = 20;
 		
 	}
 	

@@ -4,10 +4,10 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class BloodbendingConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long Duration = 0;
-	public final double Range = 0;
-	public final double Knockback = 0;
+	public final long Cooldown = 10000;
+	public final long Duration = 8000;
+	public final double Range = 15;
+	public final double Knockback = .9;
 	
 	public final boolean CanOnlyBeUsedAtNight = true;
 	public final boolean CanBeUsedOnUndeadMobs = false;

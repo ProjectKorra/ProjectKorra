@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class AirSaturationConfig extends AbilityConfig {
 
-	public final double ExhaustionFactor = 0;
+	public final double ExhaustionFactor = 0.5;
 	
 	public AirSaturationConfig() {
 		super(true, "", null);

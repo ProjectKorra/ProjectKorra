@@ -4,12 +4,12 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class CombustionConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final double Damage = 0;
-	public final double Range = 0;
-	public final double Radius = 0;
-	public final double Speed = 0;
-	public final float ExplosivePower = 0;
+	public final long Cooldown = 3000;
+	public final double Damage = 6;
+	public final double Range = 40;
+	public final double Radius = 1.5;
+	public final double Speed = 40;
+	public final float ExplosivePower = 1.2F;
 	public final boolean BreakBlocks = true;
 	
 	public CombustionConfig() {

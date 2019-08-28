@@ -4,8 +4,8 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class ImmobilizeConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long ParalyzeDuration = 0;
+	public final long Cooldown = 10000;
+	public final long ParalyzeDuration = 4000;
 	
 	public ImmobilizeConfig() {
 		super(true, "", "");

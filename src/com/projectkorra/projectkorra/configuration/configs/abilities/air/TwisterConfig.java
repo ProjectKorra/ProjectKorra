@@ -4,17 +4,17 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class TwisterConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final double Range = 0;
-	public final double Speed = 0;
-	public final double Height = 0;
-	public final double Radius = 0;
-	public final double DegreesPerParticle = 0;
-	public final double HeightPerParticle = 0;
-	public final long RemoveDelay = 0;
+	public final long Cooldown = 7500;
+	public final double Range = 30;
+	public final double Speed = 25;
+	public final double Height = 15;
+	public final double Radius = 10;
+	public final double DegreesPerParticle = 7;
+	public final double HeightPerParticle = 1.25;
+	public final long RemoveDelay = 1000;
 	
-	public final double AvatarState_Damage = 0;
-	public final double AvatarState_Range = 0;
+	public final double AvatarState_Height = 15;
+	public final double AvatarState_Range = 40;
 	
 	public TwisterConfig() {
 		super(true, "", "");

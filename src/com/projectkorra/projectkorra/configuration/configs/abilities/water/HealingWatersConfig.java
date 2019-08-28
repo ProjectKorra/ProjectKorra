@@ -4,12 +4,12 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class HealingWatersConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long Duration = 0;
-	public final long Interval = 0;
-	public final long ChargeTime = 0;
-	public final double Range = 0;
-	public final int PotionPotency = 0;
+	public final long Cooldown = 1500;
+	public final long Duration = 1000;
+	public final long Interval = 50;
+	public final long ChargeTime = 250;
+	public final double Range = 5;
+	public final int PotionPotency = 2;
 	public final boolean EnableParticles = true;
 	
 	public HealingWatersConfig() {

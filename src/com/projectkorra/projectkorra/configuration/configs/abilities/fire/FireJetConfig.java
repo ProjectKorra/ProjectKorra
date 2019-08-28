@@ -4,9 +4,9 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class FireJetConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long Duration = 0;
-	public final double Speed = 0;
+	public final long Cooldown = 5000;
+	public final long Duration = 4000;
+	public final double Speed = .7;
 	public final boolean ShowGliding = true;
 	
 	public final boolean AvatarState_Toggle = true;

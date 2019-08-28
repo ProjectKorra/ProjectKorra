@@ -4,29 +4,29 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class WaterSpoutConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final boolean UseParticles = true;
+	public final long Cooldown = 100;
+	public final boolean UseParticles = false;
 	public final boolean EnableBlockSpiral = true;
-	public final double Height = 0;
+	public final double Height = 16;
 	public final long Duration = 0;
-	public final long Interval = 0;
+	public final long Interval = 50;
 	
 	public final WaterSpoutWaveConfig WaveConfig = new WaterSpoutWaveConfig();
 	
 	public static class WaterSpoutWaveConfig {
 		
 		public final boolean Enabled = true;
-		public final long Cooldown = 0;
-		public final boolean AllowPlantSource = true;
-		public final double Radius = 0;
-		public final double WaveRadius = 0;
-		public final double AnimationSpeed = 0;
-		public final double SelectRange = 0;
-		public final double Speed = 0;
-		public final long ChargeTime = 0;
-		public final long FlightDuration = 0;
+		public final long Cooldown = 5500;
+		public final boolean AllowPlantSource = false;
+		public final double Radius = 3;
+		public final double WaveRadius = 3;
+		public final double AnimationSpeed = 25;
+		public final double SelectRange = 5;
+		public final double Speed = .65;
+		public final long ChargeTime = 400;
+		public final long FlightDuration = 4000;
 		
-		public final long AvatarState_FlightDuration = 0;
+		public final long AvatarState_FlightDuration = 20000;
 		
 	}
 	

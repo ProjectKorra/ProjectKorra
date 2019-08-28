@@ -4,8 +4,8 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class CollapseConfig extends AbilityConfig {
 
-	public final int SelectRange = 0;
-	public final double Speed = 0;
+	public final int SelectRange = 20;
+	public final double Speed = 8;
 	
 	public final ColumnConfig ColumnConfig = new ColumnConfig();
 	
@@ -13,20 +13,20 @@ public class CollapseConfig extends AbilityConfig {
 	
 	public static class ColumnConfig {
 		
-		public final long Cooldown = 0;
-		public final int Height = 0;
+		public final long Cooldown = 1000;
+		public final int Height = 10;
 		
-		public final int AvatarState_Height = 0;
+		public final int AvatarState_Height = 15;
 		
 	}
 	
 	public static class WallConfig {
 		
-		public final long Cooldown = 0;
-		public final int Height = 0;
-		public final double Radius = 0;
+		public final long Cooldown = 4500;
+		public final int Height = 8;
+		public final double Radius = 10;
 		
-		public final int AvatarState_Height = 0;
+		public final int AvatarState_Height = 12;
 		
 	}
 	

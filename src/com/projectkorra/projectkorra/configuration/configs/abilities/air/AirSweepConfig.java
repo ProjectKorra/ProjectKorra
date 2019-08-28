@@ -4,15 +4,15 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class AirSweepConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final double Damage = 0;
-	public final double Range = 0;
-	public final double Speed = 0;
-	public final double Knockback = 0;
+	public final long Cooldown = 5000;
+	public final double Damage = 4;
+	public final double Range = 20;
+	public final double Speed = 1.5;
+	public final double Knockback = 3.5;
 	
-	public final double AvatarState_Damage = 0;
-	public final double AvatarState_Range = 0;
-	public final double AvatarState_Knockback = 0;
+	public final double AvatarState_Damage = 6;
+	public final double AvatarState_Range = 25;
+	public final double AvatarState_Knockback = 5.0;
 	
 	public AirSweepConfig() {
 		super(true, "", "");

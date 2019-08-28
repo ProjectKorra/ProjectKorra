@@ -4,38 +4,38 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class TorrentConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final int MaxLayer = 0;
-	public final double Knockback = 0;
-	public final double Angle = 0;
-	public final double Radius = 0;
-	public final double Knockup = 0;
-	public final long Interval = 0;
-	public final double InitialDamage = 0;
-	public final double SuccessiveDamage = 0;
-	public final int MaxHits = 0;
-	public final double DeflectDamage = 0;
-	public final double Range = 0;
-	public final double SelectRange = 0;
+	public final long Cooldown = 3500;
+	public final int MaxLayer = 3;
+	public final double Knockback = .25;
+	public final double Angle = 10;
+	public final double Radius = 3;
+	public final double Knockup = .5;
+	public final long Interval = 100;
+	public final double InitialDamage = 3;
+	public final double SuccessiveDamage = 1;
+	public final int MaxHits = 4;
+	public final double DeflectDamage = 3;
+	public final double Range = 25;
+	public final double SelectRange = 15;
 	
 	public final boolean Revert = true;
-	public final long RevertTime = 0;
+	public final long RevertTime = 5000;
 	
-	public final double AvatarState_Knockback = 0;
-	public final double AvatarState_InitialDamage = 0;
-	public final double AvatarState_SuccessiveDamage = 0;
-	public final int AvatarState_MaxHits = 0;
+	public final double AvatarState_Knockback = 3;
+	public final double AvatarState_InitialDamage = 4;
+	public final double AvatarState_SuccessiveDamage = 4;
+	public final int AvatarState_MaxHits = 10;
 	
 	public final TorrentWaveConfig WaveConfig = new TorrentWaveConfig();
 	
 	public static class TorrentWaveConfig {
 		
-		public final long Cooldown = 0;
-		public final long Interval = 0;
-		public final double Height = 0;
-		public final double Radius = 0;
-		public final double Knockback = 0;
-		public final double GrowSpeed = 0;
+		public final long Cooldown = 7500;
+		public final long Interval = 100;
+		public final double Height = 1;
+		public final double Radius = 25;
+		public final double Knockback = 2.0;
+		public final double GrowSpeed = 25;
 		
 	}
 	

@@ -4,8 +4,8 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class ParalyzeConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long Duration = 0;
+	public final long Cooldown = 7000;
+	public final long Duration = 2000;
 	
 	public ParalyzeConfig() {
 		super(true, "", "");

@@ -74,10 +74,9 @@ public class FireJet extends FireAbility<FireJetConfig> {
 			this.time = System.currentTimeMillis();
 
 			this.start();
-			if (this.showGliding) {
-				this.previousGlidingState = player.isGliding();
-				player.setGliding(true);
-			}
+			
+			this.previousGlidingState = player.isGliding();
+			
 			this.bPlayer.addCooldown(this);
 		}
 	}
@@ -108,6 +107,10 @@ public class FireJet extends FireAbility<FireJetConfig> {
 			final Vector velocity = this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed * timefactor);
 			this.player.setVelocity(velocity);
 			this.player.setFallDistance(0);
+			
+			if (this.showGliding) {
+				player.setGliding(true);
+			}
 		}
 	}
 

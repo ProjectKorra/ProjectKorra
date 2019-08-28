@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class PhaseChangeConfig extends AbilityConfig {
 
-	public final double SourceRange = 0;
+	public final double SourceRange = 30;
 	
 	public final FreezeConfig FreezeConfig = new FreezeConfig();
 	
@@ -12,18 +12,18 @@ public class PhaseChangeConfig extends AbilityConfig {
 	
 	public static class FreezeConfig {
 		
-		public final long Cooldown = 0;
-		public final int Depth = 0;
-		public final double ControlRadius = 0;
-		public final int Radius = 0;
+		public final long Cooldown = 500;
+		public final int Depth = 1;
+		public final double ControlRadius = 5;
+		public final int Radius = 4;
 		
 	}
 	
 	public static class MeltConfig {
 		
 		public final long Cooldown = 0;
-		public final double Speed = 0;
-		public final int Radius = 0;
+		public final double Speed = 300;
+		public final int Radius = 15;
 		public final boolean AllowFlow = true;
 		
 	}

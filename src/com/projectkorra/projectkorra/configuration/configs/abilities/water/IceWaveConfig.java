@@ -4,14 +4,14 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class IceWaveConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
+	public final long Cooldown = 5000;
 	
-	public final double ThawRadius = 0;
-	public final double Damage = 0;
+	public final double ThawRadius = 30;
+	public final double Damage = 2;
 	public final boolean RevertSphere = true;
-	public final long RevertSphereTime = 0;
+	public final long RevertSphereTime = 5000;
 	
-	public final double AvatarState_Damage = 0;
+	public final double AvatarState_Damage = 5;
 	
 	public IceWaveConfig() {
 		super(true, "", "");

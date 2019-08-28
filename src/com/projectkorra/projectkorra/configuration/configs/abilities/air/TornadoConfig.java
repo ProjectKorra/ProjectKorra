@@ -4,14 +4,14 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class TornadoConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long Duration = 0;
-	public final double Range = 0;
-	public final double Height = 0;
-	public final double PlayerPushFactor = 0;
-	public final double NpcPushFactor = 0;
-	public final double Radius = 0;
-	public final double Speed = 0;
+	public final long Cooldown = 5000;
+	public final long Duration = 10000;
+	public final double Range = 15;
+	public final double Height = 15;
+	public final double PlayerPushFactor = 1.0;
+	public final double NpcPushFactor = 1.0;
+	public final double Radius = 10;
+	public final double Speed = 1;
 	
 	public TornadoConfig() {
 		super(true, "", "");

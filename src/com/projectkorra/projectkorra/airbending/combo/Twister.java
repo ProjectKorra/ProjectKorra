@@ -71,7 +71,7 @@ public class Twister extends AirAbility<TwisterConfig> implements ComboAbility {
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = config.AvatarState_Damage;
+			this.damage = config.AvatarState_Height;
 			this.range = config.AvatarState_Range;
 		}
 

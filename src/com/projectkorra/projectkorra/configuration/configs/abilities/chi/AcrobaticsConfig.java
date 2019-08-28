@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class AcrobaticsConfig extends AbilityConfig {
 
-	public final double FallReductionFactor = 0;
+	public final double FallReductionFactor = 0.75;
 	
 	public AcrobaticsConfig() {
 		super(true, "", null);

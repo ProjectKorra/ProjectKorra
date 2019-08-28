@@ -4,10 +4,10 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class ExtractionConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final int SelectRange = 0;
-	public final int DoubleLootChance = 0;
-	public final int TripleLootChance = 0;
+	public final long Cooldown = 2000;
+	public final int SelectRange = 15;
+	public final int DoubleLootChance = 25;
+	public final int TripleLootChance = 15;
 	
 	public ExtractionConfig() {
 		super(true, "", "");

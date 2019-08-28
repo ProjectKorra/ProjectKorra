@@ -4,10 +4,10 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class RapidPunchConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long Interval = 0;
-	public final double DamagePerPunch = 0;
-	public final int TotalPunches = 0;
+	public final long Cooldown = 3500;
+	public final long Interval = 500;
+	public final double DamagePerPunch = 2;
+	public final int TotalPunches = 3;
 	
 	public RapidPunchConfig() {
 		super(true, "", "");

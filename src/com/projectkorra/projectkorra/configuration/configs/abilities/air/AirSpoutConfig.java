@@ -6,8 +6,8 @@ public class AirSpoutConfig extends AbilityConfig {
 
 	public final long Cooldown = 0;
 	public final long Duration = 0;
-	public final long Interval = 0;
-	public final double Height = 0;
+	public final long Interval = 100;
+	public final double Height = 15;
 	
 	public final double AvatarState_Height = 0;
 	

@@ -4,8 +4,8 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class HighJumpConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final double Height = 0;
+	public final long Cooldown = 500;
+	public final double Height = 1.2;
 	
 	public HighJumpConfig() {
 		super(true, "", "");

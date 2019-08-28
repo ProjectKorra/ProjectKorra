@@ -4,9 +4,9 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class SmokescreenConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final int Duration = 0;
-	public final double Radius = 0;
+	public final long Cooldown = 5000;
+	public final int Duration = 3000;
+	public final double Radius = 3;
 	
 	public SmokescreenConfig() {
 		super(true, "", "");

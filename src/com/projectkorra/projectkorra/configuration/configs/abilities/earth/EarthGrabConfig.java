@@ -4,12 +4,12 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class EarthGrabConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final double Range = 0;
-	public final double DragSpeed = 0;
-	public final double DamageThreshold = 0;
-	public final double TrapHP = 0;
-	public final long TrapHitInterval = 0;
+	public final long Cooldown = 4500;
+	public final double Range = 30;
+	public final double DragSpeed = 1.0;
+	public final double DamageThreshold = 4;
+	public final double TrapHP = 3;
+	public final long TrapHitInterval = 250;
 	
 	public EarthGrabConfig() {
 		super(true, "", "");

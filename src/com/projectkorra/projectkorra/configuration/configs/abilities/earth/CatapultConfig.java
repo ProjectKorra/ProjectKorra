@@ -4,12 +4,12 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class CatapultConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final double StageTimeMult = 0;
+	public final long Cooldown = 5000;
+	public final double StageTimeMult = 2.5;
 	public final boolean CancelWithAngle = true;
-	public final double Angle = 0;
+	public final double Angle = 20;
 	
-	public final long AvatarState_Cooldown = 0;
+	public final long AvatarState_Cooldown = 2500;
 	
 	public CatapultConfig() {
 		super(true, "", "");

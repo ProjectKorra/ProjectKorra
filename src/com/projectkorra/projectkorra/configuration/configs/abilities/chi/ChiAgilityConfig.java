@@ -4,8 +4,8 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class ChiAgilityConfig extends AbilityConfig {
 
-	public final int JumpPower = 0;
-	public final int SpeedPower = 0;
+	public final int JumpPower = 2;
+	public final int SpeedPower = 2;
 	
 	public ChiAgilityConfig() {
 		super(true, "", null);

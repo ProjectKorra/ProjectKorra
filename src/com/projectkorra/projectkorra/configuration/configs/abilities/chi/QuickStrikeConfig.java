@@ -4,9 +4,9 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class QuickStrikeConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final double Damage = 0;
-	public final double ChiBlockChance = 0;
+	public final long Cooldown = 1000;
+	public final double Damage = 2;
+	public final double ChiBlockChance = 35;
 	
 	public QuickStrikeConfig() {
 		super(true, "", "");

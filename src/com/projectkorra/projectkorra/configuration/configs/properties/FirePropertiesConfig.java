@@ -13,8 +13,8 @@ public class FirePropertiesConfig implements Config {
 	public final long RevertTicks = 0;
 	public final double DayFactor = 0;
 	
-	public final String DayMessage = "";
-	public final String NightMessage = "";
+	public final String DayMessage = "You feel your firebending become more powerful as the sun rises";
+	public final String NightMessage = "You feel your power diminish as the sun sets";
 	
 	public final ParticleEffect Particles = ParticleEffect.FLAME;
 	

@@ -10,24 +10,24 @@ public class RaiseEarthConfig extends AbilityConfig {
 	
 	public static class ColumnConfig {
 		
-		public final long Cooldown = 0;
-		public final int Height = 0;
-		public final double Speed = 0;
-		public final double SelectRange = 0;
+		public final long Cooldown = 1000;
+		public final int Height = 8;
+		public final double Speed = 8;
+		public final double SelectRange = 15;
 		
-		public final int AvatarState_Height = 0;
+		public final int AvatarState_Height = 12;
 		
 	}
 	
 	public static class WallConfig {
 		
-		public final long Cooldown = 0;
-		public final int Height = 0;
-		public final int Width = 0;
-		public final int SelectRange = 0;
+		public final long Cooldown = 3500;
+		public final int Height = 6;
+		public final int Width = 6;
+		public final int SelectRange = 15;
 		
-		public final int AvatarState_Height = 0;
-		public final int AvatarState_Width = 0;
+		public final int AvatarState_Height = 50;
+		public final int AvatarState_Width = 50;
 		
 	}
 	

@@ -6,7 +6,7 @@ public class FastSwimConfig extends AbilityConfig {
 
 	public final long Cooldown = 0;
 	public final long Duration = 0;
-	public final double SpeedFactor = 0;
+	public final double SpeedFactor = 0.7;
 	
 	public FastSwimConfig() {
 		super(true, "", null);

@@ -4,20 +4,20 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class BlazeConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final int Arc = 0;
-	public final double Range = 0;
-	public final double Speed = 0;
+	public final long Cooldown = 1200;
+	public final int Arc = 14;
+	public final double Range = 15;
+	public final double Speed = 15;
 	
 	public final RingConfig RingConfig = new RingConfig();
 	
 	public static class RingConfig {
 		
-		public final long Cooldown = 0;
-		public final int Range = 0;
-		public final double Angle = 0;
+		public final long Cooldown = 3000;
+		public final int Range = 12;
+		public final double Angle = 10;
 		
-		public final int AvatarState_Range = 0;
+		public final int AvatarState_Range = 30;
 		
 	}
 	

@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class ChiSaturationConfig extends AbilityConfig {
 
-	public final double ExhaustionFactor = 0;
+	public final double ExhaustionFactor = .5;
 	
 	public ChiSaturationConfig() {
 		super(true, "", null);

@@ -4,10 +4,10 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class EarthDomeConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final int Height = 0;
-	public final double Radius = 0;
-	public final double Range = 0;
+	public final long Cooldown = 5000;
+	public final int Height = 5;
+	public final double Radius = 4;
+	public final double Range = 25;
 	
 	public EarthDomeConfig() {
 		super(true, "", "");
