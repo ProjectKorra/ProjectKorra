@@ -867,12 +867,13 @@ public class GeneralMethods {
 	/**
 	 * Gets the closest entity within the specified radius around a point
 	 * @param center point to check around
-	 * @param radius distance from center to check within
+	 * @param radius distance from center to check within, values lower than 1 are treated as 1
 	 * @return null if not found
 	 */
 	public static Entity getClosestEntity(Location center, double radius) {
 		Entity found = null;
-		double distance = radius * radius;
+		radius = Math.max(1, radius);
+		double distance = (radius + 1) * (radius + 1);
 		
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
 			double check = center.distance(entity.getLocation());
@@ -889,12 +890,13 @@ public class GeneralMethods {
 	/**
 	 * Gets the closest LivingEntity within the specified radius around a point
 	 * @param center point to check around
-	 * @param radius distance from center to check within
+	 * @param radius distance from center to check within, values lower than 1 are treated as 1
 	 * @return null if not found
 	 */
 	public static LivingEntity getClosestLivingEntity(Location center, double radius) {
 		LivingEntity le = null;
-		double distance = radius * radius;
+		radius = Math.max(1, radius);
+		double distance = (radius + 1) * (radius + 1);
 		
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
 			double check = center.distance(entity.getLocation());
