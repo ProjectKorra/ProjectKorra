@@ -88,7 +88,6 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 				this.remove();
 				return;
 			}
-			this.bPlayer.addCooldown("JetBlaze", this.cooldown);
 			this.firstTime = false;
 		} else if (System.currentTimeMillis() - this.time > this.duration) {
 			this.remove();
@@ -121,6 +120,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 			task.remove();
 		}
 		super.remove();
+		this.bPlayer.addCooldown("JetBlaze", this.cooldown);
 	}
 
 	@Override
