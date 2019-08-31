@@ -872,17 +872,17 @@ public class GeneralMethods {
 	 */
 	public static Entity getClosestEntity(Location center, double radius) {
 		Entity found = null;
-		double distance = radius * radius;
+		Double distance = null;
 		
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
-			double check = center.distance(entity.getLocation());
+			double check = center.distanceSquared(entity.getLocation());
 			
-			if (check < distance) {
+			if (distance == null || check < distance) {
 				found = entity;
 				distance = check;
 			}
 		}
-		
+
 		return found;
 	}
 	
@@ -894,12 +894,12 @@ public class GeneralMethods {
 	 */
 	public static LivingEntity getClosestLivingEntity(Location center, double radius) {
 		LivingEntity le = null;
-		double distance = radius * radius;
+		Double distance = null;
 		
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
-			double check = center.distance(entity.getLocation());
+			double check = center.distanceSquared(entity.getLocation());
 			
-			if (entity instanceof LivingEntity && check < distance) {
+			if (entity instanceof LivingEntity && (distance == null || check < distance)) {
 				le = (LivingEntity) entity;
 				distance = check;
 			}

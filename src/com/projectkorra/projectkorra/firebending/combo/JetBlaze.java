@@ -103,7 +103,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 			fs.setDensity(8);
 			fs.setSpread(1.0F);
 			fs.setUseNewParticles(true);
-			fs.setCollisionRadius(3);
+			fs.setCollisionRadius(2);
 			fs.setParticleEffect(ParticleEffect.SMOKE_LARGE);
 			fs.setDamage(this.damage);
 			fs.setFireTicks(this.fireTicks);
