@@ -245,13 +245,13 @@ public class AirBlast extends AirAbility {
 				knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
 			}
 			
-			if (GeneralMethods.isSolid(entity.getLocation().add(0, -.5, 0).getBlock())) {
-				knockback *= .5;
+			if (GeneralMethods.isSolid(entity.getLocation().add(0, -0.5, 0).getBlock()) && source == null) {
+				knockback *= 0.85;
 			}
 			
 			push.normalize().multiply(knockback);
 			
-			if (Math.abs(entity.getVelocity().dot(push)) > knockback) {
+			if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
 				push.normalize().add(entity.getVelocity()).multiply(knockback);
 			}
 			

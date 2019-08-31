@@ -811,7 +811,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 			config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
-			config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
+			config.addDefault("Abilities.Air.AirBurst.PushFactor", 2.8);
 			config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
 			config.addDefault("Abilities.Air.AirBurst.Damage", 0);
 			config.addDefault("Abilities.Air.AirBurst.Cooldown", 0);

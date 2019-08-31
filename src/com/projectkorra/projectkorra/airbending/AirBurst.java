@@ -321,8 +321,4 @@ public class AirBurst extends AirAbility {
 	public ArrayList<AirBlast> getBlasts() {
 		return this.blasts;
 	}
-
-	public ArrayList<Entity> getAffectedEntities() {
-		return this.affectedEntities;
-	}
 }
