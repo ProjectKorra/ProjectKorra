@@ -154,7 +154,7 @@ public class WaterReturn extends WaterAbility {
 			int aux = index;
 			index = -1;
 			for (int i = aux; i < inventory.getSize(); i++) {
-				if (inventory.getItem(i).getType() == Material.POTION) {
+				if (inventory.getItem(i) != null && inventory.getItem(i).getType() == Material.POTION && inventory.getItem(i).hasItemMeta()) {
 					final PotionMeta meta = (PotionMeta) inventory.getItem(i).getItemMeta();
 					if (meta.getBasePotionData().getType().equals(PotionType.WATER)) {
 						index = i;
