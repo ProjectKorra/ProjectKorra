@@ -217,60 +217,58 @@ public class AirBlast extends AirAbility {
 				return;
 			}
 		}
-		
-		if (!affectedEntities.contains(entity)) {
-			final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
-			double knockback = this.pushFactorForOthers;
-	
-			if (isUser) {
-				if (isFromOtherOrigin) {
-					knockback = this.pushFactor;
-				} else {
-					return;
-				}
-			}
-	
-			final double max = this.speed / this.speedFactor;
-	
-			final Vector push = this.direction.clone();
-			if (Math.abs(push.getY()) > max && !isUser) {
-				if (push.getY() < 0) {
-					push.setY(-max);
-				} else {
-					push.setY(max);
-				}
-			}
-	
-			if (this.location.getWorld().equals(this.origin.getWorld())) {
-				knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
-			}
 			
-			if (GeneralMethods.isSolid(entity.getLocation().add(0, -0.5, 0).getBlock()) && source == null) {
-				knockback *= 0.85;
-			}
-			
-			push.normalize().multiply(knockback);
-			
-			if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
-				push.normalize().add(entity.getVelocity()).multiply(knockback);
-			}
-			
-			GeneralMethods.setVelocity(entity, push);
-			
-			if (this.source != null) {
-				new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
+		final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
+		double knockback = this.pushFactorForOthers;
+
+		if (isUser) {
+			if (isFromOtherOrigin) {
+				knockback = this.pushFactor;
 			} else {
-				new HorizontalVelocityTracker(entity, this.player, 200l, this);
+				return;
 			}
-	
-			if (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player)) {
-				if (this.source != null) {
-					DamageHandler.damageEntity(entity, this.damage, this.source);
-				} else {
-					DamageHandler.damageEntity(entity, this.damage, this);
-				}
+		}
+
+		final double max = this.speed / this.speedFactor;
+
+		final Vector push = this.direction.clone();
+		if (Math.abs(push.getY()) > max && !isUser) {
+			if (push.getY() < 0) {
+				push.setY(-max);
+			} else {
+				push.setY(max);
 			}
-				
+		}
+
+		if (this.location.getWorld().equals(this.origin.getWorld())) {
+			knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
+		}
+		
+		if (GeneralMethods.isSolid(entity.getLocation().add(0, -0.5, 0).getBlock()) && source == null) {
+			knockback *= 0.85;
+		}
+		
+		push.normalize().multiply(knockback);
+		
+		if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
+			push.normalize().add(entity.getVelocity()).multiply(knockback);
+		}
+		
+		GeneralMethods.setVelocity(entity, push);
+		
+		if (this.source != null) {
+			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
+		} else {
+			new HorizontalVelocityTracker(entity, this.player, 200l, this);
+		}
+
+		if (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
+			if (this.source != null) {
+				DamageHandler.damageEntity(entity, this.damage, this.source);
+			} else {
+				DamageHandler.damageEntity(entity, this.damage, this);
+			}
+			
 			this.affectedEntities.add(entity);
 		}
 
