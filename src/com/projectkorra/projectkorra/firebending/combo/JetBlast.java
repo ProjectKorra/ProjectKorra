@@ -79,7 +79,6 @@ public class JetBlast extends FireAbility implements ComboAbility {
 					return;
 				}
 
-				this.bPlayer.addCooldown("JetBlast", this.cooldown);
 				this.firstTime = false;
 				final float spread = 0F;
 				ParticleEffect.EXPLOSION_LARGE.display(this.player.getLocation(), 1, spread, spread, spread, 0);
@@ -106,6 +105,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 			task.remove();
 		}
 		super.remove();
+		this.bPlayer.addCooldown("JetBlast", this.cooldown);
 	}
 
 	@Override

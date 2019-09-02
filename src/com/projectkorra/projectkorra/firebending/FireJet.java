@@ -77,7 +77,6 @@ public class FireJet extends FireAbility {
 				this.previousGlidingState = player.isGliding();
 				player.setGliding(true);
 			}
-			this.bPlayer.addCooldown(this);
 		}
 	}
 
@@ -118,6 +117,7 @@ public class FireJet extends FireAbility {
 		}
 		this.flightHandler.removeInstance(this.player, this.getName());
 		this.player.setFallDistance(0);
+		this.bPlayer.addCooldown(this);
 	}
 
 	@Override
