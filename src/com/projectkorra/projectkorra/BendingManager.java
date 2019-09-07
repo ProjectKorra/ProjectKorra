@@ -53,6 +53,9 @@ public class BendingManager implements Runnable {
 		for (final UUID uuid : BendingPlayer.getPlayers().keySet()) {
 			final BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);
 			for (final String abil : bPlayer.getCooldowns().keySet()) {
+				if (bPlayer.getBoundAbilityName().equals(abil) && Bukkit.getPlayer(uuid) != null) {
+					GeneralMethods.displayMovePreview(Bukkit.getPlayer(uuid));
+				}
 				if (System.currentTimeMillis() >= bPlayer.getCooldown(abil)) {
 					bPlayer.removeCooldown(abil);
 				}

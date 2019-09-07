@@ -832,7 +832,7 @@ public abstract class CoreAbility implements Ability {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		String displayedMessage = "";
 		if (bPlayer.isOnCooldown(this)) {
-			final long cooldown = bPlayer.getCooldown(this.getName()) - System.currentTimeMillis();
+			final long cooldown = (bPlayer.getCooldown(this.getName()) - System.currentTimeMillis()) + 1000;
 			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName() + "" + this.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
 		} else {
 			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName())) {
