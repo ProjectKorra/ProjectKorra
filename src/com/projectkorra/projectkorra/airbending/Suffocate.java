@@ -145,7 +145,7 @@ public class Suffocate extends AirAbility {
 				}
 			}
 		}
-		this.bPlayer.addCooldown(this);
+
 		this.start();
 	}
 
