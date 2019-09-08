@@ -74,6 +74,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private double animationSpeed;
 	private AbilityType type;
 	private AnimateState animation;
+	private Block sourceBlock;
 	private Vector direction;
 	private Location origin;
 	private Location location;
@@ -163,30 +164,30 @@ public class WaterSpoutWave extends WaterAbility {
 		if (this.type == AbilityType.CLICK) {
 			if (this.origin == null) {
 				this.removeOldType(this.player, AbilityType.CLICK);
-				final Block block = getWaterSourceBlock(this.player, this.selectRange, this.plant);
+				this.sourceBlock = getWaterSourceBlock(this.player, this.selectRange, this.plant);
 
-				if (block == null) {
+				if (this.sourceBlock == null) {
 					this.remove();
 					return;
 				}
 
-				final Block blockAbove = block.getRelative(BlockFace.UP);
+				final Block blockAbove = this.sourceBlock.getRelative(BlockFace.UP);
 				if (!ElementalAbility.isAir(blockAbove.getType()) && !this.isWaterbendable(blockAbove)) {
 					this.remove();
 					return;
 				}
 
-				this.origin = block.getLocation();
-				if (!this.isWaterbendable(block) || GeneralMethods.isRegionProtectedFromBuild(this, this.origin)) {
+				this.origin = this.sourceBlock.getLocation();
+				if (!this.isWaterbendable(this.sourceBlock) || GeneralMethods.isRegionProtectedFromBuild(this, this.origin)) {
 					this.remove();
 					return;
-				} else if (this.iceOnly && !(this.isIcebendable(block) || isSnow(block))) {
+				} else if (this.iceOnly && !(this.isIcebendable(this.sourceBlock) || isSnow(this.sourceBlock))) {
 					this.remove();
 					return;
 				}
 			}
-
-			if (this.player.getLocation().distanceSquared(this.origin) > this.selectRange * this.selectRange) {
+			Block source = this.sourceBlock.getLocation().getBlock();
+			if (this.player.getLocation().distanceSquared(this.origin) > this.selectRange * this.selectRange || !isWaterbendable(source)) {
 				this.remove();
 				return;
 			} else if (this.player.isSneaking()) {

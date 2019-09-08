@@ -270,6 +270,11 @@ public class SurgeWave extends WaterAbility {
 			this.remove();
 			return;
 		}
+		Block source = this.sourceBlock.getLocation().getBlock();
+		if (!isWaterbendable(source) && !this.progressing) {
+			this.remove();
+			return;
+		}
 
 		if (System.currentTimeMillis() - this.time >= this.interval) {
 			this.time = System.currentTimeMillis();

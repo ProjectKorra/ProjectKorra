@@ -172,6 +172,11 @@ public class Torrent extends WaterAbility {
 			this.remove();
 			return;
 		}
+		Block source = this.sourceBlock.getLocation().getBlock();
+		if (!isWaterbendable(source) && !this.settingUp && !this.forming && !this.formed && !this.launching) {
+			this.remove();
+			return;
+		}
 
 		if (System.currentTimeMillis() > this.time + this.interval) {
 			this.time = System.currentTimeMillis();

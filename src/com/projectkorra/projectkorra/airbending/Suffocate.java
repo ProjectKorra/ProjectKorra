@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.bukkit.Location;
@@ -20,7 +19,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import org.bukkit.util.Vector;
 
 /**
  * Suffocate
@@ -38,11 +36,9 @@ public class Suffocate extends AirAbility {
 		HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
 	};
 
-	private boolean movePoint;
 	private boolean started;
 	private boolean requireConstantAim;
 	private boolean canSuffocateUndead;
-	private int bubbleInterval;
 	private int particleCount;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
@@ -64,11 +60,10 @@ public class Suffocate extends AirAbility {
 	private double blindDelay;
 	private double blindRepeat;
 	private double animationSpeed;
+	private double bubbleSpeed = 0;
 	private Suffocate ability;
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<LivingEntity> targets;
-	private Vector vector = new Vector(1, 0, 0);
-	private Location origin, point;
 
 	public Suffocate(final Player player) {
 		super(player);
@@ -80,8 +75,6 @@ public class Suffocate extends AirAbility {
 		}
 
 		this.started = false;
-		this.movePoint = true;
-		this.origin = player.getLocation();
 		this.requireConstantAim = getConfig().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
 		this.canSuffocateUndead = getConfig().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
 		this.particleCount = getConfig().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
@@ -100,7 +93,6 @@ public class Suffocate extends AirAbility {
 		this.blind = getConfig().getInt("Abilities.Air.Suffocate.BlindPotentcy");
 		this.blindDelay = getConfig().getDouble("Abilities.Air.Suffocate.BlindDelay");
 		this.blindRepeat = getConfig().getDouble("Abilities.Air.Suffocate.BlindInterval");
-		this.bubbleInterval = getConfig().getInt("Abilities.Air.Suffocate.UnderwaterBubbleInterval");
 		this.targets = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
@@ -153,7 +145,6 @@ public class Suffocate extends AirAbility {
 				}
 			}
 		}
-
 		this.bPlayer.addCooldown(this);
 		this.start();
 	}
@@ -162,7 +153,11 @@ public class Suffocate extends AirAbility {
 	public void progress() {
 		for (int i = 0; i < this.targets.size(); i++) {
 			final LivingEntity target = this.targets.get(i);
-			if (target.isDead() || !target.getWorld().equals(this.player.getWorld()) || target.getLocation().distanceSquared(this.player.getEyeLocation()) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation()) || target instanceof ArmorStand) {
+			if (target.isDead() ||
+					!target.getWorld().equals(this.player.getWorld()) ||
+					target.getLocation().distanceSquared(this.player.getEyeLocation()) > this.range * this.range ||
+					GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())
+					|| target instanceof ArmorStand) {
 				this.breakSuffocateLocal(target);
 				i--;
 			} else if (target instanceof Player) {
@@ -204,23 +199,22 @@ public class Suffocate extends AirAbility {
 		} else if (!this.started) {
 			this.started = true;
 			for (final LivingEntity targ : this.targets) {
-				final LivingEntity target = targ;
 				final BukkitRunnable br1 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						DamageHandler.damageEntity(target, Suffocate.this.damage, Suffocate.this.ability);
+						DamageHandler.damageEntity(targ, Suffocate.this.damage, Suffocate.this.ability);
 					}
 				};
 				final BukkitRunnable br2 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
+						targ.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
 					}
 				};
 				final BukkitRunnable br3 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (Suffocate.this.blindRepeat * 20), (int) Suffocate.this.blind));
+						targ.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (Suffocate.this.blindRepeat * 20), (int) Suffocate.this.blind));
 					}
 				};
 
@@ -243,39 +237,13 @@ public class Suffocate extends AirAbility {
 		}
 		if (!this.player.isSneaking()) {
 			this.remove();
-			return;
 		}
 	}
-
+	double x = 0;
 	private void animateUnderwater(final LivingEntity target) {
 		Location targetLocation = target.getEyeLocation();
-
-		if (new Random().nextInt(this.bubbleInterval) == 1) {
-			ParticleEffect.BUBBLE_COLUMN_UP.display(targetLocation.add(target.getEyeLocation().getDirection().multiply(0.5)), 1, 0, 0, 0, 0);
-		}
-
-		if (movePoint) {
-			this.point = this.advanceLocationToPoint(vector, this.origin, targetLocation);
-
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(this.point, 1)) {
-				if (entity.equals(target)) {
-					this.movePoint = false;
-					break;
-				}
-			}
-
-			if (this.point.getBlock().getType().equals(Material.WATER)) {
-				ParticleEffect.WATER_BUBBLE.display(this.point, 2, 0.1, 0.1, 0.1, 0);
-			} else {
-				getAirbendingParticles().display(this.point, 3, 0.1, 0.1, 0.1, 0);
-			}
-		}
-	}
-
-	private Location advanceLocationToPoint(Vector vector, Location start, Location destination) {
-		vector.add(destination.toVector()).subtract(start.toVector()).multiply(0.5).normalize();
-		start.add(vector.clone().multiply(0.5));
-		return start;
+		this.bubbleSpeed = Math.min(x+=0.0005, 0.2);
+		ParticleEffect.BUBBLE_COLUMN_UP.display(targetLocation.add(target.getEyeLocation().getDirection().multiply(0.5)), 1, 0, 0, 0, this.bubbleSpeed);
 	}
 
 	/** Stops an entity from being suffocated **/
