@@ -604,10 +604,10 @@ public abstract class EarthAbility extends ElementalAbility {
 			if (block.equals(sourceblock)) {
 				info.getState().update(true, false);
 				if (RaiseEarth.blockInAllAffectedBlocks(sourceblock)) {
-					EarthAbility.revertBlock(sourceblock);
+					RaiseEarth.revertAffectedBlock(sourceblock);
 				}
 				if (RaiseEarth.blockInAllAffectedBlocks(block)) {
-					EarthAbility.revertBlock(block);
+					RaiseEarth.revertAffectedBlock(block);
 				}
 				MOVED_EARTH.remove(block);
 				return true;
@@ -636,10 +636,10 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 
 			if (RaiseEarth.blockInAllAffectedBlocks(sourceblock)) {
-				EarthAbility.revertBlock(sourceblock);
+				RaiseEarth.revertAffectedBlock(sourceblock);
 			}
 			if (RaiseEarth.blockInAllAffectedBlocks(block)) {
-				EarthAbility.revertBlock(block);
+				RaiseEarth.revertAffectedBlock(block);
 			}
 			MOVED_EARTH.remove(block);
 		}
