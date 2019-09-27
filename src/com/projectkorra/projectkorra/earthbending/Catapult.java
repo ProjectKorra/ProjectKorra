@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -69,6 +70,9 @@ public class Catapult extends EarthAbility {
 	private void moveEarth(final Vector apply, final Vector direction) {
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, 2)) {
 			if (entity.getEntityId() != this.player.getEntityId()) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					continue;
+				}
 				entity.setVelocity(apply);
 			}
 		}
