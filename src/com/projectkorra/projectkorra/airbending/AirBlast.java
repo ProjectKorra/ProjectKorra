@@ -42,6 +42,7 @@ public class AirBlast extends AirAbility {
 	public static final Material[] TDOORS = { Material.ACACIA_TRAPDOOR, Material.BIRCH_TRAPDOOR, Material.DARK_OAK_TRAPDOOR, Material.JUNGLE_TRAPDOOR, Material.OAK_TRAPDOOR, Material.SPRUCE_TRAPDOOR };
 	public static final Material[] BUTTONS = { Material.ACACIA_BUTTON, Material.BIRCH_BUTTON, Material.DARK_OAK_BUTTON, Material.JUNGLE_BUTTON, Material.OAK_BUTTON, Material.SPRUCE_BUTTON, Material.STONE_BUTTON };
 
+	private boolean useLegacyAffect;
 	private boolean canFlickLevers;
 	private boolean canOpenDoors;
 	private boolean canPressButtons;
@@ -92,7 +93,12 @@ public class AirBlast extends AirAbility {
 			if (entity != null) {
 				this.direction = GeneralMethods.getDirection(this.origin, entity.getLocation()).normalize();
 			} else {
-				this.direction = GeneralMethods.getDirection(this.origin, GeneralMethods.getTargetedLocation(player, this.range)).normalize();
+				Location target = GeneralMethods.getTargetedLocation(player, this.range);
+				if (GeneralMethods.locationEqualsIgnoreDirection(this.origin, target)) {
+					this.direction = player.getEyeLocation().getDirection().normalize();
+				} else {
+					this.direction = GeneralMethods.getDirection(this.origin, target).normalize();
+				}
 			}
 		} else {
 			this.origin = player.getEyeLocation();
@@ -147,6 +153,7 @@ public class AirBlast extends AirAbility {
 		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
 		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
 		this.canCoolLava = getConfig().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
+		this.useLegacyAffect = getConfig().getBoolean("Abilities.Air.AirBlast.LegacyAffect", false);
 
 		this.isFromOtherOrigin = false;
 		this.showParticles = true;
@@ -278,6 +285,75 @@ public class AirBlast extends AirAbility {
 
 		entity.setFireTicks(0);
 		breakBreathbendingHold(entity);
+	}
+
+	private void legacyaffect(final Entity entity) {
+		final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
+
+		if (!isUser || this.isFromOtherOrigin) {
+			this.pushFactor = this.pushFactorForOthers;
+			final Vector velocity = entity.getVelocity();
+			final double max = this.speed / this.speedFactor;
+			double factor = this.pushFactor;
+
+			final Vector push = this.direction.clone();
+			if (Math.abs(push.getY()) > max && !isUser) {
+				if (push.getY() < 0) {
+					push.setY(-max);
+				} else {
+					push.setY(max);
+				}
+			}
+			if (this.location.getWorld().equals(this.origin.getWorld())) {
+				factor *= 1 - this.location.distance(this.origin) / (2 * this.range);
+			}
+
+			if (isUser && GeneralMethods.isSolid(this.player.getLocation().add(0, -.5, 0).getBlock())) {
+				factor *= .5;
+			}
+
+			final double comp = velocity.dot(push.clone().normalize());
+			if (comp > factor) {
+				velocity.multiply(.5);
+				velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
+			} else if (comp + factor * .5 > factor) {
+				velocity.add(push.clone().multiply(factor - comp));
+			} else {
+				velocity.add(push.clone().multiply(factor * .5));
+			}
+
+			if (entity instanceof Player) {
+				if (Commands.invincible.contains(((Player) entity).getName())) {
+					return;
+				}
+			}
+
+			if (Double.isNaN(velocity.length())) {
+				return;
+			}
+
+			GeneralMethods.setVelocity(entity, velocity);
+			if (this.source != null) {
+				new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
+			} else {
+				new HorizontalVelocityTracker(entity, this.player, 200l, this);
+			}
+
+			if (entity.getFireTicks() > 0) {
+				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
+			}
+
+			entity.setFireTicks(0);
+			breakBreathbendingHold(entity);
+
+			if (this.source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity))) {
+				DamageHandler.damageEntity(entity, this.damage, this.source);
+				this.affectedEntities.add(entity);
+			} else if (this.source == null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity))) {
+				DamageHandler.damageEntity(entity, this.damage, this);
+				this.affectedEntities.add(entity);
+			}
+		}
 	}
 
 	@Override
@@ -426,7 +502,11 @@ public class AirBlast extends AirAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 				continue;
 			}
-			this.affect(entity);
+			if (this.useLegacyAffect) {
+				this.legacyaffect(entity);
+			} else {
+				this.affect(entity);
+			}
 		}
 
 		this.advanceLocation();
