@@ -8,7 +8,6 @@ import com.projectkorra.projectkorra.player.BendingPlayerLoadedEvent;
 import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.SQLException;
@@ -175,13 +174,21 @@ public class CooldownManager extends DatabaseModule<CooldownRepository>
 		return cooldowns != null && cooldowns.containsKey(abilityName);
 	}
 
-	public void removeCooldown(Player player, Cooldown cooldown)
+	public void removeCooldown(Player player, String abilityName)
 	{
 		UUID uuid = player.getUniqueId();
+		Map<String, Cooldown> cooldowns = _cooldownMap.get(player.getUniqueId());
 
-		if (_cooldownMap.containsKey(uuid))
+		if (cooldowns == null)
 		{
-			_cooldownMap.get(uuid).remove(cooldown.AbilityName);
+			return;
+		}
+
+		Cooldown cooldown = cooldowns.remove(abilityName);
+
+		if (cooldown == null)
+		{
+			return;
 		}
 
 		if (_cooldownQueue.containsKey(uuid))

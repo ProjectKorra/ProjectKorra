@@ -22,6 +22,8 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 	private static final String WATER = "water";
 	private static final String BLOOD = "blood";
 	private static final String HEALING = "healing";
+	private static final String ICE = "ice";
+	private static final String PLANT = "plant";
 	private static final String EARTH = "earth";
 	private static final String LAVA = "lava";
 	private static final String METAL = "metal";
@@ -33,6 +35,7 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 	private static final String FLIGHT = "flight";
 	private static final String SPIRITUAL = "spiritual";
 	private static final String CHI = "chi";
+	private static final String AVATAR = "avatar";
 
 	private final BendingPlayerManager _bendingPlayerManager;
 
@@ -57,6 +60,8 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 				Element water = addElement(WATER, "Water", ChatColor.AQUA);
 				addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, water);
 				addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, water);
+				addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, water);
+				addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, water);
 
 				// Earthbending
 				Element earth = addElement(EARTH, "Earth", ChatColor.AQUA);
@@ -76,6 +81,9 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 
 				// Chiblocking
 				Element chi = addElement(CHI, "Chi",  ChatColor.GOLD);
+
+				// Avatar
+				Element avatar = addElement(AVATAR, "Avatar",  ChatColor.DARK_PURPLE);
 			}
 			catch (SQLException e)
 			{
@@ -103,7 +111,7 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 						.map(_elements::get)
 						.collect(Collectors.toList());
 
-//				bendingPlayer.addElements(elements);
+				elements.forEach(bendingPlayer::addElement);
 			}
 			catch (SQLException e)
 			{
@@ -151,5 +159,107 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 			e.printStackTrace();
 			return -1;
 		}
+	}
+
+	private Element getElement(String elementName)
+	{
+		return _names.get(elementName);
+	}
+
+	private SubElement getSubElement(String elementName)
+	{
+		Element element = getElement(elementName);
+
+		if (element instanceof SubElement)
+		{
+			return (SubElement) element;
+		}
+
+		return null;
+	}
+
+	public Element getWater()
+	{
+		return getElement(WATER);
+	}
+
+	public SubElement getBlood()
+	{
+		return getSubElement(BLOOD);
+	}
+
+	public SubElement getHealing()
+	{
+		return getSubElement(HEALING);
+	}
+
+	public SubElement getIce()
+	{
+		return getSubElement(ICE);
+	}
+
+	public SubElement getPlant()
+	{
+		return getSubElement(PLANT);
+	}
+
+	public Element getEarth()
+	{
+		return getElement(EARTH);
+	}
+
+	public SubElement getLava()
+	{
+		return getSubElement(LAVA);
+	}
+
+	public SubElement getMetal()
+	{
+		return getSubElement(METAL);
+	}
+
+	public SubElement getSand()
+	{
+		return getSubElement(SAND);
+	}
+
+	public Element getFire()
+	{
+		return getElement(FIRE);
+	}
+
+	public SubElement getCombustion()
+	{
+		return getSubElement(COMBUSTION);
+	}
+
+	public SubElement getLightning()
+	{
+		return getSubElement(LIGHTNING);
+	}
+
+	public Element getAir()
+	{
+		return getElement(AIR);
+	}
+
+	public SubElement getFlight()
+	{
+		return getSubElement(FLIGHT);
+	}
+
+	public SubElement getSpiritual()
+	{
+		return getSubElement(SPIRITUAL);
+	}
+
+	public Element getChi()
+	{
+		return getElement(CHI);
+	}
+
+	public Element getAvatar()
+	{
+		return getElement(AVATAR);
 	}
 }
