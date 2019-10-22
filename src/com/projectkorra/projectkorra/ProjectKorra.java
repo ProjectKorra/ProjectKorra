@@ -8,6 +8,7 @@ import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
+import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
@@ -77,6 +78,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		Manager.startup();
+		ModuleManager.startup();
 
 		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
