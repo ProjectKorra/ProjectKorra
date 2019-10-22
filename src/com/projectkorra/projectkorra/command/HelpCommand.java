@@ -81,7 +81,7 @@ public class HelpCommand extends PKCommand {
 			if (GeneralMethods.hasSpirits()) {
 				strings.add(this.spiritsUsage);
 			}
-			Collections.sort(strings);
+			if (strings.size() <= 0) Collections.sort(strings);
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
 			Collections.reverse(strings);
