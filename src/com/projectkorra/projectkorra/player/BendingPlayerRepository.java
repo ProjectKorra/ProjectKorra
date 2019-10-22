@@ -31,7 +31,7 @@ public class BendingPlayerRepository extends DatabaseRepository
 			.query("UPDATE pk_bending_players SET player_name = ? WHERE player_id = ?;")
 			.build();
 
-	protected void createTable()
+	protected void createTables() throws SQLException
 	{
 		Connection connection = getDatabase().getConnection();
 
@@ -39,13 +39,9 @@ public class BendingPlayerRepository extends DatabaseRepository
 		{
 			statement.executeUpdate();
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
-	protected BendingPlayer selectPlayer(Player player)
+	protected BendingPlayer selectPlayer(Player player) throws SQLException
 	{
 		UUID uuid = player.getUniqueId();
 		byte[] binaryUUID = ByteBuffer.allocate(16).putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits()).array();
@@ -75,15 +71,9 @@ public class BendingPlayerRepository extends DatabaseRepository
 				return new BendingPlayer(playerId, uuid, playerName, firstLogin);
 			}
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
-	private BendingPlayer insertPlayer(UUID uuid, String playerName)
+	private BendingPlayer insertPlayer(UUID uuid, String playerName) throws SQLException
 	{
 		byte[] binaryUUID = ByteBuffer.allocate(16).putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits()).array();
 
@@ -100,23 +90,16 @@ public class BendingPlayerRepository extends DatabaseRepository
 
 			try (ResultSet rs = statement.getGeneratedKeys())
 			{
-				if (rs.next())
-				{
-					int playerId = rs.getInt(1);
+				rs.next();
 
-					return new BendingPlayer(playerId, uuid, playerName, firstLogin);
-				}
+				int playerId = rs.getInt(1);
+
+				return new BendingPlayer(playerId, uuid, playerName, firstLogin);
 			}
 		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
-	protected void updatePlayer(int playerId, String playerName)
+	protected void updatePlayer(int playerId, String playerName) throws SQLException
 	{
 		Connection connection = getDatabase().getConnection();
 
@@ -126,10 +109,6 @@ public class BendingPlayerRepository extends DatabaseRepository
 			statement.setString(2, playerName);
 
 			statement.executeUpdate();
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
 		}
 	}
 }

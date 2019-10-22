@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.module;
 
 import com.google.common.base.Preconditions;
 import com.projectkorra.projectkorra.database.DatabaseManager;
+import com.projectkorra.projectkorra.element.ElementManager;
 import com.projectkorra.projectkorra.player.BendingPlayerManager;
 
 import java.lang.reflect.Constructor;
@@ -61,12 +62,14 @@ public class ModuleManager {
 	public static void startup() {
 		registerModule(DatabaseManager.class);
 		registerModule(BendingPlayerManager.class);
+		registerModule(ElementManager.class);
 	}
 
 	/**
 	 * Disable all our core {@link Module}s onDisable.
 	 */
 	public static void shutdown() {
+		registerModule(ElementManager.class);
 		getModule(BendingPlayerManager.class).disable();
 		getModule(DatabaseManager.class).disable();
 	}

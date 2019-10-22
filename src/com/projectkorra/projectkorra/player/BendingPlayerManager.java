@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -20,7 +21,14 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 
 		runAsync(() ->
 		{
-			getRepository().createTable();
+			try
+			{
+				getRepository().createTables();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 
 			runSync(() ->
 			{
@@ -36,12 +44,22 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 
 		runAsync(() ->
 		{
-			BendingPlayer bendingPlayer = getRepository().selectPlayer(player);
-
-			runSync(() ->
+			try
 			{
-				_players.put(player.getUniqueId(), bendingPlayer);
-			});
+				BendingPlayer bendingPlayer = getRepository().selectPlayer(player);
+
+				runSync(() ->
+				{
+					_players.put(player.getUniqueId(), bendingPlayer);
+
+					BendingPlayerLoadedEvent bendingPlayerLoadedEvent = new BendingPlayerLoadedEvent(player, bendingPlayer);
+					getPlugin().getServer().getPluginManager().callEvent(bendingPlayerLoadedEvent);
+				});
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		});
 	}
 
