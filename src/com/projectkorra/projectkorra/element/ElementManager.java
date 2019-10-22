@@ -103,7 +103,7 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 						.map(_elements::get)
 						.collect(Collectors.toList());
 
-				bendingPlayer.addElements(elements);
+//				bendingPlayer.addElements(elements);
 			}
 			catch (SQLException e)
 			{

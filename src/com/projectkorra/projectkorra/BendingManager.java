@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import co.aikar.timings.lib.MCTiming;
 
+import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -49,6 +50,10 @@ public class BendingManager implements Runnable {
 		return instance;
 	}
 
+	/**
+	 * @deprecated handled by {@link CooldownManager}.
+	 */
+	@Deprecated
 	public void handleCooldowns() {
 		for (final UUID uuid : BendingPlayer.getPlayers().keySet()) {
 			final BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);

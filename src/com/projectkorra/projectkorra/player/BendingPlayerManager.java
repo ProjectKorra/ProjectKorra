@@ -1,10 +1,13 @@
 package com.projectkorra.projectkorra.player;
 
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.module.DatabaseModule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -24,47 +27,74 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 			try
 			{
 				getRepository().createTables();
+
+				for (Player player : getPlugin().getServer().getOnlinePlayers())
+				{
+					loadBendingPlayer(player);
+				}
 			}
 			catch (SQLException e)
 			{
 				e.printStackTrace();
 			}
-
-			runSync(() ->
-			{
-				log("Created database table.");
-			});
 		});
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLogin(PlayerLoginEvent event)
 	{
-		Player player = event.getPlayer();
-
 		runAsync(() ->
 		{
-			try
-			{
-				BendingPlayer bendingPlayer = getRepository().selectPlayer(player);
-
-				runSync(() ->
-				{
-					_players.put(player.getUniqueId(), bendingPlayer);
-
-					BendingPlayerLoadedEvent bendingPlayerLoadedEvent = new BendingPlayerLoadedEvent(player, bendingPlayer);
-					getPlugin().getServer().getPluginManager().callEvent(bendingPlayerLoadedEvent);
-				});
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
+			loadBendingPlayer(event.getPlayer());
 		});
+	}
+
+	@EventHandler
+	public void onQuit(PlayerQuitEvent event)
+	{
+		// TODO Queue disconnected players and execute in a batch
+		_players.remove(event.getPlayer().getUniqueId());
+	}
+
+	@EventHandler
+	public void onCooldownChange(PlayerCooldownChangeEvent event)
+	{
+		Player player = event.getPlayer();
+		BendingPlayer bendingPlayer = _players.get(player.getUniqueId());
+
+		String ability = event.getAbility();
+
+		// TODO Check bound ability
+		GeneralMethods.displayMovePreview(player);
+	}
+
+	private void loadBendingPlayer(Player player)
+	{
+		try
+		{
+			BendingPlayer bendingPlayer = getRepository().selectPlayer(player);
+
+			runSync(() ->
+			{
+				_players.put(player.getUniqueId(), bendingPlayer);
+
+				BendingPlayerLoadedEvent bendingPlayerLoadedEvent = new BendingPlayerLoadedEvent(player, bendingPlayer);
+				getPlugin().getServer().getPluginManager().callEvent(bendingPlayerLoadedEvent);
+			});
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public BendingPlayer getBendingPlayer(Player player)
 	{
-		return _players.get(player.getUniqueId());
+		return getBendingPlayer(player.getUniqueId());
+	}
+
+	public BendingPlayer getBendingPlayer(UUID uuid)
+	{
+		return _players.get(uuid);
 	}
 }

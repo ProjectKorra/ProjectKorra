@@ -65,6 +65,16 @@ public abstract class Module implements Listener
 		getPlugin().getServer().getScheduler().runTaskAsynchronously(getPlugin(), runnable);
 	}
 
+	protected final void runTimer(Runnable runnable, long delay, long period)
+	{
+		getPlugin().getServer().getScheduler().runTaskTimer(getPlugin(), runnable, delay, period);
+	}
+
+	protected final void runAsyncTimer(Runnable runnable, long delay, long period)
+	{
+		getPlugin().getServer().getScheduler().runTaskTimerAsynchronously(getPlugin(), runnable, delay, period);
+	}
+
 	public String getName()
 	{
 		return this.name;
