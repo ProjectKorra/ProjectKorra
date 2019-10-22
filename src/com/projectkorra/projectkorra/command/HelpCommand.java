@@ -1,9 +1,6 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -81,7 +78,7 @@ public class HelpCommand extends PKCommand {
 			if (GeneralMethods.hasSpirits()) {
 				strings.add(this.spiritsUsage);
 			}
-			if (strings.size() <= 0) Collections.sort(strings);
+            Collections.sort(strings);
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
 			Collections.reverse(strings);
