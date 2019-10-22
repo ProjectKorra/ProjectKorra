@@ -166,9 +166,6 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more at our website! ");
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
-			config.addDefault("Commands.Help.RPGUsage", "/bending rpg [argument]");
-			config.addDefault("Commands.Help.ItemsUsage", "/bending items [argument]");
-			config.addDefault("Commands.Help.SpiritsUsage", "/bending spirits [argument]");
 
 			config.addDefault("Commands.Display.Description", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.");
 

@@ -35,9 +35,6 @@ public class HelpCommand extends PKCommand {
 	private final String avatar;
 	private final String invalidTopic;
 	private final String usage;
-	private final String rpgUsage;
-	private final String spiritsUsage;
-	private final String itemsUsage;
 
 	public HelpCommand() {
 		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
@@ -54,9 +51,6 @@ public class HelpCommand extends PKCommand {
 		this.avatar = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Avatar");
 		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
 		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
-		this.rpgUsage = ConfigManager.languageConfig.get().getString("Command.Help.RPGUsage");
-		this.spiritsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.SpiritsUsage");
-		this.itemsUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ItemsUsage");
 	}
 
 	@Override
@@ -72,15 +66,7 @@ public class HelpCommand extends PKCommand {
 					strings.add(command.getProperUse());
 				}
 			}
-			if (GeneralMethods.hasItems()) {
-				strings.add(this.itemsUsage);
-			}
-			if (GeneralMethods.hasRPG()) {
-				strings.add(this.rpgUsage);
-			}
-			if (GeneralMethods.hasSpirits()) {
-				strings.add(this.spiritsUsage);
-			}
+			
 			Collections.sort(strings);
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
@@ -104,15 +90,7 @@ public class HelpCommand extends PKCommand {
 			for (final PKCommand command : instances.values()) {
 				strings.add(command.getProperUse());
 			}
-			if (GeneralMethods.hasItems()) {
-				strings.add(this.itemsUsage);
-			}
-			if (GeneralMethods.hasRPG()) {
-				strings.add(this.rpgUsage);
-			}
-			if (GeneralMethods.hasSpirits()) {
-				strings.add(this.spiritsUsage);
-			}
+			
 			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", Integer.valueOf(arg), true)) {
 				if (firstMessage) {
 					GeneralMethods.sendBrandingMessage(sender, s);
