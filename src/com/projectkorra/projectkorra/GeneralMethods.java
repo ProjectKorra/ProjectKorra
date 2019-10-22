@@ -52,6 +52,9 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
+import com.projectkorra.projectkorra.cooldown.CooldownManager;
+import com.projectkorra.projectkorra.element.ElementManager;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -323,7 +326,10 @@ public class GeneralMethods {
 	 * @param uuid The UUID of the player
 	 * @param player The player name
 	 * @throws SQLException
+	 *
+	 * @deprecated use {@link BendingPlayerManager} and {@link ElementManager}.
 	 */
+	@Deprecated
 	public static void createBendingPlayer(final UUID uuid, final String player) {
 		new BukkitRunnable() {
 
@@ -335,6 +341,7 @@ public class GeneralMethods {
 		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
 
+	@Deprecated
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
 		final ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {

@@ -1,6 +1,9 @@
 package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.ElementManager;
@@ -24,6 +27,16 @@ public class BendingPlayer
 	private final long firstLogin;
 
 	private final Set<Element> elements;
+	private final Set<Element> toggledElements;
+	private final String[] abilities;
+
+	private ChiAbility stance;
+	private boolean permanentlyRemoved;
+	private boolean toggled;
+	private boolean tremorSense;
+	private boolean illumination;
+	private boolean chiBlocked;
+	private long slowTime;
 
 	public BendingPlayer(int playerId, UUID uuid, String playerName, long firstLogin)
 	{
@@ -38,6 +51,8 @@ public class BendingPlayer
 		this.firstLogin = firstLogin;
 
 		this.elements = new HashSet<>();
+		this.toggledElements = new HashSet<>();
+		this.abilities = new String[9];
 	}
 
 	public void addElement(Element element)
@@ -116,6 +131,34 @@ public class BendingPlayer
 		return this.elements.contains(elementManager.getSpiritual());
 	}
 
+	public boolean isElementToggled(Element element)
+	{
+		return this.toggledElements.contains(element);
+	}
+
+	public void toggleElement(Element element)
+	{
+		if (this.toggledElements.contains(element))
+		{
+			this.toggledElements.remove(element);
+		}
+		else
+		{
+			this.toggledElements.add(element);
+		}
+	}
+
+	public CoreAbility getBoundAbility()
+	{
+		return CoreAbility.getAbility(getBoundAbilityName());
+	}
+
+	public String getBoundAbilityName()
+	{
+		int slot = this.player.getInventory().getHeldItemSlot();
+		return this.abilities[slot];
+	}
+
 	public void addCooldown(Ability ability)
 	{
 		addCooldown(ability, ability.getCooldown());
@@ -159,6 +202,82 @@ public class BendingPlayer
 	public void removeCoolldown(String abilityName)
 	{
 		cooldownManager.removeCooldown(this.player, abilityName);
+	}
+
+	public ChiAbility getStance()
+	{
+		return this.stance;
+	}
+
+	public void setStance(ChiAbility stance)
+	{
+		this.stance = stance;
+	}
+
+	public boolean isPermanentlyRemoved()
+	{
+		return this.permanentlyRemoved;
+	}
+
+	public void setPermanentlyRemoved(boolean permanentlyRemoved)
+	{
+		this.permanentlyRemoved = permanentlyRemoved;
+	}
+
+	public boolean isToggled()
+	{
+		return this.toggled;
+	}
+
+	public void toggleBending()
+	{
+		this.toggled = !this.toggled;
+		PassiveManager.registerPassives(this.player); // TODO redo this passive system
+	}
+
+	public boolean isTremorSensing()
+	{
+		return this.tremorSense;
+	}
+
+	public void toggleTremorSense()
+	{
+		this.tremorSense = !this.tremorSense;
+	}
+
+	public boolean isIlluminating()
+	{
+		return this.illumination;
+	}
+
+	public void toggleIllumination()
+	{
+		this.illumination = !this.illumination;
+	}
+
+	public boolean isChiBlocked()
+	{
+		return this.chiBlocked;
+	}
+
+	public void blockChi()
+	{
+		this.chiBlocked = true;
+	}
+
+	public void unblockChi()
+	{
+		this.chiBlocked = false;
+	}
+
+	public boolean canBeSlowed()
+	{
+		return System.currentTimeMillis() > this.slowTime;
+	}
+
+	public void slow(long cooldown)
+	{
+		this.slowTime = System.currentTimeMillis() + cooldown;
 	}
 
 	public int getId()

@@ -40,7 +40,10 @@ import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 /**
  * Class that presents a player and stores all bending information about the
  * player.
+ *
+ * @deprecated use {@link com.projectkorra.projectkorra.player.BendingPlayer}.
  */
+@Deprecated
 public class BendingPlayer {
 
 	/**

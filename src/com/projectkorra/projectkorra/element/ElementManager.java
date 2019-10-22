@@ -2,10 +2,8 @@ package com.projectkorra.projectkorra.element;
 
 import com.google.common.base.Preconditions;
 import com.projectkorra.projectkorra.module.DatabaseModule;
-import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import com.projectkorra.projectkorra.player.BendingPlayerLoadedEvent;
-import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,36 +17,25 @@ import java.util.stream.Collectors;
 
 public class ElementManager extends DatabaseModule<ElementRepository>
 {
-	private static final String WATER = "water";
-	private static final String BLOOD = "blood";
-	private static final String HEALING = "healing";
-	private static final String ICE = "ice";
-	private static final String PLANT = "plant";
-	private static final String EARTH = "earth";
-	private static final String LAVA = "lava";
-	private static final String METAL = "metal";
-	private static final String SAND = "sand";
-	private static final String FIRE = "fire";
-	private static final String COMBUSTION = "combustion";
-	private static final String LIGHTNING = "lightning";
-	private static final String AIR = "air";
-	private static final String FLIGHT = "flight";
-	private static final String SPIRITUAL = "spiritual";
-	private static final String CHI = "chi";
-	private static final String AVATAR = "avatar";
-
-	private final BendingPlayerManager _bendingPlayerManager;
+	private static final String WATER = "water", EARTH = "earth", FIRE = "fire", AIR = "air", CHI = "chi", AVATAR = "avatar";
+	private static final String BLOOD = "blood", HEALING = "healing", ICE = "ice", PLANT = "plant";
+	private static final String LAVA = "lava", METAL = "metal", SAND = "sand";
+	private static final String COMBUSTION = "combustion", LIGHTNING = "lightning";
+	private static final String FLIGHT = "flight", SPIRITUAL = "spiritual";
 
 	private final Map<Integer, Element> _elements = new HashMap<>();
-	private final Map<String, Element> _names = new HashMap<>();
 
 	private final String _nameRegex = "[a-zA-Z]+";
+
+	private Element water, earth, fire, air, chi, avatar;
+	private SubElement blood, healing, ice, plant;
+	private SubElement lava, metal, sand;
+	private SubElement combustion, lightning;
+	private SubElement flight, spiritual;
 
 	private ElementManager()
 	{
 		super("Element", new ElementRepository());
-
-		_bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 
 		runAsync(() ->
 		{
@@ -57,33 +44,33 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 				getRepository().createTables();
 
 				// Waterbending
-				Element water = addElement(WATER, "Water", ChatColor.AQUA);
-				addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, water);
-				addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, water);
-				addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, water);
-				addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, water);
+				water = addElement(WATER, "Water", ChatColor.AQUA);
+				blood = addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, water);
+				healing = addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, water);
+				ice = addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, water);
+				plant = addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, water);
 
 				// Earthbending
-				Element earth = addElement(EARTH, "Earth", ChatColor.AQUA);
-				addSubElement(LAVA, "Lava", ChatColor.DARK_GREEN, earth);
-				addSubElement(METAL, "Metal", ChatColor.DARK_GREEN, earth);
-				addSubElement(SAND, "Sand", ChatColor.DARK_GREEN, earth);
+				earth = addElement(EARTH, "Earth", ChatColor.AQUA);
+				lava =addSubElement(LAVA, "Lava", ChatColor.DARK_GREEN, earth);
+				metal = addSubElement(METAL, "Metal", ChatColor.DARK_GREEN, earth);
+				sand = addSubElement(SAND, "Sand", ChatColor.DARK_GREEN, earth);
 
 				// Firebending
-				Element fire = addElement(FIRE, "Fire", ChatColor.RED);
-				addSubElement(COMBUSTION, "Combustion", ChatColor.DARK_RED, fire);
-				addSubElement(LIGHTNING, "Lightning", ChatColor.DARK_RED, fire);
+				fire = addElement(FIRE, "Fire", ChatColor.RED);
+				combustion = addSubElement(COMBUSTION, "Combustion", ChatColor.DARK_RED, fire);
+				lightning = addSubElement(LIGHTNING, "Lightning", ChatColor.DARK_RED, fire);
 
 				// Airbending
-				Element air = addElement(AIR, "Air", ChatColor.GRAY);
-				addSubElement(FLIGHT, "Flight", ChatColor.DARK_GRAY, air);
-				addSubElement(SPIRITUAL, "Spiritual", ChatColor.DARK_GRAY, air);
+				air = addElement(AIR, "Air", ChatColor.GRAY);
+				flight = addSubElement(FLIGHT, "Flight", ChatColor.DARK_GRAY, air);
+				spiritual = addSubElement(SPIRITUAL, "Spiritual", ChatColor.DARK_GRAY, air);
 
 				// Chiblocking
-				Element chi = addElement(CHI, "Chi",  ChatColor.GOLD);
+				chi = addElement(CHI, "Chi",  ChatColor.GOLD);
 
 				// Avatar
-				Element avatar = addElement(AVATAR, "Avatar",  ChatColor.DARK_PURPLE);
+				avatar = addElement(AVATAR, "Avatar",  ChatColor.DARK_PURPLE);
 			}
 			catch (SQLException e)
 			{
@@ -127,7 +114,6 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		Element element = new Element(elementId, elementName, displayName, color);
 
 		_elements.put(elementId, element);
-		_names.put(elementName, element);
 
 		return element;
 	}
@@ -139,7 +125,6 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		SubElement element = new SubElement(elementId, elementName, displayName, color, parent);
 
 		_elements.put(elementId, element);
-		_names.put(elementName, element);
 
 		return element;
 	}
@@ -161,105 +146,88 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		}
 	}
 
-	private Element getElement(String elementName)
-	{
-		return _names.get(elementName);
-	}
-
-	private SubElement getSubElement(String elementName)
-	{
-		Element element = getElement(elementName);
-
-		if (element instanceof SubElement)
-		{
-			return (SubElement) element;
-		}
-
-		return null;
-	}
-
 	public Element getWater()
 	{
-		return getElement(WATER);
+		return water;
 	}
 
 	public SubElement getBlood()
 	{
-		return getSubElement(BLOOD);
+		return blood;
 	}
 
 	public SubElement getHealing()
 	{
-		return getSubElement(HEALING);
+		return healing;
 	}
 
 	public SubElement getIce()
 	{
-		return getSubElement(ICE);
+		return ice;
 	}
 
 	public SubElement getPlant()
 	{
-		return getSubElement(PLANT);
+		return plant;
 	}
 
 	public Element getEarth()
 	{
-		return getElement(EARTH);
+		return earth;
 	}
 
 	public SubElement getLava()
 	{
-		return getSubElement(LAVA);
+		return lava;
 	}
 
 	public SubElement getMetal()
 	{
-		return getSubElement(METAL);
+		return metal;
 	}
 
 	public SubElement getSand()
 	{
-		return getSubElement(SAND);
+		return sand;
 	}
 
 	public Element getFire()
 	{
-		return getElement(FIRE);
+		return fire;
 	}
 
 	public SubElement getCombustion()
 	{
-		return getSubElement(COMBUSTION);
+		return combustion;
 	}
 
 	public SubElement getLightning()
 	{
-		return getSubElement(LIGHTNING);
+		return lightning;
 	}
 
 	public Element getAir()
 	{
-		return getElement(AIR);
+		return air;
 	}
 
 	public SubElement getFlight()
 	{
-		return getSubElement(FLIGHT);
+		return flight;
 	}
 
 	public SubElement getSpiritual()
 	{
-		return getSubElement(SPIRITUAL);
+		return spiritual;
 	}
 
 	public Element getChi()
 	{
-		return getElement(CHI);
+		return chi;
 	}
 
 	public Element getAvatar()
 	{
-		return getElement(AVATAR);
+		return avatar;
 	}
 }
