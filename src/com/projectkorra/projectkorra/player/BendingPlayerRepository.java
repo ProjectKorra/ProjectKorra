@@ -15,20 +15,24 @@ import java.util.UUID;
 public class BendingPlayerRepository extends DatabaseRepository
 {
 	private static final DatabaseQuery CREATE_TABLE_BENDING_PLAYERS = DatabaseQuery.newBuilder()
-			.mysql("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTO_INCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, INDEX uuid_index (uuid));")
-			.sqlite("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTOINCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL); CREATE INDEX uuid_index ON pk_bending_players (uuid);")
+			.mysql("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTO_INCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_removed BOOLEAN, INDEX uuid_index (uuid));")
+			.sqlite("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTOINCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_removed BOOLEAN); CREATE INDEX uuid_index ON pk_bending_players (uuid);")
 			.build();
 
 	private static final DatabaseQuery SELECT_BENDING_PLAYER = DatabaseQuery.newBuilder()
-			.query("SELECT player_id, player_name, first_login FROM pk_bending_players WHERE uuid = ?;")
+			.query("SELECT player_id, player_name, first_login, bending_removed FROM pk_bending_players WHERE uuid = ?;")
 			.build();
 
 	private static final DatabaseQuery INSERT_BENDING_PLAYER = DatabaseQuery.newBuilder()
 			.query("INSERT INTO pk_bending_players (uuid, player_name, first_login) VALUES (?, ?, ?);")
 			.build();
 
-	private static final DatabaseQuery UPDATE_BENDING_PLAYER = DatabaseQuery.newBuilder()
+	private static final DatabaseQuery UPDATE_PLAYER_NAME = DatabaseQuery.newBuilder()
 			.query("UPDATE pk_bending_players SET player_name = ? WHERE player_id = ?;")
+			.build();
+
+	private static final DatabaseQuery UPDATE_BENDING_REMOVED = DatabaseQuery.newBuilder()
+			.query("UPDATE pk_bending_players SET bending_removed = ? WHERE player_id = ?;")
 			.build();
 
 	protected void createTables() throws SQLException
@@ -62,13 +66,18 @@ public class BendingPlayerRepository extends DatabaseRepository
 				int playerId = rs.getInt("player_id");
 				String playerName = rs.getString("player_name");
 				long firstLogin = rs.getLong("first_login");
+				boolean bendingRemoved = rs.getBoolean("bending_removed");
 
 				if (!player.getName().equals(playerName))
 				{
-					updatePlayer(playerId, player.getName());
+					updatePlayerName(playerId, player.getName());
 				}
 
-				return new BendingPlayer(playerId, uuid, playerName, firstLogin);
+				BendingPlayer bendingPlayer = new BendingPlayer(playerId, uuid, playerName, firstLogin);
+
+				bendingPlayer.setBendingRemoved(bendingRemoved);
+
+				return bendingPlayer;
 			}
 		}
 	}
@@ -99,14 +108,27 @@ public class BendingPlayerRepository extends DatabaseRepository
 		}
 	}
 
-	protected void updatePlayer(int playerId, String playerName) throws SQLException
+	protected void updatePlayerName(int playerId, String playerName) throws SQLException
 	{
 		Connection connection = getDatabase().getConnection();
 
-		try (PreparedStatement statement = connection.prepareStatement(UPDATE_BENDING_PLAYER.getQuery()))
+		try (PreparedStatement statement = connection.prepareStatement(UPDATE_PLAYER_NAME.getQuery()))
 		{
 			statement.setInt(1, playerId);
 			statement.setString(2, playerName);
+
+			statement.executeUpdate();
+		}
+	}
+
+	protected void updateBendingRemoved(BendingPlayer bendingPlayer) throws SQLException
+	{
+		Connection connection = getDatabase().getConnection();
+
+		try (PreparedStatement statement = connection.prepareStatement(UPDATE_BENDING_REMOVED.getQuery()))
+		{
+			statement.setInt(1, bendingPlayer.getId());
+			statement.setBoolean(2, bendingPlayer.isBendingRemoved());
 
 			statement.executeUpdate();
 		}

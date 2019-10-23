@@ -63,10 +63,18 @@ public class AbilityManager extends DatabaseModule<AbilityRepository>
 
 	public boolean bindAbility(Player player, String abilityName, int slot)
 	{
-		// TODO Call event, let MultiAbilityManager cancel
-		if (MultiAbilityManager.playerAbilities.containsKey(player))
+		PlayerBindAbilityEvent playerBindAbilityEvent = new PlayerBindAbilityEvent(player, abilityName);
+		getPlugin().getServer().getPluginManager().callEvent(playerBindAbilityEvent);
+
+		if (playerBindAbilityEvent.isCancelled())
 		{
-			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + "You can't edit your binds right now!");
+			String cancelMessage = playerBindAbilityEvent.getCancelMessage();
+
+			if (cancelMessage != null)
+			{
+				GeneralMethods.sendBrandingMessage(player, cancelMessage);
+			}
+
 			return false;
 		}
 

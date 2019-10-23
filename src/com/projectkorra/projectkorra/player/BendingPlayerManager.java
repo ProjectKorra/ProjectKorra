@@ -62,10 +62,45 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 		Player player = event.getPlayer();
 		BendingPlayer bendingPlayer = _players.get(player.getUniqueId());
 
-		String ability = event.getAbility();
+		String ability = bendingPlayer.getBoundAbilityName();
 
-		// TODO Check bound ability
-		GeneralMethods.displayMovePreview(player);
+		if (ability != null && ability.equals(event.getAbility()))
+		{
+			GeneralMethods.displayMovePreview(player);
+		}
+	}
+
+	public void removeBending(Player player)
+	{
+		BendingPlayer bendingPlayer = _players.get(player.getUniqueId());
+
+		bendingPlayer.setBendingRemoved(true);
+
+		updateBendingRemoved(bendingPlayer);
+	}
+
+	public void returnBending(Player player)
+	{
+		BendingPlayer bendingPlayer = _players.get(player.getUniqueId());
+
+		bendingPlayer.setBendingRemoved(false);
+
+		updateBendingRemoved(bendingPlayer);
+	}
+
+	private void updateBendingRemoved(BendingPlayer bendingPlayer)
+	{
+		runAsync(() ->
+		{
+			try
+			{
+				getRepository().updateBendingRemoved(bendingPlayer);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		});
 	}
 
 	private void loadBendingPlayer(Player player)

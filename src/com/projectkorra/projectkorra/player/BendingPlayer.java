@@ -35,7 +35,7 @@ public class BendingPlayer
 	private final String[] abilities;
 
 	private ChiAbility stance;
-	private boolean permanentlyRemoved;
+	private boolean bendingRemoved;
 	private boolean toggled;
 	private boolean tremorSense;
 	private boolean illumination;
@@ -248,14 +248,14 @@ public class BendingPlayer
 		this.stance = stance;
 	}
 
-	public boolean isPermanentlyRemoved()
+	public boolean isBendingRemoved()
 	{
-		return this.permanentlyRemoved;
+		return this.bendingRemoved;
 	}
 
-	public void setPermanentlyRemoved(boolean permanentlyRemoved)
+	protected void setBendingRemoved(boolean bendingRemoved)
 	{
-		this.permanentlyRemoved = permanentlyRemoved;
+		this.bendingRemoved = bendingRemoved;
 	}
 
 	public boolean isToggled()
