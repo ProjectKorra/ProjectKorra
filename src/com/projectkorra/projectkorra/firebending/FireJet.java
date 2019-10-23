@@ -74,10 +74,8 @@ public class FireJet extends FireAbility<FireJetConfig> {
 			this.time = System.currentTimeMillis();
 
 			this.start();
-			
+
 			this.previousGlidingState = player.isGliding();
-			
-			this.bPlayer.addCooldown(this);
 		}
 	}
 
@@ -122,6 +120,7 @@ public class FireJet extends FireAbility<FireJetConfig> {
 		}
 		this.flightHandler.removeInstance(this.player, this.getName());
 		this.player.setFallDistance(0);
+		this.bPlayer.addCooldown(this);
 	}
 
 	@Override

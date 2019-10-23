@@ -116,8 +116,8 @@ public class WaterReturn extends WaterAbility<EmptyAbilityConfig> {
 
 	private void fillBottle() {
 		final PlayerInventory inventory = this.player.getInventory();
-		if (inventory.contains(Material.GLASS_BOTTLE)) {
-			final int index = inventory.first(Material.GLASS_BOTTLE);
+		final int index = inventory.first(Material.GLASS_BOTTLE);
+		if (index >= 0) {
 			final ItemStack item = inventory.getItem(index);
 
 			final ItemStack water = waterBottleItem();
@@ -148,27 +148,15 @@ public class WaterReturn extends WaterAbility<EmptyAbilityConfig> {
 		return false;
 	}
 
-	public static boolean hasWaterBottle(final Player player) {
-		if (hasAbility(player, WaterReturn.class) || isBending(player)) {
-			return false;
-		}
-		final PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(Material.POTION)) {
-			final ItemStack item = inventory.getItem(inventory.first(Material.POTION));
-			final PotionMeta meta = (PotionMeta) item.getItemMeta();
-			return meta.getBasePotionData().getType() == PotionType.WATER;
-		}
-		return false;
-	}
-
-	public static void emptyWaterBottle(final Player player) {
-		final PlayerInventory inventory = player.getInventory();
+	public static int firstWaterBottle(final PlayerInventory inventory) {
 		int index = inventory.first(Material.POTION);
 
 		// Check that the first one found is actually a WATER bottle. We aren't implementing potion bending just yet.
-		if (index != -1 && !((PotionMeta) inventory.getItem(index).getItemMeta()).getBasePotionData().getType().equals(PotionType.WATER)) {
-			for (int i = 0; i < inventory.getSize(); i++) {
-				if (inventory.getItem(i).getType() == Material.POTION) {
+		if (index != -1) {
+			int aux = index;
+			index = -1;
+			for (int i = aux; i < inventory.getSize(); i++) {
+				if (inventory.getItem(i) != null && inventory.getItem(i).getType() == Material.POTION && inventory.getItem(i).hasItemMeta()) {
 					final PotionMeta meta = (PotionMeta) inventory.getItem(i).getItemMeta();
 					if (meta.getBasePotionData().getType().equals(PotionType.WATER)) {
 						index = i;
@@ -177,6 +165,22 @@ public class WaterReturn extends WaterAbility<EmptyAbilityConfig> {
 				}
 			}
 		}
+
+		return index;
+	}
+
+	public static boolean hasWaterBottle(final Player player) {
+		if (hasAbility(player, WaterReturn.class) || isBending(player)) {
+			return false;
+		}
+		final PlayerInventory inventory = player.getInventory();
+
+		return WaterReturn.firstWaterBottle(inventory) >= 0;
+	}
+
+	public static void emptyWaterBottle(final Player player) {
+		final PlayerInventory inventory = player.getInventory();
+		int index = WaterReturn.firstWaterBottle(inventory);
 
 		if (index != -1) {
 			final ItemStack item = inventory.getItem(index);

@@ -78,41 +78,45 @@ public class PresetCommand extends PKCommand<PresetCommandConfig> {
 			bPlayer = BendingPlayer.getBendingPlayer(player);
 		}
 
-		// bending preset list.
-		if (args.size() == 1) {
-			if (Arrays.asList(listaliases).contains(args.get(0)) && this.hasPermission(sender, "list")) {
-				boolean firstMessage = true;
-
-				final List<Preset> presets = Preset.presets.get(player.getUniqueId());
-				final List<String> presetNames = new ArrayList<String>();
-
-				if (presets == null || presets.isEmpty()) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noPresets);
-					return;
-				}
-
-				for (final Preset preset : presets) {
-					presetNames.add(preset.getName());
-				}
-
-				for (final String s : this.getPage(presetNames, ChatColor.GOLD + "Presets: ", 1, false)) {
-					if (firstMessage) {
-						GeneralMethods.sendBrandingMessage(sender, s);
-						firstMessage = false;
-					} else {
-						sender.sendMessage(ChatColor.YELLOW + s);
-					}
-				}
-
-				return;
+		int page = 1;
+		String name = null;
+		if (args.size() == 1 && !Arrays.asList(listaliases).contains(args.get(0))){
+			this.help(sender, false);
+		} else if (args.size() >= 2) {
+			if (Arrays.asList(listaliases).contains(args.get(0))) {
+				page = Integer.parseInt(args.get(1));
 			} else {
-				this.help(sender, false);
-				return;
+				name = args.get(1);
 			}
 		}
 
-		final String name = args.get(1);
-		if (Arrays.asList(deletealiases).contains(args.get(0)) && this.hasPermission(sender, "delete")) { // bending preset delete name.
+		// bending preset list.
+		if (Arrays.asList(listaliases).contains(args.get(0)) && this.hasPermission(sender, "list")) {
+			boolean firstMessage = true;
+
+			final List<Preset> presets = Preset.presets.get(player.getUniqueId());
+			final List<String> presetNames = new ArrayList<String>();
+
+			if (presets == null || presets.isEmpty()) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noPresets);
+				return;
+			}
+
+			for (final Preset preset : presets) {
+				presetNames.add(preset.getName());
+			}
+
+			for (final String s : this.getPage(presetNames, ChatColor.GOLD + "Presets: ", page, false)) {
+				if (firstMessage) {
+					GeneralMethods.sendBrandingMessage(sender, s);
+					firstMessage = false;
+				} else {
+					sender.sendMessage(ChatColor.YELLOW + s);
+				}
+			}
+
+			return;
+		} else if (Arrays.asList(deletealiases).contains(args.get(0)) && this.hasPermission(sender, "delete")) { // bending preset delete name.
 			if (!Preset.presetExists(player, name)) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noPresetName);
 				return;

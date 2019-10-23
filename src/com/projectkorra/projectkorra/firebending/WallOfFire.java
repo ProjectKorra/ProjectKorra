@@ -103,7 +103,6 @@ public class WallOfFire extends FireAbility<WallOfFireConfig> {
 
 		this.initializeBlocks();
 		this.start();
-		this.bPlayer.addCooldown(this);
 	}
 
 	private void affect(final Entity entity) {
@@ -209,6 +208,12 @@ public class WallOfFire extends FireAbility<WallOfFireConfig> {
 			this.damageTick++;
 			this.damage();
 		}
+	}
+
+	@Override
+	public void remove() {
+		super.remove();
+		this.bPlayer.addCooldown(this);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
@@ -166,7 +167,7 @@ public class MetalClips extends MetalAbility<MetalClipsConfig> {
 			return;
 		} else if (this.metalClipsCount == 3 && !this.canUse4Clips) {
 			return;
-		} else if (this.targetEntity != null && GeneralMethods.isRegionProtectedFromBuild(this, this.targetEntity.getLocation())) {
+		} else if (this.targetEntity != null && (GeneralMethods.isRegionProtectedFromBuild(this, this.targetEntity.getLocation()) || ((targetEntity instanceof Player) && Commands.invincible.contains(((Player) targetEntity).getName())))) {
 			return;
 		}
 

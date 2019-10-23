@@ -99,7 +99,7 @@ public class Collapse extends EarthAbility<CollapseConfig> {
 			thisBlock = this.block.getWorld().getBlockAt(this.location.clone().add(this.direction.clone().multiply(-i)));
 			this.affectedBlocks.put(thisBlock, thisBlock);
 			if (RaiseEarth.blockInAllAffectedBlocks(thisBlock)) {
-				EarthAbility.revertBlock(thisBlock);
+				RaiseEarth.revertAffectedBlock(thisBlock);
 			}
 		}
 	}

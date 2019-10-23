@@ -48,6 +48,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -725,17 +726,17 @@ public class GeneralMethods {
 	 */
 	public static Entity getClosestEntity(Location center, double radius) {
 		Entity found = null;
-		double distance = radius * radius;
+		Double distance = null;
 		
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
-			double check = center.distance(entity.getLocation());
+			double check = center.distanceSquared(entity.getLocation());
 			
-			if (check < distance) {
+			if (distance == null || check < distance) {
 				found = entity;
 				distance = check;
 			}
 		}
-		
+
 		return found;
 	}
 	
@@ -747,12 +748,12 @@ public class GeneralMethods {
 	 */
 	public static LivingEntity getClosestLivingEntity(Location center, double radius) {
 		LivingEntity le = null;
-		double distance = radius * radius;
+		Double distance = null;
 		
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
-			double check = center.distance(entity.getLocation());
+			double check = center.distanceSquared(entity.getLocation());
 			
-			if (entity instanceof LivingEntity && check < distance) {
+			if (entity instanceof LivingEntity && (distance == null || check < distance)) {
 				le = (LivingEntity) entity;
 				distance = check;
 			}
@@ -962,6 +963,16 @@ public class GeneralMethods {
 		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 
+	public static Location getMainHandLocation(final Player player) {
+		Location loc;
+		if (player.getMainHand() == MainHand.LEFT) {
+			loc = GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, 1.2, 0);
+		} else {
+			loc = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0);
+		}
+		return loc;
+	}
+
 	public static Plugin getProbending() {
 		if (hasProbending()) {
 			return Bukkit.getServer().getPluginManager().getPlugin("Probending");
@@ -1031,8 +1042,8 @@ public class GeneralMethods {
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
-
-	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
+	
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... nonOpaque2) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
 
@@ -1052,6 +1063,11 @@ public class GeneralMethods {
 
 		for (double i = 0; i < range; i += 0.2) {
 			location.add(vec);
+			
+			if (checkDiagonals && checkDiagonalWall(location, vec)) {
+				location.subtract(vec);
+				break;
+			}
 
 			final Block block = location.getBlock();
 
@@ -1068,12 +1084,16 @@ public class GeneralMethods {
 		return location;
 	}
 
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
+		return getTargetedLocation(player, range, ignoreTempBlocks, true, nonOpaque2);
+	}
+
 	public static Location getTargetedLocation(final Player player, final double range, final Material... nonOpaque2) {
 		return getTargetedLocation(player, range, false, nonOpaque2);
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
-		return getTargetedLocation(player, range, Material.AIR);
+		return getTargetedLocation(player, range, false);
 	}
 
 	public static Block getTopBlock(final Location loc, final int range) {

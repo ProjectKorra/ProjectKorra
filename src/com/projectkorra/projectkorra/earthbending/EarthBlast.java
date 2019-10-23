@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -376,8 +377,12 @@ public class EarthBlast extends EarthAbility<EarthBlastConfig> {
 		this.firstDestination = this.location.clone();
 		if (this.destination.getY() - this.location.getY() > 2) {
 			this.firstDestination.setY(this.destination.getY() - 1);
-		} else {
+		} else if (this.location.getY() > player.getEyeLocation().getY() && this.location.getBlock().getRelative(BlockFace.UP).isPassable()) {
+			this.firstDestination.subtract(0, 2, 0);
+		} else if (this.location.getBlock().getRelative(BlockFace.UP).isPassable() && this.location.getBlock().getRelative(BlockFace.UP, 2).isPassable()) {
 			this.firstDestination.add(0, 2, 0);
+		} else {
+			this.firstDestination.add(GeneralMethods.getDirection(this.location, this.destination).normalize().setY(0));
 		}
 
 		if (this.destination.distanceSquared(this.location) <= 1) {
