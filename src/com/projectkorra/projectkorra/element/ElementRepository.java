@@ -18,7 +18,7 @@ public class ElementRepository extends DatabaseRepository
 			.sqlite("CREATE TABLE IF NOT EXISTS pk_elements (element_id INTEGER PRIMARY KEY AUTOINCREMENT, element_name VARCHAR(50) NOT NULL); CREATE UNIQUE INDEX name_index ON pk_elements (element_name);")
 			.build();
 	private static final DatabaseQuery CREATE_TABLE_PLAYER_ELEMENTS = DatabaseQuery.newBuilder()
-			.mysql("CREATE TABLE IF NOT EXISTS pk_player_elements (player_id INTEGER REFERENCES pk_bending_players (player_id), element_id INTEGER REFERENCES pk_elements (element_id), PRIMARY KEY (player_id, element_id)), INDEX player_index (player_id), INDEX element_index (element_id));")
+			.mysql("CREATE TABLE IF NOT EXISTS pk_player_elements (player_id INTEGER REFERENCES pk_bending_players (player_id), element_id INTEGER REFERENCES pk_elements (element_id), PRIMARY KEY (player_id, element_id), INDEX player_index (player_id), INDEX element_index (element_id));")
 			.sqlite("CREATE TABLE IF NOT EXISTS pk_player_elements (player_id INTEGER REFERENCES pk_bending_players (player_id), element_id INTEGER REFERENCES pk_elements (element_id), PRIMARY KEY (player_id, element_id)); CREATE INDEX player_index ON pk_player_elements (player_id); CREATE INDEX element_index ON pk_player_elements (element_id);")
 			.build();
 
@@ -38,6 +38,10 @@ public class ElementRepository extends DatabaseRepository
 			.query("INSERT INTO pk_player_elements VALUES (?, ?);")
 			.build();
 
+	private static final DatabaseQuery DELETE_PLAYER_ELEMENTS = DatabaseQuery.newBuilder()
+			.query("DELETE FROM pk_player_elements WHERE player_id = ?;")
+			.build();
+
 	private static final DatabaseQuery DELETE_PLAYER_ELEMENT = DatabaseQuery.newBuilder()
 			.query("DELETE FROM pk_player_elements WHERE player_id = ? AND element_id = ?;")
 			.build();
@@ -47,10 +51,10 @@ public class ElementRepository extends DatabaseRepository
 		Connection connection = getDatabase().getConnection();
 
 		try
-		(
-				PreparedStatement elements = connection.prepareStatement(CREATE_TABLE_ELEMENTS.getQuery());
-				PreparedStatement playerElements = connection.prepareStatement(CREATE_TABLE_PLAYER_ELEMENTS.getQuery())
-		)
+				(
+						PreparedStatement elements = connection.prepareStatement(CREATE_TABLE_ELEMENTS.getQuery());
+						PreparedStatement playerElements = connection.prepareStatement(CREATE_TABLE_PLAYER_ELEMENTS.getQuery())
+				)
 		{
 			elements.executeUpdate();
 			playerElements.executeUpdate();
@@ -126,6 +130,18 @@ public class ElementRepository extends DatabaseRepository
 		{
 			statement.setInt(1, playerId);
 			statement.setInt(2, elementId);
+
+			statement.executeUpdate();
+		}
+	}
+
+	protected void deletePlayerElements(int playerId) throws SQLException
+	{
+		Connection connection = getDatabase().getConnection();
+
+		try (PreparedStatement statement = connection.prepareStatement(DELETE_PLAYER_ELEMENTS.getQuery()))
+		{
+			statement.setInt(1, playerId);
 
 			statement.executeUpdate();
 		}

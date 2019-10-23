@@ -2,8 +2,10 @@ package com.projectkorra.projectkorra.element;
 
 import com.google.common.base.Preconditions;
 import com.projectkorra.projectkorra.module.DatabaseModule;
+import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import com.projectkorra.projectkorra.player.BendingPlayerLoadedEvent;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +25,10 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 	private static final String COMBUSTION = "combustion", LIGHTNING = "lightning";
 	private static final String FLIGHT = "flight", SPIRITUAL = "spiritual";
 
+	private final BendingPlayerManager _bendingPlayerManager;
+
 	private final Map<Integer, Element> _elements = new HashMap<>();
+	private final Map<String, Element> _names = new HashMap<>();
 
 	private final String _nameRegex = "[a-zA-Z]+";
 
@@ -36,6 +41,8 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 	private ElementManager()
 	{
 		super("Element", new ElementRepository());
+
+		_bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 
 		runAsync(() ->
 		{
@@ -87,7 +94,6 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 	@EventHandler
 	public void onBendingPlayerLoaded(BendingPlayerLoadedEvent event)
 	{
-		Player player = event.getPlayer();
 		BendingPlayer bendingPlayer = event.getBendingPlayer();
 
 		runAsync(() ->
@@ -107,6 +113,94 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		});
 	}
 
+	public boolean addElement(Player player, Element element)
+	{
+		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+
+		if (!bendingPlayer.addElement(element))
+		{
+			return false;
+		}
+
+		runAsync(() ->
+		{
+			try
+			{
+				getRepository().insertPlayerElement(bendingPlayer.getId(), element.getId());
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		});
+
+		return true;
+	}
+
+	public void setElement(Player player, Element element)
+	{
+		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+
+		bendingPlayer.clearElements();
+		bendingPlayer.addElement(element);
+
+		runAsync(() ->
+		{
+			try
+			{
+				getRepository().deletePlayerElements(bendingPlayer.getId());
+				getRepository().insertPlayerElement(bendingPlayer.getId(), element.getId());
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		});
+	}
+
+	public boolean removeElement(Player player, Element element)
+	{
+		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+
+		if (!bendingPlayer.removeElement(element))
+		{
+			return false;
+		}
+
+		runAsync(() ->
+		{
+			try
+			{
+				getRepository().deletePlayerElement(bendingPlayer.getId(), element.getId());
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		});
+
+		return true;
+	}
+
+	public void clearElements(Player player)
+	{
+		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+
+		bendingPlayer.clearElements();
+
+		runAsync(() ->
+		{
+			try
+			{
+				getRepository().deletePlayerElements(bendingPlayer.getId());
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		});
+	}
+
 	private Element addElement(String elementName, String displayName, ChatColor color)
 	{
 		int elementId = registerElement(elementName);
@@ -114,6 +208,7 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		Element element = new Element(elementId, elementName, displayName, color);
 
 		_elements.put(elementId, element);
+		_names.put(elementName, element);
 
 		return element;
 	}
@@ -125,6 +220,7 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		SubElement element = new SubElement(elementId, elementName, displayName, color, parent);
 
 		_elements.put(elementId, element);
+		_names.put(elementName, element);
 
 		return element;
 	}

@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.module;
 
 import com.google.common.base.Preconditions;
+import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.database.DatabaseManager;
 import com.projectkorra.projectkorra.element.ElementManager;
@@ -64,6 +65,7 @@ public class ModuleManager {
 		registerModule(DatabaseManager.class);
 		registerModule(BendingPlayerManager.class);
 		registerModule(ElementManager.class);
+		registerModule(AbilityManager.class);
 		registerModule(CooldownManager.class);
 	}
 
@@ -72,6 +74,7 @@ public class ModuleManager {
 	 */
 	public static void shutdown() {
 		registerModule(CooldownManager.class);
+		registerModule(AbilityManager.class);
 		registerModule(ElementManager.class);
 		getModule(BendingPlayerManager.class).disable();
 		getModule(DatabaseManager.class).disable();

@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
@@ -10,7 +11,9 @@ import com.projectkorra.projectkorra.element.ElementManager;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,6 +21,7 @@ public class BendingPlayer
 {
 	private final BendingPlayerManager manager;
 	private final ElementManager elementManager;
+	private final AbilityManager abilityManager;
 	private final CooldownManager cooldownManager;
 
 	private final int playerId;
@@ -42,6 +46,7 @@ public class BendingPlayer
 	{
 		this.manager = ModuleManager.getModule(BendingPlayerManager.class);
 		this.elementManager = ModuleManager.getModule(ElementManager.class);
+		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
 		this.cooldownManager = ModuleManager.getModule(CooldownManager.class);
 
 		this.playerId = playerId;
@@ -55,15 +60,24 @@ public class BendingPlayer
 		this.abilities = new String[9];
 	}
 
-	public void addElement(Element element)
+	public Set<Element> getElements()
 	{
-		this.elements.add(element);
+		return new HashSet<>(this.elements);
 	}
 
-	public void setElement(Element element)
+	public boolean addElement(Element element)
+	{
+		return this.elements.add(element);
+	}
+
+	public boolean removeElement(Element element)
+	{
+		return this.elements.remove(element);
+	}
+
+	public void clearElements()
 	{
 		this.elements.clear();
-		this.elements.add(element);
 	}
 
 	public boolean hasElement(Element element)
@@ -157,6 +171,26 @@ public class BendingPlayer
 	{
 		int slot = this.player.getInventory().getHeldItemSlot();
 		return this.abilities[slot];
+	}
+
+	public String getAbility(int slot)
+	{
+		return this.abilities[slot];
+	}
+
+	public List<String> getAbilities()
+	{
+		return Arrays.asList(this.abilities);
+	}
+
+	public void setAbilities(String[] abilities)
+	{
+		System.arraycopy(abilities, 0, this.abilities, 0, 9);
+	}
+
+	public void setAbility(int slot, String abilityName)
+	{
+		this.abilities[slot] = abilityName;
 	}
 
 	public void addCooldown(Ability ability)
