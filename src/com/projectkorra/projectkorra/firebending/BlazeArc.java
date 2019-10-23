@@ -16,9 +16,10 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.BlazeConfig;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
-public class BlazeArc extends FireAbility {
+public class BlazeArc extends FireAbility<BlazeConfig> {
 
 	private static final long DISSIPATE_REMOVE_TIME = 400;
 	private static final Map<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<>();
@@ -35,10 +36,10 @@ public class BlazeArc extends FireAbility {
 	private Location location;
 	private Vector direction;
 
-	public BlazeArc(final Player player, final Location location, final Vector direction, final double range) {
-		super(player);
+	public BlazeArc(final BlazeConfig config, final Player player, final Location location, final Vector direction, final double range) {
+		super(config, player);
 		this.range = this.getDayFactor(range);
-		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
+		this.speed = config.Speed;
 		this.interval = (long) (1000. / this.speed);
 		this.origin = location.clone();
 		this.location = this.origin.clone();
@@ -282,6 +283,11 @@ public class BlazeArc extends FireAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<BlazeConfig> getConfigType() {
+		return BlazeConfig.class;
 	}
 
 }

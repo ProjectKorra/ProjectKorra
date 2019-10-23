@@ -16,8 +16,9 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.TornadoConfig;
 
-public class Tornado extends AirAbility {
+public class Tornado extends AirAbility<TornadoConfig> {
 
 	@Attribute(Attribute.COOLDOWN)
 	private final long cooldown;
@@ -42,19 +43,19 @@ public class Tornado extends AirAbility {
 	private final Random random;
 	private final Map<Integer, Integer> angles;
 
-	public Tornado(final Player player) {
-		super(player);
+	public Tornado(final TornadoConfig config, final Player player) {
+		super(config, player);
 
-		this.cooldown = getConfig().getLong("Abilities.Air.Tornado.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Air.Tornado.Duration");
-		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
+		this.range = config.Range;
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) this.range).getLocation();
 		this.origin.setY(this.origin.getY() - 1.0 / 10.0 * this.currentHeight);
-		this.maxHeight = getConfig().getDouble("Abilities.Air.Tornado.Height");
-		this.playerPushFactor = getConfig().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-		this.radius = getConfig().getDouble("Abilities.Air.Tornado.Radius");
-		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.NpcPushFactor");
-		this.speed = getConfig().getDouble("Abilities.Air.Tornado.Speed");
+		this.maxHeight = config.Height;
+		this.playerPushFactor = config.PlayerPushFactor;
+		this.radius = config.Radius;
+		this.npcPushFactor = config.NpcPushFactor;
+		this.speed = config.Speed;
 		this.numberOfStreams = (int) (.3 * this.maxHeight);
 		this.currentHeight = 2;
 		this.currentRadius = this.currentHeight / this.maxHeight * this.radius;
@@ -321,5 +322,10 @@ public class Tornado extends AirAbility {
 
 	public Map<Integer, Integer> getAngles() {
 		return this.angles;
+	}
+	
+	@Override
+	public Class<TornadoConfig> getConfigType() {
+		return TornadoConfig.class;
 	}
 }

@@ -22,6 +22,9 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.SurgeConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -30,7 +33,8 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class SurgeWave extends WaterAbility {
+@SuppressWarnings({ "deprecation", "unused" })
+public class SurgeWave extends WaterAbility<SurgeConfig> {
 
 	private boolean freezing;
 	private boolean activateFreeze;
@@ -63,8 +67,8 @@ public class SurgeWave extends WaterAbility {
 	private Map<Block, Block> waveBlocks;
 	private Map<Block, Material> frozenBlocks;
 
-	public SurgeWave(final Player player) {
-		super(player);
+	public SurgeWave(final SurgeConfig config, final Player player) {
+		super(config, player);
 
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null) {
@@ -76,20 +80,20 @@ public class SurgeWave extends WaterAbility {
 
 		this.canHitSelf = true;
 		this.currentRadius = 1;
-		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
-		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
-		this.maxRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
-		this.knockback = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback");
-		this.knockup = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup");
-		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
-		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
-		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
-		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
+		this.cooldown = config.WaveConfig.Cooldown;
+		this.interval = config.WaveConfig.Interval;
+		this.maxRadius = config.WaveConfig.Radius;
+		this.knockback = config.WaveConfig.Knockback;
+		this.knockup = config.WaveConfig.Knockup;
+		this.maxFreezeRadius = config.WaveConfig.MaxFreezeRadius;
+		this.iceRevertTime = config.WaveConfig.IceRevertTime;
+		this.range = config.WaveConfig.Range;
+		this.selectRange = config.WaveConfig.SelectRange;
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
 
 		if (this.bPlayer.isAvatarState()) {
-			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
+			this.maxRadius = config.WaveConfig.AvatarState_Radius;
 		}
 		this.maxRadius = this.getNightFactor(this.maxRadius);
 
@@ -160,10 +164,10 @@ public class SurgeWave extends WaterAbility {
 					if (Commands.invincible.contains(((Player) entity).getName())) {
 						return;
 					}
-					if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
+					if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerHead && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
 						continue ICE_SETTING;
 					}
-					if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
+					if (!ConfigManager.getConfig(WaterPropertiesConfig.class).FreezePlayerFeet && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
 						continue ICE_SETTING;
 					}
 				}
@@ -639,6 +643,11 @@ public class SurgeWave extends WaterAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<SurgeConfig> getConfigType() {
+		return SurgeConfig.class;
 	}
 
 }

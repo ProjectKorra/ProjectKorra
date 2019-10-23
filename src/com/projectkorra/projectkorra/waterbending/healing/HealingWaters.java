@@ -20,10 +20,12 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.HealingWatersConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class HealingWaters extends HealingAbility {
+@SuppressWarnings("deprecation")
+public class HealingWaters extends HealingAbility<HealingWatersConfig> {
 
 	// Configurable Variables.
 	@Attribute(Attribute.COOLDOWN)
@@ -55,8 +57,8 @@ public class HealingWaters extends HealingAbility {
 	private boolean hasReached = false;
 	private String hex;
 
-	public HealingWaters(final Player player) {
-		super(player);
+	public HealingWaters(final HealingWatersConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBend(this)) {
 			this.remove();
@@ -77,13 +79,13 @@ public class HealingWaters extends HealingAbility {
 
 	public void setFields() {
 
-		this.cooldown = getConfig().getLong("Abilities.Water.HealingWaters.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Water.HealingWaters.Range");
-		this.interval = getConfig().getLong("Abilities.Water.HealingWaters.Interval");
-		this.chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
-		this.potionPotency = getConfig().getInt("Abilities.Water.HealingWaters.PotionPotency");
-		this.duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
-		this.enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
+		this.cooldown = config.Cooldown;
+		this.range = config.Range;
+		this.interval = config.Interval;
+		this.chargeTime = config.ChargeTime;
+		this.potionPotency = config.PotionPotency;
+		this.duration = config.Duration;
+		this.enableParticles = config.EnableParticles;
 		this.hex = "00ffff";
 	}
 
@@ -354,6 +356,11 @@ public class HealingWaters extends HealingAbility {
 	@Override
 	public Location getLocation() {
 		return this.location;
+	}
+	
+	@Override
+	public Class<HealingWatersConfig> getConfigType() {
+		return HealingWatersConfig.class;
 	}
 
 }

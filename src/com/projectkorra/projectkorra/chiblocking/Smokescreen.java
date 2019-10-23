@@ -14,9 +14,10 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.SmokescreenConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class Smokescreen extends ChiAbility {
+public class Smokescreen extends ChiAbility<SmokescreenConfig> {
 
 	private static final Map<Integer, Smokescreen> SNOWBALLS = new ConcurrentHashMap<>();
 	private static final Map<String, Long> BLINDED_TIMES = new ConcurrentHashMap<>();
@@ -29,14 +30,14 @@ public class Smokescreen extends ChiAbility {
 	@Attribute(Attribute.RADIUS)
 	private double radius;
 
-	public Smokescreen(final Player player) {
-		super(player);
+	public Smokescreen(final SmokescreenConfig config, final Player player) {
+		super(config, player);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		this.cooldown = getConfig().getLong("Abilities.Chi.Smokescreen.Cooldown");
-		this.duration = getConfig().getInt("Abilities.Chi.Smokescreen.Duration");
-		this.radius = getConfig().getDouble("Abilities.Chi.Smokescreen.Radius");
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
+		this.radius = config.Radius;
 		this.start();
 	}
 
@@ -150,6 +151,11 @@ public class Smokescreen extends ChiAbility {
 
 	public static Map<String, Smokescreen> getBlindedToAbility() {
 		return BLINDED_TO_ABILITY;
+	}
+	
+	@Override
+	public Class<SmokescreenConfig> getConfigType() {
+		return SmokescreenConfig.class;
 	}
 
 }

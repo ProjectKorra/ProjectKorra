@@ -16,33 +16,36 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
 
 /**
  * Executor for /bending bind. Extends {@link PKCommand}.
  */
-public class BindCommand extends PKCommand {
+@SuppressWarnings("rawtypes")
+public class BindCommand extends PKCommand<BindCommandConfig> {
 
 	private final String abilityDoesntExist;
 	private final String wrongNumber;
 	private final String loadingInfo;
 	private final String toggledElementOff;
 	private final String noElement;
-	private final String noElementAE;
+	private final String noElementVowel;
 	private final String noSubElement;
+	private final String noSubElementVowel;
 	private final String unbindable;
 
-	public BindCommand() {
-		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[] { "bind", "b" });
+	public BindCommand(final BindCommandConfig config) {
+		super(config, "bind", "/bending bind <Ability> [Slot]", config.Description, new String[] { "bind", "b" });
 
-		this.abilityDoesntExist = ConfigManager.languageConfig.get().getString("Commands.Bind.AbilityDoesntExist");
-		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Bind.WrongNumber");
-		this.loadingInfo = ConfigManager.languageConfig.get().getString("Commands.Bind.LoadingInfo");
-		this.toggledElementOff = ConfigManager.languageConfig.get().getString("Commands.Bind.ElementToggledOff");
-		this.noElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElement");
-		this.noElementAE = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElementAE");
-		this.noSubElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoSubElement");
-		this.unbindable = ConfigManager.languageConfig.get().getString("Commands.Bind.Unbindable");
+		this.abilityDoesntExist = config.AbilityDoesntExistMessage;
+		this.wrongNumber = config.WrongNumberMessage;
+		this.loadingInfo = config.LoadingInfoMessage;
+		this.toggledElementOff = config.ElementToggledOffMessage;
+		this.noElement = config.NoElementMessage;
+		this.noElementVowel = config.NoElementMessageVowel;
+		this.noSubElement = config.NoSubElementMessage;
+		this.noSubElementVowel = config.NoSubElementMessageVowel;
+		this.unbindable = config.UnbindableMessage;
 	}
 
 	@Override
@@ -93,12 +96,24 @@ public class BindCommand extends PKCommand {
 				if (coreAbil.getElement() instanceof SubElement) {
 					final SubElement sub = (SubElement) coreAbil.getElement();
 					if (!bPlayer.hasElement(sub.getParentElement())) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ("AEIOUaeiou".indexOf(sub.getParentElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+						if (GeneralMethods.isVowel(ChatColor.stripColor(sub.getParentElement().getName()).charAt(0))) {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+						}
 					} else {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+						if (GeneralMethods.isVowel(ChatColor.stripColor(sub.getName()).charAt(0))) {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElementVowel.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+						}
 					}
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ("AEIOUaeiou".indexOf(coreAbil.getElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					if (GeneralMethods.isVowel(ChatColor.stripColor(coreAbil.getElement().getName()).charAt(0))) {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					} else {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					}
 				}
 			} else {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + super.noPermissionMessage);
@@ -109,7 +124,7 @@ public class BindCommand extends PKCommand {
 		}
 
 		final String name = coreAbil != null ? coreAbil.getName() : null;
-		GeneralMethods.bindAbility((Player) sender, name, slot);
+		GeneralMethods.bindAbility((Player) sender, name, slot - 1);
 	}
 
 	@Override
@@ -118,7 +133,7 @@ public class BindCommand extends PKCommand {
 			return new ArrayList<String>();
 		}
 
-		List<String> abilities = new ArrayList<String>();
+		List<String> abilities = new ArrayList<>();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		if (args.size() == 0) {
 			if (bPlayer != null) {

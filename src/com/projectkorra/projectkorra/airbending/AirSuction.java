@@ -23,10 +23,12 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSuctionConfig;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
-public class AirSuction extends AirAbility {
+public class AirSuction extends AirAbility<AirSuctionConfig> {
 
 	private final List<Block> affectedDoors = new ArrayList<>();
 
@@ -50,8 +52,8 @@ public class AirSuction extends AirAbility {
 	private Vector direction;
 	private boolean canAffectSelf;
 
-	public AirSuction(final Player player) {
-		super(player);
+	public AirSuction(final AirSuctionConfig config, final Player player) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown(this)) {
 			return;
@@ -74,13 +76,13 @@ public class AirSuction extends AirAbility {
 		}
 
 		this.progressing = false;
-		this.particleCount = getConfig().getInt("Abilities.Air.AirSuction.Particles");
-		this.speed = getConfig().getDouble("Abilities.Air.AirSuction.Speed");
-		this.range = getConfig().getDouble("Abilities.Air.AirSuction.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.AirSuction.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirSuction.Push.Self");
-		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirSuction.Push.Others");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirSuction.Cooldown");
+		this.particleCount = config.AnimationParticleAmount;
+		this.speed = config.Speed;
+		this.range = config.Range;
+		this.radius = config.Radius;
+		this.pushFactor = config.PushFactor_Self;
+		this.pushFactorForOthers = config.PushFactor_Others;
+		this.cooldown = config.Cooldown;
 		this.random = new Random();
 		this.origin = this.getTargetLocation();
 		this.canAffectSelf = true;
@@ -92,7 +94,7 @@ public class AirSuction extends AirAbility {
 		this.location = null;
 
 		if (this.bPlayer.isAvatarState()) {
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSuction.Push");
+			this.pushFactor = config.AvatarState_PushFactor;
 		}
 
 		this.start();
@@ -265,7 +267,7 @@ public class AirSuction extends AirAbility {
 		this.bPlayer.addCooldown(this);
 	}
 
-	public static void shoot(final Player player) {
+	public static void shoot(final AirSuctionConfig config, final Player player) {
 		AirSuction suc = null;
 
 		if (CoreAbility.hasAbility(player, AirSuction.class)) {
@@ -274,7 +276,7 @@ public class AirSuction extends AirAbility {
 				return;
 			}
 		} else {
-			suc = new AirSuction(player);
+			suc = new AirSuction(config, player);
 			suc.setOrigin(player.getEyeLocation().clone());
 			suc.setCanEffectSelf(false);
 		}
@@ -406,11 +408,16 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static int getSelectParticles() {
-		return getConfig().getInt("Abilities.Air.AirSuction.SelectParticles");
+		return ConfigManager.getConfig(AirSuctionConfig.class).SelectionParticleAmount;
 	}
 
 	public static double getSelectRange() {
-		return getConfig().getDouble("Abilities.Air.AirSuction.SelectRange");
+		return ConfigManager.getConfig(AirSuctionConfig.class).SelectionRange;
+	}
+	
+	@Override
+	public Class<AirSuctionConfig> getConfigType() {
+		return AirSuctionConfig.class;
 	}
 
 }

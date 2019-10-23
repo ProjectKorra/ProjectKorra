@@ -6,14 +6,15 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.AcrobaticsConfig;
 
-public class Acrobatics extends ChiAbility implements PassiveAbility {
-	public Acrobatics(final Player player) {
-		super(player);
+public class Acrobatics extends ChiAbility<AcrobaticsConfig> implements PassiveAbility {
+	public Acrobatics(final AcrobaticsConfig config, final Player player) {
+		super(config, player);
 	}
 
 	public static double getFallReductionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.Acrobatics.FallReductionFactor");
+		return ConfigManager.getConfig(AcrobaticsConfig.class).FallReductionFactor;
 	}
 
 	@Override
@@ -52,5 +53,10 @@ public class Acrobatics extends ChiAbility implements PassiveAbility {
 	@Override
 	public boolean isProgressable() {
 		return false;
+	}
+	
+	@Override
+	public Class<AcrobaticsConfig> getConfigType() {
+		return AcrobaticsConfig.class;
 	}
 }

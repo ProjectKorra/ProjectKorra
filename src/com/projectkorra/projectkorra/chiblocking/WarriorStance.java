@@ -10,8 +10,10 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.WarriorStanceConfig;
 
-public class WarriorStance extends ChiAbility {
+@SuppressWarnings("rawtypes")
+public class WarriorStance extends ChiAbility<WarriorStanceConfig> {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -22,15 +24,15 @@ public class WarriorStance extends ChiAbility {
 	@Attribute("Resistance")
 	private int resistance;
 
-	public WarriorStance(final Player player) {
-		super(player);
+	public WarriorStance(final WarriorStanceConfig config, final Player player) {
+		super(config, player);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		this.cooldown = getConfig().getLong("Abilities.Chi.WarriorStance.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Chi.WarriorStance.Duration");
-		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
-		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance"); //intended to be negative
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
+		this.strength = config.Strength - 1;
+		this.resistance = config.Resistance; //intended to be negative
 
 		final ChiAbility stance = this.bPlayer.getStance();
 		if (stance != null) {
@@ -124,6 +126,11 @@ public class WarriorStance extends ChiAbility {
 
 	public void setDuration(final long duration) {
 		this.duration = duration;
+	}
+	
+	@Override
+	public Class<WarriorStanceConfig> getConfigType() {
+		return WarriorStanceConfig.class;
 	}
 
 }

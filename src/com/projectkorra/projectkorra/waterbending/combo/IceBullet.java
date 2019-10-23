@@ -25,6 +25,8 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceBulletConfig;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -33,7 +35,8 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterSourceGrabber;
 
-public class IceBullet extends IceAbility implements ComboAbility {
+@SuppressWarnings("deprecation")
+public class IceBullet extends IceAbility<IceBulletConfig> implements ComboAbility {
 
 	public static enum AbilityState {
 		ICE_PILLAR_RISING, ICE_BULLET_FORMING
@@ -58,7 +61,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private long cooldown;
 	private long shotcooldown;
 	private long time;
-	private String name;
 	private AbilityState state;
 	private Location origin;
 	private Location location;
@@ -67,8 +69,8 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
 
-	public IceBullet(final Player player) {
-		super(player);
+	public IceBullet(final IceBulletConfig config, final Player player) {
+		super(config, player);
 
 		this.time = System.currentTimeMillis();
 		this.tasks = new ArrayList<>();
@@ -78,16 +80,15 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			return;
 		}
 
-		this.damage = getConfig().getDouble("Abilities.Water.IceBullet.Damage");
-		this.range = getConfig().getDouble("Abilities.Water.IceBullet.Range");
-		this.radius = getConfig().getDouble("Abilities.Water.IceBullet.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Water.IceBullet.Cooldown");
-		this.shotcooldown = getConfig().getLong("Abilities.Water.IceBullet.ShotCooldown");
-		this.shootTime = getConfig().getLong("Abilities.Water.IceBullet.ShootTime");
-		this.maxShots = getConfig().getInt("Abilities.Water.IceBullet.MaxShots");
-		this.animationSpeed = getConfig().getDouble("Abilities.Water.IceBullet.AnimationSpeed");
+		this.damage = config.Damage;
+		this.range = config.Range;
+		this.radius = config.Radius;
+		this.cooldown = config.Cooldown;
+		this.shotcooldown = config.ShotCooldown;
+		this.shootTime = config.ShootTime;
+		this.maxShots = config.MaxShots;
+		this.animationSpeed = config.AnimationSpeed;
 		this.speed = 1;
-		this.name = this.getName();
 
 		double aug = getNightFactor(player.getWorld());
 		if (aug > 1) {
@@ -101,7 +102,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		this.radius *= aug;
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Water.IceBullet.Cooldown");
+			this.cooldown = config.AvatarState_Cooldown;
 			this.damage = AvatarState.getValue(this.damage);
 			this.range = AvatarState.getValue(this.range);
 			this.shootTime = AvatarState.getValue(this.shootTime);
@@ -344,7 +345,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new IceBullet(player);
+		return new IceBullet(ConfigManager.getConfig(IceBulletConfig.class), player);
 	}
 
 	@Override
@@ -519,8 +520,10 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	public void setLocation(final Location location) {
 		this.location = location;
 	}
-
-	public void setName(final String name) {
-		this.name = name;
+	
+	@Override
+	public Class<IceBulletConfig> getConfigType() {
+		return IceBulletConfig.class;
 	}
+
 }

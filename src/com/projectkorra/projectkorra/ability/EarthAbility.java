@@ -5,10 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -22,9 +20,10 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
@@ -33,15 +32,15 @@ import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public abstract class EarthAbility extends ElementalAbility {
-
+public abstract class EarthAbility<C extends AbilityConfig> extends ElementalAbility<C> {
+	
 	private static final HashSet<Block> PREVENT_EARTHBENDING = new HashSet<Block>();
 	private static final Map<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
 	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
 
-	public EarthAbility(final Player player) {
-		super(player);
+	public EarthAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	public int getEarthbendableBlocksLength(final Block block, Vector direction, final int maxlength) {
@@ -349,7 +348,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static double getMetalAugment(final double value) {
-		return value * getConfig().getDouble("Properties.Earth.MetalPowerFactor");
+		return value * ConfigManager.getConfig(EarthPropertiesConfig.class).MetalPowerFactor;
 	}
 
 	public static Map<Block, Information> getMovedEarth() {
@@ -394,10 +393,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		return PREVENT_PHYSICS;
 	}
 
-	public static ChatColor getSubChatColor() {
-		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.EarthSub"));
-	}
-
 	public static Block getTargetEarthBlock(final Player player, final int range) {
 		return player.getTargetBlock(getTransparentMaterialSet(), range);
 	}
@@ -421,7 +416,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static boolean isEarthRevertOn() {
-		return getConfig().getBoolean("Properties.Earth.RevertEarthbending");
+		return ConfigManager.getConfig(EarthPropertiesConfig.class).RevertEarthbending;
 	}
 
 	public static boolean isLavabendable(final Player player, final Block block) {
@@ -472,70 +467,34 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void playEarthbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
-
-			Sound sound = Sound.ENTITY_GHAST_SHOOT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Earth.EarthSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		EarthPropertiesConfig earth = ConfigManager.getConfig(EarthPropertiesConfig.class);
+		
+		if (earth.PlaySound) {
+			loc.getWorld().playSound(loc, earth.SoundType, earth.SoundVolume, earth.SoundPitch);
 		}
 	}
 
 	public static void playMetalbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
-
-			Sound sound = Sound.ENTITY_IRON_GOLEM_HURT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MetalSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		EarthPropertiesConfig earth = ConfigManager.getConfig(EarthPropertiesConfig.class);
+		
+		if (earth.PlaySound) {
+			loc.getWorld().playSound(loc, earth.MetalSoundType, earth.MetalSoundVolume, earth.MetalSoundPitch);
 		}
 	}
 
 	public static void playSandbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
-
-			Sound sound = Sound.BLOCK_SAND_BREAK;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Earth.SandSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		EarthPropertiesConfig earth = ConfigManager.getConfig(EarthPropertiesConfig.class);
+		
+		if (earth.PlaySound) {
+			loc.getWorld().playSound(loc, earth.SandSoundType, earth.SandSoundVolume, earth.SandSoundPitch);
 		}
 	}
 
 	public static void playLavabendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
-
-			Sound sound = Sound.BLOCK_LAVA_AMBIENT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Earth.LavaSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		EarthPropertiesConfig earth = ConfigManager.getConfig(EarthPropertiesConfig.class);
+		
+		if (earth.PlaySound) {
+			loc.getWorld().playSound(loc, earth.LavaSoundType, earth.LavaSoundVolume, earth.LavaSoundPitch);
 		}
 	}
 

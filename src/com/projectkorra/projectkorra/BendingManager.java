@@ -1,19 +1,12 @@
 package com.projectkorra.projectkorra;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import co.aikar.timings.lib.MCTiming;
-
-import com.projectkorra.projectkorra.cooldown.CooldownManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.FirePropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.ActionBar;
@@ -21,6 +14,13 @@ import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class BendingManager implements Runnable {
 
@@ -156,19 +156,19 @@ public class BendingManager implements Runnable {
 	}
 
 	public static String getSunriseMessage() {
-		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Fire.DayMessage"));
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(FirePropertiesConfig.class).DayMessage);
 	}
 
 	public static String getSunsetMessage() {
-		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Fire.NightMessage"));
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(FirePropertiesConfig.class).NightMessage);
 	}
 
 	public static String getMoonriseMessage() {
-		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Water.NightMessage"));
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(WaterPropertiesConfig.class).NightMessage);
 	}
 
 	public static String getMoonsetMessage() {
-		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Water.DayMessage"));
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(WaterPropertiesConfig.class).DayMessage);
 	}
 
 }

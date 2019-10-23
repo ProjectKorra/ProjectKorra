@@ -11,12 +11,12 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.ClearCommandConfig;
 
 /**
  * Executor for /bending clear. Extends {@link PKCommand}.
  */
-public class ClearCommand extends PKCommand {
+public class ClearCommand extends PKCommand<ClearCommandConfig> {
 
 	private final String cantEditBinds;
 	private final String cleared;
@@ -24,14 +24,14 @@ public class ClearCommand extends PKCommand {
 	private final String clearedSlot;
 	private final String alreadyEmpty;
 
-	public ClearCommand() {
-		super("clear", "/bending clear [Slot]", ConfigManager.languageConfig.get().getString("Commands.Clear.Description"), new String[] { "clear", "cl", "c" });
+	public ClearCommand(final ClearCommandConfig config) {
+		super(config, "clear", "/bending clear [Slot]", config.Description, new String[] { "clear", "cl", "c" });
 
-		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Clear.CantEditBinds");
-		this.cleared = ConfigManager.languageConfig.get().getString("Commands.Clear.Cleared");
-		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Clear.WrongNumber");
-		this.clearedSlot = ConfigManager.languageConfig.get().getString("Commands.Clear.ClearedSlot");
-		this.alreadyEmpty = ConfigManager.languageConfig.get().getString("Commands.Clear.AlreadyEmpty");
+		this.cantEditBinds = config.CantEditBinds;
+		this.cleared = config.Cleared;
+		this.wrongNumber = config.WrongNumber;
+		this.clearedSlot = config.ClearedSlot;
+		this.alreadyEmpty = config.AlreadyEmpty;
 	}
 
 	@Override
@@ -49,8 +49,8 @@ public class ClearCommand extends PKCommand {
 			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		}
 		if (args.size() == 0) {
-			bPlayer.getAbilities().clear();
-			for (int i = 1; i <= 9; i++) {
+			Arrays.fill(bPlayer.getAbilities(), null);
+			for (int i = 0; i < 9; i++) {
 				GeneralMethods.saveAbility(bPlayer, i, null);
 			}
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
@@ -60,9 +60,9 @@ public class ClearCommand extends PKCommand {
 				if (slot < 1 || slot > 9) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 				}
-				if (bPlayer.getAbilities().get(slot) != null) {
-					bPlayer.getAbilities().remove(slot);
-					GeneralMethods.saveAbility(bPlayer, slot, null);
+				if (bPlayer.getAbilities()[slot - 1] != null) {
+					bPlayer.getAbilities()[slot - 1] = null;
+					GeneralMethods.saveAbility(bPlayer, slot - 1, null);
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);

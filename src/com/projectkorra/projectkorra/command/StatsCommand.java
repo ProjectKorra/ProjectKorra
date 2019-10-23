@@ -20,12 +20,13 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.StatsCommandConfig;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Statistic;
 import com.projectkorra.projectkorra.util.StatisticsMethods;
 
-public class StatsCommand extends PKCommand {
+@SuppressWarnings("rawtypes")
+public class StatsCommand extends PKCommand<StatsCommandConfig> {
 
 	private static final String[] getaliases = { "get", "g" };
 	private static final String[] leaderboardaliases = { "leaderboard", "lb", "l" };
@@ -35,13 +36,13 @@ public class StatsCommand extends PKCommand {
 	private final String invalidStatistic;
 	private final String invalidPlayer;
 
-	public StatsCommand() {
-		super("stats", "/bending stats <get/leaderboard> <ability/element/all> <statistic> [player/page]", ConfigManager.languageConfig.get().getString("Commands.Stats.Description"), new String[] { "statistics", "stats" });
+	public StatsCommand(final StatsCommandConfig config) {
+		super(config, "stats", "/bending stats <get/leaderboard> <ability/element/all> <statistic> [player/page]", config.Description, new String[] { "statistics", "stats" });
 
-		this.invalidLookup = ConfigManager.languageConfig.get().getString("Commands.Stats.InvalidLookup");
-		this.invalidSearchType = ConfigManager.languageConfig.get().getString("Commands.Stats.InvalidSearchType");
-		this.invalidStatistic = ConfigManager.languageConfig.get().getString("Commands.Stats.InvalidStatistic");
-		this.invalidPlayer = ConfigManager.languageConfig.get().getString("Commands.Stats.InvalidPlayer");
+		this.invalidLookup = config.InvalidLookup;
+		this.invalidSearchType = config.InvalidSearchType;
+		this.invalidStatistic = config.InvalidStatistic;
+		this.invalidPlayer = config.InvalidPlayer;
 	}
 
 	@Override

@@ -14,9 +14,10 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireJetConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class FireJet extends FireAbility {
+public class FireJet extends FireAbility<FireJetConfig> {
 
 	@Attribute("AvatarStateToggle")
 	private boolean avatarStateToggled;
@@ -31,8 +32,8 @@ public class FireJet extends FireAbility {
 	private Boolean previousGlidingState;
 	private Boolean showGliding;
 
-	public FireJet(final Player player) {
-		super(player);
+	public FireJet(final FireJetConfig config, final Player player) {
+		super(config, player);
 
 		final FireJet oldJet = getAbility(player, FireJet.class);
 		if (oldJet != null) {
@@ -47,11 +48,11 @@ public class FireJet extends FireAbility {
 			abil.remove();
 		}
 
-		this.avatarStateToggled = getConfig().getBoolean("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle");
-		this.duration = getConfig().getLong("Abilities.Fire.FireJet.Duration");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireJet.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");
-		this.showGliding = getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding");
+		this.avatarStateToggled = config.AvatarState_Toggle;
+		this.duration = config.Duration;
+		this.speed = config.Speed;
+		this.cooldown = config.Cooldown;
+		this.showGliding = config.ShowGliding;
 		this.random = new Random();
 
 		this.speed = this.getDayFactor(this.speed);
@@ -73,10 +74,8 @@ public class FireJet extends FireAbility {
 			this.time = System.currentTimeMillis();
 
 			this.start();
-			if (this.showGliding) {
-				this.previousGlidingState = player.isGliding();
-				player.setGliding(true);
-			}
+
+			this.previousGlidingState = player.isGliding();
 		}
 	}
 
@@ -106,6 +105,10 @@ public class FireJet extends FireAbility {
 			final Vector velocity = this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed * timefactor);
 			this.player.setVelocity(velocity);
 			this.player.setFallDistance(0);
+			
+			if (this.showGliding) {
+				player.setGliding(true);
+			}
 		}
 	}
 
@@ -179,6 +182,11 @@ public class FireJet extends FireAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<FireJetConfig> getConfigType() {
+		return FireJetConfig.class;
 	}
 
 }

@@ -18,9 +18,11 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireSpinConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class FireSpin extends FireAbility implements ComboAbility {
+public class FireSpin extends FireAbility<FireSpinConfig> implements ComboAbility {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -36,8 +38,8 @@ public class FireSpin extends FireAbility implements ComboAbility {
 	private ArrayList<LivingEntity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
 
-	public FireSpin(final Player player) {
-		super(player);
+	public FireSpin(final FireSpinConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
@@ -50,17 +52,17 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireSpin.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireSpin.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireSpin.Cooldown");
-		this.knockback = getConfig().getDouble("Abilities.Fire.FireSpin.Knockback");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireSpin.Speed");
+		this.damage = config.Damage;
+		this.range = config.Range;
+		this.cooldown = config.Cooldown;
+		this.knockback = config.Knockback;
+		this.speed = config.Speed;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Range");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback");
+			this.damage = config.AvatarState_Damage;
+			this.range = config.AvatarState_Range;
+			this.knockback = config.AvatarState_Knockback;
 		}
 
 		this.start();
@@ -162,7 +164,7 @@ public class FireSpin extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new FireSpin(player);
+		return new FireSpin(ConfigManager.getConfig(FireSpinConfig.class), player);
 	}
 
 	@Override
@@ -211,5 +213,10 @@ public class FireSpin extends FireAbility implements ComboAbility {
 
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+	
+	@Override
+	public Class<FireSpinConfig> getConfigType() {
+		return FireSpinConfig.class;
 	}
 }

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -23,11 +23,14 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthArmorConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class EarthArmor extends EarthAbility {
+public class EarthArmor extends EarthAbility<EarthArmorConfig> {
 
 	private boolean formed;
 	private Material headMaterial;
@@ -50,8 +53,8 @@ public class EarthArmor extends EarthAbility {
 	private int maxGoldHearts;
 	private TempArmor armor;
 
-	public EarthArmor(final Player player) {
-		super(player);
+	public EarthArmor(final EarthArmorConfig config, final Player player) {
+		super(config, player);
 		if (hasAbility(player, EarthArmor.class) || !this.canBend()) {
 			return;
 		}
@@ -60,14 +63,14 @@ public class EarthArmor extends EarthAbility {
 		this.active = true;
 		this.interval = 2000;
 		this.goldHearts = 0;
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
-		this.maxDuration = getConfig().getLong("Abilities.Earth.EarthArmor.MaxDuration");
-		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
-		this.maxGoldHearts = getConfig().getInt("Abilities.Earth.EarthArmor.GoldHearts");
+		this.cooldown = config.Cooldown;
+		this.maxDuration = config.MaxDuration;
+		this.selectRange = config.SelectRange;
+		this.maxGoldHearts = config.GoldHearts;
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown");
-			this.maxGoldHearts = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.EarthArmor.GoldHearts");
+			this.cooldown = config.AvatarState_Cooldown;
+			this.maxGoldHearts = config.AvatarState_GoldHearts;
 		}
 
 		this.headBlock = this.getTargetEarthBlock((int) this.selectRange);
@@ -469,7 +472,6 @@ public class EarthArmor extends EarthAbility {
 
 	private boolean canBend() {
 
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		final Location playerLoc = this.player.getLocation();
 
 		if (!this.player.isOnline() || this.player.isDead()) {
@@ -481,7 +483,7 @@ public class EarthArmor extends EarthAbility {
 			return false;
 		} else if (this.getPlayer() != null && this.getLocation() != null && !this.getLocation().getWorld().equals(this.player.getWorld())) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (Stream.of(ConfigManager.getConfig(GeneralPropertiesConfig.class).DisabledWorlds).anyMatch(this.player.getWorld().getName()::equalsIgnoreCase)) {
 			return false;
 		} else if (Commands.isToggledForAll || !this.bPlayer.isToggled() || !this.bPlayer.isElementToggled(this.getElement())) {
 			return false;
@@ -611,6 +613,11 @@ public class EarthArmor extends EarthAbility {
 
 	public void setMaxGoldHearts(final int maxGoldHearts) {
 		this.maxGoldHearts = maxGoldHearts;
+	}
+	
+	@Override
+	public Class<EarthArmorConfig> getConfigType() {
+		return EarthArmorConfig.class;
 	}
 
 }

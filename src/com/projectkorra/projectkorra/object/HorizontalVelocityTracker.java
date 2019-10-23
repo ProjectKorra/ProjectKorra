@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,16 +20,14 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 
-/**
- * Created by Carbogen on 2/2/2015.
- */
 public class HorizontalVelocityTracker {
 
 	public static Map<Entity, HorizontalVelocityTracker> instances = new ConcurrentHashMap<Entity, HorizontalVelocityTracker>();
 	public boolean hasBeenDamaged = false;
-	public boolean barrier = ConfigManager.defaultConfig.get().getBoolean("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock");
+	public boolean barrier = ConfigManager.getConfig(GeneralPropertiesConfig.class).ApplyHorizontalCollisionBarrierBlockDamage;
 	private long delay;
 	private long fireTime;
 	private Entity entity;

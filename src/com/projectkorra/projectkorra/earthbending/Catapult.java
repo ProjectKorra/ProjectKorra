@@ -15,9 +15,10 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.CatapultConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class Catapult extends EarthAbility {
+public class Catapult extends EarthAbility<CatapultConfig> {
 
 	private double stageTimeMult;
 	@Attribute(Attribute.COOLDOWN)
@@ -34,8 +35,8 @@ public class Catapult extends EarthAbility {
 	private boolean cancelWithAngle;
 	private BlockData bentBlockData;
 
-	public Catapult(final Player player, final boolean sneak) {
-		super(player);
+	public Catapult(final CatapultConfig config, final Player player, final boolean sneak) {
+		super(config, player);
 		this.setFields();
 		final Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
@@ -49,7 +50,7 @@ public class Catapult extends EarthAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
+			this.cooldown = config.AvatarState_Cooldown;
 		}
 
 		this.charging = sneak;
@@ -57,10 +58,10 @@ public class Catapult extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.stageTimeMult = getConfig().getDouble("Abilities.Earth.Catapult.StageTimeMult");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
-		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Catapult.Angle"));
-		this.cancelWithAngle = getConfig().getBoolean("Abilities.Earth.Catapult.CancelWithAngle");
+		this.stageTimeMult = config.StageTimeMult;
+		this.cooldown = config.Cooldown;
+		this.angle = Math.toRadians(config.Angle);
+		this.cancelWithAngle = config.CancelWithAngle;
 		this.activationHandled = false;
 		this.stage = 1;
 		this.stageStart = System.currentTimeMillis();
@@ -186,5 +187,10 @@ public class Catapult extends EarthAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<CatapultConfig> getConfigType() {
+		return CatapultConfig.class;
 	}
 }

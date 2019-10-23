@@ -19,11 +19,13 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSweepConfig;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
-public class AirSweep extends AirAbility implements ComboAbility {
+public class AirSweep extends AirAbility<AirSweepConfig> implements ComboAbility {
 
 	private int progressCounter;
 	@Attribute(Attribute.COOLDOWN)
@@ -43,8 +45,8 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
 
-	public AirSweep(final Player player) {
-		super(player);
+	public AirSweep(final AirSweepConfig config, final Player player) {
+		super(config, player);
 
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -57,17 +59,17 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			return;
 		}
 
-		this.damage = getConfig().getDouble("Abilities.Air.AirSweep.Damage");
-		this.range = getConfig().getDouble("Abilities.Air.AirSweep.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.AirSweep.Speed");
-		this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirSweep.Cooldown");
+		this.damage = config.Damage;
+		this.range = config.Range;
+		this.speed = config.Speed;
+		this.knockback = config.Knockback;
+		this.cooldown = config.Cooldown;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSweep.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSweep.Range");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSweep.Knockback");
+			this.damage = config.AvatarState_Damage;
+			this.range = config.AvatarState_Range;
+			this.knockback = config.AvatarState_Knockback;
 		}
 
 		this.bPlayer.addCooldown(this);
@@ -244,7 +246,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new AirSweep(player);
+		return new AirSweep(ConfigManager.getConfig(AirSweepConfig.class), player);
 	}
 
 	@Override
@@ -339,5 +341,10 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+
+	@Override
+	public Class<AirSweepConfig> getConfigType() {
+		return AirSweepConfig.class;
 	}
 }

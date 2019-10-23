@@ -10,7 +10,27 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.AddCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.CheckCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ChooseCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ClearCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.DebugCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.DisplayCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.HelpCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.InvincibleCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.PermaremoveCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.PresetCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ReloadCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.RemoveCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.StatsCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.ToggleCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.VersionCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.commands.WhoCommandConfig;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Commands {
 
 	private final ProjectKorra plugin;
@@ -77,24 +97,24 @@ public class Commands {
 		/**
 		 * Set of all of the Classes which extend Command
 		 */
-		new AddCommand();
-		new BindCommand();
-		new CheckCommand();
-		new ChooseCommand();
-		new ClearCommand();
-		new CopyCommand();
-		new DebugCommand();
-		new DisplayCommand();
-		new HelpCommand();
-		new InvincibleCommand();
-		new PermaremoveCommand();
-		new PresetCommand();
-		new ReloadCommand();
-		new RemoveCommand();
-		new StatsCommand();
-		new ToggleCommand();
-		new VersionCommand();
-		new WhoCommand();
+		new AddCommand(ConfigManager.getConfig(AddCommandConfig.class));
+		new BindCommand(ConfigManager.getConfig(BindCommandConfig.class));
+		new CheckCommand(ConfigManager.getConfig(CheckCommandConfig.class));
+		new ChooseCommand(ConfigManager.getConfig(ChooseCommandConfig.class));
+		new ClearCommand(ConfigManager.getConfig(ClearCommandConfig.class));
+		new CopyCommand(ConfigManager.getConfig(CopyCommandConfig.class));
+		new DebugCommand(ConfigManager.getConfig(DebugCommandConfig.class));
+		new DisplayCommand(ConfigManager.getConfig(DisplayCommandConfig.class));
+		new HelpCommand(ConfigManager.getConfig(HelpCommandConfig.class));
+		new InvincibleCommand(ConfigManager.getConfig(InvincibleCommandConfig.class));
+		new PermaremoveCommand(ConfigManager.getConfig(PermaremoveCommandConfig.class));
+		new PresetCommand(ConfigManager.getConfig(PresetCommandConfig.class));
+		new ReloadCommand(ConfigManager.getConfig(ReloadCommandConfig.class));
+		new RemoveCommand(ConfigManager.getConfig(RemoveCommandConfig.class));
+		new StatsCommand(ConfigManager.getConfig(StatsCommandConfig.class));
+		new ToggleCommand(ConfigManager.getConfig(ToggleCommandConfig.class));
+		new VersionCommand(ConfigManager.getConfig(VersionCommandConfig.class));
+		new WhoCommand(ConfigManager.getConfig(WhoCommandConfig.class));
 
 		final CommandExecutor exe = (s, c, label, args) -> {
 			if (Arrays.asList(commandaliases).contains(label.toLowerCase())) {

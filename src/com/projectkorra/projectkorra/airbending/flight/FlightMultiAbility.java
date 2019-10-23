@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbili
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.FlightConfig;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -34,7 +35,8 @@ import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
-public class FlightMultiAbility extends FlightAbility implements MultiAbility {
+@SuppressWarnings("rawtypes")
+public class FlightMultiAbility extends FlightAbility<FlightConfig> implements MultiAbility {
 
 	public static final String ID = "FlightMultiAbility";
 	public static Map<UUID, UUID> requestedMap = new HashMap<>();
@@ -60,8 +62,8 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	private long cooldown;
 	private Vector prevDir;
 
-	public FlightMultiAbility(final Player player) {
-		super(player);
+	public FlightMultiAbility(final FlightConfig config, final Player player) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown(this)) {
 			return;
@@ -117,9 +119,9 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		this.prevDir = player.getEyeLocation().getDirection().clone();
-		this.duration = getConfig().getLong("Abilities.Air.Flight.Duration");
-		this.cooldown = getConfig().getLong("Abilities.Air.Flight.Cooldown");
-		this.baseSpeed = getConfig().getDouble("Abilities.Air.Flight.BaseSpeed");
+		this.duration = config.Duration;
+		this.cooldown = config.Cooldown;
+		this.baseSpeed = config.BaseSpeed;
 
 		this.speed = 1;
 		this.slowSpeed = this.baseSpeed / 2;
@@ -391,5 +393,10 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			return requestedMap.get(requester.getUniqueId()).equals(requested.getUniqueId());
 		}
 		return false;
+	}
+	
+	@Override
+	public Class<FlightConfig> getConfigType() {
+		return FlightConfig.class;
 	}
 }

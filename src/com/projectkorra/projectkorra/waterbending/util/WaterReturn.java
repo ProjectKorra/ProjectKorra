@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.configs.abilities.EmptyAbilityConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
@@ -22,7 +23,8 @@ import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 
-public class WaterReturn extends WaterAbility {
+@SuppressWarnings("deprecation")
+public class WaterReturn extends WaterAbility<EmptyAbilityConfig> {
 
 	private long time;
 	private long interval;
@@ -31,7 +33,7 @@ public class WaterReturn extends WaterAbility {
 	private TempBlock block;
 
 	public WaterReturn(final Player player, final Block block) {
-		super(player);
+		super(new EmptyAbilityConfig(), player);
 		if (hasAbility(player, WaterReturn.class)) {
 			return;
 		}
@@ -270,6 +272,11 @@ public class WaterReturn extends WaterAbility {
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
+	}
+	
+	@Override
+	public Class<EmptyAbilityConfig> getConfigType() {
+		return EmptyAbilityConfig.class;
 	}
 
 }

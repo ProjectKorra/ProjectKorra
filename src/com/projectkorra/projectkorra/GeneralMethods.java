@@ -1,36 +1,8 @@
 package com.projectkorra.projectkorra;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
@@ -52,9 +24,55 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
-import com.projectkorra.projectkorra.cooldown.CooldownManager;
+import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AddonAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
+import com.projectkorra.projectkorra.ability.util.CollisionManager;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
+import com.projectkorra.projectkorra.airbending.AirBlast;
+import com.projectkorra.projectkorra.airbending.AirShield;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.airbending.AirSuction;
+import com.projectkorra.projectkorra.airbending.AirSwipe;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.ChatPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.element.ElementManager;
+import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
+import com.projectkorra.projectkorra.event.BendingReloadEvent;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.FireShield;
+import com.projectkorra.projectkorra.firebending.combustion.Combustion;
+import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.player.BendingPlayerManager;
+import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.ActionBar;
+import com.projectkorra.projectkorra.util.BlockCacheElement;
+import com.projectkorra.projectkorra.util.ColoredParticle;
+import com.projectkorra.projectkorra.util.MovementHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ReflectionHandler;
+import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
+import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempArmorStand;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -64,7 +82,17 @@ import com.songoda.kingdoms.constants.land.Land;
 import com.songoda.kingdoms.constants.land.SimpleChunkLocation;
 import com.songoda.kingdoms.constants.player.KingdomPlayer;
 import com.songoda.kingdoms.manager.game.GameManagement;
-
+import me.markeh.factionsframework.entities.FPlayer;
+import me.markeh.factionsframework.entities.FPlayers;
+import me.markeh.factionsframework.entities.Faction;
+import me.markeh.factionsframework.entities.Factions;
+import me.markeh.factionsframework.enums.Rel;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -91,66 +119,36 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.AddonAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
-import com.projectkorra.projectkorra.ability.util.CollisionManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirShield;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.airbending.AirSuction;
-import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
-import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
-import com.projectkorra.projectkorra.event.BendingReloadEvent;
-import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.FireShield;
-import com.projectkorra.projectkorra.firebending.combustion.Combustion;
-import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.ActionBar;
-import com.projectkorra.projectkorra.util.BlockCacheElement;
-import com.projectkorra.projectkorra.util.ColoredParticle;
-import com.projectkorra.projectkorra.util.MovementHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
-import com.projectkorra.projectkorra.util.TempArmor;
-import com.projectkorra.projectkorra.util.TempArmorStand;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
-import me.markeh.factionsframework.entities.FPlayer;
-import me.markeh.factionsframework.entities.FPlayers;
-import me.markeh.factionsframework.entities.Faction;
-import me.markeh.factionsframework.entities.Factions;
-import me.markeh.factionsframework.enums.Rel;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-
+@SuppressWarnings("rawtypes")
 public class GeneralMethods {
 
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
@@ -191,7 +189,7 @@ public class GeneralMethods {
 	 * @see #bindAbility(Player, String, int)
 	 */
 	public static void bindAbility(final Player player, final String ability) {
-		final int slot = player.getInventory().getHeldItemSlot() + 1;
+		final int slot = player.getInventory().getHeldItemSlot();
 		bindAbility(player, ability, slot);
 	}
 
@@ -215,10 +213,10 @@ public class GeneralMethods {
 		if (bPlayer == null) {
 			return;
 		}
-		bPlayer.getAbilities().put(slot, ability);
+		bPlayer.getAbilities()[slot] = ability;
 
 		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", ability).replace("{slot}", String.valueOf(slot + 1)));
 		}
 		saveAbility(bPlayer, slot, ability);
 	}
@@ -343,206 +341,59 @@ public class GeneralMethods {
 
 	@Deprecated
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-		final ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
+		ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {
-			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
+			if (!rs.next()) { // Data doesn't exist, we want a completely new player.
+				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null');");
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
+						new BendingPlayer(uuid, player, new ArrayList<>(), new ArrayList<>(), new String[9], false);
 						ProjectKorra.log.info("Created new BendingPlayer for " + player);
 					}
 				}.runTask(ProjectKorra.plugin);
 			} else {
 				// The player has at least played before.
-				final String player2 = rs2.getString("player");
+				final String player2 = rs.getString("player");
 				if (!player.equalsIgnoreCase(player2)) {
-					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
+					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "';");
 					// They have changed names.
 					ProjectKorra.log.info("Updating Player Name for " + player);
 				}
-				final String subelement = rs2.getString("subelement");
-				final String element = rs2.getString("element");
-				final String permaremoved = rs2.getString("permaremoved");
-				boolean p = false;
-				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null && !element.equals("NULL")) {
-					final boolean hasAddon = element.contains(";");
-					final String[] split = element.split(";");
-					if (split[0] != null) { // Player has an element.
-						if (split[0].contains("a")) {
-							elements.add(Element.AIR);
-						}
-						if (split[0].contains("w")) {
-							elements.add(Element.WATER);
-						}
-						if (split[0].contains("e")) {
-							elements.add(Element.EARTH);
-						}
-						if (split[0].contains("f")) {
-							elements.add(Element.FIRE);
-						}
-						if (split[0].contains("c")) {
-							elements.add(Element.CHI);
-						}
-						if (hasAddon) {
-							/*
-							 * Because plugins which depend on ProjectKorra
-							 * would be loaded after ProjectKorra, addon
-							 * elements would = null. To work around this, we
-							 * keep trying to load in the elements from the
-							 * database until it successfully loads everything
-							 * in, or it times out.
-							 */
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon elements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
-										ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon elements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null) {
-												elements.add(Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
+				final boolean permaremoved = rs.getBoolean("permaremoved");
+				final List<Element> elements = new ArrayList<>();
+				final List<SubElement> subelements = new ArrayList<>();
+				final String[] abilities = new String[9];
+				
+				for (int i = 0; i < 9; i++) {
+					final String ability = rs.getString("slot" + (i + 1));
+					if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
+						abilities[i] = ability;
 					}
 				}
-				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
-				boolean shouldSave = false;
-				if (subelement != null && !subelement.equals("NULL")) {
-					final boolean hasAddon = subelement.contains(";");
-					final String[] split = subelement.split(";");
-					if (subelement.equals("-")) {
-						final Player playero = Bukkit.getPlayer(uuid);
-						for (final SubElement sub : Element.getAllSubElements()) {
-							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
-								subelements.add(sub);
-								shouldSave = true && playero != null;
-							}
-						}
-					} else if (split[0] != null) {
-						if (split[0].contains("m")) {
-							subelements.add(Element.METAL);
-						}
-						if (split[0].contains("v")) {
-							subelements.add(Element.LAVA);
-						}
-						if (split[0].contains("s")) {
-							subelements.add(Element.SAND);
-						}
-						if (split[0].contains("c")) {
-							subelements.add(Element.COMBUSTION);
-						}
-						if (split[0].contains("l")) {
-							subelements.add(Element.LIGHTNING);
-						}
-						if (split[0].contains("t")) {
-							subelements.add(Element.SPIRITUAL);
-						}
-						if (split[0].contains("f")) {
-							subelements.add(Element.FLIGHT);
-						}
-						if (split[0].contains("i")) {
-							subelements.add(Element.ICE);
-						}
-						if (split[0].contains("h")) {
-							subelements.add(Element.HEALING);
-						}
-						if (split[0].contains("b")) {
-							subelements.add(Element.BLOOD);
-						}
-						if (split[0].contains("p")) {
-							subelements.add(Element.PLANT);
-						}
-						if (hasAddon) {
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon subelements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
-										ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon subelements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
-												subelements.add((SubElement) Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
+				
+				ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_player_elements WHERE uuid = '" + uuid.toString() + "';");
+				while (rs2.next()) {
+					String elementName = rs2.getString("element");
+					boolean isSub = rs2.getBoolean("sub_element");
+					
+					Element element = Element.fromString(elementName);
+					
+					if (element == null) {
+						continue;
+					}
+					
+					if (isSub) {
+						subelements.add((SubElement)element);
+					} else {
+						elements.add(element);
 					}
 				}
 
-				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-				final ConcurrentHashMap<Integer, String> abilitiesClone = new ConcurrentHashMap<Integer, String>(abilities);
-				for (int i = 1; i <= 9; i++) {
-					final String ability = rs2.getString("slot" + i);
-					abilitiesClone.put(i, ability);
-				}
-				final long startTime = System.currentTimeMillis();
-				final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						if (abilitiesClone.isEmpty()) {
-							// All abilities loaded.
-							this.cancel();
-						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
-							ProjectKorra.log.severe("These abilities have taken too long to load in, resulting in users having lost them if bound.");
-							this.cancel();
-						} else {
-							for (final int slot : abilitiesClone.keySet()) {
-								final String ability = abilitiesClone.get(slot);
-								if (ability.equalsIgnoreCase("null")) {
-									abilitiesClone.remove(slot);
-									continue;
-								} else if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
-									abilities.put(slot, ability);
-									abilitiesClone.remove(slot);
-									continue;
-								}
-							}
-						}
-					}
-				}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-
-				p = (permaremoved != null && (permaremoved.equals("true")));
-
-				final boolean boolean_p = p;
-				final boolean shouldSave_ = shouldSave;
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
-						if (shouldSave_) {
-							saveSubElements(BendingPlayer.getBendingPlayer(player));
-						}
+						new BendingPlayer(uuid, player, elements, subelements, abilities, permaremoved);
 					}
 				}.runTask(ProjectKorra.plugin);
 			}
@@ -652,11 +503,11 @@ public class GeneralMethods {
 	}
 
 	public static void displayMovePreview(final Player player) {
-		displayMovePreview(player, player.getInventory().getHeldItemSlot() + 1);
+		displayMovePreview(player, player.getInventory().getHeldItemSlot());
 	}
 
 	public static void displayMovePreview(final Player player, final int slot) {
-		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+		if (!ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingPreview) {
 			return;
 		}
 
@@ -664,7 +515,7 @@ public class GeneralMethods {
 		if (bPlayer == null) {
 			return;
 		}
-		String displayedMessage = bPlayer.getAbilities().get(slot);
+		String displayedMessage = bPlayer.getAbilities()[slot];
 		final CoreAbility ability = CoreAbility.getAbility(displayedMessage);
 
 		if (ability != null && bPlayer != null) {
@@ -986,7 +837,7 @@ public class GeneralMethods {
 	}
 
 	public static long getGlobalCooldown() {
-		return ConfigManager.defaultConfig.get().getLong("Properties.GlobalCooldown");
+		return ConfigManager.getConfig(GeneralPropertiesConfig.class).GlobalCooldown;
 	}
 
 	/**
@@ -1066,14 +917,15 @@ public class GeneralMethods {
 	}
 
 	public static int getMaxPresets(final Player player) {
-		final int max = ConfigManager.getConfig().getInt("Properties.MaxPresets");
+		int max = ConfigManager.getConfig(GeneralPropertiesConfig.class).MaxPresets;
 		if (player.isOp()) {
 			return max;
 		}
-		for (int i = max; i > 0; i--) {
-			if (player.hasPermission("bending.command.preset.create." + i)) {
-				return i;
+		while (max > 0) {
+			if (player.hasPermission("bending.command.preset.create." + max)) {
+				return max;
 			}
+			max--;
 		}
 		return 0;
 	}
@@ -1378,7 +1230,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isImportEnabled() {
-		return ConfigManager.defaultConfig.get().getBoolean("Properties.ImportEnabled");
+		return ConfigManager.getConfig(GeneralPropertiesConfig.class).ImportEnabled;
 	}
 
 	public static boolean isInteractable(final Block block) {
@@ -1451,17 +1303,6 @@ public class GeneralMethods {
 	}
 
 	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
-		final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
-		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		//final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
-		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectKingdoms");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
-
 		boolean isIgnite = false;
 		boolean isExplosive = false;
 		boolean isHarmless = false;
@@ -1472,17 +1313,16 @@ public class GeneralMethods {
 			isHarmless = coreAbil.isHarmlessAbility();
 		}
 
-		if (ability == null && allowHarmless) {
+		if (ability == null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
 			return false;
 		}
-		if (isHarmless && allowHarmless) {
+		if (isHarmless && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
 			return false;
 		}
 
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		//final Plugin psp = pm.getPlugin("PreciousStones");
 		final Plugin facsfw = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
@@ -1494,7 +1334,7 @@ public class GeneralMethods {
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
 
-			if (lwc != null && respectLWC) {
+			if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectLWC) {
 				final LWCPlugin lwcp = (LWCPlugin) lwc;
 				final LWC lwc2 = lwcp.getLWC();
 				final Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
@@ -1504,7 +1344,7 @@ public class GeneralMethods {
 					}
 				}
 			}
-			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
+			if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
 				final WorldGuard wg = WorldGuard.getInstance();
 				if (!player.isOnline()) {
 					return true;
@@ -1542,7 +1382,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (facsfw != null && respectFactions) {
+			if (facsfw != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectFactions) {
 				final FPlayer fPlayer = FPlayers.getBySender(player);
 				final Faction faction = Factions.getFactionAt(location);
 				final Rel relation = fPlayer.getRelationTo(faction);
@@ -1552,7 +1392,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (twnp != null && respectTowny) {
+			if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectTowny) {
 				final Towny twn = (Towny) twnp;
 
 				WorldCoord worldCoord;
@@ -1588,7 +1428,7 @@ public class GeneralMethods {
 				}
 			}
 
-			if (gpp != null && respectGriefPrevention) {
+			if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) {
 					type = Material.AIR;
@@ -1602,18 +1442,18 @@ public class GeneralMethods {
 				}
 			}
 
-			if (residence != null && respectResidence) {
+			if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectResidence) {
 				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
 				final ClaimedResidence claim = res.getByLoc(location);
 				if (claim != null) {
 					final ResidencePermissions perms = claim.getPermissions();
-					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
+					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.ResidenceFlag)) {
 						return true;
 					}
 				}
 			}
 
-			if (kingdoms != null && respectKingdoms) {
+			if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectKingdoms) {
 				final KingdomPlayer kPlayer = GameManagement.getPlayerManager().getOfflineKingdomPlayer(player).getKingdomPlayer();
 				if (kPlayer.getKingdom() != null) {
 					final SimpleChunkLocation chunkLocation = new SimpleChunkLocation(location.getChunk());
@@ -1628,7 +1468,7 @@ public class GeneralMethods {
 
 			}
 
-			if (redprotect != null && respectRedProtect) {
+			if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectRedProtect) {
 				final RedProtectAPI api = RedProtect.get().getAPI();
 				final Region region = api.getRegion(location);
 				if (!(region != null && region.canBuild(player))) {
@@ -1701,9 +1541,7 @@ public class GeneralMethods {
 		Element element = null;
 		String prefix = "";
 
-		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-
-		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
 		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 			prefix = Element.AVATAR.getPrefix();
 		} else if (bPlayer.getElements().size() > 0) {
@@ -1711,15 +1549,15 @@ public class GeneralMethods {
 			prefix = element.getPrefix();
 		}
 
-		if (chatEnabled) {
+		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
 
 		// Handle the AirSpout/WaterSpout login glitches.
 		if (player.getGameMode() != GameMode.CREATIVE) {
-			final HashMap<Integer, String> bound = bPlayer.getAbilities();
-			for (final String str : bound.values()) {
+			final String[] bound = bPlayer.getAbilities();
+			for (final String str : bound) {
 				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
 					final Player fplayer = player;
 					new BukkitRunnable() {
@@ -1748,9 +1586,7 @@ public class GeneralMethods {
 			DBConnection.sql.close();
 		}
 		GeneralMethods.stopBending();
-		ConfigManager.defaultConfig.reload();
-		ConfigManager.languageConfig.reload();
-		ConfigManager.presetConfig.reload();
+		ConfigManager.clearCache();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
@@ -1825,12 +1661,12 @@ public class GeneralMethods {
 		}
 
 		// Remove all bound abilities that will become unusable.
-		final HashMap<Integer, String> slots = bPlayer.getAbilities();
-		final HashMap<Integer, String> finalAbilities = new HashMap<Integer, String>();
-		for (final int i : slots.keySet()) {
-			if (bPlayer.canBind(CoreAbility.getAbility(slots.get(i)))) {
+		String[] currentAbilities = bPlayer.getAbilities();
+		String[] finalAbilities = new String[9];
+		for (int i = 0; i < 9; i++) {
+			if (bPlayer.canBind(CoreAbility.getAbility(currentAbilities[i]))) {
 				// The player will still be able to use this given Ability, do not remove it from their binds.
-				finalAbilities.put(i, slots.get(i));
+				finalAbilities[i] = currentAbilities[i];
 			}
 		}
 
@@ -1903,19 +1739,9 @@ public class GeneralMethods {
 		writeToDebug("Supported Plugins");
 		writeToDebug("====================");
 
-		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
-		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		final Plugin psp = pm.getPlugin("PreciousStones");
 		final Plugin fcp = pm.getPlugin("FactionsFramework");
 		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
@@ -1924,31 +1750,28 @@ public class GeneralMethods {
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
 
-		if (wgp != null && respectWorldGuard) {
+		if (wgp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
 		}
-		if (psp != null && respectPreciousStones) {
-			writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
-		}
-		if (fcp != null && respectFactions) {
+		if (fcp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectFactions) {
 			writeToDebug("FactionsFramework v" + fcp.getDescription().getVersion());
 		}
-		if (twnp != null && respectTowny) {
+		if (twnp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectTowny) {
 			writeToDebug("Towny v" + twnp.getDescription().getVersion());
 		}
-		if (gpp != null && respectGriefPrevention) {
+		if (gpp != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectGriefPrevention) {
 			writeToDebug("GriefPrevention v" + gpp.getDescription().getVersion());
 		}
-		if (lwc != null && respectLWC) {
+		if (lwc != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectLWC) {
 			writeToDebug("LWC v" + lwc.getDescription().getVersion());
 		}
-		if (residence != null && respectResidence) {
+		if (residence != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectResidence) {
 			writeToDebug("Residence v" + residence.getDescription().getVersion());
 		}
-		if (kingdoms != null && respectKingdoms) {
+		if (kingdoms != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectKingdoms) {
 			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
 		}
-		if (redprotect != null && respectRedProtect) {
+		if (redprotect != null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.RespectRedProtect) {
 			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
 		}
 
@@ -2040,107 +1863,62 @@ public class GeneralMethods {
 		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID()))) {
 			return;
 		}
-		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
+		final String[] abilities = bPlayer.getAbilities();
 
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + (slot + 1) + " = '" + (abilities[slot] == null ? null : abilities[slot - 1]) + "' WHERE uuid = '" + uuid + "'");
 	}
 
-	public static void saveElements(final BendingPlayer bPlayer) {
+	public static void saveElements(final BendingPlayer bPlayer, List<Element> e) {
 		if (bPlayer == null) {
 			return;
 		}
 		final String uuid = bPlayer.getUUIDString();
 
-		final StringBuilder elements = new StringBuilder();
-		if (bPlayer.hasElement(Element.AIR)) {
-			elements.append("a");
-		}
-		if (bPlayer.hasElement(Element.WATER)) {
-			elements.append("w");
-		}
-		if (bPlayer.hasElement(Element.EARTH)) {
-			elements.append("e");
-		}
-		if (bPlayer.hasElement(Element.FIRE)) {
-			elements.append("f");
-		}
-		if (bPlayer.hasElement(Element.CHI)) {
-			elements.append("c");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getElements()) {
-			if (Arrays.asList(Element.getAddonElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					elements.append(";");
-				}
-				elements.append(element.getName() + ",");
-			}
-		}
-
-		if (elements.length() == 0) {
-			elements.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
+		StringBuilder queryBuilder = new StringBuilder();
+		e.forEach(element -> {
+			queryBuilder.append("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element.getName().toLowerCase() + "', " + String.valueOf(e instanceof SubElement) + ");");
+		});
+		final String query = queryBuilder.toString();
+		
+		DBConnection.sql.modifyQuery(query);
 	}
-
-	public static void saveSubElements(final BendingPlayer bPlayer) {
+	
+	public static void saveElement(final BendingPlayer bPlayer, Element e) {
+		if (bPlayer == null) {
+			return;
+		}
+		
+		final String uuid = bPlayer.getUUIDString();
+		final String element = e.getName().toLowerCase();
+		final boolean subElement = e instanceof SubElement;
+		
+		DBConnection.sql.modifyQuery("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element + "', " + String.valueOf(subElement) + ");");
+	}
+	
+	public static void deleteElements(final BendingPlayer bPlayer, List<Element> e) {
 		if (bPlayer == null) {
 			return;
 		}
 		final String uuid = bPlayer.getUUIDString();
 
-		final StringBuilder subs = new StringBuilder();
-		if (bPlayer.hasSubElement(Element.METAL)) {
-			subs.append("m");
+		StringBuilder queryBuilder = new StringBuilder();
+		e.forEach(element -> {
+			queryBuilder.append("DELETE FROM pk_player_elements WHERE uuid='" + uuid + "' AND element='" + element.getName().toLowerCase() + "';");
+		});
+		final String query = queryBuilder.toString();
+		
+		DBConnection.sql.modifyQuery(query);
+	}
+	
+	public static void deleteElement(final BendingPlayer bPlayer, Element e) {
+		if (bPlayer == null) {
+			return;
 		}
-		if (bPlayer.hasSubElement(Element.LAVA)) {
-			subs.append("v");
-		}
-		if (bPlayer.hasSubElement(Element.SAND)) {
-			subs.append("s");
-		}
-		if (bPlayer.hasSubElement(Element.COMBUSTION)) {
-			subs.append("c");
-		}
-		if (bPlayer.hasSubElement(Element.LIGHTNING)) {
-			subs.append("l");
-		}
-		if (bPlayer.hasSubElement(Element.SPIRITUAL)) {
-			subs.append("t");
-		}
-		if (bPlayer.hasSubElement(Element.FLIGHT)) {
-			subs.append("f");
-		}
-		if (bPlayer.hasSubElement(Element.ICE)) {
-			subs.append("i");
-		}
-		if (bPlayer.hasSubElement(Element.HEALING)) {
-			subs.append("h");
-		}
-		if (bPlayer.hasSubElement(Element.BLOOD)) {
-			subs.append("b");
-		}
-		if (bPlayer.hasSubElement(Element.PLANT)) {
-			subs.append("p");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getSubElements()) {
-			if (Arrays.asList(Element.getAddonSubElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					subs.append(";");
-				}
-				subs.append(element.getName() + ",");
-			}
-		}
-
-		if (subs.length() == 0) {
-			subs.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
+		
+		final String uuid = bPlayer.getUUIDString();
+		final String element = e.getName().toLowerCase();
+		
+		DBConnection.sql.modifyQuery("DELETE FROM pk_player_elements WHERE uuid='" + uuid + "' AND element='" + element + "';");
 	}
 
 	public static void savePermaRemoved(final BendingPlayer bPlayer) {
@@ -2149,17 +1927,17 @@ public class GeneralMethods {
 		}
 		final String uuid = bPlayer.getUUIDString();
 		final boolean permaRemoved = bPlayer.isPermaRemoved();
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = " + String.valueOf(permaRemoved) + " WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void setVelocity(final Entity entity, final Vector velocity) {
 		if (entity instanceof TNTPrimed) {
-			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
-				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier"));
+			if (ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_TNT) {
+				velocity.multiply(ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_TNT_StrengthMultiplier);
 			}
 		} else if (entity instanceof FallingBlock) {
-			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
-				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier"));
+			if (ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_Normal) {
+				velocity.multiply(ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingAffectFallingSand_Normal_StrengthMultiplier);
 			}
 		}
 
@@ -2222,20 +2000,13 @@ public class GeneralMethods {
 	}
 
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
-		ChatColor color;
-		try {
-			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		} catch (final IllegalArgumentException exception) {
-			color = ChatColor.GOLD;
-		}
-
-		final String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		final String prefix = ChatColor.GOLD + "ProjectKorra ";
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
 		} else {
 			final TextComponent prefixComponent = new TextComponent(prefix);
 			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
-			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra!\n" + color + "Click for more info.").create()));
+			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD + "Bending brought to you by ProjectKorra!\n" + ChatColor.GOLD + "Click for more info.").create()));
 
 			/*
 			 * The commented code below does not work due to an issue with
@@ -2356,5 +2127,11 @@ public class GeneralMethods {
 			default:
 				return false;
 		}
+	}
+	
+	public static boolean isVowel(char c) {
+		String vowels = "aeiou";
+		
+		return vowels.indexOf(Character.toLowerCase(c)) != -1;
 	}
 }

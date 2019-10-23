@@ -13,13 +13,14 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.FerroControlConfig;
 
-public class FerroControl extends MetalAbility implements PassiveAbility {
+public class FerroControl extends MetalAbility<FerroControlConfig> implements PassiveAbility {
 
 	private Block block;
 
-	public FerroControl(final Player player) {
-		super(player);
+	public FerroControl(final FerroControlConfig config, final Player player) {
+		super(config, player);
 
 		this.start();
 	}
@@ -97,5 +98,10 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 	@Override
 	public boolean isProgressable() {
 		return true;
+	}
+	
+	@Override
+	public Class<FerroControlConfig> getConfigType() {
+		return FerroControlConfig.class;
 	}
 }

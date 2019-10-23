@@ -17,10 +17,12 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterSpoutConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class WaterSpout extends WaterAbility {
+@SuppressWarnings("deprecation")
+public class WaterSpout extends WaterAbility<WaterSpoutConfig> {
 
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
 	private final List<TempBlock> blocks = new ArrayList<TempBlock>();
@@ -44,8 +46,8 @@ public class WaterSpout extends WaterAbility {
 	private Block base;
 	private TempBlock baseBlock;
 
-	public WaterSpout(final Player player) {
-		super(player);
+	public WaterSpout(final WaterSpoutConfig config, final Player player) {
+		super(config, player);
 
 		final WaterSpout oldSpout = getAbility(player, WaterSpout.class);
 		if (oldSpout != null) {
@@ -53,17 +55,17 @@ public class WaterSpout extends WaterAbility {
 			return;
 		}
 
-		this.canBendOnPackedIce = getConfig().getStringList("Properties.Water.IceBlocks").contains(Material.PACKED_ICE.toString());
-		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
-		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Cooldown");
-		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
-		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
-		this.duration = getConfig().getLong("Abilities.Water.WaterSpout.Duration");
+		this.canBendOnPackedIce = isIce(Material.PACKED_ICE);
+		this.useParticles = config.UseParticles;
+		this.useBlockSpiral = config.EnableBlockSpiral;
+		this.cooldown = config.Cooldown;
+		this.height = config.Height;
+		this.interval = config.Interval;
+		this.duration = config.Duration;
 		this.startTime = System.currentTimeMillis();
 
 		this.maxHeight = this.getNightFactor(this.height);
-		final WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
+		final WaterSpoutWave spoutWave = new WaterSpoutWave(config, player, WaterSpoutWave.AbilityType.CLICK);
 		if (spoutWave.isStarted() && !spoutWave.isRemoved()) {
 			return;
 		}
@@ -457,6 +459,11 @@ public class WaterSpout extends WaterAbility {
 
 	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
+	}
+	
+	@Override
+	public Class<WaterSpoutConfig> getConfigType() {
+		return WaterSpoutConfig.class;
 	}
 
 }

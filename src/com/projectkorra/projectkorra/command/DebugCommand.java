@@ -6,15 +6,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.DebugCommandConfig;
 
 /**
  * Executor for /bending debug. Extends {@link PKCommand}.
  */
-public class DebugCommand extends PKCommand {
+public class DebugCommand extends PKCommand<DebugCommandConfig> {
 
-	public DebugCommand() {
-		super("debug", "/bending debug", ConfigManager.languageConfig.get().getString("Commands.Debug.Description"), new String[] { "debug", "de" });
+	public DebugCommand(final DebugCommandConfig config) {
+		super(config, "debug", "/bending debug", config.Description, new String[] { "debug", "de" });
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class DebugCommand extends PKCommand {
 		}
 
 		GeneralMethods.runDebug();
-		sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Debug.SuccessfullyExported"));
+		sender.sendMessage(ChatColor.GREEN + config.SuccessfullyExported);
 	}
 
 	/**

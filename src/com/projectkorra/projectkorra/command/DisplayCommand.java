@@ -1,10 +1,11 @@
 package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -21,11 +22,14 @@ import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.DisplayCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 
 /**
  * Executor for /bending display. Extends {@link PKCommand}.
  */
-public class DisplayCommand extends PKCommand {
+@SuppressWarnings("rawtypes")
+public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 
 	private final String noCombosAvailable;
 	private final String noPassivesAvailable;
@@ -34,15 +38,15 @@ public class DisplayCommand extends PKCommand {
 	private final String noAbilitiesAvailable;
 	private final String noBinds;
 
-	public DisplayCommand() {
-		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
+	public DisplayCommand(final DisplayCommandConfig config) {
+		super(config, "display", "/bending display <Element>", config.Description, new String[] { "display", "dis", "d" });
 
-		this.noCombosAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoCombosAvailable");
-		this.noPassivesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoPassivesAvailable");
-		this.noAbilitiesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoAbilitiesAvailable");
-		this.invalidArgument = ConfigManager.languageConfig.get().getString("Commands.Display.InvalidArgument");
-		this.playersOnly = ConfigManager.languageConfig.get().getString("Commands.Display.PlayersOnly");
-		this.noBinds = ConfigManager.languageConfig.get().getString("Commands.Display.NoBinds");
+		this.noCombosAvailable = config.NoCombosAvailable;
+		this.noPassivesAvailable = config.NoPassivesAvailable;
+		this.noAbilitiesAvailable = config.NoAbilitiesAvailable;
+		this.invalidArgument = config.InvalidArgument;
+		this.playersOnly = ConfigManager.getConfig(CommandPropertiesConfig.class).MustBePlayer;
+		this.noBinds = config.NoBinds;
 	}
 
 	@Override
@@ -319,9 +323,9 @@ public class DisplayCommand extends PKCommand {
 			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		}
-		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
+		final String[] abilities = bPlayer.getAbilities();
 
-		if (abilities.isEmpty()) {
+		if (Stream.of(abilities).allMatch(Objects::isNull)) {
 			sender.sendMessage(ChatColor.RED + this.noBinds);
 			return;
 		}
@@ -329,7 +333,7 @@ public class DisplayCommand extends PKCommand {
 		sender.sendMessage(ChatColor.WHITE + (ChatColor.BOLD + "Abilities"));
 
 		for (int i = 1; i <= 9; i++) {
-			final String ability = abilities.get(i);
+			final String ability = abilities[i - 1];
 			final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 			if (coreAbil != null && !ability.equalsIgnoreCase("null")) {
 				String message = i + ". " + coreAbil.getElement().getColor() + ability;

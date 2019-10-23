@@ -132,7 +132,6 @@ permissions:
       bending.earth.metalbending: true
       bending.earth.lavabending: true
       bending.earth.sandbending: true
-      bending.ability.LavaSurge: true
       bending.ability.LavaFlow: true
       bending.ability.EarthSmash: true
       bending.ability.SandSpout: true
@@ -258,6 +257,3 @@ permissions:
     children:
       bending.ability.FastSwim: true
       bending.ability.HydroSink: true
-  bending.donor:
-    default: false
-    description: Grants the Donor tag.

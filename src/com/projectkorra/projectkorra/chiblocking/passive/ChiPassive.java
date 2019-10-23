@@ -14,8 +14,10 @@ import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.QuickStrike;
 import com.projectkorra.projectkorra.chiblocking.SwiftKick;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.ChiPropertiesConfig;
 import com.projectkorra.projectkorra.util.ActionBar;
 
+@SuppressWarnings("rawtypes")
 public class ChiPassive {
 	public static boolean willChiBlock(final Player attacker, final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -74,11 +76,11 @@ public class ChiPassive {
 	}
 
 	public static double getChance() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.BlockChi.Chance");
+		return ConfigManager.getConfig(ChiPropertiesConfig.class).BlockChiChance;
 	}
 
-	public static int getDuration() {
-		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.BlockChi.Duration");
+	public static long getDuration() {
+		return ConfigManager.getConfig(ChiPropertiesConfig.class).BlockChiDuration;
 	}
 
 	public static long getTicks() {

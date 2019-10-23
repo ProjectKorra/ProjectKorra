@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,25 +29,26 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.WhoCommandConfig;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
  */
-public class WhoCommand extends PKCommand {
+@SuppressWarnings({ "rawtypes", "deprecation" })
+public class WhoCommand extends PKCommand<WhoCommandConfig> {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	final Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
+	final Map<String, String> staff = Collections.synchronizedMap(new HashMap<>());
 
 	private final String databaseOverload, noPlayersOnline, playerOffline;
 
-	public WhoCommand() {
-		super("who", "/bending who [Page/Player]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
+	public WhoCommand(final WhoCommandConfig config) {
+		super(config, "who", "/bending who [Page/Player]", config.Description, new String[] { "who", "w" });
 
-		this.databaseOverload = ConfigManager.languageConfig.get().getString("Commands.Who.DatabaseOverload");
-		this.noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
-		this.playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
+		this.databaseOverload = config.DatabaseOverload;
+		this.noPlayersOnline = config.NoPlayersOnline;
+		this.playerOffline = config.PlayerOffline;
 
 		new BukkitRunnable() {
 			@Override
@@ -159,7 +161,7 @@ public class WhoCommand extends PKCommand {
 
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
-			final BukkitRunnable runnable = new BukkitRunnable() {
+			new BukkitRunnable() {
 				@Override
 				public void run() {
 					int count = 0;
@@ -180,8 +182,7 @@ public class WhoCommand extends PKCommand {
 					}
 					WhoCommand.this.whoPlayer(sender, playerName);
 				}
-			};
-			runnable.runTaskAsynchronously(ProjectKorra.plugin);
+			}.runTaskAsynchronously(ProjectKorra.plugin);
 			return;
 		}
 
@@ -313,23 +314,19 @@ public class WhoCommand extends PKCommand {
 			final UUID uuid = player.getUniqueId();
 			if (bPlayer != null) {
 				sender.sendMessage("Abilities: ");
-				for (int i = 1; i <= 9; i++) {
-					final String ability = bPlayer.getAbilities().get(i);
+				for (int i = 0; i < 9; i++) {
+					final String ability = bPlayer.getAbilities()[i];
 					final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 					if (coreAbil == null) {
 						continue;
 					} else {
-						sender.sendMessage(i + " - " + coreAbil.getElement().getColor() + ability);
+						sender.sendMessage((i + 1) + " - " + coreAbil.getElement().getColor() + ability);
 					}
 				}
 			}
 
 			if (this.staff.containsKey(uuid.toString())) {
 				sender.sendMessage(this.staff.get(uuid.toString()));
-			}
-
-			if (player.getPlayer() != null && player.getPlayer().hasPermission("bending.donor")) {
-				sender.sendMessage(Element.AVATAR.getColor() + "Server Donor");
 			}
 		}
 

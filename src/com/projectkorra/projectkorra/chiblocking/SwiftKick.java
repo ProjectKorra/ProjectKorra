@@ -8,26 +8,27 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.SwiftKickConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
-public class SwiftKick extends ChiAbility {
+public class SwiftKick extends ChiAbility<SwiftKickConfig> {
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	@Attribute("ChiBlockChance")
-	private int blockChance;
+	private double blockChance;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Entity target;
 
-	public SwiftKick(final Player sourceplayer, final Entity targetentity) {
-		super(sourceplayer);
+	public SwiftKick(final SwiftKickConfig config, final Player sourceplayer, final Entity targetentity) {
+		super(config, sourceplayer);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		this.damage = getConfig().getDouble("Abilities.Chi.SwiftKick.Damage");
-		this.blockChance = getConfig().getInt("Abilities.Chi.SwiftKick.ChiBlockChance");
-		this.cooldown = getConfig().getInt("Abilities.Chi.SwiftKick.Cooldown");
+		this.damage = config.Damage;
+		this.blockChance = config.ChiBlockChance;
+		this.cooldown = config.Cooldown;
 		this.target = targetentity;
 		this.start();
 	}
@@ -83,11 +84,11 @@ public class SwiftKick extends ChiAbility {
 		this.damage = damage;
 	}
 
-	public int getBlockChance() {
+	public double getBlockChance() {
 		return this.blockChance;
 	}
 
-	public void setBlockChance(final int blockChance) {
+	public void setBlockChance(final double blockChance) {
 		this.blockChance = blockChance;
 	}
 
@@ -101,6 +102,11 @@ public class SwiftKick extends ChiAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<SwiftKickConfig> getConfigType() {
+		return SwiftKickConfig.class;
 	}
 
 }

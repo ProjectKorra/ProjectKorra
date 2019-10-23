@@ -5,22 +5,23 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.AirPropertiesConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public abstract class AirAbility extends ElementalAbility {
-
-	public AirAbility(final Player player) {
-		super(player);
+public abstract class AirAbility<C extends AbilityConfig> extends ElementalAbility<C> {
+	
+	public AirAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	@Override
@@ -72,20 +73,7 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @return Config specified ParticleEffect
 	 */
 	public static ParticleEffect getAirbendingParticles() {
-		final String particle = getConfig().getString("Properties.Air.Particles");
-		if (particle == null) {
-			return ParticleEffect.CLOUD;
-		} else if (particle.equalsIgnoreCase("spell")) {
-			return ParticleEffect.SPELL;
-		} else if (particle.equalsIgnoreCase("blacksmoke")) {
-			return ParticleEffect.SMOKE_NORMAL;
-		} else if (particle.equalsIgnoreCase("smoke")) {
-			return ParticleEffect.CLOUD;
-		} else if (particle.equalsIgnoreCase("smallsmoke")) {
-			return ParticleEffect.SNOW_SHOVEL;
-		} else {
-			return ParticleEffect.CLOUD;
-		}
+		return ConfigManager.getConfig(AirPropertiesConfig.class).Particles;
 	}
 
 	/**
@@ -134,19 +122,10 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param loc The location to play the sound at
 	 */
 	public static void playAirbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Air.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
-
-			Sound sound = Sound.ENTITY_CREEPER_HURT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Air.Sound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
+		AirPropertiesConfig air = ConfigManager.getConfig(AirPropertiesConfig.class);
+		
+		if (air.PlaySound) {
+			loc.getWorld().playSound(loc, air.SoundType, air.SoundVolume, air.SoundPitch);
 		}
 	}
 

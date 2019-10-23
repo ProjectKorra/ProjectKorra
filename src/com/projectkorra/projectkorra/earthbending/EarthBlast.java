@@ -17,13 +17,14 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthBlastConfig;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class EarthBlast extends EarthAbility {
+public class EarthBlast extends EarthAbility<EarthBlastConfig> {
 	private boolean isProgressing;
 	private boolean isAtDestination;
 	private boolean isSettingUp;
@@ -51,27 +52,27 @@ public class EarthBlast extends EarthAbility {
 	private Location firstDestination;
 	private Block sourceBlock;
 
-	public EarthBlast(final Player player) {
-		super(player);
+	public EarthBlast(final EarthBlastConfig config, final Player player) {
+		super(config, player);
 
 		this.isProgressing = false;
 		this.isAtDestination = false;
 		this.isSettingUp = true;
-		this.deflectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.DeflectRange");
-		this.collisionRadius = getConfig().getDouble("Abilities.Earth.EarthBlast.CollisionRadius");
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthBlast.Cooldown");
-		this.canHitSelf = getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
-		this.range = getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
-		this.damage = getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
-		this.speed = getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
-		this.pushFactor = getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
-		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.SelectRange");
+		this.deflectRange = config.DeflectRange;
+		this.collisionRadius = config.CollisionRadius;
+		this.cooldown = config.Cooldown;
+		this.canHitSelf = config.CanHitSelf;
+		this.range = config.Range;
+		this.damage = config.Damage;
+		this.speed = config.Speed;
+		this.pushFactor = config.PushFactor;
+		this.selectRange = config.SelectRange;
 		this.time = System.currentTimeMillis();
 		this.interval = (long) (1000.0 / this.speed);
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage");
+			this.cooldown = config.AvatarState_Cooldown;
+			this.damage = config.AvatarState_Damage;
 		}
 
 		if (this.prepare()) {
@@ -135,11 +136,7 @@ public class EarthBlast extends EarthAbility {
 			i++;
 		}
 		for (int j = 0; j < this.getEarthbendableBlocks().size(); j++) {
-			try {
-				trans[i] = Material.valueOf(this.getEarthbendableBlocks().get(j));
-			} catch (final IllegalArgumentException e) {
-				continue;
-			}
+			trans[i] = this.getEarthbendableBlocks().get(j);
 			i++;
 		}
 
@@ -678,5 +675,10 @@ public class EarthBlast extends EarthAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<EarthBlastConfig> getConfigType() {
+		return EarthBlastConfig.class;
 	}
 }

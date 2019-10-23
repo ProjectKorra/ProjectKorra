@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.SuffocateConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 /**
@@ -27,7 +28,7 @@ import com.projectkorra.projectkorra.util.DamageHandler;
  * entities within a large radius. If the user is damaged while performing this
  * ability then the ability is removed.
  */
-public class Suffocate extends AirAbility {
+public class Suffocate extends AirAbility<SuffocateConfig> {
 
 	public static enum SpiralType {
 		HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
@@ -61,8 +62,8 @@ public class Suffocate extends AirAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<LivingEntity> targets;
 
-	public Suffocate(final Player player) {
-		super(player);
+	public Suffocate(final SuffocateConfig config, final Player player) {
+		super(config, player);
 		this.ability = this;
 		if (this.bPlayer.isOnCooldown(this)) {
 			return;
@@ -71,32 +72,32 @@ public class Suffocate extends AirAbility {
 		}
 
 		this.started = false;
-		this.requireConstantAim = getConfig().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
-		this.canSuffocateUndead = getConfig().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
-		this.particleCount = getConfig().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
-		this.animationSpeed = getConfig().getDouble("Abilities.Air.Suffocate.AnimationSpeed");
-		this.chargeTime = getConfig().getLong("Abilities.Air.Suffocate.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Air.Suffocate.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Air.Suffocate.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.Suffocate.AnimationRadius");
-		this.constantAimRadius = getConfig().getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
-		this.damage = getConfig().getDouble("Abilities.Air.Suffocate.Damage");
-		this.damageDelay = getConfig().getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
-		this.damageRepeat = getConfig().getDouble("Abilities.Air.Suffocate.DamageInterval");
-		this.slow = getConfig().getInt("Abilities.Air.Suffocate.SlowPotency");
-		this.slowRepeat = getConfig().getDouble("Abilities.Air.Suffocate.SlowInterval");
-		this.slowDelay = getConfig().getDouble("Abilities.Air.Suffocate.SlowDelay");
-		this.blind = getConfig().getInt("Abilities.Air.Suffocate.BlindPotentcy");
-		this.blindDelay = getConfig().getDouble("Abilities.Air.Suffocate.BlindDelay");
-		this.blindRepeat = getConfig().getDouble("Abilities.Air.Suffocate.BlindInterval");
+		this.requireConstantAim = config.RequireConstantAim;
+		this.canSuffocateUndead = config.CanSuffocateUndead;
+		this.particleCount = config.AnimationParticleAmount;
+		this.animationSpeed = config.AnimationSpeed;
+		this.chargeTime = config.ChargeTime;
+		this.cooldown = config.Cooldown;
+		this.range = config.Range;
+		this.radius = config.AnimationRadius;
+		this.constantAimRadius = config.ConstantAimRadius;
+		this.damage = config.Damage;
+		this.damageDelay = config.DamageInitialDelay;
+		this.damageRepeat = config.DamageInterval;
+		this.slow = config.SlownessPotency;
+		this.slowRepeat = config.SlownessInterval;
+		this.slowDelay = config.SlownessInitialDelay;
+		this.blind = config.BlindnessPotency;
+		this.blindDelay = config.BlindnessInitialDelay;
+		this.blindRepeat = config.BlindnessInterval;
 		this.targets = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown");
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
+			this.cooldown = config.AvatarState_Cooldown;
+			this.chargeTime = config.AvatarState_ChargeTime;
+			this.damage = config.AvatarState_Damage;
+			this.range = config.AvatarState_Range;
 		}
 
 		if (this.particleCount < 1) {
@@ -645,5 +646,10 @@ public class Suffocate extends AirAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<SuffocateConfig> getConfigType() {
+		return SuffocateConfig.class;
 	}
 }

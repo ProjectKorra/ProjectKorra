@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.PhaseChangeConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -26,7 +27,8 @@ import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
 
-public class PhaseChange extends IceAbility {
+@SuppressWarnings("deprecation")
+public class PhaseChange extends IceAbility<PhaseChangeConfig> {
 
 	public static enum PhaseChangeType {
 		FREEZE, MELT, CUSTOM;
@@ -50,7 +52,7 @@ public class PhaseChange extends IceAbility {
 	private final Random r = new Random();
 
 	@Attribute(Attribute.SELECT_RANGE)
-	private int sourceRange = 8;
+	private double sourceRange = 8;
 
 	// Freeze Variables.
 	@Attribute("Freeze" + Attribute.COOLDOWN)
@@ -75,8 +77,8 @@ public class PhaseChange extends IceAbility {
 	private boolean allowMeltFlow;
 	private final CopyOnWriteArrayList<Block> melted_blocks = new CopyOnWriteArrayList<>();
 
-	public PhaseChange(final Player player, final PhaseChangeType type) {
-		super(player);
+	public PhaseChange(final PhaseChangeConfig config, final Player player, final PhaseChangeType type) {
+		super(config, player);
 		this.startNewType(type);
 		this.start();
 	}
@@ -158,33 +160,33 @@ public class PhaseChange extends IceAbility {
 		if (isNight(this.player.getWorld())) {
 			night = (int) Math.round(getNightFactor());
 		}
-		this.sourceRange = night * getConfig().getInt("Abilities.Water.PhaseChange.SourceRange");
+		this.sourceRange = night * config.SourceRange;
 
 		switch (type) {
 			case FREEZE:
-				this.depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
-				this.controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
-				this.freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
-				this.freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
+				this.depth = night * config.FreezeConfig.Depth;
+				this.controlRadius = night * config.FreezeConfig.ControlRadius;
+				this.freezeCooldown = config.FreezeConfig.Cooldown;
+				this.freezeRadius = night * config.FreezeConfig.Radius;
 
 				this.freezeArea(GeneralMethods.getTargetedLocation(this.player, this.sourceRange));
 			case MELT:
 				this.meltRadius = 1;
-				this.meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-				this.meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
-				this.meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
-				this.allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+				this.meltCooldown = config.MeltConfig.Cooldown;
+				this.meltSpeed = config.MeltConfig.Speed * night;
+				this.meltMaxRadius = night * config.MeltConfig.Radius;
+				this.allowMeltFlow = config.MeltConfig.AllowFlow;
 			case CUSTOM:
-				this.depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
-				this.controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
-				this.freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
-				this.freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
+				this.depth = night * config.FreezeConfig.Depth;
+				this.controlRadius = night * config.FreezeConfig.ControlRadius;
+				this.freezeCooldown = config.FreezeConfig.Cooldown;
+				this.freezeRadius = night * config.FreezeConfig.Radius;
 
 				this.meltRadius = 1;
-				this.meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-				this.meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
-				this.meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
-				this.allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+				this.meltCooldown = config.MeltConfig.Cooldown;
+				this.meltSpeed = config.MeltConfig.Speed * night;
+				this.meltMaxRadius = night * config.MeltConfig.Radius;
+				this.allowMeltFlow = config.MeltConfig.AllowFlow;
 		}
 	}
 
@@ -532,11 +534,11 @@ public class PhaseChange extends IceAbility {
 		this.depth = value;
 	}
 
-	public int getSourceRange() {
+	public double getSourceRange() {
 		return this.sourceRange;
 	}
 
-	public void setSourceRange(final int value) {
+	public void setSourceRange(final double value) {
 		this.sourceRange = value;
 	}
 
@@ -562,5 +564,10 @@ public class PhaseChange extends IceAbility {
 
 	public List<PhaseChangeType> getActiveTypes() {
 		return this.active_types;
+	}
+	
+	@Override
+	public Class<PhaseChangeConfig> getConfigType() {
+		return PhaseChangeConfig.class;
 	}
 }

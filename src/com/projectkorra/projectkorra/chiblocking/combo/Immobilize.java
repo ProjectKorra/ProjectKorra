@@ -15,10 +15,12 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.ImmobilizeConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
-public class Immobilize extends ChiAbility implements ComboAbility {
+public class Immobilize extends ChiAbility<ImmobilizeConfig> implements ComboAbility {
 
 	@Attribute(Attribute.DURATION)
 	private long duration;
@@ -26,11 +28,11 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 	private long cooldown;
 	private Entity target;
 
-	public Immobilize(final Player player) {
-		super(player);
+	public Immobilize(final ImmobilizeConfig config, final Player player) {
+		super(config, player);
 
-		this.cooldown = getConfig().getLong("Abilities.Chi.Immobilize.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Chi.Immobilize.ParalyzeDuration");
+		this.cooldown = config.Cooldown;
+		this.duration = config.ParalyzeDuration;
 		this.target = GeneralMethods.getTargetedEntity(player, 5);
 		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
@@ -89,7 +91,7 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new Immobilize(player);
+		return new Immobilize(ConfigManager.getConfig(ImmobilizeConfig.class), player);
 	}
 
 	@Override
@@ -120,5 +122,10 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<ImmobilizeConfig> getConfigType() {
+		return ImmobilizeConfig.class;
 	}
 }

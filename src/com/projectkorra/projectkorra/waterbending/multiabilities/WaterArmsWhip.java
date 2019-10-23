@@ -17,11 +17,12 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterArmsConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
 
-public class WaterArmsWhip extends WaterAbility {
+public class WaterArmsWhip extends WaterAbility<WaterArmsConfig> {
 
 	/**
 	 * Whip Enum value for deciding what ability should be executed.
@@ -67,42 +68,42 @@ public class WaterArmsWhip extends WaterAbility {
 	private Location end;
 	private WaterArms waterArms;
 
-	public WaterArmsWhip(final Player player, final Whip ability) {
-		super(player);
+	public WaterArmsWhip(final WaterArmsConfig config, final Player player, final Whip ability) {
+		super(config, player);
 
 		this.ability = ability;
 		this.reverting = false;
 		this.hasDamaged = false;
 		this.grappled = false;
 		this.grabbed = false;
-		this.grappleRespectRegions = getConfig().getBoolean("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions");
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
-		this.whipLength = getConfig().getInt("Abilities.Water.WaterArms.Whip.MaxLength");
-		this.whipLengthWeak = getConfig().getInt("Abilities.Water.WaterArms.Whip.MaxLengthWeak");
-		this.whipLengthNight = getConfig().getInt("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal");
-		this.whipLengthFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.FullMoon");
-		this.initLength = getConfig().getInt("Abilities.Water.WaterArms.Arms.InitialLength");
-		this.punchLength = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.MaxLength");
-		this.punchLengthNight = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal");
-		this.punchLengthFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon");
+		this.grappleRespectRegions = config.WhipConfig.GrappleRespectRegions;
+		this.usageCooldownEnabled = config.WhipConfig.UsageCooldownEnabled;
+		this.whipLength = config.WhipConfig.MaxLengthDay;
+		this.whipLengthWeak = config.WhipConfig.MaxLengthWeak;
+		this.whipLengthNight = config.WhipConfig.MaxLengthNight;
+		this.whipLengthFullMoon = config.WhipConfig.MaxLengthFullMoon;
+		this.initLength = config.InitialLength;
+		this.punchLength = config.WhipConfig.PunchLengthDay;
+		this.punchLengthNight = config.WhipConfig.PunchLengthNight;
+		this.punchLengthFullMoon = config.WhipConfig.PunchLengthFullMoon;
 		this.activeLength = this.initLength;
 		this.whipSpeed = 1;
-		this.grabDuration = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.Duration");
-		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
-		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage");
+		this.grabDuration = config.WhipConfig.GrabDuration;
+		this.pullMultiplier = config.WhipConfig.PullFactor;
+		this.punchDamage = config.WhipConfig.PunchDamage;
 
 		switch (ability) {
 			case PULL:
-				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Pull");
+				this.usageCooldown = config.WhipConfig.UsageCooldownPull;
 				break;
 			case PUNCH:
-				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Punch");
+				this.usageCooldown = config.WhipConfig.UsageCooldownPunch;
 				break;
 			case GRAPPLE:
-				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grapple");
+				this.usageCooldown = config.WhipConfig.UsageCooldownGrapple;
 				break;
 			case GRAB:
-				this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Grab");
+				this.usageCooldown = config.WhipConfig.UsageCooldownGrab;
 				break;
 			default:
 				this.usageCooldown = 200;
@@ -669,6 +670,11 @@ public class WaterArmsWhip extends WaterAbility {
 
 	public static HashMap<LivingEntity, WaterArmsWhip> getGrabbedEntities() {
 		return GRABBED_ENTITIES;
+	}
+	
+	@Override
+	public Class<WaterArmsConfig> getConfigType() {
+		return WaterArmsConfig.class;
 	}
 
 }

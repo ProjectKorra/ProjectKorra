@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.ability.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +19,7 @@ import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 
 public class MultiAbilityManager {
 
-	public static Map<Player, HashMap<Integer, String>> playerAbilities = new ConcurrentHashMap<>();
+	public static Map<Player, String[]> playerAbilities = new ConcurrentHashMap<>();
 	public static Map<Player, Integer> playerSlot = new ConcurrentHashMap<>();
 	public static Map<Player, String> playerBoundAbility = new ConcurrentHashMap<>();
 	public static ArrayList<MultiAbilityInfo> multiAbilityList = new ArrayList<MultiAbilityInfo>();
@@ -55,20 +55,18 @@ public class MultiAbilityManager {
 		playerSlot.put(player, player.getInventory().getHeldItemSlot());
 		playerBoundAbility.put(player, multiAbility);
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final HashMap<Integer, String> currAbilities = new HashMap<Integer, String>();
-		for (final int i : bPlayer.getAbilities().keySet()) {
-			currAbilities.put(i, bPlayer.getAbilities().get(i));
-		}
+		final String[] currAbilities = new String[9];
+		System.arraycopy(bPlayer.getAbilities(), 0, currAbilities, 0, bPlayer.getAbilities().length);
 		playerAbilities.put(player, currAbilities);
 
 		final List<MultiAbilityInfoSub> modes = getMultiAbility(multiAbility).getAbilities();
 
-		bPlayer.getAbilities().clear();
+		Arrays.fill(bPlayer.getAbilities(), null);
 		for (int i = 0; i < modes.size(); i++) {
 			if (!player.hasPermission("bending.ability." + multiAbility + "." + modes.get(i).getName())) {
-				bPlayer.getAbilities().put(i + 1, new StringBuilder().append(modes.get(i).getAbilityColor()).append(ChatColor.STRIKETHROUGH).append(modes.get(i).getName()).toString());
+				bPlayer.getAbilities()[i] = new StringBuilder().append(modes.get(i).getAbilityColor()).append(ChatColor.STRIKETHROUGH).append(modes.get(i).getName()).toString();
 			} else {
-				bPlayer.getAbilities().put(i + 1, modes.get(i).getAbilityColor() + modes.get(i).getName());
+				bPlayer.getAbilities()[i] = modes.get(i).getAbilityColor() + modes.get(i).getName();
 			}
 		}
 
@@ -204,21 +202,21 @@ public class MultiAbilityManager {
 	 */
 	public static void unbindMultiAbility(final Player player) {
 		if (playerAbilities.containsKey(player)) {
-			final HashMap<Integer, String> prevBinds = playerAbilities.get(player);
+			final String[] prevBinds = playerAbilities.get(player);
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
 				return;
 			}
 
+			System.arraycopy(prevBinds, 0, bPlayer.getAbilities(), 0, prevBinds.length);
 			int lastNonNull = -1;
-			for (int i = 1; i < 10; i++) {
-				if (prevBinds.get(i) != null) {
+			for (int i = 0; i < 9; i++) {
+				if (prevBinds[i] != null) {
 					lastNonNull = i;
 				}
-				bPlayer.getAbilities().put(i, prevBinds.get(i));
 			}
 			if (lastNonNull > -1) {
-				GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds.get(lastNonNull));
+				GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds[lastNonNull]);
 			}
 
 			if (player.isOnline()) {

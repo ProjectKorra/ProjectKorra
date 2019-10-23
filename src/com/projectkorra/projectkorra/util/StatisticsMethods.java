@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.storage.DBConnection;
 
+@SuppressWarnings("rawtypes")
 public class StatisticsMethods {
 
 	/**

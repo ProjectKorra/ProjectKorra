@@ -18,8 +18,9 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirShieldConfig;
 
-public class AirShield extends AirAbility {
+public class AirShield extends AirAbility<AirShieldConfig> {
 
 	private boolean isToggledByAvatarState;
 	@Attribute("Max" + Attribute.RADIUS)
@@ -39,19 +40,19 @@ public class AirShield extends AirAbility {
 	private HashMap<Integer, Integer> angles;
 	private boolean dynamicCooldown;
 
-	public AirShield(final Player player) {
-		super(player);
+	public AirShield(final AirShieldConfig config, final Player player) {
+		super(config, player);
 
-		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.MaxRadius");
-		this.initialRadius = getConfig().getDouble("Abilities.Air.AirShield.InitialRadius");
-		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
+		this.maxRadius = config.MaxRadius;
+		this.initialRadius = config.InitialRadius;
+		this.isToggledByAvatarState = config.AvatarState_Toggle;
 		this.radius = this.initialRadius;
-		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Air.AirShield.Duration");
-		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
-		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
-		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
-		this.dynamicCooldown = getConfig().getBoolean("Abilities.Air.AirShield.DynamicCooldown"); //any unused duration from shield is removed from the cooldown
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
+		this.speed = config.Speed;
+		this.streams = config.Streams;
+		this.particles = config.AnimationParticleAmount;
+		this.dynamicCooldown = config.DynamicCooldown; //any unused duration from shield is removed from the cooldown
 		if (this.duration == 0) {
 			this.dynamicCooldown = false;
 		}
@@ -284,5 +285,10 @@ public class AirShield extends AirAbility {
 
 	public HashMap<Integer, Integer> getAngles() {
 		return this.angles;
+	}
+	
+	@Override
+	public Class<AirShieldConfig> getConfigType() {
+		return AirShieldConfig.class;
 	}
 }

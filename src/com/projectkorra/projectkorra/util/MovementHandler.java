@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
  * @author Simplicitee
  *
  */
+@SuppressWarnings("rawtypes")
 public class MovementHandler {
 
 	public static Set<MovementHandler> handlers = new HashSet<>();

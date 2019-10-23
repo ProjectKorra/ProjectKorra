@@ -10,8 +10,10 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.AcrobatStanceConfig;
 
-public class AcrobatStance extends ChiAbility {
+@SuppressWarnings("rawtypes")
+public class AcrobatStance extends ChiAbility<AcrobatStanceConfig> {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -26,17 +28,17 @@ public class AcrobatStance extends ChiAbility {
 	@Attribute("ParalyzeDodgeBoost")
 	private double paralyzeDodgeBoost;
 
-	public AcrobatStance(final Player player) {
-		super(player);
+	public AcrobatStance(final AcrobatStanceConfig config, final Player player) {
+		super(config, player);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		this.cooldown = getConfig().getLong("Abilities.Chi.AcrobatStance.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Chi.AcrobatStance.Duration");
-		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") - 1;
-		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") - 1;
-		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
-		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
+		this.speed = config.Speed - 1;
+		this.jump = config.Jump - 1;
+		this.chiBlockBoost = config.ChiBlockBoost;
+		this.paralyzeDodgeBoost = config.ParalyzeChanceDecrease;
 
 		final ChiAbility stance = this.bPlayer.getStance();
 		if (stance != null) {
@@ -144,6 +146,11 @@ public class AcrobatStance extends ChiAbility {
 
 	public void setParalyzeDodgeBoost(final double paralyzeDodgeBoost) {
 		this.paralyzeDodgeBoost = paralyzeDodgeBoost;
+	}
+	
+	@Override
+	public Class<AcrobatStanceConfig> getConfigType() {
+		return AcrobatStanceConfig.class;
 	}
 
 }

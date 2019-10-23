@@ -12,9 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ExtractionConfig;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class Extraction extends MetalAbility {
+public class Extraction extends MetalAbility<ExtractionConfig> {
 
 	@Attribute("DoubleChance")
 	private int doubleChance;
@@ -26,13 +27,13 @@ public class Extraction extends MetalAbility {
 	private long cooldown;
 	private Block originBlock;
 
-	public Extraction(final Player player) {
-		super(player);
+	public Extraction(final ExtractionConfig config, final Player player) {
+		super(config, player);
 
-		this.doubleChance = getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
-		this.tripleChance = getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
-		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
+		this.doubleChance = config.DoubleLootChance;
+		this.tripleChance = config.TripleLootChance;
+		this.cooldown = config.Cooldown;
+		this.selectRange = config.SelectRange;
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
@@ -158,6 +159,11 @@ public class Extraction extends MetalAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<ExtractionConfig> getConfigType() {
+		return ExtractionConfig.class;
 	}
 
 }

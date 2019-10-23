@@ -19,9 +19,10 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ShockwaveConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
-public class Ripple extends EarthAbility {
+public class Ripple extends EarthAbility<ShockwaveConfig> {
 
 	private static final Map<Integer[], Block> BLOCKS = new ConcurrentHashMap<Integer[], Block>();
 
@@ -43,13 +44,13 @@ public class Ripple extends EarthAbility {
 	private ArrayList<Location> locations = new ArrayList<Location>();
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
 
-	public Ripple(final Player player, final Vector direction) {
-		super(player);
+	public Ripple(final ShockwaveConfig config, final Player player, final Vector direction) {
+		super(config, player);
 		this.initialize(player, this.getInitialLocation(player, direction), direction);
 	}
 
-	public Ripple(final Player player, final Location origin, final Vector direction) {
-		super(player);
+	public Ripple(final ShockwaveConfig config, final Player player, final Location origin, final Vector direction) {
+		super(config, player);
 		this.initialize(player, origin, direction);
 	}
 
@@ -58,9 +59,9 @@ public class Ripple extends EarthAbility {
 			return;
 		}
 
-		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
-		this.damage = getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
-		this.knockback = getConfig().getDouble("Abilities.Earth.Shockwave.Knockback");
+		this.range = config.Range;
+		this.damage = config.Damage;
+		this.knockback = config.Knockback;
 		this.direction = direction.clone().normalize();
 		this.origin = origin.clone();
 		this.location = origin.clone();
@@ -68,9 +69,9 @@ public class Ripple extends EarthAbility {
 		this.entities = new ArrayList<>();
 
 		if (this.bPlayer.isAvatarState()) {
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback");
+			this.range = config.AvatarState_Range;
+			this.damage = config.AvatarState_Damage;
+			this.knockback = config.AvatarState_Knockback;
 		}
 
 		this.initializeLocations();
@@ -438,6 +439,11 @@ public class Ripple extends EarthAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<ShockwaveConfig> getConfigType() {
+		return ShockwaveConfig.class;
 	}
 
 }

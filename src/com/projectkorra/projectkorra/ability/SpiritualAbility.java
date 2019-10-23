@@ -3,11 +3,12 @@ package com.projectkorra.projectkorra.ability;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 
-public abstract class SpiritualAbility extends AirAbility implements SubAbility {
+public abstract class SpiritualAbility<C extends AbilityConfig> extends AirAbility<C> implements SubAbility {
 
-	public SpiritualAbility(final Player player) {
-		super(player);
+	public SpiritualAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	@Override

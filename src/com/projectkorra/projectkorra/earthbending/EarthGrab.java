@@ -32,13 +32,14 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthGrabConfig;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class EarthGrab extends EarthAbility {
+public class EarthGrab extends EarthAbility<EarthGrabConfig> {
 
 	private LivingEntity target;
 	@Attribute(Attribute.COOLDOWN)
@@ -66,8 +67,8 @@ public class EarthGrab extends EarthAbility {
 		TRAP, DRAG, PROJECTING;
 	}
 
-	public EarthGrab(final Player player, final GrabMode mode) {
-		super(player);
+	public EarthGrab(final EarthGrabConfig config, final Player player, final GrabMode mode) {
+		super(config, player);
 
 		if (hasAbility(player, EarthGrab.class)) {
 			getAbility(player, EarthGrab.class).remove();
@@ -88,12 +89,12 @@ public class EarthGrab extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.range = getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
-		this.dragSpeed = getConfig().getDouble("Abilities.Earth.EarthGrab.DragSpeed");
-		this.interval = getConfig().getLong("Abilities.Earth.EarthGrab.TrapHitInterval");
-		this.trapHP = getConfig().getDouble("Abilities.Earth.EarthGrab.TrapHP");
-		this.damageThreshold = getConfig().getDouble("Abilities.Earth.EarthGrab.DamageThreshold");
+		this.range = config.Range;
+		this.cooldown = config.Cooldown;
+		this.dragSpeed = config.DragSpeed;
+		this.interval = config.TrapHitInterval;
+		this.trapHP = config.TrapHP;
+		this.damageThreshold = config.DamageThreshold;
 		this.origin = this.player.getLocation().clone();
 		this.direction = this.player.getLocation().getDirection().setY(0).normalize();
 		this.lastHit = 0;
@@ -383,5 +384,10 @@ public class EarthGrab extends EarthAbility {
 
 	public LivingEntity getTarget() {
 		return this.target;
+	}
+	
+	@Override
+	public Class<EarthGrabConfig> getConfigType() {
+		return EarthGrabConfig.class;
 	}
 }

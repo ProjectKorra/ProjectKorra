@@ -6,25 +6,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.CheckCommandConfig;
 
 /**
  * Executor for /bending check. Extends {@link PKCommand}.
  */
-public class CheckCommand extends PKCommand {
+public class CheckCommand extends PKCommand<CheckCommandConfig> {
 
 	private final String newVersionAvailable;
 	private final String curVersion;
 	private final String newVersion;
 	private final String upToDate;
 
-	public CheckCommand() {
-		super("check", "/bending check", ConfigManager.languageConfig.get().getString("Commands.Check.Description"), new String[] { "check", "chk" });
+	public CheckCommand(final CheckCommandConfig config) {
+		super(config, "check", "/bending check", config.Description, new String[] { "check", "chk" });
 
-		this.newVersionAvailable = ConfigManager.languageConfig.get().getString("Commands.Check.NewVersionAvailable");
-		this.curVersion = ConfigManager.languageConfig.get().getString("Commands.Check.CurrentVersion");
-		this.newVersion = ConfigManager.languageConfig.get().getString("Commands.Check.LatestVersion");
-		this.upToDate = ConfigManager.languageConfig.get().getString("Commands.Check.UpToDate");
+		this.newVersionAvailable = config.NewVersionAvailable;
+		this.curVersion = config.CurrentVersion;
+		this.newVersion = config.LatestVersion;
+		this.upToDate = config.UpToDate;
 	}
 
 	@Override

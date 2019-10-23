@@ -1,25 +1,5 @@
 package com.projectkorra.projectkorra;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
@@ -29,6 +9,7 @@ import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
@@ -36,6 +17,23 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 /**
  * Class that presents a player and stores all bending information about the
@@ -44,6 +42,7 @@ import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
  * @deprecated use {@link com.projectkorra.projectkorra.player.BendingPlayer}.
  */
 @Deprecated
+@SuppressWarnings("rawtypes")
 public class BendingPlayer {
 
 	/**
@@ -63,9 +62,9 @@ public class BendingPlayer {
 	private final String name;
 	private ChiAbility stance;
 	private final DBCooldownManager cooldownManager;
-	private final ArrayList<Element> elements;
-	private final ArrayList<SubElement> subelements;
-	private HashMap<Integer, String> abilities;
+	private final List<Element> elements;
+	private final List<SubElement> subelements;
+	private final String[] abilities;
 	private final Map<String, Cooldown> cooldowns;
 	private final Map<Element, Boolean> toggledElements;
 
@@ -78,13 +77,14 @@ public class BendingPlayer {
 	 * @param abilities The known abilities
 	 * @param permaRemoved The permanent removed status
 	 */
-	public BendingPlayer(final UUID uuid, final String playerName, final ArrayList<Element> elements, final ArrayList<SubElement> subelements, final HashMap<Integer, String> abilities, final boolean permaRemoved) {
+	public BendingPlayer(final UUID uuid, final String playerName, final List<Element> elements, final List<SubElement> subelements, final String[] abilities, final boolean permaRemoved) {
 		this.uuid = uuid;
 		this.name = playerName;
 		this.cooldownManager = Manager.getManager(DBCooldownManager.class);
 		this.elements = elements;
 		this.subelements = subelements;
-		this.setAbilities(abilities);
+		this.abilities = new String[9];
+		System.arraycopy(abilities, 0, this.abilities, 0, abilities.length);
 		this.permaRemoved = permaRemoved;
 		this.player = Bukkit.getPlayer(uuid);
 		this.toggled = true;
@@ -248,7 +248,6 @@ public class BendingPlayer {
 			return false;
 		}
 
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		final Location playerLoc = this.player.getLocation();
 
 		if (!this.player.isOnline() || this.player.isDead()) {
@@ -261,7 +260,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (Stream.of(ConfigManager.getConfig(GeneralPropertiesConfig.class).DisabledWorlds).anyMatch(this.player.getWorld().getName()::equalsIgnoreCase)) {
 			return false;
 		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;
@@ -270,7 +269,7 @@ public class BendingPlayer {
 		}
 
 		if (!ignoreCooldowns && this.cooldowns.containsKey(this.name)) {
-			if (this.cooldowns.get(this.name).getCooldown() + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+			if (this.cooldowns.get(this.name).getCooldown() + ConfigManager.getConfig(GeneralPropertiesConfig.class).GlobalCooldown >= System.currentTimeMillis()) {
 				return false;
 			}
 
@@ -303,11 +302,10 @@ public class BendingPlayer {
 			return false; // If the passive is disabled.
 		}
 		final Element element = ability.getElement();
-		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+		if (Commands.isToggledForAll && ConfigManager.getConfig(GeneralPropertiesConfig.class).TogglePassivesWithAllBending) {
 			return false;
 		}
 
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 
 		if (element == null || this.player == null) {
 			return false;
@@ -315,7 +313,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (Stream.of(ConfigManager.getConfig(GeneralPropertiesConfig.class).DisabledWorlds).anyMatch(this.player.getWorld().getName()::equalsIgnoreCase)) {
 			return false;
 		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
@@ -497,7 +495,7 @@ public class BendingPlayer {
 	 *
 	 * @return map of abilities
 	 */
-	public HashMap<Integer, String> getAbilities() {
+	public String[] getAbilities() {
 		return this.abilities;
 	}
 
@@ -539,10 +537,6 @@ public class BendingPlayer {
 		return getBendingPlayer(oPlayer);
 	}
 
-	private static FileConfiguration getConfig() {
-		return ConfigManager.getConfig();
-	}
-
 	public CoreAbility getBoundAbility() {
 		return CoreAbility.getAbility(this.getBoundAbilityName());
 	}
@@ -553,8 +547,8 @@ public class BendingPlayer {
 	 * @return The Ability name bounded to the slot
 	 */
 	public String getBoundAbilityName() {
-		final int slot = this.player.getInventory().getHeldItemSlot() + 1;
-		final String name = this.getAbilities().get(slot);
+		final int slot = this.player.getInventory().getHeldItemSlot();
+		final String name = this.getAbilities()[slot];
 
 		return name != null ? name : "";
 	}
@@ -831,11 +825,14 @@ public class BendingPlayer {
 	 *
 	 * @param abilities The abilities to set/save
 	 */
-	public void setAbilities(final HashMap<Integer, String> abilities) {
-		this.abilities = abilities;
+	public void setAbilities(final String[] abilities) {
+		if (abilities.length < this.abilities.length) {
+			Arrays.fill(abilities, null);
+		}
+		System.arraycopy(abilities, 0, this.abilities, 0, abilities.length);
 
-		for (int i = 1; i <= 9; i++) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + this.uuid + "'");
+		for (int i = 0; i < 9; i++) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + (i + 1) + " = '" + this.abilities[i] + "' WHERE uuid = '" + this.uuid + "'");
 		}
 	}
 

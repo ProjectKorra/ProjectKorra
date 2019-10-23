@@ -18,10 +18,11 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.LightningConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
-public class Lightning extends LightningAbility {
+public class Lightning extends LightningAbility<LightningConfig> {
 
 	public static enum State {
 		START, STRIKE, MAINBOLT
@@ -41,7 +42,7 @@ public class Lightning extends LightningAbility {
 	@Attribute(Attribute.RANGE)
 	private double range;
 	@Attribute(Attribute.CHARGE_DURATION)
-	private double chargeTime;
+	private long chargeTime;
 	@Attribute("SubArcChance")
 	private double subArcChance;
 	@Attribute(Attribute.DAMAGE)
@@ -57,7 +58,7 @@ public class Lightning extends LightningAbility {
 	@Attribute("StunChance")
 	private double stunChance;
 	@Attribute("Stun" + Attribute.DURATION)
-	private double stunDuration;
+	private long stunDuration;
 	@Attribute("MaxArcAngle")
 	private double maxArcAngle;
 	private double particleRotation;
@@ -72,8 +73,8 @@ public class Lightning extends LightningAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<Location> locations;
 
-	public Lightning(final Player player) {
-		super(player);
+	public Lightning(final LightningConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
@@ -94,22 +95,22 @@ public class Lightning extends LightningAbility {
 		this.tasks = new ArrayList<>();
 		this.locations = new ArrayList<>();
 
-		this.selfHitWater = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
-		this.selfHitClose = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
-		this.arcOnIce = getConfig().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
-		this.range = getConfig().getDouble("Abilities.Fire.Lightning.Range");
-		this.damage = getConfig().getDouble("Abilities.Fire.Lightning.Damage");
-		this.maxArcAngle = getConfig().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
-		this.subArcChance = getConfig().getDouble("Abilities.Fire.Lightning.SubArcChance");
-		this.chainRange = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcRange");
-		this.chainArcChance = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcChance");
-		this.waterArcRange = getConfig().getDouble("Abilities.Fire.Lightning.WaterArcRange");
-		this.stunChance = getConfig().getDouble("Abilities.Fire.Lightning.StunChance");
-		this.stunDuration = getConfig().getDouble("Abilities.Fire.Lightning.StunDuration");
-		this.maxChainArcs = getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs");
-		this.waterArcs = getConfig().getInt("Abilities.Fire.Lightning.WaterArcs");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.Lightning.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Lightning.Cooldown");
+		this.selfHitWater = config.SelfHitWater;
+		this.selfHitClose = config.SelfHitClose;
+		this.arcOnIce = config.ArcOnIce;
+		this.range = config.Range;
+		this.damage = config.Damage;
+		this.maxArcAngle = config.MaxArcAngle;
+		this.subArcChance = config.SubArcChance;
+		this.chainRange = config.ChainArcRange;
+		this.chainArcChance = config.ChainArcChance;
+		this.waterArcRange = config.WaterArcRange;
+		this.stunChance = config.StunChance;
+		this.stunDuration = config.StunDuration;
+		this.maxChainArcs = config.MaxChainArcs;
+		this.waterArcs = config.WaterArcs;
+		this.chargeTime = config.ChargeTime;
+		this.cooldown = config.Cooldown;
 
 		this.range = this.getDayFactor(this.range);
 		this.subArcChance = this.getDayFactor(this.subArcChance);
@@ -119,12 +120,12 @@ public class Lightning extends LightningAbility {
 		this.chainRange = this.getDayFactor(this.chainRange);
 		this.waterArcRange = this.getDayFactor(this.waterArcRange);
 		this.stunChance = this.getDayFactor(this.stunChance);
-		this.stunDuration = this.getDayFactor(this.stunDuration);
+		this.stunDuration = (long) this.getDayFactor(this.stunDuration);
 
 		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.ChargeTime");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Lightning.Damage");
+			this.chargeTime = config.AvatarState_ChargeTime;
+			this.cooldown = config.AvatarState_Cooldown;
+			this.damage = config.AvatarState_Damage;
 		}
 		this.start();
 	}
@@ -141,7 +142,7 @@ public class Lightning extends LightningAbility {
 
 		if (Math.random() <= this.stunChance) {
 			final MovementHandler mh = new MovementHandler(lent, this);
-			mh.stopWithDuration((long) this.stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
+			mh.stopWithDuration(this.stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
 		}
 	}
 
@@ -707,11 +708,11 @@ public class Lightning extends LightningAbility {
 		this.range = range;
 	}
 
-	public double getChargeTime() {
+	public long getChargeTime() {
 		return this.chargeTime;
 	}
 
-	public void setChargeTime(final double chargeTime) {
+	public void setChargeTime(final long chargeTime) {
 		this.chargeTime = chargeTime;
 	}
 
@@ -771,11 +772,11 @@ public class Lightning extends LightningAbility {
 		this.stunChance = stunChance;
 	}
 
-	public double getStunDuration() {
+	public long getStunDuration() {
 		return this.stunDuration;
 	}
 
-	public void setStunDuration(final double stunDuration) {
+	public void setStunDuration(final long stunDuration) {
 		this.stunDuration = stunDuration;
 	}
 
@@ -845,6 +846,11 @@ public class Lightning extends LightningAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<LightningConfig> getConfigType() {
+		return LightningConfig.class;
 	}
 
 }

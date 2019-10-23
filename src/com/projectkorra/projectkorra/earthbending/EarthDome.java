@@ -13,8 +13,11 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthDomeConfig;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.RaiseEarthConfig;
 
-public class EarthDome extends EarthAbility {
+public class EarthDome extends EarthAbility<EarthDomeConfig> {
 
 	private Location center;
 	@Attribute(Attribute.RADIUS)
@@ -25,24 +28,24 @@ public class EarthDome extends EarthAbility {
 	private long cooldown;
 	private Set<Block> checked;
 
-	public EarthDome(final Player player, final Location center) {
-		super(player);
+	public EarthDome(final EarthDomeConfig config, final Player player, final Location center) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown("EarthDome")) {
 			return;
 		}
 
 		this.center = center;
-		this.radius = getConfig().getDouble("Abilities.Earth.EarthDome.Radius");
-		this.height = getConfig().getInt("Abilities.Earth.EarthDome.Height");
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthDome.Cooldown");
+		this.radius = config.Radius;
+		this.height = config.Height;
+		this.cooldown = config.Cooldown;
 		this.checked = new HashSet<>();
 
 		this.start();
 	}
 
-	public EarthDome(final Player player) {
-		this(player, player.getLocation().clone().subtract(0, 1, 0));
+	public EarthDome(final EarthDomeConfig config, final Player player) {
+		this(config, player, player.getLocation().clone().subtract(0, 1, 0));
 	}
 
 	private Block getAppropriateBlock(final Block block) {
@@ -81,7 +84,7 @@ public class EarthDome extends EarthAbility {
 					continue;
 				}
 
-				new RaiseEarth(this.player, currBlock.getLocation(), Math.round(this.height - i));
+				new RaiseEarth(ConfigManager.getConfig(RaiseEarthConfig.class), this.player, currBlock.getLocation(), Math.round(this.height - i));
 				this.checked.add(currBlock);
 			}
 
@@ -119,6 +122,11 @@ public class EarthDome extends EarthAbility {
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
+	}
+	
+	@Override
+	public Class<EarthDomeConfig> getConfigType() {
+		return EarthDomeConfig.class;
 	}
 
 }

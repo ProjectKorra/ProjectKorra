@@ -14,9 +14,11 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.TwisterConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class Twister extends AirAbility implements ComboAbility {
+public class Twister extends AirAbility<TwisterConfig> implements ComboAbility {
 
 	public static enum AbilityState {
 		TWISTER_MOVING, TWISTER_STATIONARY
@@ -25,8 +27,6 @@ public class Twister extends AirAbility implements ComboAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long time;
-	@Attribute(Attribute.DAMAGE)
-	private double damage;
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	@Attribute(Attribute.RANGE)
@@ -45,8 +45,8 @@ public class Twister extends AirAbility implements ComboAbility {
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
 
-	public Twister(final Player player) {
-		super(player);
+	public Twister(final TwisterConfig config, final Player player) {
+		super(config, player);
 
 		this.affectedEntities = new ArrayList<>();
 
@@ -58,19 +58,19 @@ public class Twister extends AirAbility implements ComboAbility {
 			return;
 		}
 
-		this.range = getConfig().getDouble("Abilities.Air.Twister.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.Twister.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Air.Twister.Cooldown");
-		this.twisterHeight = getConfig().getDouble("Abilities.Air.Twister.Height");
-		this.twisterRadius = getConfig().getDouble("Abilities.Air.Twister.Radius");
-		this.twisterDegreeParticles = getConfig().getDouble("Abilities.Air.Twister.DegreesPerParticle");
-		this.twisterHeightParticles = getConfig().getDouble("Abilities.Air.Twister.HeightPerParticle");
-		this.twisterRemoveDelay = getConfig().getLong("Abilities.Air.Twister.RemoveDelay");
+		this.range = config.Range;
+		this.speed = config.Speed;
+		this.cooldown = config.Cooldown;
+		this.twisterHeight = config.Height;
+		this.twisterRadius = config.Radius;
+		this.twisterDegreeParticles = config.DegreesPerParticle;
+		this.twisterHeightParticles = config.HeightPerParticle;
+		this.twisterRemoveDelay = config.RemoveDelay;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Twister.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Twister.Range");
+			this.twisterHeight = config.AvatarState_Height;
+			this.range = config.AvatarState_Range;
 		}
 
 		this.bPlayer.addCooldown(this);
@@ -180,7 +180,7 @@ public class Twister extends AirAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new Twister(player);
+		return new Twister(ConfigManager.getConfig(TwisterConfig.class), player);
 	}
 
 	@Override
@@ -191,5 +191,10 @@ public class Twister extends AirAbility implements ComboAbility {
 		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
 		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
 		return twister;
+	}
+	
+	@Override
+	public Class<TwisterConfig> getConfigType() {
+		return TwisterConfig.class;
 	}
 }

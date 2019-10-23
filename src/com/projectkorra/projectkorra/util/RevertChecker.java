@@ -10,21 +10,18 @@ import java.util.concurrent.Future;
 
 import org.bukkit.Server;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
 
 import io.papermc.lib.PaperLib;
 
 public class RevertChecker implements Runnable {
 
 	private final ProjectKorra plugin;
-
-	private static final FileConfiguration config = ConfigManager.defaultConfig.get();
-	private static final boolean safeRevert = config.getBoolean("Properties.Earth.SafeRevert");
 	public static Map<Block, Block> earthRevertQueue = new ConcurrentHashMap<>();
 	static Map<Integer, Integer> airRevertQueue = new ConcurrentHashMap<>();
 
@@ -70,8 +67,8 @@ public class RevertChecker implements Runnable {
 		}
 
 		this.time = System.currentTimeMillis();
-		if (config.getBoolean("Properties.Earth.RevertEarthbending")) {
-
+		EarthPropertiesConfig config = ConfigManager.getConfig(EarthPropertiesConfig.class);
+		if (config.RevertEarthbending) {
 			try {
 				this.returnFuture = this.plugin.getServer().getScheduler().callSyncMethod(this.plugin, new getOccupiedChunks(this.plugin.getServer()));
 				final Set<Map<String, Integer>> chunks = this.returnFuture.get();
@@ -89,7 +86,7 @@ public class RevertChecker implements Runnable {
 					chunkcoord.put("x", block.getX() >> 4);
 					chunkcoord.put("z", block.getZ() >> 4);
 
-					if (this.time > (info.getTime() + config.getLong("Properties.Earth.RevertCheckTime")) && !(chunks.contains(chunkcoord) && safeRevert)) {
+					if (this.time > (info.getTime() + config.RevertCheckTime) && !(chunks.contains(chunkcoord) && config.SafeRevert)) {
 						this.addToRevertQueue(block);
 					}
 				}
@@ -108,7 +105,7 @@ public class RevertChecker implements Runnable {
 					chunkcoord.put("x", block.getX() >> 4);
 					chunkcoord.put("z", block.getZ() >> 4);
 
-					if (this.time > (info.getTime() + config.getLong("Properties.Earth.RevertCheckTime")) && !(chunks.contains(chunkcoord) && safeRevert)) {
+					if (this.time > (info.getTime() + config.RevertCheckTime) && !(chunks.contains(chunkcoord) && config.SafeRevert)) {
 						this.addToAirRevertQueue(i);
 					}
 				}

@@ -3,11 +3,12 @@ package com.projectkorra.projectkorra.ability;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 
-public abstract class LightningAbility extends FireAbility implements SubAbility {
+public abstract class LightningAbility<C extends AbilityConfig> extends FireAbility<C> implements SubAbility {
 
-	public LightningAbility(final Player player) {
-		super(player);
+	public LightningAbility(final C config, final Player player) {
+		super(config, player);
 	}
 
 	@Override

@@ -6,9 +6,10 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.ShockwaveConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class Shockwave extends EarthAbility {
+public class Shockwave extends EarthAbility<ShockwaveConfig> {
 
 	private boolean charged;
 	@Attribute(Attribute.CHARGE_DURATION)
@@ -20,19 +21,19 @@ public class Shockwave extends EarthAbility {
 	@Attribute(Attribute.RANGE)
 	private double range;
 
-	public Shockwave(final Player player, final boolean fall) {
-		super(player);
+	public Shockwave(final ShockwaveConfig config, final Player player, final boolean fall) {
+		super(config, player);
 
-		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
-		this.cooldown = getConfig().getLong("Abilities.Earth.Shockwave.Cooldown");
-		this.chargeTime = getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
-		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
-		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
+		this.angle = Math.toRadians(config.Angle);
+		this.cooldown = config.Cooldown;
+		this.chargeTime = config.ChargeTime;
+		this.threshold = config.FallThreshold;
+		this.range = config.Range;
 
 		if (this.bPlayer.isAvatarState()) {
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
+			this.range = config.AvatarState_Range;
+			this.cooldown = config.AvatarState_Cooldown;
+			this.chargeTime = config.AvatarState_ChargeTime;
 		}
 
 		if (!this.bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
@@ -96,12 +97,12 @@ public class Shockwave extends EarthAbility {
 		for (double theta = 0; theta < 360; theta += dtheta) {
 			final double rtheta = Math.toRadians(theta);
 			final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
-			new Ripple(this.player, vector.normalize());
+			new Ripple(config, this.player, vector.normalize());
 		}
 		this.bPlayer.addCooldown(this);
 	}
 
-	public static void coneShockwave(final Player player) {
+	public static void coneShockwave(final ShockwaveConfig config, final Player player) {
 		final Shockwave shockWave = getAbility(player, Shockwave.class);
 		if (shockWave != null) {
 			if (shockWave.charged) {
@@ -111,7 +112,7 @@ public class Shockwave extends EarthAbility {
 					final double rtheta = Math.toRadians(theta);
 					final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
 					if (vector.angle(player.getEyeLocation().getDirection()) < shockWave.angle) {
-						new Ripple(player, vector.normalize());
+						new Ripple(config, player, vector.normalize());
 					}
 				}
 				shockWave.bPlayer.addCooldown(shockWave);
@@ -187,6 +188,11 @@ public class Shockwave extends EarthAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<ShockwaveConfig> getConfigType() {
+		return ShockwaveConfig.class;
 	}
 
 }

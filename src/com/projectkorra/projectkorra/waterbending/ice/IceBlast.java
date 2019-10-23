@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceBlastConfig;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -28,7 +29,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class IceBlast extends IceAbility {
+public class IceBlast extends IceAbility<IceBlastConfig> {
 
 	private boolean prepared;
 	private boolean settingUp;
@@ -52,17 +53,17 @@ public class IceBlast extends IceAbility {
 	private boolean allowSnow;
 	public TempBlock source;
 
-	public IceBlast(final Player player) {
-		super(player);
+	public IceBlast(final IceBlastConfig config, final Player player) {
+		super(config, player);
 
 		this.data = 0;
-		this.interval = getConfig().getLong("Abilities.Water.IceBlast.Interval");
-		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceBlast.CollisionRadius");
-		this.deflectRange = getConfig().getDouble("Abilities.Water.IceBlast.DeflectRange");
-		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
-		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
-		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
-		this.allowSnow = getConfig().getBoolean("Abilities.Water.IceBlast.AllowSnow");
+		this.interval = config.Interval;
+		this.collisionRadius = config.CollisionRadius;
+		this.deflectRange = config.DeflectRange;
+		this.range = config.Range;
+		this.damage = config.Damage;
+		this.cooldown = config.Cooldown;
+		this.allowSnow = config.AllowSnow;
 
 		this.damage = getNightFactor(this.damage, player.getWorld());
 
@@ -71,9 +72,9 @@ public class IceBlast extends IceAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Water.IceBlast.Cooldown");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceBlast.Range");
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceBlast.Damage");
+			this.cooldown = config.AvatarState_Cooldown;
+			this.range = config.AvatarState_Range;
+			this.damage = config.AvatarState_Damage;
 		}
 
 		block(player);
@@ -491,6 +492,11 @@ public class IceBlast extends IceAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<IceBlastConfig> getConfigType() {
+		return IceBlastConfig.class;
 	}
 
 }

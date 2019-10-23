@@ -8,9 +8,9 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirAgilityConfig;
 
-public class AirAgility extends AirAbility implements PassiveAbility {
+public class AirAgility extends AirAbility<AirAgilityConfig> implements PassiveAbility {
 
 	// Configurable variables.
 	@Attribute("Jump")
@@ -18,14 +18,14 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 	@Attribute(Attribute.SPEED)
 	private int speedPower;
 
-	public AirAgility(final Player player) {
-		super(player);
+	public AirAgility(final AirAgilityConfig config, final Player player) {
+		super(config, player);
 		this.setFields();
 	}
 
 	public void setFields() {
-		this.jumpPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.JumpPower") - 1;
-		this.speedPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.SpeedPower") - 1;
+		this.jumpPower = config.JumpPower - 1;
+		this.speedPower = config.SpeedPower - 1;
 	}
 
 	@Override
@@ -86,5 +86,9 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 	public int getSpeedPower() {
 		return this.speedPower;
 	}
-
+	
+	@Override
+	public Class<AirAgilityConfig> getConfigType() {
+		return AirAgilityConfig.class;
+	}
 }

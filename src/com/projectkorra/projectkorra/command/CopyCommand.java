@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -14,21 +13,24 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 
-public class CopyCommand extends PKCommand {
+@SuppressWarnings("rawtypes")
+public class CopyCommand extends PKCommand<CopyCommandConfig> {
 
 	private final String playerNotFound;
 	private final String copied;
 	private final String failedToBindAll;
 	private final String copiedOther;
 
-	public CopyCommand() {
-		super("copy", "/bending copy <Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Copy.Description"), new String[] { "copy", "co" });
+	public CopyCommand(final CopyCommandConfig config) {
+		super(config, "copy", "/bending copy <Player> [Player]", config.Description, new String[] { "copy", "co" });
 
-		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Copy.PlayerNotFound");
-		this.copied = ConfigManager.languageConfig.get().getString("Commands.Copy.SuccessfullyCopied");
-		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Copy.FailedToBindAll");
-		this.copiedOther = ConfigManager.languageConfig.get().getString("Commands.Copy.Other.SuccessfullyCopied");
+		this.playerNotFound = config.PlayerNotFound;
+		this.copied = config.SuccessfullyCopied;
+		this.failedToBindAll = config.FailedToBindAll;
+		this.copiedOther = config.SuccessfullyCopied_Other;
 	}
 
 	@Override
@@ -90,22 +92,23 @@ public class CopyCommand extends PKCommand {
 		}
 		if (orig.isPermaRemoved()) {
 			if (self) {
-				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved);
 			} else {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved_Other);
 			}
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
+		final String[] abilities = orig.getAbilities().clone();
 		boolean boundAll = true;
-		for (int i = 1; i <= 9; i++) {
-			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+		for (int i = 0; i < 9; i++) {
+			final CoreAbility coreAbil = CoreAbility.getAbility(abilities[i]);
 			if (coreAbil != null && !target.canBind(coreAbil)) {
-				abilities.remove(i);
+				abilities[i] = null;
 				boundAll = false;
 			}
 		}
+		
 		target.setAbilities(abilities);
 		return boundAll;
 	}

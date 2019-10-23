@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -9,15 +10,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.PermaremoveCommandConfig;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 
 /**
  * Executor for /bending permaremove. Extends {@link PKCommand}.
  */
-public class PermaremoveCommand extends PKCommand {
+public class PermaremoveCommand extends PKCommand<PermaremoveCommandConfig> {
 
 	private final String playerIsOffline;
 	private final String restored;
@@ -25,14 +27,14 @@ public class PermaremoveCommand extends PKCommand {
 	private final String removed;
 	private final String removedConfirm;
 
-	public PermaremoveCommand() {
-		super("permaremove", "/bending permaremove <Player>", ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Description"), new String[] { "permaremove", "premove", "permremove", "pr" });
+	public PermaremoveCommand(final PermaremoveCommandConfig config) {
+		super(config, "permaremove", "/bending permaremove <Player>", config.Description, new String[] { "permaremove", "premove", "permremove", "pr" });
 
-		this.playerIsOffline = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.PlayerOffline");
-		this.restored = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Restored");
-		this.restoredConfirm = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.RestoredConfirm");
-		this.removed = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Removed");
-		this.removedConfirm = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.RemovedConfirm");
+		this.playerIsOffline = config.PlayerOffline;
+		this.restored = config.Restored;
+		this.restoredConfirm = config.Restored_Other;
+		this.removed = config.Removed;
+		this.removedConfirm = config.Removed_Other;
 	}
 
 	@Override
@@ -75,8 +77,12 @@ public class PermaremoveCommand extends PKCommand {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 			}
 		} else {
+			List<Element> removed = new LinkedList<>();
+			removed.addAll(bPlayer.getElements());
+			removed.addAll(bPlayer.getSubElements());
 			bPlayer.getElements().clear();
-			GeneralMethods.saveElements(bPlayer);
+			bPlayer.getSubElements().clear();
+			GeneralMethods.deleteElements(bPlayer, removed);
 			bPlayer.setPermaRemoved(true);
 			GeneralMethods.savePermaRemoved(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());

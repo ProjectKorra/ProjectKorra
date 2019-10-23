@@ -17,9 +17,11 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.FireKickConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 
-public class FireKick extends FireAbility implements ComboAbility {
+public class FireKick extends FireAbility<FireKickConfig> implements ComboAbility {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -34,8 +36,8 @@ public class FireKick extends FireAbility implements ComboAbility {
 	private ArrayList<LivingEntity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
 
-	public FireKick(final Player player) {
-		super(player);
+	public FireKick(final FireKickConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
@@ -44,15 +46,15 @@ public class FireKick extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireKick.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireKick.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireKick.Cooldown");
-		this.speed = getConfig().getLong("Abilities.Fire.FireKick.Speed");
+		this.damage = config.Damage;
+		this.range = config.Range;
+		this.cooldown = config.Cooldown;
+		this.speed = config.Speed;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireKick.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireKick.Range");
+			this.damage = config.AvatarState_Damage;
+			this.range = config.AvatarState_Range;
 		}
 
 		this.start();
@@ -185,7 +187,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new FireKick(player);
+		return new FireKick(ConfigManager.getConfig(FireKickConfig.class), player);
 	}
 
 	@Override
@@ -208,5 +210,10 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
+	}
+	
+	@Override
+	public Class<FireKickConfig> getConfigType() {
+		return FireKickConfig.class;
 	}
 }

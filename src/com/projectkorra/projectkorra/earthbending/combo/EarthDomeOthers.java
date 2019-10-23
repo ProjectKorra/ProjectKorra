@@ -11,10 +11,11 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthDomeConfig;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class EarthDomeOthers extends EarthAbility {
+public class EarthDomeOthers extends EarthAbility<EarthDomeConfig> {
 
 	private Vector direction;
 	private double range;
@@ -22,8 +23,8 @@ public class EarthDomeOthers extends EarthAbility {
 	private double maxRange;
 	private Location loc;
 
-	public EarthDomeOthers(final Player player) {
-		super(player);
+	public EarthDomeOthers(final EarthDomeConfig config, final Player player) {
+		super(config, player);
 
 		if (this.bPlayer.isOnCooldown("EarthDome")) {
 			return;
@@ -38,7 +39,7 @@ public class EarthDomeOthers extends EarthAbility {
 		}
 		this.range = 0;
 		this.direction = this.loc.getDirection().setY(0);
-		this.maxRange = getConfig().getDouble("Abilities.Earth.EarthDome.Range");
+		this.maxRange = config.Range;
 		this.start();
 	}
 
@@ -85,7 +86,7 @@ public class EarthDomeOthers extends EarthAbility {
 				continue;
 			}
 
-			new EarthDome(this.player, entity.getLocation().clone().subtract(0, 1, 0));
+			new EarthDome(config, this.player, entity.getLocation().clone().subtract(0, 1, 0));
 			this.remove(false);
 			return;
 		}
@@ -94,7 +95,7 @@ public class EarthDomeOthers extends EarthAbility {
 	public void remove(final boolean cooldown) {
 		super.remove();
 		if (cooldown) {
-			this.bPlayer.addCooldown("EarthDome", getConfig().getLong("Abilities.Earth.EarthDome.Cooldown"));
+			this.bPlayer.addCooldown("EarthDome", config.Cooldown);
 		}
 	}
 
@@ -126,5 +127,10 @@ public class EarthDomeOthers extends EarthAbility {
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
+	}
+	
+	@Override
+	public Class<EarthDomeConfig> getConfigType() {
+		return EarthDomeConfig.class;
 	}
 }

@@ -28,6 +28,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
  * stream for all their progress methods. If someone else was reliant on that,
  * they can use this ability instead.
  */
+@SuppressWarnings("rawtypes")
 public class FireComboStream extends BukkitRunnable {
 	private boolean useNewParticles;
 	private boolean cancelled;

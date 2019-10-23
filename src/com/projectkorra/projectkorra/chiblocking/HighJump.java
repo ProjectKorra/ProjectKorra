@@ -6,25 +6,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.configs.abilities.chi.HighJumpConfig;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip;
 
-public class HighJump extends ChiAbility {
+public class HighJump extends ChiAbility<HighJumpConfig> {
 
 	@Attribute(Attribute.HEIGHT)
-	private int height;
+	private double height;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 
-	public HighJump(final Player player) {
-		super(player);
+	public HighJump(final HighJumpConfig config, final Player player) {
+		super(config, player);
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
-		this.height = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Height");
-		this.cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Cooldown");
+		this.height = config.Height;
+		this.cooldown = config.Cooldown;
 		this.start();
 	}
 
@@ -79,16 +79,21 @@ public class HighJump extends ChiAbility {
 		return true;
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return this.height;
 	}
 
-	public void setHeight(final int height) {
+	public void setHeight(final double height) {
 		this.height = height;
 	}
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	@Override
+	public Class<HighJumpConfig> getConfigType() {
+		return HighJumpConfig.class;
 	}
 
 }

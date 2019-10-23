@@ -7,18 +7,19 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.water.FastSwimConfig;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
-public class FastSwim extends WaterAbility implements PassiveAbility {
+public class FastSwim extends WaterAbility<FastSwimConfig> implements PassiveAbility {
 
 	private long cooldown;
 	private double swimSpeed;
 	private long duration;
 
-	public FastSwim(final Player player) {
-		super(player);
+	public FastSwim(final FastSwimConfig config, final Player player) {
+		super(config, player);
 		if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
@@ -27,9 +28,9 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 			return;
 		}
 
-		this.cooldown = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Cooldown");
-		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
-		this.duration = ConfigManager.getConfig().getLong("Abilities.Water.Passive.FastSwim.Duration");
+		this.cooldown = config.Cooldown;
+		this.swimSpeed = config.SpeedFactor;
+		this.duration = config.Duration;
 
 		this.start();
 	}
@@ -60,7 +61,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 	}
 
 	public static double getSwimSpeed() {
-		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
+		return ConfigManager.getConfig(FastSwimConfig.class).SpeedFactor;
 	}
 
 	@Override
@@ -96,5 +97,10 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 	@Override
 	public boolean isProgressable() {
 		return true;
+	}
+	
+	@Override
+	public Class<FastSwimConfig> getConfigType() {
+		return FastSwimConfig.class;
 	}
 }

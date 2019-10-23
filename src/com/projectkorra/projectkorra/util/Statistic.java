@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 
+@SuppressWarnings("rawtypes")
 public enum Statistic {
 
 	PLAYER_KILLS("PlayerKills", "player kills"), PLAYER_DAMAGE("PlayerDamage", "player damage"), TOTAL_KILLS("TotalKills", "total kills"), TOTAL_DAMAGE("TotalDamage", "total damage");

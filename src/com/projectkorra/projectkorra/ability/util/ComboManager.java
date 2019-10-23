@@ -16,10 +16,12 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthDomeConfig;
 import com.projectkorra.projectkorra.earthbending.combo.EarthDomeOthers;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
 
+@SuppressWarnings("rawtypes")
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 20 * 60;
 	private static final Map<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
@@ -32,8 +34,8 @@ public class ComboManager {
 		COMBO_ABILITIES.clear();
 		DESCRIPTIONS.clear();
 		INSTRUCTIONS.clear();
-
-		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthDome.Enabled")) {
+		
+		if (ConfigManager.getConfig(EarthDomeConfig.class).Enabled) {
 			final ArrayList<AbilityInformation> earthDomeOthers = new ArrayList<>();
 			earthDomeOthers.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
 			earthDomeOthers.add(new AbilityInformation("Shockwave", ClickType.LEFT_CLICK));

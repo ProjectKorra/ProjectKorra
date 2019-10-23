@@ -20,12 +20,13 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.configs.abilities.earth.EarthSmashConfig;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-public class EarthSmash extends EarthAbility {
+public class EarthSmash extends EarthAbility<EarthSmashConfig> {
 
 	public static enum State {
 		START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
@@ -77,12 +78,12 @@ public class EarthSmash extends EarthAbility {
 	private ArrayList<BlockRepresenter> currentBlocks;
 	private ArrayList<TempBlock> affectedBlocks;
 
-	public EarthSmash(final Player player, final ClickType type) {
-		super(player);
+	public EarthSmash(final EarthSmashConfig config, final Player player, final ClickType type) {
+		super(config, player);
 
 		this.state = State.START;
-		this.requiredBendableBlocks = getConfig().getInt("Abilities.Earth.EarthSmash.RequiredBendableBlocks");
-		this.maxBlocksToPassThrough = getConfig().getInt("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough");
+		this.requiredBendableBlocks = config.RequiredBendableBlocks;
+		this.maxBlocksToPassThrough = config.MaxBlocksToPassThrough;
 		this.setFields();
 		this.affectedEntities = new ArrayList<>();
 		this.currentBlocks = new ArrayList<>();
@@ -142,35 +143,35 @@ public class EarthSmash extends EarthAbility {
 
 	public void setFields() {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(this.player);
-		this.shootAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.Shoot.AnimationInterval");
-		this.flightAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.Flight.AnimationInterval");
-		this.liftAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.LiftAnimationInterval");
-		this.grabDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.Grab.DetectionRadius");
-		this.flightDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.Flight.DetectionRadius");
-		this.allowGrab = getConfig().getBoolean("Abilities.Earth.EarthSmash.Grab.Enabled");
-		this.allowFlight = getConfig().getBoolean("Abilities.Earth.EarthSmash.Flight.Enabled");
-		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthSmash.SelectRange");
-		this.grabRange = getConfig().getDouble("Abilities.Earth.EarthSmash.Grab.Range");
-		this.shootRange = getConfig().getDouble("Abilities.Earth.EarthSmash.Shoot.Range");
-		this.damage = getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
-		this.knockback = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockback");
-		this.knockup = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockup");
-		this.flightSpeed = getConfig().getDouble("Abilities.Earth.EarthSmash.Flight.Speed");
-		this.chargeTime = getConfig().getLong("Abilities.Earth.EarthSmash.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
-		this.flightDuration = getConfig().getLong("Abilities.Earth.EarthSmash.Flight.Duration");
-		this.duration = getConfig().getLong("Abilities.Earth.EarthSmash.Duration");
+		this.shootAnimationInterval = config.ShootAnimationInterval;
+		this.flightAnimationInterval = config.FlightConfig.AnimationInterval;
+		this.liftAnimationInterval = config.LiftAnimationInterval;
+		this.grabDetectionRadius = config.GrabConfig.DetectionRadius;
+		this.flightDetectionRadius = config.FlightConfig.DetectionRadius;
+		this.allowGrab = config.GrabConfig.Enabled;
+		this.allowFlight = config.FlightConfig.Enabled;
+		this.selectRange = config.SelectRange;
+		this.grabRange = config.GrabConfig.Range;
+		this.shootRange = config.ShootRange;
+		this.damage = config.Damage;
+		this.knockback = config.Knockback;
+		this.knockup = config.Knockup;
+		this.flightSpeed = config.FlightConfig.Speed;
+		this.chargeTime = config.ChargeTime;
+		this.cooldown = config.Cooldown;
+		this.flightDuration = config.FlightConfig.Duration;
+		this.duration = config.Duration;
 
 		if (bPlayer.isAvatarState()) {
-			this.selectRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange");
-			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange");
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Damage");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback");
-			this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed");
-			this.flightDuration = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer");
-			this.shootRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange");
+			this.selectRange = config.AvatarState_SelectRange;
+			this.grabRange = config.GrabConfig.AvatarState_Range;
+			this.chargeTime = config.AvatarState_ChargeTime;
+			this.cooldown = config.AvatarState_Cooldown;
+			this.damage = config.AvatarState_Damage;
+			this.knockback = config.AvatarState_Knockback;
+			this.flightSpeed = config.FlightConfig.AvatarState_Speed;
+			this.flightDuration = config.FlightConfig.AvatarState_Duration;
+			this.shootRange = config.AvatarState_ShootRange;
 		}
 	}
 
@@ -974,6 +975,11 @@ public class EarthSmash extends EarthAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	@Override
+	public Class<EarthSmashConfig> getConfigType() {
+		return EarthSmashConfig.class;
 	}
 
 }

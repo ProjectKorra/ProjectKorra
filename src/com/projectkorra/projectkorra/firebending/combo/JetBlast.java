@@ -11,11 +11,13 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.fire.JetBlastConfig;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class JetBlast extends FireAbility implements ComboAbility {
+public class JetBlast extends FireAbility<JetBlastConfig> implements ComboAbility {
 
 	private boolean firstTime;
 	private long time;
@@ -27,8 +29,8 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	@Attribute(Attribute.DURATION)
 	private long duration;
 
-	public JetBlast(final Player player) {
-		super(player);
+	public JetBlast(final JetBlastConfig config, final Player player) {
+		super(config, player);
 
 		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
@@ -38,9 +40,9 @@ public class JetBlast extends FireAbility implements ComboAbility {
 		this.time = System.currentTimeMillis();
 		this.tasks = new ArrayList<>();
 
-		this.speed = getConfig().getDouble("Abilities.Fire.JetBlast.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlast.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Fire.JetBlast.Duration");
+		this.speed = config.Speed;
+		this.cooldown = config.Cooldown;
+		this.duration = config.Duration;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
@@ -51,7 +53,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	@Override
 	public Object createNewComboInstance(final Player player) {
-		return new JetBlast(player);
+		return new JetBlast(ConfigManager.getConfig(JetBlastConfig.class), player);
 	}
 
 	@Override
@@ -131,5 +133,10 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public Class<JetBlastConfig> getConfigType() {
+		return JetBlastConfig.class;
 	}
 }

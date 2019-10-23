@@ -9,11 +9,8 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 public interface ComboAbility {
 
 	/**
-	 * Accessor Method to get the instructions for using this combo.
-	 *
-	 * @return The steps for the combo.
+	 * Creates a new instance of this combo type with default config
 	 */
-
 	public abstract Object createNewComboInstance(Player player);
 
 	/**
