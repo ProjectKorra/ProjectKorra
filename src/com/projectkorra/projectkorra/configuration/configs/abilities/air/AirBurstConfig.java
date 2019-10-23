@@ -7,7 +7,7 @@ public class AirBurstConfig extends AbilityConfig {
 	public final long Cooldown = 0;
 	public final long ChargeTime = 1750;
 	public final double FallHeightThreshold = 15;
-	public final double PushFactor = 2.0;
+	public final double PushFactor = 2.8;
 	public final double Damage = 0;
 	public final double AnglePhi = 10;
 	public final double AngleTheta = 10;

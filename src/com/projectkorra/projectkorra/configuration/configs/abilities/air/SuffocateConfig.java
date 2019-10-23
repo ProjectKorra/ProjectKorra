@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class SuffocateConfig extends AbilityConfig {
 	
-	public final long Cooldown = 0;
+	public final long Cooldown = 6500;
 	public final boolean RequireConstantAim = true;
 	public final double ConstantAimRadius = 3;
 	public final boolean CanSuffocateUndead = false;

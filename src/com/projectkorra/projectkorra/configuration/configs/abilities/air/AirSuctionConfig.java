@@ -7,7 +7,8 @@ public class AirSuctionConfig extends AbilityConfig {
 	public final long Cooldown = 500;
 	public final int AnimationParticleAmount = 5;
 	public final int SelectionParticleAmount = 5;
-	public final double PushFactor = 2.5;
+	public final double PushFactor_Self = 2.0;
+	public final double PushFactor_Others = 1.3;
 	public final double Speed = 25;
 	public final double Range = 20;
 	public final double SelectionRange = 10;
