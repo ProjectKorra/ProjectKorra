@@ -11,12 +11,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository>
 {
 	private final Map<UUID, BendingPlayer> _players = new HashMap<>();
+
+	private final Set<UUID> _disconnected = new HashSet<>();
+	private final long _databaseSyncInterval = 20 * 30;
 
 	private BendingPlayerManager()
 	{
@@ -38,11 +43,22 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 				e.printStackTrace();
 			}
 		});
+
+		runTimer(() ->
+		{
+			_disconnected.forEach(_players::remove);
+			_disconnected.clear();
+		}, _databaseSyncInterval, _databaseSyncInterval);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLogin(PlayerLoginEvent event)
 	{
+		if (_disconnected.remove(event.getPlayer().getUniqueId()))
+		{
+			return;
+		}
+
 		runAsync(() ->
 		{
 			loadBendingPlayer(event.getPlayer());
@@ -52,8 +68,7 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event)
 	{
-		// TODO Queue disconnected players and execute in a batch
-		_players.remove(event.getPlayer().getUniqueId());
+		_disconnected.add(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler
