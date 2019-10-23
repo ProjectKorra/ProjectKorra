@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.database;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.database.engine.MySQLDatabase;
 import com.projectkorra.projectkorra.database.engine.SQLDatabase;
 import com.projectkorra.projectkorra.database.engine.SQLiteDatabase;
@@ -16,8 +17,7 @@ public class DatabaseManager extends Module
 	{
 		super("Database");
 
-		// TODO Pull from new ConfigManager
-		_config = new DatabaseConfig();
+		_config = ConfigManager.getConfig(DatabaseConfig.class);
 
 		switch (_config.Engine)
 		{
