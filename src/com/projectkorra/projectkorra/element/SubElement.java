@@ -2,19 +2,17 @@ package com.projectkorra.projectkorra.element;
 
 import org.bukkit.ChatColor;
 
-public class SubElement extends Element
-{
-	private final Element _parent;
+public class SubElement extends Element {
 
-	public SubElement(int elementId, String elementName, String displayName, ChatColor color, Element parent)
-	{
+	private final Element parent;
+
+	public SubElement(int elementId, String elementName, String displayName, ChatColor color, Element parent) {
 		super(elementId, elementName, displayName, color);
 
-		_parent = parent;
+		this.parent = parent;
 	}
 
-	public Element getParent()
-	{
-		return _parent;
+	public Element getParent() {
+		return this.parent;
 	}
 }

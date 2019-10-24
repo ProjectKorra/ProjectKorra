@@ -8,50 +8,45 @@ import com.projectkorra.projectkorra.module.Module;
 
 import java.util.logging.Level;
 
-public class DatabaseManager extends Module
-{
-	private final DatabaseConfig _config;
-	private final SQLDatabase _database;
+public class DatabaseManager extends Module {
 
-	private DatabaseManager()
-	{
+	private final DatabaseConfig config;
+	private final SQLDatabase database;
+
+	private DatabaseManager() {
 		super("Database");
 
-		_config = ConfigManager.getConfig(DatabaseConfig.class);
+		this.config = ConfigManager.getConfig(DatabaseConfig.class);
 
-		switch (_config.Engine)
-		{
-		case MYSQL:
-			_database = new MySQLDatabase(_config);
-			break;
-		case SQLITE:
-			_database = new SQLiteDatabase(this, _config);
-			break;
-		default:
-			log(Level.SEVERE, "Unknown database engine.");
-			_database = null;
-			break;
+		switch (this.config.Engine) {
+			case MYSQL:
+				this.database = new MySQLDatabase(this.config);
+				break;
+			case SQLITE:
+				this.database = new SQLiteDatabase(this, this.config);
+				break;
+			default:
+				log(Level.SEVERE, "Unknown database engine.");
+				this.database = null;
+				break;
 		}
 	}
 
-	public DatabaseConfig getConfig()
-	{
-		return _config;
+	public DatabaseConfig getConfig() {
+		return this.config;
 	}
 
-	public SQLDatabase getDatabase()
-	{
-		return _database;
+	public SQLDatabase getDatabase() {
+		return this.database;
 	}
 
 	@Override
-	public void onDisable()
-	{
-		_database.close();
+	public void onDisable() {
+		this.database.close();
 	}
 
-	public enum Engine
-	{
-		MYSQL, SQLITE;
+	public enum Engine {
+		MYSQL,
+		SQLITE;
 	}
 }

@@ -2,62 +2,54 @@ package com.projectkorra.projectkorra.database;
 
 import com.projectkorra.projectkorra.module.ModuleManager;
 
-public class DatabaseQuery
-{
-	private final String _mysql;
-	private final String _sqlite;
+public class DatabaseQuery {
 
-	private DatabaseQuery(String mysql, String sqlite)
-	{
-		_mysql = mysql;
-		_sqlite = sqlite;
+	private final String mysql;
+	private final String sqlite;
+
+	private DatabaseQuery(String mysql, String sqlite) {
+		this.mysql = mysql;
+		this.sqlite = sqlite;
 	}
 
-	public String getQuery()
-	{
-		switch (ModuleManager.getModule(DatabaseManager.class).getConfig().Engine)
-		{
-		case MYSQL:
-			return _mysql;
-		case SQLITE:
-			return _sqlite;
+	public String getQuery() {
+		switch (ModuleManager.getModule(DatabaseManager.class).getConfig().Engine) {
+			case MYSQL:
+				return this.mysql;
+			case SQLITE:
+				return this.sqlite;
 		}
 
 		return null;
 	}
 
-	public static Builder newBuilder()
-	{
+	public static Builder newBuilder() {
 		return new Builder();
 	}
 
-	public static final class Builder
-	{
-		private String _mysql;
-		private String _sqlite;
+	public static final class Builder {
 
-		public Builder mysql(String mysql)
-		{
-			_mysql = mysql;
+		private String mysql;
+		private String sqlite;
+
+		public Builder mysql(String mysql) {
+			this.mysql = mysql;
 			return this;
 		}
 
-		public Builder sqlite(String sqlite)
-		{
-			_sqlite = sqlite;
+		public Builder sqlite(String sqlite) {
+			this.sqlite = sqlite;
 			return this;
 		}
 
-		public Builder query(String query)
-		{
-			_mysql = query;
-			_sqlite = query;
+		public Builder query(String query) {
+			this.mysql = query;
+			this.sqlite = query;
 			return this;
 		}
 
-		public DatabaseQuery build()
-		{
-			return new DatabaseQuery(_mysql, _sqlite);
+		public DatabaseQuery build() {
+			return new DatabaseQuery(this.mysql, this.sqlite);
 		}
 	}
 }

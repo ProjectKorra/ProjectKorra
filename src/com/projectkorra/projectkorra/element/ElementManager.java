@@ -17,20 +17,20 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ElementManager extends DatabaseModule<ElementRepository>
-{
+public class ElementManager extends DatabaseModule<ElementRepository> {
+
 	private static final String WATER = "water", EARTH = "earth", FIRE = "fire", AIR = "air", CHI = "chi", AVATAR = "avatar";
 	private static final String BLOOD = "blood", HEALING = "healing", ICE = "ice", PLANT = "plant";
 	private static final String LAVA = "lava", METAL = "metal", SAND = "sand";
 	private static final String COMBUSTION = "combustion", LIGHTNING = "lightning";
 	private static final String FLIGHT = "flight", SPIRITUAL = "spiritual";
 
-	private final BendingPlayerManager _bendingPlayerManager;
+	private final BendingPlayerManager bendingPlayerManager;
 
-	private final Map<Integer, Element> _elements = new HashMap<>();
-	private final Map<String, Element> _names = new HashMap<>();
+	private final Map<Integer, Element> elements = new HashMap<>();
+	private final Map<String, Element> names = new HashMap<>();
 
-	private final String _nameRegex = "[a-zA-Z]+";
+	private final String nameRegex = "[a-zA-Z]+";
 
 	private Element water, earth, fire, air, chi, avatar;
 	private SubElement blood, healing, ice, plant;
@@ -38,98 +38,79 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 	private SubElement combustion, lightning;
 	private SubElement flight, spiritual;
 
-	private ElementManager()
-	{
+	private ElementManager() {
 		super("Element", new ElementRepository());
 
-		_bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
+		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().createTables();
 
 				// Waterbending
-				water = addElement(WATER, "Water", ChatColor.AQUA);
-				blood = addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, water);
-				healing = addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, water);
-				ice = addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, water);
-				plant = addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, water);
+				this.water = addElement(WATER, "Water", ChatColor.AQUA);
+				this.blood = addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, this.water);
+				this.healing = addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, this.water);
+				this.ice = addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, this.water);
+				this.plant = addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, this.water);
 
 				// Earthbending
-				earth = addElement(EARTH, "Earth", ChatColor.AQUA);
-				lava =addSubElement(LAVA, "Lava", ChatColor.DARK_GREEN, earth);
-				metal = addSubElement(METAL, "Metal", ChatColor.DARK_GREEN, earth);
-				sand = addSubElement(SAND, "Sand", ChatColor.DARK_GREEN, earth);
+				this.earth = addElement(EARTH, "Earth", ChatColor.AQUA);
+				this.lava = addSubElement(LAVA, "Lava", ChatColor.DARK_GREEN, this.earth);
+				this.metal = addSubElement(METAL, "Metal", ChatColor.DARK_GREEN, this.earth);
+				this.sand = addSubElement(SAND, "Sand", ChatColor.DARK_GREEN, this.earth);
 
 				// Firebending
-				fire = addElement(FIRE, "Fire", ChatColor.RED);
-				combustion = addSubElement(COMBUSTION, "Combustion", ChatColor.DARK_RED, fire);
-				lightning = addSubElement(LIGHTNING, "Lightning", ChatColor.DARK_RED, fire);
+				this.fire = addElement(FIRE, "Fire", ChatColor.RED);
+				this.combustion = addSubElement(COMBUSTION, "Combustion", ChatColor.DARK_RED, this.fire);
+				this.lightning = addSubElement(LIGHTNING, "Lightning", ChatColor.DARK_RED, this.fire);
 
 				// Airbending
-				air = addElement(AIR, "Air", ChatColor.GRAY);
-				flight = addSubElement(FLIGHT, "Flight", ChatColor.DARK_GRAY, air);
-				spiritual = addSubElement(SPIRITUAL, "Spiritual", ChatColor.DARK_GRAY, air);
+				this.air = addElement(AIR, "Air", ChatColor.GRAY);
+				this.flight = addSubElement(FLIGHT, "Flight", ChatColor.DARK_GRAY, this.air);
+				this.spiritual = addSubElement(SPIRITUAL, "Spiritual", ChatColor.DARK_GRAY, this.air);
 
 				// Chiblocking
-				chi = addElement(CHI, "Chi",  ChatColor.GOLD);
+				this.chi = addElement(CHI, "Chi", ChatColor.GOLD);
 
 				// Avatar
-				avatar = addElement(AVATAR, "Avatar",  ChatColor.DARK_PURPLE);
-			}
-			catch (SQLException e)
-			{
+				this.avatar = addElement(AVATAR, "Avatar", ChatColor.DARK_PURPLE);
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
-			runSync(() ->
-			{
+			runSync(() -> {
 				log("Populated element database tables.");
 			});
 		});
 	}
 
 	@EventHandler
-	public void onBendingPlayerLoaded(BendingPlayerLoadedEvent event)
-	{
+	public void onBendingPlayerLoaded(BendingPlayerLoadedEvent event) {
 		BendingPlayer bendingPlayer = event.getBendingPlayer();
 
-		runAsync(() ->
-		{
-			try
-			{
-				List<Element> elements = getRepository().selectPlayerElements(bendingPlayer.getId()).stream()
-						.map(_elements::get)
-						.collect(Collectors.toList());
+		runAsync(() -> {
+			try {
+				List<Element> elements = getRepository().selectPlayerElements(bendingPlayer.getId()).stream().map(this.elements::get).collect(Collectors.toList());
 
 				elements.forEach(bendingPlayer::addElement);
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
 	}
 
-	public boolean addElement(Player player, Element element)
-	{
-		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+	public boolean addElement(Player player, Element element) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		if (!bendingPlayer.addElement(element))
-		{
+		if (!bendingPlayer.addElement(element)) {
 			return false;
 		}
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().insertPlayerElement(bendingPlayer.getId(), element.getId());
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
@@ -137,44 +118,33 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		return true;
 	}
 
-	public void setElement(Player player, Element element)
-	{
-		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+	public void setElement(Player player, Element element) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
 		bendingPlayer.clearElements();
 		bendingPlayer.addElement(element);
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().deletePlayerElements(bendingPlayer.getId());
 				getRepository().insertPlayerElement(bendingPlayer.getId(), element.getId());
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
 	}
 
-	public boolean removeElement(Player player, Element element)
-	{
-		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+	public boolean removeElement(Player player, Element element) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		if (!bendingPlayer.removeElement(element))
-		{
+		if (!bendingPlayer.removeElement(element)) {
 			return false;
 		}
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().deletePlayerElement(bendingPlayer.getId(), element.getId());
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
@@ -182,148 +152,120 @@ public class ElementManager extends DatabaseModule<ElementRepository>
 		return true;
 	}
 
-	public void clearElements(Player player)
-	{
-		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+	public void clearElements(Player player) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
 		bendingPlayer.clearElements();
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().deletePlayerElements(bendingPlayer.getId());
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
 	}
 
-	private Element addElement(String elementName, String displayName, ChatColor color)
-	{
+	private Element addElement(String elementName, String displayName, ChatColor color) {
 		int elementId = registerElement(elementName);
 
 		Element element = new Element(elementId, elementName, displayName, color);
 
-		_elements.put(elementId, element);
-		_names.put(elementName, element);
+		this.elements.put(elementId, element);
+		this.names.put(elementName, element);
 
 		return element;
 	}
 
-	private SubElement addSubElement(String elementName, String displayName, ChatColor color, Element parent)
-	{
+	private SubElement addSubElement(String elementName, String displayName, ChatColor color, Element parent) {
 		int elementId = registerElement(elementName);
 
 		SubElement element = new SubElement(elementId, elementName, displayName, color, parent);
 
-		_elements.put(elementId, element);
-		_names.put(elementName, element);
+		this.elements.put(elementId, element);
+		this.names.put(elementName, element);
 
 		return element;
 	}
 
-	private int registerElement(String elementName)
-	{
+	private int registerElement(String elementName) {
 		Preconditions.checkNotNull(elementName, "Element name cannot be null");
 
-		Preconditions.checkArgument(Pattern.matches(_nameRegex, elementName), "Element name must only contain letters and spaces");
+		Preconditions.checkArgument(Pattern.matches(this.nameRegex, elementName), "Element name must only contain letters and spaces");
 
-		try
-		{
+		try {
 			return getRepository().selectElemenetId(elementName);
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
 		}
 	}
 
-	public Element getWater()
-	{
-		return water;
+	public Element getWater() {
+		return this.water;
 	}
 
-	public SubElement getBlood()
-	{
-		return blood;
+	public SubElement getBlood() {
+		return this.blood;
 	}
 
-	public SubElement getHealing()
-	{
-		return healing;
+	public SubElement getHealing() {
+		return this.healing;
 	}
 
-	public SubElement getIce()
-	{
-		return ice;
+	public SubElement getIce() {
+		return this.ice;
 	}
 
-	public SubElement getPlant()
-	{
-		return plant;
+	public SubElement getPlant() {
+		return this.plant;
 	}
 
-	public Element getEarth()
-	{
-		return earth;
+	public Element getEarth() {
+		return this.earth;
 	}
 
-	public SubElement getLava()
-	{
-		return lava;
+	public SubElement getLava() {
+		return this.lava;
 	}
 
-	public SubElement getMetal()
-	{
-		return metal;
+	public SubElement getMetal() {
+		return this.metal;
 	}
 
-	public SubElement getSand()
-	{
-		return sand;
+	public SubElement getSand() {
+		return this.sand;
 	}
 
-	public Element getFire()
-	{
-		return fire;
+	public Element getFire() {
+		return this.fire;
 	}
 
-	public SubElement getCombustion()
-	{
-		return combustion;
+	public SubElement getCombustion() {
+		return this.combustion;
 	}
 
-	public SubElement getLightning()
-	{
-		return lightning;
+	public SubElement getLightning() {
+		return this.lightning;
 	}
 
-	public Element getAir()
-	{
-		return air;
+	public Element getAir() {
+		return this.air;
 	}
 
-	public SubElement getFlight()
-	{
-		return flight;
+	public SubElement getFlight() {
+		return this.flight;
 	}
 
-	public SubElement getSpiritual()
-	{
-		return spiritual;
+	public SubElement getSpiritual() {
+		return this.spiritual;
 	}
 
-	public Element getChi()
-	{
-		return chi;
+	public Element getChi() {
+		return this.chi;
 	}
 
-	public Element getAvatar()
-	{
-		return avatar;
+	public Element getAvatar() {
+		return this.avatar;
 	}
 }

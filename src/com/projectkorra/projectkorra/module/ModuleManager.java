@@ -79,5 +79,4 @@ public class ModuleManager {
 		getModule(BendingPlayerManager.class).disable();
 		getModule(DatabaseManager.class).disable();
 	}
-
 }

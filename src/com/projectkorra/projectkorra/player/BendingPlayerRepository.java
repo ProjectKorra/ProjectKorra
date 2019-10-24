@@ -5,15 +5,11 @@ import com.projectkorra.projectkorra.database.DatabaseRepository;
 import org.bukkit.entity.Player;
 
 import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.UUID;
 
-public class BendingPlayerRepository extends DatabaseRepository
-{
+public class BendingPlayerRepository extends DatabaseRepository {
+
 	private static final DatabaseQuery CREATE_TABLE_BENDING_PLAYERS = DatabaseQuery.newBuilder()
 			.mysql("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTO_INCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_removed BOOLEAN, INDEX uuid_index (uuid));")
 			.sqlite("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTOINCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_removed BOOLEAN); CREATE INDEX uuid_index ON pk_bending_players (uuid);")
@@ -35,31 +31,25 @@ public class BendingPlayerRepository extends DatabaseRepository
 			.query("UPDATE pk_bending_players SET bending_removed = ? WHERE player_id = ?;")
 			.build();
 
-	protected void createTables() throws SQLException
-	{
+	protected void createTables() throws SQLException {
 		Connection connection = getDatabase().getConnection();
 
-		try (PreparedStatement statement = connection.prepareStatement(CREATE_TABLE_BENDING_PLAYERS.getQuery()))
-		{
+		try (PreparedStatement statement = connection.prepareStatement(CREATE_TABLE_BENDING_PLAYERS.getQuery())) {
 			statement.executeUpdate();
 		}
 	}
 
-	protected BendingPlayer selectPlayer(Player player) throws SQLException
-	{
+	protected BendingPlayer selectPlayer(Player player) throws SQLException {
 		UUID uuid = player.getUniqueId();
 		byte[] binaryUUID = ByteBuffer.allocate(16).putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits()).array();
 
 		Connection connection = getDatabase().getConnection();
 
-		try (PreparedStatement statement = connection.prepareStatement(SELECT_BENDING_PLAYER.getQuery()))
-		{
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BENDING_PLAYER.getQuery())) {
 			statement.setBytes(1, binaryUUID);
 
-			try (ResultSet rs = statement.executeQuery())
-			{
-				if (!rs.next())
-				{
+			try (ResultSet rs = statement.executeQuery()) {
+				if (!rs.next()) {
 					return insertPlayer(player.getUniqueId(), player.getName());
 				}
 
@@ -68,8 +58,7 @@ public class BendingPlayerRepository extends DatabaseRepository
 				long firstLogin = rs.getLong("first_login");
 				boolean bendingRemoved = rs.getBoolean("bending_removed");
 
-				if (!player.getName().equals(playerName))
-				{
+				if (!player.getName().equals(playerName)) {
 					updatePlayerName(playerId, player.getName());
 				}
 
@@ -82,23 +71,20 @@ public class BendingPlayerRepository extends DatabaseRepository
 		}
 	}
 
-	private BendingPlayer insertPlayer(UUID uuid, String playerName) throws SQLException
-	{
+	private BendingPlayer insertPlayer(UUID uuid, String playerName) throws SQLException {
 		byte[] binaryUUID = ByteBuffer.allocate(16).putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits()).array();
 
 		Connection connection = getDatabase().getConnection();
 		long firstLogin = System.currentTimeMillis();
 
-		try (PreparedStatement statement = connection.prepareStatement(INSERT_BENDING_PLAYER.getQuery(), Statement.RETURN_GENERATED_KEYS))
-		{
+		try (PreparedStatement statement = connection.prepareStatement(INSERT_BENDING_PLAYER.getQuery(), Statement.RETURN_GENERATED_KEYS)) {
 			statement.setBytes(1, binaryUUID);
 			statement.setString(2, playerName);
 			statement.setLong(3, firstLogin);
 
 			statement.executeUpdate();
 
-			try (ResultSet rs = statement.getGeneratedKeys())
-			{
+			try (ResultSet rs = statement.getGeneratedKeys()) {
 				rs.next();
 
 				int playerId = rs.getInt(1);
@@ -108,12 +94,10 @@ public class BendingPlayerRepository extends DatabaseRepository
 		}
 	}
 
-	protected void updatePlayerName(int playerId, String playerName) throws SQLException
-	{
+	protected void updatePlayerName(int playerId, String playerName) throws SQLException {
 		Connection connection = getDatabase().getConnection();
 
-		try (PreparedStatement statement = connection.prepareStatement(UPDATE_PLAYER_NAME.getQuery()))
-		{
+		try (PreparedStatement statement = connection.prepareStatement(UPDATE_PLAYER_NAME.getQuery())) {
 			statement.setInt(1, playerId);
 			statement.setString(2, playerName);
 
@@ -121,12 +105,10 @@ public class BendingPlayerRepository extends DatabaseRepository
 		}
 	}
 
-	protected void updateBendingRemoved(BendingPlayer bendingPlayer) throws SQLException
-	{
+	protected void updateBendingRemoved(BendingPlayer bendingPlayer) throws SQLException {
 		Connection connection = getDatabase().getConnection();
 
-		try (PreparedStatement statement = connection.prepareStatement(UPDATE_BENDING_REMOVED.getQuery()))
-		{
+		try (PreparedStatement statement = connection.prepareStatement(UPDATE_BENDING_REMOVED.getQuery())) {
 			statement.setInt(1, bendingPlayer.getId());
 			statement.setBoolean(2, bendingPlayer.isBendingRemoved());
 

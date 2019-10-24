@@ -4,32 +4,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-public class BendingPlayerLoadedEvent extends PlayerEvent
-{
+public class BendingPlayerLoadedEvent extends PlayerEvent {
+
 	private static final HandlerList HANDLER_LIST = new HandlerList();
 
-	private final BendingPlayer _bendingPlayer;
+	private final BendingPlayer bendingPlayer;
 
-	public BendingPlayerLoadedEvent(Player player, BendingPlayer bendingPlayer)
-	{
+	public BendingPlayerLoadedEvent(Player player, BendingPlayer bendingPlayer) {
 		super(player);
 
-		_bendingPlayer = bendingPlayer;
+		this.bendingPlayer = bendingPlayer;
 	}
 
-	public BendingPlayer getBendingPlayer()
-	{
-		return _bendingPlayer;
+	public BendingPlayer getBendingPlayer() {
+		return this.bendingPlayer;
 	}
 
 	@Override
-	public HandlerList getHandlers()
-	{
+	public HandlerList getHandlers() {
 		return HANDLER_LIST;
 	}
 
-	public static HandlerList getHandlerList()
-	{
+	public static HandlerList getHandlerList() {
 		return HANDLER_LIST;
 	}
 }

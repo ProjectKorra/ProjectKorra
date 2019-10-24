@@ -2,43 +2,37 @@ package com.projectkorra.projectkorra.element;
 
 import org.bukkit.ChatColor;
 
-public class Element
-{
-	private final int _elementId;
-	private final String _elementName;
-	private final String _displayName;
-	private final ChatColor _color;
+public class Element {
 
-	public Element(int elementId, String elementName, String displayName, ChatColor color)
-	{
-		_elementId = elementId;
-		_elementName = elementName;
-		_displayName = displayName;
-		_color = color;
+	private final int elementId;
+	private final String elementName;
+	private final String displayName;
+	private final ChatColor color;
+
+	public Element(int elementId, String elementName, String displayName, ChatColor color) {
+		this.elementId = elementId;
+		this.elementName = elementName;
+		this.displayName = displayName;
+		this.color = color;
 	}
 
-	public int getId()
-	{
-		return _elementId;
+	public int getId() {
+		return this.elementId;
 	}
 
-	public String getName()
-	{
-		return _elementName;
+	public String getName() {
+		return this.elementName;
 	}
 
-	public String getDisplayName()
-	{
-		return _displayName;
+	public String getDisplayName() {
+		return this.displayName;
 	}
 
-	public ChatColor getColor()
-	{
-		return _color;
+	public ChatColor getColor() {
+		return this.color;
 	}
 
-	public String getColoredName()
-	{
-		return _color + _displayName;
+	public String getColoredName() {
+		return this.color + this.displayName;
 	}
 }

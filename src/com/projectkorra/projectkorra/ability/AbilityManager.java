@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.module.DatabaseModule;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
@@ -13,83 +14,75 @@ import org.bukkit.event.EventHandler;
 
 import java.sql.SQLException;
 
-public class AbilityManager extends DatabaseModule<AbilityRepository>
-{
-	private final BendingPlayerManager _bendingPlayerManager;
+public class AbilityManager extends DatabaseModule<AbilityRepository> {
 
-	private AbilityManager()
-	{
+	private final BendingPlayerManager bendingPlayerManager;
+
+	private AbilityManager() {
 		super("Ability", new AbilityRepository());
 
-		_bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
+		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().createTables();
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
-			runSync(() ->
-			{
+			runSync(() -> {
 				log("Created database tables.");
 			});
 		});
+
+		registerAbilities();
+	}
+
+	private void registerAbilities() {
+		registerAbility(FireBlast.class);
+	}
+
+	private void registerAbility(Class<? extends Ability> abilityClass) {
+		// TODO
 	}
 
 	@EventHandler
-	public void onBendingPlayerLoaded(BendingPlayerLoadedEvent event)
-	{
+	public void onBendingPlayerLoaded(BendingPlayerLoadedEvent event) {
 		BendingPlayer bendingPlayer = event.getBendingPlayer();
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				String[] abilities = getRepository().selectPlayerAbilities(bendingPlayer.getId());
 
 				bendingPlayer.setAbilities(abilities);
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
 	}
 
-	public boolean bindAbility(Player player, String abilityName, int slot)
-	{
+	public boolean bindAbility(Player player, String abilityName, int slot) {
 		PlayerBindAbilityEvent playerBindAbilityEvent = new PlayerBindAbilityEvent(player, abilityName);
 		getPlugin().getServer().getPluginManager().callEvent(playerBindAbilityEvent);
 
-		if (playerBindAbilityEvent.isCancelled())
-		{
+		if (playerBindAbilityEvent.isCancelled()) {
 			String cancelMessage = playerBindAbilityEvent.getCancelMessage();
 
-			if (cancelMessage != null)
-			{
+			if (cancelMessage != null) {
 				GeneralMethods.sendBrandingMessage(player, cancelMessage);
 			}
 
 			return false;
 		}
 
-		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
 		bendingPlayer.setAbility(slot, abilityName);
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().insertPlayerAbility(bendingPlayer.getId(), abilityName, slot);
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
@@ -97,28 +90,22 @@ public class AbilityManager extends DatabaseModule<AbilityRepository>
 		return true;
 	}
 
-	public boolean unbindAbility(Player player, int slot)
-	{
-		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+	public boolean unbindAbility(Player player, int slot) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
 		String abilityName = bendingPlayer.getAbility(slot);
 
-		if (abilityName == null)
-		{
+		if (abilityName == null) {
 			player.sendMessage("No ability bound");
 			return false;
 		}
 
 		bendingPlayer.setAbility(slot, null);
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().deletePlayerAbility(bendingPlayer.getId(), abilityName);
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
@@ -126,20 +113,15 @@ public class AbilityManager extends DatabaseModule<AbilityRepository>
 		return true;
 	}
 
-	public void clearBinds(Player player)
-	{
-		BendingPlayer bendingPlayer = _bendingPlayerManager.getBendingPlayer(player);
+	public void clearBinds(Player player) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
 		bendingPlayer.setAbilities(new String[9]);
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().deletePlayerAbilities(bendingPlayer.getId());
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});

@@ -2,8 +2,8 @@ package com.projectkorra.projectkorra.database;
 
 import com.projectkorra.projectkorra.configuration.Config;
 
-public class DatabaseConfig implements Config
-{
+public class DatabaseConfig implements Config {
+
 	public final DatabaseManager.Engine Engine = DatabaseManager.Engine.SQLITE;
 
 	public final String SQLite_File = "projectkorra.sql";
@@ -15,14 +15,12 @@ public class DatabaseConfig implements Config
 	public final String MySQL_Password = "password";
 
 	@Override
-	public String getName()
-	{
+	public String getName() {
 		return "Database";
 	}
 
 	@Override
-	public String[] getParents()
-	{
+	public String[] getParents() {
 		return new String[0];
 	}
 }

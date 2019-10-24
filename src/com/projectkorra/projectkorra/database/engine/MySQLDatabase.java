@@ -7,12 +7,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MySQLDatabase implements SQLDatabase
-{
-	private final HikariDataSource _hikari;
+public class MySQLDatabase implements SQLDatabase {
 
-	public MySQLDatabase(DatabaseConfig databaseConfig)
-	{
+	private final HikariDataSource hikari;
+
+	public MySQLDatabase(DatabaseConfig databaseConfig) {
 		HikariConfig hikariConfig = new HikariConfig();
 
 		hikariConfig.setJdbcUrl("jdbc:mysql://" + databaseConfig.MySQL_IP + ":" + databaseConfig.MySQL_Port + "/" + databaseConfig.MySQL_DatabaseName);
@@ -23,26 +22,21 @@ public class MySQLDatabase implements SQLDatabase
 		hikariConfig.setMaximumPoolSize(10);
 		hikariConfig.setConnectionTimeout(10000);
 
-		_hikari = new HikariDataSource(hikariConfig);
+		this.hikari = new HikariDataSource(hikariConfig);
 	}
 
 	@Override
-	public Connection getConnection()
-	{
-		try (Connection connection = _hikari.getConnection())
-		{
+	public Connection getConnection() {
+		try (Connection connection = this.hikari.getConnection()) {
 			return connection;
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	@Override
-	public void close()
-	{
-		_hikari.close();
+	public void close() {
+		this.hikari.close();
 	}
 }

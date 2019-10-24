@@ -9,28 +9,22 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLiteDatabase implements SQLDatabase
-{
-	private final File _databaseFile;
-	private Connection _connection;
+public class SQLiteDatabase implements SQLDatabase {
 
-	public SQLiteDatabase(DatabaseManager databaseManager, DatabaseConfig databaseConfig)
-	{
-		_databaseFile = new File(databaseManager.getPlugin().getDataFolder(), databaseConfig.SQLite_File);
+	private final File databaseFile;
+	private Connection connection;
 
-		if (!_databaseFile.getParentFile().exists())
-		{
-			_databaseFile.getParentFile().mkdirs();
+	public SQLiteDatabase(DatabaseManager databaseManager, DatabaseConfig databaseConfig) {
+		this.databaseFile = new File(databaseManager.getPlugin().getDataFolder(), databaseConfig.SQLite_File);
+
+		if (!this.databaseFile.getParentFile().exists()) {
+			this.databaseFile.getParentFile().mkdirs();
 		}
 
-		if (!_databaseFile.exists())
-		{
-			try
-			{
-				_databaseFile.createNewFile();
-			}
-			catch (IOException e)
-			{
+		if (!this.databaseFile.exists()) {
+			try {
+				this.databaseFile.createNewFile();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -38,45 +32,32 @@ public class SQLiteDatabase implements SQLDatabase
 		open();
 	}
 
-	public void open()
-	{
-		try
-		{
-			_connection = DriverManager.getConnection("jdbc:sqlite:" + _databaseFile.getAbsolutePath());
-		}
-		catch (SQLException e)
-		{
+	public void open() {
+		try {
+			this.connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath());
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public Connection getConnection()
-	{
-		try
-		{
-			if (_connection == null || _connection.isClosed())
-			{
+	public Connection getConnection() {
+		try {
+			if (this.connection == null || this.connection.isClosed()) {
 				open();
 			}
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return _connection;
+		return this.connection;
 	}
 
 	@Override
-	public void close()
-	{
-		try
-		{
-			_connection.close();
-		}
-		catch (SQLException e)
-		{
+	public void close() {
+		try {
+			this.connection.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}

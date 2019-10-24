@@ -10,141 +10,110 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository>
-{
-	private final Map<UUID, BendingPlayer> _players = new HashMap<>();
+public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository> {
 
-	private final Set<UUID> _disconnected = new HashSet<>();
-	private final long _databaseSyncInterval = 20 * 30;
+	private final Map<UUID, BendingPlayer> players = new HashMap<>();
 
-	private BendingPlayerManager()
-	{
+	private final Set<UUID> disconnected = new HashSet<>();
+	private final long databaseSyncInterval = 20 * 30;
+
+	private BendingPlayerManager() {
 		super("Bending Player", new BendingPlayerRepository());
 
-		runAsync(() ->
-		{
-			try
-			{
+		runAsync(() -> {
+			try {
 				getRepository().createTables();
 
-				for (Player player : getPlugin().getServer().getOnlinePlayers())
-				{
+				for (Player player : getPlugin().getServer().getOnlinePlayers()) {
 					loadBendingPlayer(player);
 				}
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
 
-		runTimer(() ->
-		{
-			_disconnected.forEach(_players::remove);
-			_disconnected.clear();
-		}, _databaseSyncInterval, _databaseSyncInterval);
+		runTimer(() -> {
+			this.disconnected.forEach(this.players::remove);
+			this.disconnected.clear();
+		}, this.databaseSyncInterval, this.databaseSyncInterval);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onLogin(PlayerLoginEvent event)
-	{
-		if (_disconnected.remove(event.getPlayer().getUniqueId()))
-		{
+	public void onLogin(PlayerLoginEvent event) {
+		if (this.disconnected.remove(event.getPlayer().getUniqueId())) {
 			return;
 		}
 
-		runAsync(() ->
-		{
+		runAsync(() -> {
 			loadBendingPlayer(event.getPlayer());
 		});
 	}
 
 	@EventHandler
-	public void onQuit(PlayerQuitEvent event)
-	{
-		_disconnected.add(event.getPlayer().getUniqueId());
+	public void onQuit(PlayerQuitEvent event) {
+		this.disconnected.add(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler
-	public void onCooldownChange(PlayerCooldownChangeEvent event)
-	{
+	public void onCooldownChange(PlayerCooldownChangeEvent event) {
 		Player player = event.getPlayer();
-		BendingPlayer bendingPlayer = _players.get(player.getUniqueId());
+		BendingPlayer bendingPlayer = this.players.get(player.getUniqueId());
 
 		String ability = bendingPlayer.getBoundAbilityName();
 
-		if (ability != null && ability.equals(event.getAbility()))
-		{
+		if (ability != null && ability.equals(event.getAbility())) {
 			GeneralMethods.displayMovePreview(player);
 		}
 	}
 
-	public void removeBending(Player player)
-	{
-		BendingPlayer bendingPlayer = _players.get(player.getUniqueId());
+	public void removeBending(Player player) {
+		BendingPlayer bendingPlayer = this.players.get(player.getUniqueId());
 
 		bendingPlayer.setBendingRemoved(true);
 
 		updateBendingRemoved(bendingPlayer);
 	}
 
-	public void returnBending(Player player)
-	{
-		BendingPlayer bendingPlayer = _players.get(player.getUniqueId());
+	public void returnBending(Player player) {
+		BendingPlayer bendingPlayer = this.players.get(player.getUniqueId());
 
 		bendingPlayer.setBendingRemoved(false);
 
 		updateBendingRemoved(bendingPlayer);
 	}
 
-	private void updateBendingRemoved(BendingPlayer bendingPlayer)
-	{
-		runAsync(() ->
-		{
-			try
-			{
+	private void updateBendingRemoved(BendingPlayer bendingPlayer) {
+		runAsync(() -> {
+			try {
 				getRepository().updateBendingRemoved(bendingPlayer);
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
 	}
 
-	private void loadBendingPlayer(Player player)
-	{
-		try
-		{
+	private void loadBendingPlayer(Player player) {
+		try {
 			BendingPlayer bendingPlayer = getRepository().selectPlayer(player);
 
-			runSync(() ->
-			{
-				_players.put(player.getUniqueId(), bendingPlayer);
+			runSync(() -> {
+				this.players.put(player.getUniqueId(), bendingPlayer);
 
 				BendingPlayerLoadedEvent bendingPlayerLoadedEvent = new BendingPlayerLoadedEvent(player, bendingPlayer);
 				getPlugin().getServer().getPluginManager().callEvent(bendingPlayerLoadedEvent);
 			});
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public BendingPlayer getBendingPlayer(Player player)
-	{
+	public BendingPlayer getBendingPlayer(Player player) {
 		return getBendingPlayer(player.getUniqueId());
 	}
 
-	public BendingPlayer getBendingPlayer(UUID uuid)
-	{
-		return _players.get(uuid);
+	public BendingPlayer getBendingPlayer(UUID uuid) {
+		return this.players.get(uuid);
 	}
 }
