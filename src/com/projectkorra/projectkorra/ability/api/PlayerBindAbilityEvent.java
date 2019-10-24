@@ -1,4 +1,4 @@
-package com.projectkorra.projectkorra.ability;
+package com.projectkorra.projectkorra.ability.api;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

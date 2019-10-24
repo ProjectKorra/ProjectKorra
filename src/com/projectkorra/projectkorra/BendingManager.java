@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra;
 
 import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.api.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.properties.FirePropertiesConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;

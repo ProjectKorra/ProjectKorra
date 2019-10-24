@@ -1,13 +1,13 @@
-package com.projectkorra.projectkorra.ability;
+package com.projectkorra.projectkorra.ability.api;
 
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 
-public abstract class CombustionAbility<C extends AbilityConfig> extends FireAbility<C> implements SubAbility {
+public abstract class LightningAbility<C extends AbilityConfig> extends FireAbility<C> implements SubAbility {
 
-	public CombustionAbility(final C config, final Player player) {
+	public LightningAbility(final C config, final Player player) {
 		super(config, player);
 	}
 
@@ -18,7 +18,7 @@ public abstract class CombustionAbility<C extends AbilityConfig> extends FireAbi
 
 	@Override
 	public Element getElement() {
-		return Element.COMBUSTION;
+		return Element.LIGHTNING;
 	}
 
 }

@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.api.ElementalAbility;
+import com.projectkorra.projectkorra.ability.api.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 @SuppressWarnings("deprecation")

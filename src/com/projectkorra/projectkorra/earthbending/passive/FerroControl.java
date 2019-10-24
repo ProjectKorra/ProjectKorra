@@ -11,8 +11,8 @@ import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.MetalAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.api.MetalAbility;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.configs.abilities.earth.FerroControlConfig;
 
 public class FerroControl extends MetalAbility<FerroControlConfig> implements PassiveAbility {

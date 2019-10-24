@@ -3,8 +3,8 @@ package com.projectkorra.projectkorra.chiblocking.passive;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.api.ChiAbility;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.chi.AcrobaticsConfig;
 

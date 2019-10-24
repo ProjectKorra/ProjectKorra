@@ -1,129 +1,251 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import co.aikar.timings.lib.MCTiming;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
+import com.projectkorra.projectkorra.ability.loader.*;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.element.Element;
+import com.projectkorra.projectkorra.element.SubElement;
+import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.module.DatabaseModule;
-import com.projectkorra.projectkorra.module.ModuleManager;
-import com.projectkorra.projectkorra.player.BendingPlayer;
-import com.projectkorra.projectkorra.player.BendingPlayerLoadedEvent;
-import com.projectkorra.projectkorra.player.BendingPlayerManager;
+import com.projectkorra.projectkorra.module.Module;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 
-import java.sql.SQLException;
+import java.lang.reflect.ParameterizedType;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class AbilityManager extends DatabaseModule<AbilityRepository> {
+public class AbilityManager extends Module {
 
-	private final BendingPlayerManager bendingPlayerManager;
+	private final Set<Ability> abilitySet = new HashSet<>();
+	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> abilityMap = new HashMap<>();
 
-	private AbilityManager() {
-		super("Ability", new AbilityRepository());
+	public AbilityManager() {
+		super("Ability");
 
-		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
+		runTimer(() -> {
+			for (Ability ability : abilitySet) {
+				if (ability instanceof PassiveAbility) {
+					if (!((PassiveAbility) ability).isProgressable()) {
+						return;
+					}
 
-		runAsync(() -> {
-			try {
-				getRepository().createTables();
-			} catch (SQLException e) {
-				e.printStackTrace();
+					// This has to be before isDead as isDead will return true if they are offline.
+					if (!ability.getPlayer().isOnline()) {
+						ability.remove();
+						return;
+					}
+
+					if (ability.getPlayer().isDead()) {
+						return;
+					}
+				} else if (ability.getPlayer().isDead()) {
+					ability.remove();
+					continue;
+				} else if (!ability.getPlayer().isOnline()) {
+					ability.remove();
+					continue;
+				}
+
+				try {
+					ability.tryModifyAttributes();
+
+					try (MCTiming timing = ProjectKorra.timing(ability.getName()).startTiming()) {
+						ability.progress();
+					}
+
+					getPlugin().getServer().getPluginManager().callEvent(new AbilityProgressEvent(ability));
+				} catch (Exception e) {
+					e.printStackTrace();
+					getPlugin().getLogger().severe(ability.toString());
+
+					try {
+						ability.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + ability.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
+					} catch (final Exception me) {
+						Bukkit.getLogger().severe("unable to notify ability user of error");
+					}
+					try {
+						ability.remove();
+					} catch (final Exception re) {
+						Bukkit.getLogger().severe("unable to fully remove ability of above error");
+					}
+				}
 			}
-
-			runSync(() -> {
-				log("Created database tables.");
-			});
-		});
+			// TODO progress abilities
+		}, 1L, 1L);
 
 		registerAbilities();
 	}
 
-	private void registerAbilities() {
+	/**
+	 * Scans and loads plugin CoreAbilities, and Addon CoreAbilities that are
+	 * located in a Jar file inside of the /ProjectKorra/Abilities/ folder.
+	 */
+	public void registerAbilities() {
+		this.abilitySet.clear();
+		this.abilityMap.clear();
+
+		Ability.registerPluginAbilities(getPlugin(), "com.projectkorra");
+		Ability.registerAddonAbilities("/Abilities/");
+
 		registerAbility(FireBlast.class);
 	}
 
-	private void registerAbility(Class<? extends Ability> abilityClass) {
-		// TODO
-	}
+	private <T extends Ability> void registerAbility(Class<T> abilityClass) throws IllegalAccessException, InstantiationException {
+		AbilityData abilityData = abilityClass.getDeclaredAnnotation(AbilityData.class);
 
-	@EventHandler
-	public void onBendingPlayerLoaded(BendingPlayerLoadedEvent event) {
-		BendingPlayer bendingPlayer = event.getBendingPlayer();
-
-		runAsync(() -> {
-			try {
-				String[] abilities = getRepository().selectPlayerAbilities(bendingPlayer.getId());
-
-				bendingPlayer.setAbilities(abilities);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	public boolean bindAbility(Player player, String abilityName, int slot) {
-		PlayerBindAbilityEvent playerBindAbilityEvent = new PlayerBindAbilityEvent(player, abilityName);
-		getPlugin().getServer().getPluginManager().callEvent(playerBindAbilityEvent);
-
-		if (playerBindAbilityEvent.isCancelled()) {
-			String cancelMessage = playerBindAbilityEvent.getCancelMessage();
-
-			if (cancelMessage != null) {
-				GeneralMethods.sendBrandingMessage(player, cancelMessage);
-			}
-
-			return false;
+		if (abilityData == null) {
+			getPlugin().getLogger().warning("Ability " + abilityClass.getName() + " has no AbilityData annotation");
+			return;
 		}
 
-		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
-
-		bendingPlayer.setAbility(slot, abilityName);
-
-		runAsync(() -> {
-			try {
-				getRepository().insertPlayerAbility(bendingPlayer.getId(), abilityName, slot);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
-
-		return true;
-	}
-
-	public boolean unbindAbility(Player player, int slot) {
-		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
-
-		String abilityName = bendingPlayer.getAbility(slot);
+		String abilityName = abilityData.name();
 
 		if (abilityName == null) {
-			player.sendMessage("No ability bound");
+			getPlugin().getLogger().warning("Ability " + abilityClass.getName() + " has no name?");
+			return;
+		}
+
+		AbilityLoader abilityLoader = abilityData.abilityLoader().newInstance();
+		AbilityConfig abilityConfig = ConfigManager.getConfig(((Class<? extends AbilityConfig>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
+
+		if (!abilityConfig.Enabled) {
+			getPlugin().getLogger().info(abilityName + " is disabled");
+			return;
+		}
+
+		if (abilityLoader instanceof AddonAbilityLoader) {
+			((AddonAbilityLoader) abilityLoader).load();
+		}
+
+		if (abilityLoader instanceof ComboAbilityLoader) {
+			ComboAbilityLoader comboAbilityLoader = (ComboAbilityLoader) abilityLoader;
+
+			if (comboAbilityLoader.getCombination() == null) {
+				getPlugin().getLogger().info(abilityName + " has no combination");
+				return;
+			}
+
+			// TODO Register Combo Ability
+//			ComboManager.getComboAbilities().put(abilityName, new ComboManager.ComboAbilityInfo(abilityName, comboAbilityLoader.getCombination(), ));
+			ComboManager.getDescriptions().put(abilityName, abilityConfig.Description);
+			ComboManager.getInstructions().put(abilityName, abilityConfig.Instructions);
+		}
+
+		if (abilityLoader instanceof MultiAbilityLoader) {
+			MultiAbilityLoader multiAbilityLoader = (MultiAbilityLoader) abilityLoader;
+
+			MultiAbilityManager.multiAbilityList.add(new MultiAbilityManager.MultiAbilityInfo(abilityName, multiAbilityLoader.getMultiAbilities()));
+		}
+
+		if (abilityLoader instanceof PassiveAbilityLoader) {
+			PassiveAbilityLoader passiveAbilityLoader = (PassiveAbilityLoader) abilityLoader;
+
+			// TODO Set Hidden Ability
+			// TODO Register Passive Ability
+//			PassiveManager.getPassives().put(abilityName, ability???)
+		}
+	}
+
+	public void startAbility(Ability ability) {
+		if (ability.isStarted()) {
+			return;
+		}
+
+		this.abilitySet.add(ability);
+		this.abilityMap.computeIfAbsent(ability.getPlayer().getUniqueId(), k -> new HashMap<>())
+				.computeIfAbsent(ability.getClass(), k -> new LinkedList<>())
+				.add(ability);
+	}
+
+	protected void removeAbility(Ability ability) {
+		if (ability.isRemoved()) {
+			return;
+		}
+
+		this.abilitySet.remove(ability);
+		this.abilityMap.values().removeIf(abilityMap ->
+		{
+			abilityMap.values().removeIf(abilityList ->
+			{
+				abilityList.remove(ability);
+
+				return abilityList.isEmpty();
+			});
+
+			return abilityMap.isEmpty();
+		});
+	}
+
+	/**
+	 * Removes every {@link Ability} instance that has been started but not yet
+	 * removed.
+	 */
+	public void removeAll() {
+		new HashSet<>(this.abilitySet).forEach(Ability::remove);
+	}
+
+	public <T extends Ability> boolean hasAbility(Player player, Class<T> ability) {
+		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.abilityMap.get(player.getUniqueId());
+
+		if (abilities == null || !abilities.containsKey(ability)) {
 			return false;
 		}
 
-		bendingPlayer.setAbility(slot, null);
-
-		runAsync(() -> {
-			try {
-				getRepository().deletePlayerAbility(bendingPlayer.getId(), abilityName);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
-
-		return true;
+		return !abilities.get(abilities).isEmpty();
 	}
 
-	public void clearBinds(Player player) {
-		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
+	public <T extends Ability> T getAbility(Player player, Class<T> ability) {
+		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.abilityMap.get(player.getUniqueId());
 
-		bendingPlayer.setAbilities(new String[9]);
+		if (abilities == null || !abilities.containsKey(ability)) {
+			return null;
+		}
 
-		runAsync(() -> {
-			try {
-				getRepository().deletePlayerAbilities(bendingPlayer.getId());
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		return ability.cast(abilities.get(ability).getFirst());
+	}
+
+	public <T extends Ability> Collection<T> getAbilities(Player player, Class<T> ability) {
+		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.abilityMap.get(player.getUniqueId());
+
+		if (abilities == null || !abilities.containsKey(ability)) {
+			return null;
+		}
+
+		return abilities.get(abilities).stream().map(ability::cast).collect(Collectors.toList());
+	}
+
+	public <T extends Ability> LinkedList<T> getAbilities(Class<T> abilityClass) {
+		LinkedList<T> abilities = new LinkedList<>();
+
+		this.abilityMap.values().forEach(a -> {
+			a.values().forEach(ability -> abilities.add(abilityClass.cast(ability)));
 		});
+
+		return abilities;
+	}
+
+	public List<Ability> getAbilities(Element element) {
+		this.abilitySet.stream()
+				.filter(ability ->
+				{
+					if (ability.getElement().equals(element)) {
+						return true;
+					}
+
+					if (ability.getElement() instanceof SubElement) {
+						return ((SubElement) ability.getElement()).getParent().equals(element);
+					}
+
+					return false;
+				})
+				.collect(Collectors.toList());
 	}
 }

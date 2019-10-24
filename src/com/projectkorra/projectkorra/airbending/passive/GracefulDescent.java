@@ -3,8 +3,8 @@ package com.projectkorra.projectkorra.airbending.passive;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.api.AirAbility;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.configs.abilities.air.GracefulDescentConfig;
 
 public class GracefulDescent extends AirAbility<GracefulDescentConfig> implements PassiveAbility {

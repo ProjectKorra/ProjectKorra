@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.LightningAbility;
+import com.projectkorra.projectkorra.ability.api.LightningAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.configs.abilities.fire.LightningConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;

@@ -1,13 +1,13 @@
-package com.projectkorra.projectkorra.ability;
+package com.projectkorra.projectkorra.ability.api;
 
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 
-public abstract class BloodAbility<C extends AbilityConfig> extends WaterAbility<C> implements SubAbility {
+public abstract class IceAbility<C extends AbilityConfig> extends WaterAbility<C> implements SubAbility {
 
-	public BloodAbility(final C config, final Player player) {
+	public IceAbility(final C config, final Player player) {
 		super(config, player);
 	}
 
@@ -18,7 +18,7 @@ public abstract class BloodAbility<C extends AbilityConfig> extends WaterAbility
 
 	@Override
 	public Element getElement() {
-		return Element.BLOOD;
+		return Element.ICE;
 	}
 
 }

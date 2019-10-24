@@ -1,4 +1,4 @@
-package com.projectkorra.projectkorra.ability;
+package com.projectkorra.projectkorra.ability.bind;
 
 import com.projectkorra.projectkorra.database.DatabaseQuery;
 import com.projectkorra.projectkorra.database.DatabaseRepository;
@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AbilityRepository extends DatabaseRepository {
+public class AbilityBindRepository extends DatabaseRepository {
 
 	private static final DatabaseQuery CREATE_TABLE_PLAYER_ABILITIES = DatabaseQuery.newBuilder()
 			.mysql("CREATE TABLE IF NOT EXISTS pk_player_abilities (player_id INTEGER REFERENCES pk_bending_players (player_id), ability_name VARCHAR(50) NOT NULL, slot TINYINT NOT NULL, PRIMARY KEY (player_id, ability_name), INDEX player_index (player_id), INDEX ability_index (ability_name));")

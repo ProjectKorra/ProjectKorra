@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.api.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.configs.abilities.earth.CatapultConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;

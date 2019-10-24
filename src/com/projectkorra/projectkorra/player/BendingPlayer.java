@@ -1,9 +1,8 @@
 package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.AbilityManager;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
+import com.projectkorra.projectkorra.ability.api.ChiAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.element.Element;
@@ -17,7 +16,7 @@ public class BendingPlayer {
 
 	private final BendingPlayerManager manager;
 	private final ElementManager elementManager;
-	private final AbilityManager abilityManager;
+	private final AbilityBindManager abilityBindManager;
 	private final CooldownManager cooldownManager;
 
 	private final int playerId;
@@ -41,7 +40,7 @@ public class BendingPlayer {
 	public BendingPlayer(int playerId, UUID uuid, String playerName, long firstLogin) {
 		this.manager = ModuleManager.getModule(BendingPlayerManager.class);
 		this.elementManager = ModuleManager.getModule(ElementManager.class);
-		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
+		this.abilityBindManager = ModuleManager.getModule(AbilityBindManager.class);
 		this.cooldownManager = ModuleManager.getModule(CooldownManager.class);
 
 		this.playerId = playerId;
@@ -135,8 +134,8 @@ public class BendingPlayer {
 		}
 	}
 
-	public CoreAbility getBoundAbility() {
-		return CoreAbility.getAbility(getBoundAbilityName());
+	public Ability getBoundAbility() {
+		return Ability.getAbility(getBoundAbilityName());
 	}
 
 	public String getBoundAbilityName() {

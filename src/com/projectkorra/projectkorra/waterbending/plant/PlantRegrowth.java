@@ -8,8 +8,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.PlantAbility;
+import com.projectkorra.projectkorra.ability.api.ElementalAbility;
+import com.projectkorra.projectkorra.ability.api.PlantAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.EmptyAbilityConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;

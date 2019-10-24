@@ -13,7 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.api.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.configs.abilities.air.SuffocateConfig;
 import com.projectkorra.projectkorra.util.DamageHandler;

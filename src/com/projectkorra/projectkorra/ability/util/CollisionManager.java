@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
 
 /**

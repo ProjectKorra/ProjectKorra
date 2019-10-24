@@ -1,24 +1,24 @@
-package com.projectkorra.projectkorra.ability;
+package com.projectkorra.projectkorra.ability.api;
 
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 
-public abstract class HealingAbility<C extends AbilityConfig> extends WaterAbility<C> implements SubAbility {
+public abstract class FlightAbility<C extends AbilityConfig> extends AirAbility<C> implements SubAbility {
 
-	public HealingAbility(final C config, final Player player) {
+	public FlightAbility(final C config, final Player player) {
 		super(config, player);
 	}
 
 	@Override
 	public Class<? extends Ability> getParentAbility() {
-		return WaterAbility.class;
+		return AirAbility.class;
 	}
 
 	@Override
 	public Element getElement() {
-		return Element.HEALING;
+		return Element.FLIGHT;
 	}
 
 }

@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.api.WaterAbility;
 import com.projectkorra.projectkorra.configuration.configs.abilities.EmptyAbilityConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
