@@ -42,9 +42,9 @@ import co.aikar.timings.lib.TimingManager;
 
 public class ProjectKorra extends JavaPlugin {
 
-	private static final GeneralPropertiesConfig GENERAL_PROPERTIES = ConfigManager.getConfig(GeneralPropertiesConfig.class);
 	public static ProjectKorra plugin;
 	public static Logger log;
+	private static GeneralPropertiesConfig generalPropertiesConfig;
 	public static CollisionManager collisionManager;
 	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
@@ -66,11 +66,12 @@ public class ProjectKorra extends JavaPlugin {
 		
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
+		generalPropertiesConfig = ConfigManager.getConfig(GeneralPropertiesConfig.class);
 
 		timingManager = TimingManager.of(this);
 
 		new GeneralMethods(this);
-		final boolean checkUpdateOnStartup = GENERAL_PROPERTIES.UpdateChecker;
+		final boolean checkUpdateOnStartup = generalPropertiesConfig.UpdateChecker;
 		this.updater = new Updater(this, "https://projectkorra.com/forum/resources/projectkorra-core.1/", checkUpdateOnStartup);
 		new Commands(this);
 		new MultiAbilityManager();
@@ -141,11 +142,11 @@ public class ProjectKorra extends JavaPlugin {
 		});
 
 		if (Bukkit.getPluginManager().getPlugin("Residence") != null) {
-			FlagPermissions.addFlag(GENERAL_PROPERTIES.RegionProtection.ResidenceFlag);
+			FlagPermissions.addFlag(generalPropertiesConfig.RegionProtection.ResidenceFlag);
 		}
 
 		GeneralMethods.deserializeFile();
-		GeneralMethods.startCacheCleaner(GENERAL_PROPERTIES.RegionProtection.CacheBlockTime);
+		GeneralMethods.startCacheCleaner(generalPropertiesConfig.RegionProtection.CacheBlockTime);
 
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			new PlaceholderAPIHook(this).register();
@@ -195,11 +196,11 @@ public class ProjectKorra extends JavaPlugin {
 	}
 
 	public static boolean isStatisticsEnabled() {
-		return GENERAL_PROPERTIES.Statistics;
+		return generalPropertiesConfig.Statistics;
 	}
 
 	public static boolean isDatabaseCooldownsEnabled() {
-		return GENERAL_PROPERTIES.DatabaseCooldowns;
+		return generalPropertiesConfig.DatabaseCooldowns;
 	}
 
 	public static MCTiming timing(final String name) {

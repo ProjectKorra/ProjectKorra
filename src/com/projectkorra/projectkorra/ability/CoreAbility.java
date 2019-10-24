@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -87,8 +89,8 @@ public abstract class CoreAbility<C extends AbilityConfig> implements Ability {
 	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
-	
-	protected final C config;
+
+	protected final C config = ConfigManager.getConfig(((Class<C>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
 	protected Player player;
 	protected BendingPlayer bPlayer;
 	protected FlightHandler flightHandler;
@@ -119,7 +121,6 @@ public abstract class CoreAbility<C extends AbilityConfig> implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public CoreAbility() {
-		this.config = null;
 		for (final Field field : this.getClass().getDeclaredFields()) {
 			if (field.isAnnotationPresent(Attribute.class)) {
 				final Attribute attribute = field.getAnnotation(Attribute.class);
@@ -139,11 +140,9 @@ public abstract class CoreAbility<C extends AbilityConfig> implements Ability {
 	 */
 	public CoreAbility(final C config, final Player player) {
 		if (player == null || !this.isEnabled()) {
-			this.config = config;
 			return;
 		}
 		
-		this.config = config;
 		this.player = player;
 		this.bPlayer = BendingPlayer.getBendingPlayer(player);
 		this.flightHandler = Manager.getManager(FlightHandler.class);

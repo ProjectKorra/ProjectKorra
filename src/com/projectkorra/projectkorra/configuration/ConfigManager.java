@@ -21,10 +21,6 @@ public class ConfigManager {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final Map<Class<? extends Config>, Config> CONFIG_CACHE = Collections.synchronizedMap(new HashMap<>());
 	
-	static {
-		JavaPlugin.getProvidingPlugin(ConfigManager.class).getDataFolder().mkdir();
-	}
-	
 	private static <C extends Config> C loadConfig(File file, Class<C> clazz) throws IOException {
 		try (BufferedReader reader = Files.newReader(file, Charset.defaultCharset())) {
 			return GSON.fromJson(reader, clazz);
