@@ -325,10 +325,6 @@ public class AirBurst extends AirAbility<AirBurstConfig> {
 		return this.blasts;
 	}
 
-	public ArrayList<Entity> getAffectedEntities() {
-		return this.affectedEntities;
-	}
-	
 	@Override
 	public Class<AirBurstConfig> getConfigType() {
 		return AirBurstConfig.class;

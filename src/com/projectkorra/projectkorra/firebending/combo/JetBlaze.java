@@ -90,7 +90,6 @@ public class JetBlaze extends FireAbility<JetBlazeConfig> implements ComboAbilit
 				this.remove();
 				return;
 			}
-			this.bPlayer.addCooldown("JetBlaze", this.cooldown);
 			this.firstTime = false;
 		} else if (System.currentTimeMillis() - this.time > this.duration) {
 			this.remove();
@@ -105,7 +104,7 @@ public class JetBlaze extends FireAbility<JetBlazeConfig> implements ComboAbilit
 			fs.setDensity(8);
 			fs.setSpread(1.0F);
 			fs.setUseNewParticles(true);
-			fs.setCollisionRadius(3);
+			fs.setCollisionRadius(2);
 			fs.setParticleEffect(ParticleEffect.SMOKE_LARGE);
 			fs.setDamage(this.damage);
 			fs.setFireTicks(this.fireTicks);
@@ -123,6 +122,7 @@ public class JetBlaze extends FireAbility<JetBlazeConfig> implements ComboAbilit
 			task.remove();
 		}
 		super.remove();
+		this.bPlayer.addCooldown("JetBlaze", this.cooldown);
 	}
 
 	@Override

@@ -1,18 +1,12 @@
 package com.projectkorra.projectkorra;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
+import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.properties.FirePropertiesConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.ActionBar;
@@ -20,8 +14,13 @@ import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
-import co.aikar.timings.lib.MCTiming;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class BendingManager implements Runnable {
 
@@ -51,6 +50,10 @@ public class BendingManager implements Runnable {
 		return instance;
 	}
 
+	/**
+	 * @deprecated handled by {@link CooldownManager}.
+	 */
+	@Deprecated
 	public void handleCooldowns() {
 		for (final UUID uuid : BendingPlayer.getPlayers().keySet()) {
 			final BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);

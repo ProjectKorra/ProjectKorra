@@ -256,12 +256,11 @@ public class SurgeWall extends WaterAbility<SurgeConfig> {
 				}
 
 				final ArrayList<Block> blocks = new ArrayList<Block>();
-				final Location targetLoc = GeneralMethods.getTargetedLocation(this.player, (int) this.range, Material.WATER, Material.ICE);
+				final Location targetLoc = GeneralMethods.getTargetedLocation(this.player, (int) this.range, false, false, Material.WATER, Material.ICE);
 				this.location = targetLoc.clone();
 				final Vector eyeDir = this.player.getEyeLocation().getDirection();
 				Vector vector;
 				Block block;
-
 				for (double i = 0; i <= this.getNightFactor(this.radius); i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						vector = GeneralMethods.getOrthogonalVector(eyeDir.clone(), angle, i);

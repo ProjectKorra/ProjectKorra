@@ -78,7 +78,7 @@ public class AirSwipe extends AirAbility<AirSwipeConfig> {
 		}
 
 		this.charging = charging;
-		this.origin = player.getEyeLocation();
+		this.origin = GeneralMethods.getMainHandLocation(player);
 		this.particles = config.AnimationParticleAmount;
 		this.arc = config.Arc;
 		this.arcIncrement = config.StepSize;

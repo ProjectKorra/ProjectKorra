@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.PlayerBindAbilityEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -17,7 +20,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 
-public class MultiAbilityManager {
+public class MultiAbilityManager implements Listener {
 
 	public static Map<Player, String[]> playerAbilities = new ConcurrentHashMap<>();
 	public static Map<Player, Integer> playerSlot = new ConcurrentHashMap<>();
@@ -34,6 +37,19 @@ public class MultiAbilityManager {
 		waterArms.add(new MultiAbilityInfoSub("Spear", Element.ICE));
 		multiAbilityList.add(new MultiAbilityInfo("WaterArms", waterArms));
 		manage();
+
+		// TODO Properly set this up as a Module
+		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(this, ProjectKorra.plugin);
+	}
+
+	@EventHandler
+	public void onPlayerBindAbility(PlayerBindAbilityEvent event)
+	{
+		if (playerAbilities.containsKey(event.getPlayer()))
+		{
+			event.setCancelled(true);
+			event.setCancelMessage(ChatColor.RED + "You can't edit your binds right now!");
+		}
 	}
 
 	/**

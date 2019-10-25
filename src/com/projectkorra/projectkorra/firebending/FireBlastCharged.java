@@ -217,7 +217,7 @@ public class FireBlastCharged extends FireAbility<FireBlastConfig> {
 		}
 
 		boolean exploded = false;
-		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2 * this.collisionRadius)) {
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
 			if (entity.getEntityId() == this.player.getEntityId() || GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
@@ -311,7 +311,9 @@ public class FireBlastCharged extends FireAbility<FireBlastConfig> {
 	@Override
 	public void remove() {
 		super.remove();
-		this.bPlayer.addCooldown(this);
+		if (this.charged) {
+			this.bPlayer.addCooldown(this);
+		}
 	}
 
 	@Override

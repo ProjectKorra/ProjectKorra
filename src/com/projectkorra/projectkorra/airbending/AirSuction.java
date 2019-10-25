@@ -44,6 +44,8 @@ public class AirSuction extends AirAbility<AirSuctionConfig> {
 	private double radius;
 	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactor;
+	@Attribute(Attribute.KNOCKBACK + "Others")
+	private double pushFactorForOthers;
 	private Random random;
 	private Location location;
 	private Location origin;
@@ -78,7 +80,8 @@ public class AirSuction extends AirAbility<AirSuctionConfig> {
 		this.speed = config.Speed;
 		this.range = config.Range;
 		this.radius = config.Radius;
-		this.pushFactor = config.PushFactor;
+		this.pushFactor = config.PushFactor_Self;
+		this.pushFactorForOthers = config.PushFactor_Others;
 		this.cooldown = config.Cooldown;
 		this.random = new Random();
 		this.origin = this.getTargetLocation();
@@ -203,10 +206,15 @@ public class AirSuction extends AirAbility<AirSuctionConfig> {
 				if ((entity.getEntityId() == this.player.getEntityId()) && !this.canAffectSelf) {
 					continue;
 				}
-				final Vector velocity = entity.getVelocity();
+				
+				double knockback = this.pushFactor;
+				
+				if (entity.getEntityId() != player.getEntityId()) {
+					knockback = this.pushFactorForOthers;
+				}
+				
 				final double max = this.speed;
 				final Vector push = this.direction.clone();
-				double factor = this.pushFactor;
 
 				if (Math.abs(push.getY()) > max) {
 					if (push.getY() < 0) {
@@ -217,20 +225,16 @@ public class AirSuction extends AirAbility<AirSuctionConfig> {
 				}
 
 				if (this.location.getWorld().equals(this.origin.getWorld())) {
-					factor *= 1 - this.location.distance(this.origin) / (2 * this.range);
+					knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
+				}
+				
+				push.normalize().multiply(knockback);
+				
+				if (Math.abs(entity.getVelocity().dot(push)) > knockback) {
+					push.normalize().add(entity.getVelocity()).multiply(knockback);
 				}
 
-				final double comp = velocity.dot(push.clone().normalize());
-				if (comp > factor) {
-					velocity.multiply(.5);
-					velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
-				} else if (comp + factor * .5 > factor) {
-					velocity.add(push.clone().multiply(factor - comp));
-				} else {
-					velocity.add(push.clone().multiply(factor * .5));
-				}
-
-				GeneralMethods.setVelocity(entity, velocity);
+				GeneralMethods.setVelocity(entity, push.normalize().multiply(knockback));
 				new HorizontalVelocityTracker(entity, this.player, 200l, this);
 				entity.setFallDistance(0);
 
