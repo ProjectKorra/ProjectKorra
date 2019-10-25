@@ -23,10 +23,9 @@ public class AirBlastConfig extends AbilityConfig {
 	public final double AvatarState_PushFactor_Others = 3.0;
 	
 	public AirBlastConfig() {
-		super(true, "", "");
+		super(true, "AirBlast allows Airbenders to interact with their environment by pushing entities, items, doors, levers, buttons, and cooling lava. Airbenders can also use it to blast themselves in the air.", "Left Click in a direction of your choice \n Sneak then Left Click in a direction of your choice");
 	}
 
-	@Override
 	public String getName() {
 		return "AirBlast";
 	}

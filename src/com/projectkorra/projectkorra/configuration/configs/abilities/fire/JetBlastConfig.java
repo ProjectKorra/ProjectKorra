@@ -4,12 +4,12 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 
 public class JetBlastConfig extends AbilityConfig {
 
-	public final long Cooldown = 0;
-	public final long Duration = 0;
-	public final double Speed = 0;
+	public final long Cooldown = 8000;
+	public final long Duration = 5500;
+	public final double Speed = 0.725;
 	
 	public JetBlastConfig() {
-		super(true, "", "");
+		super(true, "Create an explosive blast that propels your FireJet at higher speeds.", "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet");
 	}
 
 	@Override

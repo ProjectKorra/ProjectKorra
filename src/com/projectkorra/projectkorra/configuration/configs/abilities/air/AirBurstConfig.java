@@ -18,7 +18,7 @@ public class AirBurstConfig extends AbilityConfig {
 	public final double AvatarState_Damage = 4;
 	
 	public AirBurstConfig() {
-		super(true, "", "");
+		super(true, "AirBurst creates an outward expanding sphere of air that knocks back everything in its path.", "Sneak until particles appear then\n Left Click to direct the burst forward or \n Release Sneak");
 	}
 
 	@Override

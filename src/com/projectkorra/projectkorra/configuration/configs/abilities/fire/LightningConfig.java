@@ -26,7 +26,7 @@ public class LightningConfig extends AbilityConfig {
 	public final double AvatarState_Damage = 0;
 	
 	public LightningConfig() {
-		super(true, "", "");
+		super(true, "Lightning is an advanced firebending technique. It allows you to create lightning and manipulate it towards a target to deal immense damage.", "\n" + "(Lightning) Hold sneak to create lightning until particles appear, then release sneak to send lightning in the direction you're looking. This deals damage to entities that it hits and has a chance to stun them for a short duration." + "\n" + "(Redirection) When someone has fired a lightning strike at you, you can hold sneak to absorb this lightning and then release sneak to fire it back.");
 	}
 
 	@Override

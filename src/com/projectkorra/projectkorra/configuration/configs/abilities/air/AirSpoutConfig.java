@@ -12,7 +12,7 @@ public class AirSpoutConfig extends AbilityConfig {
 	public final double AvatarState_Height = 0;
 	
 	public AirSpoutConfig() {
-		super(true, "", "");
+		super(true, "AirSpout gives Airbenders limited flight capabilities.", "Left Click to toggle the spout.");
 	}
 
 	@Override

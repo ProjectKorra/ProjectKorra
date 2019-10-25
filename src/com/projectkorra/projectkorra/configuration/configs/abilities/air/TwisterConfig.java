@@ -17,7 +17,7 @@ public class TwisterConfig extends AbilityConfig {
 	public final double AvatarState_Range = 40;
 	
 	public TwisterConfig() {
-		super(true, "", "");
+		super(true, "Create a cyclone of air that travels along the ground grabbing nearby entities.", "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
 	}
 
 	@Override

@@ -29,7 +29,7 @@ public class SuffocateConfig extends AbilityConfig {
 	public final double AvatarState_Range = 20;
 	
 	public SuffocateConfig() {
-		super(true, "", "");
+		super(true, "This ability is one of the most dangerous abilities an Airbender possesses. Although it is difficult to perform, it's extremely deadly once the ability starts, making it difficult for enemies to escape.", "Hold sneak while looking at a target to begin suffocating them. If the target goes out of range, you get damaged, or you release sneak, the ability will cancel.");
 	}
 
 	@Override

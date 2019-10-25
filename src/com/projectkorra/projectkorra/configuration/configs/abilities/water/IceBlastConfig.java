@@ -17,7 +17,7 @@ public class IceBlastConfig extends AbilityConfig {
 	public final double AvatarState_Range = 25;
 	
 	public IceBlastConfig() {
-		super(true, "", "");
+		super(true, "IceBlast is a powerful ability that deals damage to entities it comes into contact with. Because IceBlast's travel time is pretty quick, it's increddibly useful for finishing off low health targets.", "Tap sneak while looking at an ice block and then click in a direction to send an ice blast in that direction.");
 	}
 
 	@Override

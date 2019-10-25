@@ -19,7 +19,7 @@ public class ShockwaveConfig extends AbilityConfig {
 	public final double AvatarState_Knockback = 2.0;
 	
 	public ShockwaveConfig() {
-		super(true, "", "");
+		super(true, "Shockwave is one of the most powerful earthbending abilities. It allows the earthbender to deal mass damage to everyone around them and knock them back. It's extremely useful when fighting more than one target or if you're surrounded by mobs.", "Hold sneak until you see particles and then release sneak to send a wave of earth outwards, damaging and knocking entities back that it collides with. Additionally, instead of releasing sneak you can send a cone of earth forwards by left clicking. If you are on the Shockwave slot and you fall from a great height, your Shockwave will automatically activate.");
 	}
 
 	@Override

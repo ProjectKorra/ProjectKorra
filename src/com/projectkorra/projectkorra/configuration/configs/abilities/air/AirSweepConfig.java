@@ -15,7 +15,7 @@ public class AirSweepConfig extends AbilityConfig {
 	public final double AvatarState_Knockback = 5.0;
 	
 	public AirSweepConfig() {
-		super(true, "", "");
+		super(true, "Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst", "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
 	}
 
 	@Override

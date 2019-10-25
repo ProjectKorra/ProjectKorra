@@ -23,7 +23,7 @@ public class AirSwipeConfig extends AbilityConfig {
 	public final double AvatarState_Radius = 2;
 	
 	public AirSwipeConfig() {
-		super(true, "", "");
+		super(true, "AirSwipe is the most commonly used damage ability in an airbender's arsenal. An arc of air will flow from you towards the direction you're facing, cutting and pushing back anything in its path. This ability will extinguish fires, cool lava, and cut things like grass, mushrooms, and flowers.", "\"\\n\" + \"(Uncharged) Simply left click to send an air swipe out that will damage targets that it comes into contact with.\" + \"\\n\" + \"(Charged) Hold sneak until particles appear, then release sneak to send a more powerful air swipe out that damages entity's that it comes into contact with.\"");
 	}
 
 	@Override

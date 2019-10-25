@@ -7,11 +7,11 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FirePropertiesConfig implements Config {
 
-	public final String Description = "";
+	public final String Description = "Fire is the element of power. Firebenders are very aggressive and powerful, choosing to overwhelm their opponents with an endless onslaught of offensive attacks instead of being defensive.";
 	
 	public final boolean Griefing = true;
 	public final long RevertTicks = 0;
-	public final double DayFactor = 0;
+	public final double DayFactor = 1.25;
 	
 	public final String DayMessage = "You feel your firebending become more powerful as the sun rises";
 	public final String NightMessage = "You feel your power diminish as the sun sets";

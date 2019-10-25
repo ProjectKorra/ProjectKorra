@@ -10,7 +10,7 @@ public class EarthDomeConfig extends AbilityConfig {
 	public final double Range = 25;
 	
 	public EarthDomeConfig() {
-		super(true, "", "");
+		super(true, "EarthDome allows earthbenders to surround themselves or another entity in earth, temporarily preventing anything from entering or escaping the dome.", "(Self) RaiseEarth (Right click) > Shockwave (Right click)\\\\n(Projection) RaiseEarth(Right click) > Shockwave (Left click)");
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class HealingWatersConfig extends AbilityConfig {
 	public final boolean EnableParticles = true;
 	
 	public HealingWatersConfig() {
-		super(true, "", "");
+		super(true, "HealingWaters is an advanced waterbender skill that allows the player to heal themselves or others from the damage they've taken. If healing another player, you must continue to look at them to channel the ability.", "Hold sneak to begin healing yourself or right click while sneaking to begin healing another player. You or the player must be in water and damaged for this ability to work, or you need to have water bottles in your inventory.");
 	}
 
 	@Override

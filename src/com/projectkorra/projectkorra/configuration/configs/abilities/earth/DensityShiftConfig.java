@@ -7,7 +7,7 @@ public class DensityShiftConfig extends AbilityConfig {
 	public final long Duration = 500;
 	
 	public DensityShiftConfig() {
-		super(true, "", null);
+		super(true, "DensityShift is a passive ability which allows earthbenders to make a firm landing negating all fall damage on any earthbendable surface.", null);
 	}
 
 	@Override

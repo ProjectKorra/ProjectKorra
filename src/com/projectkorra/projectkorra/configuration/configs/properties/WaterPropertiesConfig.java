@@ -7,7 +7,7 @@ import com.projectkorra.projectkorra.configuration.Config;
 
 public class WaterPropertiesConfig implements Config {
 
-	public final String Description = "";
+	public final String Description = "Water is the element of change. Waterbenders use their plethora of skills to redirect and manipulate opponents attacks against them. Similar to Earthbenders, they employ both defensive and offensive strategies to accomplish this.";
 	
 	public final Material[] WaterBlocks = {
 		Material.WATER,

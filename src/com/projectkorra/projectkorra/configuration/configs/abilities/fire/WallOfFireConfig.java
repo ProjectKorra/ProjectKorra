@@ -22,7 +22,7 @@ public class WallOfFireConfig extends AbilityConfig {
 	public final double AvatarState_FireTicks = 0;
 	
 	public WallOfFireConfig() {
-		super(true, "", "");
+		super(true, "WallOfFire is an advanced firebending technique that can be used aggressively or defensively. It's incredibly useful when trying to block off opponents from chasing you or to back them into corners.", "Left click to create a fire wall at the location you clicked. This fire wall will damage entities that run into it and deal knockback.");
 	}
 
 	@Override

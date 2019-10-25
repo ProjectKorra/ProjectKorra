@@ -13,7 +13,7 @@ public class EarthArmorConfig extends AbilityConfig {
 	public final int AvatarState_GoldHearts = 8;
 	
 	public EarthArmorConfig() {
-		super(true, "", "");
+		super(true, "This ability encases the Earthbender in armor, giving them protection. It is a fundamental earthbending technique that's used to survive longer in battles.", "Tap sneak while looking at an earthbendable block to bring those blocks towards you, forming earth armor. This ability will give you extra hearts and will be removed once those extra hearts are gone. You can disable this ability by holding sneak and left clicking with EarthArmor.");
 	}
 
 	@Override

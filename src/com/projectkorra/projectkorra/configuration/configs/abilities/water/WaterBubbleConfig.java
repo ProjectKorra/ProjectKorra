@@ -10,7 +10,7 @@ public class WaterBubbleConfig extends AbilityConfig {
 	public final boolean MustStartAboveWater = true;
 	
 	public WaterBubbleConfig() {
-		super(true, "", "");
+		super(true, "WaterBubble is a basic waterbending ability that allows the bender to create air pockets under water. This is incredibly useful for building under water.", "Hold sneak when in range of water to push the water back and create a water bubble. Alternatively, you can click to create a bubble for a short amount of time.");
 	}
 
 	@Override

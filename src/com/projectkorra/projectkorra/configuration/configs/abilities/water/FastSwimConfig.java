@@ -9,7 +9,7 @@ public class FastSwimConfig extends AbilityConfig {
 	public final double SpeedFactor = 0.7;
 	
 	public FastSwimConfig() {
-		super(true, "", null);
+		super(true, "FastSwim is a passive ability for waterbenders allowing them to travel quickly through the water. Simple hold shift while underwater to propel yourself forward.", null);
 	}
 
 	@Override

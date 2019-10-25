@@ -12,7 +12,7 @@ public class EarthPillarsConfig extends AbilityConfig {
 	public final double FallHeightThreshold = 15;
 	
 	public EarthPillarsConfig() {
-		super(true, "", "");
+		super(true, "Send players and entities flying into the air and possibly stunning them by raising pillars of earth under their feet, dealing damage initally as well. This combo can also be used by falling from high off the ground and landing while on the Catapult ability", "Shockwave (Tap sneak) > Shockwave (Hold sneak) > Catapult (Release sneak)");
 	}
 
 	@Override

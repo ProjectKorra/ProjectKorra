@@ -31,7 +31,7 @@ public class WaterSpoutConfig extends AbilityConfig {
 	}
 	
 	public WaterSpoutConfig() {
-		super(true, "", "");
+		super(true, "This ability provides a Waterbender with a means of transportation. It's the most useful mobility move that a waterbender possesses and is great for chasing down targets or escaping.", "\n" + "(Spout) Left click to activate a spout beneath you and hold spacebar to go higher. If you wish to go lower, simply hold sneak. To disable this ability, left click once again." + "\n" + "(Wave) Left click a water source and hold sneak until water has formed around you. Then, release sneak to ride a water wave that transports you in the direction you're looking. To cancel this water wave, left click with WaterSpout.");
 	}
 
 	@Override

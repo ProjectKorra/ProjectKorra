@@ -16,7 +16,7 @@ public class AirShieldConfig extends AbilityConfig {
 	public final boolean AvatarState_Toggle = true;
 	
 	public AirShieldConfig() {
-		super(true, "", "");
+		super(true, "AirShield creates a shield of air around the bender to block incoming entities and projectiles.", "Sneak, keep holding to maintain the shield!");
 	}
 
 	@Override

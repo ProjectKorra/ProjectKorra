@@ -8,7 +8,7 @@ public class HighJumpConfig extends AbilityConfig {
 	public final double Height = 1.2;
 	
 	public HighJumpConfig() {
-		super(true, "", "");
+		super(true, "HighJump gives the Chiblocker the ability to leap into the air. This ability is used for mobility, and is often used to dodge incoming attacks.", "To use, simply left click while standing on the ground.");
 	}
 
 	@Override

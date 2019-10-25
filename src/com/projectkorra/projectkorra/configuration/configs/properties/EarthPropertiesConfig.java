@@ -7,7 +7,7 @@ import com.projectkorra.projectkorra.configuration.Config;
 
 public class EarthPropertiesConfig implements Config {
 
-	public final String Description = "";
+	public final String Description = "Earth is the element of substance. Earthbenders stay rooted to the ground, preferring to face opponents head-on, using a mix of defensive and offensive strategies to crush their foes.";
 	
 	public final Material[] EarthBlocks = {
 		Material.GRASS_BLOCK,

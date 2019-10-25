@@ -14,7 +14,7 @@ public class JetBlazeConfig extends AbilityConfig {
 	public final double AvatarState_FireTicks = 0;
 	
 	public JetBlazeConfig() {
-		super(true, "", "");
+		super(true, "Damages and burns all enemies in the proximity of your FireJet.", "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet");
 	}
 
 	@Override

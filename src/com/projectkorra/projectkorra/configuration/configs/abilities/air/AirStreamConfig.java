@@ -16,7 +16,7 @@ public class AirStreamConfig extends AbilityConfig {
 	public final long AvatarState_EntityCarryDuration = 20000;
 	
 	public AirStreamConfig() {
-		super(true, "", "");
+		super(true, "AirStream allows Airbenders to control a large stream of air that grabs onto enemies allowing you to direct them temporarily.", "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
 	}
 
 	@Override
