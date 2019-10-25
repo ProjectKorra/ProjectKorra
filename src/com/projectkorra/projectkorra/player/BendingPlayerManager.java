@@ -61,7 +61,7 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 		Player player = event.getPlayer();
 		BendingPlayer bendingPlayer = this.players.get(player.getUniqueId());
 
-		String ability = bendingPlayer.getBoundAbilityName();
+		String ability = bendingPlayer.getBoundAbility();
 
 		if (ability != null && ability.equals(event.getAbility())) {
 			GeneralMethods.displayMovePreview(player);

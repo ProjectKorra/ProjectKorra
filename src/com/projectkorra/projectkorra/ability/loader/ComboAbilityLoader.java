@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.ability.loader;
 
-import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.ComboManager;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public abstract class ComboAbilityLoader extends AbilityLoader {
 
 	/**
 	 * Returns the list of abilities which constitute the combo.
 	 *
-	 * @return An ArrayList containing the combo's steps.
+	 * @return A {@link LinkedList} containing the combo's steps.
 	 */
-	public abstract ArrayList<ComboManager.AbilityInformation> getCombination();
+	public abstract LinkedList<ComboManager.Combination> getCombination();
 }

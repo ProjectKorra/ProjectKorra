@@ -1,6 +1,8 @@
 package com.projectkorra.projectkorra.player;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.ability.api.ChiAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
@@ -16,6 +18,7 @@ public class BendingPlayer {
 
 	private final BendingPlayerManager manager;
 	private final ElementManager elementManager;
+	private final AbilityManager abilityManager;
 	private final AbilityBindManager abilityBindManager;
 	private final CooldownManager cooldownManager;
 
@@ -40,6 +43,7 @@ public class BendingPlayer {
 	public BendingPlayer(int playerId, UUID uuid, String playerName, long firstLogin) {
 		this.manager = ModuleManager.getModule(BendingPlayerManager.class);
 		this.elementManager = ModuleManager.getModule(ElementManager.class);
+		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
 		this.abilityBindManager = ModuleManager.getModule(AbilityBindManager.class);
 		this.cooldownManager = ModuleManager.getModule(CooldownManager.class);
 
@@ -134,11 +138,7 @@ public class BendingPlayer {
 		}
 	}
 
-	public Ability getBoundAbility() {
-		return Ability.getAbility(getBoundAbilityName());
-	}
-
-	public String getBoundAbilityName() {
+	public String getBoundAbility() {
 		int slot = this.player.getInventory().getHeldItemSlot();
 		return this.abilities[slot];
 	}
@@ -193,6 +193,26 @@ public class BendingPlayer {
 
 	public void removeCoolldown(String abilityName) {
 		this.cooldownManager.removeCooldown(this.player, abilityName);
+	}
+
+	public boolean canCurrentlyBendWithWeapons() {
+		if (getBoundAbility() == null) {
+			return false;
+		}
+
+		if (this.player.getInventory().getItemInMainHand() == null) {
+			return true;
+		}
+
+		boolean noWeaponElement = true; // GeneralMethods.getElementsWithNoWeaponBending().contains(this.abilityManager.getAbility())
+
+		if (!noWeaponElement) {
+			return true;
+		}
+
+		boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
+
+		return !hasWeapon;
 	}
 
 	public ChiAbility getStance() {

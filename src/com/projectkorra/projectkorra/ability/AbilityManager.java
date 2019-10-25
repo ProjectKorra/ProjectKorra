@@ -4,7 +4,6 @@ import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.ability.loader.*;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
@@ -13,6 +12,7 @@ import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.module.Module;
+import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -24,11 +24,15 @@ import java.util.stream.Collectors;
 
 public class AbilityManager extends Module {
 
+	private final ComboManager comboManager;
+
 	private final Set<Ability> abilitySet = new HashSet<>();
 	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> abilityMap = new HashMap<>();
 
 	public AbilityManager() {
 		super("Ability");
+
+		this.comboManager = ModuleManager.getModule(ComboManager.class);
 
 		runTimer(() -> {
 			for (Ability ability : abilitySet) {
@@ -128,15 +132,16 @@ public class AbilityManager extends Module {
 		if (abilityLoader instanceof ComboAbilityLoader) {
 			ComboAbilityLoader comboAbilityLoader = (ComboAbilityLoader) abilityLoader;
 
-			if (comboAbilityLoader.getCombination() == null) {
+			if (comboAbilityLoader.getCombination() == null || comboAbilityLoader.getCombination().size() < 2) {
 				getPlugin().getLogger().info(abilityName + " has no combination");
 				return;
 			}
 
-			// TODO Register Combo Ability
+			this.comboManager.registerAbility(abilityClass, abilityData, comboAbilityLoader);
+
 //			ComboManager.getComboAbilities().put(abilityName, new ComboManager.ComboAbilityInfo(abilityName, comboAbilityLoader.getCombination(), ));
-			ComboManager.getDescriptions().put(abilityName, abilityConfig.Description);
-			ComboManager.getInstructions().put(abilityName, abilityConfig.Instructions);
+//			ComboManager.getDescriptions().put(abilityName, abilityConfig.Description);
+//			ComboManager.getInstructions().put(abilityName, abilityConfig.Instructions);
 		}
 
 		if (abilityLoader instanceof MultiAbilityLoader) {
