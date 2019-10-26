@@ -1,8 +1,12 @@
 package com.projectkorra.projectkorra.ability.util;
 
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.event.AbilityLoadEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -12,22 +16,14 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import sun.reflect.ReflectionFactory;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-
-public class AbilityLoader<T> {
+public class AbilityRegistery<T> {
 
 	private final Plugin plugin;
 	private ClassLoader loader;
 	private JarFile jar;
 	private String path;
 
-	public AbilityLoader(final JavaPlugin plugin, final String packageBase) {
+	public AbilityRegistery(final JavaPlugin plugin, final String packageBase) {
 		this.plugin = plugin;
 		this.loader = plugin.getClass().getClassLoader();
 		this.path = packageBase.replace('.', '/');
@@ -60,8 +56,8 @@ public class AbilityLoader<T> {
 	 *            {@code Object.class} for classes without a type.
 	 * @return
 	 */
-	public List<T> load(final Class<?> classType, final Class<?> parentClass) {
-		final ArrayList<T> loadables = new ArrayList<>();
+	public List<Class<T>> load(final Class<?> classType, final Class<?> parentClass) {
+		final ArrayList<Class<T>> loadables = new ArrayList<>();
 
 		if (this.loader == null || this.jar == null) {
 			return loadables;
@@ -89,16 +85,10 @@ public class AbilityLoader<T> {
 					continue;
 				}
 
-				final ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
-				final Constructor<?> objDef = parentClass.getDeclaredConstructor();
-				final Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
-				final T loadable = (T) clazz.cast(intConstr.newInstance());
-
-				if (loadable == null) {
-					continue;
-				}
+				Class<T> loadable = (Class<T>) clazz;
 
 				loadables.add(loadable);
+
 				final AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(this.plugin, loadable, this.jar);
 				this.plugin.getServer().getPluginManager().callEvent(event);
 			} catch (Exception | Error e) {

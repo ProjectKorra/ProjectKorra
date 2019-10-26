@@ -4,18 +4,20 @@ import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.ability.loader.*;
+import com.projectkorra.projectkorra.ability.util.AbilityRegistery;
+import com.projectkorra.projectkorra.ability.util.AddonAbilityRegistery;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
-import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.module.Module;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -30,6 +32,8 @@ public class AbilityManager extends Module {
 
 	private final Set<Ability> abilitySet = new HashSet<>();
 	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> abilityMap = new HashMap<>();
+
+	private final Set<String> addonPlugins = new HashSet<>();
 
 	public AbilityManager() {
 		super("Ability");
@@ -99,29 +103,75 @@ public class AbilityManager extends Module {
 		this.abilitySet.clear();
 		this.abilityMap.clear();
 
-		Ability.registerPluginAbilities(getPlugin(), "com.projectkorra");
-		Ability.registerAddonAbilities("/Abilities/");
+		registerPluginAbilities("com.projectkorra");
+		registerAddonAbilities("Abilities");
 
-		registerAbility(FireBlast.class);
+//		registerAbility(FireBlast.class);
 	}
 
-	private <T extends Ability> void registerAbility(Class<T> abilityClass) throws IllegalAccessException, InstantiationException {
-		AbilityData abilityData = abilityClass.getDeclaredAnnotation(AbilityData.class);
+	/**
+	 * Scans a JavaPlugin and registers Ability class files.
+	 *
+	 * @param plugin a JavaPlugin containing Ability class files
+	 * @param packageBase a prefix of the package name, used to increase
+	 *            performance
+	 * @see #getAbilities()
+	 * @see #getAbility(String)
+	 */
+	public void registerPluginAbilities(String packageBase) {
+		AbilityRegistery<Ability> abilityRegistery = new AbilityRegistery<>(getPlugin(), packageBase);
+		List<Class<Ability>> loadedAbilities = abilityRegistery.load(Ability.class, Ability.class);
 
-		if (abilityData == null) {
-			getPlugin().getLogger().warning("Ability " + abilityClass.getName() + " has no AbilityData annotation");
+		String entry = getPlugin().getName() + "::" + packageBase;
+		this.addonPlugins.add(entry);
+
+		for (Class<Ability> abilityClass : loadedAbilities) {
+			AbilityData abilityData = getAbilityData(abilityClass);
+			AbilityLoader abilityLoader = getAbilityLoader(abilityData);
+
+			registerAbility(abilityClass, abilityData, abilityLoader);
+		}
+	}
+
+	/**
+	 * Scans all of the Jar files inside of /ProjectKorra/folder and registers
+	 * all of the Ability class files that were found.
+	 *
+	 * @param folder the name of the folder to scan
+	 * @see #getAbilities()
+	 * @see #getAbility(String)
+	 */
+	public void registerAddonAbilities(String folder) {
+		File file = new File(getPlugin().getDataFolder(), folder);
+
+		if (!file.exists()) {
+			file.mkdir();
 			return;
 		}
+
+		AddonAbilityRegistery<Ability> abilityRegistery = new AddonAbilityRegistery<>(getPlugin(), file);
+		List<Class<Ability>> loadedAbilities = abilityRegistery.load(Ability.class, Ability.class);
+
+		for (Class<Ability> abilityClass : loadedAbilities) {
+			AbilityData abilityData = getAbilityData(abilityClass);
+			AbilityLoader abilityLoader = getAbilityLoader(abilityData);
+
+			if (!(abilityLoader instanceof AddonAbilityLoader)) {
+				throw new AbilityException(abilityClass.getName() + " must have an AddonAbilityLoader");
+			}
+
+			registerAbility(abilityClass, abilityData, abilityLoader);
+		}
+	}
+
+	private <T extends Ability> void registerAbility(Class<T> abilityClass, AbilityData abilityData, AbilityLoader abilityLoader) throws AbilityException {
+		AbilityConfig abilityConfig = getAbilityConfig(abilityClass);
 
 		String abilityName = abilityData.name();
 
 		if (abilityName == null) {
-			getPlugin().getLogger().warning("Ability " + abilityClass.getName() + " has no name?");
-			return;
+			throw new AbilityException("Ability " + abilityClass.getName() + " has no name");
 		}
-
-		AbilityLoader abilityLoader = abilityData.abilityLoader().newInstance();
-		AbilityConfig abilityConfig = ConfigManager.getConfig(((Class<? extends AbilityConfig>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
 
 		if (!abilityConfig.Enabled) {
 			getPlugin().getLogger().info(abilityName + " is disabled");
@@ -141,18 +191,12 @@ public class AbilityManager extends Module {
 			}
 
 			this.comboAbilityManager.registerAbility(abilityClass, abilityData, comboAbilityLoader);
-
-//			ComboManager.getComboAbilities().put(abilityName, new ComboManager.ComboAbilityInfo(abilityName, comboAbilityLoader.getCombination(), ));
-//			ComboManager.getDescriptions().put(abilityName, abilityConfig.Description);
-//			ComboManager.getInstructions().put(abilityName, abilityConfig.Instructions);
 		}
 
 		if (abilityLoader instanceof MultiAbilityLoader) {
 			MultiAbilityLoader multiAbilityLoader = (MultiAbilityLoader) abilityLoader;
 
 			this.multiAbilityManager.registerAbility(abilityClass, abilityData, multiAbilityLoader);
-
-//			MultiAbilityManager.multiAbilityList.add(new MultiAbilityManager.MultiAbilityInfo(abilityName, multiAbilityLoader.getMultiAbilities()));
 		}
 
 		if (abilityLoader instanceof PassiveAbilityLoader) {
@@ -164,16 +208,40 @@ public class AbilityManager extends Module {
 		}
 	}
 
-	public <T extends Ability> T createAbility(Player player, Class<T> abilityClass) {
+	private AbilityData getAbilityData(Class<? extends Ability> abilityClass) throws AbilityException {
+		AbilityData abilityData = abilityClass.getDeclaredAnnotation(AbilityData.class);
+
+		if (abilityData == null) {
+			throw new AbilityException("Ability " + abilityClass.getName() + " has missing AbilityData annotation");
+		}
+
+		return abilityData;
+	}
+
+	private AbilityLoader getAbilityLoader(AbilityData abilityData) throws AbilityException {
+		try {
+			return abilityData.abilityLoader().newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new AbilityException(e);
+		}
+	}
+
+	private AbilityConfig getAbilityConfig(Class<? extends Ability> abilityClass) throws AbilityException {
+		try {
+			return ConfigManager.getConfig(((Class<? extends AbilityConfig>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
+		} catch (Exception e) {
+			throw new AbilityException(e);
+		}
+	}
+
+	public <T extends Ability> T createAbility(Player player, Class<T> abilityClass) throws AbilityException {
 		try {
 			Constructor<T> constructor = abilityClass.getDeclaredConstructor(Player.class);
 
 			return constructor.newInstance(player);
 		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
+			throw new AbilityException(e);
 		}
-
-		return null;
 	}
 
 	public void startAbility(Ability ability) {
@@ -269,5 +337,17 @@ public class AbilityManager extends Module {
 					return false;
 				})
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * {@link AbilityManager} keeps track of plugins that have registered abilities to use
+	 * for bending reload purposes <br>
+	 * <b>This isn't a simple list, external use isn't recommended</b>
+	 *
+	 * @return a list of entrys with the plugin name and path abilities can be
+	 *         found at
+	 */
+	public Set<String> getAddonPlugins() {
+		return this.addonPlugins;
 	}
 }

@@ -57,7 +57,6 @@ import java.util.jar.JarFile;
 public abstract class Ability<Config extends AbilityConfig> {
 
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
-	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
 	private static final Map<Class<? extends Ability>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
@@ -94,7 +93,7 @@ public abstract class Ability<Config extends AbilityConfig> {
 	 * @see #ABILITIES_BY_NAME
 	 * @see #getAbility(String)
 	 */
-	public Ability() {
+	private Ability() {
 		for (final Field field : this.getClass().getDeclaredFields()) {
 			if (field.isAnnotationPresent(Attribute.class)) {
 				final Attribute attribute = field.getAnnotation(Attribute.class);
@@ -113,7 +112,9 @@ public abstract class Ability<Config extends AbilityConfig> {
 	 * @see #start()
 	 */
 	public Ability(final Config config, final Player player) {
-		if (player == null || !this.isEnabled()) {
+		this();
+
+		if (player == null) {
 			return;
 		}
 		
@@ -143,7 +144,7 @@ public abstract class Ability<Config extends AbilityConfig> {
 	 * @see #isRemoved()
 	 */
 	public final void start() {
-		if (this.player == null || !this.isEnabled()) {
+		if (this.player == null) {
 			return;
 		}
 		final AbilityStartEvent event = new AbilityStartEvent(this);
@@ -185,152 +186,6 @@ public abstract class Ability<Config extends AbilityConfig> {
 		if (!this.attributesModified) {
 			modifyAttributes();
 			this.attributesModified = true;
-		}
-	}
-
-	/**
-	 * Ability keeps track of plugins that have registered abilities to use
-	 * for bending reload purposes <br>
-	 * <b>This isn't a simple list, external use isn't recommended</b>
-	 *
-	 * @return a list of entrys with the plugin name and path abilities can be
-	 *         found at
-	 */
-	public static List<String> getAddonPlugins() {
-		return ADDON_PLUGINS;
-	}
-
-	/**
-	 * Scans a JavaPlugin and registers Ability class files.
-	 *
-	 * @param plugin a JavaPlugin containing Ability class files
-	 * @param packageBase a prefix of the package name, used to increase
-	 *            performance
-	 * @see #getAbilities()
-	 * @see #getAbility(String)
-	 */
-	public static void registerPluginAbilities(final JavaPlugin plugin, final String packageBase) {
-		final com.projectkorra.projectkorra.ability.loader.AbilityLoader<Ability> abilityLoader = new com.projectkorra.projectkorra.ability.loader.AbilityLoader<Ability>(plugin, packageBase);
-		final List<Ability> loadedAbilities = abilityLoader.load(Ability.class, Ability.class);
-		final String entry = plugin.getName() + "::" + packageBase;
-		if (!ADDON_PLUGINS.contains(entry)) {
-			ADDON_PLUGINS.add(entry);
-		}
-
-		for (final Ability coreAbil : loadedAbilities) {
-			if (!coreAbil.isEnabled()) {
-				plugin.getLogger().info(coreAbil.getName() + " is disabled");
-				continue;
-			}
-
-			final String name = coreAbil.getName();
-
-			if (name == null) {
-				plugin.getLogger().warning("Ability " + coreAbil.getClass().getName() + " has no name?");
-				continue;
-			}
-
-			try {
-				ABILITIES_BY_NAME.put(name.toLowerCase(), coreAbil);
-				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
-
-				if (coreAbil instanceof ComboAbility) {
-					final ComboAbility combo = (ComboAbility) coreAbil;
-					if (combo.getCombination() != null) {
-						ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
-						ComboManager.getDescriptions().put(name, coreAbil.getDescription());
-						ComboManager.getInstructions().put(name, coreAbil.getInstructions());
-					}
-				}
-
-				if (coreAbil instanceof MultiAbility) {
-					final MultiAbility multiAbil = (MultiAbility) coreAbil;
-					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
-				}
-
-				if (coreAbil instanceof PassiveAbility) {
-					PassiveAbility passive = (PassiveAbility) coreAbil;
-					coreAbil.setHiddenAbility(true);
-					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey(passive)) {
-						PassiveManager.getPassiveClasses().put(passive, coreAbil.getClass());
-					}
-				}
-			} catch (Exception | Error e) {
-				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
-				e.printStackTrace();
-				ABILITIES_BY_NAME.remove(name.toLowerCase());
-				ABILITIES_BY_CLASS.remove(coreAbil.getClass());
-			}
-		}
-	}
-
-	/**
-	 * Scans all of the Jar files inside of /ProjectKorra/folder and registers
-	 * all of the Ability class files that were found.
-	 *
-	 * @param folder the name of the folder to scan
-	 * @see #getAbilities()
-	 * @see #getAbility(String)
-	 */
-	public static void registerAddonAbilities(final String folder) {
-		final ProjectKorra plugin = ProjectKorra.plugin;
-		final File path = new File(plugin.getDataFolder().toString() + folder);
-		if (!path.exists()) {
-			path.mkdir();
-			return;
-		}
-
-		final com.projectkorra.projectkorra.ability.loader.AddonAbilityLoader<Ability> abilityLoader = new AddonAbilityLoader<Ability>(plugin, path);
-		final List<Ability> loadedAbilities = abilityLoader.load(Ability.class, Ability.class);
-
-		for (final Ability coreAbil : loadedAbilities) {
-			if (!(coreAbil instanceof AddonAbility)) {
-				plugin.getLogger().warning(coreAbil.getName() + " is an addon ability and must implement the AddonAbility interface");
-				continue;
-			} else if (!coreAbil.isEnabled()) {
-				plugin.getLogger().info(coreAbil.getName() + " is disabled");
-				continue;
-			}
-
-			final AddonAbility addon = (AddonAbility) coreAbil;
-			final String name = coreAbil.getName();
-
-			try {
-				addon.load();
-				ABILITIES_BY_NAME.put(name.toLowerCase(), coreAbil);
-				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
-
-				if (coreAbil instanceof ComboAbility) {
-					final ComboAbility combo = (ComboAbility) coreAbil;
-					if (combo.getCombination() != null) {
-						ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
-						ComboManager.getDescriptions().put(name, coreAbil.getDescription());
-						ComboManager.getInstructions().put(name, coreAbil.getInstructions());
-						ComboManager.getAuthors().put(name, addon.getAuthor());
-					}
-				}
-
-				if (coreAbil instanceof MultiAbility) {
-					final MultiAbility multiAbil = (MultiAbility) coreAbil;
-					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
-				}
-
-				if (coreAbil instanceof PassiveAbility) {
-					PassiveAbility passive = (PassiveAbility) coreAbil;
-					coreAbil.setHiddenAbility(true);
-					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassiveClasses().containsKey(passive)) {
-						PassiveManager.getPassiveClasses().put(passive, coreAbil.getClass());
-					}
-				}
-			} catch (Exception | Error e) {
-				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
-				e.printStackTrace();
-				addon.stop();
-				ABILITIES_BY_NAME.remove(name.toLowerCase());
-				ABILITIES_BY_CLASS.remove(coreAbil.getClass());
-			}
 		}
 	}
 
@@ -380,21 +235,21 @@ public abstract class Ability<Config extends AbilityConfig> {
 		return config.Description;
 	}
 
-	public String getMovePreview(final Player player) {
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		String displayedMessage = "";
-		if (bPlayer.isOnCooldown(this)) {
-			final long cooldown = bPlayer.getCooldown(this.getName()) - System.currentTimeMillis();
-			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName() + "" + this.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
-		} else {
-			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName())) {
-				displayedMessage = this.getElement().getColor() + "" + ChatColor.UNDERLINE + this.getName();
-			} else {
-				displayedMessage = this.getElement().getColor() + this.getName();
-			}
-		}
-		return displayedMessage;
-	}
+//	public String getMovePreview(final Player player) {
+//		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+//		String displayedMessage = "";
+//		if (bPlayer.isOnCooldown(this)) {
+//			final long cooldown = bPlayer.getCooldown(this.getName()) - System.currentTimeMillis();
+//			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName() + "" + this.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
+//		} else {
+//			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName())) {
+//				displayedMessage = this.getElement().getColor() + "" + ChatColor.UNDERLINE + this.getName();
+//			} else {
+//				displayedMessage = this.getElement().getColor() + this.getName();
+//			}
+//		}
+//		return displayedMessage;
+//	}
 
 	public Player getPlayer() {
 		return this.player;
@@ -406,57 +261,57 @@ public abstract class Ability<Config extends AbilityConfig> {
 	 *
 	 * @param target The player who now controls the ability
 	 */
-	public void setPlayer(final Player target) {
-		if (target == this.player) {
-			return;
-		}
-
-		final Class<? extends Ability> clazz = this.getClass();
-
-		// The mapping from player UUID to a map of the player's instances.
-		Map<UUID, Map<Integer, Ability>> classMap = INSTANCES_BY_PLAYER.get(clazz);
-
-		if (classMap != null) {
-			// The map of AbilityId to Ability for the current player.
-			final Map<Integer, Ability> playerMap = classMap.get(this.player.getUniqueId());
-
-			if (playerMap != null) {
-				// Remove the ability from the current player's map.
-				playerMap.remove(this.id);
-
-				if (playerMap.isEmpty()) {
-					// Remove the player's empty ability map from global instances map.
-					classMap.remove(this.player.getUniqueId());
-				}
-			}
-
-			if (classMap.isEmpty()) {
-				INSTANCES_BY_PLAYER.remove(this.getClass());
-			}
-		}
-
-		// Add a new map for the current ability if it doesn't exist in the global map.
-		if (!INSTANCES_BY_PLAYER.containsKey(clazz)) {
-			INSTANCES_BY_PLAYER.put(clazz, new ConcurrentHashMap<>());
-		}
-
-		classMap = INSTANCES_BY_PLAYER.get(clazz);
-
-		// Create an AbilityId to Ability map for the target player if it doesn't exist.
-		if (!classMap.containsKey(target.getUniqueId())) {
-			classMap.put(target.getUniqueId(), new ConcurrentHashMap<>());
-		}
-
-		// Add the current instance to the target player's ability map.
-		classMap.get(target.getUniqueId()).put(this.getId(), this);
-
-		this.player = target;
-
-		final BendingPlayer newBendingPlayer = BendingPlayer.getBendingPlayer(target);
-		if (newBendingPlayer != null) {
-			this.bPlayer = newBendingPlayer;
-		}
-	}
+//	public void setPlayer(final Player target) {
+//		if (target == this.player) {
+//			return;
+//		}
+//
+//		final Class<? extends Ability> clazz = this.getClass();
+//
+//		// The mapping from player UUID to a map of the player's instances.
+//		Map<UUID, Map<Integer, Ability>> classMap = INSTANCES_BY_PLAYER.get(clazz);
+//
+//		if (classMap != null) {
+//			// The map of AbilityId to Ability for the current player.
+//			final Map<Integer, Ability> playerMap = classMap.get(this.player.getUniqueId());
+//
+//			if (playerMap != null) {
+//				// Remove the ability from the current player's map.
+//				playerMap.remove(this.id);
+//
+//				if (playerMap.isEmpty()) {
+//					// Remove the player's empty ability map from global instances map.
+//					classMap.remove(this.player.getUniqueId());
+//				}
+//			}
+//
+//			if (classMap.isEmpty()) {
+//				INSTANCES_BY_PLAYER.remove(this.getClass());
+//			}
+//		}
+//
+//		// Add a new map for the current ability if it doesn't exist in the global map.
+//		if (!INSTANCES_BY_PLAYER.containsKey(clazz)) {
+//			INSTANCES_BY_PLAYER.put(clazz, new ConcurrentHashMap<>());
+//		}
+//
+//		classMap = INSTANCES_BY_PLAYER.get(clazz);
+//
+//		// Create an AbilityId to Ability map for the target player if it doesn't exist.
+//		if (!classMap.containsKey(target.getUniqueId())) {
+//			classMap.put(target.getUniqueId(), new ConcurrentHashMap<>());
+//		}
+//
+//		// Add the current instance to the target player's ability map.
+//		classMap.get(target.getUniqueId()).put(this.getId(), this);
+//
+//		this.player = target;
+//
+//		final BendingPlayer newBendingPlayer = BendingPlayer.getBendingPlayer(target);
+//		if (newBendingPlayer != null) {
+//			this.bPlayer = newBendingPlayer;
+//		}
+//	}
 
 	/**
 	 * Used by the CollisionManager to check if two instances can collide with
@@ -589,44 +444,44 @@ public abstract class Ability<Config extends AbilityConfig> {
 	 * Returns a String used to debug potential Ability memory that can be
 	 * caused by a developer forgetting to call {@link #remove()}
 	 */
-	public static String getDebugString() {
-		final StringBuilder sb = new StringBuilder();
-		int playerCounter = 0;
-		final HashMap<String, Integer> classCounter = new HashMap<>();
-
-		for (final Map<UUID, Map<Integer, Ability>> map1 : INSTANCES_BY_PLAYER.values()) {
-			playerCounter++;
-			for (final Map<Integer, Ability> map2 : map1.values()) {
-				for (final Ability coreAbil : map2.values()) {
-					final String simpleName = coreAbil.getClass().getSimpleName();
-
-					if (classCounter.containsKey(simpleName)) {
-						classCounter.put(simpleName, classCounter.get(simpleName) + 1);
-					} else {
-						classCounter.put(simpleName, 1);
-					}
-				}
-			}
-		}
-
-		for (final Set<Ability> set : INSTANCES_BY_CLASS.values()) {
-			for (final Ability coreAbil : set) {
-				final String simpleName = coreAbil.getClass().getSimpleName();
-				if (classCounter.containsKey(simpleName)) {
-					classCounter.put(simpleName, classCounter.get(simpleName) + 1);
-				} else {
-					classCounter.put(simpleName, 1);
-				}
-			}
-		}
-
-		sb.append("Class->UUID's in memory: " + playerCounter + "\n");
-		sb.append("Abilities in memory:\n");
-		for (final String className : classCounter.keySet()) {
-			sb.append(className + ": " + classCounter.get(className) + "\n");
-		}
-		return sb.toString();
-	}
+//	public static String getDebugString() {
+//		final StringBuilder sb = new StringBuilder();
+//		int playerCounter = 0;
+//		final HashMap<String, Integer> classCounter = new HashMap<>();
+//
+//		for (final Map<UUID, Map<Integer, Ability>> map1 : INSTANCES_BY_PLAYER.values()) {
+//			playerCounter++;
+//			for (final Map<Integer, Ability> map2 : map1.values()) {
+//				for (final Ability coreAbil : map2.values()) {
+//					final String simpleName = coreAbil.getClass().getSimpleName();
+//
+//					if (classCounter.containsKey(simpleName)) {
+//						classCounter.put(simpleName, classCounter.get(simpleName) + 1);
+//					} else {
+//						classCounter.put(simpleName, 1);
+//					}
+//				}
+//			}
+//		}
+//
+//		for (final Set<Ability> set : INSTANCES_BY_CLASS.values()) {
+//			for (final Ability coreAbil : set) {
+//				final String simpleName = coreAbil.getClass().getSimpleName();
+//				if (classCounter.containsKey(simpleName)) {
+//					classCounter.put(simpleName, classCounter.get(simpleName) + 1);
+//				} else {
+//					classCounter.put(simpleName, 1);
+//				}
+//			}
+//		}
+//
+//		sb.append("Class->UUID's in memory: " + playerCounter + "\n");
+//		sb.append("Abilities in memory:\n");
+//		for (final String className : classCounter.keySet()) {
+//			sb.append(className + ": " + classCounter.get(className) + "\n");
+//		}
+//		return sb.toString();
+//	}
 
 	public abstract void progress();
 

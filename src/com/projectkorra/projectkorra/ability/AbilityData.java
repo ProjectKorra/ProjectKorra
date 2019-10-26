@@ -27,6 +27,16 @@ public @interface AbilityData {
 	String name();
 
 	/**
+	 * @return The class used to register this ability.
+	 */
+	Class<? extends AbilityLoader> abilityLoader();
+
+	/**
+	 * @return true if this is a hidden ability.
+	 */
+	boolean hidden() default false;
+
+	/**
 	 * @return the name of the author of this AddonAbility
 	 */
 	String author() default "ProjectKorra";
@@ -35,9 +45,4 @@ public @interface AbilityData {
 	 * @return The version of the ability as a String.
 	 */
 	String version() default "1.0";
-
-	/**
-	 * @return The class used to register this ability.
-	 */
-	Class<? extends AbilityLoader> abilityLoader();
 }

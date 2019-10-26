@@ -14,7 +14,7 @@ public class AbilityLoadEvent<T> extends Event {
 	private static final HandlerList handlers = new HandlerList();
 
 	private final Plugin plugin;
-	private final T loadable;
+	private final Class<T> loadable;
 	private final JarFile jarFile;
 
 	/**
@@ -24,7 +24,7 @@ public class AbilityLoadEvent<T> extends Event {
 	 * @param loadable The class that was loaded
 	 * @param jarFile The JarFile the class was loaded from
 	 */
-	public AbilityLoadEvent(final Plugin plugin, final T loadable, final JarFile jarFile) {
+	public AbilityLoadEvent(final Plugin plugin, final Class<T> loadable, final JarFile jarFile) {
 		this.plugin = plugin;
 		this.loadable = loadable;
 		this.jarFile = jarFile;
@@ -53,7 +53,7 @@ public class AbilityLoadEvent<T> extends Event {
 	 *
 	 * @return The loaded class
 	 */
-	public T getLoadable() {
+	public Class<T> getLoadable() {
 		return this.loadable;
 	}
 
