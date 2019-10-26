@@ -89,7 +89,8 @@ public class BendingPlayer {
 		this.illumination = true;
 		this.chiBlocked = false;
 		this.cooldowns = this.loadCooldowns();
-		this.toggledElements = new ConcurrentHashMap<Element, Boolean>();
+		this.toggledElements = new ConcurrentHashMap<>();
+
 		for (final Element e : Element.getAllElements()) {
 			if (!e.equals(Element.AVATAR)) {
 				this.toggledElements.put(e, true);

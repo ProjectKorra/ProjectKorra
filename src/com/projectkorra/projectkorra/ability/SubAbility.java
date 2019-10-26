@@ -8,6 +8,6 @@ public interface SubAbility {
 	 *
 	 * @return the Class of the parent
 	 */
-	public Class<? extends Ability> getParentAbility();
+	Class<? extends Ability> getParentAbility();
 
 }

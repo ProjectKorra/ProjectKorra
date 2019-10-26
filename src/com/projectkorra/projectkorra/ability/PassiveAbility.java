@@ -9,13 +9,13 @@ public interface PassiveAbility {
 	 *
 	 * @return false if this passive should always be on
 	 */
-	public boolean isInstantiable();
+	boolean isInstantiable();
 
 	/**
 	 * This is used if the passive should progress
 	 *
 	 * @return false if progress() shouldn't be called;
 	 */
-	public boolean isProgressable();
+	boolean isProgressable();
 
 }

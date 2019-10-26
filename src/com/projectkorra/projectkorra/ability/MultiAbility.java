@@ -14,6 +14,6 @@ public interface MultiAbility {
 	 *
 	 * @return a list of sub MultiAbilities
 	 */
-	public abstract ArrayList<MultiAbilityInfoSub> getMultiAbilities();
+	ArrayList<MultiAbilityInfoSub> getMultiAbilities();
 
 }
