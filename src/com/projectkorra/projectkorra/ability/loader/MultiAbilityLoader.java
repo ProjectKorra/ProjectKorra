@@ -1,8 +1,11 @@
 package com.projectkorra.projectkorra.ability.loader;
 
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.MultiAbilityManager;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class MultiAbilityLoader extends AbilityLoader {
 
@@ -14,5 +17,5 @@ public abstract class MultiAbilityLoader extends AbilityLoader {
 	 *
 	 * @return a list of sub MultiAbilities
 	 */
-	public abstract ArrayList<MultiAbilityManager.MultiAbilityInfoSub> getMultiAbilities();
+	public abstract List<Class<? extends Ability>> getAbilities();
 }

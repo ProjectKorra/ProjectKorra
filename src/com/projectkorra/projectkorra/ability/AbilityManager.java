@@ -4,7 +4,6 @@ import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.ability.loader.*;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import com.projectkorra.projectkorra.element.Element;
@@ -17,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
 
 public class AbilityManager extends Module {
 
-	private final ComboManager comboManager;
+	private final ComboAbilityManager comboAbilityManager;
+	private final MultiAbilityManager multiAbilityManager;
 
 	private final Set<Ability> abilitySet = new HashSet<>();
 	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> abilityMap = new HashMap<>();
@@ -32,7 +34,8 @@ public class AbilityManager extends Module {
 	public AbilityManager() {
 		super("Ability");
 
-		this.comboManager = ModuleManager.getModule(ComboManager.class);
+		this.comboAbilityManager = ModuleManager.getModule(ComboAbilityManager.class);
+		this.multiAbilityManager = ModuleManager.getModule(MultiAbilityManager.class);
 
 		runTimer(() -> {
 			for (Ability ability : abilitySet) {
@@ -137,7 +140,7 @@ public class AbilityManager extends Module {
 				return;
 			}
 
-			this.comboManager.registerAbility(abilityClass, abilityData, comboAbilityLoader);
+			this.comboAbilityManager.registerAbility(abilityClass, abilityData, comboAbilityLoader);
 
 //			ComboManager.getComboAbilities().put(abilityName, new ComboManager.ComboAbilityInfo(abilityName, comboAbilityLoader.getCombination(), ));
 //			ComboManager.getDescriptions().put(abilityName, abilityConfig.Description);
@@ -147,7 +150,9 @@ public class AbilityManager extends Module {
 		if (abilityLoader instanceof MultiAbilityLoader) {
 			MultiAbilityLoader multiAbilityLoader = (MultiAbilityLoader) abilityLoader;
 
-			MultiAbilityManager.multiAbilityList.add(new MultiAbilityManager.MultiAbilityInfo(abilityName, multiAbilityLoader.getMultiAbilities()));
+			this.multiAbilityManager.registerAbility(abilityClass, abilityData, multiAbilityLoader);
+
+//			MultiAbilityManager.multiAbilityList.add(new MultiAbilityManager.MultiAbilityInfo(abilityName, multiAbilityLoader.getMultiAbilities()));
 		}
 
 		if (abilityLoader instanceof PassiveAbilityLoader) {
@@ -157,6 +162,18 @@ public class AbilityManager extends Module {
 			// TODO Register Passive Ability
 //			PassiveManager.getPassives().put(abilityName, ability???)
 		}
+	}
+
+	public <T extends Ability> T createAbility(Player player, Class<T> abilityClass) {
+		try {
+			Constructor<T> constructor = abilityClass.getDeclaredConstructor(Player.class);
+
+			return constructor.newInstance(player);
+		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	public void startAbility(Ability ability) {
@@ -238,7 +255,7 @@ public class AbilityManager extends Module {
 	}
 
 	public List<Ability> getAbilities(Element element) {
-		this.abilitySet.stream()
+		return this.abilitySet.stream()
 				.filter(ability ->
 				{
 					if (ability.getElement().equals(element)) {

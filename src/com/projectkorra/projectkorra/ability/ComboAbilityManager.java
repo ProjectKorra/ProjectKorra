@@ -23,19 +23,21 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class ComboManager extends Module {
+public class ComboAbilityManager extends Module {
 
 	private final BendingPlayerManager bendingPlayerManager;
+	private final AbilityManager abilityManager;
 
 	private final Map<UUID, LinkedList<Combination>> recentlyUsed = new HashMap<>();
 	private final List<ComboAbilityInfo> comboAbilities = new ArrayList<>();
 
 	private final long combinationMax = 8;
 
-	private ComboManager() {
+	private ComboAbilityManager() {
 		super("Combo Ability");
 
 		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
+		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
 
 		this.comboAbilities.clear();
 	}
@@ -69,16 +71,7 @@ public class ComboManager extends Module {
 			return;
 		}
 
-		try {
-			Class<? extends Ability> abilityClass = comboAbilityInfo.abilityClass;
-			Constructor<? extends Ability> constructor = abilityClass.getDeclaredConstructor(Player.class);
-
-			Ability ability = constructor.newInstance(player);
-
-		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
+		this.abilityManager.createAbility(player, comboAbilityInfo.abilityClass);
 	}
 
 	private ComboAbilityInfo getComboAbiblity(LinkedList<Combination> recentlyUsed) {

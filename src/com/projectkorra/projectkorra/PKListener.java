@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.projectkorra.projectkorra.event.*;
+import com.projectkorra.projectkorra.module.ModuleManager;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -195,10 +198,6 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
-import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
-import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
@@ -1613,6 +1612,28 @@ public class PKListener implements Listener {
 		if (main.getType() == Material.AIR && (off == null || off.getType() == Material.AIR)) {
 			ComboManager.addComboAbility(player, ClickType.OFFHAND_TRIGGER);
 		}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+
+		if (event.getHand() != EquipmentSlot.HAND) {
+			return;
+		}
+
+		if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_AIR) {
+			return;
+		}
+
+		if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.isCancelled()) {
+			return;
+		}
+
+		com.projectkorra.projectkorra.player.BendingPlayer bendingPlayer = ModuleManager.getModule(BendingPlayerManager.class).getBendingPlayer(player);
+
+		PlayerSwingEvent playerSwingEvent = new PlayerSwingEvent(player, bendingPlayer, bendingPlayer.getBoundAbility());
+		ProjectKorra.plugin.getServer().getPluginManager().callEvent(playerSwingEvent);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
