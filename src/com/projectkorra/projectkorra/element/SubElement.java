@@ -6,8 +6,8 @@ public class SubElement extends Element {
 
 	private final Element parent;
 
-	public SubElement(int elementId, String elementName, String displayName, ChatColor color, Element parent) {
-		super(elementId, elementName, displayName, color);
+	public SubElement(int elementId, String elementName, String displayName, ChatColor color, ElementManager.ElementType type, Element parent) {
+		super(elementId, elementName, displayName, color, type);
 
 		this.parent = parent;
 	}

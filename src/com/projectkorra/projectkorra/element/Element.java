@@ -8,12 +8,14 @@ public class Element {
 	private final String elementName;
 	private final String displayName;
 	private final ChatColor color;
+	private final ElementManager.ElementType type;
 
-	public Element(int elementId, String elementName, String displayName, ChatColor color) {
+	public Element(int elementId, String elementName, String displayName, ChatColor color, ElementManager.ElementType type) {
 		this.elementId = elementId;
 		this.elementName = elementName;
 		this.displayName = displayName;
 		this.color = color;
+		this.type = type;
 	}
 
 	public int getId() {
@@ -34,5 +36,9 @@ public class Element {
 
 	public String getColoredName() {
 		return this.color + this.displayName;
+	}
+
+	public ElementManager.ElementType getType() {
+		return this.type;
 	}
 }
