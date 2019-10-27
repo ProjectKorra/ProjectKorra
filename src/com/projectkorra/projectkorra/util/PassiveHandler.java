@@ -1,45 +1,58 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
-
-import org.bukkit.entity.Player;
-
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
+import com.projectkorra.projectkorra.ability.PassiveAbilityManager;
+import com.projectkorra.projectkorra.ability.loader.PassiveAbilityLoader;
 import com.projectkorra.projectkorra.airbending.passive.AirSaturation;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiSaturation;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
+import com.projectkorra.projectkorra.module.Module;
+import com.projectkorra.projectkorra.module.ModuleManager;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
+import org.bukkit.entity.Player;
 
-public class PassiveHandler {
-	private static final Map<Player, Float> FOOD = new ConcurrentHashMap<>();
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 
-	public static float getExhaustion(final Player player, float level, final double factor) {
-		if (!FOOD.keySet().contains(player)) {
-			FOOD.put(player, level);
+public class PassiveHandler extends Module {
+
+	private final BendingPlayerManager bendingPlayerManager;
+	private final PassiveAbilityManager passiveAbilityManager;
+
+	private final Map<UUID, Float> food = new HashMap<>();
+
+	private PassiveHandler() {
+		super("Passive");
+
+		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
+		this.passiveAbilityManager = ModuleManager.getModule(PassiveAbilityManager.class);
+	}
+
+	public float getExhaustion(final Player player, float level, final double factor) {
+		if (!this.food.keySet().contains(player.getUniqueId())) {
+			this.food.put(player.getUniqueId(), level);
 			return level;
 		} else {
-			final float oldlevel = FOOD.get(player);
+			final float oldlevel = this.food.get(player.getUniqueId());
 			if (level < oldlevel) {
 				level = 0;
 			} else {
 				level = (float) ((level - oldlevel) * factor + oldlevel);
 			}
 
-			FOOD.put(player, level);
+			this.food.put(player.getUniqueId(), level);
 			return level;
 		}
 	}
 
-	public static void checkExhaustionPassives(final Player player) {
-		CoreAbility airsat = CoreAbility.getAbility(AirSaturation.class);
-		CoreAbility chisat = CoreAbility.getAbility(ChiSaturation.class);
-		
-		if ((airsat == null || !airsat.isEnabled()) && (chisat == null || !chisat.isEnabled())) {
+	public void checkExhaustionPassives(final Player player) {
+		PassiveAbilityLoader airsat = this.passiveAbilityManager.getPassiveAbility(AirSaturation.class);
+		PassiveAbilityLoader chisat = this.passiveAbilityManager.getPassiveAbility(ChiSaturation.class);
+
+		if (airsat == null && chisat == null) {
 			return;
 		}
 
@@ -54,21 +67,18 @@ public class PassiveHandler {
 			return;
 		}
 
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		com.projectkorra.projectkorra.player.BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		if (bPlayer == null) {
-			return;
-		}
-
-		if (!PassiveManager.hasPassive(player, airsat)) {
+		if (!this.passiveAbilityManager.canUsePassive(player, AirSaturation.class)) {
 			air = 0;
 		}
 
-		if (!PassiveManager.hasPassive(player, chisat)) {
+		if (!this.passiveAbilityManager.canUsePassive(player, ChiSaturation.class)) {
 			chi = 0;
 		}
 
 		final double max = Math.max(air, chi);
+
 		if (max == 0) {
 			return;
 		} else {

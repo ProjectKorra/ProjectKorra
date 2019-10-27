@@ -4,11 +4,11 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AbilityInfo;
 import com.projectkorra.projectkorra.ability.AbilityManager;
-import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
+import com.projectkorra.projectkorra.ability.PassiveAbilityManager;
 import com.projectkorra.projectkorra.ability.api.ChiAbility;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.ability.loader.AbilityLoader;
 import com.projectkorra.projectkorra.ability.loader.AvatarAbilityLoader;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.ElementManager;
@@ -23,6 +23,7 @@ public class BendingPlayer {
 	private final BendingPlayerManager manager;
 	private final ElementManager elementManager;
 	private final AbilityManager abilityManager;
+	private final PassiveAbilityManager passiveAbilityManager;
 	private final AbilityBindManager abilityBindManager;
 	private final CooldownManager cooldownManager;
 
@@ -48,6 +49,7 @@ public class BendingPlayer {
 		this.manager = ModuleManager.getModule(BendingPlayerManager.class);
 		this.elementManager = ModuleManager.getModule(ElementManager.class);
 		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
+		this.passiveAbilityManager = ModuleManager.getModule(PassiveAbilityManager.class);
 		this.abilityBindManager = ModuleManager.getModule(AbilityBindManager.class);
 		this.cooldownManager = ModuleManager.getModule(CooldownManager.class);
 
@@ -266,7 +268,7 @@ public class BendingPlayer {
 
 	public void toggleBending() {
 		this.toggled = !this.toggled;
-		PassiveManager.registerPassives(this.player); // TODO redo this passive system
+		this.passiveAbilityManager.registerPassives(this.player);
 	}
 
 	public boolean isTremorSensing() {

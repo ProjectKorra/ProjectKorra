@@ -51,7 +51,7 @@ public class PassiveAbilityManager extends Module {
 		});
 	}
 
-	private boolean canUsePassive(Player player, Class<? extends Ability> abilityClass) {
+	public boolean canUsePassive(Player player, Class<? extends Ability> abilityClass) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 		PassiveAbilityLoader passiveAbilityLoader = this.abilities.get(abilityClass);
 
@@ -78,6 +78,10 @@ public class PassiveAbilityManager extends Module {
 		}
 
 		return true;
+	}
+
+	public PassiveAbilityLoader getPassiveAbility(Class<? extends Ability> abilityClass) {
+		return this.abilities.get(abilityClass);
 	}
 
 	public List<Class<? extends Ability>> getPassivesForElement(Element element) {

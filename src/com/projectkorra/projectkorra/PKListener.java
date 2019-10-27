@@ -1307,7 +1307,7 @@ public class PKListener implements Listener {
 		if (bPlayer != null) {
 			try (MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-					PassiveHandler.checkExhaustionPassives(player);
+					ModuleManager.getModule(PassiveHandler.class).checkExhaustionPassives(player);
 				}
 			}
 
