@@ -8,7 +8,7 @@ public class AirAgilityConfig extends AbilityConfig {
 	public final int SpeedPower = 3;
 	
 	public AirAgilityConfig() {
-		super(true, "", null);
+		super(true, "Airbenders passively manipulate the air around them allowing them to run faster and jump higher.", null);
 	}
 
 	@Override

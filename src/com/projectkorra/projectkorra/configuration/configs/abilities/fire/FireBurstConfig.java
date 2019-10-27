@@ -18,7 +18,7 @@ public class FireBurstConfig extends AbilityConfig {
 	public final double AvatarState_Damage = 6;
 	
 	public FireBurstConfig() {
-		super(true, "", "");
+		super(true, "FireBurst is an advanced firebending technique that has a large range and the potential to deal immense damage. It's incredibly useful when surrounded by lots of mobs, to damage them all at once.", "Hold sneak until you see particles and then release sneak to send out a sphere of fire expanding outwards, damaging anything it hits. Additionally, you can left click instead of releasing sneak to send the fire burst into one direction only.");
 	}
 
 	@Override

@@ -494,7 +494,7 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		PassiveManager.registerPassives(player);
 		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
-			final Element element = event.getElement();
+			final com.projectkorra.projectkorra.element.Element element = event.getElement();
 			String prefix = "";
 
 			if (bPlayer == null) {
@@ -504,7 +504,9 @@ public class PKListener implements Listener {
 			if (bPlayer.getElements().size() > 1) {
 				prefix = Element.AVATAR.getPrefix();
 			} else if (element != null) {
-				prefix = element.getPrefix();
+				// TODO Pull prefix from config
+//				prefix = element.getPrefix();
+				prefix = element.getColoredName();
 			} else {
 				prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
 			}
@@ -924,7 +926,7 @@ public class PKListener implements Listener {
 					new AirBurst(ConfigManager.getConfig(AirBurstConfig.class), player, true);
 				}
 			}
-			
+
 			CoreAbility gd = CoreAbility.getAbility(GracefulDescent.class);
 			CoreAbility ds = CoreAbility.getAbility(DensityShift.class);
 			CoreAbility hs = CoreAbility.getAbility(HydroSink.class);
@@ -965,7 +967,7 @@ public class PKListener implements Listener {
 			}
 
 			CoreAbility hc = CoreAbility.getAbility(HeatControl.class);
-			
+
 			if (hc != null && bPlayer.hasElement(Element.FIRE) && bPlayer.canBendPassive(hc) && bPlayer.canUsePassive(hc) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 				event.setCancelled(!HeatControl.canBurn(player));
 			}

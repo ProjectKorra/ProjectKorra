@@ -36,7 +36,7 @@ public class LavaFlowConfig extends AbilityConfig {
 	public final double AvatarState_ClickRadius = 20;
 	
 	public LavaFlowConfig() {
-		super(true, "", "");
+		super(true, "LavaFlow is an extremely advanced, and dangerous ability. It allows the earthbender to create pools of lava around them, or to solidify existing lava. This ability can be deadly when comboed with EarthGrab.", "(Flow) Hold sneak and lava will begin expanding outwards. Once the lava has stopped expanding, you can release sneak. Additionally, if you tap sneak the lava you created will revert back to the earthbendable block.\" + \"\\n\" + \"(Lava Pool) Left click to slowly transform earthbendable blocks into a pool of lava.\" + \"\\n\" + \"(Solidify) Left click on lava to solidify it, turning it to stone.");
 	}
 
 	@Override

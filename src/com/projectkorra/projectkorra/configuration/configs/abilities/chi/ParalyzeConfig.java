@@ -8,7 +8,7 @@ public class ParalyzeConfig extends AbilityConfig {
 	public final long Duration = 2000;
 	
 	public ParalyzeConfig() {
-		super(true, "", "");
+		super(true, "Paralyzes the target, making them unable to do anything for a short period of time as they will be paralyzed where they're stood.", "");
 	}
 
 	@Override

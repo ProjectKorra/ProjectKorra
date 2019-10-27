@@ -15,7 +15,7 @@ public class BloodbendingConfig extends AbilityConfig {
 	public final boolean CanBloodbendOtherBloodbenders = false;
 	
 	public BloodbendingConfig() {
-		super(true, "", "");
+		super(true, "Bloodbending is one of the most unique bending abilities that existed and it has immense power, which is why it was made illegal in the Avatar universe. People who are capable of bloodbending are immune to your technique, and you are immune to theirs.", "\n" + "(Control) Hold sneak while looking at an entity to bloodbend them. You will then be controlling the entity, making them move wherever you look." + "\n" + "(Throw) While bloodbending an entity, left click to throw that entity in the direction you're looking.");
 	}
 
 	@Override

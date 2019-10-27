@@ -13,7 +13,7 @@ public class FireKickConfig extends AbilityConfig {
 	public final double AvatarState_Range = 0;
 	
 	public FireKickConfig() {
-		super(true, "", "");
+		super(true, "A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.", "FireBlast > FireBlast > (Hold sneak) > FireBlast");
 	}
 
 	@Override

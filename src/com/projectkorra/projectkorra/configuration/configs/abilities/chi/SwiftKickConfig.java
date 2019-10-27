@@ -9,7 +9,7 @@ public class SwiftKickConfig extends AbilityConfig {
 	public final double ChiBlockChance = 75;
 	
 	public SwiftKickConfig() {
-		super(true, "", "");
+		super(true, "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi.", "Jump and left click on a player to swift kick them.");
 	}
 
 	@Override

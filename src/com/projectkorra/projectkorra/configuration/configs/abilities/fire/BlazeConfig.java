@@ -22,7 +22,7 @@ public class BlazeConfig extends AbilityConfig {
 	}
 	
 	public BlazeConfig() {
-		super(true, "", "");
+		super(true, "Blaze is a basic firebending technique that can be extremely deadly if used right. It's useful to stop people from chasing you or to create space between you and other players.", "Left click to send an arc of fire in the direction you're facing that will burn entities in its path. Additionally, you can tap sneak to send a blaze all around you.");
 	}
 
 	@Override

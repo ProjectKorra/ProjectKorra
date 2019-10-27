@@ -10,7 +10,7 @@ public class WarriorStanceConfig extends AbilityConfig {
 	public final int Resistance = -1;
 	
 	public WarriorStanceConfig() {
-		super(true, "", "");
+		super(true, "WarriorStance is an advanced chiblocker technique that gives the chiblocker increased damage but makes them a tad more vulnerable. This ability is useful when finishing off weak targets.", "Left click to activate WarriorStance. Additionally, left click to disable it.");
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,33 +49,33 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 				getRepository().createTables();
 
 				// Waterbending
-				this.water = addElement(WATER, "Water", ChatColor.AQUA);
-				this.blood = addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, this.water);
-				this.healing = addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, this.water);
-				this.ice = addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, this.water);
-				this.plant = addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, this.water);
+				this.water = addElement(WATER, "Water", ChatColor.AQUA, ElementType.BENDING);
+				this.blood = addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, ElementType.BENDING, this.water);
+				this.healing = addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, ElementType.NO_SUFFIX, this.water);
+				this.ice = addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, ElementType.BENDING, this.water);
+				this.plant = addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, ElementType.BENDING, this.water);
 
 				// Earthbending
-				this.earth = addElement(EARTH, "Earth", ChatColor.AQUA);
-				this.lava = addSubElement(LAVA, "Lava", ChatColor.DARK_GREEN, this.earth);
-				this.metal = addSubElement(METAL, "Metal", ChatColor.DARK_GREEN, this.earth);
-				this.sand = addSubElement(SAND, "Sand", ChatColor.DARK_GREEN, this.earth);
+				this.earth = addElement(EARTH, "Earth", ChatColor.AQUA, ElementType.BENDING);
+				this.lava = addSubElement(LAVA, "Lava", ChatColor.DARK_GREEN, ElementType.BENDING, this.earth);
+				this.metal = addSubElement(METAL, "Metal", ChatColor.DARK_GREEN, ElementType.BENDING, this.earth);
+				this.sand = addSubElement(SAND, "Sand", ChatColor.DARK_GREEN, ElementType.BENDING, this.earth);
 
 				// Firebending
-				this.fire = addElement(FIRE, "Fire", ChatColor.RED);
-				this.combustion = addSubElement(COMBUSTION, "Combustion", ChatColor.DARK_RED, this.fire);
-				this.lightning = addSubElement(LIGHTNING, "Lightning", ChatColor.DARK_RED, this.fire);
+				this.fire = addElement(FIRE, "Fire", ChatColor.RED, ElementType.BENDING);
+				this.combustion = addSubElement(COMBUSTION, "Combustion", ChatColor.DARK_RED, ElementType.BENDING, this.fire);
+				this.lightning = addSubElement(LIGHTNING, "Lightning", ChatColor.DARK_RED, ElementType.BENDING, this.fire);
 
 				// Airbending
-				this.air = addElement(AIR, "Air", ChatColor.GRAY);
-				this.flight = addSubElement(FLIGHT, "Flight", ChatColor.DARK_GRAY, this.air);
-				this.spiritual = addSubElement(SPIRITUAL, "Spiritual", ChatColor.DARK_GRAY, this.air);
+				this.air = addElement(AIR, "Air", ChatColor.GRAY, ElementType.BENDING);
+				this.flight = addSubElement(FLIGHT, "Flight", ChatColor.DARK_GRAY, ElementType.NO_SUFFIX, this.air);
+				this.spiritual = addSubElement(SPIRITUAL, "Spiritual", ChatColor.DARK_GRAY, ElementType.NO_SUFFIX, this.air);
 
 				// Chiblocking
-				this.chi = addElement(CHI, "Chi", ChatColor.GOLD);
+				this.chi = addElement(CHI, "Chi", ChatColor.GOLD, ElementType.BLOCKING);
 
 				// Avatar
-				this.avatar = addElement(AVATAR, "Avatar", ChatColor.DARK_PURPLE);
+				this.avatar = addElement(AVATAR, "Avatar", ChatColor.DARK_PURPLE, null);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -166,10 +167,14 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 		});
 	}
 
-	private Element addElement(String elementName, String displayName, ChatColor color) {
+	public Element getElement(String elementName) {
+		return this.names.get(elementName);
+	}
+
+	private Element addElement(String elementName, String displayName, ChatColor color, ElementType type) {
 		int elementId = registerElement(elementName);
 
-		Element element = new Element(elementId, elementName, displayName, color);
+		Element element = new Element(elementId, elementName, displayName, color, type);
 
 		this.elements.put(elementId, element);
 		this.names.put(elementName, element);
@@ -177,10 +182,10 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 		return element;
 	}
 
-	private SubElement addSubElement(String elementName, String displayName, ChatColor color, Element parent) {
+	private SubElement addSubElement(String elementName, String displayName, ChatColor color, ElementType type, Element parent) {
 		int elementId = registerElement(elementName);
 
-		SubElement element = new SubElement(elementId, elementName, displayName, color, parent);
+		SubElement element = new SubElement(elementId, elementName, displayName, color, type, parent);
 
 		this.elements.put(elementId, element);
 		this.names.put(elementName, element);
@@ -267,5 +272,35 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 
 	public Element getAvatar() {
 		return this.avatar;
+	}
+
+	public List<Element> getElements() {
+		return new ArrayList<>(this.elements.values());
+	}
+
+	public enum ElementType {
+		BENDING("bending", "bender", "bend"), BLOCKING("blocking", "blocker", "block"), NO_SUFFIX("", "", "");
+
+		private String bending;
+		private String bender;
+		private String bend;
+
+		ElementType(final String bending, final String bender, final String bend) {
+			this.bending = bending;
+			this.bender = bender;
+			this.bend = bend;
+		}
+
+		public String getBending() {
+			return this.bending;
+		}
+
+		public String getBender() {
+			return this.bender;
+		}
+
+		public String getBend() {
+			return this.bend;
+		}
 	}
 }

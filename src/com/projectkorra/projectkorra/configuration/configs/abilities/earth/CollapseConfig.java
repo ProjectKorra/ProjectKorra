@@ -31,7 +31,7 @@ public class CollapseConfig extends AbilityConfig {
 	}
 	
 	public CollapseConfig() {
-		super(true, "", "");
+		super(true, "This ability is a basic earthbending ability that allows the earthbender great utility. It allows them to control earth blocks by compressing earth. Players and mobs can be trapped and killed if earth is collapsed and they're stuck inside it, meaning this move is deadly when in cave systems.", "Left click an earthbendable block. If there's space under that block, it will be collapsed. Alternatively, you can tap sneak to collapse multiple blocks at a time.");
 	}
 
 	@Override

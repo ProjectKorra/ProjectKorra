@@ -29,7 +29,7 @@ public class PhaseChangeConfig extends AbilityConfig {
 	}
 	
 	public PhaseChangeConfig() {
-		super(true, "", "");
+		super(true, "PhaseChange is one of the most useful utility moves that a waterbender possess. This ability is better used when fighting, allowing you to create a platform on water that you can fight on and being territorial by manipulating your environment. It's also useful for travelling across seas.", "\n" + "(Melt) To melt ice, hold sneak while looking at an ice block." + "\n" + "(Freeze) To freeze water and turn it into ice, simply left click at water. This ice will stay so long as you are in range, otherwise it will revert back to water. This only freezes the top layer of ice.");
 	}
 
 	@Override

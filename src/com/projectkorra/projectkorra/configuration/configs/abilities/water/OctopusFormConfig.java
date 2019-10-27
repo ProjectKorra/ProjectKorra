@@ -21,7 +21,7 @@ public class OctopusFormConfig extends AbilityConfig {
 	public final double AvatarState_Radius = 5;
 	
 	public OctopusFormConfig() {
-		super(true, "", "");
+		super(true, "OctopusForm is one of the most advanced abilities in a waterbender's aresenal. It has the possibility of doing high damage to anyone it comes into contact with.", "Left click a water source and then hold sneak to form a set of water tentacles. This ability will channel as long as you are holding sneak. Additionally, if you left click this ability will whip targets you're facing dealing damage and knockback, if they're in range.");
 	}
 
 	@Override

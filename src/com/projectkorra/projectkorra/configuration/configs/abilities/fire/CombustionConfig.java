@@ -13,7 +13,7 @@ public class CombustionConfig extends AbilityConfig {
 	public final boolean BreakBlocks = true;
 	
 	public CombustionConfig() {
-		super(true, "", "");
+		super(true, "ombustion is a special firebending technique that's extremely deadly. It allows you to create a powerful blast to deal immense damage to players at long range.", "Tap sneak to send a combustion out in the direction you're looking. It will explode on impact, or you can left click to manually expload it. This deals damage to players who are in radius of the blast.");
 	}
 
 	@Override

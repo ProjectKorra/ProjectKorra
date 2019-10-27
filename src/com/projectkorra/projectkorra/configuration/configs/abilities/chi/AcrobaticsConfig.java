@@ -7,7 +7,7 @@ public class AcrobaticsConfig extends AbilityConfig {
 	public final double FallReductionFactor = 0.75;
 	
 	public AcrobaticsConfig() {
-		super(true, "", null);
+		super(true, "Acrobatics is a passive ability which negates all fall damage based on a percent chance.", null);
 	}
 
 	@Override

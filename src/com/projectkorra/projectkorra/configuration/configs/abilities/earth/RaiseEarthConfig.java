@@ -32,7 +32,7 @@ public class RaiseEarthConfig extends AbilityConfig {
 	}
 	
 	public RaiseEarthConfig() {
-		super(true, "", "");
+		super(true, "RaiseEarth is a basic yet useful utility move. It has the potential to allow the earthbender to create great escape routes by raising earth underneath them to propell themselves upwards. It also offers synergy with other moves, such as shockwave. RaiseEarth is often used to block incoming abilities.", "(Pillar) To raise a pillar of earth, left click on an earthbendable block.\" + \"\\n\" + \"(Wall) To raise a wall of earth, tap sneak on an earthbendable block.");
 	}
 
 	@Override

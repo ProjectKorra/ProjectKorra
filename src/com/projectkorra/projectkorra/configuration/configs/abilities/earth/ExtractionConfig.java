@@ -10,7 +10,7 @@ public class ExtractionConfig extends AbilityConfig {
 	public final int TripleLootChance = 15;
 	
 	public ExtractionConfig() {
-		super(true, "", "");
+		super(true, "This ability allows metalbenders to extract the minerals from ore blocks. This ability is extremely useful for gathering materials as it has a chance to extract double or tripple the ores.", "Tap sneak while looking at an earthbendable ore to extract the ore.");
 	}
 
 	@Override

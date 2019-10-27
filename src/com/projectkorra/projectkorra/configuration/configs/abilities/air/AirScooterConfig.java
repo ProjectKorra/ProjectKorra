@@ -13,7 +13,7 @@ public class AirScooterConfig extends AbilityConfig {
 	public final boolean ShowSitting = true;
 	
 	public AirScooterConfig() {
-		super(true, "", "");
+		super(true, "AirScooter allows an Airbender to ride on a ball of air!", "Sprint, Jump, then Left Click. \nTIP: Look in the direction you would like to go");
 	}
 
 	@Override

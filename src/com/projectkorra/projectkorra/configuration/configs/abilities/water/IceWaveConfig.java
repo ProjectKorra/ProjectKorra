@@ -14,7 +14,7 @@ public class IceWaveConfig extends AbilityConfig {
 	public final double AvatarState_Damage = 5;
 	
 	public IceWaveConfig() {
-		super(true, "", "");
+		super(true, "PhaseChange your WaterWave into an IceWave that freezes and damages enemies.", "Create a WaterSpout Wave > PhaseChange (Left Click)");
 	}
 
 	@Override

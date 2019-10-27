@@ -8,7 +8,7 @@ public class ChiAgilityConfig extends AbilityConfig {
 	public final int SpeedPower = 2;
 	
 	public ChiAgilityConfig() {
-		super(true, "", null);
+		super(true, "ChiAgility is a passive ability which enables chiblockers to run faster and jump higher.", null);
 	}
 
 	@Override

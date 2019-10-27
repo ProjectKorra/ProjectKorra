@@ -10,7 +10,7 @@ public class RapidPunchConfig extends AbilityConfig {
 	public final int TotalPunches = 3;
 	
 	public RapidPunchConfig() {
-		super(true, "", "");
+		super(true, "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch. This has a short cooldown.", "Punch a player to deal massive damage.");
 	}
 
 	@Override

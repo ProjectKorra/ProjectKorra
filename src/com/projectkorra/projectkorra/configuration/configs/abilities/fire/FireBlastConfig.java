@@ -37,7 +37,7 @@ public class FireBlastConfig extends AbilityConfig {
 	}
 	
 	public FireBlastConfig() {
-		super(true, "", "");
+		super(true, "FireBlast is the most fundamental bending technique of a firebender. It allows the firebender to create mass amounts of fire blasts to constantly keep damaging an entity. It's great for rapid fire successions to deal immense damage.", "\\n\" + \"(Ball) Left click to send out a ball of fire that will deal damage and knockback entities it hits. Additionally, this ability can refuel furnace power if the blast connects with a furnace.\" + \"\\n\" + \"(Blast) Hold sneak until you see particles and then release sneak to send out a powerful fire blast outwards. This deals damage and knocks back anyone it hits, while exploding on impact.");
 	}
 
 	@Override

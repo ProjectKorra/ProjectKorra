@@ -8,12 +8,12 @@ public class ImmobilizeConfig extends AbilityConfig {
 	public final long ParalyzeDuration = 4000;
 	
 	public ImmobilizeConfig() {
-		super(true, "", "");
+		super(true, "Immobilizes the opponent for several seconds.", "QuickStrike > SwiftKick > QuickStrike > QuickStrike");
 	}
 
 	@Override
 	public String getName() {
-		return "Paralyze";
+		return "Immobilize";
 	}
 
 	@Override

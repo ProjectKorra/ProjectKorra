@@ -18,7 +18,7 @@ public class EarthTunnelConfig extends AbilityConfig {
 	public final double AvatarState_MaxRadius = 8;
 	
 	public EarthTunnelConfig() {
-		super(true, "", "");
+		super(true, "Earth Tunnel is a completely utility ability for earthbenders. It allows you to dig a hole that lowers players down while you continue the ability, create fast escape routes or just great for making your own cave systems.", "Hold sneak while looking at an earthbendable block to tunnel the blocks away. If you release sneak or look at a block that isn't earthbendable, the ability will cancel.");
 	}
 
 	@Override

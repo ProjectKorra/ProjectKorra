@@ -9,7 +9,7 @@ public class QuickStrikeConfig extends AbilityConfig {
 	public final double ChiBlockChance = 35;
 	
 	public QuickStrikeConfig() {
-		super(true, "", "");
+		super(true, "QuickStrike enables a chiblocker to quickly strike an enemy, potentially blocking their chi.", "Left click on a player to quick strike them.");
 	}
 
 	@Override

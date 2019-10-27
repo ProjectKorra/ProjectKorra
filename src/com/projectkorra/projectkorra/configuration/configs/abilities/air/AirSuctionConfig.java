@@ -17,7 +17,7 @@ public class AirSuctionConfig extends AbilityConfig {
 	public final double AvatarState_PushFactor = 3.5;
 	
 	public AirSuctionConfig() {
-		super(true, "", "");
+		super(true, "AirSuction is a basic ability that allows you to manipulation an entity's movement. It can be used to bring someone back to you when they're running away, or even to get yourself to great heights.", "\"\\n\" + \"(Pull) Left click while aiming at a target to pull them towards you.\" + \"\\n\" + \"(Manipulation) Sneak to select a point and then left click at a target or yourself to send you or your target to the point that you selected.");
 	}
 
 	@Override

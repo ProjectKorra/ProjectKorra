@@ -16,7 +16,7 @@ public class IceBulletConfig extends AbilityConfig {
 	public final long AvatarState_Cooldown = 3000;
 	
 	public IceBulletConfig() {
-		super(true, "", "");
+		super(true, "Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 	}
 
 	@Override

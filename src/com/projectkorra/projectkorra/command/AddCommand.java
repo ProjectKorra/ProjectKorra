@@ -1,30 +1,33 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.AddCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
+import com.projectkorra.projectkorra.element.Element;
+import com.projectkorra.projectkorra.element.ElementManager;
+import com.projectkorra.projectkorra.element.SubElement;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import com.projectkorra.projectkorra.module.ModuleManager;
+import com.projectkorra.projectkorra.player.BendingPlayer;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.configuration.configs.commands.AddCommandConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
-import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Executor for /bending add. Extends {@link PKCommand}.
  */
 public class AddCommand extends PKCommand<AddCommandConfig> {
+
+	private final BendingPlayerManager bendingPlayerManager;
+	private final ElementManager elementManager;
 
 	private final String playerNotFound;
 	private final String invalidElement;
@@ -43,6 +46,9 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 
 	public AddCommand(final AddCommandConfig config) {
 		super(config, "add", "/bending add <Element/SubElement> [Player]", config.Description, new String[] { "add", "a" });
+
+		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
+		this.elementManager = ModuleManager.getModule(ElementManager.class);
 
 		this.playerNotFound = config.PlayerNotFound;
 		this.invalidElement = config.InvalidElement;
@@ -85,112 +91,91 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 	/**
 	 * Adds the ability to bend an element to a player.
 	 *
-	 * @param sender The CommandSender who issued the add command
-	 * @param target The player to add the element to
-	 * @param element The element to add
+	 * @param sender      The CommandSender who issued the add command
+	 * @param target      The player to add the element to
+	 * @param elementName The element to add
 	 */
-	private void add(final CommandSender sender, final Player target, final String element) {
+	private void add(final CommandSender sender, final Player target, final String elementName) {
 
-		// if they aren't a BendingPlayer, create them.
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(target);
-		} else if (bPlayer.isPermaRemoved()) { // ignore permaremoved users.
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(target);
+
+		if (bendingPlayer.isBendingRemoved()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved_Other);
 			return;
 		}
 
-		if (element.toLowerCase().equals("all")) {
-			final StringBuilder elements = new StringBuilder("");
+		if (elementName.toLowerCase().equals("all")) {
+			final StringBuilder elements = new StringBuilder();
 			List<Element> added = new LinkedList<>();
-			for (final Element e : Element.getAllElements()) {
-				if (!bPlayer.hasElement(e) && e != Element.AVATAR) {
-					bPlayer.addElement(e);
-					added.add(e);
 
-					if (elements.length() > 1) {
-						elements.append(ChatColor.YELLOW + ", ");
-					}
-					elements.append(e.getColor() + e.getName());
-
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
+			for (Element element : this.elementManager.getElements()) {
+				if (bendingPlayer.hasElement(element) || element.equals(this.elementManager.getAvatar())) {
+					continue;
 				}
+
+				this.elementManager.addElement(target, element);
+				added.add(element);
+
+				if (elements.length() > 1) {
+					elements.append(ChatColor.YELLOW + ", ");
+				}
+
+				elements.append(element.getColor() + element.getName());
+
+				Bukkit.getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.ADD));
 			}
+
 			if (added.size() > 0) {
-				GeneralMethods.saveElements(bPlayer, added);
-				
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+				if (!(sender instanceof Player) || !(sender).equals(target)) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.addedOtherAll.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.YELLOW) + elements);
 					GeneralMethods.sendBrandingMessage(target, ChatColor.YELLOW + this.addedAll + elements);
 				} else {
 					GeneralMethods.sendBrandingMessage(target, ChatColor.YELLOW + this.addedAll + elements);
 				}
 			} else {
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+				if (!(sender instanceof Player) || !(sender).equals(target)) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElementsOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElements);
 				}
 			}
-			return;
+
 		} else {
 
 			// get the [sub]element.
-			Element e = Element.fromString(element);
-			
+			Element e = this.elementManager.getElement(elementName);
+
 			if (e == null) {
 				return;
 			}
-			
+
 			List<Element> adding = new LinkedList<>();
 			adding.add(e);
 
-			if (e == Element.AVATAR) {
+			if (e.equals(this.elementManager.getAvatar())) {
 				adding.clear();
-				adding.add(Element.AIR);
-				adding.add(Element.EARTH);
-				adding.add(Element.FIRE);
-				adding.add(Element.WATER);
+				adding.add(this.elementManager.getAir());
+				adding.add(this.elementManager.getEarth());
+				adding.add(this.elementManager.getFire());
+				adding.add(this.elementManager.getWater());
 			}
 
 			List<Element> added = new LinkedList<>();
-			
+
 			for (Element elem : adding) {
-				// if it's an element:
-				if (Arrays.asList(Element.getAllElements()).contains(elem)) {
-					if (bPlayer.hasElement(elem)) { // if already had, determine who to send the error message to.
-						continue;
-					}
 
-					// add all allowed subelements.
-					bPlayer.addElement(elem);
-					added.add(elem);
-
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
-					return;
-
-					// if it's a sub element:
-				} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
-					final SubElement sub = (SubElement) e;
-					
-					if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
-						continue;
-					}
-					
-					bPlayer.addSubElement(sub);
-					added.add(elem);
-					
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.ADD));
-					return;
-
-				} else { // bad element.
-					sender.sendMessage(ChatColor.RED + this.invalidElement);
+				if (bendingPlayer.hasElement(elem)) {
+					continue;
 				}
+
+				this.elementManager.addElement(target, elem);
+				added.add(elem);
+
+				Bukkit.getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, elem, Result.ADD));
 			}
-			
+
 			if (added.isEmpty()) {
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+				if (!(sender instanceof Player) || !(sender).equals(target)) {
 					if (adding.size() == 1 && adding.get(0) instanceof SubElement) {
 						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 					} else {
@@ -203,21 +188,15 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElement);
 					}
 				}
-				
+
 				return;
 			}
-			
-			if (added.size() == 1) {
-				GeneralMethods.saveElement(bPlayer, added.get(0));
-			} else {
-				GeneralMethods.saveElements(bPlayer, added);
-			}
-			
+
 			for (Element elem : added) {
 				ChatColor color = elem.getColor();
 				boolean vowel = GeneralMethods.isVowel(ChatColor.stripColor(elem.getName()).charAt(0));
-				
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+
+				if (!(sender instanceof Player) || !(sender).equals(target)) {
 					if (vowel) {
 						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherVowel.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", elem.getName() + elem.getType().getBender()));
 					} else {
@@ -241,29 +220,8 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 		}
 		final List<String> l = new ArrayList<>();
 		if (args.size() == 0) {
-
-			l.add("Air");
-			l.add("Earth");
-			l.add("Fire");
-			l.add("Water");
-			l.add("Chi");
-			for (final Element e : Element.getAddonElements()) {
-				l.add(e.getName());
-			}
-
-			l.add("Blood");
-			l.add("Combustion");
-			l.add("Flight");
-			l.add("Healing");
-			l.add("Ice");
-			l.add("Lava");
-			l.add("Lightning");
-			l.add("Metal");
-			l.add("Plant");
-			l.add("Sand");
-			l.add("Spiritual");
-			for (final SubElement e : Element.getAddonSubElements()) {
-				l.add(e.getName());
+			for (Element element : this.elementManager.getElements()) {
+				l.add(element.getName());
 			}
 		} else {
 			for (final Player p : Bukkit.getOnlinePlayers()) {

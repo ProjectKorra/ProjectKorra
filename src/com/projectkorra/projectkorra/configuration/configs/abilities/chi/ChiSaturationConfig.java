@@ -7,7 +7,7 @@ public class ChiSaturationConfig extends AbilityConfig {
 	public final double ExhaustionFactor = .5;
 	
 	public ChiSaturationConfig() {
-		super(true, "", null);
+		super(true, "ChiSaturation is a passive ability which causes chiblockers' hunger to deplete at a slower rate.", null);
 	}
 
 	@Override

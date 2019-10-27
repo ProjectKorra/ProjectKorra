@@ -35,7 +35,7 @@ public class MetalClipsConfig extends AbilityConfig {
 	}
 	
 	public MetalClipsConfig() {
-		super(true, "", "");
+		super(true, "MetalClips is an advanced metalbending ability that allows you to take control of a fight. It gives the metalbender the ability to control an entity, create space between them and a player and even added utility.", "(Clips) This ability requires iron ingots in your inventory. Left click to throw an ingot at an entity, dealing damage to them. This ingot will form into armor, wrapping itself around the entity. Once enough armor pieces are around the entity, you can then control them. To control them, hold sneak while looking at them and then they will be moved in the direction you look. Additionally, you can release sneak to throw them in the direction you're looking.\" + \"\\n\" + \"(Magnet) Hold sneak with this ability to pull iron ingots towards you.\"");
 	}
 
 	@Override

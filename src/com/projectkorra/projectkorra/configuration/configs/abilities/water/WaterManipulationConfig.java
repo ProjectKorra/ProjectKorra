@@ -16,7 +16,7 @@ public class WaterManipulationConfig extends AbilityConfig {
 	public final double AvatarState_Damage = 4;
 	
 	public WaterManipulationConfig() {
-		super(true, "", "");
+		super(true, "WaterManipulation is a fundamental ability for waterbenders. Although it is a basic move, it allows for fast damage due to its rapid fire nature, which is incredibly useful when wanting to finish off low health targets.", "Tap sneak on a water source and left click to send a water manipulation to the point that you clicked. Additionally, you can left click again to change the direction of this move. This includes other players' WaterManipulations.");
 	}
 
 	@Override

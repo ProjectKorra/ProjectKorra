@@ -9,7 +9,7 @@ public class SmokescreenConfig extends AbilityConfig {
 	public final double Radius = 3;
 	
 	public SmokescreenConfig() {
-		super(true, "", "");
+		super(true, "Smokescreen, if used correctly, can serve as a defensive and offensive ability for Chiblockers. When used, a smoke bomb is fired which will blind anyone within a small radius of the explosion, allowing you to either get away, or move in for the kill.", "Left click and a smoke bomb will be fired in the direction you're looking.");
 	}
 
 	@Override
