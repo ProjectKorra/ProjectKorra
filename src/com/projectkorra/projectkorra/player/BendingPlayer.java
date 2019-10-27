@@ -2,13 +2,17 @@ package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityInfo;
 import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.ability.api.ChiAbility;
+import com.projectkorra.projectkorra.ability.loader.AbilityLoader;
+import com.projectkorra.projectkorra.ability.loader.AvatarAbilityLoader;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.ElementManager;
+import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.entity.Player;
 
@@ -149,6 +153,31 @@ public class BendingPlayer {
 
 	public List<String> getAbilities() {
 		return Arrays.asList(this.abilities);
+	}
+
+	public boolean canBind(AbilityInfo abilityInfo) {
+		if (abilityInfo == null || !this.player.isOnline()) {
+			return false;
+		}
+
+		if (!this.player.hasPermission("bending.ability." + abilityInfo.getName())) {
+			return false;
+		}
+
+		AbilityLoader abilityLoader = abilityInfo.getLoader();
+		Element element = abilityInfo.getElement();
+
+		if (!hasElement(element) && !(abilityLoader instanceof AvatarAbilityLoader && !((AvatarAbilityLoader) abilityLoader).requireAvatar())) {
+			return false;
+		}
+
+		if (element instanceof SubElement) {
+			if (!hasElement(((SubElement) element).getParent())) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public void setAbilities(String[] abilities) {

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.ability.loader.AbilityLoader;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.element.Element;
 
 public class AbilityInfo {
 
@@ -17,19 +18,15 @@ public class AbilityInfo {
 		this.abilityConfig = abilityConfig;
 	}
 
-	public Class<? extends Ability> getAbilityClass() {
-		return this.abilityClass;
+	public String getName() {
+		return this.abilityData.name();
 	}
 
-	public AbilityData getAbilityData() {
-		return this.abilityData;
+	public Element getElement() {
+		return this.abilityLoader.getElement();
 	}
 
-	public AbilityLoader getAbilityLoader() {
+	public AbilityLoader getLoader() {
 		return this.abilityLoader;
-	}
-
-	public AbilityConfig getAbilityConfig() {
-		return this.abilityConfig;
 	}
 }

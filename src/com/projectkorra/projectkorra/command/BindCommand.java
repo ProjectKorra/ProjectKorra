@@ -1,22 +1,17 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AbilityInfo;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
+import com.projectkorra.projectkorra.element.Element;
+import com.projectkorra.projectkorra.element.SubElement;
+import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.ComboAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.api.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
+import java.util.*;
 
 /**
  * Executor for /bending bind. Extends {@link PKCommand}.
@@ -54,31 +49,35 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 			return;
 		}
 
-		final CoreAbility coreAbil = CoreAbility.getAbility(args.get(0));
-		if (coreAbil == null || !coreAbil.isEnabled()) {
+		String abilityName = args.get(0);
+		AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(abilityName);
+
+		if (abilityInfo == null) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.abilityDoesntExist.replace("{ability}", args.get(0)));
-			return;
-		} else if (coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility || coreAbil.isHiddenAbility()) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.unbindable.replace("{ability}", args.get(0)));
 			return;
 		}
 
+		//		} else if (coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility || coreAbil.isHiddenAbility()) {
+		//			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.unbindable.replace("{ability}", args.get(0)));
+		//			return;
+		//		}
+
 		// bending bind [Ability].
 		if (args.size() == 1) {
-			this.bind(sender, args.get(0), ((Player) sender).getInventory().getHeldItemSlot() + 1);
+			this.bind(sender, abilityInfo, ((Player) sender).getInventory().getHeldItemSlot() + 1);
 		}
 
 		// bending bind [ability] [#].
 		if (args.size() == 2) {
 			try {
-				this.bind(sender, args.get(0), Integer.parseInt(args.get(1)));
+				this.bind(sender, abilityInfo, Integer.parseInt(args.get(1)));
 			} catch (final NumberFormatException ex) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 			}
 		}
 	}
 
-	private void bind(final CommandSender sender, final String ability, final int slot) {
+	private void bind(final CommandSender sender, final AbilityInfo abilityInfo, final int slot) {
 		if (!(sender instanceof Player)) {
 			return;
 		} else if (slot < 1 || slot > 9) {
@@ -86,45 +85,58 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 			return;
 		}
 
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer((Player) sender);
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-		if (bPlayer == null) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.loadingInfo);
-			return;
-		} else if (coreAbil == null || !bPlayer.canBind(coreAbil)) {
-			if (coreAbil != null && coreAbil.getElement() != Element.AVATAR && !bPlayer.hasElement(coreAbil.getElement())) {
-				if (coreAbil.getElement() instanceof SubElement) {
-					final SubElement sub = (SubElement) coreAbil.getElement();
-					if (!bPlayer.hasElement(sub.getParentElement())) {
-						if (GeneralMethods.isVowel(ChatColor.stripColor(sub.getParentElement().getName()).charAt(0))) {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
-						} else {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
-						}
-					} else {
-						if (GeneralMethods.isVowel(ChatColor.stripColor(sub.getName()).charAt(0))) {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElementVowel.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
-						} else {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
-						}
-					}
-				} else {
-					if (GeneralMethods.isVowel(ChatColor.stripColor(coreAbil.getElement().getName()).charAt(0))) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
-					} else {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
-					}
-				}
-			} else {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + super.noPermissionMessage);
+		Player player = (Player) sender;
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
+
+		Element element = abilityInfo.getElement();
+
+		//		if (bPlayer == null) {
+		//			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.loadingInfo);
+		//			return;
+		//		}
+
+		if (bendingPlayer.canBind(abilityInfo)) {
+			if (!bendingPlayer.isElementToggled(element)) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
 			}
+
+			this.abilityBindManager.bindAbility(player, abilityInfo.getName(), slot);
+			GeneralMethods.sendBrandingMessage(player, element.getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", abilityInfo.getName()).replace("{slot}", String.valueOf(slot + 1)));
 			return;
-		} else if (!bPlayer.isElementToggled(coreAbil.getElement())) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
 		}
 
-		final String name = coreAbil != null ? coreAbil.getName() : null;
-		GeneralMethods.bindAbility((Player) sender, name, slot - 1);
+		if (element.equals(this.elementManager.getAvatar()) || bendingPlayer.hasElement(element)) {
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + super.noPermissionMessage);
+			return;
+		}
+
+		if (!(element instanceof SubElement)) {
+			if (GeneralMethods.isVowel(ChatColor.stripColor(element.getName()).charAt(0))) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", element.getName() + element.getType().getBender()));
+			} else {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", element.getName() + element.getType().getBender()));
+			}
+
+			return;
+		}
+
+		SubElement subElement = (SubElement) element;
+
+		if (bendingPlayer.hasElement(subElement.getParent())) {
+			if (GeneralMethods.isVowel(ChatColor.stripColor(subElement.getName()).charAt(0))) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElementVowel.replace("{subelement}", subElement.getName() + subElement.getType().getBending()));
+			} else {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", subElement.getName() + subElement.getType().getBending()));
+			}
+
+			return;
+		}
+
+		if (GeneralMethods.isVowel(ChatColor.stripColor(subElement.getParent().getName()).charAt(0))) {
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElementVowel.replace("{element}", subElement.getParent().getName() + subElement.getParent().getType().getBender()));
+		} else {
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noElement.replace("{element}", subElement.getParent().getName() + subElement.getParent().getType().getBender()));
+		}
 	}
 
 	@Override
@@ -133,21 +145,26 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 			return new ArrayList<String>();
 		}
 
-		List<String> abilities = new ArrayList<>();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		if (args.size() == 0) {
-			if (bPlayer != null) {
-				for (final CoreAbility coreAbil : CoreAbility.getAbilities()) {
-					if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil) && !(coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility) && !abilities.contains(coreAbil.getName())) {
-						abilities.add(coreAbil.getName());
-					}
-				}
-			}
-		} else {
-			abilities = Arrays.asList("123456789".split(""));
+		Player player = (Player) sender;
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
+
+		if (args.size() > 0) {
+			return Arrays.asList("123456789".split(""));
 		}
 
-		Collections.sort(abilities);
-		return abilities;
+		Set<String> abilitySet = new HashSet<>();
+
+		for (AbilityInfo abilityInfo : this.abilityManager.getAbilities()) {
+			// if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil) && !(coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility) && !abilities.contains(coreAbil.getName())) {
+
+			if (bendingPlayer.canBind(abilityInfo)) {
+				abilitySet.add(abilityInfo.getName());
+			}
+		}
+
+		List<String> abilityList = new ArrayList<>(abilitySet);
+		Collections.sort(abilityList);
+
+		return abilityList;
 	}
 }

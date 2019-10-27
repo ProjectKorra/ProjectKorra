@@ -9,6 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.projectkorra.projectkorra.ability.AbilityManager;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
+import com.projectkorra.projectkorra.element.ElementManager;
+import com.projectkorra.projectkorra.module.ModuleManager;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,6 +30,11 @@ import com.projectkorra.projectkorra.configuration.configs.properties.CommandPro
  */
 @SuppressWarnings("rawtypes")
 public abstract class PKCommand<C extends CommandConfig> implements SubCommand<C> {
+
+	protected final BendingPlayerManager bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
+	protected final ElementManager elementManager = ModuleManager.getModule(ElementManager.class);
+	protected final AbilityManager abilityManager = ModuleManager.getModule(AbilityManager.class);
+	protected final AbilityBindManager abilityBindManager = ModuleManager.getModule(AbilityBindManager.class);
 
 	protected String noPermissionMessage, mustBePlayerMessage;
 

@@ -31,7 +31,7 @@ public class AbilityManager extends Module {
 	private final MultiAbilityManager multiAbilityManager;
 	private final PassiveAbilityManager passiveAbilityManager;
 
-	private final Map<Class<? extends Ability>, AbilityInfo> abilities = new HashMap<>();
+	private final Map<String, AbilityInfo> abilities = new HashMap<>();
 
 	private final Set<Ability> playerAbilitySet = new HashSet<>();
 	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> playerAbilityMap = new HashMap<>();
@@ -214,7 +214,7 @@ public class AbilityManager extends Module {
 		}
 
 		AbilityInfo abilityInfo = new AbilityInfo(abilityClass, abilityData, abilityLoader, abilityConfig);
-		this.abilities.put(abilityClass, abilityInfo);
+		this.abilities.put(abilityData.name(), abilityInfo);
 	}
 
 	private AbilityData getAbilityData(Class<? extends Ability> abilityClass) throws AbilityException {
@@ -329,6 +329,10 @@ public class AbilityManager extends Module {
 		});
 
 		return abilities;
+	}
+
+	public AbilityInfo getAbilityInfo(String abilityName) {
+		return this.abilities.get(abilityName);
 	}
 
 	public List<AbilityInfo> getAbilities() {

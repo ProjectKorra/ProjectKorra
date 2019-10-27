@@ -5,13 +5,10 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.AddCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 import com.projectkorra.projectkorra.element.Element;
-import com.projectkorra.projectkorra.element.ElementManager;
 import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
-import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
-import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -25,9 +22,6 @@ import java.util.List;
  * Executor for /bending add. Extends {@link PKCommand}.
  */
 public class AddCommand extends PKCommand<AddCommandConfig> {
-
-	private final BendingPlayerManager bendingPlayerManager;
-	private final ElementManager elementManager;
 
 	private final String playerNotFound;
 	private final String invalidElement;
@@ -46,9 +40,6 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 
 	public AddCommand(final AddCommandConfig config) {
 		super(config, "add", "/bending add <Element/SubElement> [Player]", config.Description, new String[] { "add", "a" });
-
-		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
-		this.elementManager = ModuleManager.getModule(ElementManager.class);
 
 		this.playerNotFound = config.PlayerNotFound;
 		this.invalidElement = config.InvalidElement;
