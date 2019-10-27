@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.ability.loader.AbilityLoader;
+import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 
 import java.lang.annotation.ElementType;

@@ -29,9 +29,12 @@ public class AbilityManager extends Module {
 
 	private final ComboAbilityManager comboAbilityManager;
 	private final MultiAbilityManager multiAbilityManager;
+	private final PassiveAbilityManager passiveAbilityManager;
 
-	private final Set<Ability> abilitySet = new HashSet<>();
-	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> abilityMap = new HashMap<>();
+	private final Map<Class<? extends Ability>, AbilityInfo> abilities = new HashMap<>();
+
+	private final Set<Ability> playerAbilitySet = new HashSet<>();
+	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> playerAbilityMap = new HashMap<>();
 
 	private final Set<String> addonPlugins = new HashSet<>();
 
@@ -40,9 +43,10 @@ public class AbilityManager extends Module {
 
 		this.comboAbilityManager = ModuleManager.getModule(ComboAbilityManager.class);
 		this.multiAbilityManager = ModuleManager.getModule(MultiAbilityManager.class);
+		this.passiveAbilityManager = ModuleManager.getModule(PassiveAbilityManager.class);
 
 		runTimer(() -> {
-			for (Ability ability : abilitySet) {
+			for (Ability ability : playerAbilitySet) {
 				if (ability instanceof PassiveAbility) {
 					if (!((PassiveAbility) ability).isProgressable()) {
 						return;
@@ -100,8 +104,8 @@ public class AbilityManager extends Module {
 	 * located in a Jar file inside of the /ProjectKorra/Abilities/ folder.
 	 */
 	public void registerAbilities() {
-		this.abilitySet.clear();
-		this.abilityMap.clear();
+		this.playerAbilitySet.clear();
+		this.playerAbilityMap.clear();
 
 		registerPluginAbilities("com.projectkorra");
 		registerAddonAbilities("Abilities");
@@ -191,21 +195,26 @@ public class AbilityManager extends Module {
 			}
 
 			this.comboAbilityManager.registerAbility(abilityClass, abilityData, comboAbilityLoader);
+			return;
 		}
 
 		if (abilityLoader instanceof MultiAbilityLoader) {
 			MultiAbilityLoader multiAbilityLoader = (MultiAbilityLoader) abilityLoader;
 
 			this.multiAbilityManager.registerAbility(abilityClass, abilityData, multiAbilityLoader);
+			return;
 		}
 
 		if (abilityLoader instanceof PassiveAbilityLoader) {
 			PassiveAbilityLoader passiveAbilityLoader = (PassiveAbilityLoader) abilityLoader;
 
 			// TODO Set Hidden Ability
-			// TODO Register Passive Ability
-//			PassiveManager.getPassives().put(abilityName, ability???)
+			this.passiveAbilityManager.registerAbility(abilityClass, passiveAbilityLoader);
+			return;
 		}
+
+		AbilityInfo abilityInfo = new AbilityInfo(abilityClass, abilityData, abilityLoader, abilityConfig);
+		this.abilities.put(abilityClass, abilityInfo);
 	}
 
 	private AbilityData getAbilityData(Class<? extends Ability> abilityClass) throws AbilityException {
@@ -249,8 +258,8 @@ public class AbilityManager extends Module {
 			return;
 		}
 
-		this.abilitySet.add(ability);
-		this.abilityMap.computeIfAbsent(ability.getPlayer().getUniqueId(), k -> new HashMap<>())
+		this.playerAbilitySet.add(ability);
+		this.playerAbilityMap.computeIfAbsent(ability.getPlayer().getUniqueId(), k -> new HashMap<>())
 				.computeIfAbsent(ability.getClass(), k -> new LinkedList<>())
 				.add(ability);
 	}
@@ -260,8 +269,8 @@ public class AbilityManager extends Module {
 			return;
 		}
 
-		this.abilitySet.remove(ability);
-		this.abilityMap.values().removeIf(abilityMap ->
+		this.playerAbilitySet.remove(ability);
+		this.playerAbilityMap.values().removeIf(abilityMap ->
 		{
 			abilityMap.values().removeIf(abilityList ->
 			{
@@ -279,11 +288,11 @@ public class AbilityManager extends Module {
 	 * removed.
 	 */
 	public void removeAll() {
-		new HashSet<>(this.abilitySet).forEach(Ability::remove);
+		new HashSet<>(this.playerAbilitySet).forEach(Ability::remove);
 	}
 
 	public <T extends Ability> boolean hasAbility(Player player, Class<T> ability) {
-		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.abilityMap.get(player.getUniqueId());
+		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.playerAbilityMap.get(player.getUniqueId());
 
 		if (abilities == null || !abilities.containsKey(ability)) {
 			return false;
@@ -293,7 +302,7 @@ public class AbilityManager extends Module {
 	}
 
 	public <T extends Ability> T getAbility(Player player, Class<T> ability) {
-		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.abilityMap.get(player.getUniqueId());
+		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.playerAbilityMap.get(player.getUniqueId());
 
 		if (abilities == null || !abilities.containsKey(ability)) {
 			return null;
@@ -303,7 +312,7 @@ public class AbilityManager extends Module {
 	}
 
 	public <T extends Ability> Collection<T> getAbilities(Player player, Class<T> ability) {
-		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.abilityMap.get(player.getUniqueId());
+		Map<Class<? extends Ability>, LinkedList<Ability>> abilities = this.playerAbilityMap.get(player.getUniqueId());
 
 		if (abilities == null || !abilities.containsKey(ability)) {
 			return null;
@@ -315,15 +324,19 @@ public class AbilityManager extends Module {
 	public <T extends Ability> LinkedList<T> getAbilities(Class<T> abilityClass) {
 		LinkedList<T> abilities = new LinkedList<>();
 
-		this.abilityMap.values().forEach(a -> {
+		this.playerAbilityMap.values().forEach(a -> {
 			a.values().forEach(ability -> abilities.add(abilityClass.cast(ability)));
 		});
 
 		return abilities;
 	}
 
+	public List<AbilityInfo> getAbilities() {
+		return new ArrayList<>(this.abilities.values());
+	}
+
 	public List<Ability> getAbilities(Element element) {
-		return this.abilitySet.stream()
+		return this.playerAbilitySet.stream()
 				.filter(ability ->
 				{
 					if (ability.getElement().equals(element)) {

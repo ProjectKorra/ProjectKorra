@@ -19,8 +19,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ComboAbilityManager extends Module {
@@ -29,7 +27,7 @@ public class ComboAbilityManager extends Module {
 	private final AbilityManager abilityManager;
 
 	private final Map<UUID, LinkedList<Combination>> recentlyUsed = new HashMap<>();
-	private final List<ComboAbilityInfo> comboAbilities = new ArrayList<>();
+	private final List<ComboAbilityInfo> abilities = new ArrayList<>();
 
 	private final long combinationMax = 8;
 
@@ -39,13 +37,13 @@ public class ComboAbilityManager extends Module {
 		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
 
-		this.comboAbilities.clear();
+		this.abilities.clear();
 	}
 
 	public void registerAbility(Class<? extends Ability> abilityClass, AbilityData abilityData, ComboAbilityLoader comboAbilityLoader) {
 		ComboAbilityInfo comboAbilityInfo = new ComboAbilityInfo(abilityClass, abilityData.name(), comboAbilityLoader.getCombination());
 
-		this.comboAbilities.add(comboAbilityInfo);
+		this.abilities.add(comboAbilityInfo);
 	}
 
 	private void processComboAbility(Player player, ClickType clickType) {
@@ -75,7 +73,7 @@ public class ComboAbilityManager extends Module {
 	}
 
 	private ComboAbilityInfo getComboAbiblity(LinkedList<Combination> recentlyUsed) {
-		for (ComboAbilityInfo comboAbilityInfo : this.comboAbilities) {
+		for (ComboAbilityInfo comboAbilityInfo : this.abilities) {
 			LinkedList<Combination> abilityCombinations = comboAbilityInfo.combinations;
 
 			int comboSize = abilityCombinations.size();
