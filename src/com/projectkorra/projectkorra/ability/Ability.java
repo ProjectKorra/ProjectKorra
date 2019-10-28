@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Manager;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -9,7 +10,6 @@ import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.AttributePriority;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
-import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
 import com.projectkorra.projectkorra.module.ModuleManager;
@@ -44,7 +44,7 @@ import java.util.jar.JarFile;
  * @see #registerAddonAbilities(String)
  * @see #registerPluginAbilities(JavaPlugin, String)
  */
-public abstract class Ability<Config extends AbilityConfig> {
+public abstract class Ability<Info extends AbilityInfo, Config extends AbilityConfig> {
 
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
 	private static final Map<Class<? extends Ability>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
@@ -486,8 +486,6 @@ public abstract class Ability<Config extends AbilityConfig> {
 	public abstract long getCooldown();
 
 	public abstract String getName();
-
-	public abstract Element getElement();
 
 	public abstract Location getLocation();
 

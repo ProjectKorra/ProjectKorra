@@ -16,14 +16,14 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class AbilityRegistery<T> {
+public class AbilityRegistry<T> {
 
 	private final Plugin plugin;
 	private ClassLoader loader;
 	private JarFile jar;
 	private String path;
 
-	public AbilityRegistery(final JavaPlugin plugin, final String packageBase) {
+	public AbilityRegistry(final JavaPlugin plugin, final String packageBase) {
 		this.plugin = plugin;
 		this.loader = plugin.getClass().getClassLoader();
 		this.path = packageBase.replace('.', '/');

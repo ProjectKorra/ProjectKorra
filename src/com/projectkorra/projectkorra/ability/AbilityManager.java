@@ -3,9 +3,9 @@ package com.projectkorra.projectkorra.ability;
 import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.api.PassiveAbility;
-import com.projectkorra.projectkorra.ability.loader.*;
-import com.projectkorra.projectkorra.ability.util.AbilityRegistery;
-import com.projectkorra.projectkorra.ability.util.AddonAbilityRegistery;
+import com.projectkorra.projectkorra.ability.info.*;
+import com.projectkorra.projectkorra.ability.util.AbilityRegistry;
+import com.projectkorra.projectkorra.ability.util.AddonAbilityRegistry;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import com.projectkorra.projectkorra.element.Element;
@@ -123,17 +123,16 @@ public class AbilityManager extends Module {
 	 * @see #getAbility(String)
 	 */
 	public void registerPluginAbilities(String packageBase) {
-		AbilityRegistery<Ability> abilityRegistery = new AbilityRegistery<>(getPlugin(), packageBase);
-		List<Class<Ability>> loadedAbilities = abilityRegistery.load(Ability.class, Ability.class);
+		AbilityRegistry<Ability> abilityRegistry = new AbilityRegistry<>(getPlugin(), packageBase);
+		List<Class<Ability>> loadedAbilities = abilityRegistry.load(Ability.class, Ability.class);
 
 		String entry = getPlugin().getName() + "::" + packageBase;
 		this.addonPlugins.add(entry);
 
 		for (Class<Ability> abilityClass : loadedAbilities) {
-			AbilityData abilityData = getAbilityData(abilityClass);
-			AbilityLoader abilityLoader = getAbilityLoader(abilityData);
+			AbilityInfo abilityInfo = getAbilityInfo(abilityClass);
 
-			registerAbility(abilityClass, abilityData, abilityLoader);
+			registerAbility(abilityClass, abilityInfo);
 		}
 	}
 
@@ -153,25 +152,24 @@ public class AbilityManager extends Module {
 			return;
 		}
 
-		AddonAbilityRegistery<Ability> abilityRegistery = new AddonAbilityRegistery<>(getPlugin(), file);
+		AddonAbilityRegistry<Ability> abilityRegistery = new AddonAbilityRegistry<>(getPlugin(), file);
 		List<Class<Ability>> loadedAbilities = abilityRegistery.load(Ability.class, Ability.class);
 
 		for (Class<Ability> abilityClass : loadedAbilities) {
-			AbilityData abilityData = getAbilityData(abilityClass);
-			AbilityLoader abilityLoader = getAbilityLoader(abilityData);
+			AbilityInfo abilityInfo = getAbilityInfo(abilityClass);
 
-			if (!(abilityLoader instanceof AddonAbilityLoader)) {
-				throw new AbilityException(abilityClass.getName() + " must have an AddonAbilityLoader");
+			if (!(abilityInfo instanceof AddonAbilityInfo)) {
+				throw new AbilityException(abilityClass.getName() + " must have an AddonAbilityInfo");
 			}
 
-			registerAbility(abilityClass, abilityData, abilityLoader);
+			registerAbility(abilityClass, abilityInfo);
 		}
 	}
 
-	private <T extends Ability> void registerAbility(Class<T> abilityClass, AbilityData abilityData, AbilityLoader abilityLoader) throws AbilityException {
+	private <T extends Ability> void registerAbility(Class<T> abilityClass, AbilityInfo abilityInfo) throws AbilityException {
 		AbilityConfig abilityConfig = getAbilityConfig(abilityClass);
 
-		String abilityName = abilityData.name();
+		String abilityName = abilityInfo.getName();
 
 		if (abilityName == null) {
 			throw new AbilityException("Ability " + abilityClass.getName() + " has no name");
@@ -182,62 +180,51 @@ public class AbilityManager extends Module {
 			return;
 		}
 
-		if (abilityLoader instanceof AddonAbilityLoader) {
-			((AddonAbilityLoader) abilityLoader).load();
+		if (abilityInfo instanceof AddonAbilityInfo) {
+			((AddonAbilityInfo) abilityInfo).load();
 		}
 
-		if (abilityLoader instanceof ComboAbilityLoader) {
-			ComboAbilityLoader comboAbilityLoader = (ComboAbilityLoader) abilityLoader;
+		if (abilityInfo instanceof ComboAbilityInfo) {
+			ComboAbilityInfo comboAbilityInfo = (ComboAbilityInfo) abilityInfo;
 
-			if (comboAbilityLoader.getCombination() == null || comboAbilityLoader.getCombination().size() < 2) {
+			if (comboAbilityInfo.getCombination() == null || comboAbilityInfo.getCombination().size() < 2) {
 				getPlugin().getLogger().info(abilityName + " has no combination");
 				return;
 			}
 
-			this.comboAbilityManager.registerAbility(abilityClass, abilityData, comboAbilityLoader);
+			this.comboAbilityManager.registerAbility(abilityClass, comboAbilityInfo);
 			return;
 		}
 
-		if (abilityLoader instanceof MultiAbilityLoader) {
-			MultiAbilityLoader multiAbilityLoader = (MultiAbilityLoader) abilityLoader;
+		if (abilityInfo instanceof MultiAbilityInfo) {
+			MultiAbilityInfo multiAbilityInfo = (MultiAbilityInfo) abilityInfo;
 
-			this.multiAbilityManager.registerAbility(abilityClass, abilityData, multiAbilityLoader);
+			this.multiAbilityManager.registerAbility(abilityClass, multiAbilityInfo);
 			return;
 		}
 
-		if (abilityLoader instanceof PassiveAbilityLoader) {
-			PassiveAbilityLoader passiveAbilityLoader = (PassiveAbilityLoader) abilityLoader;
+		if (abilityInfo instanceof PassiveAbilityInfo) {
+			PassiveAbilityInfo passiveAbilityInfo = (PassiveAbilityInfo) abilityInfo;
 
 			// TODO Set Hidden Ability
-			this.passiveAbilityManager.registerAbility(abilityClass, passiveAbilityLoader);
+			this.passiveAbilityManager.registerAbility(abilityClass, passiveAbilityInfo);
 			return;
 		}
 
-		AbilityInfo abilityInfo = new AbilityInfo(abilityClass, abilityData, abilityLoader, abilityConfig);
-		this.abilities.put(abilityData.name(), abilityInfo);
+		this.abilities.put(abilityInfo.getName(), abilityInfo);
 	}
 
-	private AbilityData getAbilityData(Class<? extends Ability> abilityClass) throws AbilityException {
-		AbilityData abilityData = abilityClass.getDeclaredAnnotation(AbilityData.class);
-
-		if (abilityData == null) {
-			throw new AbilityException("Ability " + abilityClass.getName() + " has missing AbilityData annotation");
-		}
-
-		return abilityData;
-	}
-
-	private AbilityLoader getAbilityLoader(AbilityData abilityData) throws AbilityException {
+	protected AbilityInfo getAbilityInfo(Class<? extends Ability> abilityClass) throws AbilityException {
 		try {
-			return abilityData.abilityLoader().newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			return ((Class<? extends AbilityInfo>) ((ParameterizedType) abilityClass.getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
+		} catch (Exception e) {
 			throw new AbilityException(e);
 		}
 	}
 
 	private AbilityConfig getAbilityConfig(Class<? extends Ability> abilityClass) throws AbilityException {
 		try {
-			return ConfigManager.getConfig(((Class<? extends AbilityConfig>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
+			return ConfigManager.getConfig(((Class<? extends AbilityConfig>) ((ParameterizedType) abilityClass.getGenericSuperclass()).getActualTypeArguments()[1]));
 		} catch (Exception e) {
 			throw new AbilityException(e);
 		}
@@ -339,8 +326,8 @@ public class AbilityManager extends Module {
 		return new ArrayList<>(this.abilities.values());
 	}
 
-	public List<Ability> getAbilities(Element element) {
-		return this.playerAbilitySet.stream()
+	public List<AbilityInfo> getAbilities(Element element) {
+		return this.abilities.values().stream()
 				.filter(ability ->
 				{
 					if (ability.getElement().equals(element)) {

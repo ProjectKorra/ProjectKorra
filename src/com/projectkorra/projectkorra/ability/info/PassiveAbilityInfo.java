@@ -1,6 +1,6 @@
-package com.projectkorra.projectkorra.ability.loader;
+package com.projectkorra.projectkorra.ability.info;
 
-public abstract class PassiveAbilityLoader extends AbilityLoader {
+public interface PassiveAbilityInfo extends AbilityInfo {
 
 	/**
 	 * This is a check to see if the passive requires some form of activation,
@@ -9,13 +9,12 @@ public abstract class PassiveAbilityLoader extends AbilityLoader {
 	 *
 	 * @return false if this passive should always be on
 	 */
-	public abstract boolean isInstantiable();
+	boolean isInstantiable();
 
 	/**
 	 * This is used if the passive should progress
 	 *
 	 * @return false if progress() shouldn't be called;
 	 */
-	public abstract boolean isProgressable();
-
+	boolean isProgressable();
 }

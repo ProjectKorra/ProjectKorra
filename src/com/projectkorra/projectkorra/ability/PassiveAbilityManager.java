@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.ability.loader.PassiveAbilityLoader;
+import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.module.Module;
@@ -19,7 +19,7 @@ public class PassiveAbilityManager extends Module {
 	private final BendingPlayerManager bendingPlayerManager;
 	private final AbilityManager abilityManager;
 
-	private final Map<Class<? extends Ability>, PassiveAbilityLoader> abilities = new HashMap<>();
+	private final Map<Class<? extends Ability>, PassiveAbilityInfo> abilities = new HashMap<>();
 
 	private PassiveAbilityManager() {
 		super("Passive Ability");
@@ -28,12 +28,12 @@ public class PassiveAbilityManager extends Module {
 		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
 	}
 
-	public void registerAbility(Class<? extends Ability> abilityClass, PassiveAbilityLoader passiveAbilityLoader) {
-		this.abilities.put(abilityClass, passiveAbilityLoader);
+	public void registerAbility(Class<? extends Ability> abilityClass, PassiveAbilityInfo passiveAbilityInfo) {
+		this.abilities.put(abilityClass, passiveAbilityInfo);
 	}
 
 	public void registerPassives(Player player) {
-		this.abilities.forEach((abilityClass, passiveAbilityLoader) -> {
+		this.abilities.forEach((abilityClass, passiveAbilityInfo) -> {
 			if (!canUsePassive(player, abilityClass)) {
 				return;
 			}
@@ -42,7 +42,7 @@ public class PassiveAbilityManager extends Module {
 				return;
 			}
 
-			if (!passiveAbilityLoader.isInstantiable()) {
+			if (!passiveAbilityInfo.isInstantiable()) {
 				return;
 			}
 
@@ -53,13 +53,13 @@ public class PassiveAbilityManager extends Module {
 
 	public boolean canUsePassive(Player player, Class<? extends Ability> abilityClass) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
-		PassiveAbilityLoader passiveAbilityLoader = this.abilities.get(abilityClass);
+		PassiveAbilityInfo passiveAbilityInfo = this.abilities.get(abilityClass);
 
-		if (passiveAbilityLoader == null) {
+		if (passiveAbilityInfo == null) {
 			return false;
 		}
 
-		Element element = passiveAbilityLoader.getElement();
+		Element element = passiveAbilityInfo.getElement();
 
 		if (element instanceof SubElement) {
 			element = ((SubElement) element).getParent();
@@ -80,7 +80,7 @@ public class PassiveAbilityManager extends Module {
 		return true;
 	}
 
-	public PassiveAbilityLoader getPassiveAbility(Class<? extends Ability> abilityClass) {
+	public PassiveAbilityInfo getPassiveAbility(Class<? extends Ability> abilityClass) {
 		return this.abilities.get(abilityClass);
 	}
 

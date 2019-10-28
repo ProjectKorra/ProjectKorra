@@ -1,7 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.ability.api.PlayerBindAbilityEvent;
-import com.projectkorra.projectkorra.ability.loader.MultiAbilityLoader;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.info.MultiAbilityInfo;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.PlayerSwingEvent;
 import com.projectkorra.projectkorra.module.Module;
@@ -13,11 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class MultiAbilityManager extends Module {
 
@@ -25,6 +22,7 @@ public class MultiAbilityManager extends Module {
 	private final AbilityManager abilityManager;
 
 	private final Map<String, MultiAbility> abilities = new HashMap<>();
+	private final Map<String, Class<? extends Ability>> multiAbilities = new HashMap<>();
 
 	private final Map<UUID, Class<? extends Ability>> playerMultiAbility = new HashMap<>();
 	private final Map<UUID, List<String>> playerAbilities = new HashMap<>();
@@ -36,17 +34,21 @@ public class MultiAbilityManager extends Module {
 		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
 	}
 
-	public void registerAbility(Class<? extends Ability> abilityClass, AbilityData abilityData, MultiAbilityLoader multiAbilityLoader) {
-		List<String> abilities = multiAbilityLoader.getAbilities().stream()
-				.map(ability -> ability.getDeclaredAnnotation(AbilityData.class))
-				.map(AbilityData::name)
-				.collect(Collectors.toList());
+	public void registerAbility(Class<? extends Ability> abilityClass, MultiAbilityInfo multiAbilityInfo) {
+		List<Class<? extends Ability>> abilities = multiAbilityInfo.getAbilities();
 
-		// TODO Exception handling for multi abilities with missing AbilityData annotations
+		Map<String, Class<? extends Ability>> abilitiesByName = new HashMap<>();
 
-		MultiAbility multiAbility = new MultiAbility(abilityClass, abilityData.name(), abilities);
+		for (Class<? extends Ability> ability : abilities) {
+			AbilityInfo info = this.abilityManager.getAbilityInfo(ability);
 
-		this.abilities.put(abilityData.name(), multiAbility);
+			abilitiesByName.put(info.getName(), ability);
+		}
+
+		MultiAbility multiAbility = new MultiAbility(abilityClass, multiAbilityInfo.getName(), abilitiesByName.keySet());
+
+		this.abilities.put(multiAbilityInfo.getName(), multiAbility);
+		this.multiAbilities.putAll(abilitiesByName);
 	}
 
 	@EventHandler
@@ -72,6 +74,20 @@ public class MultiAbilityManager extends Module {
 
 		bendingPlayer.setAbilities(abilities);
 		player.getInventory().setHeldItemSlot(0);
+	}
+
+	@EventHandler
+	public void onMultiAbilitySwing(PlayerSwingEvent event) {
+		Player player = event.getPlayer();
+
+		String abilityName = event.getAbilityName();
+		Class<? extends Ability> abilityClass = this.multiAbilities.get(abilityName);
+
+		if (abilityClass == null) {
+			return;
+		}
+
+		Ability ability = this.abilityManager.createAbility(player, abilityClass);
 	}
 
 	@EventHandler
@@ -124,9 +140,9 @@ public class MultiAbilityManager extends Module {
 	public class MultiAbility {
 		private final Class<? extends Ability> abilityClass;
 		private final String abilityName;
-		private final List<String> abilities;
+		private final Set<String> abilities;
 
-		MultiAbility(Class<? extends Ability> abilityClass, String abilityName, List<String> abilities) {
+		MultiAbility(Class<? extends Ability> abilityClass, String abilityName, Set<String> abilities) {
 			this.abilityClass = abilityClass;
 			this.abilityName = abilityName;
 			this.abilities = abilities;

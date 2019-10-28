@@ -17,14 +17,14 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-public class AddonAbilityRegistery<T> {
+public class AddonAbilityRegistry<T> {
 
 	private final Plugin plugin;
 	private final File directory;
 	private final ArrayList<File> files;
 	private ClassLoader loader;
 
-	public AddonAbilityRegistery(final Plugin plugin, final File directory) {
+	public AddonAbilityRegistry(final Plugin plugin, final File directory) {
 		this.plugin = plugin;
 		this.directory = directory;
 		this.files = new ArrayList<File>();

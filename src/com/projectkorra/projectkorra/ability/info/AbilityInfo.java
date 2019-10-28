@@ -1,17 +1,10 @@
-package com.projectkorra.projectkorra.ability;
+package com.projectkorra.projectkorra.ability.info;
 
-import com.projectkorra.projectkorra.ability.loader.AbilityLoader;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface AbilityData {
+public interface AbilityInfo {
 
 	/**
 	 * The name of the ability is used for commands such as <b>/bending
@@ -25,25 +18,28 @@ public @interface AbilityData {
 	 *
 	 * @return Returns the name of the ability
 	 */
-	String name();
+	String getName();
 
-	/**
-	 * @return The class used to register this ability.
-	 */
-	Class<? extends AbilityLoader> abilityLoader();
+	Element getElement();
 
 	/**
 	 * @return true if this is a hidden ability.
 	 */
-	boolean hidden() default false;
+	default boolean isHidden() {
+		return false;
+	}
 
 	/**
 	 * @return the name of the author of this AddonAbility
 	 */
-	String author() default "ProjectKorra";
+	default String getAuthor() {
+		return "ProjectKorra";
+	}
 
 	/**
 	 * @return The version of the ability as a String.
 	 */
-	String version() default "1.0";
+	default String getVersion() {
+		return "1.0";
+	}
 }

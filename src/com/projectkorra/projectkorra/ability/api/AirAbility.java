@@ -3,12 +3,12 @@ package com.projectkorra.projectkorra.ability.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirSpout;
@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 import com.projectkorra.projectkorra.configuration.configs.properties.AirPropertiesConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public abstract class AirAbility<C extends AbilityConfig> extends ElementalAbility<C> {
+public abstract class AirAbility<Info extends AbilityInfo, C extends AbilityConfig> extends ElementalAbility<Info, C> {
 	
 	public AirAbility(final C config, final Player player) {
 		super(config, player);
@@ -32,11 +32,6 @@ public abstract class AirAbility<C extends AbilityConfig> extends ElementalAbili
 	@Override
 	public boolean isExplosiveAbility() {
 		return false;
-	}
-
-	@Override
-	public Element getElement() {
-		return Element.AIR;
 	}
 
 	@Override

@@ -1,14 +1,13 @@
 package com.projectkorra.projectkorra.airbending.passive;
 
+import com.projectkorra.projectkorra.ability.api.AirAbility;
+import com.projectkorra.projectkorra.airbending.util.AirPassiveAbilityInfo;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSaturationConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.ability.api.AirAbility;
-import com.projectkorra.projectkorra.ability.api.PassiveAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.configuration.configs.abilities.air.AirSaturationConfig;
-
-public class AirSaturation extends AirAbility<AirSaturationConfig> implements PassiveAbility {
+public class AirSaturation extends AirAbility<AirSaturationInfo, AirSaturationConfig> {
 	public AirSaturation(final AirSaturationConfig config, final Player player) {
 		super(config, player);
 	}
@@ -46,6 +45,19 @@ public class AirSaturation extends AirAbility<AirSaturationConfig> implements Pa
 	}
 
 	@Override
+	public Class<AirSaturationConfig> getConfigType() {
+		return AirSaturationConfig.class;
+	}
+}
+
+class AirSaturationInfo extends AirPassiveAbilityInfo {
+
+	@Override
+	public String getName() {
+		return "AirSaturation";
+	}
+
+	@Override
 	public boolean isInstantiable() {
 		return false;
 	}
@@ -53,10 +65,5 @@ public class AirSaturation extends AirAbility<AirSaturationConfig> implements Pa
 	@Override
 	public boolean isProgressable() {
 		return false;
-	}
-	
-	@Override
-	public Class<AirSaturationConfig> getConfigType() {
-		return AirSaturationConfig.class;
 	}
 }

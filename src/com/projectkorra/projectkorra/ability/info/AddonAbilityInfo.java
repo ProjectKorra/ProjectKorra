@@ -1,14 +1,14 @@
-package com.projectkorra.projectkorra.ability.loader;
+package com.projectkorra.projectkorra.ability.info;
 
 import com.projectkorra.projectkorra.ability.AbilityManager;
 
-public abstract class AddonAbilityLoader extends AbilityLoader {
+public interface AddonAbilityInfo extends AbilityInfo {
 
 	/**
 	 * Called when the ability is loaded by PK. This is where the developer
 	 * registers Listeners and Permissions.
 	 */
-	public abstract void load();
+	void load();
 
 	/**
 	 * Called whenever ProjectKorra stops and the ability is unloaded. This
@@ -16,5 +16,5 @@ public abstract class AddonAbilityLoader extends AbilityLoader {
 	 * Any CoreAbility instances do not need to be cleaned up by stop method, as
 	 * they will be cleaned up by {@link AbilityManager#removeAll()}.
 	 */
-	public abstract void stop();
+	void stop();
 }
