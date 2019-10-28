@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.ability.api;
 
+import com.projectkorra.projectkorra.ability.Ability;
+
 public interface SubAbility {
 
 	/**

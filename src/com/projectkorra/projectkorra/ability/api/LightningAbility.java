@@ -1,24 +1,18 @@
 package com.projectkorra.projectkorra.ability.api;
 
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+public abstract class LightningAbility<Info extends AbilityInfo, C extends AbilityConfig> extends FireAbility<Info, C> implements SubAbility {
 
-public abstract class LightningAbility<C extends AbilityConfig> extends FireAbility<C> implements SubAbility {
-
-	public LightningAbility(final C config, final Player player) {
-		super(config, player);
+	public LightningAbility(final Player player) {
+		super(player);
 	}
 
 	@Override
 	public Class<? extends Ability> getParentAbility() {
 		return FireAbility.class;
 	}
-
-	@Override
-	public Element getElement() {
-		return Element.LIGHTNING;
-	}
-
 }

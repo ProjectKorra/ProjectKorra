@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.ability;
 
 import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.ability.info.*;
 import com.projectkorra.projectkorra.ability.util.AbilityRegistry;
 import com.projectkorra.projectkorra.ability.util.AddonAbilityRegistry;
@@ -32,6 +31,7 @@ public class AbilityManager extends Module {
 	private final PassiveAbilityManager passiveAbilityManager;
 
 	private final Map<String, AbilityInfo> abilities = new HashMap<>();
+	private final Map<Class<? extends Ability>, AbilityInfo> abilityInfoMap = new HashMap<>();
 
 	private final Set<Ability> playerAbilitySet = new HashSet<>();
 	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> playerAbilityMap = new HashMap<>();
@@ -47,8 +47,8 @@ public class AbilityManager extends Module {
 
 		runTimer(() -> {
 			for (Ability ability : playerAbilitySet) {
-				if (ability instanceof PassiveAbility) {
-					if (!((PassiveAbility) ability).isProgressable()) {
+				if (ability.getInfo() instanceof PassiveAbilityInfo) {
+					if (!((PassiveAbilityInfo) ability).isProgressable()) {
 						return;
 					}
 
@@ -119,7 +119,7 @@ public class AbilityManager extends Module {
 	 * @param plugin a JavaPlugin containing Ability class files
 	 * @param packageBase a prefix of the package name, used to increase
 	 *            performance
-	 * @see #getAbilities()
+	 * @see #getAllAbilityInfo()
 	 * @see #getAbility(String)
 	 */
 	public void registerPluginAbilities(String packageBase) {
@@ -141,7 +141,7 @@ public class AbilityManager extends Module {
 	 * all of the Ability class files that were found.
 	 *
 	 * @param folder the name of the folder to scan
-	 * @see #getAbilities()
+	 * @see #getAllAbilityInfo()
 	 * @see #getAbility(String)
 	 */
 	public void registerAddonAbilities(String folder) {
@@ -212,14 +212,6 @@ public class AbilityManager extends Module {
 		}
 
 		this.abilities.put(abilityInfo.getName(), abilityInfo);
-	}
-
-	protected AbilityInfo getAbilityInfo(Class<? extends Ability> abilityClass) throws AbilityException {
-		try {
-			return ((Class<? extends AbilityInfo>) ((ParameterizedType) abilityClass.getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
-		} catch (Exception e) {
-			throw new AbilityException(e);
-		}
 	}
 
 	private AbilityConfig getAbilityConfig(Class<? extends Ability> abilityClass) throws AbilityException {
@@ -308,6 +300,26 @@ public class AbilityManager extends Module {
 		return abilities.get(abilities).stream().map(ability::cast).collect(Collectors.toList());
 	}
 
+	public AbilityInfo getAbilityInfo(String abilityName) {
+		return this.abilities.get(abilityName);
+	}
+
+	public AbilityInfo getAbilityInfo(Class<? extends Ability> abilityClass) {
+		return this.abilityInfoMap.computeIfAbsent(abilityClass, k ->
+		{
+			try {
+				return ((Class<? extends AbilityInfo>) ((ParameterizedType) abilityClass.getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+	}
+
+	public List<AbilityInfo> getAbilityInfo() {
+		return new ArrayList<>(this.abilities.values());
+	}
+
 	public <T extends Ability> LinkedList<T> getAbilities(Class<T> abilityClass) {
 		LinkedList<T> abilities = new LinkedList<>();
 
@@ -318,12 +330,8 @@ public class AbilityManager extends Module {
 		return abilities;
 	}
 
-	public AbilityInfo getAbilityInfo(String abilityName) {
-		return this.abilities.get(abilityName);
-	}
-
-	public List<AbilityInfo> getAbilities() {
-		return new ArrayList<>(this.abilities.values());
+	public List<Ability> getAbilities() {
+		return new ArrayList<>(this.playerAbilitySet);
 	}
 
 	public List<AbilityInfo> getAbilities(Element element) {

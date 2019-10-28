@@ -20,8 +20,8 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public abstract class AirAbility<Info extends AbilityInfo, C extends AbilityConfig> extends ElementalAbility<Info, C> {
 	
-	public AirAbility(final C config, final Player player) {
-		super(config, player);
+	public AirAbility(final Player player) {
+		super(player);
 	}
 
 	@Override

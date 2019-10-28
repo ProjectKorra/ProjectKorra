@@ -1,19 +1,16 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityManager;
+import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
+import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
+import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.api.PassiveAbility;
-import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
+import java.util.*;
 
 /**
  * A CollisionManager is used to monitor possible collisions between all
@@ -24,9 +21,9 @@ import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
  * ProjectKorra.getCollisionInitializer().addCollision(myCoreAbility)
  * ProjectKorra.getCollisionInitializer().addSmallAbility(myCoreAbility)
  * <p>
- * For a CoreAbility to collide properly, the {@link CoreAbility#isCollidable()}
- * , {@link CoreAbility#getCollisionRadius()},
- * {@link CoreAbility#getLocations()}, and {@link CoreAbility#handleCollision()}
+ * For a CoreAbility to collide properly, the {@link Ability#isCollidable()}
+ * , {@link Ability#getCollisionRadius()},
+ * {@link Ability#getLocations()}, and {@link Ability#handleCollision()}
  * should be overridden if necessary.
  * <p>
  * During a Collision the {@link AbilityCollisionEvent} is called, then if not
@@ -35,6 +32,8 @@ import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class CollisionManager {
+
+	private final AbilityManager abilityManager = ModuleManager.getModule(AbilityManager.class);
 
 	/*
 	 * If true an ability instance can remove multiple other instances on a
@@ -70,8 +69,8 @@ public class CollisionManager {
 	private void detectCollisions() {
 		int activeInstanceCount = 0;
 
-		for (final CoreAbility ability : CoreAbility.getAbilitiesByInstances()) {
-			if (!(ability instanceof PassiveAbility)) {
+		for (final Ability ability : this.abilityManager.getAbilities()) {
+			if (!(ability.getInfo() instanceof PassiveAbilityInfo)) {
 				if (++activeInstanceCount > 1) {
 					break;
 				}
@@ -82,21 +81,21 @@ public class CollisionManager {
 			return;
 		}
 
-		final HashMap<CoreAbility, List<Location>> locationsCache = new HashMap<>();
+		final HashMap<Ability, List<Location>> locationsCache = new HashMap<>();
 
 		for (final Collision collision : this.collisions) {
-			final Collection<? extends CoreAbility> instancesFirst = CoreAbility.getAbilities(collision.getAbilityFirst().getClass());
+			final Collection<? extends Ability> instancesFirst = this.abilityManager.getAbilities(collision.getAbilityFirst().getClass());
 			if (instancesFirst.isEmpty()) {
 				continue;
 			}
-			final Collection<? extends CoreAbility> instancesSecond = CoreAbility.getAbilities(collision.getAbilitySecond().getClass());
+			final Collection<? extends Ability> instancesSecond = this.abilityManager.getAbilities(collision.getAbilitySecond().getClass());
 			if (instancesSecond.isEmpty()) {
 				continue;
 			}
-			final HashSet<CoreAbility> alreadyCollided = new HashSet<CoreAbility>();
+			final HashSet<Ability> alreadyCollided = new HashSet<>();
 			final double certainNoCollisionDistSquared = Math.pow(this.certainNoCollisionDistance, 2);
 
-			for (final CoreAbility abilityFirst : instancesFirst) {
+			for (final Ability abilityFirst : instancesFirst) {
 				if (abilityFirst.getPlayer() == null || alreadyCollided.contains(abilityFirst) || !abilityFirst.isCollidable()) {
 					continue;
 				}
@@ -109,7 +108,7 @@ public class CollisionManager {
 					continue;
 				}
 
-				for (final CoreAbility abilitySecond : instancesSecond) {
+				for (final Ability abilitySecond : instancesSecond) {
 					if (abilitySecond.getPlayer() == null || alreadyCollided.contains(abilitySecond) || !abilitySecond.isCollidable()) {
 						continue;
 					} else if (abilityFirst.getPlayer().equals(abilitySecond.getPlayer())) {

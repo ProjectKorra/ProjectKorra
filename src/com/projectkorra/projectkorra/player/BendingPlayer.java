@@ -2,13 +2,12 @@ package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.AbilityInfo;
 import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.PassiveAbilityManager;
 import com.projectkorra.projectkorra.ability.api.ChiAbility;
 import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
-import com.projectkorra.projectkorra.ability.loader.AbilityLoader;
-import com.projectkorra.projectkorra.ability.loader.AvatarAbilityLoader;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.info.AvatarAbilityInfo;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.ElementManager;
@@ -166,10 +165,9 @@ public class BendingPlayer {
 			return false;
 		}
 
-		AbilityLoader abilityLoader = abilityInfo.getLoader();
 		Element element = abilityInfo.getElement();
 
-		if (!hasElement(element) && !(abilityLoader instanceof AvatarAbilityLoader && !((AvatarAbilityLoader) abilityLoader).requireAvatar())) {
+		if (!hasElement(element) && !(abilityInfo instanceof AvatarAbilityInfo && !((AvatarAbilityInfo) abilityInfo).requireAvatar())) {
 			return false;
 		}
 

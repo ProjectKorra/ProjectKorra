@@ -52,6 +52,7 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 	private static int idCounter;
 
 	protected final AbilityManager manager = ModuleManager.getModule(AbilityManager.class);
+	protected final Info info = (Info) this.manager.getAbilityInfo(getClass());
 	protected final Config config = ConfigManager.getConfig(((Class<Config>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
 
 	protected Player player;
@@ -101,7 +102,7 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 	 * @param player the non-null player that created this instance
 	 * @see #start()
 	 */
-	public Ability(final Config config, final Player player) {
+	public Ability(final Player player) {
 		this();
 
 		if (player == null) {
@@ -205,6 +206,10 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 
 	public int getId() {
 		return this.id;
+	}
+
+	public Info getInfo() {
+		return this.info;
 	}
 	
 	public abstract Class<Config> getConfigType();

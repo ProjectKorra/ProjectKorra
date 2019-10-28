@@ -1,14 +1,13 @@
 package com.projectkorra.projectkorra.ability.api;
 
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+public abstract class ChiAbility<Info extends AbilityInfo, C extends AbilityConfig> extends ElementalAbility<Info, C> {
 
-public abstract class ChiAbility<C extends AbilityConfig> extends ElementalAbility<C> {
-
-	public ChiAbility(final C config, final Player player) {
-		super(config, player);
+	public ChiAbility(final Player player) {
+		super(player);
 	}
 
 	@Override
@@ -20,10 +19,4 @@ public abstract class ChiAbility<C extends AbilityConfig> extends ElementalAbili
 	public boolean isExplosiveAbility() {
 		return false;
 	}
-
-	@Override
-	public Element getElement() {
-		return Element.CHI;
-	}
-
 }

@@ -1,10 +1,19 @@
 package com.projectkorra.projectkorra.ability.api;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
+import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,30 +26,20 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
-import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
-import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.Information;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class EarthAbility<C extends AbilityConfig> extends ElementalAbility<C> {
+public abstract class EarthAbility<Info extends AbilityInfo, C extends AbilityConfig> extends ElementalAbility<Info, C> {
 	
 	private static final HashSet<Block> PREVENT_EARTHBENDING = new HashSet<Block>();
 	private static final Map<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
 	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
 
-	public EarthAbility(final C config, final Player player) {
-		super(config, player);
+	public EarthAbility(final Player player) {
+		super(player);
 	}
 
 	public int getEarthbendableBlocksLength(final Block block, Vector direction, final int maxlength) {
@@ -57,11 +56,6 @@ public abstract class EarthAbility<C extends AbilityConfig> extends ElementalAbi
 
 	public Block getEarthSourceBlock(final double range) {
 		return getEarthSourceBlock(this.player, this.getName(), range);
-	}
-
-	@Override
-	public Element getElement() {
-		return Element.EARTH;
 	}
 
 	public Block getLavaSourceBlock(final double range) {

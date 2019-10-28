@@ -1,21 +1,8 @@
 package com.projectkorra.projectkorra.ability.api;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Tag;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
@@ -30,16 +17,23 @@ import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
-public abstract class WaterAbility<C extends AbilityConfig> extends ElementalAbility<C> {
+import java.util.HashSet;
+import java.util.Set;
 
-	public WaterAbility(final C config, final Player player) {
-		super(config, player);
-	}
+public abstract class WaterAbility<Info extends AbilityInfo, C extends AbilityConfig> extends ElementalAbility<Info, C> {
 
-	@Override
-	public Element getElement() {
-		return Element.WATER;
+	public WaterAbility(final Player player) {
+		super(player);
 	}
 
 	public Block getIceSourceBlock(final double range) {

@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AbilityInfo;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
 import com.projectkorra.projectkorra.element.Element;
@@ -154,7 +154,7 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 
 		Set<String> abilitySet = new HashSet<>();
 
-		for (AbilityInfo abilityInfo : this.abilityManager.getAbilities()) {
+		for (AbilityInfo abilityInfo : this.abilityManager.getAbilityInfo()) {
 			// if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil) && !(coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility) && !abilities.contains(coreAbil.getName())) {
 
 			if (bendingPlayer.canBind(abilityInfo)) {

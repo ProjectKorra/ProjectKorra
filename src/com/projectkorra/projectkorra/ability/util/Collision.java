@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.ability.util;
 
+import com.projectkorra.projectkorra.ability.Ability;
 import org.bukkit.Location;
-
-import com.projectkorra.projectkorra.ability.CoreAbility;
 
 /**
  * A Collision is used to represent the collision between two CoreAbility
@@ -16,14 +15,14 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
  */
 @SuppressWarnings("rawtypes")
 public class Collision {
-	private CoreAbility abilityFirst;
-	private CoreAbility abilitySecond;
+	private Ability abilityFirst;
+	private Ability abilitySecond;
 	private boolean removingFirst;
 	private boolean removingSecond;
 	private Location locationFirst;
 	private Location locationSecond;
 
-	public Collision(final CoreAbility abilityFirst, final CoreAbility abilitySecond, final boolean removingFirst, final boolean removingSecond, final Location locationFirst, final Location locationSecond) {
+	public Collision(final Ability abilityFirst, final Ability abilitySecond, final boolean removingFirst, final boolean removingSecond, final Location locationFirst, final Location locationSecond) {
 		if (abilityFirst == null || abilitySecond == null) {
 			return;
 		}
@@ -36,23 +35,23 @@ public class Collision {
 		this.locationSecond = locationSecond;
 	}
 
-	public Collision(final CoreAbility abilityFirst, final CoreAbility abilitySecond, final boolean removingFirst, final boolean removingSecond) {
+	public Collision(final Ability abilityFirst, final Ability abilitySecond, final boolean removingFirst, final boolean removingSecond) {
 		this(abilityFirst, abilitySecond, removingFirst, removingSecond, null, null);
 	}
 
-	public CoreAbility getAbilityFirst() {
+	public Ability getAbilityFirst() {
 		return this.abilityFirst;
 	}
 
-	public void setAbilityFirst(final CoreAbility abilityFirst) {
+	public void setAbilityFirst(final Ability abilityFirst) {
 		this.abilityFirst = abilityFirst;
 	}
 
-	public CoreAbility getAbilitySecond() {
+	public Ability getAbilitySecond() {
 		return this.abilitySecond;
 	}
 
-	public void setAbilitySecond(final CoreAbility abilitySecond) {
+	public void setAbilitySecond(final Ability abilitySecond) {
 		this.abilitySecond = abilitySecond;
 	}
 

@@ -1,21 +1,7 @@
 package com.projectkorra.projectkorra.ability.api;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
@@ -23,13 +9,22 @@ import com.projectkorra.projectkorra.configuration.configs.properties.FireProper
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-public abstract class FireAbility<C extends AbilityConfig> extends ElementalAbility<C> {
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public abstract class FireAbility<Info extends AbilityInfo, C extends AbilityConfig> extends ElementalAbility<Info, C> {
 
 	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
 
-	public FireAbility(final C config, final Player player) {
-		super(config, player);
+	public FireAbility(final Player player) {
+		super(player);
 	}
 
 	@Override
@@ -40,11 +35,6 @@ public abstract class FireAbility<C extends AbilityConfig> extends ElementalAbil
 	@Override
 	public boolean isExplosiveAbility() {
 		return true;
-	}
-
-	@Override
-	public Element getElement() {
-		return Element.FIRE;
 	}
 
 	@Override

@@ -42,8 +42,8 @@ public abstract class ElementalAbility<Info extends AbilityInfo, C extends Abili
 		}
 	}
 
-	public ElementalAbility(final C config, final Player player) {
-		super(config, player);
+	public ElementalAbility(Player player) {
+		super(player);
 	}
 
 	public boolean isTransparent(final Block block) {
