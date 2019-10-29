@@ -11,8 +11,8 @@ import java.util.UUID;
 public class BendingPlayerRepository extends DatabaseRepository {
 
 	private static final DatabaseQuery CREATE_TABLE_BENDING_PLAYERS = DatabaseQuery.newBuilder()
-			.mysql("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTO_INCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_removed BOOLEAN, INDEX uuid_index (uuid));")
-			.sqlite("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTOINCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_removed BOOLEAN); CREATE INDEX uuid_index ON pk_bending_players (uuid);")
+			.mysql("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTO_INCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_permanently_removed BOOLEAN, INDEX uuid_index (uuid));")
+			.sqlite("CREATE TABLE IF NOT EXISTS pk_bending_players (player_id INTEGER PRIMARY KEY AUTOINCREMENT, uuid BINARY(16) NOT NULL, player_name VARCHAR(16) NOT NULL, first_login BIGINT NOT NULL, bending_permanently_removed BOOLEAN); CREATE INDEX uuid_index ON pk_bending_players (uuid);")
 			.build();
 
 	private static final DatabaseQuery SELECT_BENDING_PLAYER = DatabaseQuery.newBuilder()
@@ -27,8 +27,8 @@ public class BendingPlayerRepository extends DatabaseRepository {
 			.query("UPDATE pk_bending_players SET player_name = ? WHERE player_id = ?;")
 			.build();
 
-	private static final DatabaseQuery UPDATE_BENDING_REMOVED = DatabaseQuery.newBuilder()
-			.query("UPDATE pk_bending_players SET bending_removed = ? WHERE player_id = ?;")
+	private static final DatabaseQuery UPDATE_BENDING_PERMANENTLY_REMOVED = DatabaseQuery.newBuilder()
+			.query("UPDATE pk_bending_players SET bending_permanently_removed = ? WHERE player_id = ?;")
 			.build();
 
 	protected void createTables() throws SQLException {
@@ -56,7 +56,7 @@ public class BendingPlayerRepository extends DatabaseRepository {
 				int playerId = rs.getInt("player_id");
 				String playerName = rs.getString("player_name");
 				long firstLogin = rs.getLong("first_login");
-				boolean bendingRemoved = rs.getBoolean("bending_removed");
+				boolean bendingPermanentlyRemoved = rs.getBoolean("bending_permanently_removed");
 
 				if (!player.getName().equals(playerName)) {
 					updatePlayerName(playerId, player.getName());
@@ -64,7 +64,7 @@ public class BendingPlayerRepository extends DatabaseRepository {
 
 				BendingPlayer bendingPlayer = new BendingPlayer(playerId, uuid, playerName, firstLogin);
 
-				bendingPlayer.setBendingRemoved(bendingRemoved);
+				bendingPlayer.setBendingPermanentlyRemoved(bendingPermanentlyRemoved);
 
 				return bendingPlayer;
 			}
@@ -108,9 +108,9 @@ public class BendingPlayerRepository extends DatabaseRepository {
 	protected void updateBendingRemoved(BendingPlayer bendingPlayer) throws SQLException {
 		Connection connection = getDatabase().getConnection();
 
-		try (PreparedStatement statement = connection.prepareStatement(UPDATE_BENDING_REMOVED.getQuery())) {
+		try (PreparedStatement statement = connection.prepareStatement(UPDATE_BENDING_PERMANENTLY_REMOVED.getQuery())) {
 			statement.setInt(1, bendingPlayer.getId());
-			statement.setBoolean(2, bendingPlayer.isBendingRemoved());
+			statement.setBoolean(2, bendingPlayer.isBendingPermanentlyRemoved());
 
 			statement.executeUpdate();
 		}

@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.ability.api.PlayerBindAbilityEvent;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.api.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.info.MultiAbilityInfo;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
@@ -128,13 +129,13 @@ public class MultiAbilityManager extends Module {
 	}
 
 	@EventHandler
-	public void onPlayerBindAbility(PlayerBindAbilityEvent event) {
+	public void onPlayerBindAbility(PlayerBindChangeEvent event) {
 		if (!this.playerAbilities.containsKey(event.getPlayer().getUniqueId())) {
 			return;
 		}
 
 		event.setCancelled(true);
-		event.setCancelMessage(ChatColor.RED + "You can't edit your binds right now!");
+		GeneralMethods.sendBrandingMessage(event.getPlayer(), ChatColor.RED + "You can't edit your binds right now!");
 	}
 
 	public class MultiAbility {

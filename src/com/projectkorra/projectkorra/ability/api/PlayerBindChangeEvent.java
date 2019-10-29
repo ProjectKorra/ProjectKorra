@@ -5,25 +5,40 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-public class PlayerBindAbilityEvent extends PlayerEvent implements Cancellable
+public class PlayerBindChangeEvent extends PlayerEvent implements Cancellable
 {
 	private static final HandlerList HANDLER_LIST = new HandlerList();
 
 	private final String abilityName;
+	private final int slot;
+	private final Reason reason;
 
 	private boolean cancelled;
-	private String cancelMessage;
 
-	public PlayerBindAbilityEvent(Player player, String abilityName)
+	public PlayerBindChangeEvent(Player player, Reason reason) {
+		this(player, null, -1, reason);
+	}
+
+	public PlayerBindChangeEvent(Player player, String abilityName, int slot, Reason reason)
 	{
 		super(player);
 
 		this.abilityName = abilityName;
+		this.slot = slot;
+		this.reason = reason;
 	}
 
 	public String getAbilityName()
 	{
 		return this.abilityName;
+	}
+
+	public int getSlot() {
+		return this.slot;
+	}
+
+	public Reason getReason() {
+		return this.reason;
 	}
 
 	@Override
@@ -38,16 +53,6 @@ public class PlayerBindAbilityEvent extends PlayerEvent implements Cancellable
 		this.cancelled = cancelled;
 	}
 
-	public String getCancelMessage()
-	{
-		return this.cancelMessage;
-	}
-
-	public void setCancelMessage(String cancelMessage)
-	{
-		this.cancelMessage = cancelMessage;
-	}
-
 	@Override
 	public HandlerList getHandlers()
 	{
@@ -57,5 +62,9 @@ public class PlayerBindAbilityEvent extends PlayerEvent implements Cancellable
 	public static HandlerList getHandlerList()
 	{
 		return HANDLER_LIST;
+	}
+
+	public enum Reason {
+		ADD, REMOVE, CLEAR
 	}
 }

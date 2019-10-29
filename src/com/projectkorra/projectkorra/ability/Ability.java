@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -13,6 +12,8 @@ import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConf
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
 import com.projectkorra.projectkorra.module.ModuleManager;
+import com.projectkorra.projectkorra.player.BendingPlayer;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -51,12 +52,13 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 
 	private static int idCounter;
 
+	protected final BendingPlayerManager bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 	protected final AbilityManager manager = ModuleManager.getModule(AbilityManager.class);
 	protected final Info info = (Info) this.manager.getAbilityInfo(getClass());
 	protected final Config config = ConfigManager.getConfig(((Class<Config>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
 
 	protected Player player;
-	protected BendingPlayer bPlayer;
+	protected BendingPlayer bendingPlayer;
 	protected FlightHandler flightHandler;
 
 	private final Map<String, Map<AttributePriority, Set<Pair<Number, AttributeModifier>>>> attributeModifiers = new HashMap<>();
@@ -110,7 +112,7 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 		}
 		
 		this.player = player;
-		this.bPlayer = BendingPlayer.getBendingPlayer(player);
+		this.bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 		this.flightHandler = Manager.getManager(FlightHandler.class);
 		this.startTime = System.currentTimeMillis();
 		this.started = false;
@@ -201,7 +203,7 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 	}
 
 	public BendingPlayer getBendingPlayer() {
-		return this.bPlayer;
+		return this.bendingPlayer;
 	}
 
 	public int getId() {

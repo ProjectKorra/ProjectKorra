@@ -1,7 +1,8 @@
 package com.projectkorra.projectkorra.ability.bind;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.PlayerBindAbilityEvent;
+import com.projectkorra.projectkorra.ability.api.PlayerBindChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.module.DatabaseModule;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
@@ -49,21 +50,15 @@ public class AbilityBindManager extends DatabaseModule<AbilityBindRepository> {
 		});
 	}
 
-	public boolean bindAbility(Player player, String abilityName, int slot) {
-		PlayerBindAbilityEvent playerBindAbilityEvent = new PlayerBindAbilityEvent(player, abilityName);
-		getPlugin().getServer().getPluginManager().callEvent(playerBindAbilityEvent);
-
-		if (playerBindAbilityEvent.isCancelled()) {
-			String cancelMessage = playerBindAbilityEvent.getCancelMessage();
-
-			if (cancelMessage != null) {
-				GeneralMethods.sendBrandingMessage(player, cancelMessage);
-			}
-
-			return false;
-		}
-
+	public Result bindAbility(Player player, String abilityName, int slot) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
+
+		PlayerBindChangeEvent playerBindChangeEvent = new PlayerBindChangeEvent(player, abilityName, slot, PlayerBindChangeEvent.Reason.ADD);
+		getPlugin().getServer().getPluginManager().callEvent(playerBindChangeEvent);
+
+		if (playerBindChangeEvent.isCancelled()) {
+			return Result.CANCELLED;
+		}
 
 		bendingPlayer.setAbility(slot, abilityName);
 
@@ -75,17 +70,22 @@ public class AbilityBindManager extends DatabaseModule<AbilityBindRepository> {
 			}
 		});
 
-		return true;
+		return Result.SUCCESS;
 	}
 
-	public boolean unbindAbility(Player player, int slot) {
+	public Result unbindAbility(Player player, int slot) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
-
 		String abilityName = bendingPlayer.getAbility(slot);
 
 		if (abilityName == null) {
-			player.sendMessage("No ability bound");
-			return false;
+			return Result.ALREADY_EMPTY;
+		}
+
+		PlayerBindChangeEvent playerBindChangeEvent = new PlayerBindChangeEvent(player, abilityName, slot, PlayerBindChangeEvent.Reason.REMOVE);
+		getPlugin().getServer().getPluginManager().callEvent(playerBindChangeEvent);
+
+		if (playerBindChangeEvent.isCancelled()) {
+			return Result.CANCELLED;
 		}
 
 		bendingPlayer.setAbility(slot, null);
@@ -98,11 +98,18 @@ public class AbilityBindManager extends DatabaseModule<AbilityBindRepository> {
 			}
 		});
 
-		return true;
+		return Result.SUCCESS;
 	}
 
-	public void clearBinds(Player player) {
+	public Result clearBinds(Player player) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
+
+		PlayerBindChangeEvent playerBindChangeEvent = new PlayerBindChangeEvent(player, PlayerBindChangeEvent.Reason.REMOVE);
+		getPlugin().getServer().getPluginManager().callEvent(playerBindChangeEvent);
+
+		if (playerBindChangeEvent.isCancelled()) {
+			return Result.CANCELLED;
+		}
 
 		bendingPlayer.setAbilities(new String[9]);
 
@@ -113,5 +120,11 @@ public class AbilityBindManager extends DatabaseModule<AbilityBindRepository> {
 				e.printStackTrace();
 			}
 		});
+
+		return Result.SUCCESS;
+	}
+
+	public enum Result {
+		SUCCESS, CANCELLED, ALREADY_EMPTY
 	}
 }

@@ -1,17 +1,17 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.google.common.primitives.Ints;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.ClearCommandConfig;
+import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.configuration.configs.commands.ClearCommandConfig;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Executor for /bending clear. Extends {@link PKCommand}.
@@ -38,45 +38,43 @@ public class ClearCommand extends PKCommand<ClearCommandConfig> {
 	public void execute(final CommandSender sender, final List<String> args) {
 		if (!this.hasPermission(sender) || !this.correctLength(sender, args.size(), 0, 1) || !this.isPlayer(sender)) {
 			return;
-		} else if (MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
+		}
+
+		Player player = (Player) sender;
+
+		if (args.isEmpty()) {
+			if (this.abilityBindManager.clearBinds(player) == AbilityBindManager.Result.SUCCESS) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
+			}
+
 			return;
 		}
 
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+		Integer slot = Ints.tryParse(args.get(0));
+
+		if (slot == null || slot < 1 || slot > 9) {
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
+			return;
 		}
-		if (args.size() == 0) {
-			Arrays.fill(bPlayer.getAbilities(), null);
-			for (int i = 0; i < 9; i++) {
-				GeneralMethods.saveAbility(bPlayer, i, null);
-			}
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
-		} else if (args.size() == 1) {
-			try {
-				final int slot = Integer.parseInt(args.get(0));
-				if (slot < 1 || slot > 9) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
-				}
-				if (bPlayer.getAbilities()[slot - 1] != null) {
-					bPlayer.getAbilities()[slot - 1] = null;
-					GeneralMethods.saveAbility(bPlayer, slot - 1, null);
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
-				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);
-				}
-			} catch (final NumberFormatException e) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
-			}
+
+		slot =- 1;
+
+		AbilityBindManager.Result result = this.abilityBindManager.unbindAbility(player, slot);
+
+		switch (result) {
+			case SUCCESS:
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
+				break;
+			case ALREADY_EMPTY:
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);
+				break;
 		}
 	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		if (args.size() >= 1 || !sender.hasPermission("bending.command.clear")) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 		return Arrays.asList("123456789".split(""));
 	}

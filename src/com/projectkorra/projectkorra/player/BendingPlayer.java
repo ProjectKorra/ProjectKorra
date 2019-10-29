@@ -37,7 +37,7 @@ public class BendingPlayer {
 	private final String[] abilities;
 
 	private ChiAbility stance;
-	private boolean bendingRemoved;
+	private boolean bendingPermanentlyRemoved;
 	private boolean toggled;
 	private boolean tremorSense;
 	private boolean illumination;
@@ -188,6 +188,14 @@ public class BendingPlayer {
 		this.abilities[slot] = abilityName;
 	}
 
+	public long getCooldown(Ability ability) {
+		return getCooldown(ability.getName());
+	}
+
+	public long getCooldown(String abilityName) {
+		return this.cooldownManager.getCooldown(this.player, abilityName);
+	}
+
 	public void addCooldown(Ability ability) {
 		addCooldown(ability, ability.getCooldown());
 	}
@@ -217,10 +225,10 @@ public class BendingPlayer {
 	}
 
 	public void removeCooldown(Ability ability) {
-		removeCoolldown(ability.getName());
+		removeCooldown(ability.getName());
 	}
 
-	public void removeCoolldown(String abilityName) {
+	public void removeCooldown(String abilityName) {
 		this.cooldownManager.removeCooldown(this.player, abilityName);
 	}
 
@@ -252,12 +260,12 @@ public class BendingPlayer {
 		this.stance = stance;
 	}
 
-	public boolean isBendingRemoved() {
-		return this.bendingRemoved;
+	public boolean isBendingPermanentlyRemoved() {
+		return this.bendingPermanentlyRemoved;
 	}
 
-	protected void setBendingRemoved(boolean bendingRemoved) {
-		this.bendingRemoved = bendingRemoved;
+	protected void setBendingPermanentlyRemoved(boolean bendingPermanentlyRemoved) {
+		this.bendingPermanentlyRemoved = bendingPermanentlyRemoved;
 	}
 
 	public boolean isToggled() {

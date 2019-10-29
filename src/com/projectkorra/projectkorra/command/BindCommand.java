@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
@@ -100,8 +101,9 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
 			}
 
-			this.abilityBindManager.bindAbility(player, abilityInfo.getName(), slot);
-			GeneralMethods.sendBrandingMessage(player, element.getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", abilityInfo.getName()).replace("{slot}", String.valueOf(slot + 1)));
+			if (this.abilityBindManager.bindAbility(player, abilityInfo.getName(), slot) == AbilityBindManager.Result.SUCCESS) {
+				GeneralMethods.sendBrandingMessage(player, element.getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", abilityInfo.getName()).replace("{slot}", String.valueOf(slot + 1)));
+			}
 			return;
 		}
 

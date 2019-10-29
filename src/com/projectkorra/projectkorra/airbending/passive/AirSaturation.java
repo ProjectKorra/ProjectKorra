@@ -8,8 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class AirSaturation extends AirAbility<AirSaturationInfo, AirSaturationConfig> {
-	public AirSaturation(final AirSaturationConfig config, final Player player) {
-		super(config, player);
+	public AirSaturation(final Player player) {
+		super(player);
 	}
 
 	public static double getExhaustionFactor() {
