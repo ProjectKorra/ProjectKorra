@@ -88,6 +88,7 @@ public abstract class CoreAbility implements Ability {
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
 	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
 	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
+	private static final Field[] EMPTY_FIELDS = new Field[0];
 
 	private static int idCounter;
 
@@ -448,6 +449,26 @@ public abstract class CoreAbility implements Ability {
 	 */
 	public static List<String> getAddonPlugins() {
 		return ADDON_PLUGINS;
+	}
+
+	public static Field getAttributeField(Class<? extends CoreAbility> ability, String attribute) {
+		Map<String, Field> attributes = ATTRIBUTE_FIELDS.get(ability);
+
+		if (attributes == null) {
+			return null;
+		}
+
+		return attributes.get(attribute);
+	}
+
+	public static Field[] getAttributeFields(Class<? extends CoreAbility> ability) {
+		Map<String, Field> attributes = ATTRIBUTE_FIELDS.get(ability);
+
+		if (attributes == null) {
+			return EMPTY_FIELDS;
+		}
+
+		return attributes.values().toArray(EMPTY_FIELDS);
 	}
 
 	/**
