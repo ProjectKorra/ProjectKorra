@@ -17,4 +17,14 @@ public interface AddonAbilityInfo extends AbilityInfo {
 	 * they will be cleaned up by {@link AbilityManager#removeAll()}.
 	 */
 	void stop();
+
+	/**
+	 * @return the name of the author of this AddonAbility
+	 */
+	String getAuthor();
+
+	/**
+	 * @return The version of the ability as a String.
+	 */
+	String getVersion();
 }

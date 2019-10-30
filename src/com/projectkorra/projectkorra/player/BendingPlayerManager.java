@@ -68,18 +68,10 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 		}
 	}
 
-	public void removeBending(Player player) {
+	public void setBendingPermanentlyRemoved(Player player, boolean removed) {
 		BendingPlayer bendingPlayer = this.players.get(player.getUniqueId());
 
-		bendingPlayer.setBendingRemoved(true);
-
-		updateBendingRemoved(bendingPlayer);
-	}
-
-	public void returnBending(Player player) {
-		BendingPlayer bendingPlayer = this.players.get(player.getUniqueId());
-
-		bendingPlayer.setBendingRemoved(false);
+		bendingPlayer.setBendingPermanentlyRemoved(removed);
 
 		updateBendingRemoved(bendingPlayer);
 	}

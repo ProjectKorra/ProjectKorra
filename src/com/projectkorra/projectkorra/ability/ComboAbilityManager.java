@@ -28,7 +28,7 @@ public class ComboAbilityManager extends Module {
 	private final BendingPlayerManager bendingPlayerManager;
 	private final AbilityManager abilityManager;
 
-	private final List<ComboAbilityInfo> abilities = new ArrayList<>();
+	private final Map<String, ComboAbilityInfo> abilities = new HashMap<>();
 	private final List<ComboAbility> comboAbilities = new ArrayList<>();
 
 	private final Map<UUID, LinkedList<Combination>> recentlyUsed = new HashMap<>();
@@ -47,7 +47,7 @@ public class ComboAbilityManager extends Module {
 	public void registerAbility(Class<? extends Ability> abilityClass, ComboAbilityInfo comboAbilityInfo) {
 		ComboAbility comboAbility = new ComboAbility(abilityClass, comboAbilityInfo.getName(), comboAbilityInfo.getCombination());
 
-		this.abilities.add(comboAbilityInfo);
+		this.abilities.put(comboAbilityInfo.getName(), comboAbilityInfo);
 		this.comboAbilities.add(comboAbility);
 	}
 
@@ -93,8 +93,12 @@ public class ComboAbilityManager extends Module {
 		return null;
 	}
 
+	public ComboAbilityInfo getAbility(String abilityName) {
+		return this.abilities.get(abilityName);
+	}
+
 	public List<ComboAbilityInfo> getAbilities(Element element) {
-		return this.abilities.stream()
+		return this.abilities.values().stream()
 				.filter(comboAbilityInfo -> comboAbilityInfo.getElement().equals(element))
 				.collect(Collectors.toList());
 	}

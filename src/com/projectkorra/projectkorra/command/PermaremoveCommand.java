@@ -1,20 +1,17 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.configs.commands.PermaremoveCommandConfig;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.configs.commands.PermaremoveCommandConfig;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Executor for /bending permaremove. Extends {@link PKCommand}.
@@ -43,9 +40,16 @@ public class PermaremoveCommand extends PKCommand<PermaremoveCommandConfig> {
 			return;
 		}
 		if (args.size() == 1) {
-			this.permaremove(sender, args.get(0));
+			Player player = Bukkit.getPlayer(args.get(0));
+
+			if (player == null) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerIsOffline);
+				return;
+			}
+
+			this.permaremove(sender, player);
 		} else if (args.size() == 0 && this.isPlayer(sender)) {
-			this.permaremove(sender, sender.getName());
+			this.permaremove(sender, (Player) sender);
 		}
 	}
 
@@ -54,40 +58,23 @@ public class PermaremoveCommand extends PKCommand<PermaremoveCommandConfig> {
 	 * been permaremoved.
 	 *
 	 * @param sender The CommandSender who issued the permaremove command
-	 * @param target The Player who's bending should be permaremoved
+	 * @param player The Player who's bending should be permaremoved
 	 */
-	private void permaremove(final CommandSender sender, final String target) {
-		final Player player = Bukkit.getPlayer(target);
-		if (player == null) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerIsOffline);
-			return;
-		}
+	private void permaremove(final CommandSender sender, final Player player) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		}
-
-		if (bPlayer.isPermaRemoved()) {
-			bPlayer.setPermaRemoved(false);
-			GeneralMethods.savePermaRemoved(bPlayer);
+		if (bendingPlayer.isBendingPermanentlyRemoved()) {
+			this.bendingPlayerManager.setBendingPermanentlyRemoved(player, false);
 			GeneralMethods.sendBrandingMessage(player, ChatColor.GREEN + this.restored);
-			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target)) {
+			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(player.getName())) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 			}
 		} else {
-			List<Element> removed = new LinkedList<>();
-			removed.addAll(bPlayer.getElements());
-			removed.addAll(bPlayer.getSubElements());
-			bPlayer.getElements().clear();
-			bPlayer.getSubElements().clear();
-			GeneralMethods.deleteElements(bPlayer, removed);
-			bPlayer.setPermaRemoved(true);
-			GeneralMethods.savePermaRemoved(bPlayer);
+			this.elementManager.clearElements(player);
+			this.bendingPlayerManager.setBendingPermanentlyRemoved(player, true);
 			GeneralMethods.removeUnusableAbilities(player.getName());
 			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + this.removed);
-			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target)) {
+			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(player.getName())) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));
 			}
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.PERMAREMOVE));

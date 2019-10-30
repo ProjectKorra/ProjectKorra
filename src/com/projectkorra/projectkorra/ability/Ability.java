@@ -216,22 +216,6 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 	
 	public abstract Class<Config> getConfigType();
 
-	public boolean isHiddenAbility() {
-		return this.hidden;
-	}
-
-	public void setHiddenAbility(final boolean hidden) {
-		this.hidden = hidden;
-	}
-
-	public String getInstructions() {
-		return config.Instructions;
-	}
-
-	public String getDescription() {
-		return config.Description;
-	}
-
 //	public String getMovePreview(final Player player) {
 //		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 //		String displayedMessage = "";

@@ -1,29 +1,18 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.AddonAbility;
-import com.projectkorra.projectkorra.ability.api.ComboAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.api.PassiveAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.info.AddonAbilityInfo;
+import com.projectkorra.projectkorra.ability.info.ComboAbilityInfo;
+import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.HelpCommandConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.AirPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.AvatarPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.ChiPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.FirePropertiesConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.*;
+import com.projectkorra.projectkorra.element.Element;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
+import java.util.*;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
@@ -106,6 +95,7 @@ public class HelpCommand extends PKCommand<HelpCommandConfig> {
 		}
 
 		final String arg = args.get(0).toLowerCase();
+		AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(arg);
 
 		if (this.isNumeric(arg)) {
 			final List<String> strings = new ArrayList<String>();
@@ -135,113 +125,120 @@ public class HelpCommand extends PKCommand<HelpCommandConfig> {
 			sender.sendMessage(ChatColor.GOLD + this.properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Combo Name>" + ChatColor.GOLD));
 		} else if (Arrays.asList(Commands.passivealiases).contains(arg)) { // bending help elementpassive.
 			sender.sendMessage(ChatColor.GOLD + this.properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Passive Name>" + ChatColor.RED));
-		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility) && CoreAbility.getAbility(arg).isEnabled() && !CoreAbility.getAbility(arg).isHiddenAbility() || CoreAbility.getAbility(arg) instanceof PassiveAbility) { // bending help ability.
-			final CoreAbility ability = CoreAbility.getAbility(arg);
-			final ChatColor color = ability.getElement().getColor();
+		} else if (abilityInfo != null && !(abilityInfo instanceof ComboAbilityInfo) && !abilityInfo.isHidden() || abilityInfo instanceof PassiveAbilityInfo) { // bending help ability.
+			final ChatColor color = abilityInfo.getElement().getColor();
 
-			if (ability instanceof AddonAbility) {
-				if (ability instanceof PassiveAbility) {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon Passive)");
+			if (abilityInfo instanceof AddonAbilityInfo) {
+				if (abilityInfo instanceof PassiveAbilityInfo) {
+					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Addon Passive)");
 				} else {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon)");
+					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Addon)");
 				}
 
-				sender.sendMessage(color + ability.getDescription());
+				sender.sendMessage(color + abilityInfo.getDescription());
 
-				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
+				if (!abilityInfo.getInstructions().isEmpty()) {
+					sender.sendMessage(ChatColor.WHITE + this.usage + abilityInfo.getInstructions());
 				}
 
-				final AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
-				sender.sendMessage(color + "- By: " + ChatColor.WHITE + abil.getAuthor());
-				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + abil.getVersion());
+				final AddonAbilityInfo addonAbilityInfo = (AddonAbilityInfo) abilityInfo;
+				sender.sendMessage(color + "- By: " + ChatColor.WHITE + addonAbilityInfo.getAuthor());
+				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + addonAbilityInfo.getVersion());
 			} else {
-				if (ability instanceof PassiveAbility) {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Passive)");
+				if (abilityInfo instanceof PassiveAbilityInfo) {
+					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Passive)");
 				} else {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()));
+					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()));
 				}
 
-				sender.sendMessage(color + ability.getDescription());
+				sender.sendMessage(color + abilityInfo.getDescription());
 
-				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
+				if (!abilityInfo.getInstructions().isEmpty()) {
+					sender.sendMessage(ChatColor.WHITE + this.usage + abilityInfo.getInstructions());
 				}
 			}
 		} else if (Arrays.asList(Commands.airaliases).contains(arg)) {
-			sender.sendMessage(Element.AIR.getColor() + this.air.replace("/b display Air", Element.AIR.getSubColor() + "/b display Air" + Element.AIR.getColor()));
+			Element air = this.elementManager.getAir();
+
+			sender.sendMessage(air.getColor() + this.air.replace("/b display Air", air.getSecondaryColor() + "/b display Air" + air.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.wateraliases).contains(arg)) {
-			sender.sendMessage(Element.WATER.getColor() + this.water.replace("/b display Water", Element.WATER.getSubColor() + "/b display Water" + Element.WATER.getColor()));
+			Element water = this.elementManager.getWater();
+
+			sender.sendMessage(water.getColor() + this.water.replace("/b display Water", water.getSecondaryColor() + "/b display Water" + water.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.earthaliases).contains(arg)) {
-			sender.sendMessage(Element.EARTH.getColor() + this.earth.replace("/b display Earth", Element.EARTH.getSubColor() + "/b display Earth" + Element.EARTH.getColor()));
+			Element earth = this.elementManager.getEarth();
+
+			sender.sendMessage(earth.getColor() + this.earth.replace("/b display Earth", earth.getSecondaryColor() + "/b display Earth" + earth.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.firealiases).contains(arg)) {
-			sender.sendMessage(Element.FIRE.getColor() + this.fire.replace("/b display Fire", Element.FIRE.getSubColor() + "/b display Fire" + Element.FIRE.getColor()));
+			Element fire = this.elementManager.getFire();
+
+			sender.sendMessage(fire.getColor() + this.fire.replace("/b display Fire", fire.getSecondaryColor() + "/b display Fire" + fire.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.chialiases).contains(arg)) {
-			sender.sendMessage(Element.CHI.getColor() + this.chi.replace("/b display Chi", Element.CHI.getSubColor() + "/b display Chi" + Element.CHI.getColor()));
+			Element chi = this.elementManager.getChi();
+
+			sender.sendMessage(chi.getColor() + this.chi.replace("/b display Chi", chi.getSecondaryColor() + "/b display Chi" + chi.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else if (Arrays.asList(Commands.avataraliases).contains(arg)) {
-			sender.sendMessage(Element.AVATAR.getColor() + this.avatar.replace("/b display Avatar", Element.AVATAR.getSubColor() + "/b display Avatar" + Element.AVATAR.getColor()));
+			Element avatar = this.elementManager.getAvatar();
+
+			sender.sendMessage(avatar.getColor() + this.avatar.replace("/b display Avatar", avatar.getSecondaryColor() + "/b display Avatar" + avatar.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else {
-			// combos - handled differently because they're stored in CamelCase in ComboManager.
-			for (final String combo : ComboManager.getDescriptions().keySet()) {
-				if (combo.equalsIgnoreCase(arg)) {
-					final CoreAbility ability = CoreAbility.getAbility(combo);
-					final ChatColor color = ability != null ? ability.getElement().getColor() : null;
+			ComboAbilityInfo comboAbilityInfo =  this.comboAbilityManager.getAbility(arg);
 
-					if (ability instanceof AddonAbility) {
-						sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon Combo)");
-						sender.sendMessage(color + ability.getDescription());
-
-						if (!ability.getInstructions().isEmpty()) {
-							sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
-						}
-
-						final AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
-						sender.sendMessage(color + "- By: " + ChatColor.WHITE + abil.getAuthor());
-						sender.sendMessage(color + "- Version: " + ChatColor.WHITE + abil.getVersion());
-					} else {
-						sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Combo)");
-						sender.sendMessage(color + ComboManager.getDescriptions().get(combo));
-						sender.sendMessage(ChatColor.WHITE + this.usage + ComboManager.getInstructions().get(combo));
-					}
-
-					return;
-				}
+			if (comboAbilityInfo == null) {
+				sender.sendMessage(ChatColor.RED + this.invalidTopic);
+				return;
 			}
 
-			sender.sendMessage(ChatColor.RED + this.invalidTopic);
+			final ChatColor color = comboAbilityInfo.getElement().getColor();
+
+			if (comboAbilityInfo instanceof AddonAbilityInfo) {
+				sender.sendMessage(color + (ChatColor.BOLD + comboAbilityInfo.getName()) + ChatColor.WHITE + " (Addon Combo)");
+				sender.sendMessage(color + comboAbilityInfo.getDescription());
+
+				if (!comboAbilityInfo.getInstructions().isEmpty()) {
+					sender.sendMessage(ChatColor.WHITE + this.usage + comboAbilityInfo.getInstructions());
+				}
+
+				final AddonAbilityInfo addonAbilityInfo = (AddonAbilityInfo) comboAbilityInfo;
+				sender.sendMessage(color + "- By: " + ChatColor.WHITE + addonAbilityInfo.getAuthor());
+				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + addonAbilityInfo.getVersion());
+			} else {
+				sender.sendMessage(color + (ChatColor.BOLD + comboAbilityInfo.getName()) + ChatColor.WHITE + " (Combo)");
+				sender.sendMessage(color + comboAbilityInfo.getDescription());
+				sender.sendMessage(ChatColor.WHITE + this.usage + comboAbilityInfo.getInstructions());
+			}
 		}
 	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		if (args.size() >= 1 || !sender.hasPermission("bending.command.help")) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 
-		final List<String> list = new ArrayList<String>();
-		for (final Element e : Element.getAllElements()) {
+		final List<String> list = new ArrayList<>();
+		for (final Element e : this.elementManager.getElements()) {
 			list.add(e.getName());
 		}
 
-		final List<String> abils = new ArrayList<String>();
-		for (final CoreAbility coreAbil : CoreAbility.getAbilities()) {
-			if (!(sender instanceof Player) && (!coreAbil.isHiddenAbility()) && coreAbil.isEnabled() && !abils.contains(coreAbil.getName())) {
-				abils.add(coreAbil.getName());
-			} else if (sender instanceof Player) {
-				if ((!coreAbil.isHiddenAbility()) && coreAbil.isEnabled() && !abils.contains(coreAbil.getName())) {
-					abils.add(coreAbil.getName());
-				}
+		final Set<String> abilitySet = new HashSet<>();
+
+		for (AbilityInfo abilityInfo : this.abilityManager.getAbilityInfo()) {
+			if (!abilityInfo.isHidden()) {
+				abilitySet.add(abilityInfo.getName());
 			}
 		}
 
-		Collections.sort(abils);
-		list.addAll(abils);
+		List<String> abilityList = new ArrayList<>(abilitySet);
+		Collections.sort(abilityList);
+		list.addAll(abilityList);
+
 		return list;
 	}
 }

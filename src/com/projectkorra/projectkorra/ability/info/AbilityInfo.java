@@ -22,24 +22,14 @@ public interface AbilityInfo {
 
 	Element getElement();
 
+	String getDescription();
+
+	String getInstructions();
+
 	/**
 	 * @return true if this is a hidden ability.
 	 */
 	default boolean isHidden() {
 		return false;
-	}
-
-	/**
-	 * @return the name of the author of this AddonAbility
-	 */
-	default String getAuthor() {
-		return "ProjectKorra";
-	}
-
-	/**
-	 * @return The version of the ability as a String.
-	 */
-	default String getVersion() {
-		return "1.0";
 	}
 }
