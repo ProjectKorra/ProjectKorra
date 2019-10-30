@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.module.DatabaseModule;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository> {
 
@@ -88,7 +90,7 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 
 	private void loadBendingPlayer(Player player) {
 		try {
-			BendingPlayer bendingPlayer = getRepository().selectPlayer(player);
+			BendingPlayer bendingPlayer = getRepository().selectPlayer(player.getUniqueId(), player.getName());
 
 			runSync(() -> {
 				this.players.put(player.getUniqueId(), bendingPlayer);
@@ -99,6 +101,24 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void loadBendingPlayer(UUID uuid, Consumer<BendingPlayer> consumer) {
+		runAsync(() -> {
+			try {
+				BendingPlayer bendingPlayer = getRepository().selectPlayer(uuid, null);
+
+				runSync(() -> {
+					this.players.put(uuid, bendingPlayer);
+					this.disconnected.add(uuid);
+
+					consumer.accept(bendingPlayer);
+				});
+			} catch (SQLException e) {
+				consumer.accept(null);
+				e.printStackTrace();
+			}
+		});
 	}
 
 	public BendingPlayer getBendingPlayer(Player player) {

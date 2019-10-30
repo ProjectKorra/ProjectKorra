@@ -91,6 +91,10 @@ public class BendingPlayer {
 		return this.elements.contains(this.elementManager.getBlood());
 	}
 
+	public boolean canBloodbendAtAnytime() {
+		return canBloodbend() && this.player.hasPermission("bending.water.bloodbending.anytime");
+	}
+
 	public boolean canUseHealing() {
 		return this.elements.contains(this.elementManager.getHealing());
 	}

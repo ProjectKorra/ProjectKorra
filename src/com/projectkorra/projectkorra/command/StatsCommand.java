@@ -1,29 +1,22 @@
 package com.projectkorra.projectkorra.command;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.configuration.configs.commands.StatsCommandConfig;
+import com.projectkorra.projectkorra.element.Element;
+import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.Statistic;
+import com.projectkorra.projectkorra.util.StatisticsMethods;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.configs.commands.StatsCommandConfig;
-import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.Statistic;
-import com.projectkorra.projectkorra.util.StatisticsMethods;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @SuppressWarnings("rawtypes")
 public class StatsCommand extends PKCommand<StatsCommandConfig> {
@@ -50,11 +43,11 @@ public class StatsCommand extends PKCommand<StatsCommandConfig> {
 		if (!this.correctLength(sender, args.size(), 3, 4)) {
 			return;
 		}
-		final CoreAbility ability = CoreAbility.getAbility(args.get(1));
-		final Element element = Element.getElement(args.get(1));
+		final AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(args.get(1));
+		final Element element = this.elementManager.getElement(args.get(1));
 		Object object = null;
-		if (ability != null) {
-			object = ability;
+		if (abilityInfo != null) {
+			object = abilityInfo;
 		} else if (element != null) {
 			object = element;
 		}
@@ -125,9 +118,9 @@ public class StatsCommand extends PKCommand<StatsCommandConfig> {
 		} else {
 			value = StatisticsMethods.getStatistic(target.getUniqueId(), object, statistic);
 		}
-		if (object instanceof CoreAbility) {
-			final CoreAbility ability = (CoreAbility) object;
-			message = message.replace("%object%", ability.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
+		if (object instanceof AbilityInfo) {
+			final AbilityInfo abilityInfo = (AbilityInfo) object;
+			message = message.replace("%object%", abilityInfo.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
 		} else if (object instanceof Element) {
 			final Element element = (Element) object;
 			message = message.replace("%object%", element.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
@@ -144,9 +137,9 @@ public class StatsCommand extends PKCommand<StatsCommandConfig> {
 		int p = page > maxPage ? maxPage : page;
 		p = p < 1 ? 1 : p;
 		String title = "%object% " + statistic.getDisplayName() + " Leaderboard";
-		if (object instanceof CoreAbility) {
-			final CoreAbility ability = (CoreAbility) object;
-			title = title.replace("%object%", ability.getName());
+		if (object instanceof AbilityInfo) {
+			final AbilityInfo abilityInfo = (AbilityInfo) object;
+			title = title.replace("%object%", abilityInfo.getName());
 		} else if (object instanceof Element) {
 			final Element element = (Element) object;
 			title = title.replace("%object%", element.getName());

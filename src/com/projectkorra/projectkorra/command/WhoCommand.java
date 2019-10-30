@@ -1,5 +1,20 @@
 package com.projectkorra.projectkorra.command;
 
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.configuration.configs.commands.WhoCommandConfig;
+import com.projectkorra.projectkorra.element.Element;
+import com.projectkorra.projectkorra.element.ElementManager;
+import com.projectkorra.projectkorra.element.SubElement;
+import com.projectkorra.projectkorra.player.BendingPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,28 +23,7 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.ElementType;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.configs.commands.WhoCommandConfig;
+import java.util.*;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
@@ -98,17 +92,13 @@ public class WhoCommand extends PKCommand<WhoCommandConfig> {
 			for (final Player player : Bukkit.getOnlinePlayers()) {
 				final String playerName = player.getName();
 				String result = "";
-				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
+				BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-				if (bp == null) {
-					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-					bp = BendingPlayer.getBendingPlayer(player.getName());
-				}
-				for (final Element element : bp.getElements()) {
+				for (final Element element : bendingPlayer.getElements()) {
 					if (result == "") {
-						result = ChatColor.WHITE + playerName + " - " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
+						result = ChatColor.WHITE + playerName + " - " + (((!bendingPlayer.isElementToggled(element) || !bendingPlayer.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
 					} else {
-						result = result + ChatColor.WHITE + " | " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
+						result = result + ChatColor.WHITE + " | " + (((!bendingPlayer.isElementToggled(element) || !bendingPlayer.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
 					}
 				}
 				if (this.staff.containsKey(player.getUniqueId().toString())) {
@@ -147,197 +137,204 @@ public class WhoCommand extends PKCommand<WhoCommandConfig> {
 	 * @param playerName The Player to look up
 	 */
 	private void whoPlayer(final CommandSender sender, final String playerName) {
-		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-		if (player == null || !player.hasPlayedBefore() && !player.isOnline()) {
+		final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+
+		if (offlinePlayer == null || !offlinePlayer.hasPlayedBefore() && !offlinePlayer.isOnline()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + "Player not found!");
 			return;
 		}
-		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + this.playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
-		}
 
-		final Player player_ = (Player) (player.isOnline() ? player : null);
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(offlinePlayer.getUniqueId());
 
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					int count = 0;
-					final long delay = 200L;
-					while (!BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-						if (count > 5 * (1000 / delay)) { // After 5 seconds of waiting, tell the user the database is busy and to try again in a few seconds.
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + WhoCommand.this.databaseOverload);
-							break;
-						}
-						count++;
-						try {
-							Thread.sleep(delay);
-						} catch (final InterruptedException e) {
-							e.printStackTrace();
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + WhoCommand.this.databaseOverload);
-							break;
-						}
-					}
-					WhoCommand.this.whoPlayer(sender, playerName);
-				}
-			}.runTaskAsynchronously(ProjectKorra.plugin);
+		if (bendingPlayer != null) {
+			someWhoPlayerMethod(sender, offlinePlayer, bendingPlayer);
 			return;
 		}
 
-		bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer != null) {
-			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : ""));
-			if (bPlayer.hasElement(Element.AIR)) {
-				if (bPlayer.isElementToggled(Element.AIR)) {
-					sender.sendMessage(Element.AIR.getColor() + "- Airbender");
-				} else {
-					sender.sendMessage(Element.AIR.getColor() + "" + ChatColor.STRIKETHROUGH + "- Airbender");
-				}
+		GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + this.playerOffline.replace("{player}", ChatColor.WHITE + offlinePlayer.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + offlinePlayer.getName() + ChatColor.GRAY));
 
-				if (player_ != null) {
-					if (bPlayer.canUseFlight()) {
-						sender.sendMessage(Element.FLIGHT.getColor() + "    Can Fly");
-					}
-					if (bPlayer.canUseSpiritualProjection()) {
-						sender.sendMessage(Element.SPIRITUAL.getColor() + "    Can use Spiritual Projection");
-					}
-					for (final SubElement se : Element.getAddonSubElements(Element.AIR)) {
-						if (bPlayer.canUseSubElement(se)) {
-							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
-						}
-					}
-				}
+		this.bendingPlayerManager.loadBendingPlayer(offlinePlayer.getUniqueId(), loadedBendingPlayer -> {
+			if (loadedBendingPlayer == null) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + WhoCommand.this.databaseOverload);
+				return;
 			}
 
-			if (bPlayer.hasElement(Element.WATER)) {
-				if (bPlayer.isElementToggled(Element.WATER)) {
-					sender.sendMessage(Element.WATER.getColor() + "- Waterbender");
-				} else {
-					sender.sendMessage(Element.WATER.getColor() + "" + ChatColor.STRIKETHROUGH + "- Waterbender");
-				}
+			someWhoPlayerMethod(sender, offlinePlayer, loadedBendingPlayer);
+		});
+	}
 
-				if (player_ != null) {
-					if (bPlayer.canPlantbend()) {
-						sender.sendMessage(Element.PLANT.getColor() + "    Can Plantbend");
-					}
-					if (bPlayer.canBloodbend()) {
-						if (bPlayer.canBloodbendAtAnytime()) {
-							sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend anytime, on any day");
-						} else {
-							sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend");
-						}
-					}
-					if (bPlayer.canIcebend()) {
-						sender.sendMessage(Element.ICE.getColor() + "    Can Icebend");
-					}
-					if (bPlayer.canWaterHeal()) {
-						sender.sendMessage(Element.HEALING.getColor() + "    Can Heal");
-					}
-					for (final SubElement se : Element.getAddonSubElements(Element.WATER)) {
-						if (bPlayer.canUseSubElement(se)) {
-							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
-						}
-					}
-				}
+	private void someWhoPlayerMethod(CommandSender sender, OfflinePlayer player, BendingPlayer bendingPlayer) {
+		sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : ""));
+
+		Element element;
+		Set<Element> checked = new HashSet<>();
+
+		checked.add(element = this.elementManager.getAir());
+		if (bendingPlayer.hasElement(element)) {
+			if (bendingPlayer.isElementToggled(element)) {
+				sender.sendMessage(element.getColor() + "- Airbender");
+			} else {
+				sender.sendMessage(element.getColor() + "" + ChatColor.STRIKETHROUGH + "- Airbender");
 			}
 
-			if (bPlayer.hasElement(Element.EARTH)) {
-				if (bPlayer.isElementToggled(Element.EARTH)) {
-					sender.sendMessage(Element.EARTH.getColor() + "- Earthbender");
-				} else {
-					sender.sendMessage(Element.EARTH.getColor() + "" + ChatColor.STRIKETHROUGH + "- Earthbender");
+			if (player.isOnline()) {
+				if (bendingPlayer.canUseFlight()) {
+					sender.sendMessage(this.elementManager.getFlight().getColor() + "    Can Fly");
 				}
 
-				if (player_ != null) {
-					if (bPlayer.canMetalbend()) {
-						sender.sendMessage(Element.METAL.getColor() + "    Can Metalbend");
-					}
-					if (bPlayer.canLavabend()) {
-						sender.sendMessage(Element.LAVA.getColor() + "    Can Lavabend");
-					}
-					if (bPlayer.canSandbend()) {
-						sender.sendMessage(Element.SAND.getColor() + "    Can Sandbend");
-					}
-					for (final SubElement se : Element.getAddonSubElements(Element.EARTH)) {
-						if (bPlayer.canUseSubElement(se)) {
-							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
-						}
-					}
-				}
-			}
-
-			if (bPlayer.hasElement(Element.FIRE)) {
-				if (bPlayer.isElementToggled(Element.FIRE)) {
-					sender.sendMessage(Element.FIRE.getColor() + "- Firebender");
-				} else {
-					sender.sendMessage(Element.FIRE.getColor() + "" + ChatColor.STRIKETHROUGH + "- Firebender");
+				if (bendingPlayer.canUseSpiritual()) {
+					sender.sendMessage(this.elementManager.getSpiritual().getColor() + "    Can use Spiritual Projection");
 				}
 
-				if (player_ != null) {
-					if (bPlayer.canCombustionbend()) {
-						sender.sendMessage(Element.COMBUSTION.getColor() + "    Can Combustionbend");
-					}
-					if (bPlayer.canLightningbend()) {
-						sender.sendMessage(Element.LIGHTNING.getColor() + "    Can Lightningbend");
-					}
-					for (final SubElement se : Element.getAddonSubElements(Element.FIRE)) {
-						if (bPlayer.canUseSubElement(se)) {
-							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
-						}
+				for (SubElement subElement : this.elementManager.getSubElements(element)) {
+					if (bendingPlayer.hasElement(subElement)) {
+						sender.sendMessage(subElement.getColor() + "    Can " + (!subElement.getType().equals(ElementManager.ElementType.NO_SUFFIX) ? "" : "use ") + subElement.getName() + subElement.getType().getBend());
 					}
 				}
-			}
-
-			if (bPlayer.hasElement(Element.CHI)) {
-				if (bPlayer.isElementToggled(Element.CHI)) {
-					sender.sendMessage(Element.CHI.getColor() + "- Chiblocker");
-				} else {
-					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
-				}
-			}
-
-			for (final Element element : Element.getAddonElements()) {
-				if (bPlayer.hasElement(element)) {
-					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
-					if (player_ != null) {
-						for (final SubElement subelement : Element.getSubElements(element)) {
-							if (bPlayer.canUseSubElement(subelement)) {
-								sender.sendMessage(subelement.getColor() + "    Can " + (!subelement.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + subelement.getName() + subelement.getType().getBend());
-							}
-						}
-					}
-				}
-			}
-
-			final UUID uuid = player.getUniqueId();
-			if (bPlayer != null) {
-				sender.sendMessage("Abilities: ");
-				for (int i = 0; i < 9; i++) {
-					final String ability = bPlayer.getAbilities()[i];
-					final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-					if (coreAbil == null) {
-						continue;
-					} else {
-						sender.sendMessage((i + 1) + " - " + coreAbil.getElement().getColor() + ability);
-					}
-				}
-			}
-
-			if (this.staff.containsKey(uuid.toString())) {
-				sender.sendMessage(this.staff.get(uuid.toString()));
 			}
 		}
 
+		checked.add(element = this.elementManager.getWater());
+		if (bendingPlayer.hasElement(element)) {
+			if (bendingPlayer.isElementToggled(element)) {
+				sender.sendMessage(element.getColor() + "- Waterbender");
+			} else {
+				sender.sendMessage(element.getColor() + "" + ChatColor.STRIKETHROUGH + "- Waterbender");
+			}
+
+			if (player.isOnline()) {
+				if (bendingPlayer.canPlantbend()) {
+					sender.sendMessage(this.elementManager.getPlant().getColor() + "    Can Plantbend");
+				}
+
+				if (bendingPlayer.canBloodbend()) {
+					if (bendingPlayer.canBloodbendAtAnytime()) {
+						sender.sendMessage(this.elementManager.getBlood().getColor() + "    Can Bloodbend anytime, on any day");
+					} else {
+						sender.sendMessage(this.elementManager.getBlood().getColor() + "    Can Bloodbend");
+					}
+				}
+
+				if (bendingPlayer.canIcebend()) {
+					sender.sendMessage(this.elementManager.getIce().getColor() + "    Can Icebend");
+				}
+
+				if (bendingPlayer.canUseHealing()) {
+					sender.sendMessage(this.elementManager.getHealing().getColor() + "    Can Heal");
+				}
+
+				for (SubElement subElement : this.elementManager.getSubElements(element)) {
+					if (bendingPlayer.hasElement(subElement)) {
+						sender.sendMessage(subElement.getColor() + "    Can " + (!subElement.getType().equals(ElementManager.ElementType.NO_SUFFIX) ? "" : "use ") + subElement.getName() + subElement.getType().getBend());
+					}
+				}
+			}
+		}
+
+		checked.add(element = this.elementManager.getEarth());
+		if (bendingPlayer.hasElement(element)) {
+			if (bendingPlayer.isElementToggled(element)) {
+				sender.sendMessage(element.getColor() + "- Earthbender");
+			} else {
+				sender.sendMessage(element.getColor() + "" + ChatColor.STRIKETHROUGH + "- Earthbender");
+			}
+
+			if (player.isOnline()) {
+				if (bendingPlayer.canMetalbend()) {
+					sender.sendMessage(this.elementManager.getMetal().getColor() + "    Can Metalbend");
+				}
+
+				if (bendingPlayer.canLavabend()) {
+					sender.sendMessage(this.elementManager.getLava().getColor() + "    Can Lavabend");
+				}
+
+				if (bendingPlayer.canSandbend()) {
+					sender.sendMessage(this.elementManager.getSand().getColor() + "    Can Sandbend");
+				}
+
+				for (SubElement subElement : this.elementManager.getSubElements(element)) {
+					if (bendingPlayer.hasElement(subElement)) {
+						sender.sendMessage(subElement.getColor() + "    Can " + (!subElement.getType().equals(ElementManager.ElementType.NO_SUFFIX) ? "" : "use ") + subElement.getName() + subElement.getType().getBend());
+					}
+				}
+			}
+		}
+
+		checked.add(element = this.elementManager.getFire());
+		if (bendingPlayer.hasElement(element)) {
+			if (bendingPlayer.isElementToggled(element)) {
+				sender.sendMessage(element.getColor() + "- Firebender");
+			} else {
+				sender.sendMessage(element.getColor() + "" + ChatColor.STRIKETHROUGH + "- Firebender");
+			}
+
+			if (player.isOnline()) {
+				if (bendingPlayer.canCombustionbend()) {
+					sender.sendMessage(this.elementManager.getCombustion().getColor() + "    Can Combustionbend");
+				}
+
+				if (bendingPlayer.canUseLightning()) {
+					sender.sendMessage(this.elementManager.getLightning().getColor() + "    Can Lightningbend");
+				}
+
+				for (SubElement subElement : this.elementManager.getSubElements(element)) {
+					if (bendingPlayer.hasElement(subElement)) {
+						sender.sendMessage(subElement.getColor() + "    Can " + (!subElement.getType().equals(ElementManager.ElementType.NO_SUFFIX) ? "" : "use ") + subElement.getName() + subElement.getType().getBend());
+					}
+				}
+			}
+		}
+
+		checked.add(element = this.elementManager.getChi());
+		if (bendingPlayer.hasElement(element)) {
+			if (bendingPlayer.isElementToggled(element)) {
+				sender.sendMessage(element.getColor() + "- Chiblocker");
+			} else {
+				sender.sendMessage(element.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
+			}
+		}
+
+		for (Element e : this.elementManager.getElements()) {
+			if (checked.contains(e)) {
+				continue;
+			}
+
+			if (bendingPlayer.hasElement(e)) {
+				sender.sendMessage(e.getColor() + "" + (bendingPlayer.isElementToggled(e) ? "" : ChatColor.STRIKETHROUGH) + "- " + e.getName() + (e.getType() != null ? e.getType().getBender() : ""));
+				if (player.isOnline()) {
+					for (SubElement subElement : this.elementManager.getSubElements(e)) {
+						if (bendingPlayer.hasElement(subElement)) {
+							sender.sendMessage(subElement.getColor() + "    Can " + (!subElement.getType().equals(ElementManager.ElementType.NO_SUFFIX) ? "" : "use ") + subElement.getName() + subElement.getType().getBend());
+						}
+					}
+				}
+			}
+		}
+
+		final UUID uuid = player.getUniqueId();
+		sender.sendMessage("Abilities: ");
+		for (int i = 0; i < 9; i++) {
+			String abilityName = bendingPlayer.getAbility(i);
+			AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(abilityName);
+
+			if (abilityInfo == null) {
+				continue;
+			}
+
+			sender.sendMessage((i + 1) + " - " + abilityInfo.getElement().getColor() + abilityName);
+		}
+
+		if (this.staff.containsKey(uuid.toString())) {
+			sender.sendMessage(this.staff.get(uuid.toString()));
+		}
 	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		if (args.size() >= 1 || !sender.hasPermission("bending.command.who")) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
-		final List<String> l = new ArrayList<String>();
+		final List<String> l = new ArrayList<>();
 		for (final Player p : Bukkit.getOnlinePlayers()) {
 			l.add(p.getName());
 		}

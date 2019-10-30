@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.database.DatabaseQuery;
 import com.projectkorra.projectkorra.database.DatabaseRepository;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.nio.ByteBuffer;
@@ -39,8 +40,7 @@ public class BendingPlayerRepository extends DatabaseRepository {
 		}
 	}
 
-	protected BendingPlayer selectPlayer(Player player) throws SQLException {
-		UUID uuid = player.getUniqueId();
+	protected BendingPlayer selectPlayer(UUID uuid, String name) throws SQLException {
 		byte[] binaryUUID = ByteBuffer.allocate(16).putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits()).array();
 
 		Connection connection = getDatabase().getConnection();
@@ -50,7 +50,11 @@ public class BendingPlayerRepository extends DatabaseRepository {
 
 			try (ResultSet rs = statement.executeQuery()) {
 				if (!rs.next()) {
-					return insertPlayer(player.getUniqueId(), player.getName());
+					if (name != null) {
+						return insertPlayer(uuid, name);
+					}
+
+					return null;
 				}
 
 				int playerId = rs.getInt("player_id");
@@ -58,8 +62,8 @@ public class BendingPlayerRepository extends DatabaseRepository {
 				long firstLogin = rs.getLong("first_login");
 				boolean bendingPermanentlyRemoved = rs.getBoolean("bending_permanently_removed");
 
-				if (!player.getName().equals(playerName)) {
-					updatePlayerName(playerId, player.getName());
+				if (name != null && !name.equals(playerName)) {
+					updatePlayerName(playerId, name);
 				}
 
 				BendingPlayer bendingPlayer = new BendingPlayer(playerId, uuid, playerName, firstLogin);
