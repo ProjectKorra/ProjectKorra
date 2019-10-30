@@ -7,20 +7,19 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.info.AddonAbilityInfo;
+import com.projectkorra.projectkorra.ability.info.ComboAbilityInfo;
+import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
+import com.projectkorra.projectkorra.element.Element;
+import com.projectkorra.projectkorra.element.SubElement;
+import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.AddonAbility;
-import com.projectkorra.projectkorra.ability.api.ComboAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.api.SubAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.DisplayCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
@@ -83,29 +82,24 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 			} else if (elementName.equalsIgnoreCase("avp")) {
 				elementName = "avatarpassive";
 			}
-			final Element element = Element.fromString(elementName.replace("combos", "").replace("combo", "").replace("passives", "").replace("passive", ""));
+
+			final Element element = this.elementManager.getElement(elementName.replace("combos", "").replace("combo", "").replace("passives", "").replace("passive", ""));
 			// combos.
 			if (elementName.contains("combo")) {
 				if (element == null) {
 					sender.sendMessage(ChatColor.BOLD + "Combos");
 
-					for (final Element e : Element.getAllElements()) {
-						final ChatColor color = e != null ? e.getColor() : null;
-						final ArrayList<String> combos = ComboManager.getCombosForElement(e);
+					for (final Element e : this.elementManager.getElements()) {
+						final List<ComboAbilityInfo> abilities = this.comboAbilityManager.getAbilities(e);
 
-						for (final String comboAbil : combos) {
-							ChatColor comboColor = color;
-							if (!sender.hasPermission("bending.ability." + comboAbil)) {
+						for (final ComboAbilityInfo comboAbilityInfo : abilities) {
+							if (!sender.hasPermission("bending.ability." + comboAbilityInfo.getName())) {
 								continue;
 							}
 
-							final CoreAbility coreAbil = CoreAbility.getAbility(comboAbil);
-							if (coreAbil != null) {
-								comboColor = coreAbil.getElement().getColor();
-							}
-							String message = (comboColor + comboAbil);
+							String message = comboAbilityInfo.getElement().getColor() + comboAbilityInfo.getName();
 
-							if (coreAbil instanceof AddonAbility) {
+							if (comboAbilityInfo instanceof AddonAbilityInfo) {
 								message += ChatColor.WHITE + (ChatColor.BOLD + "*");
 							}
 
@@ -115,29 +109,23 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 					return;
 				} else {
 					final ChatColor color = element != null ? element.getColor() : null;
-					final ArrayList<String> combos = ComboManager.getCombosForElement(element);
+					final List<ComboAbilityInfo> abilities = this.comboAbilityManager.getAbilities(element);
 
-					if (combos.isEmpty()) {
+					if (abilities.isEmpty()) {
 						GeneralMethods.sendBrandingMessage(sender, color + this.noCombosAvailable.replace("{element}", element.getName()));
 						return;
 					}
 
 					sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + ChatColor.WHITE + (ChatColor.BOLD + " Combos"));
 
-					for (final String comboMove : combos) {
-						ChatColor comboColor = color;
-						if (!sender.hasPermission("bending.ability." + comboMove)) {
+					for (final ComboAbilityInfo comboAbilityInfo : abilities) {
+						if (!sender.hasPermission("bending.ability." + comboAbilityInfo.getName())) {
 							continue;
 						}
 
-						final CoreAbility coreAbil = CoreAbility.getAbility(comboMove);
-						if (coreAbil != null) {
-							comboColor = coreAbil.getElement().getColor();
-						}
+						String message = comboAbilityInfo.getElement().getColor() + comboAbilityInfo.getName();
 
-						String message = (comboColor + comboMove);
-
-						if (coreAbil instanceof AddonAbility) {
+						if (comboAbilityInfo instanceof AddonAbilityInfo) {
 							message += ChatColor.WHITE + (ChatColor.BOLD + "*");
 						}
 
@@ -150,23 +138,17 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 				if (element == null) {
 					sender.sendMessage(ChatColor.BOLD + "Passives");
 
-					for (final Element e : Element.getAllElements()) {
-						final ChatColor color = e != null ? e.getColor() : null;
-						final Set<String> passives = PassiveManager.getPassivesForElement(e);
+					for (final Element e : this.elementManager.getElements()) {
+						final List<PassiveAbilityInfo> passives = this.passiveAbilityManager.getPassives(e);
 
-						for (final String passiveAbil : passives) {
-							ChatColor passiveColor = color;
-							if (!sender.hasPermission("bending.ability." + passiveAbil)) {
+						for (final PassiveAbilityInfo passiveAbilityInfo : passives) {
+							if (!sender.hasPermission("bending.ability." + passiveAbilityInfo.getName())) {
 								continue;
 							}
 
-							final CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
-							if (coreAbil != null) {
-								passiveColor = coreAbil.getElement().getColor();
-							}
-							String message = (passiveColor + passiveAbil);
+							String message = passiveAbilityInfo.getElement().getColor() + passiveAbilityInfo.getName();
 
-							if (coreAbil instanceof AddonAbility) {
+							if (passiveAbilityInfo instanceof AddonAbilityInfo) {
 								message += ChatColor.WHITE + (ChatColor.BOLD + "*");
 							}
 
@@ -176,7 +158,7 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 					return;
 				}
 				final ChatColor color = element != null ? element.getColor() : null;
-				final Set<String> passives = PassiveManager.getPassivesForElement(element);
+				final List<PassiveAbilityInfo> passives = this.passiveAbilityManager.getPassives(element);
 
 				if (passives.isEmpty()) {
 					GeneralMethods.sendBrandingMessage(sender, color + this.noPassivesAvailable.replace("{element}", element.getName()));
@@ -185,17 +167,12 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 
 				sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + ChatColor.WHITE + (ChatColor.BOLD + " Passives"));
 
-				for (final String passiveAbil : passives) {
-					ChatColor passiveColor = color;
-					if (!sender.hasPermission("bending.ability." + passiveAbil)) {
+				for (final PassiveAbilityInfo passiveAbilityInfo : passives) {
+					if (!sender.hasPermission("bending.ability." + passiveAbilityInfo.getName())) {
 						continue;
 					}
 
-					final CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
-					if (coreAbil != null) {
-						passiveColor = coreAbil.getElement().getColor();
-					}
-					sender.sendMessage(passiveColor + passiveAbil);
+					sender.sendMessage(passiveAbilityInfo.getElement().getColor() + passiveAbilityInfo.getName());
 				}
 				return;
 			} else if (element != null) {
@@ -209,14 +186,14 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 			else {
 				final StringBuilder elements = new StringBuilder(ChatColor.RED + this.invalidArgument);
 				elements.append(ChatColor.WHITE + "\nElements: ");
-				for (final Element e : Element.getAllElements()) {
+				for (final Element e : this.elementManager.getElements()) {
 					if (!(e instanceof SubElement)) {
 						elements.append(e.getColor() + e.getName() + ChatColor.WHITE + " | ");
 					}
 				}
 				sender.sendMessage(elements.toString());
 				final StringBuilder subelements = new StringBuilder(ChatColor.WHITE + "SubElements: ");
-				for (final SubElement e : Element.getAllSubElements()) {
+				for (final SubElement e : this.elementManager.getSubElements()) {
 					subelements.append(ChatColor.WHITE + "\n- " + e.getColor() + e.getName());
 				}
 				sender.sendMessage(subelements.toString());
@@ -228,7 +205,7 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playersOnly);
 				return;
 			}
-			this.displayBinds(sender);
+			this.displayBinds((Player) sender);
 		}
 	}
 
@@ -239,7 +216,7 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 	 * @param element The element to show the moves for
 	 */
 	private void displayElement(final CommandSender sender, final Element element) {
-		final List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
+		final List<AbilityInfo> abilities = this.abilityManager.getAbilities(element);
 
 		if (abilities.isEmpty()) {
 			sender.sendMessage(ChatColor.YELLOW + this.noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
@@ -249,29 +226,29 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 		sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending());
 
 		final HashSet<String> abilitiesSent = new HashSet<String>(); // Some abilities have the same name. This prevents this from showing anything.
-		for (final CoreAbility ability : abilities) {
-			if (ability instanceof SubAbility || ability instanceof ComboAbility || ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
+		for (final AbilityInfo abilityInfo : abilities) {
+			if (abilityInfo instanceof SubAbility || abilityInfo instanceof ComboAbilityInfo || abilityInfo.isHidden() || abilitiesSent.contains(abilityInfo.getName())) {
 				continue;
 			}
 
-			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
-				String message = ability.getElement().getColor() + ability.getName();
-				if (ability instanceof AddonAbility) {
+			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, abilityInfo.getName())) {
+				String message = abilityInfo.getElement().getColor() + abilityInfo.getName();
+				if (abilityInfo instanceof AddonAbilityInfo) {
 					message += ChatColor.WHITE + (ChatColor.BOLD + "*");
 				}
 
 				sender.sendMessage(message);
-				abilitiesSent.add(ability.getName());
+				abilitiesSent.add(abilityInfo.getName());
 			}
 		}
 
-		if (element.equals(Element.CHI)) {
+		if (element.equals(this.elementManager.getChi())) {
 			sender.sendMessage(ChatColor.YELLOW + "Combos: " + ChatColor.GOLD + "/bending display ChiCombos");
 			sender.sendMessage(ChatColor.YELLOW + "Passives: " + ChatColor.GOLD + "/bending display ChiPassives");
 		} else {
-			sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.getName() + "Combos");
-			sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
-			for (final SubElement sub : Element.getSubElements(element)) {
+			sender.sendMessage(element.getSecondaryColor() + "Combos: " + element.getColor() + "/bending display " + element.getName() + "Combos");
+			sender.sendMessage(element.getSecondaryColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
+			for (final SubElement sub : this.elementManager.getSubElements(element)) {
 				if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
 					sender.sendMessage(sub.getColor() + sub.getName() + " abilities: " + element.getColor() + "/bending display " + sub.getName());
 				}
@@ -286,7 +263,7 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 	 * @param element The subelement to show the moves for
 	 */
 	private void displaySubElement(final CommandSender sender, final SubElement element) {
-		final List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
+		final List<AbilityInfo> abilities = this.abilityManager.getAbilities(element);;
 
 		if (abilities.isEmpty() && element != null) {
 			sender.sendMessage(ChatColor.YELLOW + this.noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
@@ -296,20 +273,20 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 		sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending());
 
 		final HashSet<String> abilitiesSent = new HashSet<String>();
-		for (final CoreAbility ability : abilities) {
-			if (ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
+		for (final AbilityInfo abilityInfo : abilities) {
+			if (abilityInfo.isHidden() || abilitiesSent.contains(abilityInfo.getName())) {
 				continue;
-			} else if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
-				String message = element.getColor() + ability.getName();
-				if (ability instanceof AddonAbility) {
+			} else if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, abilityInfo.getName())) {
+				String message = element.getColor() + abilityInfo.getName();
+				if (abilityInfo instanceof AddonAbilityInfo) {
 					message += ChatColor.WHITE + (ChatColor.BOLD + "*");
 				}
 
 				sender.sendMessage(message);
-				abilitiesSent.add(ability.getName());
+				abilitiesSent.add(abilityInfo.getName());
 			}
 		}
-		sender.sendMessage(element.getParentElement().getColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
+		sender.sendMessage(element.getParent().getColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
 	}
 
 	/**
@@ -317,66 +294,43 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 	 *
 	 * @param sender The CommandSender to output the bound abilities to
 	 */
-	private void displayBinds(final CommandSender sender) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		}
-		final String[] abilities = bPlayer.getAbilities();
+	private void displayBinds(final Player player) {
+		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
+		List<String> abilities = bendingPlayer.getAbilities();
 
-		if (Stream.of(abilities).allMatch(Objects::isNull)) {
-			sender.sendMessage(ChatColor.RED + this.noBinds);
+		if (abilities.stream().allMatch(Objects::isNull)) {
+			player.sendMessage(ChatColor.RED + this.noBinds);
 			return;
 		}
 
-		sender.sendMessage(ChatColor.WHITE + (ChatColor.BOLD + "Abilities"));
+		player.sendMessage(ChatColor.WHITE + (ChatColor.BOLD + "Abilities"));
 
-		for (int i = 1; i <= 9; i++) {
-			final String ability = abilities[i - 1];
-			final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-			if (coreAbil != null && !ability.equalsIgnoreCase("null")) {
-				String message = i + ". " + coreAbil.getElement().getColor() + ability;
+		for (int i = 0; i < 9; i++) {
+			final String abilityName = abilities.get(i);
+			final AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(abilityName);
 
-				if (coreAbil instanceof AddonAbility) {
-					message += ChatColor.WHITE + (ChatColor.BOLD + "*");
-				}
-
-				sender.sendMessage(message);
+			if (abilityInfo == null) {
+				continue;
 			}
+
+			String message = (i + 1) + ". " + abilityInfo.getElement().getColor() + abilityName;
+
+			if (abilityInfo instanceof AddonAbilityInfo) {
+				message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+			}
+
+			player.sendMessage(message);
 		}
 	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		if (args.size() >= 1 || !sender.hasPermission("bending.command.display")) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 		final List<String> list = new ArrayList<String>();
-		list.add("Air");
-		list.add("Earth");
-		list.add("Fire");
-		list.add("Water");
-		list.add("Chi");
-
-		for (final Element e : Element.getAddonElements()) {
+		for (Element e : this.elementManager.getAllElements()) {
 			list.add(e.getName());
-		}
-
-		list.add("Bloodbending");
-		list.add("Combustion");
-		list.add("Flight");
-		list.add("Healing");
-		list.add("Ice");
-		list.add("Lava");
-		list.add("Lightning");
-		list.add("Metal");
-		list.add("Plantbending");
-		list.add("Sand");
-		list.add("Spiritual");
-
-		for (final SubElement se : Element.getAddonSubElements()) {
-			list.add(se.getName());
 		}
 
 		list.add("AirCombos");

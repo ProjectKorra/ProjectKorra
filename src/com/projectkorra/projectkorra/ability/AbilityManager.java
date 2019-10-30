@@ -30,8 +30,8 @@ public class AbilityManager extends Module {
 	private final MultiAbilityManager multiAbilityManager;
 	private final PassiveAbilityManager passiveAbilityManager;
 
-	private final Map<String, AbilityInfo> abilities = new HashMap<>();
-	private final Map<Class<? extends Ability>, AbilityInfo> abilityInfoMap = new HashMap<>();
+	private final Map<String, AbilityInfo> abilityInfoByName = new HashMap<>();
+	private final Map<Class<? extends Ability>, AbilityInfo> abilityInfoByClass = new HashMap<>();
 
 	private final Set<Ability> playerAbilitySet = new HashSet<>();
 	private final Map<UUID, Map<Class<? extends Ability>, LinkedList<Ability>>> playerAbilityMap = new HashMap<>();
@@ -211,7 +211,8 @@ public class AbilityManager extends Module {
 			return;
 		}
 
-		this.abilities.put(abilityInfo.getName(), abilityInfo);
+		this.abilityInfoByName.put(abilityInfo.getName(), abilityInfo);
+		this.abilityInfoByClass.put(abilityClass, abilityInfo);
 	}
 
 	private AbilityConfig getAbilityConfig(Class<? extends Ability> abilityClass) throws AbilityException {
@@ -301,23 +302,15 @@ public class AbilityManager extends Module {
 	}
 
 	public AbilityInfo getAbilityInfo(String abilityName) {
-		return this.abilities.get(abilityName);
+		return this.abilityInfoByName.get(abilityName);
 	}
 
 	public AbilityInfo getAbilityInfo(Class<? extends Ability> abilityClass) {
-		return this.abilityInfoMap.computeIfAbsent(abilityClass, k ->
-		{
-			try {
-				return ((Class<? extends AbilityInfo>) ((ParameterizedType) abilityClass.getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-				return null;
-			}
-		});
+		return this.abilityInfoByClass.get(abilityClass);
 	}
 
 	public List<AbilityInfo> getAbilityInfo() {
-		return new ArrayList<>(this.abilities.values());
+		return new ArrayList<>(this.abilityInfoByName.values());
 	}
 
 	public <T extends Ability> LinkedList<T> getAbilities(Class<T> abilityClass) {
@@ -335,7 +328,7 @@ public class AbilityManager extends Module {
 	}
 
 	public List<AbilityInfo> getAbilities(Element element) {
-		return this.abilities.values().stream()
+		return this.abilityInfoByName.values().stream()
 				.filter(ability ->
 				{
 					if (ability.getElement().equals(element)) {

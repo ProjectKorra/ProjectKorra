@@ -8,13 +8,15 @@ public class Element {
 	private final String elementName;
 	private final String displayName;
 	private final ChatColor color;
+	private final ChatColor secondaryColor;
 	private final ElementManager.ElementType type;
 
-	public Element(int elementId, String elementName, String displayName, ChatColor color, ElementManager.ElementType type) {
+	public Element(int elementId, String elementName, String displayName, ChatColor color, ChatColor secondaryColor, ElementManager.ElementType type) {
 		this.elementId = elementId;
 		this.elementName = elementName;
 		this.displayName = displayName;
 		this.color = color;
+		this.secondaryColor = secondaryColor;
 		this.type = type;
 	}
 
@@ -32,6 +34,10 @@ public class Element {
 
 	public ChatColor getColor() {
 		return this.color;
+	}
+
+	public ChatColor getSecondaryColor() {
+		return this.secondaryColor;
 	}
 
 	public String getColoredName() {

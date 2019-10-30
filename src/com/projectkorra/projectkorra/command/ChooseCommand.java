@@ -199,9 +199,7 @@ public class ChooseCommand extends PKCommand<ChooseCommandConfig> {
 		final List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
 			for (Element element : this.elementManager.getElements()) {
-				if (!(element instanceof SubElement)) {
-					l.add(element.getName());
-				}
+				l.add(element.getName());
 			}
 		} else {
 			for (final Player p : Bukkit.getOnlinePlayers()) {

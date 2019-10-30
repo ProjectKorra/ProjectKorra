@@ -84,19 +84,19 @@ public class PassiveAbilityManager extends Module {
 		return this.abilities.get(abilityClass);
 	}
 
-	public List<Class<? extends Ability>> getPassivesForElement(Element element) {
-		List<Class<? extends Ability>> abilities = new ArrayList<>();
+	public List<PassiveAbilityInfo> getPassives(Element element) {
+		List<PassiveAbilityInfo> abilities = new ArrayList<>();
 
-		this.abilities.forEach((abilityClass, passiveAbilityLoader) -> {
+		this.abilities.values().forEach(passiveAbilityInfo -> {
 
-			Element passiveElement = passiveAbilityLoader.getElement();
+			Element passiveElement = passiveAbilityInfo.getElement();
 
 			if (passiveElement instanceof SubElement) {
 				passiveElement = ((SubElement) passiveElement).getParent();
 			}
 
 			if (passiveElement.equals(element)) {
-				abilities.add(abilityClass);
+				abilities.add(passiveAbilityInfo);
 			}
 		});
 

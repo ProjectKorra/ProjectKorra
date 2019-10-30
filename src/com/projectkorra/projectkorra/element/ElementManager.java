@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.element;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.projectkorra.projectkorra.module.DatabaseModule;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
@@ -11,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,7 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 
 	private final Map<Integer, Element> elements = new HashMap<>();
 	private final Map<String, Element> names = new HashMap<>();
+	private final Map<Element, List<SubElement>> subElements = new HashMap<>();
 
 	private final String nameRegex = "[a-zA-Z]+";
 
@@ -49,33 +48,33 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 				getRepository().createTables();
 
 				// Waterbending
-				this.water = addElement(WATER, "Water", ChatColor.AQUA, ElementType.BENDING);
+				this.water = addElement(WATER, "Water", ChatColor.AQUA, ChatColor.DARK_AQUA, ElementType.BENDING);
 				this.blood = addSubElement(BLOOD, "Blood", ChatColor.DARK_AQUA, ElementType.BENDING, this.water);
 				this.healing = addSubElement(HEALING, "Healing", ChatColor.DARK_AQUA, ElementType.NO_SUFFIX, this.water);
 				this.ice = addSubElement(ICE, "Ice", ChatColor.DARK_AQUA, ElementType.BENDING, this.water);
 				this.plant = addSubElement(PLANT, "Plant", ChatColor.DARK_AQUA, ElementType.BENDING, this.water);
 
 				// Earthbending
-				this.earth = addElement(EARTH, "Earth", ChatColor.AQUA, ElementType.BENDING);
+				this.earth = addElement(EARTH, "Earth", ChatColor.GREEN, ChatColor.DARK_GREEN ,ElementType.BENDING);
 				this.lava = addSubElement(LAVA, "Lava", ChatColor.DARK_GREEN, ElementType.BENDING, this.earth);
 				this.metal = addSubElement(METAL, "Metal", ChatColor.DARK_GREEN, ElementType.BENDING, this.earth);
 				this.sand = addSubElement(SAND, "Sand", ChatColor.DARK_GREEN, ElementType.BENDING, this.earth);
 
 				// Firebending
-				this.fire = addElement(FIRE, "Fire", ChatColor.RED, ElementType.BENDING);
+				this.fire = addElement(FIRE, "Fire", ChatColor.RED, ChatColor.DARK_RED, ElementType.BENDING);
 				this.combustion = addSubElement(COMBUSTION, "Combustion", ChatColor.DARK_RED, ElementType.BENDING, this.fire);
 				this.lightning = addSubElement(LIGHTNING, "Lightning", ChatColor.DARK_RED, ElementType.BENDING, this.fire);
 
 				// Airbending
-				this.air = addElement(AIR, "Air", ChatColor.GRAY, ElementType.BENDING);
+				this.air = addElement(AIR, "Air", ChatColor.GRAY, ChatColor.DARK_GRAY, ElementType.BENDING);
 				this.flight = addSubElement(FLIGHT, "Flight", ChatColor.DARK_GRAY, ElementType.NO_SUFFIX, this.air);
 				this.spiritual = addSubElement(SPIRITUAL, "Spiritual", ChatColor.DARK_GRAY, ElementType.NO_SUFFIX, this.air);
 
 				// Chiblocking
-				this.chi = addElement(CHI, "Chi", ChatColor.GOLD, ElementType.BLOCKING);
+				this.chi = addElement(CHI, "Chi", ChatColor.GOLD, ChatColor.YELLOW, ElementType.BLOCKING);
 
 				// Avatar
-				this.avatar = addElement(AVATAR, "Avatar", ChatColor.DARK_PURPLE, null);
+				this.avatar = addElement(AVATAR, "Avatar", ChatColor.DARK_PURPLE, ChatColor.WHITE, null);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -171,10 +170,10 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 		return this.names.get(elementName);
 	}
 
-	private Element addElement(String elementName, String displayName, ChatColor color, ElementType type) {
+	private Element addElement(String elementName, String displayName, ChatColor color, ChatColor secondaryColor, ElementType type) {
 		int elementId = registerElement(elementName);
 
-		Element element = new Element(elementId, elementName, displayName, color, type);
+		Element element = new Element(elementId, elementName, displayName, color, secondaryColor, type);
 
 		this.elements.put(elementId, element);
 		this.names.put(elementName, element);
@@ -189,6 +188,7 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 
 		this.elements.put(elementId, element);
 		this.names.put(elementName, element);
+		this.subElements.computeIfAbsent(parent, k -> new ArrayList<>()).add(element);
 
 		return element;
 	}
@@ -275,6 +275,25 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 	}
 
 	public List<Element> getElements() {
+		return this.elements.values().stream()
+				.filter(Predicates.not(SubElement.class::isInstance))
+				.collect(Collectors.toList());
+	}
+
+	public List<SubElement> getSubElements() {
+		return this.elements.values().stream()
+				.filter(SubElement.class::isInstance)
+				.map(SubElement.class::cast)
+				.collect(Collectors.toList());
+	}
+
+	public List<SubElement> getSubElements(Element parent) {
+		List<SubElement> subElements = this.subElements.get(parent);
+
+		return subElements != null ? subElements : Collections.emptyList();
+	}
+
+	public List<Element> getAllElements() {
 		return new ArrayList<>(this.elements.values());
 	}
 

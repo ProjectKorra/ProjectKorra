@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.ability.info.ComboAbilityInfo;
+import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.module.Module;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
@@ -20,14 +21,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ComboAbilityManager extends Module {
 
 	private final BendingPlayerManager bendingPlayerManager;
 	private final AbilityManager abilityManager;
 
+	private final List<ComboAbilityInfo> abilities = new ArrayList<>();
+	private final List<ComboAbility> comboAbilities = new ArrayList<>();
+
 	private final Map<UUID, LinkedList<Combination>> recentlyUsed = new HashMap<>();
-	private final List<ComboAbility> abilities = new ArrayList<>();
 
 	private final long combinationMax = 8;
 
@@ -43,7 +47,8 @@ public class ComboAbilityManager extends Module {
 	public void registerAbility(Class<? extends Ability> abilityClass, ComboAbilityInfo comboAbilityInfo) {
 		ComboAbility comboAbility = new ComboAbility(abilityClass, comboAbilityInfo.getName(), comboAbilityInfo.getCombination());
 
-		this.abilities.add(comboAbility);
+		this.abilities.add(comboAbilityInfo);
+		this.comboAbilities.add(comboAbility);
 	}
 
 	private void processComboAbility(Player player, ClickType clickType) {
@@ -59,7 +64,7 @@ public class ComboAbilityManager extends Module {
 			recentlyUsed.removeLast();
 		}
 
-		ComboAbility comboAbility = getComboAbility(recentlyUsed);
+		ComboAbility comboAbility = getAbility(recentlyUsed);
 
 		if (comboAbility == null) {
 			return;
@@ -72,8 +77,8 @@ public class ComboAbilityManager extends Module {
 		this.abilityManager.createAbility(player, comboAbility.abilityClass);
 	}
 
-	private ComboAbility getComboAbility(LinkedList<Combination> recentlyUsed) {
-		for (ComboAbility comboAbility : this.abilities) {
+	private ComboAbility getAbility(LinkedList<Combination> recentlyUsed) {
+		for (ComboAbility comboAbility : this.comboAbilities) {
 			int comboSize = comboAbility.combinations.size();
 
 			if (recentlyUsed.size() < comboSize) {
@@ -86,6 +91,12 @@ public class ComboAbilityManager extends Module {
 		}
 
 		return null;
+	}
+
+	public List<ComboAbilityInfo> getAbilities(Element element) {
+		return this.abilities.stream()
+				.filter(comboAbilityInfo -> comboAbilityInfo.getElement().equals(element))
+				.collect(Collectors.toList());
 	}
 
 	@EventHandler

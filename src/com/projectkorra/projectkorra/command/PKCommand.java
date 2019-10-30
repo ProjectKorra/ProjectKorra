@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.projectkorra.projectkorra.ability.AbilityManager;
+import com.projectkorra.projectkorra.ability.ComboAbilityManager;
+import com.projectkorra.projectkorra.ability.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.PassiveAbilityManager;
 import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.element.ElementManager;
 import com.projectkorra.projectkorra.module.ModuleManager;
@@ -34,6 +37,9 @@ public abstract class PKCommand<C extends CommandConfig> implements SubCommand<C
 	protected final BendingPlayerManager bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 	protected final ElementManager elementManager = ModuleManager.getModule(ElementManager.class);
 	protected final AbilityManager abilityManager = ModuleManager.getModule(AbilityManager.class);
+	protected final ComboAbilityManager comboAbilityManager = ModuleManager.getModule(ComboAbilityManager.class);
+	protected final MultiAbilityManager multiAbilityManager = ModuleManager.getModule(MultiAbilityManager.class);
+	protected final PassiveAbilityManager passiveAbilityManager = ModuleManager.getModule(PassiveAbilityManager.class);
 	protected final AbilityBindManager abilityBindManager = ModuleManager.getModule(AbilityBindManager.class);
 
 	protected String noPermissionMessage, mustBePlayerMessage;

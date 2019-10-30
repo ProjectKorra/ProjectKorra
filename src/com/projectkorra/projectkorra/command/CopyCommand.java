@@ -3,15 +3,15 @@ package com.projectkorra.projectkorra.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
@@ -79,18 +79,10 @@ public class CopyCommand extends PKCommand<CopyCommandConfig> {
 
 	private boolean assignAbilities(final CommandSender sender, final Player player, final Player player2, final boolean self) {
 
-		BendingPlayer orig = BendingPlayer.getBendingPlayer(player);
-		BendingPlayer target = BendingPlayer.getBendingPlayer(player2);
+		BendingPlayer orig = this.bendingPlayerManager.getBendingPlayer(player);
+		BendingPlayer target = this.bendingPlayerManager.getBendingPlayer(player2);
 
-		if (orig == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			orig = BendingPlayer.getBendingPlayer(player);
-		}
-		if (target == null) {
-			GeneralMethods.createBendingPlayer(player2.getUniqueId(), player2.getName());
-			target = BendingPlayer.getBendingPlayer(player2);
-		}
-		if (orig.isPermaRemoved()) {
+		if (orig.isBendingPermanentlyRemoved()) {
 			if (self) {
 				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved);
 			} else {
@@ -99,17 +91,22 @@ public class CopyCommand extends PKCommand<CopyCommandConfig> {
 			return false;
 		}
 
-		final String[] abilities = orig.getAbilities().clone();
+		List<String> abilities = orig.getAbilities();
 		boolean boundAll = true;
+
 		for (int i = 0; i < 9; i++) {
-			final CoreAbility coreAbil = CoreAbility.getAbility(abilities[i]);
-			if (coreAbil != null && !target.canBind(coreAbil)) {
-				abilities[i] = null;
+			String abilityName = abilities.get(0);
+
+			AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(abilityName);
+
+			if (abilityInfo == null || !target.canBind(abilityInfo)) {
 				boundAll = false;
+				continue;
 			}
+
+			this.abilityBindManager.bindAbility(player2, abilityName, i);
 		}
-		
-		target.setAbilities(abilities);
+
 		return boundAll;
 	}
 

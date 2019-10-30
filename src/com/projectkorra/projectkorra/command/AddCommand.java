@@ -90,7 +90,7 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(target);
 
-		if (bendingPlayer.isBendingRemoved()) {
+		if (bendingPlayer.isBendingPermanentlyRemoved()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.getConfig(CommandPropertiesConfig.class).BendingPermanentlyRemoved_Other);
 			return;
 		}
@@ -211,7 +211,7 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 		}
 		final List<String> l = new ArrayList<>();
 		if (args.size() == 0) {
-			for (Element element : this.elementManager.getElements()) {
+			for (Element element : this.elementManager.getAllElements()) {
 				l.add(element.getName());
 			}
 		} else {
