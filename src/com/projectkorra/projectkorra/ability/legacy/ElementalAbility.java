@@ -1,8 +1,8 @@
-package com.projectkorra.projectkorra.ability.api;
+package com.projectkorra.projectkorra.ability.legacy;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  * Air, Water, Earth, Fire, Chi, or AvatarAbility. This class is mainly used to
  * keep CoreAbility from becoming too cluttered.
  */
-public abstract class ElementalAbility<Info extends AbilityInfo, C extends AbilityConfig> extends Ability<Info, C> {
+public abstract class ElementalAbility<Handler extends AbilityHandler> extends Ability<Handler> {
 	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
@@ -42,8 +42,8 @@ public abstract class ElementalAbility<Info extends AbilityInfo, C extends Abili
 		}
 	}
 
-	public ElementalAbility(Player player) {
-		super(player);
+	public ElementalAbility(Handler abilityHandler, Player player) {
+		super(abilityHandler, player);
 	}
 
 	public boolean isTransparent(final Block block) {

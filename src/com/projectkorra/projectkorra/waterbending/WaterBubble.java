@@ -15,8 +15,8 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.api.ElementalAbility;
-import com.projectkorra.projectkorra.ability.api.WaterAbility;
+import com.projectkorra.projectkorra.ability.legacy.ElementalAbility;
+import com.projectkorra.projectkorra.ability.legacy.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.configs.abilities.water.WaterBubbleConfig;
 import com.projectkorra.projectkorra.util.TempBlock;

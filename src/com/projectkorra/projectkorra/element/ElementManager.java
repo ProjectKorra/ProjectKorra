@@ -2,8 +2,9 @@ package com.projectkorra.projectkorra.element;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
-import com.projectkorra.projectkorra.module.DatabaseModule;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.module.ModuleManager;
+import com.projectkorra.projectkorra.module.PlayerDatabaseModule;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import com.projectkorra.projectkorra.player.BendingPlayerLoadedEvent;
 import com.projectkorra.projectkorra.player.BendingPlayerManager;
@@ -16,7 +17,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ElementManager extends DatabaseModule<ElementRepository> {
+public class ElementManager extends PlayerDatabaseModule<Set<Element>, ElementRepository> {
 
 	private static final String WATER = "water", EARTH = "earth", FIRE = "fire", AIR = "air", CHI = "chi", AVATAR = "avatar";
 	private static final String BLOOD = "blood", HEALING = "healing", ICE = "ice", PLANT = "plant";
@@ -93,7 +94,7 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 			try {
 				List<Element> elements = getRepository().selectPlayerElements(bendingPlayer.getId()).stream().map(this.elements::get).collect(Collectors.toList());
 
-				elements.forEach(bendingPlayer::addElement);
+				elements.forEach(element -> getPlugin().getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(event.getPlayer(), element, PlayerChangeElementEvent.Reason.ADD)));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -103,9 +104,11 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 	public boolean addElement(Player player, Element element) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		if (!bendingPlayer.addElement(element)) {
+		if (!getData(player).add(element)) {
 			return false;
 		}
+//		PlayerChangeElementEvent playerChangeElementEvent = new PlayerChangeElementEvent(player, element, PlayerChangeElementEvent.Reason.ADD);
+//		getPlugin().getServer().getPluginManager().callEvent(playerChangeElementEvent);
 
 		runAsync(() -> {
 			try {
@@ -121,8 +124,10 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 	public void setElement(Player player, Element element) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		bendingPlayer.clearElements();
-		bendingPlayer.addElement(element);
+		getData(player).clear();
+		getData(player).add(element);
+//		PlayerChangeElementEvent playerChangeElementEvent = new PlayerChangeElementEvent(player, element, PlayerChangeElementEvent.Reason.SET);
+//		getPlugin().getServer().getPluginManager().callEvent(playerChangeElementEvent);
 
 		runAsync(() -> {
 			try {
@@ -137,9 +142,11 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 	public boolean removeElement(Player player, Element element) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		if (!bendingPlayer.removeElement(element)) {
+		if (!getData(player).remove(element)) {
 			return false;
 		}
+//		PlayerChangeElementEvent playerChangeElementEvent = new PlayerChangeElementEvent(player, element, PlayerChangeElementEvent.Reason.REMOVE);
+//		getPlugin().getServer().getPluginManager().callEvent(playerChangeElementEvent);
 
 		runAsync(() -> {
 			try {
@@ -155,7 +162,9 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 	public void clearElements(Player player) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		bendingPlayer.clearElements();
+		getData(player).clear();
+//		PlayerChangeElementEvent playerChangeElementEvent = new PlayerChangeElementEvent(player, null, PlayerChangeElementEvent.Reason.CLEAR);
+//		getPlugin().getServer().getPluginManager().callEvent(playerChangeElementEvent);
 
 		runAsync(() -> {
 			try {
@@ -164,6 +173,18 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	public Set<Element> getElements(Player player) {
+		return Collections.unmodifiableSet(getData(player));
+	}
+
+	public boolean hasElement(Player player, Element element) {
+		if (element.equals(this.avatar)) {
+			return player.hasPermission("bending.avatar");
+		}
+
+		return getData(player).contains(element);
 	}
 
 	public Element getElement(String elementName) {
@@ -295,6 +316,11 @@ public class ElementManager extends DatabaseModule<ElementRepository> {
 
 	public List<Element> getAllElements() {
 		return new ArrayList<>(this.elements.values());
+	}
+
+	@Override
+	protected Set<Element> addData(UUID uuid) {
+		return new HashSet<>();
 	}
 
 	public enum ElementType {

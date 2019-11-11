@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import com.projectkorra.projectkorra.ability.info.AddonAbilityInfo;
-import com.projectkorra.projectkorra.ability.info.ComboAbilityInfo;
-import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.AddonAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.ComboAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.PassiveAbilityInfo;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.player.BendingPlayer;
@@ -19,7 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.SubAbility;
+import com.projectkorra.projectkorra.ability.legacy.SubAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.DisplayCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
@@ -292,7 +290,7 @@ public class DisplayCommand extends PKCommand<DisplayCommandConfig> {
 	/**
 	 * Displays a Player's bound abilities.
 	 *
-	 * @param sender The CommandSender to output the bound abilities to
+	 * @param player The Player to output the bound abilities to
 	 */
 	private void displayBinds(final Player player) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);

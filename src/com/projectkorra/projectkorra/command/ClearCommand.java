@@ -43,7 +43,7 @@ public class ClearCommand extends PKCommand<ClearCommandConfig> {
 		Player player = (Player) sender;
 
 		if (args.isEmpty()) {
-			if (this.abilityBindManager.clearBinds(player) == AbilityBindManager.Result.SUCCESS) {
+			if (this.abilityBindManager.clearAbilities(player) == AbilityBindManager.Result.SUCCESS) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
 			}
 

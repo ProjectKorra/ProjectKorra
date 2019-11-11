@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.event;
 
 import com.projectkorra.projectkorra.element.Element;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -11,50 +10,31 @@ import org.bukkit.event.HandlerList;
  */
 public class PlayerChangeElementEvent extends Event {
 
-	private static final HandlerList handlers = new HandlerList();
-	private final CommandSender sender;
-	private final Player target;
+	private static final HandlerList HANDLER_LIST = new HandlerList();
+
+	private final Player player;
 	private final Element element;
-	private final Result result;
+	private final Reason reason;
 
 	/**
 	 *
-	 * @param sender the {@link CommandSender} who changed the player's bending
-	 * @param target the {@link Player player} who's bending was changed
+	 * @param player the {@link Player player} who's bending was changed
 	 * @param element the {@link Element element} that was affected
-	 * @param result whether the element was chosen, added, removed, or
+	 * @param reason whether the element was chosen, added, removed, or
 	 *            permaremoved
 	 */
-	public PlayerChangeElementEvent(final CommandSender sender, final Player target, final Element element, final Result result) {
-		this.sender = sender;
-		this.target = target;
+	public PlayerChangeElementEvent(final Player player, final Element element, final Reason reason) {
+		this.player = player;
 		this.element = element;
-		this.result = result;
-	}
-
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
-	/**
-	 *
-	 * @return the {@link CommandSender} who changed the player's bending
-	 */
-	public CommandSender getSender() {
-		return this.sender;
+		this.reason = reason;
 	}
 
 	/**
 	 *
 	 * @return the {@link Player player} who's bending was changed
 	 */
-	public Player getTarget() {
-		return this.target;
+	public Player getPlayer() {
+		return this.player;
 	}
 
 	/**
@@ -69,13 +49,20 @@ public class PlayerChangeElementEvent extends Event {
 	 *
 	 * @return whether the element was chosen, added, removed, or permaremoved
 	 */
-	public Result getResult() {
-		return this.result;
+	public Reason getReason() {
+		return this.reason;
 	}
 
-	public static enum Result {
-		CHOOSE, REMOVE, ADD, PERMAREMOVE;
-		private Result() {}
+	@Override
+	public HandlerList getHandlers() {
+		return HANDLER_LIST;
 	}
 
+	public static HandlerList getHandlerList() {
+		return HANDLER_LIST;
+	}
+
+	public enum Reason {
+		ADD, SET, REMOVE, CLEAR
+	}
 }

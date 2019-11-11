@@ -1,9 +1,9 @@
 package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.api.MultiAbility;
 import com.projectkorra.projectkorra.ability.api.PlayerBindChangeEvent;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import com.projectkorra.projectkorra.ability.info.MultiAbilityInfo;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.PlayerSwingEvent;
 import com.projectkorra.projectkorra.module.Module;
@@ -16,40 +16,40 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MultiAbilityManager extends Module {
 
 	private final BendingPlayerManager bendingPlayerManager;
 	private final AbilityManager abilityManager;
+	private final AbilityBindManager abilityBindManager;
 
-	private final Map<String, MultiAbility> abilities = new HashMap<>();
-	private final Map<String, Class<? extends Ability>> multiAbilities = new HashMap<>();
+//	private final Map<String, MultiAbility> abilities = new HashMap<>();
+//	private final Map<String, Class<? extends Ability>> multiAbilities = new HashMap<>();
+
+	private final Map<String, MultiAbilityInfo> multiAbilityMap = new HashMap<>();
+	private final Map<String, AbilityHandler> handlerMap = new HashMap<>();
 
 	private final Map<UUID, Class<? extends Ability>> playerMultiAbility = new HashMap<>();
-	private final Map<UUID, List<String>> playerAbilities = new HashMap<>();
+	private final Map<UUID, String[]> playerAbilities = new HashMap<>();
 
 	private MultiAbilityManager() {
 		super("Multi Ability");
 
 		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
+		this.abilityBindManager = ModuleManager.getModule(AbilityBindManager.class);
 	}
 
-	public void registerAbility(Class<? extends Ability> abilityClass, MultiAbilityInfo multiAbilityInfo) {
-		List<Class<? extends Ability>> abilities = multiAbilityInfo.getAbilities();
+	public void registerAbility(AbilityHandler abilityHandler) {
+		MultiAbility multiAbility = (MultiAbility) abilityHandler;
 
-		Map<String, Class<? extends Ability>> abilitiesByName = new HashMap<>();
+		Map<String, AbilityHandler> handlerMap = multiAbility.getAbilities().stream().collect(Collectors.toMap(AbilityHandler::getName, h -> h));
 
-		for (Class<? extends Ability> ability : abilities) {
-			AbilityInfo info = this.abilityManager.getAbilityInfo(ability);
+		MultiAbilityInfo multiAbilityInfo = new MultiAbilityInfo(abilityHandler, new ArrayList<>(handlerMap.keySet()));
 
-			abilitiesByName.put(info.getName(), ability);
-		}
-
-		MultiAbility multiAbility = new MultiAbility(abilityClass, multiAbilityInfo.getName(), abilitiesByName.keySet());
-
-		this.abilities.put(multiAbilityInfo.getName(), multiAbility);
-		this.multiAbilities.putAll(abilitiesByName);
+		this.multiAbilityMap.put(abilityHandler.getName(), multiAbilityInfo);
+		this.handlerMap.putAll(handlerMap);
 	}
 
 	@EventHandler
@@ -58,22 +58,33 @@ public class MultiAbilityManager extends Module {
 		BendingPlayer bendingPlayer = event.getBendingPlayer();
 
 		String abilityName = event.getAbilityName();
-		MultiAbility multiAbility = this.abilities.get(abilityName);
+		MultiAbilityInfo multiAbilityInfo = this.multiAbilityMap.get(abilityName);
 
-		if (multiAbility == null) {
+		if (multiAbilityInfo == null) {
 			return;
 		}
 
-		this.playerMultiAbility.put(player.getUniqueId(), multiAbility.abilityClass);
+		this.playerMultiAbility.put(player.getUniqueId(), multiAbilityInfo.abilityHandler.getAbility());
 		this.playerAbilities.put(player.getUniqueId(), bendingPlayer.getAbilities());
 
-		Ability ability = this.abilityManager.createAbility(player, multiAbility.abilityClass);
+		multiAbilityInfo.abilityHandler.newInstance(player);
 
-		String[] abilities = multiAbility.abilities.stream()
-				.filter(name -> player.hasPermission("bending.ability." + multiAbility.abilityName + "." + name))
-				.toArray(String[]::new);
+		// TODO Allow AbilityBindManager to create 'temp' abilities which are not stored
+		for (int slot = 0; slot < multiAbilityInfo.abilities.size(); slot++) {
+			String multiAbility = multiAbilityInfo.abilities.get(slot);
 
-		bendingPlayer.setAbilities(abilities);
+			if (!player.hasPermission("bending.ability." + multiAbilityInfo.abilityHandler.getName() + "." + multiAbility)) {
+				continue;
+			}
+
+			this.abilityBindManager.bindAbility(player, multiAbility, slot, false);
+		}
+
+//		String[] abilities = multiAbilityInfo.abilities.stream()
+//				.filter(name -> player.hasPermission("bending.ability." + multiAbilityInfo.abilityHandler.getName() + "." + name))
+//				.toArray(String[]::new);
+
+//		bendingPlayer.setAbilities(abilities);
 		player.getInventory().setHeldItemSlot(0);
 	}
 
@@ -82,13 +93,13 @@ public class MultiAbilityManager extends Module {
 		Player player = event.getPlayer();
 
 		String abilityName = event.getAbilityName();
-		Class<? extends Ability> abilityClass = this.multiAbilities.get(abilityName);
+		AbilityHandler abilityHandler = this.handlerMap.get(abilityName);
 
-		if (abilityClass == null) {
+		if (abilityHandler == null) {
 			return;
 		}
 
-		Ability ability = this.abilityManager.createAbility(player, abilityClass);
+		abilityHandler.newInstance(player);
 	}
 
 	@EventHandler
@@ -96,7 +107,6 @@ public class MultiAbilityManager extends Module {
 		Ability ability = event.getAbility();
 
 		Player player = ability.getPlayer();
-		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
 		Class<? extends Ability> multiAbility = this.playerMultiAbility.get(player.getUniqueId());
 
@@ -105,9 +115,9 @@ public class MultiAbilityManager extends Module {
 		}
 
 		this.playerMultiAbility.remove(player.getUniqueId());
-		List<String> abilities = this.playerAbilities.remove(player.getUniqueId());
+		String[] abilities = this.playerAbilities.remove(player.getUniqueId());
 
-		bendingPlayer.setAbilities(abilities.toArray(new String[0]));
+		this.abilityBindManager.setAbilities(player, abilities);
 	}
 
 	@EventHandler
@@ -119,7 +129,7 @@ public class MultiAbilityManager extends Module {
 			return;
 		}
 
-		int abilities = bendingPlayer.getAbilities().size();
+		int abilities = bendingPlayer.getAbilities().length;
 
 		if (event.getNewSlot() < abilities) {
 			return;
@@ -138,14 +148,12 @@ public class MultiAbilityManager extends Module {
 		GeneralMethods.sendBrandingMessage(event.getPlayer(), ChatColor.RED + "You can't edit your binds right now!");
 	}
 
-	public class MultiAbility {
-		private final Class<? extends Ability> abilityClass;
-		private final String abilityName;
-		private final Set<String> abilities;
+	public class MultiAbilityInfo {
+		private final AbilityHandler abilityHandler;
+		private final List<String> abilities;
 
-		MultiAbility(Class<? extends Ability> abilityClass, String abilityName, Set<String> abilities) {
-			this.abilityClass = abilityClass;
-			this.abilityName = abilityName;
+		MultiAbilityInfo(AbilityHandler abilityHandler, List<String> abilities) {
+			this.abilityHandler = abilityHandler;
 			this.abilities = abilities;
 		}
 	}

@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra;
 
 import co.aikar.timings.lib.MCTiming;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.api.ElementalAbility;
+import com.projectkorra.projectkorra.ability.legacy.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.properties.FirePropertiesConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.WaterPropertiesConfig;
@@ -31,13 +31,12 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
 
-	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING;
+	private final MCTiming TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING;
 
 	public BendingManager() {
 		instance = this;
 		this.time = System.currentTimeMillis();
 
-		this.CORE_ABILITY_TIMING = ProjectKorra.timing("CoreAbility#ProgressAll");
 		this.TEMP_POTION_TIMING = ProjectKorra.timing("TempPotion#ProgressAll");
 		this.DAY_NIGHT_TIMING = ProjectKorra.timing("HandleDayNight");
 		this.HORIZONTAL_VELOCITY_TRACKER_TIMING = ProjectKorra.timing("HorizontalVelocityTracker#UpdateAll");
@@ -117,10 +116,6 @@ public class BendingManager implements Runnable {
 		this.interval = System.currentTimeMillis() - this.time;
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
-
-		try (MCTiming timing = this.CORE_ABILITY_TIMING.startTiming()) {
-			CoreAbility.progressAll();
-		}
 
 		try (MCTiming timing = this.TEMP_POTION_TIMING.startTiming()) {
 			TempPotionEffect.progressAll();

@@ -14,9 +14,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.ElementalAbility;
-import com.projectkorra.projectkorra.ability.api.IceAbility;
-import com.projectkorra.projectkorra.ability.api.WaterAbility;
+import com.projectkorra.projectkorra.ability.legacy.ElementalAbility;
+import com.projectkorra.projectkorra.ability.legacy.IceAbility;
+import com.projectkorra.projectkorra.ability.legacy.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.configs.abilities.water.IceSpikeConfig;
 import com.projectkorra.projectkorra.util.TempBlock;

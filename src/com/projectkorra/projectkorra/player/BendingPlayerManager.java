@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.module.DatabaseModule;
 import org.bukkit.OfflinePlayer;
@@ -54,19 +55,39 @@ public class BendingPlayerManager extends DatabaseModule<BendingPlayerRepository
 	}
 
 	@EventHandler
+	public void onBendingPlayerLoaded(BendingPlayerLoadedEvent event) {
+		Player player = event.getPlayer();
+		BendingPlayer bendingPlayer = event.getBendingPlayer();
+
+		if (bendingPlayer.isToggled()) {
+
+		}
+	}
+
+	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		this.disconnected.add(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler
-	public void onCooldownChange(PlayerCooldownChangeEvent event) {
+	public void onChangeElement(PlayerChangeElementEvent event) {
 		Player player = event.getPlayer();
 		BendingPlayer bendingPlayer = this.players.get(player.getUniqueId());
 
-		String ability = bendingPlayer.getBoundAbility();
-
-		if (ability != null && ability.equals(event.getAbility())) {
-			GeneralMethods.displayMovePreview(player);
+		switch (event.getReason()) {
+			case ADD:
+				bendingPlayer.addElement(event.getElement());
+				break;
+			case SET:
+				bendingPlayer.clearElements();
+				bendingPlayer.addElement(event.getElement());
+				break;
+			case REMOVE:
+				bendingPlayer.removeElement(event.getElement());
+				break;
+			case CLEAR:
+				bendingPlayer.clearElements();
+				break;
 		}
 	}
 

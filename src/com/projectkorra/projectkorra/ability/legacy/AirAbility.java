@@ -1,13 +1,4 @@
-package com.projectkorra.projectkorra.ability.api;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+package com.projectkorra.projectkorra.ability.legacy;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -17,8 +8,15 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.AbilityConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.AirPropertiesConfig;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
-public abstract class AirAbility<Info extends AbilityInfo, C extends AbilityConfig> extends ElementalAbility<Info, C> {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class AirAbility<C extends AbilityConfig> extends ElementalAbility<C> {
 	
 	public AirAbility(final Player player) {
 		super(player);

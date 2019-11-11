@@ -24,23 +24,25 @@ public class ModuleManager {
 	 * @throws NullPointerException     if moduleClass is null
 	 * @throws IllegalArgumentException if moduleClass has already been registered
 	 */
-	public static void registerModule(Class<? extends Module> moduleClass) {
+	public static <T extends Module> T registerModule(Class<T> moduleClass) {
 		Preconditions.checkNotNull(moduleClass, "moduleClass cannot be null");
 		Preconditions.checkArgument(!MODULES.containsKey(moduleClass), "moduleClass has already been registered");
 
 		try {
-			Constructor<? extends Module> constructor = moduleClass.getDeclaredConstructor();
+			Constructor<T> constructor = moduleClass.getDeclaredConstructor();
 			boolean accessible = constructor.isAccessible();
 			constructor.setAccessible(true);
 
-			Module module = constructor.newInstance();
+			T module = constructor.newInstance();
 
 			MODULES.put(moduleClass, module);
 			module.enable();
 
 			constructor.setAccessible(accessible);
+			return module;
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -54,7 +56,10 @@ public class ModuleManager {
 	 */
 	public static <T extends Module> T getModule(Class<T> moduleClass) {
 		Preconditions.checkNotNull(moduleClass, "moduleClass cannot be null");
-		Preconditions.checkArgument(MODULES.containsKey(moduleClass), "moduleClass has not been registered");
+
+		if (!MODULES.containsKey(moduleClass)) {
+			return registerModule(moduleClass);
+		}
 
 		return moduleClass.cast(MODULES.get(moduleClass));
 	}
@@ -63,6 +68,9 @@ public class ModuleManager {
 	 * Register all our core {@link Module}s onEnable.
 	 */
 	public static void startup() {
+		MODULES.values().forEach(Module::disable);
+		MODULES.clear();
+
 		registerModule(DatabaseManager.class);
 		registerModule(BendingPlayerManager.class);
 		registerModule(ElementManager.class);
@@ -74,12 +82,12 @@ public class ModuleManager {
 	/**
 	 * Disable all our core {@link Module}s onDisable.
 	 */
-	public static void shutdown() {
-		registerModule(CooldownManager.class);
-		registerModule(AbilityBindManager.class);
-		registerModule(AbilityManager.class);
-		registerModule(ElementManager.class);
-		getModule(BendingPlayerManager.class).disable();
-		getModule(DatabaseManager.class).disable();
-	}
+//	public static void shutdown() {
+//		registerModule(CooldownManager.class);
+//		registerModule(AbilityBindManager.class);
+//		registerModule(AbilityManager.class);
+//		registerModule(ElementManager.class);
+//		getModule(BendingPlayerManager.class).disable();
+//		getModule(DatabaseManager.class).disable();
+//	}
 }

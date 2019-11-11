@@ -6,8 +6,6 @@ import com.projectkorra.projectkorra.configuration.configs.commands.AddCommandCo
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.SubElement;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -112,8 +110,6 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 				}
 
 				elements.append(element.getColor() + element.getName());
-
-				Bukkit.getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.ADD));
 			}
 
 			if (added.size() > 0) {
@@ -161,8 +157,6 @@ public class AddCommand extends PKCommand<AddCommandConfig> {
 
 				this.elementManager.addElement(target, elem);
 				added.add(elem);
-
-				Bukkit.getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, elem, Result.ADD));
 			}
 
 			if (added.isEmpty()) {

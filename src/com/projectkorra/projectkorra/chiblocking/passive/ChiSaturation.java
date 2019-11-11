@@ -1,16 +1,18 @@
 package com.projectkorra.projectkorra.chiblocking.passive;
 
+import com.projectkorra.projectkorra.ability.AbilityHandler;
+import com.projectkorra.projectkorra.element.Element;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.ability.api.ChiAbility;
+import com.projectkorra.projectkorra.ability.legacy.ChiAbility;
 import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.abilities.chi.ChiSaturationConfig;
 
-public class ChiSaturation extends ChiAbility<ChiSaturationConfig> implements PassiveAbility {
-	public ChiSaturation(final ChiSaturationConfig config, final Player player) {
-		super(config, player);
+public class ChiSaturation extends ChiAbility<ChiSaturation.ChiSaturationHandler> implements PassiveAbility {
+	private ChiSaturation(final ChiSaturationHandler abilityHandler, final Player player) {
+		super(abilityHandler, player);
 	}
 
 	public static double getExhaustionFactor() {
@@ -54,9 +56,66 @@ public class ChiSaturation extends ChiAbility<ChiSaturationConfig> implements Pa
 	public boolean isProgressable() {
 		return false;
 	}
-	
-	@Override
-	public Class<ChiSaturationConfig> getConfigType() {
-		return ChiSaturationConfig.class;
+
+	public static class ChiSaturationHandler extends AbilityHandler<ChiSaturation, ChiSaturationConfig> implements PassiveAbility {
+
+		public ChiSaturationHandler(Class<ChiSaturation> abilityClass, Class<ChiSaturationConfig> configClass) {
+			super(abilityClass, configClass);
+		}
+
+		@Override
+		public String getName() {
+			return "ChiSaturation";
+		}
+
+		@Override
+		public boolean isSneakAbility() {
+			return false;
+		}
+
+		@Override
+		public boolean isHarmlessAbility() {
+			return false;
+		}
+
+		@Override
+		public boolean isIgniteAbility() {
+			return false;
+		}
+
+		@Override
+		public boolean isExplosiveAbility() {
+			return false;
+		}
+
+		@Override
+		public long getCooldown() {
+			return 0;
+		}
+
+		@Override
+		public Element getElement() {
+			return null;
+		}
+
+		@Override
+		public String getDescription() {
+			return null;
+		}
+
+		@Override
+		public String getInstructions() {
+			return null;
+		}
+
+		@Override
+		public boolean isInstantiable() {
+			return false;
+		}
+
+		@Override
+		public boolean isProgressable() {
+			return false;
+		}
 	}
 }

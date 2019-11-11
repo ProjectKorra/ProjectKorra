@@ -24,15 +24,16 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.api.AddonAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.api.EarthAbility;
-import com.projectkorra.projectkorra.ability.api.ElementalAbility;
-import com.projectkorra.projectkorra.ability.api.FireAbility;
+import com.projectkorra.projectkorra.ability.legacy.EarthAbility;
+import com.projectkorra.projectkorra.ability.legacy.ElementalAbility;
+import com.projectkorra.projectkorra.ability.legacy.FireAbility;
 import com.projectkorra.projectkorra.ability.api.PassiveAbility;
-import com.projectkorra.projectkorra.ability.api.WaterAbility;
+import com.projectkorra.projectkorra.ability.legacy.WaterAbility;
+import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
@@ -46,20 +47,15 @@ import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.ChatPropertiesConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
-import com.projectkorra.projectkorra.element.ElementManager;
-import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
-import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
+import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
@@ -133,8 +129,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -168,57 +162,6 @@ public class GeneralMethods {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Checks to see if an AbilityExists. Uses method
-	 * {@link #getAbility(String)} to check if it exists.
-	 *
-	 * @param string Ability Name
-	 * @return true if ability exists
-	 */
-	public static boolean abilityExists(final String string) {
-		return CoreAbility.getAbility(string) != null;
-	}
-
-	/**
-	 * Binds a Ability to the hotbar slot that the player is on.
-	 *
-	 * @param player The player to bind to
-	 * @param ability The ability name to Bind
-	 * @see #bindAbility(Player, String, int)
-	 */
-	public static void bindAbility(final Player player, final String ability) {
-		final int slot = player.getInventory().getHeldItemSlot();
-		bindAbility(player, ability, slot);
-	}
-
-	/**
-	 * Binds a Ability to a specific hotbar slot.
-	 *
-	 * @param player The player to bind to
-	 * @param ability
-	 * @param slot
-	 * @see #bindAbility(Player, String)
-	 */
-	public static void bindAbility(final Player player, final String ability, final int slot) {
-		if (MultiAbilityManager.playerAbilities.containsKey(player)) {
-			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + "You can't edit your binds right now!");
-			return;
-		}
-
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-
-		if (bPlayer == null) {
-			return;
-		}
-		bPlayer.getAbilities()[slot] = ability;
-
-		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", ability).replace("{slot}", String.valueOf(slot + 1)));
-		}
-		saveAbility(bPlayer, slot, ability);
 	}
 
 	/**
@@ -317,90 +260,6 @@ public class GeneralMethods {
 		return (a || b || c || (a && b));
 	}
 
-	/**
-	 * Creates a {@link BendingPlayer} with the data from the database. This
-	 * runs when a player logs in.
-	 *
-	 * @param uuid The UUID of the player
-	 * @param player The player name
-	 * @throws SQLException
-	 *
-	 * @deprecated use {@link BendingPlayerManager} and {@link ElementManager}.
-	 */
-	@Deprecated
-	public static void createBendingPlayer(final UUID uuid, final String player) {
-		new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				createBendingPlayerAsynchronously(uuid, player);
-			}
-
-		}.runTaskAsynchronously(ProjectKorra.plugin);
-	}
-
-	@Deprecated
-	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-		ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (!rs.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null');");
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, new ArrayList<>(), new ArrayList<>(), new String[9], false);
-						ProjectKorra.log.info("Created new BendingPlayer for " + player);
-					}
-				}.runTask(ProjectKorra.plugin);
-			} else {
-				// The player has at least played before.
-				final String player2 = rs.getString("player");
-				if (!player.equalsIgnoreCase(player2)) {
-					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "';");
-					// They have changed names.
-					ProjectKorra.log.info("Updating Player Name for " + player);
-				}
-				final boolean permaremoved = rs.getBoolean("permaremoved");
-				final List<Element> elements = new ArrayList<>();
-				final List<SubElement> subelements = new ArrayList<>();
-				final String[] abilities = new String[9];
-				
-				for (int i = 0; i < 9; i++) {
-					final String ability = rs.getString("slot" + (i + 1));
-					if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
-						abilities[i] = ability;
-					}
-				}
-				
-				ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_player_elements WHERE uuid = '" + uuid.toString() + "';");
-				while (rs2.next()) {
-					String elementName = rs2.getString("element");
-					boolean isSub = rs2.getBoolean("sub_element");
-					
-					Element element = Element.fromString(elementName);
-					
-					if (element == null) {
-						continue;
-					}
-					
-					if (isSub) {
-						subelements.add((SubElement)element);
-					} else {
-						elements.add(element);
-					}
-				}
-
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, elements, subelements, abilities, permaremoved);
-					}
-				}.runTask(ProjectKorra.plugin);
-			}
-		} catch (final SQLException ex) {
-			ex.printStackTrace();
-		}
-	}
 
 	/**
 	 * Deserializes the configuration file "bendingPlayers.yml" of the old
@@ -500,31 +359,6 @@ public class GeneralMethods {
 		for (final ItemStack item : items) {
 			block.getWorld().dropItem(block.getLocation(), item);
 		}
-	}
-
-	public static void displayMovePreview(final Player player) {
-		displayMovePreview(player, player.getInventory().getHeldItemSlot());
-	}
-
-	public static void displayMovePreview(final Player player, final int slot) {
-		if (!ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingPreview) {
-			return;
-		}
-
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			return;
-		}
-		String displayedMessage = bPlayer.getAbilities()[slot];
-		final CoreAbility ability = CoreAbility.getAbility(displayedMessage);
-
-		if (ability != null && bPlayer != null) {
-			displayedMessage = ability.getMovePreview(player);
-		} else if (displayedMessage == null || displayedMessage.isEmpty() || displayedMessage.equals("")) {
-			displayedMessage = "";
-		}
-
-		ActionBar.sendActionBar(displayedMessage, player);
 	}
 
 	public static float getAbsorbationHealth(final Player player) {
@@ -812,7 +646,6 @@ public class GeneralMethods {
 	 * @param block The single block
 	 * @param type The Material type to change the block into
 	 * @param data The block data to change the block into
-	 * @param breakitem Unused
 	 * @return The item drops fromt the specified block
 	 */
 	public static Collection<ItemStack> getDrops(final Block block, final Material type, final BlockData data) {
@@ -880,25 +713,6 @@ public class GeneralMethods {
 	public static Plugin getItems() {
 		if (hasItems()) {
 			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems");
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the last ability used by a player. Also checks if a combo was
-	 * used.
-	 *
-	 * @param player The player to check
-	 * @return name of last ability used
-	 */
-	public static String getLastUsedAbility(final Player player, final boolean checkCombos) {
-		final List<AbilityInformation> lastUsedAbility = ComboManager.getRecentlyUsedAbilities(player, 1);
-		if (!lastUsedAbility.isEmpty()) {
-			if (ComboManager.checkForValidCombo(player) != null && checkCombos) {
-				return ComboManager.checkForValidCombo(player).getName();
-			} else {
-				return lastUsedAbility.get(0).getAbilityName();
-			}
 		}
 		return null;
 	}
@@ -1302,18 +1116,18 @@ public class GeneralMethods {
 		return isRegionProtectedFromBuild(player, null, loc);
 	}
 
-	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
+	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String abilityName, final Location loc) {
 		boolean isIgnite = false;
 		boolean isExplosive = false;
 		boolean isHarmless = false;
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-		if (coreAbil != null) {
-			isIgnite = coreAbil.isIgniteAbility();
-			isExplosive = coreAbil.isExplosiveAbility();
-			isHarmless = coreAbil.isHarmlessAbility();
+		final AbilityInfo abilityInfo = ModuleManager.getModule(AbilityManager.class).getAbilityInfo(abilityName);
+		if (abilityInfo != null) {
+			isIgnite = abilityInfo.isIgniteAbility();
+			isExplosive = abilityInfo.isExplosiveAbility();
+			isHarmless = abilityInfo.isHarmlessAbility();
 		}
 
-		if (ability == null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
+		if (abilityName == null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
 			return false;
 		}
 		if (isHarmless && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
@@ -1524,55 +1338,55 @@ public class GeneralMethods {
 		return mat != null && (mat == Material.WOODEN_AXE || mat == Material.WOODEN_PICKAXE || mat == Material.WOODEN_SHOVEL || mat == Material.WOODEN_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SHOVEL || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SHOVEL || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SHOVEL || mat == Material.GOLDEN_AXE || mat == Material.GOLDEN_HOE || mat == Material.GOLDEN_SWORD || mat == Material.GOLDEN_PICKAXE || mat == Material.GOLDEN_SHOVEL || mat == Material.TRIDENT);
 	}
 
-	public static void loadBendingPlayer(final BendingPlayer pl) {
-		final Player player = Bukkit.getPlayer(pl.getUUID());
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (bPlayer == null) {
-			return;
-		}
-
-		if (PKListener.getToggledOut().contains(player.getUniqueId())) {
-			bPlayer.toggleBending();
-			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
-		}
-
-		Preset.loadPresets(player);
-		Element element = null;
-		String prefix = "";
-
-		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
-		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
-			prefix = Element.AVATAR.getPrefix();
-		} else if (bPlayer.getElements().size() > 0) {
-			element = bPlayer.getElements().get(0);
-			prefix = element.getPrefix();
-		}
-
-		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
-			player.setDisplayName(player.getName());
-			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
-		}
-
-		// Handle the AirSpout/WaterSpout login glitches.
-		if (player.getGameMode() != GameMode.CREATIVE) {
-			final String[] bound = bPlayer.getAbilities();
-			for (final String str : bound) {
-				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
-					final Player fplayer = player;
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							fplayer.setFlying(false);
-							fplayer.setAllowFlight(false);
-						}
-					}.runTaskLater(ProjectKorra.plugin, 2);
-					break;
-				}
-			}
-		}
-		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(bPlayer));
-	}
+//	public static void loadBendingPlayer(final BendingPlayer pl) {
+//		final Player player = Bukkit.getPlayer(pl.getUUID());
+//		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+//
+//		if (bPlayer == null) {
+//			return;
+//		}
+//
+//		if (PKListener.getToggledOut().contains(player.getUniqueId())) {
+//			bPlayer.toggleBending();
+//			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
+//		}
+//
+//		Preset.loadPresets(player);
+//		Element element = null;
+//		String prefix = "";
+//
+//		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
+//		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
+//			prefix = Element.AVATAR.getPrefix();
+//		} else if (bPlayer.getElements().size() > 0) {
+//			element = bPlayer.getElements().get(0);
+//			prefix = element.getPrefix();
+//		}
+//
+//		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
+//			player.setDisplayName(player.getName());
+//			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
+//		}
+//
+//		// Handle the AirSpout/WaterSpout login glitches.
+//		if (player.getGameMode() != GameMode.CREATIVE) {
+//			final String[] bound = bPlayer.getAbilities();
+//			for (final String str : bound) {
+//				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
+//					final Player fplayer = player;
+//					new BukkitRunnable() {
+//						@Override
+//						public void run() {
+//							fplayer.setFlying(false);
+//							fplayer.setAllowFlight(false);
+//						}
+//					}.runTaskLater(ProjectKorra.plugin, 2);
+//					break;
+//				}
+//			}
+//		}
+//		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(bPlayer));
+//	}
 
 	public static void reloadPlugin(final CommandSender sender) {
 		ProjectKorra.log.info("Reloading ProjectKorra and configuration");
@@ -1587,14 +1401,12 @@ public class GeneralMethods {
 		}
 		GeneralMethods.stopBending();
 		ConfigManager.clearCache();
-		Preset.loadExternalPresets();
-		new MultiAbilityManager();
-		new ComboManager();
+//		Preset.loadExternalPresets();
+		ModuleManager.startup();
 		// Stop the previous collision detection task before creating new manager.
 		ProjectKorra.collisionManager.stopCollisionDetection();
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
-		CoreAbility.registerAbilities();
 		reloadAddonPlugins();
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered.
 		ProjectKorra.collisionManager.startCollisionDetection();
@@ -1605,23 +1417,25 @@ public class GeneralMethods {
 			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
 			stopPlugin();
 		}
-		for (final Player player : Bukkit.getOnlinePlayers()) {
-			Preset.unloadPreset(player);
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			PassiveManager.registerPassives(player);
-		}
+//		for (final Player player : Bukkit.getOnlinePlayers()) {
+//			Preset.unloadPreset(player);
+//			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+//			PassiveManager.registerPassives(player);
+//		}
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
 	}
 
 	public static void reloadAddonPlugins() {
-		for (int i = CoreAbility.getAddonPlugins().size() - 1; i > -1; i--) {
-			final String entry = CoreAbility.getAddonPlugins().get(i);
+		AbilityManager abilityManager = ModuleManager.getModule(AbilityManager.class);
+
+		for (int i = abilityManager.getAddonPlugins().size() - 1; i > -1; i--) {
+			final String entry = abilityManager.getAddonPlugins().get(i);
 			final String[] split = entry.split("::");
 			if (Bukkit.getServer().getPluginManager().isPluginEnabled(split[0])) {
-				CoreAbility.registerPluginAbilities((JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
+				abilityManager.registerPluginAbilities((JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
 			} else {
-				CoreAbility.getAddonPlugins().remove(i);
+				abilityManager.getAddonPlugins().remove(i);
 			}
 		}
 	}
@@ -1638,6 +1452,7 @@ public class GeneralMethods {
 	}
 
 	public static void removeUnusableAbilities(final String player) {
+
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -1846,88 +1661,6 @@ public class GeneralMethods {
 			writeToDebug(line);
 		}
 
-	}
-
-	public static void saveAbility(final BendingPlayer bPlayer, final int slot, final String ability) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-
-		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(Bukkit.getPlayer(UUID.fromString(uuid)), ability, slot, false);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return;
-		}
-		// Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID()))) {
-			return;
-		}
-		final String[] abilities = bPlayer.getAbilities();
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + (slot + 1) + " = '" + (abilities[slot] == null ? null : abilities[slot - 1]) + "' WHERE uuid = '" + uuid + "'");
-	}
-
-	public static void saveElements(final BendingPlayer bPlayer, List<Element> e) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-
-		StringBuilder queryBuilder = new StringBuilder();
-		e.forEach(element -> {
-			queryBuilder.append("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element.getName().toLowerCase() + "', " + String.valueOf(e instanceof SubElement) + ");");
-		});
-		final String query = queryBuilder.toString();
-		
-		DBConnection.sql.modifyQuery(query);
-	}
-	
-	public static void saveElement(final BendingPlayer bPlayer, Element e) {
-		if (bPlayer == null) {
-			return;
-		}
-		
-		final String uuid = bPlayer.getUUIDString();
-		final String element = e.getName().toLowerCase();
-		final boolean subElement = e instanceof SubElement;
-		
-		DBConnection.sql.modifyQuery("INSERT INTO pk_player_elements (uuid, element, sub_element) VALUES ('" + uuid + "', '" + element + "', " + String.valueOf(subElement) + ");");
-	}
-	
-	public static void deleteElements(final BendingPlayer bPlayer, List<Element> e) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-
-		StringBuilder queryBuilder = new StringBuilder();
-		e.forEach(element -> {
-			queryBuilder.append("DELETE FROM pk_player_elements WHERE uuid='" + uuid + "' AND element='" + element.getName().toLowerCase() + "';");
-		});
-		final String query = queryBuilder.toString();
-		
-		DBConnection.sql.modifyQuery(query);
-	}
-	
-	public static void deleteElement(final BendingPlayer bPlayer, Element e) {
-		if (bPlayer == null) {
-			return;
-		}
-		
-		final String uuid = bPlayer.getUUIDString();
-		final String element = e.getName().toLowerCase();
-		
-		DBConnection.sql.modifyQuery("DELETE FROM pk_player_elements WHERE uuid='" + uuid + "' AND element='" + element + "';");
-	}
-
-	public static void savePermaRemoved(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-		final boolean permaRemoved = bPlayer.isPermaRemoved();
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = " + String.valueOf(permaRemoved) + " WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void setVelocity(final Entity entity, final Vector velocity) {

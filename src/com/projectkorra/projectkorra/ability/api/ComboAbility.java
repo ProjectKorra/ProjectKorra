@@ -1,10 +1,10 @@
-package com.projectkorra.projectkorra.ability.info;
+package com.projectkorra.projectkorra.ability.api;
 
 import com.projectkorra.projectkorra.ability.ComboAbilityManager;
 
 import java.util.LinkedList;
 
-public interface ComboAbilityInfo extends AbilityInfo {
+public interface ComboAbility {
 
 	/**
 	 * Returns the list of abilities which constitute the combo.

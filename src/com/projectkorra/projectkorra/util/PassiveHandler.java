@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.util;
 
+import com.projectkorra.projectkorra.ability.AbilityHandler;
 import com.projectkorra.projectkorra.ability.PassiveAbilityManager;
-import com.projectkorra.projectkorra.ability.loader.PassiveAbilityLoader;
 import com.projectkorra.projectkorra.airbending.passive.AirSaturation;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiSaturation;
 import com.projectkorra.projectkorra.command.Commands;
@@ -49,8 +49,8 @@ public class PassiveHandler extends Module {
 	}
 
 	public void checkExhaustionPassives(final Player player) {
-		PassiveAbilityLoader airsat = this.passiveAbilityManager.getPassiveAbility(AirSaturation.class);
-		PassiveAbilityLoader chisat = this.passiveAbilityManager.getPassiveAbility(ChiSaturation.class);
+		AbilityHandler airsat = this.passiveAbilityManager.getHandler(AirSaturation.AirSaturationHandler.class);
+		AbilityHandler chisat = this.passiveAbilityManager.getHandler(ChiSaturation.ChiSaturationHandler.class);
 
 		if (airsat == null && chisat == null) {
 			return;
@@ -67,13 +67,11 @@ public class PassiveHandler extends Module {
 			return;
 		}
 
-		com.projectkorra.projectkorra.player.BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
-
-		if (!this.passiveAbilityManager.canUsePassive(player, AirSaturation.class)) {
+		if (!this.passiveAbilityManager.canUsePassive(player, airsat)) {
 			air = 0;
 		}
 
-		if (!this.passiveAbilityManager.canUsePassive(player, ChiSaturation.class)) {
+		if (!this.passiveAbilityManager.canUsePassive(player, chisat)) {
 			chi = 0;
 		}
 

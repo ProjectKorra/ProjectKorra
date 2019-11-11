@@ -4,10 +4,10 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.PassiveAbilityManager;
-import com.projectkorra.projectkorra.ability.api.ChiAbility;
+import com.projectkorra.projectkorra.ability.legacy.ChiAbility;
 import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import com.projectkorra.projectkorra.ability.info.AvatarAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.AvatarAbilityInfo;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.ElementManager;
@@ -15,7 +15,9 @@ import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class BendingPlayer {
 
@@ -32,9 +34,7 @@ public class BendingPlayer {
 	private final String playerName;
 	private final long firstLogin;
 
-	private final Set<Element> elements;
 	private final Set<Element> toggledElements;
-	private final String[] abilities;
 
 	private ChiAbility stance;
 	private boolean bendingPermanentlyRemoved;
@@ -58,37 +58,31 @@ public class BendingPlayer {
 		this.playerName = playerName;
 		this.firstLogin = firstLogin;
 
-		this.elements = new HashSet<>();
 		this.toggledElements = new HashSet<>();
-		this.abilities = new String[9];
 	}
 
 	public Set<Element> getElements() {
-		return new HashSet<>(this.elements);
+		return this.elementManager.getElements(this.player);
 	}
 
-	public boolean addElement(Element element) {
-		return this.elements.add(element);
+	protected boolean addElement(Element element) {
+		return this.elementManager.addElement(this.player, element);
 	}
 
-	public boolean removeElement(Element element) {
-		return this.elements.remove(element);
+	protected boolean removeElement(Element element) {
+		return this.elementManager.removeElement(this.player, element);
 	}
 
-	public void clearElements() {
-		this.elements.clear();
+	protected void clearElements() {
+		this.elementManager.clearElements(this.player);
 	}
 
 	public boolean hasElement(Element element) {
-		if (element.equals(this.elementManager.getAvatar())) {
-			return this.player.hasPermission("bending.avatar");
-		}
-
-		return this.elements.contains(element);
+		return this.elementManager.hasElement(this.player, element);
 	}
 
 	public boolean canBloodbend() {
-		return this.elements.contains(this.elementManager.getBlood());
+		return this.elementManager.hasElement(this.player, this.elementManager.getBlood());
 	}
 
 	public boolean canBloodbendAtAnytime() {
@@ -96,43 +90,43 @@ public class BendingPlayer {
 	}
 
 	public boolean canUseHealing() {
-		return this.elements.contains(this.elementManager.getHealing());
+		return this.elementManager.hasElement(this.player, this.elementManager.getHealing());
 	}
 
 	public boolean canIcebend() {
-		return this.elements.contains(this.elementManager.getIce());
+		return this.elementManager.hasElement(this.player, this.elementManager.getIce());
 	}
 
 	public boolean canPlantbend() {
-		return this.elements.contains(this.elementManager.getPlant());
+		return this.elementManager.hasElement(this.player, this.elementManager.getPlant());
 	}
 
 	public boolean canLavabend() {
-		return this.elements.contains(this.elementManager.getLava());
+		return this.elementManager.hasElement(this.player, this.elementManager.getLava());
 	}
 
 	public boolean canMetalbend() {
-		return this.elements.contains(this.elementManager.getMetal());
+		return this.elementManager.hasElement(this.player, this.elementManager.getMetal());
 	}
 
 	public boolean canSandbend() {
-		return this.elements.contains(this.elementManager.getSand());
+		return this.elementManager.hasElement(this.player, this.elementManager.getSand());
 	}
 
 	public boolean canCombustionbend() {
-		return this.elements.contains(this.elementManager.getCombustion());
+		return this.elementManager.hasElement(this.player, this.elementManager.getCombustion());
 	}
 
 	public boolean canUseLightning() {
-		return this.elements.contains(this.elementManager.getLightning());
+		return this.elementManager.hasElement(this.player, this.elementManager.getLightning());
 	}
 
 	public boolean canUseFlight() {
-		return this.elements.contains(this.elementManager.getFlight());
+		return this.elementManager.hasElement(this.player, this.elementManager.getFlight());
 	}
 
 	public boolean canUseSpiritual() {
-		return this.elements.contains(this.elementManager.getSpiritual());
+		return this.elementManager.hasElement(this.player, this.elementManager.getSpiritual());
 	}
 
 	public boolean isElementToggled(Element element) {
@@ -148,16 +142,15 @@ public class BendingPlayer {
 	}
 
 	public String getBoundAbility() {
-		int slot = this.player.getInventory().getHeldItemSlot();
-		return this.abilities[slot];
+		return this.abilityBindManager.getBoundAbility(this.player);
 	}
 
 	public String getAbility(int slot) {
-		return this.abilities[slot];
+		return this.abilityBindManager.getAbility(this.player, slot);
 	}
 
-	public List<String> getAbilities() {
-		return Arrays.asList(this.abilities);
+	public String[] getAbilities() {
+		return this.abilityBindManager.getAbilities(this.player);
 	}
 
 	public boolean canBind(AbilityInfo abilityInfo) {
@@ -182,14 +175,6 @@ public class BendingPlayer {
 		}
 
 		return true;
-	}
-
-	public void setAbilities(String[] abilities) {
-		System.arraycopy(abilities, 0, this.abilities, 0, 9);
-	}
-
-	public void setAbility(int slot, String abilityName) {
-		this.abilities[slot] = abilityName;
 	}
 
 	public long getCooldown(Ability ability) {

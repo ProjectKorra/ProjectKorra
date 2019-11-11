@@ -1,10 +1,10 @@
-package com.projectkorra.projectkorra.ability.info;
+package com.projectkorra.projectkorra.ability.api;
 
-import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
 
 import java.util.List;
 
-public interface MultiAbilityInfo extends AbilityInfo {
+public interface MultiAbility {
 
 	/**
 	 * Returns the sub abilities of a MultiAbility. For example:
@@ -14,5 +14,5 @@ public interface MultiAbilityInfo extends AbilityInfo {
 	 *
 	 * @return a list of sub MultiAbilities
 	 */
-	List<Class<? extends Ability>> getAbilities();
+	List<AbilityHandler> getAbilities();
 }

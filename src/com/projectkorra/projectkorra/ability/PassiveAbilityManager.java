@@ -1,25 +1,24 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.module.Module;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import com.projectkorra.projectkorra.player.BendingPlayerManager;
+import com.projectkorra.projectkorra.util.MultiKeyMap;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PassiveAbilityManager extends Module {
 
 	private final BendingPlayerManager bendingPlayerManager;
 	private final AbilityManager abilityManager;
 
-	private final Map<Class<? extends Ability>, PassiveAbilityInfo> abilities = new HashMap<>();
+	private final MultiKeyMap<String, AbilityHandler> handlerMap = new MultiKeyMap<>();
 
 	private PassiveAbilityManager() {
 		super("Passive Ability");
@@ -28,38 +27,38 @@ public class PassiveAbilityManager extends Module {
 		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
 	}
 
-	public void registerAbility(Class<? extends Ability> abilityClass, PassiveAbilityInfo passiveAbilityInfo) {
-		this.abilities.put(abilityClass, passiveAbilityInfo);
+	public void registerAbility(AbilityHandler abilityHandler) {
+		this.handlerMap.put(abilityHandler.getName(), abilityHandler);
 	}
 
 	public void registerPassives(Player player) {
-		this.abilities.forEach((abilityClass, passiveAbilityInfo) -> {
-			if (!canUsePassive(player, abilityClass)) {
+		this.handlerMap.values().forEach(abilityHandler -> {
+			if (!canUsePassive(player, abilityHandler)) {
 				return;
 			}
 
-			if (this.abilityManager.hasAbility(player, abilityClass)) {
+			if (this.abilityManager.hasAbility(player, abilityHandler.getAbility())) {
 				return;
 			}
 
-			if (!passiveAbilityInfo.isInstantiable()) {
+			if (!((PassiveAbility) abilityHandler).isInstantiable()) {
 				return;
 			}
 
-			Ability ability = this.abilityManager.createAbility(player, abilityClass);
+			Ability ability = abilityHandler.newInstance(player);
 			ability.start();
 		});
 	}
 
-	public boolean canUsePassive(Player player, Class<? extends Ability> abilityClass) {
+	public boolean canUsePassive(Player player, AbilityHandler abilityHandler) {
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
-		PassiveAbilityInfo passiveAbilityInfo = this.abilities.get(abilityClass);
+//		AbilityHandler abilityHandler = this.handlerMap.get(handlerClass);
 
-		if (passiveAbilityInfo == null) {
-			return false;
-		}
+//		if (abilityHandler == null) {
+//			return false;
+//		}
 
-		Element element = passiveAbilityInfo.getElement();
+		Element element = abilityHandler.getElement();
 
 		if (element instanceof SubElement) {
 			element = ((SubElement) element).getParent();
@@ -80,26 +79,30 @@ public class PassiveAbilityManager extends Module {
 		return true;
 	}
 
-	public PassiveAbilityInfo getPassiveAbility(Class<? extends Ability> abilityClass) {
-		return this.abilities.get(abilityClass);
+	public AbilityHandler getHandler(String abbilityName) {
+		return this.handlerMap.get(abbilityName);
 	}
 
-	public List<PassiveAbilityInfo> getPassives(Element element) {
-		List<PassiveAbilityInfo> abilities = new ArrayList<>();
+	public AbilityHandler getHandler(Class<? extends AbilityHandler> handlerClass) {
+		return this.handlerMap.get(handlerClass);
+	}
 
-		this.abilities.values().forEach(passiveAbilityInfo -> {
+	public List<AbilityHandler> getPassives(Element element) {
+		List<AbilityHandler> handlerList = new ArrayList<>();
 
-			Element passiveElement = passiveAbilityInfo.getElement();
+		this.handlerMap.values().forEach(abilityHandler -> {
+
+			Element passiveElement = abilityHandler.getElement();
 
 			if (passiveElement instanceof SubElement) {
 				passiveElement = ((SubElement) passiveElement).getParent();
 			}
 
 			if (passiveElement.equals(element)) {
-				abilities.add(passiveAbilityInfo);
+				handlerList.add(abilityHandler);
 			}
 		});
 
-		return abilities;
+		return handlerList;
 	}
 }

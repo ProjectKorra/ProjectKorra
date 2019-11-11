@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.api.ComboAbility;
-import com.projectkorra.projectkorra.ability.api.IceAbility;
+import com.projectkorra.projectkorra.ability.legacy.IceAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;

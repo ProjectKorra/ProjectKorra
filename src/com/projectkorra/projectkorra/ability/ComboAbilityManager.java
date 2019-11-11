@@ -1,12 +1,13 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.ability.info.ComboAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.ComboAbility;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.module.Module;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.MultiKeyMap;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -28,8 +29,9 @@ public class ComboAbilityManager extends Module {
 	private final BendingPlayerManager bendingPlayerManager;
 	private final AbilityManager abilityManager;
 
-	private final Map<String, ComboAbilityInfo> abilities = new HashMap<>();
-	private final List<ComboAbility> comboAbilities = new ArrayList<>();
+	private final MultiKeyMap<String, AbilityHandler> handlerMap = new MultiKeyMap<>();
+
+	private final List<ComboAbilityInfo> comboAbilities = new ArrayList<>();
 
 	private final Map<UUID, LinkedList<Combination>> recentlyUsed = new HashMap<>();
 
@@ -40,15 +42,15 @@ public class ComboAbilityManager extends Module {
 
 		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
-
-		this.abilities.clear();
 	}
 
-	public void registerAbility(Class<? extends Ability> abilityClass, ComboAbilityInfo comboAbilityInfo) {
-		ComboAbility comboAbility = new ComboAbility(abilityClass, comboAbilityInfo.getName(), comboAbilityInfo.getCombination());
+	public void registerAbility(AbilityHandler abilityHandler) {
+		ComboAbility comboAbility = (ComboAbility) abilityHandler;
 
-		this.abilities.put(comboAbilityInfo.getName(), comboAbilityInfo);
-		this.comboAbilities.add(comboAbility);
+		ComboAbilityInfo comboAbilityInfo = new ComboAbilityInfo(abilityHandler, comboAbility.getCombination());
+
+		this.handlerMap.put(abilityHandler.getName(), abilityHandler);
+		this.comboAbilities.add(comboAbilityInfo);
 	}
 
 	private void processComboAbility(Player player, ClickType clickType) {
@@ -64,41 +66,45 @@ public class ComboAbilityManager extends Module {
 			recentlyUsed.removeLast();
 		}
 
-		ComboAbility comboAbility = getAbility(recentlyUsed);
+		ComboAbilityInfo comboAbilityInfo = getAbility(recentlyUsed);
 
-		if (comboAbility == null) {
+		if (comboAbilityInfo == null) {
 			return;
 		}
 
-		if (!player.hasPermission("bending.ability." + comboAbility.abilityName)) {
+		if (!player.hasPermission("bending.ability." + comboAbilityInfo.abilityHandler.getName())) {
 			return;
 		}
 
-		this.abilityManager.createAbility(player, comboAbility.abilityClass);
+		comboAbilityInfo.abilityHandler.newInstance(player);
 	}
 
-	private ComboAbility getAbility(LinkedList<Combination> recentlyUsed) {
-		for (ComboAbility comboAbility : this.comboAbilities) {
-			int comboSize = comboAbility.combinations.size();
+	private ComboAbilityInfo getAbility(LinkedList<Combination> recentlyUsed) {
+		for (ComboAbilityInfo comboAbilityInfo : this.comboAbilities) {
+			int comboSize = comboAbilityInfo.combinationList.size();
 
 			if (recentlyUsed.size() < comboSize) {
 				continue;
 			}
 
-			if (recentlyUsed.subList(0, comboSize).equals(comboAbility.combinations)) {
-				return comboAbility;
+			if (recentlyUsed.subList(0, comboSize).equals(comboAbilityInfo.combinationList)) {
+				return comboAbilityInfo;
 			}
 		}
 
 		return null;
 	}
 
-	public ComboAbilityInfo getAbility(String abilityName) {
-		return this.abilities.get(abilityName);
+	public AbilityHandler getHandler(String abilityName) {
+		return this.handlerMap.get(abilityName);
 	}
 
-	public List<ComboAbilityInfo> getAbilities(Element element) {
-		return this.abilities.values().stream()
+	public AbilityHandler getHandler(Class<? extends AbilityHandler> handlerClass) {
+		return this.handlerMap.get(handlerClass);
+	}
+
+	public List<AbilityHandler> getHandlers(Element element) {
+		return this.handlerMap.values().stream()
 				.filter(comboAbilityInfo -> comboAbilityInfo.getElement().equals(element))
 				.collect(Collectors.toList());
 	}
@@ -212,15 +218,13 @@ public class ComboAbilityManager extends Module {
 		}
 	}
 
-	private class ComboAbility {
-		private final Class<? extends Ability> abilityClass;
-		private final String abilityName;
-		private final List<Combination> combinations;
+	private class ComboAbilityInfo {
+		private final AbilityHandler abilityHandler;
+		private final List<Combination> combinationList;
 
-		ComboAbility(Class<? extends Ability> abilityClass, String abilityName, List<Combination> combinations) {
-			this.abilityClass = abilityClass;
-			this.abilityName = abilityName;
-			this.combinations = combinations;
+		ComboAbilityInfo(AbilityHandler abilityHandler, List<Combination> combinationList) {
+			this.abilityHandler = abilityHandler;
+			this.combinationList = combinationList;
 		}
 	}
 }

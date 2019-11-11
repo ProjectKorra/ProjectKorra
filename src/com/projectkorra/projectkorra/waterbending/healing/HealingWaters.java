@@ -15,9 +15,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.AirAbility;
-import com.projectkorra.projectkorra.ability.api.ElementalAbility;
-import com.projectkorra.projectkorra.ability.api.HealingAbility;
+import com.projectkorra.projectkorra.ability.legacy.AirAbility;
+import com.projectkorra.projectkorra.ability.legacy.ElementalAbility;
+import com.projectkorra.projectkorra.ability.legacy.HealingAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.configuration.configs.abilities.water.HealingWatersConfig;

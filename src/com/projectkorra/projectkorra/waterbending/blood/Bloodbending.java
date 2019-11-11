@@ -18,8 +18,8 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.AirAbility;
-import com.projectkorra.projectkorra.ability.api.BloodAbility;
+import com.projectkorra.projectkorra.ability.legacy.AirAbility;
+import com.projectkorra.projectkorra.ability.legacy.BloodAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.configuration.configs.abilities.water.BloodbendingConfig;

@@ -1,6 +1,6 @@
-package com.projectkorra.projectkorra.ability.info;
+package com.projectkorra.projectkorra.ability.api;
 
-public interface PassiveAbilityInfo extends AbilityInfo {
+public interface PassiveAbility {
 
 	/**
 	 * This is a check to see if the passive requires some form of activation,

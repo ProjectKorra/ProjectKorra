@@ -40,15 +40,14 @@ public abstract class Module implements Listener {
 		log("Disabling...");
 
 		HandlerList.unregisterAll(this);
-		onDisable();
 
 		long finishTime = System.currentTimeMillis();
 		log(String.format("Disabled! [%sms]", finishTime - startTime));
 	}
-
-	public void onDisable() {
-
-	}
+//
+//	public void onDisable() {
+//
+//	}
 
 	protected final void runSync(Runnable runnable) {
 		getPlugin().getServer().getScheduler().runTask(getPlugin(), runnable);

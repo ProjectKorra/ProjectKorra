@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.ability.util;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AbilityManager;
-import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.PassiveAbilityInfo;
 import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import org.bukkit.Bukkit;

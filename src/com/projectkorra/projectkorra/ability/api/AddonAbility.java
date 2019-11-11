@@ -1,8 +1,8 @@
-package com.projectkorra.projectkorra.ability.info;
+package com.projectkorra.projectkorra.ability.api;
 
 import com.projectkorra.projectkorra.ability.AbilityManager;
 
-public interface AddonAbilityInfo extends AbilityInfo {
+public interface AddonAbility {
 
 	/**
 	 * Called when the ability is loaded by PK. This is where the developer

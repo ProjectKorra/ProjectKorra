@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.Manager;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -45,7 +44,7 @@ import java.util.jar.JarFile;
  * @see #registerAddonAbilities(String)
  * @see #registerPluginAbilities(JavaPlugin, String)
  */
-public abstract class Ability<Info extends AbilityInfo, Config extends AbilityConfig> {
+public abstract class Ability<Handler extends AbilityHandler> {
 
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
 	private static final Map<Class<? extends Ability>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
@@ -54,9 +53,10 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 
 	protected final BendingPlayerManager bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
 	protected final AbilityManager manager = ModuleManager.getModule(AbilityManager.class);
-	protected final Info info = (Info) this.manager.getAbilityInfo(getClass());
-	protected final Config config = ConfigManager.getConfig(((Class<Config>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
+//	protected final Info info = (Info) this.manager.getAbilityInfo(getClass());
+//	protected final Config config = ConfigManager.getConfig(((Class<Config>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]));
 
+	protected Handler abilityHandler;
 	protected Player player;
 	protected BendingPlayer bendingPlayer;
 	protected FlightHandler flightHandler;
@@ -104,13 +104,14 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 	 * @param player the non-null player that created this instance
 	 * @see #start()
 	 */
-	public Ability(final Player player) {
+	public Ability(Handler abilityHandler, Player player) {
 		this();
 
 		if (player == null) {
 			return;
 		}
-		
+
+		this.abilityHandler = abilityHandler;
 		this.player = player;
 		this.bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 		this.flightHandler = Manager.getManager(FlightHandler.class);
@@ -210,11 +211,9 @@ public abstract class Ability<Info extends AbilityInfo, Config extends AbilityCo
 		return this.id;
 	}
 
-	public Info getInfo() {
-		return this.info;
+	public Handler getHandler() {
+		return this.abilityHandler;
 	}
-	
-	public abstract Class<Config> getConfigType();
 
 //	public String getMovePreview(final Player player) {
 //		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);

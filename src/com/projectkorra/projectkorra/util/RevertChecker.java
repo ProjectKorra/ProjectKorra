@@ -13,7 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.api.EarthAbility;
+import com.projectkorra.projectkorra.ability.legacy.EarthAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.properties.EarthPropertiesConfig;
 

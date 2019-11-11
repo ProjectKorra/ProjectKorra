@@ -2,9 +2,9 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import com.projectkorra.projectkorra.ability.info.AddonAbilityInfo;
-import com.projectkorra.projectkorra.ability.info.ComboAbilityInfo;
-import com.projectkorra.projectkorra.ability.info.PassiveAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.AddonAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.ComboAbilityInfo;
+import com.projectkorra.projectkorra.ability.api.PassiveAbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.HelpCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.*;

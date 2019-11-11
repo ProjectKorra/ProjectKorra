@@ -2,8 +2,6 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.configs.commands.PermaremoveCommandConfig;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -77,7 +75,6 @@ public class PermaremoveCommand extends PKCommand<PermaremoveCommandConfig> {
 			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(player.getName())) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));
 			}
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.PERMAREMOVE));
 		}
 	}
 

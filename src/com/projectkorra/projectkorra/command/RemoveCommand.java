@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.configs.commands.RemoveCommandConfig;
 import com.projectkorra.projectkorra.element.Element;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -70,8 +68,6 @@ public class RemoveCommand extends PKCommand<RemoveCommandConfig> {
 
 			GeneralMethods.removeUnusableAbilities(player.getName());
 			GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()));
-
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
 			return;
 		}
 
@@ -92,8 +88,6 @@ public class RemoveCommand extends PKCommand<RemoveCommandConfig> {
 			GeneralMethods.removeUnusableAbilities(player.getName());
 			GeneralMethods.sendBrandingMessage(player, e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
 			GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
-
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 			return;
 		}
 
@@ -106,7 +100,6 @@ public class RemoveCommand extends PKCommand<RemoveCommandConfig> {
 			}
 
 			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.REMOVE));
 		}
 	}
 
