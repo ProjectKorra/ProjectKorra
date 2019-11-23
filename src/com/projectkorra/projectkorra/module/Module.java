@@ -81,7 +81,11 @@ public abstract class Module implements Listener {
 		getPlugin().getLogger().log(level, String.format(LOG_FORMAT, getName(), message));
 	}
 
-	public ProjectKorra getPlugin() {
+	public final ProjectKorra getPlugin() {
 		return JavaPlugin.getPlugin(ProjectKorra.class);
+	}
+
+	public final <T extends Module> T module(Class<T> moduleClass) {
+		return ModuleManager.getModule(moduleClass);
 	}
 }

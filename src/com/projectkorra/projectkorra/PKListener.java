@@ -7,7 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.projectkorra.projectkorra.ability.AbilityHandler;
+import com.projectkorra.projectkorra.ability.AbilityHandlerManager;
+import com.projectkorra.projectkorra.ability.AbilityManager;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
+import com.projectkorra.projectkorra.element.ElementManager;
 import com.projectkorra.projectkorra.event.*;
+import com.projectkorra.projectkorra.module.Module;
 import com.projectkorra.projectkorra.module.ModuleManager;
 import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import org.bukkit.Bukkit;
@@ -83,14 +89,10 @@ import com.projectkorra.projectkorra.ability.api.AddonAbility;
 import com.projectkorra.projectkorra.ability.legacy.AirAbility;
 import com.projectkorra.projectkorra.ability.legacy.AvatarAbility;
 import com.projectkorra.projectkorra.ability.legacy.ChiAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.legacy.EarthAbility;
 import com.projectkorra.projectkorra.ability.legacy.ElementalAbility;
 import com.projectkorra.projectkorra.ability.legacy.FireAbility;
 import com.projectkorra.projectkorra.ability.legacy.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirBurst;
 import com.projectkorra.projectkorra.airbending.AirScooter;
@@ -217,7 +219,6 @@ import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -250,7 +251,7 @@ import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 import co.aikar.timings.lib.MCTiming;
 
 @SuppressWarnings({ "unused", "deprecation", "rawtypes", "unchecked" })
-public class PKListener implements Listener {
+public class PKListener extends Module {
 	ProjectKorra plugin;
 
 	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
@@ -262,8 +263,14 @@ public class PKListener implements Listener {
 	private static MCTiming TimingPhysicsWaterManipulationCheck, TimingPhysicsEarthPassiveCheck, TimingPhysicsIlluminationTorchCheck, TimingPhysicsEarthAbilityCheck, TimingPhysicsAirTempBlockBelowFallingBlockCheck;
 	private static MCTiming TimingPlayerMoveMovementHandlerCheck, TimingPlayerMoveSpoutCheck, TimingPlayerMoveBloodbentCheck, TimingPlayerMoveAirChiPassiveCheck, TimingPlayerMoveFirePassiveCheck, TimingPlayerMoveJumpCheck;
 
-	public PKListener(final ProjectKorra plugin) {
+	private final BendingPlayerManager bendingPlayerManager;
+	private final ElementManager elementManager;
+	private final AbilityManager abilityManager;
+	private final AbilityHandlerManager abilityHandlerManager;
+	private final AbilityBindManager abilityBindManager;
 
+	public PKListener(final ProjectKorra plugin) {
+		super("Listener");
 		this.plugin = plugin;
 
 		TimingPhysicsWaterManipulationCheck = ProjectKorra.timing("PhysicsWaterManipulationCheck");
@@ -278,59 +285,65 @@ public class PKListener implements Listener {
 		TimingPlayerMoveAirChiPassiveCheck = ProjectKorra.timing("PlayerMoveAirChiPassiveCheck");
 		TimingPlayerMoveFirePassiveCheck = ProjectKorra.timing("PlayerMoveFirePassiveCheck");
 		TimingPlayerMoveJumpCheck = ProjectKorra.timing("PlayerMoveJumpCheck");
+
+		this.bendingPlayerManager = module(BendingPlayerManager.class);
+		this.elementManager = module(ElementManager.class);
+		this.abilityManager = module(AbilityManager.class);
+		this.abilityHandlerManager = module(AbilityHandlerManager.class);
+		this.abilityBindManager = module(AbilityBindManager.class);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(final BlockBreakEvent event) {
 		final Block block = event.getBlock();
 		final Player player = event.getPlayer();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final String abil = bPlayer.getBoundAbilityName();
-		CoreAbility ability = null;
+		final com.projectkorra.projectkorra.player.BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
+		final String abilityName = bendingPlayer.getBoundAbility();
+		AbilityHandler abilityHandler;
 
-		if (bPlayer.isElementToggled(Element.WATER) && bPlayer.isToggled()) {
-			if (abil != null && abil.equalsIgnoreCase("Surge")) {
-				ability = CoreAbility.getAbility(SurgeWall.class);
-			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
-				ability = CoreAbility.getAbility(Torrent.class);
-			} else {
-				ability = CoreAbility.getAbility(abil);
-			}
-
-			if (ability != null && ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-
-		final EarthBlast blast = EarthBlast.getBlastFromSource(block);
-		if (blast != null) {
-			blast.remove();
-		}
-
-		if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
-			if (PhaseChange.thaw(block)) {
-				event.setCancelled(true);
-			}
-		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
-			event.setCancelled(true);
-		} else if (Illumination.isIlluminationTorch(block)) {
-			event.setCancelled(true);
-		} else if (!SurgeWave.canThaw(block)) {
-			SurgeWave.thaw(block);
-			event.setCancelled(true);
-		} else if (LavaFlow.isLavaFlowBlock(block)) {
-			LavaFlow.removeBlock(block);
-		} else if (EarthAbility.getMovedEarth().containsKey(block)) {
-			EarthAbility.removeRevertIndex(block);
-		} else if (TempBlock.isTempBlock(block)) {
-			event.setCancelled(true);
-			TempBlock.revertBlock(block, Material.AIR);
-		} else if (DensityShift.isPassiveSand(block)) {
-			DensityShift.revertSand(block);
-		} else if (WaterBubble.isAir(block)) {
-			event.setCancelled(true);
-		}
+//		if (bendingPlayer.isElementToggled(this.elementManager.getWater()) && bendingPlayer.isToggled()) {
+//			if (abilityName != null && abilityName.equalsIgnoreCase("Surge")) {
+//				abilityHandler = this.abilityHandlerManager.getHandler(Surge)CoreAbility.getAbility(SurgeWall.class);
+//			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
+//				ability = CoreAbility.getAbility(Torrent.class);
+//			} else {
+//				ability = CoreAbility.getAbility(abil);
+//			}
+//
+//			if (ability != null && ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
+//				event.setCancelled(true);
+//				return;
+//			}
+//		}
+//
+//		final EarthBlast blast = EarthBlast.getBlastFromSource(block);
+//		if (blast != null) {
+//			blast.remove();
+//		}
+//
+//		if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
+//			if (PhaseChange.thaw(block)) {
+//				event.setCancelled(true);
+//			}
+//		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
+//			event.setCancelled(true);
+//		} else if (Illumination.isIlluminationTorch(block)) {
+//			event.setCancelled(true);
+//		} else if (!SurgeWave.canThaw(block)) {
+//			SurgeWave.thaw(block);
+//			event.setCancelled(true);
+//		} else if (LavaFlow.isLavaFlowBlock(block)) {
+//			LavaFlow.removeBlock(block);
+//		} else if (EarthAbility.getMovedEarth().containsKey(block)) {
+//			EarthAbility.removeRevertIndex(block);
+//		} else if (TempBlock.isTempBlock(block)) {
+//			event.setCancelled(true);
+//			TempBlock.revertBlock(block, Material.AIR);
+//		} else if (DensityShift.isPassiveSand(block)) {
+//			DensityShift.revertSand(block);
+//		} else if (WaterBubble.isAir(block)) {
+//			event.setCancelled(true);
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -490,30 +503,30 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onElementChange(final PlayerChangeElementEvent event) {
-		final Player player = event.getTarget();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		PassiveManager.registerPassives(player);
-		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
-			final com.projectkorra.projectkorra.element.Element element = event.getElement();
-			String prefix = "";
-
-			if (bPlayer == null) {
-				return;
-			}
-
-			if (bPlayer.getElements().size() > 1) {
-				prefix = Element.AVATAR.getPrefix();
-			} else if (element != null) {
-				// TODO Pull prefix from config
-//				prefix = element.getPrefix();
-				prefix = element.getColoredName();
-			} else {
-				prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
-			}
-
-			player.setDisplayName(player.getName());
-			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
-		}
+//		final Player player = event.getTarget();
+//		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+//		PassiveManager.registerPassives(player);
+//		if (ConfigManager.getConfig(ChatPropertiesConfig.class).Enabled) {
+//			final com.projectkorra.projectkorra.element.Element element = event.getElement();
+//			String prefix = "";
+//
+//			if (bPlayer == null) {
+//				return;
+//			}
+//
+//			if (bPlayer.getElements().size() > 1) {
+//				prefix = Element.AVATAR.getPrefix();
+//			} else if (element != null) {
+//				// TODO Pull prefix from config
+////				prefix = element.getPrefix();
+//				prefix = element.getColoredName();
+//			} else {
+//				prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.getConfig(ChatPropertiesConfig.class).NonbenderPrefix) + " ";
+//			}
+//
+//			player.setDisplayName(player.getName());
+//			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -570,33 +583,33 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if (entity instanceof Player) {
-			final Player player = (Player) entity;
-			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer == null) {
-				return;
-			}
-
-			if (CoreAbility.hasAbility(player, EarthGrab.class)) {
-				final EarthGrab abil = CoreAbility.getAbility(player, EarthGrab.class);
-				abil.remove();
-			}
-
-			if (CoreAbility.getAbility(player, FireJet.class) != null && event.getCause() == DamageCause.FLY_INTO_WALL) {
-				event.setCancelled(true);
-			}
-
-			if (bPlayer.isElementToggled(Element.FIRE)) {
-				return;
-			}
-
-			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HeatControl")) {
-				if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
-					player.setFireTicks(0);
-					event.setCancelled(true);
-				}
-			}
-		}
+//		if (entity instanceof Player) {
+//			final Player player = (Player) entity;
+//			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+//			if (bPlayer == null) {
+//				return;
+//			}
+//
+//			if (CoreAbility.hasAbility(player, EarthGrab.class)) {
+//				final EarthGrab abil = CoreAbility.getAbility(player, EarthGrab.class);
+//				abil.remove();
+//			}
+//
+//			if (CoreAbility.getAbility(player, FireJet.class) != null && event.getCause() == DamageCause.FLY_INTO_WALL) {
+//				event.setCancelled(true);
+//			}
+//
+//			if (bPlayer.isElementToggled(Element.FIRE)) {
+//				return;
+//			}
+//
+//			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HeatControl")) {
+//				if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
+//					player.setFireTicks(0);
+//					event.setCancelled(true);
+//				}
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -619,52 +632,52 @@ public class PKListener implements Listener {
 			}
 		}
 
-		final CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
-
-		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
-			final CoreAbility coreAbility = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
-			for (final CoreAbility fireCombo : cookingFireCombos) {
-				if (coreAbility.getName().equalsIgnoreCase(fireCombo.getName())) {
-					final List<ItemStack> drops = event.getDrops();
-					final List<ItemStack> newDrops = new ArrayList<>();
-					for (int i = 0; i < drops.size(); i++) {
-						ItemStack cooked = drops.get(i);
-						final Material material = drops.get(i).getType();
-						switch (material) {
-							case BEEF:
-								cooked = new ItemStack(Material.COOKED_BEEF);
-								break;
-							case SALMON:
-								cooked = new ItemStack(Material.COOKED_SALMON);
-								break;
-							case CHICKEN:
-								cooked = new ItemStack(Material.COOKED_CHICKEN);
-								break;
-							case PORKCHOP:
-								cooked = new ItemStack(Material.COOKED_PORKCHOP);
-								break;
-							case MUTTON:
-								cooked = new ItemStack(Material.COOKED_MUTTON);
-								break;
-							case RABBIT:
-								cooked = new ItemStack(Material.COOKED_RABBIT);
-								break;
-							case COD:
-								cooked = new ItemStack(Material.COOKED_COD);
-								break;
-							default:
-								break;
-						}
-
-						newDrops.add(cooked);
-					}
-					event.getDrops().clear();
-					event.getDrops().addAll(newDrops);
-
-					break;
-				}
-			}
-		}
+//		final CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
+//
+//		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
+//			final CoreAbility coreAbility = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
+//			for (final CoreAbility fireCombo : cookingFireCombos) {
+//				if (coreAbility.getName().equalsIgnoreCase(fireCombo.getName())) {
+//					final List<ItemStack> drops = event.getDrops();
+//					final List<ItemStack> newDrops = new ArrayList<>();
+//					for (int i = 0; i < drops.size(); i++) {
+//						ItemStack cooked = drops.get(i);
+//						final Material material = drops.get(i).getType();
+//						switch (material) {
+//							case BEEF:
+//								cooked = new ItemStack(Material.COOKED_BEEF);
+//								break;
+//							case SALMON:
+//								cooked = new ItemStack(Material.COOKED_SALMON);
+//								break;
+//							case CHICKEN:
+//								cooked = new ItemStack(Material.COOKED_CHICKEN);
+//								break;
+//							case PORKCHOP:
+//								cooked = new ItemStack(Material.COOKED_PORKCHOP);
+//								break;
+//							case MUTTON:
+//								cooked = new ItemStack(Material.COOKED_MUTTON);
+//								break;
+//							case RABBIT:
+//								cooked = new ItemStack(Material.COOKED_RABBIT);
+//								break;
+//							case COD:
+//								cooked = new ItemStack(Material.COOKED_COD);
+//								break;
+//							default:
+//								break;
+//						}
+//
+//						newDrops.add(cooked);
+//					}
+//					event.getDrops().clear();
+//					event.getDrops().addAll(newDrops);
+//
+//					break;
+//				}
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -776,10 +789,10 @@ public class PKListener implements Listener {
 
 		if (entity instanceof Player) {
 			final Player player = (Player) entity;
-			if (CoreAbility.hasAbility(player, EarthArmor.class)) {
-				final EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
-				abil.remove();
-			}
+//			if (CoreAbility.hasAbility(player, EarthArmor.class)) {
+//				final EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
+//				abil.remove();
+//			}
 		}
 	}
 
@@ -803,12 +816,12 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClick(final InventoryClickEvent event) {
-		for (final MetalClips clips : CoreAbility.getAbilities(MetalClips.class)) {
-			if (clips.getTargetEntity() != null && clips.getTargetEntity().getEntityId() == event.getWhoClicked().getEntityId()) {
-				event.setCancelled(true);
-				break;
-			}
-		}
+//		for (final MetalClips clips : CoreAbility.getAbilities(MetalClips.class)) {
+//			if (clips.getTargetEntity() != null && clips.getTargetEntity().getEntityId() == event.getWhoClicked().getEntityId()) {
+//				event.setCancelled(true);
+//				break;
+//			}
+//		}
 
 		for (int i = 0; i < 4; i++) {
 			if (event.getSlot() == 36 + i && TempArmor.hasTempArmor(event.getWhoClicked())) {
@@ -820,30 +833,30 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityBendingDeath(final EntityBendingDeathEvent event) {
 		BENDING_ENTITY_DEATH.put(event.getEntity(), event.getAbility());
-		if (event.getEntity() instanceof Player) {
-			if (ConfigManager.getConfig(GeneralPropertiesConfig.class).DeathMessages) {
-				final Ability ability = event.getAbility();
-				if (ability == null) {
-					return;
-				}
-
-				BENDING_PLAYER_DEATH.put((Player) event.getEntity(), ability.getElement().getColor() + ability.getName());
-				final Player player = (Player) event.getEntity();
-
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						BENDING_PLAYER_DEATH.remove(player);
-					}
-				}.runTaskLater(ProjectKorra.plugin, 20);
-			}
-			if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
-				StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.PLAYER_KILLS, 1);
-			}
-		}
-		if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
-			StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.TOTAL_KILLS, 1);
-		}
+//		if (event.getEntity() instanceof Player) {
+//			if (ConfigManager.getConfig(GeneralPropertiesConfig.class).DeathMessages) {
+//				final Ability ability = event.getAbility();
+//				if (ability == null) {
+//					return;
+//				}
+//
+//				BENDING_PLAYER_DEATH.put((Player) event.getEntity(), ability.getElement().getColor() + ability.getName());
+//				final Player player = (Player) event.getEntity();
+//
+//				new BukkitRunnable() {
+//					@Override
+//					public void run() {
+//						BENDING_PLAYER_DEATH.remove(player);
+//					}
+//				}.runTaskLater(ProjectKorra.plugin, 20);
+//			}
+//			if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
+//				StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.PLAYER_KILLS, 1);
+//			}
+//		}
+//		if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
+//			StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.TOTAL_KILLS, 1);
+//		}
 	}
 
 	@EventHandler
@@ -852,7 +865,7 @@ public class PKListener implements Listener {
 
 		if (Illumination.isIlluminationTorch(block)) {
 			final Player player = Illumination.getBlocks().get(TempBlock.get(block));
-			CoreAbility.getAbility(player, Illumination.class).remove();
+//			CoreAbility.getAbility(player, Illumination.class).remove();
 		}
 	}
 
@@ -909,8 +922,8 @@ public class PKListener implements Listener {
 			}
 
 			if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
-				final FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
-				fma.cancel("taking damage");
+//				final FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
+//				fma.cancel("taking damage");
 			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
@@ -927,35 +940,35 @@ public class PKListener implements Listener {
 				}
 			}
 
-			CoreAbility gd = CoreAbility.getAbility(GracefulDescent.class);
-			CoreAbility ds = CoreAbility.getAbility(DensityShift.class);
-			CoreAbility hs = CoreAbility.getAbility(HydroSink.class);
-			CoreAbility ab = CoreAbility.getAbility(Acrobatics.class);
-
-			if (gd != null && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(gd) && bPlayer.canUsePassive(gd) && gd.isEnabled() && PassiveManager.hasPassive(player, gd)) {
-				event.setDamage(0D);
-				event.setCancelled(true);
-			} else if (ds != null && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ds) && bPlayer.canUsePassive(ds) && ds.isEnabled() && PassiveManager.hasPassive(player, ds)) {
-				if (DensityShift.softenLanding(ConfigManager.getConfig(DensityShiftConfig.class), player)) {
-					event.setDamage(0D);
-					event.setCancelled(true);
-				}
-			} else if (hs != null && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(hs) && bPlayer.canUsePassive(hs) && hs.isEnabled() && PassiveManager.hasPassive(player, hs)) {
-				if (HydroSink.applyNoFall(player)) {
-					event.setDamage(0D);
-					event.setCancelled(true);
-				}
-			}
-
-			if (ab != null && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ab) && bPlayer.canUsePassive(ab) && ab.isEnabled() && PassiveManager.hasPassive(player, ab)) {
-				final double initdamage = event.getDamage();
-				final double newdamage = event.getDamage() * Acrobatics.getFallReductionFactor();
-				final double finaldamage = initdamage - newdamage;
-				event.setDamage(finaldamage);
-				if (finaldamage <= 0.4) {
-					event.setCancelled(true);
-				}
-			}
+//			CoreAbility gd = CoreAbility.getAbility(GracefulDescent.class);
+//			CoreAbility ds = CoreAbility.getAbility(DensityShift.class);
+//			CoreAbility hs = CoreAbility.getAbility(HydroSink.class);
+//			CoreAbility ab = CoreAbility.getAbility(Acrobatics.class);
+//
+//			if (gd != null && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(gd) && bPlayer.canUsePassive(gd) && gd.isEnabled() && PassiveManager.hasPassive(player, gd)) {
+//				event.setDamage(0D);
+//				event.setCancelled(true);
+//			} else if (ds != null && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ds) && bPlayer.canUsePassive(ds) && ds.isEnabled() && PassiveManager.hasPassive(player, ds)) {
+//				if (DensityShift.softenLanding(ConfigManager.getConfig(DensityShiftConfig.class), player)) {
+//					event.setDamage(0D);
+//					event.setCancelled(true);
+//				}
+//			} else if (hs != null && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(hs) && bPlayer.canUsePassive(hs) && hs.isEnabled() && PassiveManager.hasPassive(player, hs)) {
+//				if (HydroSink.applyNoFall(player)) {
+//					event.setDamage(0D);
+//					event.setCancelled(true);
+//				}
+//			}
+//
+//			if (ab != null && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ab) && bPlayer.canUsePassive(ab) && ab.isEnabled() && PassiveManager.hasPassive(player, ab)) {
+//				final double initdamage = event.getDamage();
+//				final double newdamage = event.getDamage() * Acrobatics.getFallReductionFactor();
+//				final double finaldamage = initdamage - newdamage;
+//				event.setDamage(finaldamage);
+//				if (finaldamage <= 0.4) {
+//					event.setCancelled(true);
+//				}
+//			}
 
 			if (event.getCause() == DamageCause.FALL) {
 				final Flight flight = Manager.getManager(FlightHandler.class).getInstance(player);
@@ -966,21 +979,21 @@ public class PKListener implements Listener {
 				}
 			}
 
-			CoreAbility hc = CoreAbility.getAbility(HeatControl.class);
+//			CoreAbility hc = CoreAbility.getAbility(HeatControl.class);
 
-			if (hc != null && bPlayer.hasElement(Element.FIRE) && bPlayer.canBendPassive(hc) && bPlayer.canUsePassive(hc) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
-				event.setCancelled(!HeatControl.canBurn(player));
-			}
+//			if (hc != null && bPlayer.hasElement(Element.FIRE) && bPlayer.canBendPassive(hc) && bPlayer.canUsePassive(hc) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
+//				event.setCancelled(!HeatControl.canBurn(player));
+//			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.SUFFOCATION && TempBlock.isTempBlock(player.getEyeLocation().getBlock())) {
 				event.setDamage(0D);
 				event.setCancelled(true);
 			}
 
-			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
-				final EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
-				eartharmor.updateAbsorbtion();
-			}
+//			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
+//				final EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
+//				eartharmor.updateAbsorbtion();
+//			}
 		}
 	}
 
@@ -997,11 +1010,11 @@ public class PKListener implements Listener {
 		}
 
 		if (MovementHandler.isStopped(e.getDamager())) {
-			final CoreAbility ability = (CoreAbility) e.getDamager().getMetadata("movement:stop").get(0).value();
-			if (!(ability instanceof EarthGrab)) {
-				e.setCancelled(true);
-				return;
-			}
+//			final CoreAbility ability = (CoreAbility) e.getDamager().getMetadata("movement:stop").get(0).value();
+//			if (!(ability instanceof EarthGrab)) {
+//				e.setCancelled(true);
+//				return;
+//			}
 		}
 
 		if (entity instanceof Player) {
@@ -1015,34 +1028,34 @@ public class PKListener implements Listener {
 				return;
 			}
 
-			final Ability boundAbil = sourceBPlayer.getBoundAbility();
-
-			if (sourceBPlayer.getBoundAbility() != null) {
-				if (!sourceBPlayer.isOnCooldown(boundAbil)) {
-					if (sourceBPlayer.canBendPassive(sourceBPlayer.getBoundAbility())) {
-						if (e.getCause() == DamageCause.ENTITY_ATTACK) {
-							if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
-								if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
-									if (sourceBPlayer.isElementToggled(Element.CHI)) {
-										if (boundAbil.equals(CoreAbility.getAbility(Paralyze.class))) {
-											new Paralyze(ConfigManager.getConfig(ParalyzeConfig.class), sourcePlayer, entity);
-										} else if (boundAbil.equals(CoreAbility.getAbility(QuickStrike.class))) {
-											new QuickStrike(ConfigManager.getConfig(QuickStrikeConfig.class), sourcePlayer, entity);
-											e.setCancelled(true);
-										} else if (boundAbil.equals(CoreAbility.getAbility(SwiftKick.class))) {
-											new SwiftKick(ConfigManager.getConfig(SwiftKickConfig.class), sourcePlayer, entity);
-											e.setCancelled(true);
-										} else if (boundAbil.equals(CoreAbility.getAbility(RapidPunch.class))) {
-											new RapidPunch(ConfigManager.getConfig(RapidPunchConfig.class), sourcePlayer, entity);
-											e.setCancelled(true);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			} else {
+//			final Ability boundAbil = sourceBPlayer.getBoundAbility();
+//
+//			if (sourceBPlayer.getBoundAbility() != null) {
+//				if (!sourceBPlayer.isOnCooldown(boundAbil)) {
+//					if (sourceBPlayer.canBendPassive(sourceBPlayer.getBoundAbility())) {
+//						if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+//							if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
+//								if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
+//									if (sourceBPlayer.isElementToggled(Element.CHI)) {
+//										if (boundAbil.equals(CoreAbility.getAbility(Paralyze.class))) {
+//											new Paralyze(ConfigManager.getConfig(ParalyzeConfig.class), sourcePlayer, entity);
+//										} else if (boundAbil.equals(CoreAbility.getAbility(QuickStrike.class))) {
+//											new QuickStrike(ConfigManager.getConfig(QuickStrikeConfig.class), sourcePlayer, entity);
+//											e.setCancelled(true);
+//										} else if (boundAbil.equals(CoreAbility.getAbility(SwiftKick.class))) {
+//											new SwiftKick(ConfigManager.getConfig(SwiftKickConfig.class), sourcePlayer, entity);
+//											e.setCancelled(true);
+//										} else if (boundAbil.equals(CoreAbility.getAbility(RapidPunch.class))) {
+//											new RapidPunch(ConfigManager.getConfig(RapidPunchConfig.class), sourcePlayer, entity);
+//											e.setCancelled(true);
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			} else {
 				if (e.getCause() == DamageCause.ENTITY_ATTACK) {
 					if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
 						if (sourceBPlayer.isElementToggled(Element.CHI)) {
@@ -1055,7 +1068,7 @@ public class PKListener implements Listener {
 						}
 					}
 				}
-			}
+//			}
 		}
 	}
 
@@ -1076,32 +1089,32 @@ public class PKListener implements Listener {
 		}
 
 		if (event.getEntity().getKiller() != null) {
-			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
-				String message = ConfigManager.getConfig(GeneralPropertiesConfig.class).DefaultDeathMessage;
-				final String ability = BENDING_PLAYER_DEATH.get(event.getEntity());
-				final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
-				final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
-				Element element = null;
-				final boolean isAvatarAbility = false;
-
-				if (coreAbil != null) {
-					element = coreAbil.getElement();
-				}
-
-				if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
-					if (coreAbil != null && ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType()).HorizontalVelocityDeathMessage != null) {
-						message = ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType()).HorizontalVelocityDeathMessage;
-					}
-				} else if (coreAbil != null) {
-					AbilityConfig conf = ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType());
-					if (conf.DeathMessage != null) {
-						message = conf.DeathMessage;
-					}
-				}
-				message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);
-				event.setDeathMessage(message);
-				BENDING_PLAYER_DEATH.remove(event.getEntity());
-			}
+//			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
+//				String message = ConfigManager.getConfig(GeneralPropertiesConfig.class).DefaultDeathMessage;
+//				final String ability = BENDING_PLAYER_DEATH.get(event.getEntity());
+//				final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
+//				final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
+//				Element element = null;
+//				final boolean isAvatarAbility = false;
+//
+//				if (coreAbil != null) {
+//					element = coreAbil.getElement();
+//				}
+//
+//				if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
+//					if (coreAbil != null && ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType()).HorizontalVelocityDeathMessage != null) {
+//						message = ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType()).HorizontalVelocityDeathMessage;
+//					}
+//				} else if (coreAbil != null) {
+//					AbilityConfig conf = ConfigManager.getConfig((Class<? extends AbilityConfig>) coreAbil.getConfigType());
+//					if (conf.DeathMessage != null) {
+//						message = conf.DeathMessage;
+//					}
+//				}
+//				message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);
+//				event.setDeathMessage(message);
+//				BENDING_PLAYER_DEATH.remove(event.getEntity());
+//			}
 		}
 	}
 
@@ -1125,11 +1138,11 @@ public class PKListener implements Listener {
 
 			if (event.getHand() == EquipmentSlot.HAND) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (event.getClickedBlock() != null) {
-						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
-					} else {
-						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
-					}
+//					if (event.getClickedBlock() != null) {
+//						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
+//					} else {
+//						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
+//					}
 				}
 			}
 
@@ -1140,9 +1153,9 @@ public class PKListener implements Listener {
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
 			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("IceBlast")) {
-				if (CoreAbility.hasAbility(player, IceBullet.class)) {
-					CoreAbility.getAbility(player, IceBullet.class).doRightClick();
-				}
+//				if (CoreAbility.hasAbility(player, IceBullet.class)) {
+//					CoreAbility.getAbility(player, IceBullet.class).doRightClick();
+//				}
 			}
 		}
 
@@ -1156,9 +1169,9 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		if (bPlayer.canCurrentlyBendWithWeapons()) {
-			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
-		}
+//		if (bPlayer.canCurrentlyBendWithWeapons()) {
+//			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
+//		}
 
 		if (event.getRightClicked().hasMetadata("earthgrab:trap")) {
 			final EarthGrab eg = (EarthGrab) event.getRightClicked().getMetadata("earthgrab:trap").get(0).value();
@@ -1177,35 +1190,35 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters") && event.getHand().equals(EquipmentSlot.HAND)) {
-			final HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
-			if (instance != null && instance.charged) {
-				instance.click();
-				event.setCancelled(true);
-				return;
-			}
-		}
+//		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters") && event.getHand().equals(EquipmentSlot.HAND)) {
+//			final HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
+//			if (instance != null && instance.charged) {
+//				instance.click();
+//				event.setCancelled(true);
+//				return;
+//			}
+//		}
 
-		if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
-			if (event.getRightClicked() instanceof Player) {
-				final Player target = (Player) event.getRightClicked();
-				if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
-					final FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
-					fma.requestCarry(target);
-					final UUID uuid = player.getUniqueId();
-					RIGHT_CLICK_INTERACT.add(uuid);
-
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							RIGHT_CLICK_INTERACT.remove(uuid);
-						}
-					}.runTaskLater(this.plugin, 5);
-				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
-					FlightMultiAbility.acceptCarryRequest(player, target);
-				}
-			}
-		}
+//		if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
+//			if (event.getRightClicked() instanceof Player) {
+//				final Player target = (Player) event.getRightClicked();
+//				if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+//					final FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
+//					fma.requestCarry(target);
+//					final UUID uuid = player.getUniqueId();
+//					RIGHT_CLICK_INTERACT.add(uuid);
+//
+//					new BukkitRunnable() {
+//						@Override
+//						public void run() {
+//							RIGHT_CLICK_INTERACT.remove(uuid);
+//						}
+//					}.runTaskLater(this.plugin, 5);
+//				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
+//					FlightMultiAbility.acceptCarryRequest(player, target);
+//				}
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1226,15 +1239,15 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 
-		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-		if (ProjectKorra.isStatisticsEnabled()) {
-			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
-		}
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-			PassiveManager.registerPassives(player);
-			GeneralMethods.removeUnusableAbilities(player.getName());
-		}, 5);
-
+//		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+//		if (ProjectKorra.isStatisticsEnabled()) {
+//			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
+//		}
+//		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
+//			PassiveManager.registerPassives(player);
+//			GeneralMethods.removeUnusableAbilities(player.getName());
+//		}, 5);
+//
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
 			player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
 		}, 20 * 4);
@@ -1242,7 +1255,7 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
-		PassiveManager.registerPassives(event.getPlayer());
+//		PassiveManager.registerPassives(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1269,21 +1282,21 @@ public class PKListener implements Listener {
 		}
 
 		try (MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
-			if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
-				Vector vel = new Vector();
-				vel.setX(event.getTo().getX() - event.getFrom().getX());
-				vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
-
-				final double currspeed = vel.length();
-				final double maxspeed = .2;
-				if (currspeed > maxspeed) {
-					// apply only if moving set a factor
-					vel = vel.normalize().multiply(maxspeed);
-					// apply the new velocity
-					event.getPlayer().setVelocity(vel);
-				}
-				return;
-			}
+//			if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
+//				Vector vel = new Vector();
+//				vel.setX(event.getTo().getX() - event.getFrom().getX());
+//				vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
+//
+//				final double currspeed = vel.length();
+//				final double maxspeed = .2;
+//				if (currspeed > maxspeed) {
+//					// apply only if moving set a factor
+//					vel = vel.normalize().multiply(maxspeed);
+//					// apply the new velocity
+//					event.getPlayer().setVelocity(vel);
+//				}
+//				return;
+//			}
 		}
 
 		try (MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
@@ -1377,7 +1390,7 @@ public class PKListener implements Listener {
 			Commands.invincible.remove(player.getName());
 		}
 
-		Preset.unloadPreset(player);
+//		Preset.unloadPreset(player);
 
 		if (TempArmor.hasTempArmor(player)) {
 			for (final TempArmor armor : TempArmor.getTempArmorList(player)) {
@@ -1389,14 +1402,14 @@ public class PKListener implements Listener {
 			MetalClips.removeControlledEnitity(event.getPlayer());
 		}
 
-		MultiAbilityManager.remove(player);
+//		MultiAbilityManager.remove(player);
 		JUMPS.remove(player);
 
-		for (final CoreAbility ca : CoreAbility.getAbilities()) {
-			if (CoreAbility.getAbility(event.getPlayer(), ca.getClass()) != null) {
-				CoreAbility.getAbility(event.getPlayer(), ca.getClass()).remove();
-			}
-		}
+//		for (final CoreAbility ca : CoreAbility.getAbilities()) {
+//			if (CoreAbility.getAbility(event.getPlayer(), ca.getClass()) != null) {
+//				CoreAbility.getAbility(event.getPlayer(), ca.getClass()).remove();
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1408,13 +1421,13 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (bPlayer.canCurrentlyBendWithWeapons()) {
-			if (player.isSneaking()) {
-				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
-			} else {
-				ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
-			}
-		}
+//		if (bPlayer.canCurrentlyBendWithWeapons()) {
+//			if (player.isSneaking()) {
+//				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
+//			} else {
+//				ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
+//			}
+//		}
 
 		final String abilName = bPlayer.getBoundAbilityName();
 		if (Suffocate.isBreathbent(player)) {
@@ -1443,162 +1456,162 @@ public class PKListener implements Listener {
 
 		AirScooter.check(player);
 
-		final CoreAbility coreAbil = bPlayer.getBoundAbility();
-		final String abil = bPlayer.getBoundAbilityName();
-
-		if (coreAbil == null || !coreAbil.isSneakAbility()) {
-			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
-				new FerroControl(ConfigManager.getConfig(FerroControlConfig.class), player);
-			}
-
-			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FastSwim.class))) {
-				new FastSwim(ConfigManager.getConfig(FastSwimConfig.class), player);
-			}
-		}
-
-		if (coreAbil == null) {
-			return;
-		}
-
-		if (!player.isSneaking() && bPlayer.canBendIgnoreCooldowns(coreAbil)) {
-			if (coreAbil instanceof AddonAbility) {
-				return;
-			}
-
-			if (coreAbil instanceof AirAbility && bPlayer.isElementToggled(Element.AIR) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Tornado")) {
-						new Tornado(ConfigManager.getConfig(TornadoConfig.class), player);
-					} else if (abil.equalsIgnoreCase("AirBlast")) {
-						AirBlast.setOrigin(player);
-					} else if (abil.equalsIgnoreCase("AirBurst")) {
-						new AirBurst(ConfigManager.getConfig(AirBurstConfig.class), player, false);
-					} else if (abil.equalsIgnoreCase("AirSuction")) {
-						new AirSuction(ConfigManager.getConfig(AirSuctionConfig.class), player);
-					} else if (abil.equalsIgnoreCase("AirSwipe")) {
-						new AirSwipe(ConfigManager.getConfig(AirSwipeConfig.class), player, true);
-					} else if (abil.equalsIgnoreCase("AirShield")) {
-						new AirShield(ConfigManager.getConfig(AirShieldConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Suffocate")) {
-						new Suffocate(ConfigManager.getConfig(SuffocateConfig.class), player);
-					}
-				}
-			}
-
-			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Bloodbending")) {
-						new Bloodbending(ConfigManager.getConfig(BloodbendingConfig.class), player);
-					} else if (abil.equalsIgnoreCase("IceBlast")) {
-						new IceBlast(ConfigManager.getConfig(IceBlastConfig.class), player);
-					} else if (abil.equalsIgnoreCase("IceSpike")) {
-						new IceSpikeBlast(ConfigManager.getConfig(IceSpikeConfig.class), player);
-					} else if (abil.equalsIgnoreCase("OctopusForm")) {
-						OctopusForm.form(ConfigManager.getConfig(OctopusFormConfig.class), player);
-					} else if (abil.equalsIgnoreCase("PhaseChange")) {
-						if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
-							new PhaseChange(ConfigManager.getConfig(PhaseChangeConfig.class), player, PhaseChangeType.MELT);
-						} else {
-							final PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
-							pc.startNewType(PhaseChangeType.MELT);
-						}
-					} else if (abil.equalsIgnoreCase("WaterManipulation")) {
-						new WaterManipulation(ConfigManager.getConfig(WaterManipulationConfig.class), player);
-					} else if (abil.equalsIgnoreCase("WaterBubble")) {
-						new WaterBubble(ConfigManager.getConfig(WaterBubbleConfig.class), player, true);
-					} else if (abil.equalsIgnoreCase("Surge")) {
-						SurgeWall.form(ConfigManager.getConfig(SurgeConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Torrent")) {
-						Torrent.create(ConfigManager.getConfig(TorrentConfig.class), player);
-					} else if (abil.equalsIgnoreCase("WaterArms")) {
-						new WaterArms(ConfigManager.getConfig(WaterArmsConfig.class), player);
-					}
-
-					if (abil.equalsIgnoreCase("HealingWaters")) {
-						new HealingWaters(ConfigManager.getConfig(HealingWatersConfig.class), player);
-					}
-				}
-			}
-
-			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Catapult")) {
-						new Catapult(ConfigManager.getConfig(CatapultConfig.class), player, true);
-					} else if (abil.equalsIgnoreCase("EarthBlast")) {
-						new EarthBlast(ConfigManager.getConfig(EarthBlastConfig.class), player);
-					} else if (abil.equalsIgnoreCase("EarthArmor")) {
-						new EarthArmor(ConfigManager.getConfig(EarthArmorConfig.class), player);
-					} else if (abil.equalsIgnoreCase("RaiseEarth")) {
-						new RaiseEarthWall(ConfigManager.getConfig(RaiseEarthConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Collapse")) {
-						new CollapseWall(ConfigManager.getConfig(CollapseConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Shockwave")) {
-						new Shockwave(ConfigManager.getConfig(ShockwaveConfig.class), player, false);
-					} else if (abil.equalsIgnoreCase("EarthTunnel")) {
-						new EarthTunnel(ConfigManager.getConfig(EarthTunnelConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Tremorsense")) {
-						bPlayer.toggleTremorSense();
-					} else if (abil.equalsIgnoreCase("Extraction")) {
-						new Extraction(ConfigManager.getConfig(ExtractionConfig.class), player);
-					} else if (abil.equalsIgnoreCase("LavaFlow")) {
-						new LavaFlow(ConfigManager.getConfig(LavaFlowConfig.class), player, LavaFlow.AbilityType.SHIFT);
-					} else if (abil.equalsIgnoreCase("EarthSmash")) {
-						new EarthSmash(ConfigManager.getConfig(EarthSmashConfig.class), player, ClickType.SHIFT_DOWN);
-					} else if (abil.equalsIgnoreCase("MetalClips")) {
-						final MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
-						if (clips != null) {
-							if (clips.getTargetEntity() == null) {
-								clips.setMagnetized(true);
-							} else {
-								clips.setControlling(true);
-							}
-						} else {
-							new MetalClips(ConfigManager.getConfig(MetalClipsConfig.class), player, 1);
-						}
-					} else if (abil.equalsIgnoreCase("EarthGrab")) {
-						new EarthGrab(ConfigManager.getConfig(EarthGrabConfig.class), player, GrabMode.DRAG);
-					}
-				}
-
-			}
-
-			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Blaze")) {
-						new BlazeRing(ConfigManager.getConfig(BlazeConfig.class), player);
-					} else if (abil.equalsIgnoreCase("FireBlast")) {
-						new FireBlastCharged(ConfigManager.getConfig(FireBlastConfig.class), player);
-					} else if (abil.equalsIgnoreCase("HeatControl")) {
-						new HeatControl(ConfigManager.getConfig(HeatControlConfig.class), player, HeatControlType.COOK);
-					} else if (abil.equalsIgnoreCase("FireBurst")) {
-						new FireBurst(ConfigManager.getConfig(FireBurstConfig.class), player);
-					} else if (abil.equalsIgnoreCase("FireShield")) {
-						new FireShield(ConfigManager.getConfig(FireShieldConfig.class), player, true);
-					} else if (abil.equalsIgnoreCase("Lightning")) {
-						new Lightning(ConfigManager.getConfig(LightningConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Combustion")) {
-						new Combustion(ConfigManager.getConfig(CombustionConfig.class), player);
-					} else if (abil.equalsIgnoreCase("FireManipulation")) {
-						new FireManipulation(ConfigManager.getConfig(FireManipulationConfig.class), player, FireManipulationType.SHIFT);
-					}
-				}
-			}
-		}
+//		final CoreAbility coreAbil = bPlayer.getBoundAbility();
+//		final String abil = bPlayer.getBoundAbilityName();
+//
+//		if (coreAbil == null || !coreAbil.isSneakAbility()) {
+//			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
+//				new FerroControl(ConfigManager.getConfig(FerroControlConfig.class), player);
+//			}
+//
+//			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FastSwim.class))) {
+//				new FastSwim(ConfigManager.getConfig(FastSwimConfig.class), player);
+//			}
+//		}
+//
+//		if (coreAbil == null) {
+//			return;
+//		}
+//
+//		if (!player.isSneaking() && bPlayer.canBendIgnoreCooldowns(coreAbil)) {
+//			if (coreAbil instanceof AddonAbility) {
+//				return;
+//			}
+//
+//			if (coreAbil instanceof AirAbility && bPlayer.isElementToggled(Element.AIR) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("Tornado")) {
+//						new Tornado(ConfigManager.getConfig(TornadoConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("AirBlast")) {
+//						AirBlast.setOrigin(player);
+//					} else if (abil.equalsIgnoreCase("AirBurst")) {
+//						new AirBurst(ConfigManager.getConfig(AirBurstConfig.class), player, false);
+//					} else if (abil.equalsIgnoreCase("AirSuction")) {
+//						new AirSuction(ConfigManager.getConfig(AirSuctionConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("AirSwipe")) {
+//						new AirSwipe(ConfigManager.getConfig(AirSwipeConfig.class), player, true);
+//					} else if (abil.equalsIgnoreCase("AirShield")) {
+//						new AirShield(ConfigManager.getConfig(AirShieldConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Suffocate")) {
+//						new Suffocate(ConfigManager.getConfig(SuffocateConfig.class), player);
+//					}
+//				}
+//			}
+//
+//			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("Bloodbending")) {
+//						new Bloodbending(ConfigManager.getConfig(BloodbendingConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("IceBlast")) {
+//						new IceBlast(ConfigManager.getConfig(IceBlastConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("IceSpike")) {
+//						new IceSpikeBlast(ConfigManager.getConfig(IceSpikeConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("OctopusForm")) {
+//						OctopusForm.form(ConfigManager.getConfig(OctopusFormConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("PhaseChange")) {
+//						if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
+//							new PhaseChange(ConfigManager.getConfig(PhaseChangeConfig.class), player, PhaseChangeType.MELT);
+//						} else {
+//							final PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
+//							pc.startNewType(PhaseChangeType.MELT);
+//						}
+//					} else if (abil.equalsIgnoreCase("WaterManipulation")) {
+//						new WaterManipulation(ConfigManager.getConfig(WaterManipulationConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("WaterBubble")) {
+//						new WaterBubble(ConfigManager.getConfig(WaterBubbleConfig.class), player, true);
+//					} else if (abil.equalsIgnoreCase("Surge")) {
+//						SurgeWall.form(ConfigManager.getConfig(SurgeConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Torrent")) {
+//						Torrent.create(ConfigManager.getConfig(TorrentConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("WaterArms")) {
+//						new WaterArms(ConfigManager.getConfig(WaterArmsConfig.class), player);
+//					}
+//
+//					if (abil.equalsIgnoreCase("HealingWaters")) {
+//						new HealingWaters(ConfigManager.getConfig(HealingWatersConfig.class), player);
+//					}
+//				}
+//			}
+//
+//			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("Catapult")) {
+//						new Catapult(ConfigManager.getConfig(CatapultConfig.class), player, true);
+//					} else if (abil.equalsIgnoreCase("EarthBlast")) {
+//						new EarthBlast(ConfigManager.getConfig(EarthBlastConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("EarthArmor")) {
+//						new EarthArmor(ConfigManager.getConfig(EarthArmorConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("RaiseEarth")) {
+//						new RaiseEarthWall(ConfigManager.getConfig(RaiseEarthConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Collapse")) {
+//						new CollapseWall(ConfigManager.getConfig(CollapseConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Shockwave")) {
+//						new Shockwave(ConfigManager.getConfig(ShockwaveConfig.class), player, false);
+//					} else if (abil.equalsIgnoreCase("EarthTunnel")) {
+//						new EarthTunnel(ConfigManager.getConfig(EarthTunnelConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Tremorsense")) {
+//						bPlayer.toggleTremorSense();
+//					} else if (abil.equalsIgnoreCase("Extraction")) {
+//						new Extraction(ConfigManager.getConfig(ExtractionConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("LavaFlow")) {
+//						new LavaFlow(ConfigManager.getConfig(LavaFlowConfig.class), player, LavaFlow.AbilityType.SHIFT);
+//					} else if (abil.equalsIgnoreCase("EarthSmash")) {
+//						new EarthSmash(ConfigManager.getConfig(EarthSmashConfig.class), player, ClickType.SHIFT_DOWN);
+//					} else if (abil.equalsIgnoreCase("MetalClips")) {
+//						final MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
+//						if (clips != null) {
+//							if (clips.getTargetEntity() == null) {
+//								clips.setMagnetized(true);
+//							} else {
+//								clips.setControlling(true);
+//							}
+//						} else {
+//							new MetalClips(ConfigManager.getConfig(MetalClipsConfig.class), player, 1);
+//						}
+//					} else if (abil.equalsIgnoreCase("EarthGrab")) {
+//						new EarthGrab(ConfigManager.getConfig(EarthGrabConfig.class), player, GrabMode.DRAG);
+//					}
+//				}
+//
+//			}
+//
+//			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("Blaze")) {
+//						new BlazeRing(ConfigManager.getConfig(BlazeConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("FireBlast")) {
+//						new FireBlastCharged(ConfigManager.getConfig(FireBlastConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("HeatControl")) {
+//						new HeatControl(ConfigManager.getConfig(HeatControlConfig.class), player, HeatControlType.COOK);
+//					} else if (abil.equalsIgnoreCase("FireBurst")) {
+//						new FireBurst(ConfigManager.getConfig(FireBurstConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("FireShield")) {
+//						new FireShield(ConfigManager.getConfig(FireShieldConfig.class), player, true);
+//					} else if (abil.equalsIgnoreCase("Lightning")) {
+//						new Lightning(ConfigManager.getConfig(LightningConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Combustion")) {
+//						new Combustion(ConfigManager.getConfig(CombustionConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("FireManipulation")) {
+//						new FireManipulation(ConfigManager.getConfig(FireManipulationConfig.class), player, FireManipulationType.SHIFT);
+//					}
+//				}
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSlotChange(final PlayerItemHeldEvent event) {
 		final Player player = event.getPlayer();
 		final int slot = event.getNewSlot();
-		GeneralMethods.displayMovePreview(player, slot);
-
-		if (!ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingPreview) {
-			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
-			if (waterArms != null) {
-				waterArms.displayBoundMsg(event.getNewSlot());
-				return;
-			}
-		}
+//		GeneralMethods.displayMovePreview(player, slot);
+//
+//		if (!ConfigManager.getConfig(GeneralPropertiesConfig.class).BendingPreview) {
+//			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
+//			if (waterArms != null) {
+//				waterArms.displayBoundMsg(event.getNewSlot());
+//				return;
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1611,9 +1624,9 @@ public class PKListener implements Listener {
 
 		final ItemStack main = event.getMainHandItem();
 		final ItemStack off = event.getOffHandItem();
-		if (main.getType() == Material.AIR && (off == null || off.getType() == Material.AIR)) {
-			ComboManager.addComboAbility(player, ClickType.OFFHAND_TRIGGER);
-		}
+//		if (main.getType() == Material.AIR && (off == null || off.getType() == Material.AIR)) {
+//			ComboManager.addComboAbility(player, ClickType.OFFHAND_TRIGGER);
+//		}
 	}
 
 	@EventHandler
@@ -1660,11 +1673,11 @@ public class PKListener implements Listener {
 		final Entity target = GeneralMethods.getTargetedEntity(player, 3);
 
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
-			if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
-				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
-			} else {
-				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
-			}
+//			if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
+//				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
+//			} else {
+//				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
+//			}
 		}
 
 		if (Suffocate.isBreathbent(player)) {
@@ -1675,11 +1688,11 @@ public class PKListener implements Listener {
 			return;
 		} else if (MovementHandler.isStopped(player)) {
 			if (player.hasMetadata("movement:stop")) {
-				final CoreAbility abil = (CoreAbility) player.getMetadata("movement:stop").get(0).value();
-				if (!(abil instanceof EarthGrab)) {
-					event.setCancelled(true);
-					return;
-				}
+//				final CoreAbility abil = (CoreAbility) player.getMetadata("movement:stop").get(0).value();
+//				if (!(abil instanceof EarthGrab)) {
+//					event.setCancelled(true);
+//					return;
+//				}
 			}
 		} else if (bPlayer.isChiBlocked()) {
 			event.setCancelled(true);
@@ -1690,184 +1703,184 @@ public class PKListener implements Listener {
 		AirScooter.check(player);
 
 		String abil = bPlayer.getBoundAbilityName();
-		final CoreAbility coreAbil = bPlayer.getBoundAbility();
-
-		if (coreAbil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) {
-			return;
-		} else if (bPlayer.canBendIgnoreCooldowns(coreAbil)) {
-			if (coreAbil instanceof AddonAbility) {
-				return;
-			}
-
-			if (coreAbil instanceof AirAbility && bPlayer.isElementToggled(Element.AIR) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("AirBlast")) {
-						new AirBlast(ConfigManager.getConfig(AirBlastConfig.class), player);
-					} else if (abil.equalsIgnoreCase("AirSuction")) {
-						AirSuction.shoot(ConfigManager.getConfig(AirSuctionConfig.class), player);
-					} else if (abil.equalsIgnoreCase("AirBurst")) {
-						AirBurst.coneBurst(player);
-					} else if (abil.equalsIgnoreCase("AirScooter")) {
-						new AirScooter(ConfigManager.getConfig(AirScooterConfig.class), player);
-					} else if (abil.equalsIgnoreCase("AirSpout")) {
-						new AirSpout(ConfigManager.getConfig(AirSpoutConfig.class), player);
-					} else if (abil.equalsIgnoreCase("AirSwipe")) {
-						new AirSwipe(ConfigManager.getConfig(AirSwipeConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Flight")) {
-						new FlightMultiAbility(ConfigManager.getConfig(FlightConfig.class), player);
-						return;
-					}
-				}
-			}
-
-			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Bloodbending")) {
-						Bloodbending.launch(player);
-					} else if (abil.equalsIgnoreCase("IceBlast")) {
-						if (CoreAbility.hasAbility(player, IceBullet.class)) {
-							CoreAbility.getAbility(player, IceBullet.class).doLeftClick();
-						} else {
-							IceBlast.activate(player);
-						}
-					} else if (abil.equalsIgnoreCase("IceSpike")) {
-						IceSpikeBlast.activate(ConfigManager.getConfig(IceSpikeConfig.class), player);
-					} else if (abil.equalsIgnoreCase("OctopusForm")) {
-						new OctopusForm(ConfigManager.getConfig(OctopusFormConfig.class), player);
-					} else if (abil.equalsIgnoreCase("PhaseChange")) {
-						if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
-							new PhaseChange(ConfigManager.getConfig(PhaseChangeConfig.class), player, PhaseChangeType.FREEZE);
-						} else {
-							final PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
-							pc.startNewType(PhaseChangeType.FREEZE);
-						}
-					} else if (abil.equalsIgnoreCase("WaterBubble")) {
-						new WaterBubble(ConfigManager.getConfig(WaterBubbleConfig.class), player, false);
-					} else if (abil.equalsIgnoreCase("WaterSpout")) {
-						new WaterSpout(ConfigManager.getConfig(WaterSpoutConfig.class), player);
-					} else if (abil.equalsIgnoreCase("WaterManipulation")) {
-						WaterManipulation.moveWater(ConfigManager.getConfig(WaterManipulationConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Surge")) {
-						new SurgeWall(ConfigManager.getConfig(SurgeConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Torrent")) {
-						new Torrent(ConfigManager.getConfig(TorrentConfig.class), player);
-					}
-				}
-			}
-
-			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Catapult")) {
-						new Catapult(ConfigManager.getConfig(CatapultConfig.class), player, false);
-					} else if (abil.equalsIgnoreCase("EarthBlast")) {
-						EarthBlast.throwEarth(player);
-					} else if (abil.equalsIgnoreCase("RaiseEarth")) {
-						new RaiseEarth(ConfigManager.getConfig(RaiseEarthConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Collapse")) {
-						new Collapse(ConfigManager.getConfig(CollapseConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Shockwave")) {
-						Shockwave.coneShockwave(ConfigManager.getConfig(ShockwaveConfig.class), player);
-					} else if (abil.equalsIgnoreCase("EarthArmor")) {
-						final EarthArmor armor = CoreAbility.getAbility(player, EarthArmor.class);
-						if (armor != null && armor.isFormed()) {
-							armor.click();
-						}
-					} else if (abil.equalsIgnoreCase("Tremorsense")) {
-						new Tremorsense(ConfigManager.getConfig(TremorsenseConfig.class), player, true);
-					} else if (abil.equalsIgnoreCase("MetalClips")) {
-						final MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
-						if (clips == null) {
-							new MetalClips(ConfigManager.getConfig(MetalClipsConfig.class), player, 0);
-						} else if (clips.getMetalClipsCount() < (player.hasPermission("bending.ability.MetalClips.4clips") ? 4 : 3)) {
-							clips.shootMetal();
-						} else if (clips.getMetalClipsCount() == 4 && clips.isCanUse4Clips()) {
-							clips.crush();
-						}
-					} else if (abil.equalsIgnoreCase("LavaFlow")) {
-						new LavaFlow(ConfigManager.getConfig(LavaFlowConfig.class), player, AbilityType.CLICK);
-					} else if (abil.equalsIgnoreCase("EarthSmash")) {
-						new EarthSmash(ConfigManager.getConfig(EarthSmashConfig.class), player, ClickType.LEFT_CLICK);
-					} else if (abil.equalsIgnoreCase("EarthGrab")) {
-						new EarthGrab(ConfigManager.getConfig(EarthGrabConfig.class), player, GrabMode.PROJECTING);
-					}
-				}
-			}
-
-			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Blaze")) {
-						new Blaze(ConfigManager.getConfig(BlazeConfig.class), player);
-					} else if (abil.equalsIgnoreCase("FireBlast")) {
-						new FireBlast(ConfigManager.getConfig(FireBlastConfig.class), player);
-					} else if (abil.equalsIgnoreCase("FireJet")) {
-						new FireJet(ConfigManager.getConfig(FireJetConfig.class), player);
-					} else if (abil.equalsIgnoreCase("HeatControl")) {
-						new HeatControl(ConfigManager.getConfig(HeatControlConfig.class), player, HeatControlType.MELT);
-					} else if (abil.equalsIgnoreCase("Illumination")) {
-						IlluminationConfig illuConfig = ConfigManager.getConfig(IlluminationConfig.class);
-						if (illuConfig.Passive) {
-							bPlayer.toggleIllumination();
-						} else {
-							new Illumination(illuConfig, player);
-						}
-					} else if (abil.equalsIgnoreCase("FireBurst")) {
-						FireBurst.coneBurst(player);
-					} else if (abil.equalsIgnoreCase("FireShield")) {
-						new FireShield(ConfigManager.getConfig(FireShieldConfig.class), player);
-					} else if (abil.equalsIgnoreCase("WallOfFire")) {
-						new WallOfFire(ConfigManager.getConfig(WallOfFireConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Combustion")) {
-						Combustion.explode(player);
-					} else if (abil.equalsIgnoreCase("FireManipulation")) {
-						if (CoreAbility.hasAbility(player, FireManipulation.class)) {
-							final FireManipulation fireManip = CoreAbility.getAbility(player, FireManipulation.class);
-							if (fireManip.getFireManipulationType() == FireManipulationType.SHIFT) {
-								fireManip.click();
-							}
-						} else {
-							new FireManipulation(ConfigManager.getConfig(FireManipulationConfig.class), player, FireManipulationType.CLICK);
-						}
-					}
-				}
-			}
-
-			if (coreAbil instanceof ChiAbility && bPlayer.isElementToggled(Element.CHI) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("HighJump")) {
-						new HighJump(ConfigManager.getConfig(HighJumpConfig.class), player);
-					} else if (abil.equalsIgnoreCase("Smokescreen")) {
-						new Smokescreen(ConfigManager.getConfig(SmokescreenConfig.class), player);
-					} else if (abil.equalsIgnoreCase("WarriorStance")) {
-						new WarriorStance(ConfigManager.getConfig(WarriorStanceConfig.class), player);
-					} else if (abil.equalsIgnoreCase("AcrobatStance")) {
-						new AcrobatStance(ConfigManager.getConfig(AcrobatStanceConfig.class), player);
-					}
-				}
-			}
-
-			if (coreAbil instanceof AvatarAbility) {
-				if (abil.equalsIgnoreCase("AvatarState")) {
-					new AvatarState(ConfigManager.getConfig(AvatarStateConfig.class), player);
-				}
-			}
-		}
-		if (MultiAbilityManager.hasMultiAbilityBound(player)) {
-			abil = MultiAbilityManager.getBoundMultiAbility(player);
-			if (abil.equalsIgnoreCase("WaterArms")) {
-				new WaterArms(ConfigManager.getConfig(WaterArmsConfig.class), player);
-			} else if (abil.equalsIgnoreCase("Flight")) {
-				new FlightMultiAbility(ConfigManager.getConfig(FlightConfig.class), player);
-			}
-		}
+//		final CoreAbility coreAbil = bPlayer.getBoundAbility();
+//
+//		if (coreAbil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) {
+//			return;
+//		} else if (bPlayer.canBendIgnoreCooldowns(coreAbil)) {
+//			if (coreAbil instanceof AddonAbility) {
+//				return;
+//			}
+//
+//			if (coreAbil instanceof AirAbility && bPlayer.isElementToggled(Element.AIR) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("AirBlast")) {
+//						new AirBlast(ConfigManager.getConfig(AirBlastConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("AirSuction")) {
+//						AirSuction.shoot(ConfigManager.getConfig(AirSuctionConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("AirBurst")) {
+//						AirBurst.coneBurst(player);
+//					} else if (abil.equalsIgnoreCase("AirScooter")) {
+//						new AirScooter(ConfigManager.getConfig(AirScooterConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("AirSpout")) {
+//						new AirSpout(ConfigManager.getConfig(AirSpoutConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("AirSwipe")) {
+//						new AirSwipe(ConfigManager.getConfig(AirSwipeConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Flight")) {
+//						new FlightMultiAbility(ConfigManager.getConfig(FlightConfig.class), player);
+//						return;
+//					}
+//				}
+//			}
+//
+//			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("Bloodbending")) {
+//						Bloodbending.launch(player);
+//					} else if (abil.equalsIgnoreCase("IceBlast")) {
+//						if (CoreAbility.hasAbility(player, IceBullet.class)) {
+//							CoreAbility.getAbility(player, IceBullet.class).doLeftClick();
+//						} else {
+//							IceBlast.activate(player);
+//						}
+//					} else if (abil.equalsIgnoreCase("IceSpike")) {
+//						IceSpikeBlast.activate(ConfigManager.getConfig(IceSpikeConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("OctopusForm")) {
+//						new OctopusForm(ConfigManager.getConfig(OctopusFormConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("PhaseChange")) {
+//						if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
+//							new PhaseChange(ConfigManager.getConfig(PhaseChangeConfig.class), player, PhaseChangeType.FREEZE);
+//						} else {
+//							final PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
+//							pc.startNewType(PhaseChangeType.FREEZE);
+//						}
+//					} else if (abil.equalsIgnoreCase("WaterBubble")) {
+//						new WaterBubble(ConfigManager.getConfig(WaterBubbleConfig.class), player, false);
+//					} else if (abil.equalsIgnoreCase("WaterSpout")) {
+//						new WaterSpout(ConfigManager.getConfig(WaterSpoutConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("WaterManipulation")) {
+//						WaterManipulation.moveWater(ConfigManager.getConfig(WaterManipulationConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Surge")) {
+//						new SurgeWall(ConfigManager.getConfig(SurgeConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Torrent")) {
+//						new Torrent(ConfigManager.getConfig(TorrentConfig.class), player);
+//					}
+//				}
+//			}
+//
+//			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("Catapult")) {
+//						new Catapult(ConfigManager.getConfig(CatapultConfig.class), player, false);
+//					} else if (abil.equalsIgnoreCase("EarthBlast")) {
+//						EarthBlast.throwEarth(player);
+//					} else if (abil.equalsIgnoreCase("RaiseEarth")) {
+//						new RaiseEarth(ConfigManager.getConfig(RaiseEarthConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Collapse")) {
+//						new Collapse(ConfigManager.getConfig(CollapseConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Shockwave")) {
+//						Shockwave.coneShockwave(ConfigManager.getConfig(ShockwaveConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("EarthArmor")) {
+//						final EarthArmor armor = CoreAbility.getAbility(player, EarthArmor.class);
+//						if (armor != null && armor.isFormed()) {
+//							armor.click();
+//						}
+//					} else if (abil.equalsIgnoreCase("Tremorsense")) {
+//						new Tremorsense(ConfigManager.getConfig(TremorsenseConfig.class), player, true);
+//					} else if (abil.equalsIgnoreCase("MetalClips")) {
+//						final MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
+//						if (clips == null) {
+//							new MetalClips(ConfigManager.getConfig(MetalClipsConfig.class), player, 0);
+//						} else if (clips.getMetalClipsCount() < (player.hasPermission("bending.ability.MetalClips.4clips") ? 4 : 3)) {
+//							clips.shootMetal();
+//						} else if (clips.getMetalClipsCount() == 4 && clips.isCanUse4Clips()) {
+//							clips.crush();
+//						}
+//					} else if (abil.equalsIgnoreCase("LavaFlow")) {
+//						new LavaFlow(ConfigManager.getConfig(LavaFlowConfig.class), player, AbilityType.CLICK);
+//					} else if (abil.equalsIgnoreCase("EarthSmash")) {
+//						new EarthSmash(ConfigManager.getConfig(EarthSmashConfig.class), player, ClickType.LEFT_CLICK);
+//					} else if (abil.equalsIgnoreCase("EarthGrab")) {
+//						new EarthGrab(ConfigManager.getConfig(EarthGrabConfig.class), player, GrabMode.PROJECTING);
+//					}
+//				}
+//			}
+//
+//			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("Blaze")) {
+//						new Blaze(ConfigManager.getConfig(BlazeConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("FireBlast")) {
+//						new FireBlast(ConfigManager.getConfig(FireBlastConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("FireJet")) {
+//						new FireJet(ConfigManager.getConfig(FireJetConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("HeatControl")) {
+//						new HeatControl(ConfigManager.getConfig(HeatControlConfig.class), player, HeatControlType.MELT);
+//					} else if (abil.equalsIgnoreCase("Illumination")) {
+//						IlluminationConfig illuConfig = ConfigManager.getConfig(IlluminationConfig.class);
+//						if (illuConfig.Passive) {
+//							bPlayer.toggleIllumination();
+//						} else {
+//							new Illumination(illuConfig, player);
+//						}
+//					} else if (abil.equalsIgnoreCase("FireBurst")) {
+//						FireBurst.coneBurst(player);
+//					} else if (abil.equalsIgnoreCase("FireShield")) {
+//						new FireShield(ConfigManager.getConfig(FireShieldConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("WallOfFire")) {
+//						new WallOfFire(ConfigManager.getConfig(WallOfFireConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Combustion")) {
+//						Combustion.explode(player);
+//					} else if (abil.equalsIgnoreCase("FireManipulation")) {
+//						if (CoreAbility.hasAbility(player, FireManipulation.class)) {
+//							final FireManipulation fireManip = CoreAbility.getAbility(player, FireManipulation.class);
+//							if (fireManip.getFireManipulationType() == FireManipulationType.SHIFT) {
+//								fireManip.click();
+//							}
+//						} else {
+//							new FireManipulation(ConfigManager.getConfig(FireManipulationConfig.class), player, FireManipulationType.CLICK);
+//						}
+//					}
+//				}
+//			}
+//
+//			if (coreAbil instanceof ChiAbility && bPlayer.isElementToggled(Element.CHI) == true) {
+//				if (bPlayer.canCurrentlyBendWithWeapons()) {
+//					if (abil.equalsIgnoreCase("HighJump")) {
+//						new HighJump(ConfigManager.getConfig(HighJumpConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("Smokescreen")) {
+//						new Smokescreen(ConfigManager.getConfig(SmokescreenConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("WarriorStance")) {
+//						new WarriorStance(ConfigManager.getConfig(WarriorStanceConfig.class), player);
+//					} else if (abil.equalsIgnoreCase("AcrobatStance")) {
+//						new AcrobatStance(ConfigManager.getConfig(AcrobatStanceConfig.class), player);
+//					}
+//				}
+//			}
+//
+//			if (coreAbil instanceof AvatarAbility) {
+//				if (abil.equalsIgnoreCase("AvatarState")) {
+//					new AvatarState(ConfigManager.getConfig(AvatarStateConfig.class), player);
+//				}
+//			}
+//		}
+//		if (MultiAbilityManager.hasMultiAbilityBound(player)) {
+//			abil = MultiAbilityManager.getBoundMultiAbility(player);
+//			if (abil.equalsIgnoreCase("WaterArms")) {
+//				new WaterArms(ConfigManager.getConfig(WaterArmsConfig.class), player);
+//			} else if (abil.equalsIgnoreCase("Flight")) {
+//				new FlightMultiAbility(ConfigManager.getConfig(FlightConfig.class), player);
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerToggleFlight(final PlayerToggleFlightEvent event) {
 		final Player player = event.getPlayer();
-		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
-			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
-			return;
-		}
+//		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
+//			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
+//			return;
+//		}
 
 		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
 			if (player.isFlying()) {
@@ -1891,9 +1904,9 @@ public class PKListener implements Listener {
 			}
 		}
 		if (ConfigManager.getConfig(FireJetConfig.class).ShowGliding) {
-			if (CoreAbility.getAbility(player, FireJet.class) != null) {
-				event.setCancelled(true);
-			}
+//			if (CoreAbility.getAbility(player, FireJet.class) != null) {
+//				event.setCancelled(true);
+//			}
 		}
 	}
 
@@ -1914,29 +1927,29 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPickupItem(final EntityPickupItemEvent event) {
-		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
-			if (metalClips.getTrackedIngots().contains(event.getItem())) {
-				event.setCancelled(true);
-			}
-		}
+//		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+//			if (metalClips.getTrackedIngots().contains(event.getItem())) {
+//				event.setCancelled(true);
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryPickupItem(final InventoryPickupItemEvent event) {
-		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
-			if (metalClips.getTrackedIngots().contains(event.getItem())) {
-				event.setCancelled(true);
-			}
-		}
+//		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+//			if (metalClips.getTrackedIngots().contains(event.getItem())) {
+//				event.setCancelled(true);
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onItemMerge(final ItemMergeEvent event) {
-		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
-			if (metalClips.getTrackedIngots().contains(event.getEntity()) || metalClips.getTrackedIngots().contains(event.getTarget())) {
-				event.setCancelled(true);
-			}
-		}
+//		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
+//			if (metalClips.getTrackedIngots().contains(event.getEntity()) || metalClips.getTrackedIngots().contains(event.getTarget())) {
+//				event.setCancelled(true);
+//			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

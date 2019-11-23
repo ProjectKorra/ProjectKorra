@@ -65,7 +65,6 @@ public abstract class Ability<Handler extends AbilityHandler> {
 	private final Map<String, Object> attributeValues = new HashMap<>();
 	private boolean started;
 	private boolean removed;
-	private boolean hidden;
 	private int id;
 	private long startTime;
 	private long startTick;
@@ -364,7 +363,7 @@ public abstract class Ability<Handler extends AbilityHandler> {
 		Validate.notNull(value, "value cannot be null");
 		Validate.notNull(modificationType, "modifierMethod cannot be null");
 		Validate.notNull(priority, "priority cannot be null");
-		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + this.getName());
+		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + getHandler().getName());
 		if (!this.attributeModifiers.containsKey(attribute)) {
 			this.attributeModifiers.put(attribute, new HashMap<>());
 		}
@@ -378,7 +377,7 @@ public abstract class Ability<Handler extends AbilityHandler> {
 	public Ability setAttribute(final String attribute, final Object value) {
 		Validate.notNull(attribute, "attribute cannot be null");
 		Validate.notNull(value, "value cannot be null");
-		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + this.getName());
+		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + getHandler().getName());
 		this.attributeValues.put(attribute, value);
 		return this;
 	}
@@ -464,18 +463,6 @@ public abstract class Ability<Handler extends AbilityHandler> {
 //	}
 
 	public abstract void progress();
-
-	public abstract boolean isSneakAbility();
-
-	public abstract boolean isHarmlessAbility();
-
-	public abstract boolean isIgniteAbility();
-
-	public abstract boolean isExplosiveAbility();
-
-	public abstract long getCooldown();
-
-	public abstract String getName();
 
 	public abstract Location getLocation();
 

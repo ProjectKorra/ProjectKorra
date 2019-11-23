@@ -14,38 +14,22 @@ import com.griefcraft.model.Protection;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.Coord;
-import com.palmergames.bukkit.towny.object.PlayerCache;
+import com.palmergames.bukkit.towny.object.*;
 import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.palmergames.bukkit.towny.object.TownyWorld;
-import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
+import com.projectkorra.projectkorra.ability.AbilityHandlerManager;
 import com.projectkorra.projectkorra.ability.AbilityManager;
-import com.projectkorra.projectkorra.ability.api.AddonAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.legacy.EarthAbility;
+import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
 import com.projectkorra.projectkorra.ability.legacy.ElementalAbility;
-import com.projectkorra.projectkorra.ability.legacy.FireAbility;
-import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.ability.legacy.WaterAbility;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirShield;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.airbending.AirSuction;
-import com.projectkorra.projectkorra.airbending.AirSwipe;
+import com.projectkorra.projectkorra.airbending.*;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
@@ -55,18 +39,11 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.module.ModuleManager;
-import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.player.BendingPlayer;
+import com.projectkorra.projectkorra.player.BendingPlayerManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.ActionBar;
-import com.projectkorra.projectkorra.util.BlockCacheElement;
-import com.projectkorra.projectkorra.util.ColoredParticle;
-import com.projectkorra.projectkorra.util.MovementHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ReflectionHandler;
+import com.projectkorra.projectkorra.util.*;
 import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
-import com.projectkorra.projectkorra.util.TempArmor;
-import com.projectkorra.projectkorra.util.TempArmorStand;
-import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -89,57 +66,27 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("rawtypes")
@@ -1109,7 +1056,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isRegionProtectedFromBuild(final Ability ability, final Location loc) {
-		return isRegionProtectedFromBuild(ability.getPlayer(), ability.getName(), loc);
+		return isRegionProtectedFromBuild(ability.getPlayer(), ability.getHandler().getName(), loc);
 	}
 
 	public static boolean isRegionProtectedFromBuild(final Player player, final Location loc) {
@@ -1120,11 +1067,11 @@ public class GeneralMethods {
 		boolean isIgnite = false;
 		boolean isExplosive = false;
 		boolean isHarmless = false;
-		final AbilityInfo abilityInfo = ModuleManager.getModule(AbilityManager.class).getAbilityInfo(abilityName);
-		if (abilityInfo != null) {
-			isIgnite = abilityInfo.isIgniteAbility();
-			isExplosive = abilityInfo.isExplosiveAbility();
-			isHarmless = abilityInfo.isHarmlessAbility();
+		final AbilityHandler abilityHandler = ModuleManager.getModule(AbilityHandlerManager.class).getHandler(abilityName);
+		if (abilityHandler != null) {
+			isIgnite = abilityHandler.isIgniteAbility();
+			isExplosive = abilityHandler.isExplosiveAbility();
+			isHarmless = abilityHandler.isHarmlessAbility();
 		}
 
 		if (abilityName == null && ConfigManager.getConfig(GeneralPropertiesConfig.class).RegionProtection.AllowHarmlessAbilities) {
@@ -1433,7 +1380,7 @@ public class GeneralMethods {
 			final String entry = abilityManager.getAddonPlugins().get(i);
 			final String[] split = entry.split("::");
 			if (Bukkit.getServer().getPluginManager().isPluginEnabled(split[0])) {
-				abilityManager.registerPluginAbilities((JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
+//				abilityManager.registerPluginAbilities((JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
 			} else {
 				abilityManager.getAddonPlugins().remove(i);
 			}
@@ -1451,41 +1398,50 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void removeUnusableAbilities(final String player) {
+	public static void removeUnusableAbilities(final String playerName) {
 
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
+		Player player = Bukkit.getPlayer(playerName);
+
+		if (player == null) {
+			return;
+		}
+
+		BendingPlayer bendingPlayer = ModuleManager.getModule(BendingPlayerManager.class).getBendingPlayer(player);
+
+		if (bendingPlayer == null) {
 			return;
 		}
 
 		// Remove all active instances of abilities that will become unusable.
 		// We need to do this prior to filtering binds in case the player has a MultiAbility running.
-		for (final CoreAbility coreAbility : CoreAbility.getAbilities()) {
-			final CoreAbility playerAbility = CoreAbility.getAbility(bPlayer.getPlayer(), coreAbility.getClass());
-			if (playerAbility != null) {
-				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(bPlayer.getPlayer(), playerAbility)) {
+		for (final AbilityHandler abilityHandler : ModuleManager.getModule(AbilityHandlerManager.class).getHandlers()) {
+			final Ability ability = ModuleManager.getModule(AbilityManager.class).getAbility(player, abilityHandler.getAbility());
+			if (ability != null) {
+				/*
+				if (abilityHandler instanceof PassiveAbility && PassiveManager.hasPassive(bPlayer.getPlayer(), playerAbility)) {
 					// The player will be able to keep using the given PassiveAbility.
 					continue;
-				} else if (bPlayer.canBend(playerAbility)) {
+				} else */
+				if (bendingPlayer.canBend(abilityHandler)) {
 					// The player will still be able to use this given Ability, do not end it.
 					continue;
 				}
 
-				playerAbility.remove();
+				ability.remove();
 			}
 		}
 
 		// Remove all bound abilities that will become unusable.
-		String[] currentAbilities = bPlayer.getAbilities();
+		String[] currentAbilities = bendingPlayer.getAbilities();
 		String[] finalAbilities = new String[9];
 		for (int i = 0; i < 9; i++) {
-			if (bPlayer.canBind(CoreAbility.getAbility(currentAbilities[i]))) {
+			if (bendingPlayer.canBind(ModuleManager.getModule(AbilityHandlerManager.class).getHandler(currentAbilities[i]))) {
 				// The player will still be able to use this given Ability, do not remove it from their binds.
 				finalAbilities[i] = currentAbilities[i];
 			}
 		}
 
-		bPlayer.setAbilities(finalAbilities);
+		ModuleManager.getModule(AbilityBindManager.class).setAbilities(player, finalAbilities);
 	}
 
 	public static Vector rotateVectorAroundVector(final Vector axis, final Vector rotator, final double degrees) {
@@ -1606,11 +1562,11 @@ public class GeneralMethods {
 		writeToDebug("====================");
 		final ArrayList<String> stockAbils = new ArrayList<String>();
 		final ArrayList<String> unofficialAbils = new ArrayList<String>();
-		for (final CoreAbility ability : CoreAbility.getAbilities()) {
-			if (ability.getClass().getPackage().getName().startsWith("com.projectkorra")) {
-				stockAbils.add(ability.getName());
+		for (final AbilityHandler abilityHandler : ModuleManager.getModule(AbilityHandlerManager.class).getHandlers()) {
+			if (abilityHandler.getClass().getPackage().getName().startsWith("com.projectkorra")) {
+				stockAbils.add(abilityHandler.getName());
 			} else {
-				unofficialAbils.add(ability.getName());
+				unofficialAbils.add(abilityHandler.getName());
 			}
 		}
 		if (!stockAbils.isEmpty()) {
@@ -1657,9 +1613,9 @@ public class GeneralMethods {
 		writeToDebug("");
 		writeToDebug("CoreAbility Debugger");
 		writeToDebug("====================");
-		for (final String line : CoreAbility.getDebugString().split("\\n")) {
-			writeToDebug(line);
-		}
+//		for (final String line : CoreAbility.getDebugString().split("\\n")) {
+//			writeToDebug(line);
+//		}
 
 	}
 
@@ -1792,25 +1748,25 @@ public class GeneralMethods {
 	}
 
 	public static void stopBending() {
-		for (final CoreAbility ability : CoreAbility.getAbilities()) {
-			if (ability instanceof AddonAbility) {
-				((AddonAbility) ability).stop();
-			}
-		}
-
-		CoreAbility.removeAll();
-		EarthAbility.stopBending();
-		WaterAbility.stopBending();
-		FireAbility.stopBending();
-
-		TempBlock.removeAll();
-		TempArmor.revertAll();
-		TempArmorStand.removeAll();
-		MovementHandler.resetAll();
-		MultiAbilityManager.removeAll();
-		if (!INVINCIBLE.isEmpty()) {
-			INVINCIBLE.clear();
-		}
+//		for (final CoreAbility ability : CoreAbility.getAbilities()) {
+//			if (ability instanceof AddonAbility) {
+//				((AddonAbility) ability).stop();
+//			}
+//		}
+//
+//		CoreAbility.removeAll();
+//		EarthAbility.stopBending();
+//		WaterAbility.stopBending();
+//		FireAbility.stopBending();
+//
+//		TempBlock.removeAll();
+//		TempArmor.revertAll();
+//		TempArmorStand.removeAll();
+//		MovementHandler.resetAll();
+//		MultiAbilityManager.removeAll();
+//		if (!INVINCIBLE.isEmpty()) {
+//			INVINCIBLE.clear();
+//		}
 	}
 
 	public static void stopPlugin() {

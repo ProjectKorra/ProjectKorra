@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.ability.bind;
 
 import com.projectkorra.projectkorra.ability.AbilityHandler;
+import com.projectkorra.projectkorra.ability.AbilityHandlerManager;
 import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.api.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -25,12 +26,14 @@ public class AbilityBindManager extends PlayerDatabaseModule<String[], AbilityBi
 
 	private final BendingPlayerManager bendingPlayerManager;
 	private final AbilityManager abilityManager;
+	private final AbilityHandlerManager abilityHandlerManager;
 
 	private AbilityBindManager() {
 		super("Ability Binds", new AbilityBindRepository());
 
-		this.bendingPlayerManager = ModuleManager.getModule(BendingPlayerManager.class);
-		this.abilityManager = ModuleManager.getModule(AbilityManager.class);
+		this.bendingPlayerManager = module(BendingPlayerManager.class);
+		this.abilityManager = module(AbilityManager.class);
+		this.abilityHandlerManager = module(AbilityHandlerManager.class);
 
 		runAsync(() -> {
 			try {
@@ -183,7 +186,7 @@ public class AbilityBindManager extends PlayerDatabaseModule<String[], AbilityBi
 			return;
 		}
 
-		AbilityHandler abilityHandler = this.abilityManager.getHandler(abilityName);
+		AbilityHandler abilityHandler = this.abilityHandlerManager.getHandler(abilityName);
 
 		if (abilityHandler == null) {
 			ActionBar.sendActionBar(abilityName, player);

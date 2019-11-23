@@ -1,23 +1,28 @@
 package com.projectkorra.projectkorra.player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
 import com.projectkorra.projectkorra.ability.AbilityManager;
 import com.projectkorra.projectkorra.ability.PassiveAbilityManager;
-import com.projectkorra.projectkorra.ability.legacy.ChiAbility;
+import com.projectkorra.projectkorra.ability.abilities.chi.ChiAbilityHandler;
+import com.projectkorra.projectkorra.ability.api.AvatarAbility;
 import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import com.projectkorra.projectkorra.ability.api.AvatarAbilityInfo;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.cooldown.CooldownManager;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.ElementManager;
 import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.module.ModuleManager;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class BendingPlayer {
 
@@ -36,7 +41,7 @@ public class BendingPlayer {
 
 	private final Set<Element> toggledElements;
 
-	private ChiAbility stance;
+	private ChiAbilityHandler stance;
 	private boolean bendingPermanentlyRemoved;
 	private boolean toggled;
 	private boolean tremorSense;
@@ -153,18 +158,74 @@ public class BendingPlayer {
 		return this.abilityBindManager.getAbilities(this.player);
 	}
 
-	public boolean canBind(AbilityInfo abilityInfo) {
-		if (abilityInfo == null || !this.player.isOnline()) {
+	public boolean canBend(AbilityHandler abilityHandler) {
+		return canBend(abilityHandler, false, false);
+	}
+
+	public boolean canBendIgnoreBinds(AbilityHandler abilityHandler) {
+		return canBend(abilityHandler, true, false);
+	}
+
+	public boolean canBendIgnoreCooldowns(AbilityHandler abilityHandler) {
+		return canBend(abilityHandler, false, true);
+	}
+
+	public boolean canBendIgnoreBindsCooldowns(AbilityHandler abilityHandler) {
+		return canBend(abilityHandler, true, true);
+	}
+
+	private boolean canBend(AbilityHandler abilityHandler, boolean ignoreBinds, boolean ignoreCooldowns) {
+		if (abilityHandler == null) {
 			return false;
 		}
 
-		if (!this.player.hasPermission("bending.ability." + abilityInfo.getName())) {
+		final Location playerLoc = this.player.getLocation();
+
+		if (!this.player.isOnline() || this.player.isDead()) {
+			return false;
+		} else if (!this.canBind(abilityHandler)) {
+			return false;
+//		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(this.player.getWorld())) {
+//			return false;
+		} else if (!ignoreCooldowns && this.isOnCooldown(abilityHandler.getName())) {
+			return false;
+		} else if (!ignoreBinds && (!abilityHandler.getName().equals(this.getBoundAbility()))) {
+			return false;
+		} else if (Stream.of(ConfigManager.getConfig(GeneralPropertiesConfig.class).DisabledWorlds).anyMatch(this.player.getWorld().getName()::equalsIgnoreCase)) {
+			return false;
+		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(abilityHandler.getElement())) {
+			return false;
+		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		}
 
-		Element element = abilityInfo.getElement();
+		if (!ignoreCooldowns && isOnCooldown(abilityHandler.getName())) {
+			if (getCooldown(abilityHandler.getName()) + ConfigManager.getConfig(GeneralPropertiesConfig.class).GlobalCooldown >= System.currentTimeMillis()) {
+				return false;
+			}
+		}
 
-		if (!hasElement(element) && !(abilityInfo instanceof AvatarAbilityInfo && !((AvatarAbilityInfo) abilityInfo).requireAvatar())) {
+		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !abilityHandler.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
+			return false;
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, abilityHandler.getName(), playerLoc)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean canBind(AbilityHandler abilityHandler) {
+		if (abilityHandler == null || !this.player.isOnline()) {
+			return false;
+		}
+
+		if (!this.player.hasPermission("bending.ability." + abilityHandler.getName())) {
+			return false;
+		}
+
+		Element element = abilityHandler.getElement();
+
+		if (!hasElement(element) && !(abilityHandler instanceof AvatarAbility && !((AvatarAbility) abilityHandler).requireAvatar())) {
 			return false;
 		}
 
@@ -177,7 +238,7 @@ public class BendingPlayer {
 		return true;
 	}
 
-	public long getCooldown(Ability ability) {
+	public long getCooldown(AbilityHandler ability) {
 		return getCooldown(ability.getName());
 	}
 
@@ -185,15 +246,16 @@ public class BendingPlayer {
 		return this.cooldownManager.getCooldown(this.player, abilityName);
 	}
 
-	public void addCooldown(Ability ability) {
+	public void addCooldown(AbilityHandler ability) {
 		addCooldown(ability, ability.getCooldown());
 	}
 
-	public void addCooldown(Ability ability, long duration) {
+	// TODO Move this method into AbilityHandler, which calls BendingPlayer#addCooldown(String, Long)
+	public void addCooldown(AbilityHandler ability, long duration) {
 		addCooldown(ability.getName(), duration);
 	}
 
-	public void addCooldown(Ability ability, long duration, boolean permanent) {
+	public void addCooldown(AbilityHandler ability, long duration, boolean permanent) {
 		addCooldown(ability.getName(), duration, permanent);
 	}
 
@@ -205,7 +267,7 @@ public class BendingPlayer {
 		this.cooldownManager.addCooldown(this.player, abilityName, duration, permanent);
 	}
 
-	public boolean isOnCooldown(Ability ability) {
+	public boolean isOnCooldown(AbilityHandler ability) {
 		return isOnCooldown(ability.getName());
 	}
 
@@ -213,7 +275,7 @@ public class BendingPlayer {
 		return this.cooldownManager.isOnCooldown(this.player, abilityName);
 	}
 
-	public void removeCooldown(Ability ability) {
+	public void removeCooldown(AbilityHandler ability) {
 		removeCooldown(ability.getName());
 	}
 
@@ -241,11 +303,11 @@ public class BendingPlayer {
 		return !hasWeapon;
 	}
 
-	public ChiAbility getStance() {
+	public ChiAbilityHandler getStance() {
 		return this.stance;
 	}
 
-	public void setStance(ChiAbility stance) {
+	public void setStance(ChiAbilityHandler stance) {
 		this.stance = stance;
 	}
 
@@ -282,6 +344,21 @@ public class BendingPlayer {
 		this.illumination = !this.illumination;
 	}
 
+	public boolean isAvatarState() {
+		return false;
+//		return this.abilityManager.hasAbility(this.player, AvatarState.class);
+	}
+
+	public boolean isBloodbent() {
+		return false;
+//		return BloodBending.isBloodbent(this.player);
+	}
+
+	public boolean isControlledByMetalClips() {
+		return false;
+//		return MetalClips.isControlled(this.player);
+	}
+
 	public boolean isChiBlocked() {
 		return this.chiBlocked;
 	}
@@ -292,6 +369,10 @@ public class BendingPlayer {
 
 	public void unblockChi() {
 		this.chiBlocked = false;
+	}
+
+	public boolean isParalyzed() {
+		return this.player.hasMetadata("movement:stop");
 	}
 
 	public boolean canBeSlowed() {
