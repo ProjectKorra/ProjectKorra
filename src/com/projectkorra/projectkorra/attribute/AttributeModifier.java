@@ -1,7 +1,5 @@
 package com.projectkorra.projectkorra.attribute;
 
-import org.apache.commons.lang.Validate;
-
 public enum AttributeModifier {
 
 	ADDITION((oldValue, modifier) -> {
@@ -61,7 +59,9 @@ public enum AttributeModifier {
 	}
 
 	public Number performModification(final Number oldValue, final Number modifier) {
-		Validate.isTrue(!(this == DIVISION && modifier.doubleValue() == 0), "modifier cannot be 0");
+		if (this == DIVISION && modifier.doubleValue() == 0) {
+			throw new IllegalArgumentException("Attribute modifier for DIVISION cannot be zero!");
+		}
 		return this.modifier.performModification(oldValue, modifier);
 	}
 
