@@ -7,9 +7,7 @@ import com.projectkorra.projectkorra.configuration.configs.commands.ChooseComman
 import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.GeneralPropertiesConfig;
 import com.projectkorra.projectkorra.element.Element;
-import com.projectkorra.projectkorra.element.SubElement;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import org.bukkit.Bukkit;
@@ -186,7 +184,7 @@ public class ChooseCommand extends PKCommand<ChooseCommandConfig> {
 			}
 		}
 		
-		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, element, Result.CHOOSE));
+		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(player, element, PlayerChangeElementEvent.Action.SET));
 		GeneralMethods.removeUnusableAbilities(player.getName());
 	}
 

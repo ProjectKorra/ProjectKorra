@@ -1,20 +1,19 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
+import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
 import com.projectkorra.projectkorra.player.BendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.configuration.configs.commands.CopyCommandConfig;
-import com.projectkorra.projectkorra.configuration.configs.properties.CommandPropertiesConfig;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class CopyCommand extends PKCommand<CopyCommandConfig> {
@@ -91,15 +90,15 @@ public class CopyCommand extends PKCommand<CopyCommandConfig> {
 			return false;
 		}
 
-		List<String> abilities = orig.getAbilities();
+		String[] abilities = orig.getAbilities();
 		boolean boundAll = true;
 
 		for (int i = 0; i < 9; i++) {
-			String abilityName = abilities.get(0);
+			String abilityName = abilities[0];
 
-			AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(abilityName);
+			AbilityHandler abilityHandler = this.abilityHandlerManager.getHandler(abilityName);
 
-			if (abilityInfo == null || !target.canBind(abilityInfo)) {
+			if (abilityHandler == null || !target.canBind(abilityHandler)) {
 				boundAll = false;
 				continue;
 			}

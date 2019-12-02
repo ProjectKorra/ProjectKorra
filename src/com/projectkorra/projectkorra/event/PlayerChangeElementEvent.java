@@ -14,19 +14,19 @@ public class PlayerChangeElementEvent extends Event {
 
 	private final Player player;
 	private final Element element;
-	private final Reason reason;
+	private final Action action;
 
 	/**
 	 *
 	 * @param player the {@link Player player} who's bending was changed
 	 * @param element the {@link Element element} that was affected
-	 * @param reason whether the element was chosen, added, removed, or
+	 * @param action whether the element was chosen, added, removed, or
 	 *            permaremoved
 	 */
-	public PlayerChangeElementEvent(final Player player, final Element element, final Reason reason) {
+	public PlayerChangeElementEvent(final Player player, final Element element, final Action action) {
 		this.player = player;
 		this.element = element;
-		this.reason = reason;
+		this.action = action;
 	}
 
 	/**
@@ -49,8 +49,8 @@ public class PlayerChangeElementEvent extends Event {
 	 *
 	 * @return whether the element was chosen, added, removed, or permaremoved
 	 */
-	public Reason getReason() {
-		return this.reason;
+	public Action getAction() {
+		return this.action;
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class PlayerChangeElementEvent extends Event {
 		return HANDLER_LIST;
 	}
 
-	public enum Reason {
+	public enum Action {
 		ADD, SET, REMOVE, CLEAR
 	}
 }

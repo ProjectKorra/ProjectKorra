@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
 import com.projectkorra.projectkorra.configuration.configs.commands.StatsCommandConfig;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.storage.DBConnection;
@@ -43,11 +43,11 @@ public class StatsCommand extends PKCommand<StatsCommandConfig> {
 		if (!this.correctLength(sender, args.size(), 3, 4)) {
 			return;
 		}
-		final AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(args.get(1));
+		final AbilityHandler abilityHandler = this.abilityHandlerManager.getHandler(args.get(1));
 		final Element element = this.elementManager.getElement(args.get(1));
 		Object object = null;
-		if (abilityInfo != null) {
-			object = abilityInfo;
+		if (abilityHandler != null) {
+			object = abilityHandler;
 		} else if (element != null) {
 			object = element;
 		}
@@ -118,9 +118,9 @@ public class StatsCommand extends PKCommand<StatsCommandConfig> {
 		} else {
 			value = StatisticsMethods.getStatistic(target.getUniqueId(), object, statistic);
 		}
-		if (object instanceof AbilityInfo) {
-			final AbilityInfo abilityInfo = (AbilityInfo) object;
-			message = message.replace("%object%", abilityInfo.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
+		if (object instanceof AbilityHandler) {
+			final AbilityHandler abilityHandler = (AbilityHandler) object;
+			message = message.replace("%object%", abilityHandler.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
 		} else if (object instanceof Element) {
 			final Element element = (Element) object;
 			message = message.replace("%object%", element.getName()).replace("%player%", target.getName()).replace("%value%", String.valueOf(value));
@@ -137,9 +137,9 @@ public class StatsCommand extends PKCommand<StatsCommandConfig> {
 		int p = page > maxPage ? maxPage : page;
 		p = p < 1 ? 1 : p;
 		String title = "%object% " + statistic.getDisplayName() + " Leaderboard";
-		if (object instanceof AbilityInfo) {
-			final AbilityInfo abilityInfo = (AbilityInfo) object;
-			title = title.replace("%object%", abilityInfo.getName());
+		if (object instanceof AbilityHandler) {
+			final AbilityHandler abilityHandler = (AbilityHandler) object;
+			title = title.replace("%object%", abilityHandler.getName());
 		} else if (object instanceof Element) {
 			final Element element = (Element) object;
 			title = title.replace("%object%", element.getName());

@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import com.projectkorra.projectkorra.ability.api.AddonAbilityInfo;
-import com.projectkorra.projectkorra.ability.api.ComboAbilityInfo;
-import com.projectkorra.projectkorra.ability.api.PassiveAbilityInfo;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
+import com.projectkorra.projectkorra.ability.api.AddonAbility;
+import com.projectkorra.projectkorra.ability.api.ComboAbility;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.HelpCommandConfig;
 import com.projectkorra.projectkorra.configuration.configs.properties.*;
@@ -95,7 +95,7 @@ public class HelpCommand extends PKCommand<HelpCommandConfig> {
 		}
 
 		final String arg = args.get(0).toLowerCase();
-		AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(arg);
+		AbilityHandler abilityHandler = this.abilityHandlerManager.getHandler(arg);
 
 		if (this.isNumeric(arg)) {
 			final List<String> strings = new ArrayList<String>();
@@ -125,36 +125,36 @@ public class HelpCommand extends PKCommand<HelpCommandConfig> {
 			sender.sendMessage(ChatColor.GOLD + this.properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Combo Name>" + ChatColor.GOLD));
 		} else if (Arrays.asList(Commands.passivealiases).contains(arg)) { // bending help elementpassive.
 			sender.sendMessage(ChatColor.GOLD + this.properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Passive Name>" + ChatColor.RED));
-		} else if (abilityInfo != null && !(abilityInfo instanceof ComboAbilityInfo) && !abilityInfo.isHidden() || abilityInfo instanceof PassiveAbilityInfo) { // bending help ability.
-			final ChatColor color = abilityInfo.getElement().getColor();
+		} else if (abilityHandler != null && !(abilityHandler instanceof ComboAbility) && !abilityHandler.isHidden() || abilityHandler instanceof PassiveAbility) { // bending help ability.
+			final ChatColor color = abilityHandler.getElement().getColor();
 
-			if (abilityInfo instanceof AddonAbilityInfo) {
-				if (abilityInfo instanceof PassiveAbilityInfo) {
-					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Addon Passive)");
+			if (abilityHandler instanceof AddonAbility) {
+				if (abilityHandler instanceof PassiveAbility) {
+					sender.sendMessage(color + (ChatColor.BOLD + abilityHandler.getName()) + ChatColor.WHITE + " (Addon Passive)");
 				} else {
-					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Addon)");
+					sender.sendMessage(color + (ChatColor.BOLD + abilityHandler.getName()) + ChatColor.WHITE + " (Addon)");
 				}
 
-				sender.sendMessage(color + abilityInfo.getDescription());
+				sender.sendMessage(color + abilityHandler.getDescription());
 
-				if (!abilityInfo.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + this.usage + abilityInfo.getInstructions());
+				if (!abilityHandler.getInstructions().isEmpty()) {
+					sender.sendMessage(ChatColor.WHITE + this.usage + abilityHandler.getInstructions());
 				}
 
-				final AddonAbilityInfo addonAbilityInfo = (AddonAbilityInfo) abilityInfo;
+				final AddonAbility addonAbilityInfo = (AddonAbility) abilityHandler;
 				sender.sendMessage(color + "- By: " + ChatColor.WHITE + addonAbilityInfo.getAuthor());
 				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + addonAbilityInfo.getVersion());
 			} else {
-				if (abilityInfo instanceof PassiveAbilityInfo) {
-					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Passive)");
+				if (abilityHandler instanceof PassiveAbility) {
+					sender.sendMessage(color + (ChatColor.BOLD + abilityHandler.getName()) + ChatColor.WHITE + " (Passive)");
 				} else {
-					sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()));
+					sender.sendMessage(color + (ChatColor.BOLD + abilityHandler.getName()));
 				}
 
-				sender.sendMessage(color + abilityInfo.getDescription());
+				sender.sendMessage(color + abilityHandler.getDescription());
 
-				if (!abilityInfo.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + this.usage + abilityInfo.getInstructions());
+				if (!abilityHandler.getInstructions().isEmpty()) {
+					sender.sendMessage(ChatColor.WHITE + this.usage + abilityHandler.getInstructions());
 				}
 			}
 		} else if (Arrays.asList(Commands.airaliases).contains(arg)) {
@@ -188,30 +188,30 @@ public class HelpCommand extends PKCommand<HelpCommandConfig> {
 			sender.sendMessage(avatar.getColor() + this.avatar.replace("/b display Avatar", avatar.getSecondaryColor() + "/b display Avatar" + avatar.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
 		} else {
-			ComboAbilityInfo comboAbilityInfo =  this.comboAbilityManager.getAbility(arg);
+			AbilityHandler abilityInfo = this.comboAbilityManager.getHandler(arg);
 
-			if (comboAbilityInfo == null) {
+			if (abilityInfo == null) {
 				sender.sendMessage(ChatColor.RED + this.invalidTopic);
 				return;
 			}
 
-			final ChatColor color = comboAbilityInfo.getElement().getColor();
+			final ChatColor color = abilityInfo.getElement().getColor();
 
-			if (comboAbilityInfo instanceof AddonAbilityInfo) {
-				sender.sendMessage(color + (ChatColor.BOLD + comboAbilityInfo.getName()) + ChatColor.WHITE + " (Addon Combo)");
-				sender.sendMessage(color + comboAbilityInfo.getDescription());
+			if (abilityInfo instanceof AddonAbility) {
+				sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Addon Combo)");
+				sender.sendMessage(color + abilityInfo.getDescription());
 
-				if (!comboAbilityInfo.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + this.usage + comboAbilityInfo.getInstructions());
+				if (!abilityInfo.getInstructions().isEmpty()) {
+					sender.sendMessage(ChatColor.WHITE + this.usage + abilityInfo.getInstructions());
 				}
 
-				final AddonAbilityInfo addonAbilityInfo = (AddonAbilityInfo) comboAbilityInfo;
+				final AddonAbility addonAbilityInfo = (AddonAbility) abilityInfo;
 				sender.sendMessage(color + "- By: " + ChatColor.WHITE + addonAbilityInfo.getAuthor());
 				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + addonAbilityInfo.getVersion());
 			} else {
-				sender.sendMessage(color + (ChatColor.BOLD + comboAbilityInfo.getName()) + ChatColor.WHITE + " (Combo)");
-				sender.sendMessage(color + comboAbilityInfo.getDescription());
-				sender.sendMessage(ChatColor.WHITE + this.usage + comboAbilityInfo.getInstructions());
+				sender.sendMessage(color + (ChatColor.BOLD + abilityInfo.getName()) + ChatColor.WHITE + " (Combo)");
+				sender.sendMessage(color + abilityInfo.getDescription());
+				sender.sendMessage(ChatColor.WHITE + this.usage + abilityInfo.getInstructions());
 			}
 		}
 	}
@@ -229,9 +229,9 @@ public class HelpCommand extends PKCommand<HelpCommandConfig> {
 
 		final Set<String> abilitySet = new HashSet<>();
 
-		for (AbilityInfo abilityInfo : this.abilityManager.getAbilityInfo()) {
-			if (!abilityInfo.isHidden()) {
-				abilitySet.add(abilityInfo.getName());
+		for (AbilityHandler abilityHandler : this.abilityHandlerManager.getHandlers()) {
+			if (!abilityHandler.isHidden()) {
+				abilitySet.add(abilityHandler.getName());
 			}
 		}
 

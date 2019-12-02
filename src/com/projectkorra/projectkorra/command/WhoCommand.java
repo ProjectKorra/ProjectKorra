@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
 import com.projectkorra.projectkorra.configuration.configs.commands.WhoCommandConfig;
 import com.projectkorra.projectkorra.element.Element;
 import com.projectkorra.projectkorra.element.ElementManager;
@@ -315,13 +315,13 @@ public class WhoCommand extends PKCommand<WhoCommandConfig> {
 		sender.sendMessage("Abilities: ");
 		for (int i = 0; i < 9; i++) {
 			String abilityName = bendingPlayer.getAbility(i);
-			AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(abilityName);
+			AbilityHandler abilityHandler = this.abilityHandlerManager.getHandler(abilityName);
 
-			if (abilityInfo == null) {
+			if (abilityHandler == null) {
 				continue;
 			}
 
-			sender.sendMessage((i + 1) + " - " + abilityInfo.getElement().getColor() + abilityName);
+			sender.sendMessage((i + 1) + " - " + abilityHandler.getElement().getColor() + abilityName);
 		}
 
 		if (this.staff.containsKey(uuid.toString())) {

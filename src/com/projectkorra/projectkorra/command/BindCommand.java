@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AbilityHandler;
+import com.projectkorra.projectkorra.ability.api.ComboAbility;
+import com.projectkorra.projectkorra.ability.api.PassiveAbility;
 import com.projectkorra.projectkorra.ability.bind.AbilityBindManager;
-import com.projectkorra.projectkorra.ability.info.AbilityInfo;
-import com.projectkorra.projectkorra.ability.api.ComboAbilityInfo;
-import com.projectkorra.projectkorra.ability.api.PassiveAbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.configuration.configs.commands.BindCommandConfig;
 import com.projectkorra.projectkorra.element.Element;
@@ -53,9 +53,9 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 		}
 
 		String abilityName = args.get(0);
-		AbilityInfo abilityInfo = this.abilityManager.getAbilityInfo(abilityName);
+		AbilityHandler abilityHandler = this.abilityHandlerManager.getHandler(abilityName);
 
-		if (abilityInfo == null) {
+		if (abilityHandler == null) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.abilityDoesntExist.replace("{ability}", args.get(0)));
 			return;
 		}
@@ -67,20 +67,20 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 
 		// bending bind [Ability].
 		if (args.size() == 1) {
-			this.bind(sender, abilityInfo, ((Player) sender).getInventory().getHeldItemSlot() + 1);
+			this.bind(sender, abilityHandler, ((Player) sender).getInventory().getHeldItemSlot() + 1);
 		}
 
 		// bending bind [ability] [#].
 		if (args.size() == 2) {
 			try {
-				this.bind(sender, abilityInfo, Integer.parseInt(args.get(1)));
+				this.bind(sender, abilityHandler, Integer.parseInt(args.get(1)));
 			} catch (final NumberFormatException ex) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 			}
 		}
 	}
 
-	private void bind(final CommandSender sender, final AbilityInfo abilityInfo, final int slot) {
+	private void bind(final CommandSender sender, final AbilityHandler abilityHandler, final int slot) {
 		if (!(sender instanceof Player)) {
 			return;
 		} else if (slot < 1 || slot > 9) {
@@ -91,20 +91,20 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 		Player player = (Player) sender;
 		BendingPlayer bendingPlayer = this.bendingPlayerManager.getBendingPlayer(player);
 
-		Element element = abilityInfo.getElement();
+		Element element = abilityHandler.getElement();
 
 		//		if (bPlayer == null) {
 		//			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.loadingInfo);
 		//			return;
 		//		}
 
-		if (bendingPlayer.canBind(abilityInfo)) {
+		if (bendingPlayer.canBind(abilityHandler)) {
 			if (!bendingPlayer.isElementToggled(element)) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
 			}
 
-			if (this.abilityBindManager.bindAbility(player, abilityInfo.getName(), slot) == AbilityBindManager.Result.SUCCESS) {
-				GeneralMethods.sendBrandingMessage(player, element.getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", abilityInfo.getName()).replace("{slot}", String.valueOf(slot + 1)));
+			if (this.abilityBindManager.bindAbility(player, abilityHandler.getName(), slot) == AbilityBindManager.Result.SUCCESS) {
+				GeneralMethods.sendBrandingMessage(player, element.getColor() + ConfigManager.getConfig(BindCommandConfig.class).SuccessfullyBoundMessage.replace("{ability}", abilityHandler.getName()).replace("{slot}", String.valueOf(slot + 1)));
 			}
 			return;
 		}
@@ -158,9 +158,9 @@ public class BindCommand extends PKCommand<BindCommandConfig> {
 
 		Set<String> abilitySet = new HashSet<>();
 
-		for (AbilityInfo abilityInfo : this.abilityManager.getAbilityInfo()) {
-			if (!abilityInfo.isHidden() && bendingPlayer.canBind(abilityInfo) && !(abilityInfo instanceof PassiveAbilityInfo || abilityInfo instanceof ComboAbilityInfo && !abilitySet.contains(abilityInfo.getName()))) {
-				abilitySet.add(abilityInfo.getName());
+		for (AbilityHandler abilityHandler : this.abilityHandlerManager.getHandlers()) {
+			if (!abilityHandler.isHidden() && bendingPlayer.canBind(abilityHandler) && !(abilityHandler instanceof PassiveAbility || abilityHandler instanceof ComboAbility && !abilitySet.contains(abilityHandler.getName()))) {
+				abilitySet.add(abilityHandler.getName());
 			}
 		}
 
