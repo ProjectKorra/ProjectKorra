@@ -45,11 +45,10 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 				c = bPlayer.getElements().get(0).getColor();
 				e = bPlayer.getElements().get(0).getName();
 			}
-			final String element = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e);
 			if (params.equals("element")) {
-				return c + element + ChatColor.RESET;
+				return e;
 			} else if (params.equals("elementcolor")) {
-				return c + "";
+				return c.toString();
 			}
 		} else if (params.equals("elements")) {
 			return bPlayer.getElements().stream().map(item -> item.getColor() + item.getName()).collect(joining(" "));

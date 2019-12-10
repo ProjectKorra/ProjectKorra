@@ -121,15 +121,23 @@ public class FireBlast extends FireAbility {
 	}
 
 	private void advanceLocation() {
-		if (this.showParticles) {
-			ParticleEffect.FLAME.display(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius, 0);
-			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, this.smokeRadius, this.smokeRadius, this.smokeRadius, 0);
+		if (this.isFireBurst) {
+			this.flameRadius += 0.06;
+			this.smokeRadius += 0.06;
 		}
+		
+		if (this.showParticles) {
+			ParticleEffect.FLAME.display(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
+			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, this.smokeRadius, this.smokeRadius, this.smokeRadius);
+		}
+		
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
 			return;
 		}
+		
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
+		
 		if (this.random.nextInt(4) == 0) {
 			playFirebendingSound(this.location);
 		}
@@ -425,4 +433,5 @@ public class FireBlast extends FireAbility {
 		this.isFireBurst = isFireBurst;
 	}
 
+	
 }
