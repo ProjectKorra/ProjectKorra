@@ -13,6 +13,8 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -23,9 +25,12 @@ public class WaterArmsFreeze extends IceAbility {
 
 	private boolean cancelled;
 	private boolean usageCooldownEnabled;
+	@Attribute(Attribute.RANGE)
 	private int iceRange;
 	private int distanceTravelled;
+	@Attribute(Attribute.DAMAGE)
 	private double iceDamage;
+	@Attribute(Attribute.COOLDOWN)
 	private long usageCooldown;
 	private Arm arm;
 	private Location location;
@@ -75,7 +80,7 @@ public class WaterArmsFreeze extends IceAbility {
 
 			final Vector dir = this.player.getLocation().getDirection();
 			this.location = this.waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
-			this.direction = GeneralMethods.getDirection(this.location, GeneralMethods.getTargetedLocation(this.player, this.iceRange, Material.WATER, Material.STATIONARY_WATER, Material.ICE, Material.PACKED_ICE)).normalize();
+			this.direction = GeneralMethods.getDirection(this.location, GeneralMethods.getTargetedLocation(this.player, this.iceRange, Material.WATER, Material.ICE, Material.PACKED_ICE)).normalize();
 		} else {
 			return;
 		}
@@ -121,11 +126,14 @@ public class WaterArmsFreeze extends IceAbility {
 	}
 
 	private void progressIce() {
-		ParticleEffect.SNOW_SHOVEL.display(this.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 0.05, 5);
-		new TempBlock(this.location.getBlock(), Material.ICE, (byte) 0).setRevertTime(10);
+		ParticleEffect.SNOW_SHOVEL.display(this.location, 5, Math.random(), Math.random(), Math.random(), 0.05);
+		new TempBlock(this.location.getBlock(), Material.ICE).setRevertTime(10);
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && !(entity instanceof ArmorStand)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					continue;
+				}
 				DamageHandler.damageEntity(entity, this.iceDamage, this);
 				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 40, 2);
 				new TempPotionEffect((LivingEntity) entity, effect);

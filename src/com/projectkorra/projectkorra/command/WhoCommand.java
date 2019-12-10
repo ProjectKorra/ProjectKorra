@@ -29,9 +29,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.spirits.SpiritElement;
-import com.projectkorra.spirits.SpiritPlayer;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
@@ -73,14 +70,11 @@ public class WhoCommand extends PKCommand {
 					in.close();
 					WhoCommand.this.staff.clear();
 					WhoCommand.this.staff.putAll(updatedstaff);
-				}
-				catch (final SocketException e) {
+				} catch (final SocketException e) {
 					ProjectKorra.log.info("Could not update staff list.");
-				}
-				catch (final MalformedURLException e) {
+				} catch (final MalformedURLException e) {
 					e.printStackTrace();
-				}
-				catch (final IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -178,8 +172,7 @@ public class WhoCommand extends PKCommand {
 						count++;
 						try {
 							Thread.sleep(delay);
-						}
-						catch (final InterruptedException e) {
+						} catch (final InterruptedException e) {
 							e.printStackTrace();
 							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + WhoCommand.this.databaseOverload);
 							break;
@@ -309,18 +302,6 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
 					if (player_ != null) {
 						for (final SubElement subelement : Element.getSubElements(element)) {
-							if (GeneralMethods.hasSpirits()) {
-								final SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player_);
-								if (subelement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
-									sender.sendMessage(subelement.getColor() + "    Is " + sPlayer.getSpirit().getName() + element.getName());
-								}
-								if (subelement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
-									sender.sendMessage(subelement.getColor() + "    Is " + sPlayer.getSpirit().getName() + element.getName());
-								}
-								if (sPlayer.isSpirit()) {
-									continue;
-								}
-							}
 							if (bPlayer.canUseSubElement(subelement)) {
 								sender.sendMessage(subelement.getColor() + "    Can " + (!subelement.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + subelement.getName() + subelement.getType().getBend());
 							}
@@ -343,21 +324,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 
-			if (GeneralMethods.hasRPG()) {
-				if (RPGMethods.isCurrentAvatar(player.getUniqueId())) {
-					sender.sendMessage(Element.AVATAR.getColor() + "Current Avatar");
-				} else if (RPGMethods.hasBeenAvatar(player.getUniqueId())) {
-					sender.sendMessage(Element.AVATAR.getColor() + "Former Avatar");
-				}
-			}
-
 			if (this.staff.containsKey(uuid.toString())) {
 				sender.sendMessage(this.staff.get(uuid.toString()));
 			}
 
 			if (player.getPlayer() != null && player.getPlayer().hasPermission("bending.donor")) {
-				// Requires Servers to define `server-name` in their server.properties file. Example: server-name=My Server.
-				sender.sendMessage(Element.AVATAR.getColor() + ProjectKorra.plugin.getServer().getServerName() + " Donor");
+				sender.sendMessage(Element.AVATAR.getColor() + "Server Donor");
 			}
 		}
 

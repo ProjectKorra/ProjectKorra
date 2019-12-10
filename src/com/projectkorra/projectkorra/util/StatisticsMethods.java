@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.storage.DBConnection;
@@ -32,7 +33,7 @@ public class StatisticsMethods {
 			return 0;
 		}
 		final int statId = getId(statistic.getStatisticName(ability));
-		return ProjectKorra.statistics.getStatisticCurrent(uuid, statId);
+		return Manager.getManager(StatisticsManager.class).getStatisticCurrent(uuid, statId);
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class StatisticsMethods {
 			return;
 		}
 		final int statId = getId(statistic.getStatisticName(ability));
-		ProjectKorra.statistics.addStatistic(uuid, statId, statDelta);
+		Manager.getManager(StatisticsManager.class).addStatistic(uuid, statId, statDelta);
 	}
 
 	/**
@@ -73,7 +74,7 @@ public class StatisticsMethods {
 			return 0;
 		}
 		long totalValue = 0;
-		for (final int statId : ProjectKorra.statistics.getStatisticsMap(uuid).keySet()) {
+		for (final int statId : Manager.getManager(StatisticsManager.class).getStatisticsMap(uuid).keySet()) {
 			final String abilName = getAbilityName(statId);
 			final CoreAbility ability = CoreAbility.getAbility(abilName);
 			if (ability == null) {
@@ -107,7 +108,7 @@ public class StatisticsMethods {
 			return 0;
 		}
 		long totalValue = 0;
-		for (final int statId : ProjectKorra.statistics.getStatisticsMap(uuid).keySet()) {
+		for (final int statId : Manager.getManager(StatisticsManager.class).getStatisticsMap(uuid).keySet()) {
 			final String abilName = getAbilityName(statId);
 			final CoreAbility ability = CoreAbility.getAbility(abilName);
 			if (ability == null) {
@@ -169,19 +170,18 @@ public class StatisticsMethods {
 		if (!ProjectKorra.isStatisticsEnabled()) {
 			return 0;
 		}
-		if (!ProjectKorra.statistics.getKeysByName().containsKey(statName)) {
+		if (!Manager.getManager(StatisticsManager.class).getKeysByName().containsKey(statName)) {
 			DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'")) {
 				if (rs.next()) {
-					ProjectKorra.statistics.getKeysByName().put(rs.getString("statName"), rs.getInt("id"));
-					ProjectKorra.statistics.getKeysById().put(rs.getInt("id"), rs.getString("statName"));
+					Manager.getManager(StatisticsManager.class).getKeysByName().put(rs.getString("statName"), rs.getInt("id"));
+					Manager.getManager(StatisticsManager.class).getKeysById().put(rs.getInt("id"), rs.getString("statName"));
 				}
-			}
-			catch (final SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return ProjectKorra.statistics.getKeysByName().containsKey(statName) ? ProjectKorra.statistics.getKeysByName().get(statName) : -1;
+		return Manager.getManager(StatisticsManager.class).getKeysByName().containsKey(statName) ? Manager.getManager(StatisticsManager.class).getKeysByName().get(statName) : -1;
 	}
 
 	/**
@@ -196,10 +196,10 @@ public class StatisticsMethods {
 		if (!ProjectKorra.isStatisticsEnabled()) {
 			return "";
 		}
-		if (!ProjectKorra.statistics.getKeysById().containsKey(id)) {
+		if (!Manager.getManager(StatisticsManager.class).getKeysById().containsKey(id)) {
 			return "";
 		}
-		final String statName = ProjectKorra.statistics.getKeysById().get(id);
+		final String statName = Manager.getManager(StatisticsManager.class).getKeysById().get(id);
 		final String[] split = statName.split("_");
 		if (split.length < 2) {
 			return "";

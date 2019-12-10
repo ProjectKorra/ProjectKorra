@@ -1,8 +1,9 @@
 name: ProjectKorra
 author: ProjectKorra
+api-version: 1.13
 version: ${project.version}
 main: com.projectkorra.projectkorra.ProjectKorra
-softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms]
+softdepend: [PreciousStones, WorldGuard, WorldEdit, FactionsFramework, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms, RedProtect, PlaceholderAPI]
 commands:
   projectkorra:
     aliases: [b,bending,mtla,tla,korra,pk,bend]
@@ -15,7 +16,6 @@ permissions:
       bending.player: true
       bending.command.reload: true
       bending.admin.permaremove: true
-      bending.command.avatar: true
       bending.command.add.others: true
       bending.command.add: true
       bending.command.rechoose: true
@@ -28,10 +28,8 @@ permissions:
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true
       bending.ability.MetalClips.throw: true
-      bending.command.import: true
       bending.command.toggle.all: true
       bending.admin.toggle: true
-      bending.command.give: true
       bending.command.invincible: true
       bending.command.check: true
       bending.command.preset.bind.assign: true
@@ -193,6 +191,14 @@ permissions:
       bending.ability.AirSweep: true
       bending.ability.AirStream: true
       bending.ability.Twister: true
+  bending.ability.Flight:
+    default: false
+    description: Grants access to Flight sub-abilities.
+    children:
+      bending.ability.Flight.Soar: true
+      bending.ability.Flight.Glide: true
+      bending.ability.Flight.Levitate: true
+      bending.ability.Flight.Ending: true
   bending.ability.WaterCombo:
     default: false
     description: Grants access to all WaterCombos.
@@ -227,7 +233,7 @@ permissions:
     description: Grants access to all air passives.
     children:
       bending.ability.AirAgility: true
-      bending.ability.AirSatiation: true
+      bending.ability.AirSaturation: true
       bending.ability.GracefulDescent: true
   bending.chi.passive:
     default:  false
@@ -235,7 +241,7 @@ permissions:
     children:
       bending.ability.Acrobatics: true
       bending.ability.ChiAgility: true
-      bending.ability.ChiSatiation: true
+      bending.ability.ChiSaturation: true
   bending.earth.passive:
     default:  false
     description: Grants access to all earth passives.
@@ -251,7 +257,7 @@ permissions:
     description: Grants access to all water passives.
     children:
       bending.ability.FastSwim: true
-      bending.ability.Hydrosink: true
+      bending.ability.HydroSink: true
   bending.donor:
     default: false
     description: Grants the Donor tag.

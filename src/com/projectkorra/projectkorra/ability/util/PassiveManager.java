@@ -48,8 +48,7 @@ public class PassiveManager {
 					final Constructor<?> constructor = clazz.getConstructor(Player.class);
 					final Object object = constructor.newInstance(player);
 					((CoreAbility) object).start();
-				}
-				catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
 			}

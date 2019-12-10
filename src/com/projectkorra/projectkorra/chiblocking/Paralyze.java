@@ -19,6 +19,8 @@ public class Paralyze extends ChiAbility {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
+	private long duration;
 	private Entity target;
 
 	public Paralyze(final Player sourceplayer, final Entity targetentity) {
@@ -27,7 +29,11 @@ public class Paralyze extends ChiAbility {
 			return;
 		}
 		this.target = targetentity;
+		if (!(this.target instanceof LivingEntity)) {
+			return;
+		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Chi.Paralyze.Duration");
 		this.start();
 	}
 
@@ -40,13 +46,13 @@ public class Paralyze extends ChiAbility {
 					return;
 				}
 			}
-			paralyze(this.target);
+			this.paralyze(this.target);
 			this.bPlayer.addCooldown(this);
 		}
 		this.remove();
 	}
 
-	private static void paralyze(final Entity entity) {
+	private void paralyze(final Entity entity) {
 		if (entity instanceof Creature) {
 			((Creature) entity).setTarget(null);
 		}
@@ -57,8 +63,8 @@ public class Paralyze extends ChiAbility {
 			}
 		}
 		final MovementHandler mh = new MovementHandler((LivingEntity) entity, CoreAbility.getAbility(Paralyze.class));
-		mh.stopWithDuration(getDuration() / 1000 * 20, Element.CHI.getColor() + "* Paralyzed *");
-		entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 2, 0);
+		mh.stopWithDuration(this.duration / 1000 * 20, Element.CHI.getColor() + "* Paralyzed *");
+		entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 2, 0);
 	}
 
 	@Override
@@ -86,10 +92,6 @@ public class Paralyze extends ChiAbility {
 		return false;
 	}
 
-	public static long getDuration() {
-		return getConfig().getLong("Abilities.Chi.Paralyze.Duration");
-	}
-
 	public Entity getTarget() {
 		return this.target;
 	}
@@ -98,4 +100,7 @@ public class Paralyze extends ChiAbility {
 		this.target = target;
 	}
 
+	public long getDuration() {
+		return this.duration;
+	}
 }

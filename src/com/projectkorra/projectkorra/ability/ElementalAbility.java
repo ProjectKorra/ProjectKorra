@@ -3,18 +3,18 @@ package com.projectkorra.projectkorra.ability;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.rpg.event.EventManager;
 
 /**
  * ElementalAbility is used to hold methods that should be accessible by every
@@ -25,6 +25,16 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
+	private static final Set<Material> TRANSPARENT = new HashSet<>();
+
+	static {
+		TRANSPARENT.clear();
+		for (final Material mat : Material.values()) {
+			if (GeneralMethods.isTransparent(mat)) {
+				TRANSPARENT.add(mat);
+			}
+		}
+	}
 
 	public ElementalAbility(final Player player) {
 		super(player);
@@ -39,16 +49,15 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static Material[] getTransparentMaterials() {
-		return GeneralMethods.NON_OPAQUE;
+		return TRANSPARENT.toArray(new Material[TRANSPARENT.size()]);
 	}
 
 	public static HashSet<Material> getTransparentMaterialSet() {
-		final HashSet<Material> set = new HashSet<Material>();
-		for (final Material material : getTransparentMaterials()) {
-			set.add(material);
-		}
+		return new HashSet<>(TRANSPARENT);
+	}
 
-		return set;
+	public static boolean isAir(final Material material) {
+		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR;
 	}
 
 	public static boolean isDay(final World world) {
@@ -73,19 +82,10 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isFullMoon(final World world) {
-		if (GeneralMethods.hasRPG()) {
-			final String event = EventManager.marker.get(world);
-			return event != null && event.equalsIgnoreCase("FullMoon");
-		} else {
-			final long days = world.getFullTime() / 24000;
-			final long phase = days % 8;
+		final double days = Math.ceil(world.getFullTime() / 24000) + 1;
+		final double phase = days % 8;
 
-			if (phase == 0) {
-				return true;
-			}
-
-			return false;
-		}
+		return phase == 0;
 	}
 
 	public static boolean isIce(final Block block) {
@@ -101,7 +101,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isLava(final Material material) {
-		return material == Material.LAVA || material == Material.STATIONARY_LAVA;
+		return material == Material.LAVA;
 	}
 
 	public static boolean isSnow(final Block block) {
@@ -112,26 +112,8 @@ public abstract class ElementalAbility extends CoreAbility {
 		return getConfig().getStringList("Properties.Water.SnowBlocks").contains(material.toString());
 	}
 
-	public static boolean isLunarEclipse(final World world) {
-		if (world == null || !GeneralMethods.hasRPG()) {
-			return false;
-		}
-
-		final String event = EventManager.marker.get(world);
-		return event != null && event.equalsIgnoreCase("LunarEclipse");
-	}
-
-	public static boolean isSolarEclipse(final World world) {
-		if (world == null || !GeneralMethods.hasRPG() || !EventManager.marker.containsKey(world)) {
-			return false;
-		}
-
-		final String event = EventManager.marker.get(world);
-		return event != null && event.equalsIgnoreCase("SolarEclipse");
-	}
-
 	public static boolean isMeltable(final Block block) {
-		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) {
+		if (isIce(block) || isSnow(block)) {
 			return true;
 		}
 
@@ -147,7 +129,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMetalBlock(final Block block) {
-		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.QUARTZ_ORE) {
+		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.NETHER_QUARTZ_ORE) {
 			return true;
 		}
 
@@ -214,15 +196,6 @@ public abstract class ElementalAbility extends CoreAbility {
 		return getConfig().getStringList("Properties.Earth.SandBlocks").contains(material.toString());
 	}
 
-	public static boolean isSozinsComet(final World world) {
-		if (world == null || !GeneralMethods.hasRPG()) {
-			return false;
-		}
-
-		final String event = EventManager.marker.get(world);
-		return event != null && event.equalsIgnoreCase("SozinsComet");
-	}
-
 	public static boolean isTransparent(final Player player, final Block block) {
 		return isTransparent(player, null, block);
 	}
@@ -231,22 +204,22 @@ public abstract class ElementalAbility extends CoreAbility {
 		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation());
 	}
 
-	public static boolean isUndead(final Entity entity) {
-		if (entity == null) {
+	public static boolean isWater(final Block block) {
+		if (block == null) {
 			return false;
-		} else if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE) {
+		} else if (isWater(block.getType())) {
 			return true;
+		} else {
+			return isWater(block.getBlockData());
 		}
-
-		return false;
 	}
 
-	public static boolean isWater(final Block block) {
-		return block != null ? isWater(block.getType()) : null;
+	public static boolean isWater(final BlockData data) {
+		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : isWater(data.getMaterial());
 	}
 
 	public static boolean isWater(final Material material) {
-		return material == Material.WATER || material == Material.STATIONARY_WATER;
+		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
 	}
 
 }

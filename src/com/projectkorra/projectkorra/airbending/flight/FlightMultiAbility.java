@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfoSub;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -46,10 +47,18 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		SOAR, GLIDE, LEVITATE, ENDING;
 	}
 
-	public double speed = 1, baseSpeed, slowSpeed, fastSpeed, multiplier;
-	public FlightMode mode = FlightMode.SOAR;
-	public long prevCheck = 0, duration;
-	public Vector prevDir;
+	private double speed;
+	private double slowSpeed;
+	private double fastSpeed;
+	private double multiplier;
+	@Attribute(Attribute.SPEED)
+	private double baseSpeed;
+	private FlightMode mode = FlightMode.SOAR;
+	@Attribute(Attribute.DURATION)
+	private long duration;
+	@Attribute(Attribute.COOLDOWN)
+	private long cooldown;
+	private Vector prevDir;
 
 	public FlightMultiAbility(final Player player) {
 		super(player);
@@ -104,12 +113,15 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		MultiAbilityManager.bindMultiAbility(player, "Flight");
-		ProjectKorra.flightHandler.createInstance(player, ID);
+		this.flightHandler.createInstance(player, ID);
 		this.hadGlide = player.isGliding();
 		flying.add(player.getUniqueId());
 		this.prevDir = player.getEyeLocation().getDirection().clone();
 		this.duration = getConfig().getLong("Abilities.Air.Flight.Duration");
+		this.cooldown = getConfig().getLong("Abilities.Air.Flight.Cooldown");
 		this.baseSpeed = getConfig().getDouble("Abilities.Air.Flight.BaseSpeed");
+
+		this.speed = 1;
 		this.slowSpeed = this.baseSpeed / 2;
 		this.fastSpeed = this.baseSpeed * 2;
 		this.multiplier = this.baseSpeed;
@@ -118,7 +130,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 	@Override
 	public long getCooldown() {
-		return getConfig().getLong("Abilities.Air.Flight.Cooldown");
+		return this.cooldown;
 	}
 
 	@Override
@@ -209,11 +221,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 				}
 
 				this.prevDir = this.player.getEyeLocation().getDirection().clone();
-			}
 
-			this.particles();
-
-			if (this.speed > this.baseSpeed) {
 				for (final Entity e : GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.speed)) {
 					if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId() && !this.player.getPassengers().contains(e)) {
 						if (!GeneralMethods.isRegionProtectedFromBuild(this.player, e.getLocation())) {
@@ -225,6 +233,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 				}
 			}
 
+			this.particles();
 			this.player.setVelocity(this.player.getEyeLocation().getDirection().clone().multiply(this.multiplier));
 		} else if (this.mode == FlightMode.GLIDE) {
 			this.player.setAllowFlight(false);
@@ -252,8 +261,8 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	}
 
 	private void particles() {
-		ParticleEffect.CLOUD.display(GeneralMethods.getRightSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 0f, 0f, 0f, 0f, 1);
-		ParticleEffect.CLOUD.display(GeneralMethods.getLeftSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 0f, 0f, 0f, 0f, 1);
+		ParticleEffect.CLOUD.display(GeneralMethods.getRightSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 1, 0, 0, 0);
+		ParticleEffect.CLOUD.display(GeneralMethods.getLeftSide(this.player.getLocation(), 0.55).add(this.player.getVelocity().clone()), 1, 0, 0, 0);
 	}
 
 	private String speed() {
@@ -311,7 +320,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		if (this.player.isOnline() && !this.player.isDead()) {
 			this.player.eject();
 		}
-		ProjectKorra.flightHandler.removeInstance(this.player, ID);
+		this.flightHandler.removeInstance(this.player, ID);
 		this.player.setGliding(this.hadGlide);
 	}
 

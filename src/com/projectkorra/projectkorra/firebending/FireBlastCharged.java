@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -33,14 +34,22 @@ public class FireBlastCharged extends FireAbility {
 	private boolean canDamageBlocks;
 	private boolean dissipate;
 	private long time;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
+	@Attribute(Attribute.COOLDOWN)
+	private long cooldown;
 	private long interval;
+	@Attribute(Attribute.DAMAGE)
 	private double maxDamage;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private double collisionRadius;
+	@Attribute(Attribute.DAMAGE + Attribute.RANGE)
 	private double damageRadius;
+	@Attribute("Explosion" + Attribute.RANGE)
 	private double explosionRadius;
 	private double innerRadius;
+	@Attribute(Attribute.FIRE_TICK)
 	private double fireTicks;
 	private TNTPrimed explosion;
 	private Location origin;
@@ -59,6 +68,7 @@ public class FireBlastCharged extends FireAbility {
 		this.canDamageBlocks = getConfig().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");
 		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Charged.Cooldown");
 		this.time = System.currentTimeMillis();
 		this.interval = 25;
 		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius");
@@ -187,7 +197,7 @@ public class FireBlastCharged extends FireAbility {
 					}
 				}
 				this.location.getWorld().playSound(this.location, Sound.ENTITY_GENERIC_EXPLODE, 5, 1);
-				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, this.location, 255.0D);
+				ParticleEffect.EXPLOSION_HUGE.display(this.location, 1, 0, 0, 0);
 			}
 		}
 
@@ -197,8 +207,8 @@ public class FireBlastCharged extends FireAbility {
 
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
-			ParticleEffect.FLAME.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 5);
-			ParticleEffect.SMOKE.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 2);
+			ParticleEffect.FLAME.display(block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
+			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.5, 0.5, 0.5, 0);
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
 			}
@@ -206,7 +216,7 @@ public class FireBlastCharged extends FireAbility {
 		}
 
 		boolean exploded = false;
-		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2 * this.collisionRadius)) {
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
 			if (entity.getEntityId() == this.player.getEntityId() || GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
@@ -225,7 +235,7 @@ public class FireBlastCharged extends FireAbility {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
 			if (BlazeArc.isIgnitable(this.player, block)) {
 				if (block.getType() != Material.FIRE) {
-					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState().getData());
+					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState());
 				}
 				block.setType(Material.FIRE);
 				if (this.dissipate) {
@@ -238,10 +248,10 @@ public class FireBlastCharged extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this) && !this.launched) {
+		if (!this.bPlayer.canBendIgnoreBinds(this) && !this.launched) {
 			this.remove();
 			return;
-		} else if (!this.bPlayer.canBend(CoreAbility.getAbility("FireBlast")) && !this.launched) {
+		} else if (!this.bPlayer.canBendIgnoreCooldowns(CoreAbility.getAbility("FireBlast")) && !this.launched) {
 			this.remove();
 			return;
 		} else if (!this.player.isSneaking() && !this.charged) {
@@ -298,6 +308,14 @@ public class FireBlastCharged extends FireAbility {
 	}
 
 	@Override
+	public void remove() {
+		super.remove();
+		if (this.charged) {
+			this.bPlayer.addCooldown(this);
+		}
+	}
+
+	@Override
 	public String getName() {
 		return "FireBlast";
 	}
@@ -309,7 +327,7 @@ public class FireBlastCharged extends FireAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return this.cooldown;
 	}
 
 	@Override

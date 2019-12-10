@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
@@ -25,12 +26,16 @@ import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 public class HealingWaters extends HealingAbility {
 
 	// Configurable Variables.
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private long interval;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
-	private int power;
-	private int potDuration;
+	@Attribute("PotionPotency")
+	private int potionPotency;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	private boolean enableParticles;
 
@@ -76,8 +81,7 @@ public class HealingWaters extends HealingAbility {
 		this.range = getConfig().getDouble("Abilities.Water.HealingWaters.Range");
 		this.interval = getConfig().getLong("Abilities.Water.HealingWaters.Interval");
 		this.chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
-		this.power = getConfig().getInt("Abilities.Water.HealingWaters.Power");
-		this.potDuration = getConfig().getInt("Abilities.Water.HealingWaters.HealingDuration");
+		this.potionPotency = getConfig().getInt("Abilities.Water.HealingWaters.PotionPotency");
 		this.duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
 		this.enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
 		this.hex = "00ffff";
@@ -122,7 +126,7 @@ public class HealingWaters extends HealingAbility {
 				WaterReturn.emptyWaterBottle(this.player);
 			}
 		} else {
-			GeneralMethods.displayColoredParticle(this.origin, this.hex);
+			GeneralMethods.displayColoredParticle(this.hex, this.origin);
 		}
 
 		// If the ability is charged, try healing.
@@ -210,7 +214,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(final Player player) {
 		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation())) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, this.potDuration, this.power));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
 			AirAbility.breakBreathbendingHold(player);
 			this.healing = true;
 			this.healingSelf = true;
@@ -219,7 +223,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(final LivingEntity livingEntity) {
 		if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
-			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, this.potDuration, this.power));
+			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
 			AirAbility.breakBreathbendingHold(livingEntity);
 			this.healing = true;
 			this.healingSelf = false;
@@ -238,7 +242,7 @@ public class HealingWaters extends HealingAbility {
 			final double angle = this.pstage * increment;
 			final double x = centre.getX() + (0.75 * Math.cos(angle));
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
-			GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x, centre.getY(), z), this.hex);
+			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
 
 			if (this.pstage >= 36) {
 				this.pstage = 0;
@@ -259,8 +263,8 @@ public class HealingWaters extends HealingAbility {
 				final double x2 = centre.getX() + (0.75 * Math.cos(angle2));
 				final double z2 = centre.getZ() + (0.75 * Math.sin(angle2));
 
-				GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1), this.hex);
-				GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2), this.hex);
+				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1));
+				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2));
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;
@@ -295,7 +299,7 @@ public class HealingWaters extends HealingAbility {
 			}
 		}
 
-		GeneralMethods.displayColoredParticle(this.location, this.hex);
+		GeneralMethods.displayColoredParticle(this.hex, this.location);
 	}
 
 	private void fillBottle() {
@@ -304,12 +308,14 @@ public class HealingWaters extends HealingAbility {
 			final int index = inventory.first(Material.GLASS_BOTTLE);
 			final ItemStack item = inventory.getItem(index);
 
+			final ItemStack water = WaterReturn.waterBottleItem();
+
 			if (item.getAmount() == 1) {
-				inventory.setItem(index, new ItemStack(Material.POTION));
+				inventory.setItem(index, water);
 			} else {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
-				final HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.POTION));
+				final HashMap<Integer, ItemStack> leftover = inventory.addItem(water);
 				for (final int left : leftover.keySet()) {
 					this.player.getWorld().dropItemNaturally(this.player.getLocation(), leftover.get(left));
 				}

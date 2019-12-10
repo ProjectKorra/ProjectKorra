@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +24,10 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
-import com.projectkorra.rpg.RPGMethods;
 
 public abstract class FireAbility extends ElementalAbility {
 
 	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
-	private static final Material[] IGNITABLE_MATERIALS = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK, Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT, Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS, Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2, Material.LAPIS_BLOCK, Material.LAPIS_ORE, Material.LOG, Material.MOSSY_COBBLESTONE, Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK, Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND, Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE, Material.SOUL_SAND, Material.WOOD, Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK, Material.PUMPKIN, Material.JACK_O_LANTERN, Material.NOTE_BLOCK, Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER, Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE, Material.COAL_BLOCK, Material.WORKBENCH, Material.HAY_BLOCK, Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON, Material.EMERALD_ORE, Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK, Material.QUARTZ_BLOCK, Material.QUARTZ_ORE, Material.STAINED_CLAY, Material.HARD_CLAY };
 
 	public FireAbility(final Player player) {
 		super(player);
@@ -56,13 +52,8 @@ public abstract class FireAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			final ParticleData particleData = new ParticleEffect.BlockData(Material.FIRE, (byte) 0);
-			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.FIRE.createBlockData());
 		}
-	}
-
-	public double getDayFactor(final double value) {
-		return this.player != null ? getDayFactor(value, this.player.getWorld()) : 1;
 	}
 
 	/**
@@ -78,7 +69,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * fire dissipates or is destroyed.
 	 */
 	public static void createTempFire(final Location loc) {
-		if (loc.getBlock().getType() == Material.AIR) {
+		if (ElementalAbility.isAir(loc.getBlock().getType())) {
 			loc.getBlock().setType(Material.FIRE);
 			return;
 		}
@@ -94,6 +85,10 @@ public abstract class FireAbility extends ElementalAbility {
 		info.setTime(time + System.currentTimeMillis());
 		loc.getBlock().setType(Material.FIRE);
 		TEMP_FIRE.put(loc, info);
+	}
+
+	public double getDayFactor(final double value) {
+		return this.player != null ? value * getDayFactor() : 1;
 	}
 
 	public static double getDayFactor() {
@@ -113,17 +108,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 */
 	public static double getDayFactor(final double value, final World world) {
 		if (isDay(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (isSozinsComet(world)) {
-					return RPGMethods.getFactor("SozinsComet") * value;
-				} else if (isLunarEclipse(world)) {
-					return RPGMethods.getFactor("SolarEclipse") * value;
-				} else {
-					return value * getDayFactor();
-				}
-			} else {
-				return value * getDayFactor();
-			}
+			return value * getDayFactor();
 		}
 		return value;
 	}
@@ -137,7 +122,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static boolean isIgnitable(final Material material) {
-		return Arrays.asList(IGNITABLE_MATERIALS).contains(material);
+		return material.isFlammable() || material.isBurnable();
 	}
 
 	/**
@@ -161,22 +146,20 @@ public abstract class FireAbility extends ElementalAbility {
 			final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
 			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
 
-			Sound sound = Sound.ENTITY_FIREWORK_BLAST;
+			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}
 
-	public static void playFirebendingParticles(final Location loc, final int amount, final float xOffset, final float yOffset, final float zOffset) {
-		ParticleEffect.FLAME.display(loc, xOffset, yOffset, zOffset, 0, amount);
+	public static void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+		ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
 	}
 
 	public static void playFirebendingSound(final Location loc) {
@@ -188,25 +171,20 @@ public abstract class FireAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
 	}
 
 	public static void playLightningbendingParticle(final Location loc) {
-		playLightningbendingParticle(loc, (float) Math.random(), (float) Math.random(), (float) Math.random());
+		playLightningbendingParticle(loc, Math.random(), Math.random(), Math.random());
 	}
 
-	public static void playLightningbendingParticle(final Location loc, final float xOffset, final float yOffset, final float zOffset) {
-		loc.setX(loc.getX() + Math.random() * (xOffset / 2 - -(xOffset / 2)));
-		loc.setY(loc.getY() + Math.random() * (yOffset / 2 - -(yOffset / 2)));
-		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
-		GeneralMethods.displayColoredParticle(loc, "#01E1FF");
+	public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
+		GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
@@ -218,11 +196,9 @@ public abstract class FireAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -234,9 +210,9 @@ public abstract class FireAbility extends ElementalAbility {
 		while (it.hasNext()) {
 			final Location loc = it.next();
 			final Information info = TEMP_FIRE.get(loc);
-			if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
+			if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
 				revertTempFire(loc);
-			} else if (info.getBlock().getType() == Material.AIR || System.currentTimeMillis() > info.getTime()) {
+			} else if (ElementalAbility.isAir(info.getBlock().getType()) || System.currentTimeMillis() > info.getTime()) {
 				revertTempFire(loc);
 			}
 		}
@@ -252,14 +228,14 @@ public abstract class FireAbility extends ElementalAbility {
 			return;
 		}
 		final Information info = TEMP_FIRE.get(location);
-		if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
-			if (info.getState().getType() == Material.RED_ROSE || info.getState().getType() == Material.YELLOW_FLOWER) {
-				final ItemStack itemStack = new ItemStack(info.getState().getData().getItemType(), 1, info.getState().getRawData());
+		if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
+			if (info.getState().getType().isBurnable() && !info.getState().getType().isOccluding()) {
+				final ItemStack itemStack = new ItemStack(info.getState().getType(), 1);
 				info.getState().getBlock().getWorld().dropItemNaturally(info.getLocation(), itemStack);
 			}
 		} else {
 			info.getBlock().setType(info.getState().getType());
-			info.getBlock().setData(info.getState().getRawData());
+			info.getBlock().setBlockData(info.getState().getBlockData());
 		}
 		TEMP_FIRE.remove(location);
 	}

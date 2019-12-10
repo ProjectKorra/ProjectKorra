@@ -17,8 +17,7 @@ public class AirSaturation extends AirAbility implements PassiveAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {

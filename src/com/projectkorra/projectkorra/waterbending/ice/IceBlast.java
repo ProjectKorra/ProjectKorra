@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -18,6 +19,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -33,16 +35,21 @@ public class IceBlast extends IceAbility {
 	private boolean progressing;
 	private byte data;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double collisionRadius;
+	@Attribute("Deflect" + Attribute.RANGE)
 	private double deflectRange;
 	private Block sourceBlock;
 	private Location location;
 	private Location firstDestination;
 	private Location destination;
+	private boolean allowSnow;
 	public TempBlock source;
 
 	public IceBlast(final Player player) {
@@ -55,6 +62,7 @@ public class IceBlast extends IceAbility {
 		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
 		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
 		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
+		this.allowSnow = getConfig().getBoolean("Abilities.Water.IceBlast.AllowSnow");
 
 		this.damage = getNightFactor(this.damage, player.getWorld());
 
@@ -63,14 +71,14 @@ public class IceBlast extends IceAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Water.IceBlast.Cooldown");
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceBlast.Range");
 			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceBlast.Damage");
 		}
 
 		block(player);
 		this.range = getNightFactor(this.range, player.getWorld());
-		final Block sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.SHIFT_DOWN, false, true, false, false, false);
+		final Block sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.SHIFT_DOWN, false, true, false, this.allowSnow, false);
 		final IceBlast oldAbil = getAbility(player, IceBlast.class);
 		if (oldAbil != null) {
 			oldAbil.setSourceBlock(sourceBlock == null ? oldAbil.getSourceBlock() : sourceBlock);
@@ -174,7 +182,7 @@ public class IceBlast extends IceAbility {
 		AirAbility.breakBreathbendingHold(entity);
 
 		for (int x = 0; x < 30; x++) {
-			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .3f, this.location, 255.0);
+			ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random() / 4, Math.random() / 4, Math.random() / 4, new ItemStack(Material.ICE));
 		}
 	}
 
@@ -208,11 +216,11 @@ public class IceBlast extends IceAbility {
 		this.prepared = false;
 
 		if (TempBlock.isTempBlock(this.sourceBlock)) {
-			TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE, this.data);
+			TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE);
 			this.source = TempBlock.get(this.sourceBlock);
 		} else {
-			new TempBlock(this.sourceBlock, Material.AIR, (byte) 0);
-			this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE, this.data);
+			new TempBlock(this.sourceBlock, Material.AIR);
+			this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE);
 		}
 	}
 
@@ -302,15 +310,15 @@ public class IceBlast extends IceAbility {
 
 			this.sourceBlock = block;
 			if (TempBlock.isTempBlock(this.sourceBlock)) {
-				TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE, this.data);
+				TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE);
 				this.source = TempBlock.get(this.sourceBlock);
 			} else {
-				this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE, this.data);
+				this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE);
 			}
 
 			for (int x = 0; x < 10; x++) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .5f, this.location, 255.0);
-				ParticleEffect.SNOW_SHOVEL.display(this.location, (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), 0, 5);
+				ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, new ItemStack(Material.ICE));
+				ParticleEffect.SNOW_SHOVEL.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
 			}
 			if ((new Random()).nextInt(4) == 0) {
 				playIcebendingSound(this.location);
@@ -323,8 +331,8 @@ public class IceBlast extends IceAbility {
 
 	public void breakParticles(final int amount) {
 		for (int x = 0; x < amount; x++) {
-			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), 2f, this.location, 255.0);
-			ParticleEffect.SNOW_SHOVEL.display(this.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
+			ParticleEffect.ITEM_CRACK.display(this.location, 2, Math.random(), Math.random(), Math.random(), new ItemStack(Material.ICE));
+			ParticleEffect.SNOW_SHOVEL.display(this.location, 2, Math.random(), Math.random(), Math.random(), 0);
 		}
 		this.location.getWorld().playSound(this.location, Sound.BLOCK_GLASS_BREAK, 5, 1.3f);
 	}

@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.waterbending.multiabilities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,13 +10,16 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -36,26 +38,34 @@ public class WaterArms extends WaterAbility {
 		RIGHT, LEFT;
 	}
 
-	private static final Integer[] UNBREAKABLES = { 7, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
-
 	private boolean cooldownLeft;
 	private boolean cooldownRight;
 	private boolean fullSource; // used to determine whip length in WaterArmsWhip.
 	private boolean leftArmConsumed;
 	private boolean rightArmConsumed;
+	@Attribute("CanUsePlantSource")
 	private boolean canUsePlantSource;
+	@Attribute("CanLightningStrikeArms")
 	private boolean lightningEnabled;
+	@Attribute("LightningOneHitKO")
 	private boolean lightningKill;
 	private int lengthReduction;
+	@Attribute("InitialLength")
 	private int initLength;
+	@Attribute(Attribute.SELECT_RANGE)
 	private int sourceGrabRange;
+	@Attribute("MaxPunches")
 	private int maxPunches;
+	@Attribute("MaxIceBlasts")
 	private int maxIceBlasts;
+	@Attribute("MaxUses")
 	private int maxUses;
 	private int selectedSlot;
 	private int freezeSlot;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long lastClickTime;
+	@Attribute("LightningDamage")
 	private double lightningDamage;
 	private World world;
 	private String sneakMsg;
@@ -159,7 +169,7 @@ public class WaterArms extends WaterAbility {
 				this.fullSource = false;
 			}
 
-			ParticleEffect.LARGE_SMOKE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
+			ParticleEffect.SMOKE_LARGE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(this.player)) {
 			WaterReturn.emptyWaterBottle(this.player);
@@ -201,7 +211,7 @@ public class WaterArms extends WaterAbility {
 			}
 		}
 
-		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || block.getType() == Material.AIR;
+		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || ElementalAbility.isAir(block.getType());
 	}
 
 	/**
@@ -223,7 +233,7 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(this.getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))) {
-			this.addBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
+			this.addBlock(r1.getBlock(), Material.WATER, GeneralMethods.getWaterData(3), 100);
 			newBlocks.add(r1.getBlock());
 		}
 
@@ -234,7 +244,7 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 
-		this.addBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
+		this.addBlock(r2.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
 		newBlocks.add(r2.getBlock());
 
 		for (int j = 1; j <= this.initLength; j++) {
@@ -247,9 +257,9 @@ public class WaterArms extends WaterAbility {
 
 			newBlocks.add(r3.getBlock());
 			if (j >= 1 && this.selectedSlot == this.freezeSlot && this.bPlayer.canIcebend()) {
-				this.addBlock(r3.getBlock(), Material.ICE, (byte) 0, 100);
+				this.addBlock(r3.getBlock(), Material.ICE, Material.ICE.createBlockData(), 100);
 			} else {
-				this.addBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
+				this.addBlock(r3.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
 			}
 		}
 
@@ -278,7 +288,7 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(this.getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))) {
-			this.addBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5, 100);
+			this.addBlock(l1.getBlock(), Material.WATER, GeneralMethods.getWaterData(3), 100);
 			newBlocks.add(l1.getBlock());
 		}
 
@@ -289,7 +299,7 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 
-		this.addBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
+		this.addBlock(l2.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
 		newBlocks.add(l2.getBlock());
 
 		for (int j = 1; j <= this.initLength; j++) {
@@ -302,9 +312,9 @@ public class WaterArms extends WaterAbility {
 
 			newBlocks.add(l3.getBlock());
 			if (j >= 1 && this.selectedSlot == this.freezeSlot && this.bPlayer.canIcebend()) {
-				this.addBlock(l3.getBlock(), Material.ICE, (byte) 0, 100);
+				this.addBlock(l3.getBlock(), Material.ICE, Material.ICE.createBlockData(), 100);
 			} else {
-				this.addBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 8, 100);
+				this.addBlock(l3.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
 			}
 		}
 
@@ -314,18 +324,18 @@ public class WaterArms extends WaterAbility {
 		return true;
 	}
 
-	public void addBlock(final Block b, final Material m, final byte i, final long revertTime) {
+	public void addBlock(final Block b, final Material m, final BlockData data, final long revertTime) {
 		if (TempBlock.isTempBlock(b)) {
 			final TempBlock tb = TempBlock.get(b);
 
 			if (this.right.contains(b) || this.left.contains(b)) {
-				tb.setType(m, i);
+				tb.setType(m, data);
 				tb.setRevertTime(revertTime);
 			} else {
 				this.external.add(tb);
 			}
 		} else {
-			new TempBlock(b, m, i).setRevertTime(revertTime);
+			new TempBlock(b, m, data).setRevertTime(revertTime);
 		}
 	}
 
@@ -452,7 +462,7 @@ public class WaterArms extends WaterAbility {
 	}
 
 	public static boolean isUnbreakable(final Block block) {
-		if (Arrays.asList(UNBREAKABLES).contains(block.getTypeId())) {
+		if (block.getType().getBlastResistance() >= 9.0F) {
 			return true;
 		}
 		return false;
@@ -653,22 +663,6 @@ public class WaterArms extends WaterAbility {
 		return false;
 	}
 
-	public boolean isCooldownLeft() {
-		return this.cooldownLeft;
-	}
-
-	public void setCooldownLeft(final boolean cooldownLeft) {
-		this.cooldownLeft = cooldownLeft;
-	}
-
-	public boolean isCooldownRight() {
-		return this.cooldownRight;
-	}
-
-	public void setCooldownRight(final boolean cooldownRight) {
-		this.cooldownRight = cooldownRight;
-	}
-
 	public boolean isCanUsePlantSource() {
 		return this.canUsePlantSource;
 	}
@@ -747,10 +741,6 @@ public class WaterArms extends WaterAbility {
 
 	public void setSneakMsg(final String sneakMsg) {
 		this.sneakMsg = sneakMsg;
-	}
-
-	public static Integer[] getUnbreakables() {
-		return UNBREAKABLES;
 	}
 
 	public void setFullSource(final boolean fullSource) {

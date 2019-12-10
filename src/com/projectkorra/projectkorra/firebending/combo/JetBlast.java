@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -18,15 +19,18 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	private boolean firstTime;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private ArrayList<FireComboStream> tasks;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 
 	public JetBlast(final Player player) {
 		super(player);
 
-		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			return;
 		}
 
@@ -75,10 +79,9 @@ public class JetBlast extends FireAbility implements ComboAbility {
 					return;
 				}
 
-				this.bPlayer.addCooldown("JetBlast", this.cooldown);
 				this.firstTime = false;
 				final float spread = 0F;
-				ParticleEffect.LARGE_EXPLODE.display(this.player.getLocation(), spread, spread, spread, 0, 1);
+				ParticleEffect.EXPLOSION_LARGE.display(this.player.getLocation(), 1, spread, spread, spread, 0);
 				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
 			}
 			final FireJet fj = getAbility(this.player, FireJet.class);
@@ -94,6 +97,15 @@ public class JetBlast extends FireAbility implements ComboAbility {
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 			this.tasks.add(fs);
 		}
+	}
+
+	@Override
+	public void remove() {
+		for (final FireComboStream task : this.tasks) {
+			task.remove();
+		}
+		super.remove();
+		this.bPlayer.addCooldown("JetBlast", this.cooldown);
 	}
 
 	@Override
@@ -120,10 +132,4 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
-	@Override
-	public String getInstructions() {
-		return "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet";
-	}
-
 }

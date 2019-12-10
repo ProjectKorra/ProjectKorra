@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -9,9 +8,10 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 
-public class FlightHandler {
+public class FlightHandler extends Manager {
 
 	/**
 	 * A Map containing all Flight instances.
@@ -22,14 +22,12 @@ public class FlightHandler {
 	 * duration. This is used to reduce the number of iterations when cleaning
 	 * up dead instances.
 	 */
-	private final PriorityQueue<FlightAbility> CLEANUP = new PriorityQueue<>(100, new Comparator<FlightAbility>() {
-		@Override
-		public int compare(final FlightAbility f1, final FlightAbility f2) {
-			return (int) (f1.duration - f2.duration);
-		}
-	});
+	private final PriorityQueue<FlightAbility> CLEANUP = new PriorityQueue<>(100, (f1, f2) -> (int) (f1.duration - f2.duration));
 
-	public FlightHandler() {
+	private FlightHandler() {}
+
+	@Override
+	public void onActivate() {
 		this.startCleanup();
 	}
 

@@ -22,30 +22,39 @@ import com.projectkorra.projectkorra.command.Commands;
 public class AirShield extends AirAbility {
 
 	private boolean isToggledByAvatarState;
-	@Attribute(Attribute.RADIUS)
+	@Attribute("Max" + Attribute.RADIUS)
 	private double maxRadius;
-	@Attribute(Attribute.RADIUS)
+	@Attribute("Initial" + Attribute.RADIUS)
+	private double initialRadius;
 	private double radius;
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	private int streams;
 	private int particles;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	private Random random;
 	private HashMap<Integer, Integer> angles;
+	private boolean dynamicCooldown;
 
 	public AirShield(final Player player) {
 		super(player);
 
-		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
+		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.MaxRadius");
+		this.initialRadius = getConfig().getDouble("Abilities.Air.AirShield.InitialRadius");
 		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
-		this.radius = this.maxRadius;
+		this.radius = this.initialRadius;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirShield.Duration");
 		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
 		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
+		this.dynamicCooldown = getConfig().getBoolean("Abilities.Air.AirShield.DynamicCooldown"); //any unused duration from shield is removed from the cooldown
+		if (this.duration == 0) {
+			this.dynamicCooldown = false;
+		}
 		this.random = new Random();
 		this.angles = new HashMap<>();
 
@@ -91,7 +100,15 @@ public class AirShield extends AirAbility {
 			return;
 		} else if (!this.bPlayer.isAvatarState() || !this.isToggledByAvatarState) {
 			if (!this.player.isSneaking() || !this.bPlayer.canBend(this)) {
-				this.bPlayer.addCooldown(this);
+				if (this.dynamicCooldown) {
+					Long reducedCooldown = this.cooldown - (this.duration - (System.currentTimeMillis() - this.getStartTime()));
+					if (reducedCooldown < 0L) {
+						reducedCooldown = 0L;
+					}
+					this.bPlayer.addCooldown(this, reducedCooldown);
+				} else {
+					this.bPlayer.addCooldown(this);
+				}
 				this.remove();
 				return;
 			} else if (this.duration != 0) {
@@ -128,7 +145,7 @@ public class AirShield extends AirAbility {
 				vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
 				vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
-				final Vector velocity = entity.getVelocity();
+				final Vector velocity = entity.getVelocity().clone();
 				if (this.bPlayer.isAvatarState()) {
 					velocity.setX(AvatarState.getValue(vx));
 					velocity.setZ(AvatarState.getValue(vz));

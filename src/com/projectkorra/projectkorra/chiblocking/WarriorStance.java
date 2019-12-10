@@ -9,11 +9,17 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class WarriorStance extends ChiAbility {
 
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
+	private long duration;
+	@Attribute("Strength")
 	private int strength;
+	@Attribute("Resistance")
 	private int resistance;
 
 	public WarriorStance(final Player player) {
@@ -22,8 +28,9 @@ public class WarriorStance extends ChiAbility {
 			return;
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.WarriorStance.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Chi.WarriorStance.Duration");
 		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
-		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
+		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance"); //intended to be negative
 
 		final ChiAbility stance = this.bPlayer.getStance();
 		if (stance != null) {
@@ -36,7 +43,7 @@ public class WarriorStance extends ChiAbility {
 		this.start();
 		this.bPlayer.setStance(this);
 		GeneralMethods.displayMovePreview(player);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 0.5F, 2F);
 	}
 
 	@Override
@@ -44,13 +51,16 @@ public class WarriorStance extends ChiAbility {
 		if (!this.bPlayer.canBendIgnoreBinds(this) || !this.bPlayer.hasElement(Element.CHI)) {
 			this.remove();
 			return;
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
+			this.remove();
+			return;
 		}
 
-		if (!this.player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, this.resistance, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) || this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() > this.resistance || (this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() == this.resistance && this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getDuration() == 1)) { //special case for negative resistance
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, this.resistance, true, false), true);
 		}
-		if (!this.player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, this.strength, true));
+		if (!this.player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) || this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() < this.strength || (this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() == this.strength && this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 10, this.strength, true, false), true);
 		}
 	}
 
@@ -61,7 +71,7 @@ public class WarriorStance extends ChiAbility {
 		this.bPlayer.setStance(null);
 		if (this.player != null) {
 			GeneralMethods.displayMovePreview(this.player);
-			this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+			this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 0.5F, 2F);
 			this.player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 			this.player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
 		}
@@ -106,6 +116,14 @@ public class WarriorStance extends ChiAbility {
 
 	public void setResistance(final int resistance) {
 		this.resistance = resistance;
+	}
+
+	public long getDuration() {
+		return this.duration;
+	}
+
+	public void setDuration(final long duration) {
+		this.duration = duration;
 	}
 
 }

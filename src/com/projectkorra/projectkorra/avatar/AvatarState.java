@@ -64,11 +64,6 @@ public class AvatarState extends AvatarAbility {
 	@Override
 	public void progress() {
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
-			if (this.player != null) {
-				if (this.bPlayer.isOnCooldown(this)) {
-					this.bPlayer.removeCooldown(this);
-				}
-			}
 			this.remove();
 			return;
 		}
@@ -85,18 +80,23 @@ public class AvatarState extends AvatarAbility {
 	}
 
 	private void addPotionEffects() {
-		final int duration = 70;
 		if (this.regenEnabled) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, this.regenPower));
+			this.addProgressPotionEffect(PotionEffectType.REGENERATION, this.regenPower);
 		}
 		if (this.speedEnabled) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, this.speedPower));
+			this.addProgressPotionEffect(PotionEffectType.SPEED, this.speedPower);
 		}
 		if (this.resistanceEnabled) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, this.resistancePower));
+			this.addProgressPotionEffect(PotionEffectType.DAMAGE_RESISTANCE, this.resistancePower);
 		}
 		if (this.fireResistanceEnabled) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, duration, this.fireResistancePower));
+			this.addProgressPotionEffect(PotionEffectType.FIRE_RESISTANCE, this.fireResistancePower);
+		}
+	}
+
+	private void addProgressPotionEffect(final PotionEffectType effect, final int power) {
+		if (!this.player.hasPotionEffect(effect) || this.player.getPotionEffect(effect).getAmplifier() < power || (this.player.getPotionEffect(effect).getAmplifier() == power && this.player.getPotionEffect(effect).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(effect, 10, power, true, false), true);
 		}
 	}
 

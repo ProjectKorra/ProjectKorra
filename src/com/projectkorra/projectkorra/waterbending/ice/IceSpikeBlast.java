@@ -5,10 +5,10 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -29,21 +30,29 @@ public class IceSpikeBlast extends IceAbility {
 	private boolean settingUp;
 	private boolean progressing;
 	private byte data;
-	private int slowPower;
+	@Attribute("SlowPotency")
+	private int slowPotency;
+	@Attribute("Slow" + Attribute.DURATION)
 	private int slowDuration;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute("Slow" + Attribute.COOLDOWN)
 	private long slowCooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double collisionRadius;
+	@Attribute("Deflect" + Attribute.RANGE)
 	private double deflectRange;
 	private Block sourceBlock;
 	private Location location;
 	private Location firstDestination;
 	private Location destination;
 	private TempBlock source;
+	private Material sourceType;
 
 	public IceSpikeBlast(final Player player) {
 		super(player);
@@ -60,7 +69,7 @@ public class IceSpikeBlast extends IceAbility {
 		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Range");
 		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Damage");
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.Cooldown");
-		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPower");
+		this.slowPotency = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPotency");
 		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowDuration");
 
 		if (!this.bPlayer.canBend(this) || !this.bPlayer.canIcebend()) {
@@ -72,14 +81,14 @@ public class IceSpikeBlast extends IceAbility {
 			this.slowCooldown = 0;
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Range");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Damage");
-			this.slowPower = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPower");
+			this.slowPotency = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPotency");
 			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowDuration");
 		}
 
 		block(player);
 		this.range = this.getNightFactor(this.range);
 		this.damage = this.getNightFactor(this.damage);
-		this.slowPower = (int) this.getNightFactor(this.slowPower);
+		this.slowPotency = (int) this.getNightFactor(this.slowPotency);
 		this.sourceBlock = getWaterSourceBlock(player, this.range, this.bPlayer.canPlantbend());
 		if (this.sourceBlock == null) {
 			this.sourceBlock = getIceSourceBlock(player, this.range);
@@ -101,13 +110,13 @@ public class IceSpikeBlast extends IceAbility {
 				return;
 			}
 			if (targetBPlayer.canBeSlowed()) {
-				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPower);
+				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPotency);
 				new TempPotionEffect(entity, effect);
 				targetBPlayer.slow(this.slowCooldown);
 				DamageHandler.damageEntity(entity, this.damage, this);
 			}
 		} else {
-			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPower);
+			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPotency);
 			new TempPotionEffect(entity, effect);
 			DamageHandler.damageEntity(entity, this.damage, this);
 		}
@@ -122,6 +131,11 @@ public class IceSpikeBlast extends IceAbility {
 		}
 
 		this.sourceBlock = block;
+		if (!isIce(block)) {
+			this.sourceType = Material.ICE;
+		} else {
+			this.sourceType = block.getType();
+		}
 		this.location = this.sourceBlock.getLocation();
 		this.prepared = true;
 		this.start();
@@ -175,8 +189,6 @@ public class IceSpikeBlast extends IceAbility {
 				return;
 			}
 
-			this.source = null;
-
 			if (isTransparent(this.player, block) && !block.isLiquid()) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
@@ -191,7 +203,7 @@ public class IceSpikeBlast extends IceAbility {
 				return;
 			}
 
-			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius + 0.5)) {
 				if (entity.getEntityId() != this.player.getEntityId() && entity instanceof LivingEntity) {
 					this.affect((LivingEntity) entity);
 					this.progressing = false;
@@ -209,8 +221,8 @@ public class IceSpikeBlast extends IceAbility {
 			}
 
 			this.sourceBlock = block;
-			this.source = new TempBlock(this.sourceBlock, Material.ICE, this.data);
-			this.source.setRevertTime(140);
+			this.source = new TempBlock(this.sourceBlock, this.sourceType);
+			this.source.setRevertTime(130);
 		} else if (this.prepared) {
 			if (this.sourceBlock != null) {
 				playFocusWaterEffect(this.sourceBlock);
@@ -226,12 +238,10 @@ public class IceSpikeBlast extends IceAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (this.progressing) {
-			if (this.source != null) {
-				this.source.revertBlock();
-			}
-			this.progressing = false;
+		if (this.source != null) {
+			this.source.revertBlock();
 		}
+		this.progressing = false;
 	}
 
 	private void returnWater() {
@@ -245,9 +255,9 @@ public class IceSpikeBlast extends IceAbility {
 
 		final LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(this.player, this.range);
 		if (target == null) {
-			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, getTransparentMaterials());
+			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, true, getTransparentMaterials());
 		} else {
-			this.destination = target.getEyeLocation();
+			this.destination = target.getLocation();
 		}
 
 		if (this.sourceBlock == null) {
@@ -273,8 +283,16 @@ public class IceSpikeBlast extends IceAbility {
 		if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 			new PlantRegrowth(this.player, this.sourceBlock);
 			this.sourceBlock.setType(Material.AIR);
+		} else if (isWater(this.sourceBlock)) {
+			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
+				this.sourceBlock.setType(Material.AIR);
+			}
+		} else if (TempBlock.isTempBlock(this.sourceBlock)) {
+			final TempBlock tb = TempBlock.get(this.sourceBlock);
+			if (isBendableWaterTempBlock(tb)) {
+				tb.revertBlock();
+			}
 		}
-
 	}
 
 	public static void activate(final Player player) {
@@ -358,7 +376,7 @@ public class IceSpikeBlast extends IceAbility {
 				Location loc;
 				final Entity target = GeneralMethods.getTargetedEntity(player, iceSpike.range);
 				if (target == null) {
-					loc = GeneralMethods.getTargetedLocation(player, iceSpike.range);
+					loc = GeneralMethods.getTargetedLocation(player, iceSpike.range, true);
 				} else {
 					loc = ((LivingEntity) target).getEyeLocation();
 				}
@@ -390,9 +408,9 @@ public class IceSpikeBlast extends IceAbility {
 					return;
 				}
 
-				final MaterialData data = block.getState().getData();
+				final BlockState state = block.getState();
 				block.setType(Material.WATER);
-				block.setData((byte) 0);
+				block.setBlockData(GeneralMethods.getWaterData(0));
 				final IceSpikeBlast iceSpike = new IceSpikeBlast(player);
 				iceSpike.throwIce();
 				iceSpike.sourceBlock = null;
@@ -400,8 +418,8 @@ public class IceSpikeBlast extends IceAbility {
 				if (iceSpike.progressing) {
 					WaterReturn.emptyWaterBottle(player);
 				}
-				block.setType(data.getItemType());
-				block.setData(data.getData());
+				block.setType(state.getType());
+				block.setBlockData(state.getBlockData());
 
 			}
 		}
@@ -479,12 +497,12 @@ public class IceSpikeBlast extends IceAbility {
 		this.data = data;
 	}
 
-	public int getSlowPower() {
-		return this.slowPower;
+	public int getSlowPotency() {
+		return this.slowPotency;
 	}
 
-	public void setSlowPower(final int slowPower) {
-		this.slowPower = slowPower;
+	public void setSlowPotency(final int slowPotency) {
+		this.slowPotency = slowPotency;
 	}
 
 	public int getSlowDuration() {

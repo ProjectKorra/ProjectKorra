@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import sun.reflect.ReflectionFactory;
+
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-
-import sun.reflect.ReflectionFactory;
 
 public class AbilityLoader<T> {
 
@@ -47,8 +47,7 @@ public class AbilityLoader<T> {
 
 			this.jar = new JarFile(new File(s));
 
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -102,8 +101,7 @@ public class AbilityLoader<T> {
 				loadables.add(loadable);
 				final AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(this.plugin, loadable, this.jar);
 				this.plugin.getServer().getPluginManager().callEvent(event);
-			}
-			catch (Exception | Error e) {
+			} catch (Exception | Error e) {
 				continue;
 			}
 		}

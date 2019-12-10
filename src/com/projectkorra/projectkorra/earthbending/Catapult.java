@@ -4,21 +4,23 @@ import java.util.Random;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class Catapult extends EarthAbility {
 
 	private double stageTimeMult;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Location origin;
 	private Location target;
@@ -30,6 +32,7 @@ public class Catapult extends EarthAbility {
 	private Vector up;
 	private double angle;
 	private boolean cancelWithAngle;
+	private BlockData bentBlockData;
 
 	public Catapult(final Player player, final boolean sneak) {
 		super(player);
@@ -38,12 +41,17 @@ public class Catapult extends EarthAbility {
 		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
 			return;
 		}
+
+		this.bentBlockData = b.getBlockData();
+
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
+
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
 		}
+
 		this.charging = sneak;
 		this.start();
 	}
@@ -62,6 +70,9 @@ public class Catapult extends EarthAbility {
 	private void moveEarth(final Vector apply, final Vector direction) {
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, 2)) {
 			if (entity.getEntityId() != this.player.getEntityId()) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					continue;
+				}
 				entity.setVelocity(apply);
 			}
 		}
@@ -75,6 +86,14 @@ public class Catapult extends EarthAbility {
 			return;
 		}
 
+		final Block b = this.player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
+			this.remove();
+			return;
+		}
+
+		this.bentBlockData = b.getBlockData();
+
 		if (this.charging) {
 			if (this.stage == 4 || !this.player.isSneaking()) {
 				this.charging = false;
@@ -83,17 +102,11 @@ public class Catapult extends EarthAbility {
 					this.stage++;
 					this.stageStart = System.currentTimeMillis();
 					final Random random = new Random();
-					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte) 0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, this.player.getLocation(), 257);
-					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte) 0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, this.player.getLocation().add(0, 0.5, 0), 257);
+					ParticleEffect.BLOCK_DUST.display(this.player.getLocation(), 15, random.nextFloat(), random.nextFloat(), random.nextFloat(), this.bentBlockData);
+					ParticleEffect.BLOCK_DUST.display(this.player.getLocation().add(0, 0.5, 0), 10, random.nextFloat(), random.nextFloat(), random.nextFloat(), this.bentBlockData);
 					this.player.getWorld().playEffect(this.player.getLocation(), Effect.GHAST_SHOOT, 0, 10);
 				}
 			}
-			return;
-		}
-
-		final Block b = this.player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
-		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
-			this.remove();
 			return;
 		}
 

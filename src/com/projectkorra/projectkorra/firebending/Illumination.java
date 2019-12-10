@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Illumination extends FireAbility {
@@ -19,7 +21,9 @@ public class Illumination extends FireAbility {
 	private static final Map<TempBlock, Player> BLOCKS = new ConcurrentHashMap<>();
 
 	private byte normalData;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private int lightThreshold;
 	private Material normalType;
@@ -114,12 +118,14 @@ public class Illumination extends FireAbility {
 			return;
 		} else if (this.block != null && standingBlock.equals(this.block.getBlock())) {
 			return;
-		} else if (standBlock.getType() == Material.LEAVES || standBlock.getType() == Material.LEAVES_2) {
+		} else if (Tag.LEAVES.isTagged(standBlock.getType())) {
+			return;
+		} else if (standingBlock.getType().name().endsWith("_FENCE") || standingBlock.getType().name().endsWith("_FENCE_GATE") || standingBlock.getType().name().endsWith("_WALL") || standingBlock.getType() == Material.IRON_BARS || standingBlock.getType().name().endsWith("_PANE")) {
 			return;
 		}
 
 		this.revert();
-		this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
+		this.block = new TempBlock(standingBlock, Material.TORCH);
 		BLOCKS.put(this.block, this.player);
 	}
 

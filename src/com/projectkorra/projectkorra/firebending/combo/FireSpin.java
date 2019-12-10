@@ -17,14 +17,20 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireSpin extends FireAbility implements ComboAbility {
 
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	private Location destination;
 	private ArrayList<LivingEntity> affectedEntities;
@@ -37,7 +43,7 @@ public class FireSpin extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		if (player.getLocation().getBlock().getType() == Material.WATER || player.getLocation().getBlock().getType() == Material.STATIONARY_WATER) {
+		if (player.getLocation().getBlock().getType() == Material.WATER) {
 			return;
 		}
 
@@ -205,10 +211,5 @@ public class FireSpin extends FireAbility implements ComboAbility {
 
 	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
-	}
-
-	@Override
-	public String getInstructions() {
-		return "FireBlast > FireBlast > FireShield (Left Click) > FireShield (Tap Shift)";
 	}
 }

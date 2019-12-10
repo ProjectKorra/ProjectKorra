@@ -37,11 +37,9 @@ public abstract class AvatarAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Abilities.Avatar.AvatarState.Sound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Abilities.Avatar.AvatarState.Sound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}

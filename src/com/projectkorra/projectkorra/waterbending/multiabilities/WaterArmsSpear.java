@@ -17,6 +17,8 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
@@ -28,19 +30,26 @@ public class WaterArmsSpear extends WaterAbility {
 	private boolean hitEntity;
 	private boolean canFreeze;
 	private boolean usageCooldownEnabled;
+	@Attribute("DamageEnabled")
 	private boolean spearDamageEnabled;
+	@Attribute("Length")
 	private int spearLength;
+	@Attribute(Attribute.RANGE)
 	private int spearRange;
 	private int spearRangeNight;
 	private int spearRangeFullMoon;
-	private int spearSphere;
+	@Attribute("SphereRadius")
+	private int spearSphereRadius;
 	private int spearSphereNight;
 	private int spearSphereFullMoon;
 	private int distanceTravelled;
+	@Attribute(Attribute.DURATION)
 	private long spearDuration;
 	private long spearDurationNight;
 	private long spearDurationFullMoon;
+	@Attribute(Attribute.COOLDOWN)
 	private long usageCooldown;
+	@Attribute(Attribute.DAMAGE)
 	private double spearDamage;
 	private Arm arm;
 	private Location location;
@@ -58,7 +67,7 @@ public class WaterArmsSpear extends WaterAbility {
 		this.spearRange = getConfig().getInt("Abilities.Water.WaterArms.Spear.Range");
 		this.spearRangeNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
 		this.spearRangeFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
-		this.spearSphere = getConfig().getInt("Abilities.Water.WaterArms.Spear.Sphere");
+		this.spearSphereRadius = getConfig().getInt("Abilities.Water.WaterArms.Spear.SphereRadius");
 		this.spearSphereNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal");
 		this.spearSphereFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon");
 		this.spearDuration = getConfig().getLong("Abilities.Water.WaterArms.Spear.Duration");
@@ -75,30 +84,14 @@ public class WaterArmsSpear extends WaterAbility {
 	private void getNightAugments() {
 		final World world = this.player.getWorld();
 		if (isNight(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (isLunarEclipse(world)) {
-					this.spearRange = this.spearRangeFullMoon;
-					this.spearSphere = this.spearSphereFullMoon;
-					this.spearDuration = this.spearDurationFullMoon;
-				} else if (isFullMoon(world)) {
-					this.spearRange = this.spearRangeFullMoon;
-					this.spearSphere = this.spearSphereFullMoon;
-					this.spearDuration = this.spearDurationFullMoon;
-				} else {
-					this.spearRange = this.spearRangeNight;
-					this.spearSphere = this.spearSphereNight;
-					this.spearDuration = this.spearDurationNight;
-				}
+			if (isFullMoon(world) && !GeneralMethods.hasRPG()) {
+				this.spearRange = this.spearRangeFullMoon;
+				this.spearSphereRadius = this.spearSphereFullMoon;
+				this.spearDuration = this.spearDurationFullMoon;
 			} else {
-				if (isFullMoon(world)) {
-					this.spearRange = this.spearRangeFullMoon;
-					this.spearSphere = this.spearSphereFullMoon;
-					this.spearDuration = this.spearDurationFullMoon;
-				} else {
-					this.spearRange = this.spearRangeNight;
-					this.spearSphere = this.spearSphereNight;
-					this.spearDuration = this.spearDurationNight;
-				}
+				this.spearRange = this.spearRangeNight;
+				this.spearSphereRadius = this.spearSphereNight;
+				this.spearDuration = this.spearDurationNight;
 			}
 		}
 	}
@@ -185,7 +178,7 @@ public class WaterArmsSpear extends WaterAbility {
 				return;
 			}
 
-			new TempBlock(this.location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+			new TempBlock(this.location.getBlock(), Material.WATER, GeneralMethods.getWaterData(0));
 			getIceBlocks().put(this.location.getBlock(), System.currentTimeMillis() + 600L);
 			final Vector direction = GeneralMethods.getDirection(this.initLocation, GeneralMethods.getTargetedLocation(this.player, this.spearRange, getTransparentMaterials())).normalize();
 
@@ -206,7 +199,7 @@ public class WaterArmsSpear extends WaterAbility {
 						getIceBlocks().remove(block);
 					}
 
-					final TempBlock tempBlock = new TempBlock(block, Material.AIR, (byte) 0);
+					final TempBlock tempBlock = new TempBlock(block, Material.AIR);
 					tempBlock.setType(Material.ICE);
 
 					getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
@@ -231,16 +224,30 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private void createIceBall() {
-		if (this.spearSphere <= 0) {
+		if (this.spearSphereRadius <= 0) {
 			if (this.canFreeze) {
 				this.createSpear();
 			}
 			return;
 		}
-		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.spearSphere)) {
+		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.location, this.spearSphereRadius);
+		ICE_SETTING: for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.spearSphereRadius)) {
 			if (isTransparent(this.player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
+				for (final Entity entity : trapped) {
+					if (entity instanceof Player) {
+						if (Commands.invincible.contains(((Player) entity).getName())) {
+							return;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block, true)) {
+							continue ICE_SETTING;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block, true)) {
+							continue ICE_SETTING;
+						}
+					}
+				}
 				playIcebendingSound(block.getLocation());
-				new TempBlock(block, Material.ICE, (byte) 0);
+				new TempBlock(block, Material.ICE);
 				getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 			}
 		}
@@ -364,11 +371,11 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	public int getSpearSphere() {
-		return this.spearSphere;
+		return this.spearSphereRadius;
 	}
 
 	public void setSpearSphere(final int spearSphere) {
-		this.spearSphere = spearSphere;
+		this.spearSphereRadius = spearSphere;
 	}
 
 	public int getSpearSphereNight() {

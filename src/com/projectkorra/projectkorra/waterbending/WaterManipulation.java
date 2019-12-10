@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,6 +19,8 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -40,12 +41,20 @@ public class WaterManipulation extends WaterAbility {
 	private boolean prepared;
 	private int dispelRange;
 	private long time;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
-	private double selectRange, range;
-	private double pushFactor;
+	@Attribute(Attribute.SELECT_RANGE)
+	private double selectRange;
+	@Attribute(Attribute.RANGE)
+	private double range;
+	@Attribute(Attribute.KNOCKBACK)
+	private double knockback;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute("Deflect" + Attribute.RANGE)
 	private double deflectRange;
 	private double collisionRadius;
 	private Block sourceBlock;
@@ -73,7 +82,7 @@ public class WaterManipulation extends WaterAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
 		this.selectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
 		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
-		this.pushFactor = getConfig().getDouble("Abilities.Water.WaterManipulation.Push");
+		this.knockback = getConfig().getDouble("Abilities.Water.WaterManipulation.Knockback");
 		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
 		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
@@ -200,7 +209,7 @@ public class WaterManipulation extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.sourceBlock.getWorld().playEffect(this.location, Effect.SMOKE, 4, (int) this.selectRange);
+					ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
 					return;
 				}
 
@@ -269,9 +278,12 @@ public class WaterManipulation extends WaterAbility {
 				if (!this.displacing) {
 					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId()) {
+							if (GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+								continue;
+							}
 							final Location location = this.player.getEyeLocation();
 							final Vector vector = location.getDirection();
-							entity.setVelocity(vector.normalize().multiply(this.pushFactor));
+							entity.setVelocity(vector.normalize().multiply(this.knockback));
 
 							if (this.bPlayer.isAvatarState()) {
 								this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
@@ -299,9 +311,9 @@ public class WaterManipulation extends WaterAbility {
 				}
 				if (this.trail != null) {
 					this.trail2 = this.trail;
-					this.trail2.setType(Material.STATIONARY_WATER, (byte) 2);
+					this.trail2.setType(Material.WATER, GeneralMethods.getWaterData(6));
 				}
-				this.trail = new TempBlock(this.sourceBlock, Material.STATIONARY_WATER, (byte) 1);
+				this.trail = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(7));
 				this.sourceBlock = block;
 
 				if (this.location.distanceSquared(this.targetDestination) <= 1 || this.location.distanceSquared(this.firstDestination) > this.range * this.range) {
@@ -354,10 +366,10 @@ public class WaterManipulation extends WaterAbility {
 			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
 				PhaseChange.getFrozenBlocksAsBlock().remove(block);
 			}
-			new TempBlock(block, Material.WATER, (byte) 0);
+			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 		} else {
 			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(.5, .5, .5), 255.0);
+				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 			}
 		}
 
@@ -488,7 +500,7 @@ public class WaterManipulation extends WaterAbility {
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
-					final TempBlock tb = new TempBlock(block, Material.WATER, (byte) 0);
+					final TempBlock tb = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 
 					final WaterManipulation waterManip = new WaterManipulation(player, block);
 					waterManip.moveWater();
@@ -678,11 +690,11 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	public double getPushFactor() {
-		return this.pushFactor;
+		return this.knockback;
 	}
 
 	public void setPushFactor(final double pushFactor) {
-		this.pushFactor = pushFactor;
+		this.knockback = pushFactor;
 	}
 
 	public double getDamage() {

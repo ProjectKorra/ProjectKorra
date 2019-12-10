@@ -103,12 +103,10 @@ public class Preset {
 							}
 							new Preset(uuid, rs.getString("name"), moves);
 							i++;
-						}
-						while (rs.next());
+						} while (rs.next());
 						ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
 					}
-				}
-				catch (final SQLException ex) {
+				} catch (final SQLException ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -138,7 +136,7 @@ public class Preset {
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = (HashMap<Integer, String>) preset.abilities.clone();
+		final HashMap<Integer, String> abilities = new HashMap<>(preset.abilities);
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
 			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
@@ -273,8 +271,7 @@ public class Preset {
 			ps.setString(2, this.name);
 			ps.execute();
 			presets.get(this.uuid).remove(this);
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -303,8 +300,7 @@ public class Preset {
 				ps.setString(2, this.name);
 				ps.execute();
 			}
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 		for (final Integer i : this.abilities.keySet()) {
@@ -319,8 +315,7 @@ public class Preset {
 						this.ps.setString(2, Preset.this.uuid.toString());
 						this.ps.setString(3, Preset.this.name);
 						this.ps.execute();
-					}
-					catch (final SQLException e) {
+					} catch (final SQLException e) {
 						e.printStackTrace();
 					}
 				}
@@ -334,8 +329,7 @@ public class Preset {
 				try {
 					Thread.sleep(1500);
 					reloadPreset(player);
-				}
-				catch (final InterruptedException e) {
+				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 			}

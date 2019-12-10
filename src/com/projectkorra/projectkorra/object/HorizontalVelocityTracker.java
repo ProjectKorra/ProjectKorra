@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -44,6 +48,10 @@ public class HorizontalVelocityTracker {
 			return;
 		}
 
+		if (!(e instanceof LivingEntity)) {
+			return;
+		}
+
 		remove(e);
 		this.entity = e;
 		this.instigator = instigator;
@@ -52,7 +60,6 @@ public class HorizontalVelocityTracker {
 		this.thisVelocity = e.getVelocity().clone();
 		this.launchLocation = e.getLocation().clone();
 		this.impactLocation = this.launchLocation.clone();
-		this.delay = delay;
 		this.abil = ability;
 		this.update();
 		instances.put(this.entity, this);
@@ -64,6 +71,12 @@ public class HorizontalVelocityTracker {
 		}
 
 		if (this.entity.isOnGround()) {
+			this.remove();
+			return;
+		}
+
+		if (System.currentTimeMillis() > (this.fireTime + 30000)) {
+			ProjectKorra.log.info("removed HorizontalVelocityTracker lasting over 30 seconds: " + this.instigator.getName() + " using " + this.abil.getName() + " on " + this.entity);
 			this.remove();
 			return;
 		}
@@ -86,7 +99,7 @@ public class HorizontalVelocityTracker {
 			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
 				this.impactLocation = this.entity.getLocation();
 				for (final Block b : blocks) {
-					if (b.getType() == Material.BARRIER && this.barrier == false) {
+					if (b.getType() == Material.BARRIER && !this.barrier) {
 						return;
 					}
 					if (GeneralMethods.isSolid(b) && (this.entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
@@ -117,9 +130,7 @@ public class HorizontalVelocityTracker {
 	}
 
 	public static void remove(final Entity e) {
-		if (instances.containsKey(e)) {
-			instances.remove(e);
-		}
+		instances.remove(e);
 	}
 
 	public static boolean hasBeenDamagedByHorizontalVelocity(final Entity e) {
@@ -127,5 +138,10 @@ public class HorizontalVelocityTracker {
 			return instances.get(e).hasBeenDamaged;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

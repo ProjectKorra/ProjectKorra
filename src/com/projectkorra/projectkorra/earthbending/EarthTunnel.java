@@ -1,10 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,28 +12,33 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthTunnel extends EarthAbility {
 
 	private long interval;
+	private int blocksPerInterval;
 	private long time;
+	@Attribute("Depth")
 	private double depth;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	private long revertTime;
 	private double radius;
 	private double angle;
+	@Attribute(Attribute.RADIUS)
 	private double maxRadius;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private double radiusIncrement;
 	private boolean revert;
 	private boolean dropLootIfNotRevert;
+	private boolean ignoreOres;
 	private Block block;
 	private Location origin;
 	private Location location;
 	private Vector direction;
-
-	public static Map<TempBlock, Long> airBlocks = new ConcurrentHashMap<TempBlock, Long>();
 
 	public EarthTunnel(final Player player) {
 		super(player);
@@ -47,8 +48,11 @@ public class EarthTunnel extends EarthAbility {
 		this.range = getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
+		this.blocksPerInterval = getConfig().getInt("Abilities.Earth.EarthTunnel.BlocksPerInterval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
+		this.ignoreOres = getConfig().getBoolean("Abilities.Earth.EarthTunnel.IgnoreOres");
+		this.revertTime = getConfig().getLong("Properties.Earth.RevertCheckTime");
 
 		this.time = System.currentTimeMillis();
 
@@ -87,69 +91,87 @@ public class EarthTunnel extends EarthAbility {
 
 		if (System.currentTimeMillis() - this.time >= this.interval) {
 			this.time = System.currentTimeMillis();
-			if (Math.abs(Math.toDegrees(this.player.getEyeLocation().getDirection().angle(this.direction))) > 20 || !this.player.isSneaking()) {
-				this.bPlayer.addCooldown(this);
-				this.remove();
-				return;
-			} else {
-				while ((!isEarth(this.block) && !isSand(this.block))) {
-					if (!this.isTransparent(this.block)) {
+			for (int i = 1; i <= this.blocksPerInterval; i++) {
+				if (Math.abs(Math.toDegrees(this.player.getEyeLocation().getDirection().angle(this.direction))) > 20 || !this.player.isSneaking()) {
+					this.bPlayer.addCooldown(this);
+					this.remove();
+					return;
+				} else {
+					while ((!isEarth(this.block) && !isSand(this.block)) || (this.ignoreOres && this.isOre(this.block))) {
+						if (!this.isTransparent(this.block) && (this.ignoreOres && !this.isOre(this.block))) {
+							this.remove();
+							return;
+						}
+
+						if (this.angle >= 360) {
+							this.angle = 0;
+							if (this.radius >= this.maxRadius) {
+								this.radius = this.radiusIncrement;
+								if (this.depth >= this.range) {
+									this.bPlayer.addCooldown(this);
+									this.remove();
+									return;
+								} else {
+									this.depth += 0.5;
+								}
+							} else {
+								this.radius += this.radiusIncrement;
+							}
+						} else {
+							this.angle += 20;
+						}
+
+						final Vector vec = GeneralMethods.getOrthogonalVector(this.direction, this.angle, this.radius);
+						this.block = this.location.clone().add(this.direction.clone().normalize().multiply(this.depth)).add(vec).getBlock();
+					}
+
+					if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
+						this.bPlayer.addCooldown(this);
 						this.remove();
 						return;
 					}
 
-					if (this.angle >= 360) {
-						this.angle = 0;
-						if (this.radius >= this.maxRadius) {
-							this.radius = this.radiusIncrement;
-							if (this.depth >= this.range) {
-								this.bPlayer.addCooldown(this);
-								this.remove();
-								return;
-							} else {
-								this.depth += 0.5;
-							}
+					if (this.revert) {
+						if (getMovedEarth().containsKey(this.block)) {
+							this.block.setType(Material.AIR);
 						} else {
-							this.radius += this.radiusIncrement;
-						}
-					} else {
-						this.angle += 20;
-					}
-
-					final Vector vec = GeneralMethods.getOrthogonalVector(this.direction, this.angle, this.radius);
-					this.block = this.location.clone().add(this.direction.clone().normalize().multiply(this.depth)).add(vec).getBlock();
-				}
-
-				if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
-					this.bPlayer.addCooldown(this);
-					this.remove();
-					return;
-				}
-
-				if (this.revert) {
-					if (getMovedEarth().containsKey(this.block)) {
-						this.block.setType(Material.AIR);
-					} else {
-						airBlocks.put(new TempBlock(this.block, Material.AIR, (byte) 0), System.currentTimeMillis());
-						if (isPlant(this.block.getRelative(BlockFace.UP)) || isSnow(this.block.getRelative(BlockFace.UP))) {
-							final Block above = this.block.getRelative(BlockFace.UP);
-							final Block above2 = above.getRelative(BlockFace.UP);
-							if (isPlant(above) || isSnow(above)) {
-								airBlocks.put(new TempBlock(above, Material.AIR, (byte) 0), System.currentTimeMillis());
-								if (isPlant(above2) && above2.getType().equals(Material.DOUBLE_PLANT)) {
-									airBlocks.put(new TempBlock(above2, Material.AIR, (byte) 0), System.currentTimeMillis());
+							new TempBlock(this.block, Material.AIR).setRevertTime(revertTime);
+							if (isPlant(this.block.getRelative(BlockFace.UP)) || isSnow(this.block.getRelative(BlockFace.UP))) {
+								final Block above = this.block.getRelative(BlockFace.UP);
+								final Block above2 = above.getRelative(BlockFace.UP);
+								if (isPlant(above) || isSnow(above)) {
+									new TempBlock(above, Material.AIR).setRevertTime(revertTime);
+									if (isPlant(above2) && above2.getType().equals(Material.TALL_GRASS)) {
+										new TempBlock(above2, Material.AIR).setRevertTime(revertTime);
+									}
 								}
 							}
 						}
-					}
-				} else {
-					if (this.dropLootIfNotRevert) {
-						this.block.breakNaturally();
 					} else {
-						this.block.setType(Material.AIR);
+						if (this.dropLootIfNotRevert) {
+							this.block.breakNaturally();
+						} else {
+							this.block.setType(Material.AIR);
+						}
 					}
 				}
 			}
+		}
+	}
+
+	private boolean isOre(final Block block) {
+		switch (block.getType()) {
+			case COAL_ORE:
+			case IRON_ORE:
+			case GOLD_ORE:
+			case LAPIS_ORE:
+			case REDSTONE_ORE:
+			case DIAMOND_ORE:
+			case EMERALD_ORE:
+			case NETHER_QUARTZ_ORE:
+				return true;
+			default: 
+				return false;
 		}
 	}
 
@@ -176,15 +198,6 @@ public class EarthTunnel extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-
-	@Override
-	public List<Location> getLocations() {
-		final ArrayList<Location> locations = new ArrayList<>();
-		for (final TempBlock tblock : airBlocks.keySet()) {
-			locations.add(tblock.getLocation());
-		}
-		return locations;
 	}
 
 	public long getInterval() {
@@ -277,17 +290,6 @@ public class EarthTunnel extends EarthAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
-	}
-
-	public static void revertAirBlocks() {
-		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthTunnel.Revert")) {
-			for (final TempBlock tempBlock : EarthTunnel.airBlocks.keySet()) {
-				if (EarthTunnel.airBlocks.get(tempBlock) + ConfigManager.defaultConfig.get().getLong("Properties.Earth.RevertCheckTime") <= System.currentTimeMillis()) {
-					tempBlock.revertBlock();
-					EarthTunnel.airBlocks.remove(tempBlock);
-				}
-			}
-		}
 	}
 
 }

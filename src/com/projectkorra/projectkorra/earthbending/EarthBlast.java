@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,10 +16,12 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthBlast extends EarthAbility {
 	private boolean isProgressing;
@@ -27,15 +30,21 @@ public class EarthBlast extends EarthAbility {
 	private boolean canHitSelf;
 	private long time;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactor;
+	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
+	@Attribute("DeflectRange")
 	private double deflectRange;
 	private double collisionRadius;
-	private byte sourceData;
 	private Material sourceType;
 	private Location location;
 	private Location destination;
@@ -63,7 +72,6 @@ public class EarthBlast extends EarthAbility {
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage");
-
 		}
 
 		if (this.prepare()) {
@@ -100,17 +108,12 @@ public class EarthBlast extends EarthAbility {
 			DensityShift.revertSand(this.sourceBlock);
 		}
 
-		this.sourceData = this.sourceBlock.getData();
 		if (this.sourceBlock.getType() == Material.SAND) {
 			this.sourceType = Material.SAND;
-			if (this.sourceBlock.getData() == (byte) 0x1) {
-				this.sourceBlock.setType(Material.RED_SANDSTONE);
-			} else {
-				this.sourceBlock.setType(Material.SANDSTONE);
-			}
-		} else if (this.sourceBlock.getType() == Material.STEP) {
-			this.sourceBlock.setType(Material.STEP);
-			this.sourceType = Material.STEP;
+			this.sourceBlock.setType(Material.SANDSTONE);
+		} else if (this.sourceBlock.getType() == Material.RED_SAND) {
+			this.sourceType = Material.RED_SAND;
+			this.sourceBlock.setType(Material.RED_SANDSTONE);
 		} else if (this.sourceBlock.getType() == Material.STONE) {
 			this.sourceBlock.setType(Material.COBBLESTONE);
 			this.sourceType = Material.STONE;
@@ -134,15 +137,14 @@ public class EarthBlast extends EarthAbility {
 		for (int j = 0; j < this.getEarthbendableBlocks().size(); j++) {
 			try {
 				trans[i] = Material.valueOf(this.getEarthbendableBlocks().get(j));
-			}
-			catch (final IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				continue;
 			}
 			i++;
 		}
 
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(this.player, this.range, trans);
+			location = GeneralMethods.getTargetedLocation(this.player, this.range, true, trans);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
@@ -153,6 +155,8 @@ public class EarthBlast extends EarthAbility {
 	public boolean prepare() {
 		final Block block = BlockSource.getEarthSourceBlock(this.player, this.range, ClickType.SHIFT_DOWN);
 		if (block == null || !this.isEarthbendable(block)) {
+			return false;
+		} else if (TempBlock.isTempBlock(block)) {
 			return false;
 		}
 
@@ -291,10 +295,6 @@ public class EarthBlast extends EarthAbility {
 
 				if (isEarthRevertOn()) {
 					this.sourceBlock.setType(this.sourceType);
-					this.sourceBlock.setData(this.sourceData);
-					if (this.sourceBlock.getType() == Material.RED_SANDSTONE && this.sourceType == Material.SAND) {
-						this.sourceBlock.setData((byte) 0x1);
-					}
 
 					moveEarthBlock(this.sourceBlock, block);
 
@@ -318,7 +318,6 @@ public class EarthBlast extends EarthAbility {
 						if (this.sourceBlock.getType() == Material.RED_SANDSTONE) {
 							this.sourceType = Material.SAND;
 							this.sourceBlock.setType(this.sourceType);
-							this.sourceBlock.setData((byte) 0x1);
 						} else {
 							this.sourceBlock.setType(this.sourceType);
 						}
@@ -348,17 +347,7 @@ public class EarthBlast extends EarthAbility {
 		if (this.destination != null && this.sourceBlock != null) {
 			this.sourceBlock.setType(Material.AIR);
 		} else if (this.sourceBlock != null) {
-			if (this.sourceBlock.getType() == Material.SAND) {
-				if (this.sourceBlock.getData() == (byte) 0x1) {
-					this.sourceBlock.setType(this.sourceType);
-					this.sourceBlock.setData((byte) 0x1);
-				} else {
-					this.sourceBlock.setType(this.sourceType);
-				}
-			} else {
-				this.sourceBlock.setType(this.sourceType);
-				this.sourceBlock.setData(this.sourceData);
-			}
+			this.sourceBlock.setType(this.sourceType);
 		}
 	}
 
@@ -374,15 +363,29 @@ public class EarthBlast extends EarthAbility {
 		}
 
 		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range, new ArrayList<Entity>());
-		if (target == null) {
-			this.destination = this.getTargetEarthBlock((int) this.range).getLocation();
-			this.firstDestination = this.sourceBlock.getLocation().clone();
-			this.firstDestination.setY(this.destination.getY());
+		if (target != null) {
+			this.destination = target.getLocation();
 		} else {
-			this.destination = ((LivingEntity) target).getEyeLocation();
-			this.firstDestination = this.sourceBlock.getLocation().clone();
-			this.firstDestination.setY(this.destination.getY());
-			this.destination = GeneralMethods.getPointOnLine(this.firstDestination, this.destination, this.range);
+			this.destination = this.getTargetLocation();
+		}
+
+		if (this.sourceBlock == null) {
+			return;
+		}
+		this.location = this.sourceBlock.getLocation();
+		if (this.destination.distanceSquared(this.location) < 1) {
+			return;
+		}
+
+		this.firstDestination = this.location.clone();
+		if (this.destination.getY() - this.location.getY() > 2) {
+			this.firstDestination.setY(this.destination.getY() - 1);
+		} else if (this.location.getY() > player.getEyeLocation().getY() && this.location.getBlock().getRelative(BlockFace.UP).isPassable()) {
+			this.firstDestination.subtract(0, 2, 0);
+		} else if (this.location.getBlock().getRelative(BlockFace.UP).isPassable() && this.location.getBlock().getRelative(BlockFace.UP, 2).isPassable()) {
+			this.firstDestination.add(0, 2, 0);
+		} else {
+			this.firstDestination.add(GeneralMethods.getDirection(this.location, this.destination).normalize().setY(0));
 		}
 
 		if (this.destination.distanceSquared(this.location) <= 1) {
@@ -394,7 +397,6 @@ public class EarthBlast extends EarthAbility {
 
 			final Material currentType = this.sourceBlock.getType();
 			this.sourceBlock.setType(this.sourceType);
-			this.sourceBlock.setData(this.sourceData);
 			if (isEarthRevertOn()) {
 				addTempAirBlock(this.sourceBlock);
 			} else {
@@ -466,7 +468,6 @@ public class EarthBlast extends EarthAbility {
 			if (mloc.distanceSquared(location) <= blast.range * blast.range && GeneralMethods.getDistanceFromLine(vector, location, blast.location) < blast.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				blast.redirect(player, blast.getTargetLocation());
 			}
-
 		}
 	}
 

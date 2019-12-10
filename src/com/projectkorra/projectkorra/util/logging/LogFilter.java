@@ -64,12 +64,7 @@ public class LogFilter implements Filter {
 		}
 
 		final String toRecord = recordString;
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
-			@Override
-			public void run() {
-				LogFilter.this.loggedRecords.add(toRecord);
-			}
-		}, 10);
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> LogFilter.this.loggedRecords.add(toRecord), 10);
 		return true;
 	}
 

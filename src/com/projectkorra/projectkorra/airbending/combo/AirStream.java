@@ -1,8 +1,6 @@
 package com.projectkorra.projectkorra.airbending.combo;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -20,13 +18,17 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class AirStream extends AirAbility implements ComboAbility {
+
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long time;
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute("EntityCarry" + Attribute.HEIGHT)
 	private double airStreamMaxEntityHeight;
+	@Attribute("EntityCarry" + Attribute.DURATION)
 	private double airStreamEntityCarryDuration;
 	private Location origin;
 	private Location currentLoc;
@@ -34,14 +36,12 @@ public class AirStream extends AirAbility implements ComboAbility {
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
-	private Set<Player> flights;
 
 	public AirStream(final Player player) {
 		super(player);
 
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
-		this.flights = new HashSet<>();
 
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
@@ -54,14 +54,14 @@ public class AirStream extends AirAbility implements ComboAbility {
 		this.range = getConfig().getDouble("Abilities.Air.AirStream.Range");
 		this.speed = getConfig().getDouble("Abilities.Air.AirStream.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirStream.Cooldown");
-		this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirStream.EntityHeight");
-		this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirStream.EntityDuration");
+		this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirStream.EntityCarry.Height");
+		this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirStream.EntityCarry.Duration");
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.Range");
-			this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityHeight");
-			this.airStreamEntityCarryDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityDuration");
+			this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Height");
+			this.airStreamEntityCarryDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Duration");
 		}
 
 		this.bPlayer.addCooldown(this);
@@ -93,16 +93,16 @@ public class AirStream extends AirAbility implements ComboAbility {
 			this.currentLoc = this.origin.clone();
 		}
 		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
-		if (target instanceof Player) {
-			if (Commands.invincible.contains(((Player) target).getName())) {
-				return;
-			}
-		}
 
 		if (target != null && target.getLocation().distanceSquared(this.currentLoc) > 49) {
 			this.destination = target.getLocation();
 		} else {
 			this.destination = GeneralMethods.getTargetedLocation(this.player, this.range, getTransparentMaterials());
+		}
+
+		if (GeneralMethods.locationEqualsIgnoreDirection(this.currentLoc, this.destination)) {
+			this.remove();
+			return;
 		}
 
 		this.direction = GeneralMethods.getDirection(this.currentLoc, this.destination).normalize();
@@ -157,15 +157,13 @@ public class AirStream extends AirAbility implements ComboAbility {
 			}
 			if (!entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
 				this.affectedEntities.add(entity);
-				if (entity instanceof Player) {
-					final Player ep = (Player) entity;
-					ProjectKorra.flightHandler.createInstance(ep, this.player, this.getName());
-					this.flights.add(ep);
-				}
 			}
 		}
 
 		for (final Entity entity : this.affectedEntities) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+				continue;
+			}
 			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
 			entity.setVelocity(force.clone().normalize().multiply(this.speed));
 			entity.setFallDistance(0F);
@@ -178,10 +176,6 @@ public class AirStream extends AirAbility implements ComboAbility {
 		for (final BukkitRunnable task : this.tasks) {
 			task.cancel();
 		}
-		for (final Player flyer : this.flights) {
-			ProjectKorra.flightHandler.removeInstance(flyer, this.getName());
-		}
-		this.flights.clear();
 	}
 
 	@Override
@@ -191,7 +185,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -302,16 +296,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 		this.tasks = tasks;
 	}
 
-	public Set<Player> getFlights() {
-		return this.flights;
-	}
-
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
-	}
-
-	@Override
-	public String getInstructions() {
-		return "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)";
 	}
 }

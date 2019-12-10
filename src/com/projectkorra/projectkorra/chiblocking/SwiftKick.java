@@ -1,11 +1,11 @@
 package com.projectkorra.projectkorra.chiblocking;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -14,6 +14,7 @@ public class SwiftKick extends ChiAbility {
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute("ChiBlockChance")
 	private int blockChance;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -37,7 +38,7 @@ public class SwiftKick extends ChiAbility {
 			this.remove();
 			return;
 		}
-		if (this.player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
+		if (!ElementalAbility.isAir(this.player.getLocation().subtract(0, 0.5, 0).getBlock().getType())) {
 			this.remove();
 			return;
 		}

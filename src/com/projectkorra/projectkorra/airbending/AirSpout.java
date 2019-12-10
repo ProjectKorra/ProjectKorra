@@ -10,8 +10,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 
@@ -22,6 +22,7 @@ public class AirSpout extends AirAbility {
 	private int angle;
 	private long animTime;
 	private long interval;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -53,7 +54,7 @@ public class AirSpout extends AirAbility {
 			return;
 		}
 
-		ProjectKorra.flightHandler.createInstance(player, this.getName());
+		this.flightHandler.createInstance(player, this.getName());
 
 		if (this.bPlayer.isAvatarState()) {
 			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
@@ -89,8 +90,21 @@ public class AirSpout extends AirAbility {
 	}
 
 	private void allowFlight() {
-		this.player.setAllowFlight(true);
-		this.player.setFlying(true);
+		if (!this.player.getAllowFlight()) {
+			this.player.setAllowFlight(true);
+		}
+		if (!this.player.isFlying()) {
+			this.player.setFlying(true);
+		}
+	}
+
+	private void removeFlight() {
+		if (this.player.isFlying()) {
+			this.player.setFlying(false);
+		}
+		if (this.player.getAllowFlight()) {
+			this.player.setAllowFlight(false);
+		}
 	}
 
 	private boolean isWithinMaxSpoutHeight(final double threshold) {
@@ -109,7 +123,7 @@ public class AirSpout extends AirAbility {
 		final Block standingblock = this.player.getLocation().getBlock();
 		for (int i = 0; i <= this.height + 5; i++) {
 			final Block block = standingblock.getRelative(BlockFace.DOWN, i);
-			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
+			if (GeneralMethods.isSolid(block) || ElementalAbility.isWater(block)) {
 				return block;
 			}
 		}
@@ -135,7 +149,7 @@ public class AirSpout extends AirAbility {
 		}
 
 		final Block eyeBlock = this.player.getEyeLocation().getBlock();
-		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
+		if (ElementalAbility.isWater(eyeBlock) || GeneralMethods.isSolid(eyeBlock)) {
 			this.remove();
 			return;
 		}
@@ -163,12 +177,7 @@ public class AirSpout extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
-	}
-
-	private void removeFlight() {
-		this.player.setAllowFlight(false);
-		this.player.setFlying(false);
+		this.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	private void rotateAirColumn(final Block block) {

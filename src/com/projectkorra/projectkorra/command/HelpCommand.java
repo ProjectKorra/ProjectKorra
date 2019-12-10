@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.items.command.PKICommand;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -18,7 +17,6 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.rpg.commands.RPGCommand;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
@@ -68,23 +66,7 @@ public class HelpCommand extends PKCommand {
 					strings.add(command.getProperUse());
 				}
 			}
-			if (GeneralMethods.hasItems()) {
-				for (final PKICommand command : PKICommand.instances.values()) {
-					if (sender.hasPermission("bendingitems.command." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
-			}
-			if (GeneralMethods.hasRPG()) {
-				for (final RPGCommand command : RPGCommand.instances.values()) {
-					if (sender.hasPermission("bending.command.rpg." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
-			}
-			if (GeneralMethods.hasSpirits()) {
-				// spirits commands being added (if needed).
-			}
+			
 			Collections.sort(strings);
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
@@ -108,23 +90,7 @@ public class HelpCommand extends PKCommand {
 			for (final PKCommand command : instances.values()) {
 				strings.add(command.getProperUse());
 			}
-			if (GeneralMethods.hasItems()) {
-				for (final PKICommand command : PKICommand.instances.values()) {
-					if (sender.hasPermission("bendingitems.command." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
-			}
-			if (GeneralMethods.hasRPG()) {
-				for (final RPGCommand command : RPGCommand.instances.values()) {
-					if (sender.hasPermission("bending.command.rpg." + command.getName())) {
-						strings.add(command.getProperUse());
-					}
-				}
-			}
-			if (GeneralMethods.hasSpirits()) {
-				// spirits commands being added (if needed).
-			}
+			
 			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", Integer.valueOf(arg), true)) {
 				if (firstMessage) {
 					GeneralMethods.sendBrandingMessage(sender, s);

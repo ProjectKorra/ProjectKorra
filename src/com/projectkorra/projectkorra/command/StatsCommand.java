@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -93,9 +92,7 @@ public class StatsCommand extends PKCommand {
 			int page = 1;
 			try {
 				page = Integer.parseInt(args.get(3));
-			}
-			catch (IndexOutOfBoundsException | NumberFormatException e) {
-			}
+			} catch (IndexOutOfBoundsException | NumberFormatException e) {}
 			final Object o = object;
 			final int p = page;
 			new BukkitRunnable() {
@@ -160,8 +157,7 @@ public class StatsCommand extends PKCommand {
 		final int minIndex = maxIndex - 9;
 		try {
 			uuids.get(minIndex);
-		}
-		catch (final IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) {
 			messages.add("&7No statistics found.");
 			return messages;
 		}
@@ -201,8 +197,7 @@ public class StatsCommand extends PKCommand {
 					}
 				}
 			}
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 		for (final Player player : ProjectKorra.plugin.getServer().getOnlinePlayers()) {
@@ -218,20 +213,17 @@ public class StatsCommand extends PKCommand {
 			}
 		}
 		final List<UUID> list = new ArrayList<>(uuids);
-		Collections.sort(list, new Comparator<UUID>() {
-			@Override
-			public int compare(final UUID u1, final UUID u2) {
-				long value1 = 0;
-				long value2 = 0;
-				if (object == null) {
-					value1 = StatisticsMethods.getStatisticTotal(u1, statistic);
-					value2 = StatisticsMethods.getStatisticTotal(u2, statistic);
-				} else {
-					value1 = StatisticsMethods.getStatistic(u1, object, statistic);
-					value2 = StatisticsMethods.getStatistic(u2, object, statistic);
-				}
-				return (int) (value2 - value1);
+		Collections.sort(list, (u1, u2) -> {
+			long value1 = 0;
+			long value2 = 0;
+			if (object == null) {
+				value1 = StatisticsMethods.getStatisticTotal(u1, statistic);
+				value2 = StatisticsMethods.getStatisticTotal(u2, statistic);
+			} else {
+				value1 = StatisticsMethods.getStatistic(u1, object, statistic);
+				value2 = StatisticsMethods.getStatistic(u2, object, statistic);
 			}
+			return (int) (value2 - value1);
 		});
 		return list;
 	}

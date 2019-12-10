@@ -8,14 +8,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
 public class RaiseEarthWall extends EarthAbility {
 
+	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
+	@Attribute(Attribute.HEIGHT)
 	private int height;
+	@Attribute(Attribute.WIDTH)
 	private int width;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Location location;
 
@@ -35,61 +40,7 @@ public class RaiseEarthWall extends EarthAbility {
 			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
 		}
 
-		final Vector direction = player.getEyeLocation().getDirection().normalize();
-		double ox, oy, oz;
-		direction.setY(0);
-		ox = -direction.getZ();
-		oy = 0;
-		oz = direction.getX();
-
-		Vector orth = new Vector(ox, oy, oz);
-		orth = orth.normalize();
-		orth = getDegreeRoundedVector(orth, 0.25);
-
-		final Block sblock = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.SHIFT_DOWN);
-
-		if (sblock == null) {
-			this.location = this.getTargetEarthBlock(this.selectRange).getLocation();
-		} else {
-			this.location = sblock.getLocation();
-		}
-
-		final World world = this.location.getWorld();
-		boolean shouldAddCooldown = false;
-
-		for (int i = 0; i < this.width; i++) {
-			final double adjustedI = i - this.width / 2.0;
-			Block block = world.getBlockAt(this.location.clone().add(orth.clone().multiply(adjustedI)));
-
-			if (this.isTransparent(block)) {
-				for (int j = 1; j < this.height; j++) {
-					block = block.getRelative(BlockFace.DOWN);
-					if (this.isEarthbendable(block)) {
-						shouldAddCooldown = true;
-						new RaiseEarth(player, block.getLocation(), this.height);
-					} else if (!this.isTransparent(block)) {
-						break;
-					}
-				}
-			} else if (this.isEarthbendable(block.getRelative(BlockFace.UP))) {
-				for (int j = 1; j < this.height; j++) {
-					block = block.getRelative(BlockFace.UP);
-					if (this.isTransparent(block)) {
-						shouldAddCooldown = true;
-						new RaiseEarth(player, block.getRelative(BlockFace.DOWN).getLocation(), this.height);
-					} else if (!this.isEarthbendable(block)) {
-						break;
-					}
-				}
-			} else if (this.isEarthbendable(block)) {
-				shouldAddCooldown = true;
-				new RaiseEarth(player, block.getLocation(), this.height);
-			}
-		}
-
-		if (shouldAddCooldown) {
-			this.bPlayer.addCooldown("RaiseEarthWall", this.cooldown);
-		}
+		this.start();
 	}
 
 	private static Vector getDegreeRoundedVector(Vector vec, final double degreeIncrement) {
@@ -123,6 +74,62 @@ public class RaiseEarthWall extends EarthAbility {
 
 	@Override
 	public void progress() {
+		final Vector direction = this.player.getEyeLocation().getDirection().normalize();
+		double ox, oy, oz;
+		direction.setY(0);
+		ox = -direction.getZ();
+		oy = 0;
+		oz = direction.getX();
+
+		Vector orth = new Vector(ox, oy, oz);
+		orth = orth.normalize();
+		orth = getDegreeRoundedVector(orth, 0.25);
+
+		final Block sblock = BlockSource.getEarthSourceBlock(this.player, this.selectRange, ClickType.SHIFT_DOWN);
+
+		if (sblock == null) {
+			this.location = this.getTargetEarthBlock(this.selectRange).getLocation();
+		} else {
+			this.location = sblock.getLocation();
+		}
+
+		final World world = this.location.getWorld();
+		boolean shouldAddCooldown = false;
+
+		for (int i = 0; i < this.width; i++) {
+			final double adjustedI = i - this.width / 2.0;
+			Block block = world.getBlockAt(this.location.clone().add(orth.clone().multiply(adjustedI)));
+
+			if (this.isTransparent(block)) {
+				for (int j = 1; j < this.height; j++) {
+					block = block.getRelative(BlockFace.DOWN);
+					if (this.isEarthbendable(block)) {
+						shouldAddCooldown = true;
+						new RaiseEarth(this.player, block.getLocation(), this.height);
+					} else if (!this.isTransparent(block)) {
+						break;
+					}
+				}
+			} else if (this.isEarthbendable(block.getRelative(BlockFace.UP))) {
+				for (int j = 1; j < this.height; j++) {
+					block = block.getRelative(BlockFace.UP);
+					if (this.isTransparent(block)) {
+						shouldAddCooldown = true;
+						new RaiseEarth(this.player, block.getRelative(BlockFace.DOWN).getLocation(), this.height);
+					} else if (!this.isEarthbendable(block)) {
+						break;
+					}
+				}
+			} else if (this.isEarthbendable(block)) {
+				shouldAddCooldown = true;
+				new RaiseEarth(this.player, block.getLocation(), this.height);
+			}
+		}
+
+		if (shouldAddCooldown) {
+			this.bPlayer.addCooldown("RaiseEarthWall", this.cooldown);
+		}
+		this.remove();
 	}
 
 	@Override

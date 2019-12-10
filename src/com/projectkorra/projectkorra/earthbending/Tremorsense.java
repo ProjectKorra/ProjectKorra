@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class Tremorsense extends EarthAbility {
 
@@ -21,10 +23,14 @@ public class Tremorsense extends EarthAbility {
 	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<Block, Player>();
 
 	private byte lightThreshold;
+	@Attribute("Depth")
 	private int maxDepth;
+	@Attribute(Attribute.RADIUS)
 	private int radius;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Block block;
+	@Attribute(Attribute.RANGE)
 	private int stickyRange;
 
 	public Tremorsense(final Player player, final boolean clicked) {
@@ -73,7 +79,7 @@ public class Tremorsense extends EarthAbility {
 					} else if (!this.isEarthbendable(blocki) && earth) {
 						foundAir = true;
 						break;
-					} else if (!this.isEarthbendable(blocki) && !earth && blocki.getType() != Material.AIR) {
+					} else if (!this.isEarthbendable(blocki) && !earth && !ElementalAbility.isAir(blocki.getType())) {
 						break;
 					}
 				}
@@ -97,11 +103,11 @@ public class Tremorsense extends EarthAbility {
 
 		if (isBendable && this.block == null) {
 			this.block = standBlock;
-			this.player.sendBlockChange(this.block.getLocation(), 89, (byte) 1);
+			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE, (byte) 1);
 		} else if (isBendable && !this.block.equals(standBlock)) {
 			this.revertGlowBlock();
 			this.block = standBlock;
-			this.player.sendBlockChange(this.block.getLocation(), 89, (byte) 1);
+			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE, (byte) 1);
 		} else if (this.block == null) {
 			return;
 		} else if (!this.player.getWorld().equals(this.block.getWorld())) {
@@ -122,7 +128,7 @@ public class Tremorsense extends EarthAbility {
 
 	public void revertGlowBlock() {
 		if (this.block != null) {
-			this.player.sendBlockChange(this.block.getLocation(), this.block.getTypeId(), this.block.getData());
+			this.player.sendBlockChange(this.block.getLocation(), this.block.getType(), this.block.getData());
 		}
 	}
 

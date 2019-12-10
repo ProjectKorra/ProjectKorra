@@ -1,143 +1,178 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>1.8.7</version>
-  <packaging>jar</packaging>
+  <version>1.8.9</version>
   <name>ProjectKorra</name>
-
   <repositories>
+    <!-- local jar files, add more using: mvn install:install-file -Dfile=aaa.jar -DgroupId=aaa -DartifactId=aaa -Dversion=aaa -Dpackaging=jar -DlocalRepositoryPath=path/to/ProjectKorra/localrepo/ -->
+    <repository>
+      <id>project.local</id>
+      <name>project</name>
+      <url>file://${project.basedir}/localrepo/</url>
+    </repository>
+    <!-- WorldGuard and WorldEdit Repo -->
+    <repository>
+      <id>sk89q-repo</id>
+      <url>http://maven.sk89q.com/repo/</url>
+    </repository>
+    <!-- GriefPrevention Repo -->
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+    <!-- NoCheat Repo -->
+    <repository>
+      <id>md_5-snapshots</id>
+      <url>https://repo.md-5.net/content/repositories/snapshots/</url>
+    </repository>
+    <!-- Spigot Repo -->
     <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
+    <!-- Aikars Repo -->
+    <repository>
+      <id>aikar</id>
+      <url>http://repo.aikar.co/nexus/content/groups/aikar/</url>
+    </repository>
+    <!-- Paper Repo -->
+    <repository>
+      <id>papermc</id>
+      <url>https://papermc.io/repo/repository/maven-public/</url>
+    </repository>
+    <!-- Placeholder API Repo -->
+    <repository>
+      <id>placeholderapi</id>
+      <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+    </repository>
   </repositories>
-
   <dependencies>
-  	<!-- Spigot API -->
-  	<dependency>
-    	<groupId>org.spigotmc</groupId>
-    	<artifactId>Spigot-Server</artifactId>
-    	<version>LATEST</version>
-    	<scope>system</scope>
-    	<systemPath>${project.basedir}/lib/spigot-1.12.1.jar</systemPath>
+    <!-- PaperLib -->
+    <dependency>
+      <groupId>io.papermc</groupId>
+      <artifactId>paperlib</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <!-- Minecraft Timings -->
+    <dependency>
+      <groupId>co.aikar</groupId>
+      <artifactId>minecraft-timings</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+    <!-- Spigot API -->
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.13.2-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- lang3 -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.8.1</version>
     </dependency>
     <!-- Factions -->
     <dependency>
-      <groupId>com.massivecraft</groupId>
-      <artifactId>factions</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Factions 2.7.5.jar</systemPath>
-    </dependency>
-    <!-- GriefPrevention -->
+      <groupId>me.markeh</groupId>
+      <artifactId>factionsframework</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+  </dependency>
+  <!-- GriefPrevention -->
     <dependency>
-      <groupId>me.ryanhamshire</groupId>
+      <groupId>com.github.TechFortress</groupId>
       <artifactId>GriefPrevention</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/GriefPrevention 10.5.3.jar</systemPath>
+      <version>16.7.1</version>
+      <scope>provided</scope>
     </dependency>
     <!-- LWC -->
     <dependency>
       <groupId>com.griefcraft</groupId>
       <artifactId>lwc</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/LWC.jar</systemPath>
-    </dependency>
-    <!-- MassiveCore -->
-    <dependency>
-      <groupId>com.massivecraft</groupId>
-      <artifactId>massivecore</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/MassiveCore 2.7.5.jar</systemPath>
+      <version>2.1.2</version>
+      <scope>provided</scope>
     </dependency>
     <!-- NoCheatPlus -->
     <dependency>
       <groupId>fr.neatmonster</groupId>
       <artifactId>nocheatplus</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/NoCheatPlus.jar</systemPath>
+      <version>3.16.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <!-- PreciousStones -->
-    <dependency>
-      <groupId>net.sacredlabyrinth.Phaed</groupId>
-      <artifactId>PreciousStones</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
-    </dependency>
-    <!-- PK RPG -->
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>rpg</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ProjectKorraRPG.jar</systemPath>
-    </dependency>
-    <!-- PK ITEMS -->
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>items</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ProjectKorraItems.jar</systemPath>
-    </dependency>
-    <!-- PK Spirits -->
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>spirits</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ProjectKorraSpirits.jar</systemPath>
-    </dependency>
+    <!-- outdated
+<dependency>
+  <groupId>net.sacredlabyrinth.Phaed</groupId>
+  <artifactId>PreciousStones</artifactId>
+  <version>LATEST</version>
+  <scope>system</scope>
+  <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
+</dependency>
+-->
     <!-- Residence -->
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>
       <artifactId>residence</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Residence4.0.0.4.jar</systemPath>
+      <version>4.8.3.1</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Towny -->
     <dependency>
-      <groupId>com.plamergames.bukkit</groupId>
+      <groupId>com.palmergames</groupId>
       <artifactId>Towny</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Towny.jar</systemPath>
+      <version>0.93.0.0</version>
+      <scope>provided</scope>
     </dependency>
-    <!-- WorldGuard -->
+    <!-- WorldEdit / WorldGuard -->
     <dependency>
-      <groupId>com.sk89q</groupId>
-      <artifactId>worldguard</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/worldguard-6.1.jar</systemPath>
+      <groupId>com.sk89q.worldedit</groupId>
+      <artifactId>worldedit-core</artifactId>
+      <version>7.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-core</artifactId>
+      <version>7.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldedit</groupId>
+      <artifactId>worldedit-bukkit</artifactId>
+      <version>7.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-legacy</artifactId>
+      <version>7.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- RedProtect -->
+    <dependency>
+      <groupId>br.net.fabiozumbi12</groupId>
+      <artifactId>RedProtect</artifactId>
+      <version>7.5.5</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Kingdoms -->
     <dependency>
-      <groupId>org.kingdoms</groupId>
-      <artifactId>Kingdoms</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Kingdoms.jar</systemPath>
+      <groupId>com.songoda</groupId>
+      <artifactId>kingdoms</artifactId>
+      <version>1.2.3</version>
+      <scope>provided</scope>
     </dependency>
-    <!-- GLib -->
+    <!-- PlaceholderAPI -->
     <dependency>
-      <groupId>org.generallib</groupId>
-      <artifactId>GLib</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
+      <groupId>me.clip</groupId>
+      <artifactId>placeholderapi</artifactId>
+      <version>2.9.2</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
-
   <build>
     <defaultGoal>clean package install</defaultGoal>
     <finalName>${project.name}-${project.version}</finalName>
@@ -156,29 +191,57 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.8.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
       </plugin>
-	  <plugin>
-	    <artifactId>maven-shade-plugin</artifactId>
-		<version>2.3</version>
-		<executions>
-		  <execution>
-		    <phase>package</phase>
-			<goals>
-			  <goal>shade</goal>
-			</goals>
-		  </execution>
-		</executions>
-	    <configuration />
-	  </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <outputDirectory>${dir}</outputDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.1</version>
+        <configuration>
+          <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+          <relocations>
+            <relocation>
+              <pattern>co.aikar.timings.lib</pattern>
+              <shadedPattern>timingslib.projectkorra</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>io.papermc.lib</pattern>
+              <shadedPattern>paperlib.projectkorra</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.apache.commons</pattern>
+              <shadedPattern>commonslang3.projectkorra</shadedPattern>
+            </relocation>
+          </relocations>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <minimizeJar>true</minimizeJar>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <properties>
+    <dir>${project.build.directory}</dir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>

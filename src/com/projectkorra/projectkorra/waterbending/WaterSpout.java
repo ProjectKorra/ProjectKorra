@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -25,6 +25,7 @@ public class WaterSpout extends WaterAbility {
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
 	private final List<TempBlock> blocks = new ArrayList<TempBlock>();
 
+	@Attribute("CanBendOnPackedIce")
 	private boolean canBendOnPackedIce;
 	private boolean useParticles;
 	private boolean useBlockSpiral;
@@ -33,10 +34,12 @@ public class WaterSpout extends WaterAbility {
 	private long interval;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DURATION)
 	private long duration;
 	private long startTime;
 	private double rotation;
 	private double height;
+	@Attribute(Attribute.HEIGHT)
 	private double maxHeight;
 	private Block base;
 	private TempBlock baseBlock;
@@ -80,7 +83,7 @@ public class WaterSpout extends WaterAbility {
 		if (!this.isWithinMaxSpoutHeight(topBlock.getLocation(), heightRemoveThreshold)) {
 			return;
 		}
-		ProjectKorra.flightHandler.createInstance(player, this.getName());
+		this.flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		this.spoutableWaterHeight(player.getLocation()); // Sets base.
 		this.start();
@@ -107,8 +110,8 @@ public class WaterSpout extends WaterAbility {
 			loc.add(x, height, z);
 
 			final Block block = loc.getBlock();
-			if ((!TempBlock.isTempBlock(block)) && (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block))) {
-				this.blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 1));
+			if ((!TempBlock.isTempBlock(block)) && (ElementalAbility.isAir(block.getType()) || !GeneralMethods.isSolid(block))) {
+				this.blocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(7)));
 				AFFECTED_BLOCKS.put(block, block);
 			}
 		}
@@ -154,7 +157,7 @@ public class WaterSpout extends WaterAbility {
 					block = location.clone().add(0, i, 0).getBlock();
 
 					if (!TempBlock.isTempBlock(block)) {
-						this.blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
+						this.blocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
 						AFFECTED_BLOCKS.put(block, block);
 					}
 					this.rotateParticles(block);
@@ -162,10 +165,14 @@ public class WaterSpout extends WaterAbility {
 
 				this.displayWaterSpiral(location.clone().add(.5, 0, .5));
 				if (this.player.getLocation().getBlockY() > block.getY()) {
-					this.player.setFlying(false);
+					if (this.player.isFlying()) {
+						this.player.setFlying(false);
+					}
 				} else {
-					this.player.setAllowFlight(true);
-					this.player.setFlying(true);
+					if (!this.player.isFlying()) {
+						this.player.setAllowFlight(true);
+						this.player.setFlying(true);
+					}
 				}
 			} else {
 				this.bPlayer.addCooldown(this);
@@ -183,7 +190,7 @@ public class WaterSpout extends WaterAbility {
 			AFFECTED_BLOCKS.remove(tb.getBlock());
 			tb.revertBlock();
 		}
-		ProjectKorra.flightHandler.removeInstance(this.player, this.getName());
+		this.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	public void revertBaseBlock() {
@@ -222,7 +229,7 @@ public class WaterSpout extends WaterAbility {
 				dy = this.height;
 			}
 
-			final float[] directions = { -0.5f, 0.325f, 0.25f, 0.125f, 0.f, 0.125f, 0.25f, 0.325f, 0.5f };
+			final double[] directions = { -0.5, 0.325, 0.25, 0.125, 0.0, 0.125, 0.25, 0.325, 0.5 };
 			int index = this.angle;
 			this.angle++;
 			if (this.angle >= directions.length) {
@@ -235,7 +242,7 @@ public class WaterSpout extends WaterAbility {
 				}
 
 				final Location effectLoc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
-				ParticleEffect.WATER_SPLASH.display(effectLoc2, directions[index], directions[index], directions[index], 5, (int) (this.height + 5));
+				ParticleEffect.WATER_SPLASH.display(effectLoc2, 5, directions[index], directions[index], directions[index]);
 			}
 		}
 	}
@@ -279,7 +286,7 @@ public class WaterSpout extends WaterAbility {
 
 					if (!TempBlock.isTempBlock(blocki)) {
 						this.revertBaseBlock();
-						this.baseBlock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);
+						this.baseBlock = new TempBlock(blocki, Material.WATER, GeneralMethods.getWaterData(0));
 					}
 
 					this.base = blocki;
@@ -289,7 +296,7 @@ public class WaterSpout extends WaterAbility {
 					return i;
 				}
 
-				if ((blocki.getType() != Material.AIR && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
+				if ((!ElementalAbility.isAir(blocki.getType()) && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
 					this.revertBaseBlock();
 					return -1;
 				}
@@ -354,6 +361,9 @@ public class WaterSpout extends WaterAbility {
 
 	@Override
 	public List<Location> getLocations() {
+		if (this.getBase() == null) {
+			return new ArrayList<>();
+		}
 		final ArrayList<Location> locations = new ArrayList<>();
 		final Location top = this.getLocation();
 		final Location iterLoc = this.getBase().getLocation();

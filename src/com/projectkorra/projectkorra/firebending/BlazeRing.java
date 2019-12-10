@@ -5,10 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class BlazeRing extends FireAbility {
 
+	@Attribute(Attribute.RANGE)
 	private int range;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angleIncrement;
 	private Location location;
@@ -56,8 +59,7 @@ public class BlazeRing extends FireAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public Location getLocation() {

@@ -15,7 +15,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.event.BindChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 
 public class MultiAbilityManager {
 
@@ -43,7 +43,7 @@ public class MultiAbilityManager {
 	 * @param multiAbility MultiAbility being bound
 	 */
 	public static void bindMultiAbility(final Player player, final String multiAbility) {
-		final BindChangeEvent event = new BindChangeEvent(player, multiAbility, true);
+		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, multiAbility, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return;

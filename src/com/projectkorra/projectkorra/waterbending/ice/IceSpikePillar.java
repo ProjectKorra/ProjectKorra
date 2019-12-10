@@ -18,8 +18,10 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -29,18 +31,27 @@ public class IceSpikePillar extends IceAbility {
 	/** The list of blocks IceSpike uses */
 	private final Map<Block, TempBlock> ice_blocks = new HashMap<Block, TempBlock>();
 
+	@Attribute(Attribute.HEIGHT)
 	private int height;
 	private int progress;
+	@Attribute("SlowPotency")
 	private int slowPower;
+	@Attribute("Slow" + Attribute.DURATION)
 	private int slowDuration;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long time;
 	private long removeTimestamp;
-	private long removeTimer;
+	@Attribute(Attribute.DURATION)
+	private long duration;
 	private long interval;
+	@Attribute("Slow" + Attribute.COOLDOWN)
 	private long slowCooldown;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Block source_block; // The block clicked on.
 	private Block base_block; // The block at the bottom of the pillar.
@@ -86,8 +97,7 @@ public class IceSpikePillar extends IceAbility {
 			}
 			this.origin = this.source_block.getLocation();
 			this.location = this.origin.clone();
-		}
-		catch (final IllegalStateException e) {
+		} catch (final IllegalStateException e) {
 			return;
 		}
 
@@ -174,7 +184,7 @@ public class IceSpikePillar extends IceAbility {
 		Block b;
 		for (int i = 1; i <= this.height; i++) {
 			b = this.source_block.getWorld().getBlockAt(this.location.clone().add(this.direction.clone().multiply(i)));
-			if (b.getType() != Material.AIR) {
+			if (!ElementalAbility.isAir(b.getType())) {
 				return false;
 			}
 
@@ -194,7 +204,7 @@ public class IceSpikePillar extends IceAbility {
 				this.removeTimestamp = System.currentTimeMillis();
 			} else {
 				// If it's time to remove.
-				if (this.removeTimestamp != 0 && this.removeTimestamp + this.removeTimer <= System.currentTimeMillis()) {
+				if (this.removeTimestamp != 0 && this.removeTimestamp + this.duration <= System.currentTimeMillis()) {
 					if (!this.sinkPillar()) {
 						this.remove();
 						return;
@@ -225,7 +235,7 @@ public class IceSpikePillar extends IceAbility {
 			}
 		}
 
-		final TempBlock b = new TempBlock(affectedBlock, Material.ICE, (byte) 0);
+		final TempBlock b = new TempBlock(affectedBlock, Material.ICE);
 		this.ice_blocks.put(affectedBlock, b);
 
 		if (!this.inField || new Random().nextInt((int) ((this.height + 1) * 1.5)) == 0) {
@@ -344,12 +354,12 @@ public class IceSpikePillar extends IceAbility {
 		this.removeTimestamp = removeTimestamp;
 	}
 
-	public long getRemoveTimer() {
-		return this.removeTimer;
+	public long getDuration() {
+		return this.duration;
 	}
 
-	public void setRemoveTimer(final long removeTimer) {
-		this.removeTimer = removeTimer;
+	public void setDuration(final long duration) {
+		this.duration = duration;
 	}
 
 	public long getInterval() {

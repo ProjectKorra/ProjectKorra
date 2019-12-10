@@ -2,12 +2,14 @@ package com.projectkorra.projectkorra.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -86,16 +88,11 @@ public class TempArmor {
 
 		if (!INSTANCES.containsKey(entity)) {
 			ORIGINAL.put(entity, this.oldArmor);
-			final PriorityQueue<TempArmor> queue = new PriorityQueue<>(10, new Comparator<TempArmor>() {
-
-				@Override
-				public int compare(final TempArmor a, final TempArmor b) {
-					final long current = System.currentTimeMillis();
-					final long remainingA = a.getStartTime() + a.getDuration() - current;
-					final long remainingB = b.getStartTime() + b.getDuration() - current;
-					return (int) (remainingA - remainingB);
-				}
-
+			final PriorityQueue<TempArmor> queue = new PriorityQueue<>(10, (a, b) -> {
+				final long current = System.currentTimeMillis();
+				final long remainingA = a.getStartTime() + a.getDuration() - current;
+				final long remainingB = b.getStartTime() + b.getDuration() - current;
+				return (int) (remainingA - remainingB);
 			});
 
 			INSTANCES.put(entity, queue);
@@ -118,7 +115,7 @@ public class TempArmor {
 		for (final ItemStack drop : drops) {
 			boolean match = false;
 			for (final ItemStack armorPiece : this.newArmor) {
-				if (armorPiece.isSimilar(drop)) {
+				if (armorPiece != null && armorPiece.isSimilar(drop)) {
 					match = true;
 					break;
 				}
@@ -208,10 +205,6 @@ public class TempArmor {
 	 * TempArmor instance was started, if the display queue is empty.
 	 */
 	public void revert() {
-		if (this.removeAbilOnForceRevert && this.ability != null && !this.ability.isRemoved()) {
-			this.ability.remove();
-		}
-
 		final PriorityQueue<TempArmor> queue = INSTANCES.get(this.entity);
 
 		if (queue.contains(this)) {
@@ -230,6 +223,10 @@ public class TempArmor {
 			this.entity.getEquipment().setArmorContents(ORIGINAL.get(this.entity));
 			INSTANCES.remove(this.entity);
 			ORIGINAL.remove(this.entity);
+		}
+
+		if (this.removeAbilOnForceRevert && this.ability != null && !this.ability.isRemoved()) {
+			this.ability.remove();
 		}
 	}
 
@@ -289,5 +286,10 @@ public class TempArmor {
 			return Collections.emptyList();
 		}
 		return new ArrayList<>(INSTANCES.get(entity));
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

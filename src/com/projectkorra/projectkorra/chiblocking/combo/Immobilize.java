@@ -13,12 +13,16 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class Immobilize extends ChiAbility implements ComboAbility {
 
+	@Attribute(Attribute.DURATION)
 	private long duration;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Entity target;
 
@@ -35,6 +39,9 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 			this.remove();
 			return;
 		} else {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, this.target.getLocation()) || ((this.target instanceof Player) && Commands.invincible.contains(((Player) this.target).getName()))) {
+				return;
+			}
 			paralyze(this.target, this.duration);
 			this.bPlayer.addCooldown(this);
 		}
@@ -58,8 +65,7 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {
@@ -114,10 +120,5 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
-	}
-
-	@Override
-	public String getInstructions() {
-		return "QuickStrike > SwiftKick > QuickStrike > QuickStrike";
 	}
 }

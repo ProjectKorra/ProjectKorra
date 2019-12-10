@@ -1,12 +1,16 @@
 package com.projectkorra.projectkorra.ability;
 
-import org.bukkit.Effect;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -18,14 +22,13 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
+import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
-import com.projectkorra.rpg.RPGMethods;
 
 public abstract class WaterAbility extends ElementalAbility {
 
@@ -50,17 +53,6 @@ public abstract class WaterAbility extends ElementalAbility {
 		return getIceSourceBlock(this.player, range);
 	}
 
-	public double getNightFactor() {
-		if (this.getLocation() != null) {
-			return getNightFactor(this.getLocation().getWorld());
-		}
-		return this.player != null ? getNightFactor(this.player.getLocation().getWorld()) : 1;
-	}
-
-	public double getNightFactor(final double value) {
-		return this.player != null ? getNightFactor(value, this.player.getWorld()) : value;
-	}
-
 	public Block getPlantSourceBlock(final double range) {
 		return this.getPlantSourceBlock(range, false);
 	}
@@ -83,9 +75,12 @@ public abstract class WaterAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			final ParticleData particleData = new ParticleEffect.BlockData(Material.WATER, (byte) 0);
-			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, collision.getLocationFirst().getBlock().getBlockData());
 		}
+	}
+
+	public double getNightFactor(final double value) {
+		return this.player != null ? value * getNightFactor() : 1;
 	}
 
 	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
@@ -93,7 +88,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
-		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock);
+		return PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock) || Torrent.getFrozenBlocks().containsKey(tempBlock);
 	}
 
 	public boolean isIcebendable(final Block block) {
@@ -154,26 +149,16 @@ public abstract class WaterAbility extends ElementalAbility {
 		return null;
 	}
 
+	public static double getNightFactor() {
+		return getConfig().getDouble("Properties.Water.NightFactor");
+	}
+
 	public static double getNightFactor(final double value, final World world) {
 		if (isNight(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (isLunarEclipse(world)) {
-					return RPGMethods.getFactor("LunarEclipse") * value;
-				} else if (isFullMoon(world)) {
-					return RPGMethods.getFactor("FullMoon") * value;
-				} else {
-					return getConfig().getDouble("Properties.Water.NightFactor") * value;
-				}
-			} else {
-				if (isFullMoon(world)) {
-					return getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
-				} else {
-					return getConfig().getDouble("Properties.Water.NightFactor") * value;
-				}
-			}
-		} else {
-			return value;
+			return value * getNightFactor();
 		}
+
+		return value;
 	}
 
 	public static double getNightFactor(final World world) {
@@ -214,7 +199,20 @@ public abstract class WaterAbility extends ElementalAbility {
 		final Vector vector = location.getDirection().clone().normalize();
 
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
+		final Set<Material> trans = getTransparentMaterialSet();
+
+		if (plantbending) {
+			final Set<Material> remove = new HashSet<>();
+			for (final Material m : trans) {
+				if (isPlant(m)) {
+					remove.add(m);
+				}
+			}
+
+			trans.removeAll(remove);
+		}
+
+		final Block testBlock = player.getTargetBlock(trans, range > 3 ? 3 : (int) range);
 		if (bPlayer == null) {
 			return null;
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
@@ -265,7 +263,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isLeaves(final Material material) {
-		return material == Material.LEAVES || material == Material.LEAVES_2;
+		return Tag.LEAVES.isTagged(material);
 	}
 
 	public static boolean isSnow(final Block block) {
@@ -277,14 +275,13 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
-		final byte full = 0x0;
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
 		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
-		} else if (isWater(block) && block.getData() == full) {
+		} else if (isWater(block) && block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
 			return true;
 		} else if (isIce(block) && !bPlayer.canIcebend()) {
 			return false;
@@ -295,7 +292,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playFocusWaterEffect(final Block block) {
-		block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 4, 20);
+		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
 	}
 
 	public static void playIcebendingSound(final Location loc) {
@@ -307,11 +304,9 @@ public abstract class WaterAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -326,11 +321,9 @@ public abstract class WaterAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
@@ -345,11 +338,9 @@ public abstract class WaterAbility extends ElementalAbility {
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound"));
-			}
-			catch (final IllegalArgumentException exception) {
+			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.WaterSound.Sound' is not valid.");
-			}
-			finally {
+			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}

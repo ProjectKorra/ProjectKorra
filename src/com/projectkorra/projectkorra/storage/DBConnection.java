@@ -49,8 +49,7 @@ public class DBConnection {
 						sql.getConnection().setAutoCommit(true);
 						ProjectKorra.log.info("Database Updated.");
 					}
-				}
-				catch (final SQLException e) {
+				} catch (final SQLException e) {
 					e.printStackTrace();
 				}
 			}
@@ -66,7 +65,7 @@ public class DBConnection {
 			}
 			if (!sql.tableExists("pk_cooldowns")) {
 				ProjectKorra.log.info("Creating pk_cooldowns table");
-				final String query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) PRIMARY KEY, cooldown_id INTEGER NOT NULL, value BIGINT);";
+				final String query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 				sql.modifyQuery(query, false);
 			}
 		} else {
@@ -94,8 +93,7 @@ public class DBConnection {
 						ProjectKorra.log.info("Database Updated.");
 					}
 
-				}
-				catch (final SQLException e) {
+				} catch (final SQLException e) {
 					e.printStackTrace();
 				}
 			}
@@ -111,7 +109,7 @@ public class DBConnection {
 			}
 			if (!sql.tableExists("pk_cooldowns")) {
 				ProjectKorra.log.info("Creating pk_cooldowns table");
-				final String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) PRIMARY KEY, cooldown_id INTEGER NOT NULL, value BIGINT);";
+				final String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 				sql.modifyQuery(query, false);
 			}
 		}
