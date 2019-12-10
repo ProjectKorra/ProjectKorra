@@ -67,8 +67,7 @@ public class ClearCommand extends PKCommand {
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);
 				}
-			}
-			catch (final NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 			}
 		}

@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -139,7 +140,7 @@ public class TorrentWave extends WaterAbility {
 				}
 
 				if (isTransparent(this.player, block)) {
-					final TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
+					final TempBlock tempBlock = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 					this.blocks.add(tempBlock);
 					torrentBlocks.add(block);
 				} else {
@@ -150,6 +151,9 @@ public class TorrentWave extends WaterAbility {
 				for (final Entity entity : indexList) {
 					if (!this.affectedEntities.contains(entity)) {
 						if (entity.getLocation().distanceSquared(location) <= 4) {
+							if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+								continue;
+							}
 							this.affectedEntities.add(entity);
 							this.affect(entity);
 						}

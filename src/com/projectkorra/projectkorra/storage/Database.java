@@ -71,8 +71,7 @@ public abstract class Database {
 		if (this.connection != null) {
 			try {
 				this.connection.close();
-			}
-			catch (final SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -124,8 +123,7 @@ public abstract class Database {
 			final ResultSet rs = stmt.executeQuery();
 
 			return rs;
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -146,8 +144,7 @@ public abstract class Database {
 			final ResultSet rs = dmd.getTables(null, null, table, null);
 
 			return rs.next();
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -168,8 +165,7 @@ public abstract class Database {
 			final DatabaseMetaData dmd = this.connection.getMetaData();
 			final ResultSet rs = dmd.getColumns(null, null, table, column);
 			return rs.next();
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -183,8 +179,7 @@ public abstract class Database {
 			final PreparedStatement stmt = this.connection.prepareStatement(query);
 			stmt.execute();
 			stmt.close();
-		}
-		catch (final SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}

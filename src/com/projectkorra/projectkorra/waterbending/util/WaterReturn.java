@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
@@ -43,7 +44,7 @@ public class WaterReturn extends WaterAbility {
 
 		if (this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			if (isTransparent(player, block) && ((TempBlock.isTempBlock(block) && block.isLiquid()) || !block.isLiquid()) && this.hasEmptyWaterBottle()) {
-				this.block = new TempBlock(block, Material.WATER, (byte) 0);
+				this.block = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 			}
 		}
 		this.start();
@@ -83,10 +84,10 @@ public class WaterReturn extends WaterAbility {
 		final Block newblock = this.location.getBlock();
 		if (isTransparent(this.player, newblock) && !newblock.isLiquid()) {
 			this.block.revertBlock();
-			this.block = new TempBlock(newblock, Material.WATER, (byte) 0);
+			this.block = new TempBlock(newblock, Material.WATER, GeneralMethods.getWaterData(0));
 		} else if (isTransparent(this.player, newblock)) {
 			if (isWater(newblock)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5, .5, .5), 255.0);
+				ParticleEffect.WATER_BUBBLE.display(newblock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 			}
 		} else {
 			this.remove();
@@ -113,16 +114,18 @@ public class WaterReturn extends WaterAbility {
 
 	private void fillBottle() {
 		final PlayerInventory inventory = this.player.getInventory();
-		if (inventory.contains(Material.GLASS_BOTTLE)) {
-			final int index = inventory.first(Material.GLASS_BOTTLE);
+		final int index = inventory.first(Material.GLASS_BOTTLE);
+		if (index >= 0) {
 			final ItemStack item = inventory.getItem(index);
 
+			final ItemStack water = waterBottleItem();
+
 			if (item.getAmount() == 1) {
-				inventory.setItem(index, new ItemStack(Material.POTION));
+				inventory.setItem(index, water);
 			} else {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
-				final HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.POTION));
+				final HashMap<Integer, ItemStack> leftover = inventory.addItem(water);
 				for (final int left : leftover.keySet()) {
 					this.player.getWorld().dropItemNaturally(this.player.getLocation(), leftover.get(left));
 				}
@@ -143,27 +146,15 @@ public class WaterReturn extends WaterAbility {
 		return false;
 	}
 
-	public static boolean hasWaterBottle(final Player player) {
-		if (hasAbility(player, WaterReturn.class) || isBending(player)) {
-			return false;
-		}
-		final PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(Material.POTION)) {
-			final ItemStack item = inventory.getItem(inventory.first(Material.POTION));
-			final PotionMeta meta = (PotionMeta) item.getItemMeta();
-			return meta.getBasePotionData().getType() == PotionType.WATER;
-		}
-		return false;
-	}
-
-	public static void emptyWaterBottle(final Player player) {
-		final PlayerInventory inventory = player.getInventory();
+	public static int firstWaterBottle(final PlayerInventory inventory) {
 		int index = inventory.first(Material.POTION);
 
 		// Check that the first one found is actually a WATER bottle. We aren't implementing potion bending just yet.
-		if (index != -1 && !((PotionMeta) inventory.getItem(index).getItemMeta()).getBasePotionData().getType().equals(PotionType.WATER)) {
-			for (int i = 0; i < inventory.getSize(); i++) {
-				if (inventory.getItem(i).getType() == Material.POTION) {
+		if (index != -1) {
+			int aux = index;
+			index = -1;
+			for (int i = aux; i < inventory.getSize(); i++) {
+				if (inventory.getItem(i) != null && inventory.getItem(i).getType() == Material.POTION && inventory.getItem(i).hasItemMeta()) {
 					final PotionMeta meta = (PotionMeta) inventory.getItem(i).getItemMeta();
 					if (meta.getBasePotionData().getType().equals(PotionType.WATER)) {
 						index = i;
@@ -172,6 +163,22 @@ public class WaterReturn extends WaterAbility {
 				}
 			}
 		}
+
+		return index;
+	}
+
+	public static boolean hasWaterBottle(final Player player) {
+		if (hasAbility(player, WaterReturn.class) || isBending(player)) {
+			return false;
+		}
+		final PlayerInventory inventory = player.getInventory();
+
+		return WaterReturn.firstWaterBottle(inventory) >= 0;
+	}
+
+	public static void emptyWaterBottle(final Player player) {
+		final PlayerInventory inventory = player.getInventory();
+		int index = WaterReturn.firstWaterBottle(inventory);
 
 		if (index != -1) {
 			final ItemStack item = inventory.getItem(index);
@@ -187,6 +194,16 @@ public class WaterReturn extends WaterAbility {
 				}
 			}
 		}
+	}
+
+	public static ItemStack waterBottleItem() {
+		final ItemStack water = new ItemStack(Material.POTION);
+		final PotionMeta meta = (PotionMeta) water.getItemMeta();
+
+		meta.setBasePotionData(new PotionData(PotionType.WATER));
+		water.setItemMeta(meta);
+
+		return water;
 	}
 
 	public long getTime() {

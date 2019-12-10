@@ -142,12 +142,10 @@ public class Twister extends AirAbility implements ComboAbility {
 		}
 
 		for (final Entity entity : this.affectedEntities) {
-			final Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc.clone().add(0, height, 0));
-			if (entity instanceof Player) {
-				if (Commands.invincible.contains(((Player) entity).getName())) {
-					break;
-				}
+			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+				continue;
 			}
+			final Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc.clone().add(0, height, 0));
 			entity.setVelocity(forceDir.clone().normalize().multiply(0.3));
 		}
 	}

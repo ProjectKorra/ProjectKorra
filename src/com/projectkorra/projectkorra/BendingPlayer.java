@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -22,9 +25,6 @@ import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
@@ -155,16 +155,17 @@ public class BendingPlayer {
 
 	public Map<String, Cooldown> loadCooldowns() {
 		final Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
-		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'")) {
-			while (rs.next()) {
-				final int cooldownId = rs.getInt("cooldown_id");
-				final long value = rs.getLong("value");
-				final String name = cooldownManager.getCooldownName(cooldownId);
-				cooldowns.put(name, new Cooldown(value, true));
+		if (ProjectKorra.isDatabaseCooldownsEnabled()) {
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'")) {
+				while (rs.next()) {
+					final int cooldownId = rs.getInt("cooldown_id");
+					final long value = rs.getLong("value");
+					final String name = this.cooldownManager.getCooldownName(cooldownId);
+					cooldowns.put(name, new Cooldown(value, true));
+				}
+			} catch (final SQLException e) {
+				e.printStackTrace();
 			}
-		}
-		catch (final SQLException e) {
-			e.printStackTrace();
 		}
 		return cooldowns;
 	}
@@ -174,15 +175,14 @@ public class BendingPlayer {
 		for (final Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
 			final String name = entry.getKey();
 			final Cooldown cooldown = entry.getValue();
-			final int cooldownId = cooldownManager.getCooldownId(name, false);
+			final int cooldownId = this.cooldownManager.getCooldownId(name, false);
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
 				if (rs.next()) {
 					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
 				} else {
 					DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
 				}
-			}
-			catch (final SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -912,4 +912,8 @@ public class BendingPlayer {
 		this.chiBlocked = false;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 }

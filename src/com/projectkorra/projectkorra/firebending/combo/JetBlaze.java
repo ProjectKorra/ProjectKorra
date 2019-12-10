@@ -88,7 +88,6 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 				this.remove();
 				return;
 			}
-			this.bPlayer.addCooldown("JetBlaze", this.cooldown);
 			this.firstTime = false;
 		} else if (System.currentTimeMillis() - this.time > this.duration) {
 			this.remove();
@@ -103,8 +102,8 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 			fs.setDensity(8);
 			fs.setSpread(1.0F);
 			fs.setUseNewParticles(true);
-			fs.setCollisionRadius(3);
-			fs.setParticleEffect(ParticleEffect.LARGE_SMOKE);
+			fs.setCollisionRadius(2);
+			fs.setParticleEffect(ParticleEffect.SMOKE_LARGE);
 			fs.setDamage(this.damage);
 			fs.setFireTicks(this.fireTicks);
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
@@ -113,6 +112,15 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
 			}
 		}
+	}
+
+	@Override
+	public void remove() {
+		for (final FireComboStream task : this.tasks) {
+			task.remove();
+		}
+		super.remove();
+		this.bPlayer.addCooldown("JetBlaze", this.cooldown);
 	}
 
 	@Override

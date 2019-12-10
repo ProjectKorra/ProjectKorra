@@ -79,10 +79,9 @@ public class JetBlast extends FireAbility implements ComboAbility {
 					return;
 				}
 
-				this.bPlayer.addCooldown("JetBlast", this.cooldown);
 				this.firstTime = false;
 				final float spread = 0F;
-				ParticleEffect.LARGE_EXPLODE.display(this.player.getLocation(), spread, spread, spread, 0, 1);
+				ParticleEffect.EXPLOSION_LARGE.display(this.player.getLocation(), 1, spread, spread, spread, 0);
 				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
 			}
 			final FireJet fj = getAbility(this.player, FireJet.class);
@@ -98,6 +97,15 @@ public class JetBlast extends FireAbility implements ComboAbility {
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 			this.tasks.add(fs);
 		}
+	}
+
+	@Override
+	public void remove() {
+		for (final FireComboStream task : this.tasks) {
+			task.remove();
+		}
+		super.remove();
+		this.bPlayer.addCooldown("JetBlast", this.cooldown);
 	}
 
 	@Override

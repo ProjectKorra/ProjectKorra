@@ -30,8 +30,7 @@ import org.bukkit.Bukkit;
  */
 public final class ReflectionHandler {
 	// Prevent accidental construction.
-	private ReflectionHandler() {
-	}
+	private ReflectionHandler() {}
 
 	/**
 	 * Returns the constructor of a given class with the given parameter types

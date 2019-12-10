@@ -1,13 +1,13 @@
 package com.projectkorra.projectkorra.waterbending.blood;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -97,19 +97,15 @@ public class Bloodbending extends BloodAbility {
 			for (int i = 0; i < this.range; i++) {
 				final Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
-				if (entities.contains(player)) {
-					entities.remove(player);
-				}
-				for (final Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
-					if (!(iterator.next() instanceof LivingEntity)) {
-						iterator.remove();
-					}
-				}
-				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
+
+				entities.remove(player);
+				entities.removeIf(e -> !(e instanceof LivingEntity) || e instanceof ArmorStand);
+
+				if (!entities.isEmpty() && !entities.contains(player)) {
 					break;
 				}
 			}
-			if (entities == null || entities.isEmpty()) {
+			if (entities.isEmpty()) {
 				return;
 			}
 			this.target = entities.get(0);
@@ -127,7 +123,7 @@ public class Bloodbending extends BloodAbility {
 						return;
 					}
 				}
-			} else if (!this.canBeUsedOnUndeadMobs && isUndead(this.target)) {
+			} else if (!this.canBeUsedOnUndeadMobs && GeneralMethods.isUndead(this.target)) {
 				return;
 			}
 
@@ -179,7 +175,7 @@ public class Bloodbending extends BloodAbility {
 
 		if (!this.canBeUsedOnUndeadMobs) {
 			for (final Entity entity : TARGETED_ENTITIES.keySet()) {
-				if (isUndead(entity)) {
+				if (GeneralMethods.isUndead(entity)) {
 					TARGETED_ENTITIES.remove(entity);
 				}
 			}

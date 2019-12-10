@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Extraction extends MetalAbility {
 
@@ -42,7 +43,7 @@ public class Extraction extends MetalAbility {
 			return;
 		}
 
-		if (!GeneralMethods.isRegionProtectedFromBuild(this, this.originBlock.getLocation())) {
+		if (!GeneralMethods.isRegionProtectedFromBuild(this, this.originBlock.getLocation()) && !TempBlock.isTempBlock(this.originBlock)) {
 			final Material material = this.originBlock.getType();
 			Material type = null;
 
@@ -57,7 +58,7 @@ public class Extraction extends MetalAbility {
 					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, this.getAmount()));
 					type = Material.STONE;
 					break;
-				case QUARTZ_ORE:
+				case NETHER_QUARTZ_ORE:
 					this.originBlock.setType(Material.NETHERRACK);
 					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, this.getAmount()));
 					type = Material.NETHERRACK;
@@ -96,8 +97,7 @@ public class Extraction extends MetalAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public Location getLocation() {

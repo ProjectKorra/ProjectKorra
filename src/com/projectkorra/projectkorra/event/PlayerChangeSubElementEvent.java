@@ -74,7 +74,6 @@ public class PlayerChangeSubElementEvent extends Event {
 
 	public static enum Result {
 		CHOOSE, REMOVE, ADD, PERMAREMOVE;
-		private Result() {
-		}
+		private Result() {}
 	}
 }

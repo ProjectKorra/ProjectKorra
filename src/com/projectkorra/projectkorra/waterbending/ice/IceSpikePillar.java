@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -96,8 +97,7 @@ public class IceSpikePillar extends IceAbility {
 			}
 			this.origin = this.source_block.getLocation();
 			this.location = this.origin.clone();
-		}
-		catch (final IllegalStateException e) {
+		} catch (final IllegalStateException e) {
 			return;
 		}
 
@@ -184,7 +184,7 @@ public class IceSpikePillar extends IceAbility {
 		Block b;
 		for (int i = 1; i <= this.height; i++) {
 			b = this.source_block.getWorld().getBlockAt(this.location.clone().add(this.direction.clone().multiply(i)));
-			if (b.getType() != Material.AIR) {
+			if (!ElementalAbility.isAir(b.getType())) {
 				return false;
 			}
 
@@ -235,7 +235,7 @@ public class IceSpikePillar extends IceAbility {
 			}
 		}
 
-		final TempBlock b = new TempBlock(affectedBlock, Material.ICE, (byte) 0);
+		final TempBlock b = new TempBlock(affectedBlock, Material.ICE);
 		this.ice_blocks.put(affectedBlock, b);
 
 		if (!this.inField || new Random().nextInt((int) ((this.height + 1) * 1.5)) == 0) {

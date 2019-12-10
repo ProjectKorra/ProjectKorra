@@ -19,8 +19,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.combo.EarthDomeOthers;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletLeftClick;
-import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletRightClick;
 
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 20 * 60;
@@ -34,15 +32,6 @@ public class ComboManager {
 		COMBO_ABILITIES.clear();
 		DESCRIPTIONS.clear();
 		INSTRUCTIONS.clear();
-
-		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.IceBullet.Enabled")) {
-			final ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<>();
-			iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("IceBulletLeftClick", new ComboAbilityInfo("IceBulletLeftClick", iceBulletLeft, IceBulletLeftClick.class));
-			final ArrayList<AbilityInformation> iceBulletRight = new ArrayList<>();
-			iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK_BLOCK));
-			COMBO_ABILITIES.put("IceBulletRightClick", new ComboAbilityInfo("IceBulletRightClick", iceBulletRight, IceBulletRightClick.class));
-		}
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthDome.Enabled")) {
 			final ArrayList<AbilityInformation> earthDomeOthers = new ArrayList<>();
@@ -82,8 +71,7 @@ public class ComboManager {
 					final Class<?> clazz = (Class<?>) comboAbil.getComboType();
 					try {
 						ReflectionHandler.instantiateObject(clazz, player);
-					}
-					catch (final Exception e) {
+					} catch (final Exception e) {
 						e.printStackTrace();
 					}
 				} else {

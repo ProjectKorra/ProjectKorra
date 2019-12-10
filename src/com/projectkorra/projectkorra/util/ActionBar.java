@@ -31,8 +31,7 @@ public class ActionBar {
 			playerConnection = ReflectionHandler.getField("EntityPlayer", PackageType.MINECRAFT_SERVER, false, "playerConnection");
 			sendPacket = ReflectionHandler.getMethod(playerConnection.getType(), "sendPacket", PackageType.MINECRAFT_SERVER.getClass("Packet"));
 			initialised = true;
-		}
-		catch (final ReflectiveOperationException e) {
+		} catch (final ReflectiveOperationException e) {
 			initialised = false;
 		}
 	}
@@ -54,8 +53,7 @@ public class ActionBar {
 				packet = packetChat.newInstance(o, (byte) 2);
 			}
 			sendTo(packet, player);
-		}
-		catch (final ReflectiveOperationException e) {
+		} catch (final ReflectiveOperationException e) {
 			e.printStackTrace();
 			initialised = false;
 		}

@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -73,13 +75,13 @@ public class FireComboStream extends BukkitRunnable {
 	@Override
 	public void run() {
 		final Block block = this.location.getBlock();
-		if (block.getRelative(BlockFace.UP).getType() != Material.AIR && !ElementalAbility.isPlant(block)) {
+		if (!ElementalAbility.isAir(block.getRelative(BlockFace.UP).getType()) && !ElementalAbility.isPlant(block)) {
 			this.remove();
 			return;
 		}
 		for (int i = 0; i < this.density; i++) {
 			if (this.useNewParticles) {
-				this.particleEffect.display(this.location, this.spread, this.spread, this.spread, 0, 1);
+				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
@@ -170,6 +172,7 @@ public class FireComboStream extends BukkitRunnable {
 		return this.location;
 	}
 
+	@Override
 	public boolean isCancelled() {
 		return this.cancelled;
 	}
@@ -225,5 +228,10 @@ public class FireComboStream extends BukkitRunnable {
 
 	public void setUseNewParticles(final boolean b) {
 		this.useNewParticles = b;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

@@ -2,13 +2,10 @@ package com.projectkorra.projectkorra.earthbending;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -17,10 +14,9 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class RaiseEarth extends EarthAbility {
-
-	private static final Map<Block, Block> ALL_AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
 	private int distance;
 	@Attribute(Attribute.HEIGHT)
@@ -59,8 +55,7 @@ public class RaiseEarth extends EarthAbility {
 			this.origin = this.block.getLocation();
 			this.location = this.origin.clone();
 			this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), this.height);
-		}
-		catch (final IllegalStateException e) {
+		} catch (final IllegalStateException e) {
 			return;
 		}
 
@@ -106,12 +101,8 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	private boolean canInstantiate() {
-		if (this.location.getBlock().getRelative(BlockFace.UP).getType() == Material.STATIONARY_LAVA) {
-			return false;
-		}
-
 		for (final Block block : this.affectedBlocks.keySet()) {
-			if (!this.isEarthbendable(block) || ALL_AFFECTED_BLOCKS.containsKey(block)) {
+			if (!this.isEarthbendable(block) || TempBlock.isTempBlock(block)) {
 				return false;
 			}
 		}
@@ -150,11 +141,15 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	public static boolean blockInAllAffectedBlocks(final Block block) {
-		return ALL_AFFECTED_BLOCKS.containsKey(block);
+		for (RaiseEarth raiseEarth : getAbilities(RaiseEarth.class)) {
+			if (raiseEarth.affectedBlocks.contains(block)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void revertAffectedBlock(final Block block) {
-		ALL_AFFECTED_BLOCKS.remove(block);
 		for (final RaiseEarth raiseEarth : getAbilities(RaiseEarth.class)) {
 			raiseEarth.affectedBlocks.remove(block);
 		}

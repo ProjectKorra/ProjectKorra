@@ -40,7 +40,7 @@ public class RaiseEarthWall extends EarthAbility {
 			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
 		}
 
-		start();
+		this.start();
 	}
 
 	private static Vector getDegreeRoundedVector(Vector vec, final double degreeIncrement) {
@@ -74,7 +74,7 @@ public class RaiseEarthWall extends EarthAbility {
 
 	@Override
 	public void progress() {
-		final Vector direction = player.getEyeLocation().getDirection().normalize();
+		final Vector direction = this.player.getEyeLocation().getDirection().normalize();
 		double ox, oy, oz;
 		direction.setY(0);
 		ox = -direction.getZ();
@@ -85,7 +85,7 @@ public class RaiseEarthWall extends EarthAbility {
 		orth = orth.normalize();
 		orth = getDegreeRoundedVector(orth, 0.25);
 
-		final Block sblock = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.SHIFT_DOWN);
+		final Block sblock = BlockSource.getEarthSourceBlock(this.player, this.selectRange, ClickType.SHIFT_DOWN);
 
 		if (sblock == null) {
 			this.location = this.getTargetEarthBlock(this.selectRange).getLocation();
@@ -105,7 +105,7 @@ public class RaiseEarthWall extends EarthAbility {
 					block = block.getRelative(BlockFace.DOWN);
 					if (this.isEarthbendable(block)) {
 						shouldAddCooldown = true;
-						new RaiseEarth(player, block.getLocation(), this.height);
+						new RaiseEarth(this.player, block.getLocation(), this.height);
 					} else if (!this.isTransparent(block)) {
 						break;
 					}
@@ -115,14 +115,14 @@ public class RaiseEarthWall extends EarthAbility {
 					block = block.getRelative(BlockFace.UP);
 					if (this.isTransparent(block)) {
 						shouldAddCooldown = true;
-						new RaiseEarth(player, block.getRelative(BlockFace.DOWN).getLocation(), this.height);
+						new RaiseEarth(this.player, block.getRelative(BlockFace.DOWN).getLocation(), this.height);
 					} else if (!this.isEarthbendable(block)) {
 						break;
 					}
 				}
 			} else if (this.isEarthbendable(block)) {
 				shouldAddCooldown = true;
-				new RaiseEarth(player, block.getLocation(), this.height);
+				new RaiseEarth(this.player, block.getLocation(), this.height);
 			}
 		}
 

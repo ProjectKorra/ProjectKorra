@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -95,7 +96,7 @@ public class LavaSurge extends LavaAbility {
 	public boolean prepare() {
 		final Block targetBlock = BlockSource.getEarthSourceBlock(this.player, this.prepareRange, ClickType.SHIFT_DOWN);
 
-		if (targetBlock == null || !(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) && !isLava(targetBlock.getRelative(BlockFace.UP))) {
+		if (targetBlock == null || !(ElementalAbility.isAir(targetBlock.getRelative(BlockFace.UP).getType())) && !isLava(targetBlock.getRelative(BlockFace.UP))) {
 			return false;
 		}
 
@@ -118,9 +119,7 @@ public class LavaSurge extends LavaAbility {
 
 		try {
 			targetLocation = GeneralMethods.getTargetedEntity(this.player, this.travelRange * 2, null).getLocation();
-		}
-		catch (final NullPointerException e) {
-		}
+		} catch (final NullPointerException e) {}
 
 		if (targetLocation == null) {
 			this.remove();
@@ -216,7 +215,7 @@ public class LavaSurge extends LavaAbility {
 				playEarthbendingSound(b.getLocation());
 
 				for (int i = 0; i < 2; i++) {
-					final TempBlock tb = new TempBlock(b, Material.STATIONARY_LAVA, (byte) 0);
+					final TempBlock tb = new TempBlock(b, Material.LAVA, GeneralMethods.getLavaData(0));
 					this.fractureTempBlocks.add(tb);
 				}
 			}
@@ -228,7 +227,7 @@ public class LavaSurge extends LavaAbility {
 			}
 
 			if (curTime > this.time + (this.fallingBlockInterval * this.fallingBlocksCount)) {
-				final FallingBlock fbs = GeneralMethods.spawnFallingBlock(this.sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
+				final FallingBlock fbs = GeneralMethods.spawnFallingBlock(this.sourceBlock.getLocation().add(0, 1, 0), Material.MAGMA_BLOCK, Material.MAGMA_BLOCK.createBlockData());
 				this.fallingBlocks.add(fbs);
 				ALL_FALLING_BLOCKS.add(fbs);
 				double x = this.random.nextDouble() / 5;
@@ -242,7 +241,7 @@ public class LavaSurge extends LavaAbility {
 
 				for (final Block b : this.fracture) {
 					if (this.random.nextBoolean() && b != this.sourceBlock) {
-						final FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
+						final FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), Material.MAGMA_BLOCK, Material.MAGMA_BLOCK.createBlockData());
 						ALL_FALLING_BLOCKS.add(fb);
 						this.fallingBlocks.add(fb);
 						fb.setVelocity(this.direction.clone().add(new Vector(this.random.nextDouble() / 10, 0.1, this.random.nextDouble() / 10)).multiply(1.2));

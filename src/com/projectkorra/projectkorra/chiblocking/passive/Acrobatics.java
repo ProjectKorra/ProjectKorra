@@ -17,8 +17,7 @@ public class Acrobatics extends ChiAbility implements PassiveAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {

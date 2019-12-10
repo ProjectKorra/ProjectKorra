@@ -102,7 +102,6 @@ public class WallOfFire extends FireAbility {
 
 		this.initializeBlocks();
 		this.start();
-		this.bPlayer.addCooldown(this);
 	}
 
 	private void affect(final Entity entity) {
@@ -148,8 +147,8 @@ public class WallOfFire extends FireAbility {
 			if (!this.isTransparent(block)) {
 				continue;
 			}
-			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
-			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
+			ParticleEffect.FLAME.display(block.getLocation(), 3, 0.6, 0.6, 0.6);
+			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.6, 0.6, 0.6);
 
 			if (this.random.nextInt(7) == 0) {
 				playFirebendingSound(block.getLocation());
@@ -208,6 +207,12 @@ public class WallOfFire extends FireAbility {
 			this.damageTick++;
 			this.damage();
 		}
+	}
+
+	@Override
+	public void remove() {
+		super.remove();
+		this.bPlayer.addCooldown(this);
 	}
 
 	@Override

@@ -197,7 +197,7 @@ public class FireBlastCharged extends FireAbility {
 					}
 				}
 				this.location.getWorld().playSound(this.location, Sound.ENTITY_GENERIC_EXPLODE, 5, 1);
-				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, this.location, 255.0D);
+				ParticleEffect.EXPLOSION_HUGE.display(this.location, 1, 0, 0, 0);
 			}
 		}
 
@@ -207,8 +207,8 @@ public class FireBlastCharged extends FireAbility {
 
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
-			ParticleEffect.FLAME.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 5);
-			ParticleEffect.SMOKE.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 2);
+			ParticleEffect.FLAME.display(block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
+			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.5, 0.5, 0.5, 0);
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
 			}
@@ -216,7 +216,7 @@ public class FireBlastCharged extends FireAbility {
 		}
 
 		boolean exploded = false;
-		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2 * this.collisionRadius)) {
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
 			if (entity.getEntityId() == this.player.getEntityId() || GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
@@ -235,7 +235,7 @@ public class FireBlastCharged extends FireAbility {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
 			if (BlazeArc.isIgnitable(this.player, block)) {
 				if (block.getType() != Material.FIRE) {
-					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState().getData());
+					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState());
 				}
 				block.setType(Material.FIRE);
 				if (this.dissipate) {
@@ -310,9 +310,11 @@ public class FireBlastCharged extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		bPlayer.addCooldown(this);
+		if (this.charged) {
+			this.bPlayer.addCooldown(this);
+		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return "FireBlast";
@@ -325,7 +327,7 @@ public class FireBlastCharged extends FireAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 
 	@Override

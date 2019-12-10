@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -117,12 +118,14 @@ public class Illumination extends FireAbility {
 			return;
 		} else if (this.block != null && standingBlock.equals(this.block.getBlock())) {
 			return;
-		} else if (standBlock.getType() == Material.LEAVES || standBlock.getType() == Material.LEAVES_2) {
+		} else if (Tag.LEAVES.isTagged(standBlock.getType())) {
+			return;
+		} else if (standingBlock.getType().name().endsWith("_FENCE") || standingBlock.getType().name().endsWith("_FENCE_GATE") || standingBlock.getType().name().endsWith("_WALL") || standingBlock.getType() == Material.IRON_BARS || standingBlock.getType().name().endsWith("_PANE")) {
 			return;
 		}
 
 		this.revert();
-		this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
+		this.block = new TempBlock(standingBlock, Material.TORCH);
 		BLOCKS.put(this.block, this.player);
 	}
 

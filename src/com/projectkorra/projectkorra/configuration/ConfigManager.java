@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.configuration;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigManager {
@@ -165,9 +166,6 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more at our website! ");
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
-			config.addDefault("Commands.Help.RPGUsage", "/bending rpg [argument]");
-			config.addDefault("Commands.Help.ItemsUsage", "/bending items [argument]");
-			config.addDefault("Commands.Help.SpiritsUsage", "/bending spirits [argument]");
 
 			config.addDefault("Commands.Display.Description", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.");
 
@@ -443,67 +441,104 @@ public class ConfigManager {
 			config = defaultConfig.get();
 
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
-			earthBlocks.add("DIRT");
-			earthBlocks.add("MYCEL");
-			earthBlocks.add("GRASS");
-			earthBlocks.add("STONE");
-			earthBlocks.add("GRAVEL");
-			earthBlocks.add("CLAY");
-			earthBlocks.add("COAL_ORE");
-			earthBlocks.add("REDSTONE_ORE");
-			earthBlocks.add("LAPIS_ORE");
-			earthBlocks.add("DIAMOND_ORE");
-			earthBlocks.add("NETHERRACK");
-			earthBlocks.add("COBBLESTONE");
-			earthBlocks.add("STEP");
-			earthBlocks.add("GRASS_PATH");
+			earthBlocks.add(Material.DIRT.toString());
+			earthBlocks.add(Material.MYCELIUM.toString());
+			earthBlocks.add(Material.STONE.toString());
+			earthBlocks.add(Material.GRAVEL.toString());
+			earthBlocks.add(Material.CLAY.toString());
+			earthBlocks.add(Material.COAL_ORE.toString());
+			earthBlocks.add(Material.REDSTONE_ORE.toString());
+			earthBlocks.add(Material.LAPIS_ORE.toString());
+			earthBlocks.add(Material.DIAMOND_ORE.toString());
+			earthBlocks.add(Material.EMERALD_ORE.toString());
+			earthBlocks.add(Material.NETHERRACK.toString());
+			earthBlocks.add(Material.COBBLESTONE.toString());
+			earthBlocks.add(Material.STONE_SLAB.toString());
+			earthBlocks.add(Material.COBBLESTONE_SLAB.toString());
+			earthBlocks.add(Material.GRASS_BLOCK.toString());
+			earthBlocks.add(Material.GRASS_PATH.toString());
+			earthBlocks.add(Material.ANDESITE.toString());
+			earthBlocks.add(Material.GRANITE.toString());
+			earthBlocks.add(Material.DIORITE.toString());
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
-			metalBlocks.add("IRON_ORE");
-			metalBlocks.add("GOLD_ORE");
-			metalBlocks.add("QUARTZ_ORE");
-			metalBlocks.add("IRON_BLOCK");
-			metalBlocks.add("GOLD_BLOCK");
-			metalBlocks.add("QUARTZ_BLOCK");
+			metalBlocks.add(Material.IRON_ORE.toString());
+			metalBlocks.add(Material.GOLD_ORE.toString());
+			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
+			metalBlocks.add(Material.IRON_BLOCK.toString());
+			metalBlocks.add(Material.GOLD_BLOCK.toString());
+			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
 
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
-			sandBlocks.add("SAND");
-			sandBlocks.add("SANDSTONE");
-			sandBlocks.add("RED_SAND");
-			sandBlocks.add("RED_SANDSTONE");
+			sandBlocks.add(Material.SAND.toString());
+			sandBlocks.add(Material.SANDSTONE.toString());
+			sandBlocks.add(Material.SANDSTONE_SLAB.toString());
+			sandBlocks.add(Material.RED_SAND.toString());
+			sandBlocks.add(Material.RED_SANDSTONE.toString());
+			sandBlocks.add(Material.RED_SANDSTONE_SLAB.toString());
 
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
-			iceBlocks.add("ICE");
-			iceBlocks.add("PACKED_ICE");
+			iceBlocks.add(Material.ICE.toString());
+			iceBlocks.add(Material.PACKED_ICE.toString());
+			iceBlocks.add(Material.BLUE_ICE.toString());
+			iceBlocks.add(Material.FROSTED_ICE.toString());
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
-			plantBlocks.add("SAPLING");
-			plantBlocks.add("LEAVES");
-			plantBlocks.add("LEAVES_2");
-			plantBlocks.add("DEAD_BUSH");
-			plantBlocks.add("YELLOW_FLOWER");
-			plantBlocks.add("RED_ROSE");
-			plantBlocks.add("RED_MUSHROOM");
-			plantBlocks.add("BROWN_MUSHROOM");
-			plantBlocks.add("CACTUS");
-			plantBlocks.add("PUMPKIN");
-			plantBlocks.add("HUGE_MUSHROOM_1");
-			plantBlocks.add("HUGE_MUSHROOM_2");
-			plantBlocks.add("MELON_BLOCK");
-			plantBlocks.add("VINE");
-			plantBlocks.add("WATER_LILY");
-			plantBlocks.add("DOUBLE_PLANT");
-			plantBlocks.add("CROPS");
-			plantBlocks.add("LONG_GRASS");
-			plantBlocks.add("SUGAR_CANE_BLOCK");
-			plantBlocks.add("PUMPKIN_STEM");
-			plantBlocks.add("MELON_STEM");
+			plantBlocks.add(Material.ACACIA_SAPLING.toString());
+			plantBlocks.add(Material.BIRCH_SAPLING.toString());
+			plantBlocks.add(Material.DARK_OAK_SAPLING.toString());
+			plantBlocks.add(Material.JUNGLE_SAPLING.toString());
+			plantBlocks.add(Material.OAK_SAPLING.toString());
+			plantBlocks.add(Material.SPRUCE_SAPLING.toString());
+			plantBlocks.add(Material.ACACIA_LEAVES.toString());
+			plantBlocks.add(Material.BIRCH_LEAVES.toString());
+			plantBlocks.add(Material.DARK_OAK_LEAVES.toString());
+			plantBlocks.add(Material.JUNGLE_LEAVES.toString());
+			plantBlocks.add(Material.OAK_LEAVES.toString());
+			plantBlocks.add(Material.SPRUCE_LEAVES.toString());
+			plantBlocks.add(Material.DEAD_BUSH.toString());
+			plantBlocks.add(Material.ORANGE_TULIP.toString());
+			plantBlocks.add(Material.PINK_TULIP.toString());
+			plantBlocks.add(Material.RED_TULIP.toString());
+			plantBlocks.add(Material.WHITE_TULIP.toString());
+			plantBlocks.add(Material.ROSE_BUSH.toString());
+			plantBlocks.add(Material.BLUE_ORCHID.toString());
+			plantBlocks.add(Material.ALLIUM.toString());
+			plantBlocks.add(Material.DANDELION.toString());
+			plantBlocks.add(Material.LILAC.toString());
+			plantBlocks.add(Material.OXEYE_DAISY.toString());
+			plantBlocks.add(Material.AZURE_BLUET.toString());
+			plantBlocks.add(Material.PEONY.toString());
+			plantBlocks.add(Material.SUNFLOWER.toString());
+			plantBlocks.add(Material.POPPY.toString());
+			plantBlocks.add(Material.FERN.toString());
+			plantBlocks.add(Material.LARGE_FERN.toString());
+			plantBlocks.add(Material.RED_MUSHROOM.toString());
+			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.toString());
+			plantBlocks.add(Material.BROWN_MUSHROOM.toString());
+			plantBlocks.add(Material.BROWN_MUSHROOM_BLOCK.toString());
+			plantBlocks.add(Material.MUSHROOM_STEM.toString());
+			plantBlocks.add(Material.CACTUS.toString());
+			plantBlocks.add(Material.PUMPKIN.toString());
+			plantBlocks.add(Material.PUMPKIN_STEM.toString());
+			plantBlocks.add(Material.MELON.toString());
+			plantBlocks.add(Material.MELON_STEM.toString());
+			plantBlocks.add(Material.VINE.toString());
+			plantBlocks.add(Material.LILY_PAD.toString());
+			plantBlocks.add(Material.WHEAT.toString());
+			plantBlocks.add(Material.BEETROOTS.toString());
+			plantBlocks.add(Material.CARROTS.toString());
+			plantBlocks.add(Material.POTATOES.toString());
+			plantBlocks.add(Material.SUGAR_CANE.toString());
+			plantBlocks.add(Material.GRASS.toString());
+			plantBlocks.add(Material.TALL_GRASS.toString());
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
-			snowBlocks.add("SNOW");
+			snowBlocks.add(Material.SNOW.toString());
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
+			config.addDefault("Properties.DatabaseCooldowns", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
@@ -513,6 +548,7 @@ public class ConfigManager {
 			config.addDefault("Properties.TogglePassivesWithAllBending", true);
 			config.addDefault("Properties.SeaLevel", 62);
 			config.addDefault("Properties.ChooseCooldown", 0L);
+			config.addDefault("Properties.MaxPresets", 10);
 
 			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 			config.addDefault("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock", false);
@@ -528,7 +564,9 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.RespectLWC", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
-			config.addDefault("Properties.RegionProtection.Kingdoms", true);
+			config.addDefault("Properties.RegionProtection.RespectKingdoms", true);
+			config.addDefault("Properties.RegionProtection.RespectPlotSquared", true);
+			config.addDefault("Properties.RegionProtection.RespectRedProtect", true);
 			config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
 
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
@@ -539,6 +577,8 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.Sound.Pitch", 2);
 
 			config.addDefault("Properties.Water.DynamicSourcing", true);
+			config.addDefault("Properties.Water.FreezePlayerHead", true);
+			config.addDefault("Properties.Water.FreezePlayerFeet", true);
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
@@ -569,7 +609,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.EarthSound.Sound", "ENTITY_GHAST_SHOOT");
 			config.addDefault("Properties.Earth.EarthSound.Volume", 1);
 			config.addDefault("Properties.Earth.EarthSound.Pitch", 1);
-			config.addDefault("Properties.Earth.MetalSound.Sound", "ENTITY_IRONGOLEM_HURT");
+			config.addDefault("Properties.Earth.MetalSound.Sound", "ENTITY_IRON_GOLEM_HURT");
 			config.addDefault("Properties.Earth.MetalSound.Volume", 1);
 			config.addDefault("Properties.Earth.MetalSound.Pitch", 1.25);
 			config.addDefault("Properties.Earth.SandSound.Sound", "BLOCK_SAND_BREAK");
@@ -587,7 +627,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.FireSound.Sound", "BLOCK_FIRE_AMBIENT");
 			config.addDefault("Properties.Fire.FireSound.Volume", 1);
 			config.addDefault("Properties.Fire.FireSound.Pitch", 1);
-			config.addDefault("Properties.Fire.CombustionSound.Sound", "ENTITY_FIREWORK_BLAST");
+			config.addDefault("Properties.Fire.CombustionSound.Sound", "ENTITY_FIREWORK_ROCKET_BLAST");
 			config.addDefault("Properties.Fire.CombustionSound.Volume", 1);
 			config.addDefault("Properties.Fire.CombustionSound.Pitch", 0);
 			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
@@ -721,6 +761,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage", 5);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Damage", 4);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Range", 30);
+			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Cooldown", 0);
+			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Damage", 4);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Range", 30);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Push", 0.9);
@@ -757,8 +799,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.SelectParticles", 4);
 			config.addDefault("Abilities.Air.AirBlast.Particles", 6);
 			config.addDefault("Abilities.Air.AirBlast.Cooldown", 500);
-			config.addDefault("Abilities.Air.AirBlast.Push.Self", 2.5);
-			config.addDefault("Abilities.Air.AirBlast.Push.Entities", 3.5);
+			config.addDefault("Abilities.Air.AirBlast.Push.Self", 2.0);
+			config.addDefault("Abilities.Air.AirBlast.Push.Entities", 1.6);
 			config.addDefault("Abilities.Air.AirBlast.CanFlickLevers", true);
 			config.addDefault("Abilities.Air.AirBlast.CanOpenDoors", true);
 			config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
@@ -766,7 +808,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 			config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
-			config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
+			config.addDefault("Abilities.Air.AirBurst.PushFactor", 2.8);
 			config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
 			config.addDefault("Abilities.Air.AirBurst.Damage", 0);
 			config.addDefault("Abilities.Air.AirBurst.Cooldown", 0);
@@ -776,6 +818,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBurst.AngleTheta", 10);
 
 			config.addDefault("Abilities.Air.AirScooter.Enabled", true);
+			config.addDefault("Abilities.Air.AirScooter.ShowSitting", false);
 			config.addDefault("Abilities.Air.AirScooter.Speed", 0.675);
 			config.addDefault("Abilities.Air.AirScooter.Interval", 100);
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);
@@ -786,10 +829,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
 			config.addDefault("Abilities.Air.AirShield.Duration", 0);
-			config.addDefault("Abilities.Air.AirShield.Radius", 7);
+			config.addDefault("Abilities.Air.AirShield.MaxRadius", 7);
+			config.addDefault("Abilities.Air.AirShield.InitialRadius", 1);
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
 			config.addDefault("Abilities.Air.AirShield.Particles", 5);
+			config.addDefault("Abilities.Air.AirShield.DynamicCooldown", false);
 
 			config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 			config.addDefault("Abilities.Air.AirSpout.Cooldown", 0);
@@ -802,7 +847,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSuction.Range", 20);
 			config.addDefault("Abilities.Air.AirSuction.SelectRange", 10);
 			config.addDefault("Abilities.Air.AirSuction.Radius", 2);
-			config.addDefault("Abilities.Air.AirSuction.Push", 2.5);
+			config.addDefault("Abilities.Air.AirSuction.Push.Self", 2.0);
+			config.addDefault("Abilities.Air.AirSuction.Push.Others", 1.3);
 			config.addDefault("Abilities.Air.AirSuction.Cooldown", 500);
 			config.addDefault("Abilities.Air.AirSuction.Particles", 6);
 			config.addDefault("Abilities.Air.AirSuction.SelectParticles", 6);
@@ -827,7 +873,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 500);
-			config.addDefault("Abilities.Air.Suffocate.Cooldown", 0);
+			config.addDefault("Abilities.Air.Suffocate.Cooldown", 6500);
 			config.addDefault("Abilities.Air.Suffocate.Range", 20);
 			config.addDefault("Abilities.Air.Suffocate.Damage", 2);
 			config.addDefault("Abilities.Air.Suffocate.DamageInitialDelay", 2);
@@ -911,6 +957,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBlast.CollisionRadius", 1.5);
 			config.addDefault("Abilities.Water.IceBlast.Interval", 20);
 			config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
+			config.addDefault("Abilities.Water.IceBlast.AllowSnow", false);
 
 			config.addDefault("Abilities.Water.IceSpike.Enabled", true);
 			config.addDefault("Abilities.Water.IceSpike.Cooldown", 2000);
@@ -1108,6 +1155,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBullet.AnimationSpeed", 1);
 			config.addDefault("Abilities.Water.IceBullet.ShootTime", 10000);
 			config.addDefault("Abilities.Water.IceBullet.Cooldown", 10000);
+			config.addDefault("Abilities.Water.IceBullet.ShotCooldown", 500);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Enabled", true);
@@ -1168,7 +1216,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 			config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
+			config.addDefault("Abilities.Earth.EarthTunnel.IgnoreOres", false);
 			config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
+			config.addDefault("Abilities.Earth.EarthTunnel.BlocksPerInterval", 1);
 
 			config.addDefault("Abilities.Earth.Extraction.Enabled", true);
 			config.addDefault("Abilities.Earth.Extraction.SelectRange", 5);
@@ -1320,6 +1370,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Speed", 0.8);
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
+			config.addDefault("Abilities.Fire.FireJet.ShowGliding", false);
 
 			config.addDefault("Abilities.Fire.FireManipulation.Enabled", false);
 
@@ -1444,8 +1495,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.AcrobatStance.Cooldown", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.Duration", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.ChiBlockBoost", 3);
-			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 1);
-			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 1);
+			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 3);
+			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 3);
 
 			config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 			config.addDefault("Abilities.Chi.HighJump.Height", 1.3);

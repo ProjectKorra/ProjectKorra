@@ -8,6 +8,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -16,7 +17,9 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -160,14 +163,14 @@ public class EarthSmash extends EarthAbility {
 
 		if (bPlayer.isAvatarState()) {
 			this.selectRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange");
-			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Grab.Range");
+			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange");
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Damage");
 			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback");
-			this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Flight.Speed");
-			this.flightDuration = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Flight.Duration");
-			this.shootRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Shoot.Range");
+			this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed");
+			this.flightDuration = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer");
+			this.shootRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange");
 		}
 	}
 
@@ -209,7 +212,7 @@ public class EarthSmash extends EarthAbility {
 			} else if (System.currentTimeMillis() - this.getStartTime() > this.chargeTime) {
 				final Location tempLoc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
 				tempLoc.add(0, 0.3, 0);
-				ParticleEffect.SMOKE.display(tempLoc, 0.3F, 0.1F, 0.3F, 0, 4);
+				ParticleEffect.SMOKE_NORMAL.display(tempLoc, 4, 0.3, 0.1, 0.3, 0);
 			}
 		} else if (this.state == State.LIFTING) {
 			if (System.currentTimeMillis() - this.delay >= this.liftAnimationInterval) {
@@ -224,12 +227,11 @@ public class EarthSmash extends EarthAbility {
 
 				// Check to make sure the new location is available to move to.
 				for (final Block block : this.getBlocks()) {
-					if (block.getType() != Material.AIR && !this.isTransparent(block)) {
+					if (!ElementalAbility.isAir(block.getType()) && !this.isTransparent(block)) {
 						this.location = oldLoc;
 						break;
 					}
 				}
-
 				this.draw();
 				return;
 			} else {
@@ -254,7 +256,7 @@ public class EarthSmash extends EarthAbility {
 				// If an earthsmash runs into too many blocks we should remove it.
 				int badBlocksFound = 0;
 				for (final Block block : this.getBlocks()) {
-					if (block.getType() != Material.AIR && (!this.isTransparent(block) || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)) {
+					if (!ElementalAbility.isAir(block.getType()) && (!this.isTransparent(block) || block.getType() == Material.WATER)) {
 						badBlocksFound++;
 					}
 				}
@@ -288,6 +290,9 @@ public class EarthSmash extends EarthAbility {
 					return;
 				}
 				for (final Entity entity : entities) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+						continue;
+					}
 					entity.setVelocity(direction.clone().multiply(this.flightSpeed));
 				}
 
@@ -344,7 +349,7 @@ public class EarthSmash extends EarthAbility {
 				// Make sure there is a clear path upward otherwise remove.
 				for (int y = 0; y <= 3; y++) {
 					final Block tempBlock = this.location.clone().add(0, y, 0).getBlock();
-					if (!this.isTransparent(tempBlock) && tempBlock.getType() != Material.AIR) {
+					if (!this.isTransparent(tempBlock) && !ElementalAbility.isAir(tempBlock.getType())) {
 						this.remove();
 						return;
 					}
@@ -356,7 +361,7 @@ public class EarthSmash extends EarthAbility {
 						for (int z = -1; z <= 1; z++) {
 							if ((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) {
 								final Block block = tempLoc.clone().add(x, y, z).getBlock();
-								this.currentBlocks.add(new BlockRepresenter(x, y, z, this.selectMaterialForRepresenter(block.getType()), block.getData()));
+								this.currentBlocks.add(new BlockRepresenter(x, y, z, this.selectMaterialForRepresenter(block.getType()), block.getBlockData()));
 							}
 						}
 					}
@@ -417,7 +422,7 @@ public class EarthSmash extends EarthAbility {
 
 			}
 			if (this.player != null && this.isTransparent(block)) {
-				this.affectedBlocks.add(new TempBlock(block, blockRep.getType(), blockRep.getData()));
+				this.affectedBlocks.add(new TempBlock(block, blockRep.getType()));
 				getPreventEarthbendingBlocks().add(block);
 			}
 		}
@@ -561,6 +566,9 @@ public class EarthSmash extends EarthAbility {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.flightDetectionRadius);
 		for (final Entity entity : entities) {
 			if (entity instanceof LivingEntity && entity != this.player && !this.affectedEntities.contains(entity)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					continue;
+				}
 				this.affectedEntities.add(entity);
 				final double damage = this.currentBlocks.size() / 13.0 * this.damage;
 				DamageHandler.damageEntity(entity, damage, this);
@@ -616,9 +624,9 @@ public class EarthSmash extends EarthAbility {
 	public class BlockRepresenter {
 		private int x, y, z;
 		private Material type;
-		private byte data;
+		private BlockData data;
 
-		public BlockRepresenter(final int x, final int y, final int z, final Material type, final byte data) {
+		public BlockRepresenter(final int x, final int y, final int z, final Material type, final BlockData data) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -642,7 +650,7 @@ public class EarthSmash extends EarthAbility {
 			return this.type;
 		}
 
-		public byte getData() {
+		public BlockData getData() {
 			return this.data;
 		}
 
@@ -662,7 +670,7 @@ public class EarthSmash extends EarthAbility {
 			this.type = type;
 		}
 
-		public void setData(final byte data) {
+		public void setData(final BlockData data) {
 			this.data = data;
 		}
 

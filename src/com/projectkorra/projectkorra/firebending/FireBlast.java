@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -51,6 +52,8 @@ public class FireBlast extends FireAbility {
 	private double fireTicks;
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
+	private double flameRadius;
+	private double smokeRadius;
 	private Random random;
 	private Location location;
 	private Location origin;
@@ -112,26 +115,36 @@ public class FireBlast extends FireAbility {
 		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
 		this.knockback = getConfig().getDouble("Abilities.Fire.FireBlast.Knockback");
+		this.flameRadius = getConfig().getDouble("Abilities.Fire.FireBlast.FlameParticleRadius");
+		this.smokeRadius = getConfig().getDouble("Abilities.Fire.FireBlast.SmokeParticleRadius");
 		this.random = new Random();
 	}
 
 	private void advanceLocation() {
-		if (this.showParticles) {
-			ParticleEffect.FLAME.display(this.location, 0.275F, 0.275F, 0.275F, 0, 6);
-			ParticleEffect.SMOKE.display(this.location, 0.3F, 0.3F, 0.3F, 0, 3);
+		if (this.isFireBurst) {
+			this.flameRadius += 0.06;
+			this.smokeRadius += 0.06;
 		}
+		
+		if (this.showParticles) {
+			ParticleEffect.FLAME.display(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
+			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, this.smokeRadius, this.smokeRadius, this.smokeRadius);
+		}
+		
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
 			return;
 		}
+		
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
+		
 		if (this.random.nextInt(4) == 0) {
 			playFirebendingSound(this.location);
 		}
 	}
 
 	private void affect(final Entity entity) {
-		if (entity.getUniqueId() != this.player.getUniqueId()) {
+		if (entity.getUniqueId() != this.player.getUniqueId() && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) && !((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			if (this.bPlayer.isAvatarState()) {
 				GeneralMethods.setVelocity(entity, this.direction.clone().multiply(AvatarState.getValue(this.knockback)));
 			} else {
@@ -203,11 +216,9 @@ public class FireBlast extends FireAbility {
 			return;
 		}
 
-		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
+		Entity entity = GeneralMethods.getClosestEntity(this.location, this.collisionRadius);
+		if (entity != null) {
 			this.affect(entity);
-			if (entity instanceof LivingEntity) {
-				break;
-			}
 		}
 
 		this.advanceLocation();
@@ -422,4 +433,5 @@ public class FireBlast extends FireAbility {
 		this.isFireBurst = isFireBurst;
 	}
 
+	
 }

@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -21,8 +22,10 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
@@ -168,7 +171,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 
 				final Block blockAbove = block.getRelative(BlockFace.UP);
-				if (blockAbove.getType() != Material.AIR && !this.isWaterbendable(blockAbove)) {
+				if (!ElementalAbility.isAir(blockAbove.getType()) && !this.isWaterbendable(blockAbove)) {
 					this.remove();
 					return;
 				}
@@ -210,6 +213,17 @@ public class WaterSpoutWave extends WaterAbility {
 					new PlantRegrowth(this.player, this.origin.getBlock());
 					this.origin.getBlock().setType(Material.AIR);
 				}
+
+				if (TempBlock.isTempBlock(this.origin.getBlock())) {
+					final TempBlock tb = TempBlock.get(this.origin.getBlock());
+
+					if (Torrent.getFrozenBlocks().containsKey(tb)) {
+						Torrent.massThaw(tb);
+					} else if (!isBendableWaterTempBlock(tb)) {
+						this.remove();
+						return;
+					}
+				}
 			}
 
 			this.removeOldType(this.player, AbilityType.CLICK);
@@ -228,11 +242,11 @@ public class WaterSpoutWave extends WaterAbility {
 				this.location.add(0, this.animationSpeed, 0);
 				final Block block = this.location.getBlock();
 
-				if (!(this.isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (!(this.isWaterbendable(block) || ElementalAbility.isAir(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()))) {
 					this.remove();
 					return;
 				}
-				this.createBlock(block, Material.STATIONARY_WATER);
+				this.createBlock(block, Material.WATER);
 				if (this.location.distanceSquared(this.origin) > 4) {
 					this.animation = AnimateState.TOWARD_PLAYER;
 				}
@@ -244,12 +258,12 @@ public class WaterSpoutWave extends WaterAbility {
 				this.location.add(vec.normalize().multiply(this.animationSpeed));
 				final Block block = this.location.getBlock();
 
-				if (!(this.isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (!(this.isWaterbendable(block) || ElementalAbility.isAir(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()))) {
 					this.remove();
 					return;
 				}
 
-				this.createBlock(block, Material.STATIONARY_WATER);
+				this.createBlock(block, Material.WATER);
 				if (this.location.distanceSquared(eyeLoc) < 1.7) {
 					this.animation = AnimateState.CIRCLE;
 					final Vector tempDir = this.player.getLocation().getDirection();
@@ -288,11 +302,11 @@ public class WaterSpoutWave extends WaterAbility {
 
 				this.player.setVelocity(this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
-					if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (this.iceWave) {
-							this.createBlockDelay(block, Material.ICE, (byte) 0, 2L);
+							this.createBlockDelay(block, Material.ICE, Material.ICE.createBlockData(), 2L);
 						} else {
-							this.createBlock(block, Material.STATIONARY_WATER, (byte) 0);
+							this.createBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 						}
 					}
 				}
@@ -336,8 +350,8 @@ public class WaterSpoutWave extends WaterAbility {
 			dir.setY(0);
 			final Block block = this.player.getEyeLocation().add(dir).getBlock();
 			this.location = block.getLocation();
-			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-				this.createBlock(block, Material.STATIONARY_WATER, (byte) 8);
+			if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				this.createBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
 			}
 		}
 	}
@@ -354,7 +368,7 @@ public class WaterSpoutWave extends WaterAbility {
 		}
 	}
 
-	public void createBlockDelay(final Block block, final Material mat, final byte data, final long delay) {
+	public void createBlockDelay(final Block block, final Material mat, final BlockData data, final long delay) {
 		final BukkitRunnable br = new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -366,10 +380,10 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, (byte) 0);
+		this.createBlock(block, mat, mat.createBlockData());
 	}
 
-	public void createBlock(final Block block, final Material mat, final byte data) {
+	public void createBlock(final Block block, final Material mat, final BlockData data) {
 		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
 	}
 
@@ -408,10 +422,23 @@ public class WaterSpoutWave extends WaterAbility {
 					if (block.getLocation().distanceSquared(entity.getLocation().getBlock().getLocation()) > radius * radius) {
 						continue;
 					}
-
-					if (block.getType() == Material.AIR || block.getType() == Material.ICE || this.isWaterbendable(block)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+						continue;
+					}
+					if (entity instanceof Player) {
+						if (Commands.invincible.contains(((Player) entity).getName())) {
+							return;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
+							continue;
+						}
+						if (!getConfig().getBoolean("Properties.Water.FreezePlayerFeet") && GeneralMethods.playerFeetIsInBlock((Player) entity, block)) {
+							continue;
+						}
+					}
+					if (ElementalAbility.isAir(block.getType()) || block.getType() == Material.ICE || this.isWaterbendable(block)) {
 						if (!FROZEN_BLOCKS.containsKey(block)) {
-							final TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 1);
+							final TempBlock tblock = new TempBlock(block, Material.ICE);
 							FROZEN_BLOCKS.put(block, tblock);
 							if (this.revertIceSphere) {
 								tblock.setRevertTime(this.revertSphereTime + (new Random().nextInt(1000) - 500));

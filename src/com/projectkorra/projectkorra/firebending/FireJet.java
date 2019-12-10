@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
+import static com.projectkorra.projectkorra.firebending.Illumination.isIlluminationTorch;
+
 import java.util.Random;
 
 import org.bukkit.Location;
@@ -8,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -25,6 +28,8 @@ public class FireJet extends FireAbility {
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Random random;
+	private Boolean previousGlidingState;
+	private Boolean showGliding;
 
 	public FireJet(final Player player) {
 		super(player);
@@ -46,28 +51,32 @@ public class FireJet extends FireAbility {
 		this.duration = getConfig().getLong("Abilities.Fire.FireJet.Duration");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireJet.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");
+		this.showGliding = getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding");
 		this.random = new Random();
 
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (BlazeArc.isIgnitable(player, block) || block.getType() == Material.AIR || block.getType() == Material.STEP || block.getType() == Material.WOOD_STEP || this.bPlayer.isAvatarState()) {
+		if (BlazeArc.isIgnitable(player, block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
-			if (canFireGrief()) {
-				if (block.getType() == Material.AIR) {
+			if (!canFireGrief()) {
+				if (ElementalAbility.isAir(block.getType())) {
 					createTempFire(block.getLocation());
 				}
 
-			} else if (block.getType() == Material.AIR) {
+			} else if (ElementalAbility.isAir(block.getType())) {
 				block.setType(Material.FIRE);
 			}
 
-			flightHandler.createInstance(player, this.getName());
+			this.flightHandler.createInstance(player, this.getName());
 			player.setAllowFlight(true);
 			this.time = System.currentTimeMillis();
 
 			this.start();
-			this.bPlayer.addCooldown(this);
+			if (this.showGliding) {
+				this.previousGlidingState = player.isGliding();
+				player.setGliding(true);
+			}
 		}
 	}
 
@@ -84,8 +93,8 @@ public class FireJet extends FireAbility {
 				playFirebendingSound(this.player.getLocation());
 			}
 
-			ParticleEffect.FLAME.display(this.player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
-			ParticleEffect.SMOKE.display(this.player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.FLAME.display(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
+			ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {
@@ -103,7 +112,12 @@ public class FireJet extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		flightHandler.removeInstance(this.player, this.getName());
+		if (this.showGliding) {
+			this.player.setGliding(this.previousGlidingState);
+		}
+		this.flightHandler.removeInstance(this.player, this.getName());
+		this.player.setFallDistance(0);
+		this.bPlayer.addCooldown(this);
 	}
 
 	@Override

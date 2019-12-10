@@ -1,14 +1,13 @@
 package com.projectkorra.projectkorra.earthbending.passive;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -20,8 +19,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class DensityShift extends EarthAbility implements PassiveAbility {
-	private static final Map<Block, Long> SAND_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<Block, MaterialData> SAND_ID_ENTITIES = new ConcurrentHashMap<>();
+	private static final Set<TempBlock> SAND_BLOCKS = new HashSet<>();
 
 	public DensityShift(final Player player) {
 		super(player);
@@ -40,40 +38,21 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 			return true;
 		}
 
-		if (ElementalAbility.isEarth(block) || ElementalAbility.isTransparent(player, block)) {
-			if (!ElementalAbility.isTransparent(player, block)) {
-				final MaterialData type = block.getState().getData();
-				if (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
-					if (type.getItemType() == Material.RED_SANDSTONE) {
-						final byte data = (byte) 0x1;
-						block.setType(Material.SAND);
-						block.setData(data);
-					} else {
-						block.setType(Material.SAND);
-					}
-
-					if (!SAND_BLOCKS.containsKey(block)) {
-						SAND_ID_ENTITIES.put(block, type);
-						SAND_BLOCKS.put(block, System.currentTimeMillis());
-					}
-				}
-			}
-
+		if (ElementalAbility.isEarth(block)) {
 			for (final Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
 				if (ElementalAbility.isEarth(affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
-						final MaterialData type = affectedBlock.getState().getData();
-						if (type.getItemType() == Material.RED_SANDSTONE) {
-							final byte data = (byte) 0x1;
-							affectedBlock.setType(Material.SAND);
-							affectedBlock.setData(data);
-						} else {
-							affectedBlock.setType(Material.SAND);
+						Material sand = Material.SAND;
+						if (affectedBlock.getType() == Material.RED_SANDSTONE) {
+							sand = Material.RED_SAND;
 						}
 
-						if (!SAND_BLOCKS.containsKey(affectedBlock)) {
-							SAND_ID_ENTITIES.put(affectedBlock, type);
-							SAND_BLOCKS.put(affectedBlock, System.currentTimeMillis());
+						final TempBlock tb = new TempBlock(affectedBlock, sand);
+
+						if (!SAND_BLOCKS.contains(tb)) {
+							SAND_BLOCKS.add(tb);
+							tb.setRevertTime(getDuration());
+							tb.setRevertTask(() -> SAND_BLOCKS.remove(tb));
 						}
 					}
 				}
@@ -86,44 +65,33 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	}
 
 	public static boolean isPassiveSand(final Block block) {
-		return SAND_BLOCKS.containsKey(block);
-	}
-
-	public static void revertSand(final Block block) {
-		final MaterialData materialdata = SAND_ID_ENTITIES.get(block);
-		SAND_ID_ENTITIES.remove(block);
-		SAND_BLOCKS.remove(block);
-
-		if (block.getType() == Material.SAND) {
-			block.setType(materialdata.getItemType());
-			block.setData(materialdata.getData());
+		if (TempBlock.isTempBlock(block)) {
+			return SAND_BLOCKS.contains(TempBlock.get(block));
+		} else {
+			return false;
 		}
 	}
 
-	public static void revertSands() {
-		for (final Block block : SAND_BLOCKS.keySet()) {
-			if (System.currentTimeMillis() >= SAND_BLOCKS.get(block) + getDuration()) {
-				revertSand(block);
-			}
+	public static void revertSand(final Block block) {
+		if (TempBlock.isTempBlock(block)) {
+			TempBlock.get(block).revertBlock();
 		}
 	}
 
 	public static void revertAllSand() {
-		for (final Block block : SAND_BLOCKS.keySet()) {
-			revertSand(block);
+		for (final TempBlock block : SAND_BLOCKS) {
+			block.setRevertTask(null);
+			block.revertBlock();
 		}
+		SAND_BLOCKS.clear();
 	}
 
 	public static void removeAll() {
 		revertAllSand();
 	}
 
-	public static Map<Block, Long> getSandBlocks() {
+	public static Set<TempBlock> getSandBlocks() {
 		return SAND_BLOCKS;
-	}
-
-	public static Map<Block, MaterialData> getSandIdEntities() {
-		return SAND_ID_ENTITIES;
 	}
 
 	public static long getDuration() {
@@ -131,8 +99,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public boolean isSneakAbility() {

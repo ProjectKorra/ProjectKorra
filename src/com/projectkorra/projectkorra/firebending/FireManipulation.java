@@ -113,8 +113,8 @@ public class FireManipulation extends FireAbility {
 					this.points.remove(point);
 					return;
 				}
-				ParticleEffect.FLAME.display(point, 0.25F, 0.25F, 0.25F, 0, 12);
-				ParticleEffect.SMOKE.display(point, 0.25F, 0.25F, 0.25F, 0, 6);
+				ParticleEffect.FLAME.display(point, 12, 0.25, 0.25, 0.25);
+				ParticleEffect.SMOKE_NORMAL.display(point, 6, 0.25, 0.25, 0.25);
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(point, 1.2D)) {
 					if (entity instanceof LivingEntity && entity.getUniqueId() != this.player.getUniqueId()) {
 						DamageHandler.damageEntity(entity, this.shieldDamage, this);
@@ -143,8 +143,8 @@ public class FireManipulation extends FireAbility {
 			for (final Location point : this.points.keySet()) {
 				final Vector direction = this.focalPoint.toVector().subtract(point.toVector());
 				point.add(direction.clone().multiply(this.streamSpeed / 5));
-				ParticleEffect.FLAME.display(point, 0.25F, 0.25F, 0.25F, 0, this.shieldParticles);
-				ParticleEffect.SMOKE.display(point, 0.25F, 0.25F, 0.25F, 0, this.shieldParticles / 2);
+				ParticleEffect.FLAME.display(point, this.shieldParticles, 0.25, 0.25, 0.25);
+				ParticleEffect.SMOKE_NORMAL.display(point, this.shieldParticles / 2, 0.25, 0.25, 0.25);
 			}
 		} else {
 			Vector direction = this.player.getLocation().getDirection().clone();
@@ -173,8 +173,8 @@ public class FireManipulation extends FireAbility {
 				return;
 			}
 
-			ParticleEffect.FLAME.display(this.shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, this.streamParticles);
-			ParticleEffect.SMOKE.display(this.shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, this.streamParticles / 2);
+			ParticleEffect.FLAME.display(this.shotPoint, this.streamParticles, 0.5, 0.5, 0.5, 0.01);
+			ParticleEffect.SMOKE_NORMAL.display(this.shotPoint, this.streamParticles / 2, 0.5, 0.5, 0.5, 0.01);
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.shotPoint, 2)) {
 				if (entity instanceof LivingEntity && entity.getUniqueId() != this.player.getUniqueId()) {
 					DamageHandler.damageEntity(entity, this.streamDamage, this);
@@ -214,7 +214,9 @@ public class FireManipulation extends FireAbility {
 	@Override
 	public List<Location> getLocations() {
 		final List<Location> locations = new ArrayList<>();
-		locations.addAll(this.points.keySet());
+		if (this.points != null) {
+			locations.addAll(this.points.keySet());
+		}
 		return locations;
 	}
 

@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -51,7 +52,7 @@ public class IceSpikePillarField extends IceAbility {
 		}
 
 		this.numberOfSpikes = (int) (((this.radius) * (this.radius)) / 4);
-		start();
+		this.start();
 	}
 
 	@Override
@@ -61,19 +62,19 @@ public class IceSpikePillarField extends IceAbility {
 
 	@Override
 	public void progress() {
-		this.thrownForce = new Vector(0, knockup, 0);
+		this.thrownForce = new Vector(0, this.knockup, 0);
 		final Random random = new Random();
-		final int locX = player.getLocation().getBlockX();
-		final int locY = player.getLocation().getBlockY();
-		final int locZ = player.getLocation().getBlockZ();
+		final int locX = this.player.getLocation().getBlockX();
+		final int locY = this.player.getLocation().getBlockY();
+		final int locZ = this.player.getLocation().getBlockZ();
 		final List<Block> iceBlocks = new ArrayList<Block>();
 
 		for (int x = (int) -(this.radius - 1); x <= (this.radius - 1); x++) {
 			for (int z = (int) -(this.radius - 1); z <= (this.radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
-					final Block testBlock = player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
+					final Block testBlock = this.player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
 
-					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR && !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ()) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) {
+					if (((WaterAbility.isIcebendable(this.player, testBlock.getType(), false) && !TempBlock.isTempBlock(testBlock)) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) && ElementalAbility.isAir(testBlock.getRelative(BlockFace.UP).getType()) && !(testBlock.getX() == this.player.getEyeLocation().getBlock().getX() && testBlock.getZ() == this.player.getEyeLocation().getBlock().getZ())) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
 							final Random rand = new Random();
@@ -86,16 +87,18 @@ public class IceSpikePillarField extends IceAbility {
 			}
 		}
 
-		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.radius);
-		for (int i = 0; i < this.numberOfSpikes; i++) {
+		int pillars;
+
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.radius);
+		for (pillars = 0; pillars < this.numberOfSpikes; pillars++) {
 			if (iceBlocks.isEmpty()) {
-				return;
+				break;
 			}
 
 			Entity target = null;
 			Block targetBlock = null;
 			for (final Entity entity : entities) {
-				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId()) {
+				if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId()) {
 					for (final Block block : iceBlocks) {
 						if (block.getX() == entity.getLocation().getBlockX() && block.getZ() == entity.getLocation().getBlockZ()) {
 							target = entity;
@@ -115,12 +118,17 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-				final IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
+				final IceSpikePillar pillar = new IceSpikePillar(this.player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
 				pillar.inField = true;
 				iceBlocks.remove(targetBlock);
+			} else {
+				pillars--;
 			}
 		}
-		this.bPlayer.addCooldown("IceSpikePillarField", this.cooldown);
+
+		if (pillars > 0) {
+			this.bPlayer.addCooldown("IceSpikePillarField", this.cooldown);
+		}
 		this.remove();
 	}
 

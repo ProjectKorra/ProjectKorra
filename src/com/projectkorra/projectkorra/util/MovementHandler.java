@@ -128,7 +128,11 @@ public class MovementHandler {
 	 */
 	public void reset() {
 		if (this.runnable != null) {
-			this.runnable.cancel();
+			try {
+				this.runnable.cancel();
+			} catch (final IllegalStateException e) { //if a player hasn't landed on the ground yet this runnable wont be scheduled, and will give an error on server shutdown
+				this.runnable = null;
+			}
 		}
 		if (this.msg != null) {
 			this.msg.cancel();

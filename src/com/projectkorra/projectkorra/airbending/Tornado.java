@@ -13,15 +13,16 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 
 public class Tornado extends AirAbility {
 
 	@Attribute(Attribute.COOLDOWN)
-	private long cooldown;
+	private final long cooldown;
 	@Attribute(Attribute.DURATION)
-	private long duration;
+	private final long duration;
 	private int numberOfStreams;
 	private int particleCount;
 	@Attribute(Attribute.SPEED)
@@ -69,7 +70,7 @@ public class Tornado extends AirAbility {
 			}
 		}
 
-		flightHandler.createInstance(player, this.getName());
+		this.flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
 		this.start();
 	}
@@ -96,7 +97,7 @@ public class Tornado extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		flightHandler.removeInstance(this.player, this.getName());
+		this.flightHandler.removeInstance(this.player, this.getName());
 	}
 
 	private void rotateTornado() {
@@ -104,7 +105,7 @@ public class Tornado extends AirAbility {
 		final double timefactor = this.currentHeight / this.maxHeight;
 		this.currentRadius = timefactor * this.radius;
 
-		if (this.origin.getBlock().getType() != Material.AIR && this.origin.getBlock().getType() != Material.BARRIER) {
+		if (!ElementalAbility.isAir(this.origin.getBlock().getType()) && this.origin.getBlock().getType() != Material.BARRIER) {
 			this.origin.setY(this.origin.getY() - 1. / 10. * this.currentHeight);
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, this.currentHeight)) {
@@ -127,8 +128,13 @@ public class Tornado extends AirAbility {
 
 						mag = Math.sqrt(x * x + z * z);
 
-						vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
-						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+						if (mag == 0.0) {
+							vx = 0.0;
+							vz = 0.0;
+						} else {
+							vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
+							vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+						}
 
 						if (entity instanceof Player) {
 							vy = 0.05 * this.playerPushFactor;
@@ -158,7 +164,7 @@ public class Tornado extends AirAbility {
 							}
 						}
 
-						final Vector velocity = entity.getVelocity();
+						final Vector velocity = entity.getVelocity().clone();
 						velocity.setX(vx);
 						velocity.setZ(vz);
 						velocity.setY(vy);
@@ -167,10 +173,6 @@ public class Tornado extends AirAbility {
 						entity.setFallDistance(0);
 
 						breakBreathbendingHold(entity);
-
-						if (entity instanceof Player) {
-							flightHandler.createInstance((Player) entity, 50L, this.getName());
-						}
 					}
 				}
 			}

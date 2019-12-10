@@ -92,6 +92,7 @@ public class FireBurst extends FireAbility {
 					if (direction.angle(vector) <= angle) {
 						final FireBlast fblast = new FireBlast(location, direction.normalize(), this.player, this.damage, safeBlocks);
 						fblast.setRange(this.range);
+						fblast.setFireBurst(true);
 					}
 				}
 			}
@@ -163,6 +164,7 @@ public class FireBurst extends FireAbility {
 
 					fblast.setRange(this.range);
 					fblast.setShowParticles(false);
+					fblast.setFireBurst(true);
 					this.blasts.add(fblast);
 				}
 			}

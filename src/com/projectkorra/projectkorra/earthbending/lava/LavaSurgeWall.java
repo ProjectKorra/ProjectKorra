@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -160,7 +161,7 @@ public class LavaSurgeWall extends LavaAbility {
 
 			if (this.forming) {
 				final ArrayList<Block> blocks = new ArrayList<Block>();
-				final Location loc = GeneralMethods.getTargetedLocation(this.player, (int) this.range, Material.WATER, Material.STATIONARY_WATER, Material.ICE);
+				final Location loc = GeneralMethods.getTargetedLocation(this.player, (int) this.range, Material.WATER, Material.ICE);
 				this.location = loc.clone();
 				final Vector dir = this.player.getEyeLocation().getDirection();
 				Vector vec;
@@ -176,7 +177,7 @@ public class LavaSurgeWall extends LavaAbility {
 						}
 						if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE || this.isLavabendable(block))) {
+						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || block.getType() == Material.FIRE || this.isLavabendable(block))) {
 							WALL_BLOCKS.put(block, this.player);
 							this.addWallBlock(block);
 							blocks.add(block);
@@ -212,7 +213,7 @@ public class LavaSurgeWall extends LavaAbility {
 				block = this.location.getBlock();
 			}
 
-			if (block.getType() != Material.AIR) {
+			if (!ElementalAbility.isAir(block.getType())) {
 				this.breakBlock();
 				return;
 			} else if (!this.progressing) {
@@ -232,7 +233,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	private void addWallBlock(final Block block) {
-		new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
+		new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
 	}
 
 	private void breakBlock() {
@@ -272,7 +273,7 @@ public class LavaSurgeWall extends LavaAbility {
 			return;
 		}
 		if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
+			new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
 			AFFECTED_BLOCKS.put(block, block);
 		}
 	}
