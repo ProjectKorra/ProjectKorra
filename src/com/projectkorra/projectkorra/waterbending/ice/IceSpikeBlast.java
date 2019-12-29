@@ -158,6 +158,11 @@ public class IceSpikeBlast extends IceAbility {
 			this.remove();
 			return;
 		}
+		Block source = this.sourceBlock.getLocation().getBlock();
+		if (!isWaterbendable(source) && !this.progressing && !this.settingUp) {
+			this.remove();
+			return;
+		}
 
 		if (System.currentTimeMillis() < this.time + this.interval) {
 			return;

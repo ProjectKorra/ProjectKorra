@@ -236,6 +236,11 @@ public class OctopusForm extends WaterAbility {
 			this.remove();
 			return;
 		}
+		Block block = this.sourceBlock.getLocation().getBlock();
+		if (!isWaterbendable(block) && !this.settingUp && !this.forming && !this.formed) {
+			this.remove();
+			return;
+		}
 
 		final Random random = new Random();
 

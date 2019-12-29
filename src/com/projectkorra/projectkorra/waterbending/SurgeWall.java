@@ -232,6 +232,11 @@ public class SurgeWall extends WaterAbility {
 			this.remove();
 			return;
 		}
+		Block source = this.sourceBlock.getLocation().getBlock();
+		if (!isWaterbendable(source) && !this.settingUp && !this.forming && !this.progressing) {
+			remove();
+			return;
+		}
 		this.locations.clear();
 
 		if (System.currentTimeMillis() - this.time >= this.interval) {
