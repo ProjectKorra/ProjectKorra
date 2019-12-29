@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -149,7 +150,12 @@ public class Suffocate extends AirAbility {
 	public void progress() {
 		for (int i = 0; i < this.targets.size(); i++) {
 			final LivingEntity target = this.targets.get(i);
-			if (target.isDead() || !target.getWorld().equals(this.player.getWorld()) || target.getLocation().distanceSquared(this.player.getEyeLocation()) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
+
+			if (target.isDead() ||
+					!target.getWorld().equals(this.player.getWorld()) ||
+					target.getLocation().distanceSquared(this.player.getEyeLocation()) > this.range * this.range ||
+					GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation()) ||
+					target instanceof ArmorStand) {
 				this.breakSuffocateLocal(target);
 				i--;
 			} else if (target instanceof Player) {
@@ -191,23 +197,22 @@ public class Suffocate extends AirAbility {
 		} else if (!this.started) {
 			this.started = true;
 			for (final LivingEntity targ : this.targets) {
-				final LivingEntity target = targ;
 				final BukkitRunnable br1 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						DamageHandler.damageEntity(target, Suffocate.this.damage, Suffocate.this.ability);
+						DamageHandler.damageEntity(targ, Suffocate.this.damage, Suffocate.this.ability);
 					}
 				};
 				final BukkitRunnable br2 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
+						targ.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
 					}
 				};
 				final BukkitRunnable br3 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (Suffocate.this.blindRepeat * 20), (int) Suffocate.this.blind));
+						targ.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (Suffocate.this.blindRepeat * 20), (int) Suffocate.this.blind));
 					}
 				};
 
@@ -220,10 +225,11 @@ public class Suffocate extends AirAbility {
 			}
 		}
 
-		this.animate();
+		for (final LivingEntity target : this.targets)
+			this.animate(target);
+
 		if (!this.player.isSneaking()) {
 			this.remove();
-			return;
 		}
 	}
 
@@ -290,7 +296,7 @@ public class Suffocate extends AirAbility {
 	 * specific time (dt) the ability will create a different set of
 	 * SuffocationSpirals.
 	 */
-	public void animate() {
+	public void animate(final LivingEntity target) {
 		final int steps = 8 * this.particleCount;
 		final long curTime = System.currentTimeMillis();
 		final long dt = curTime - this.getStartTime() - this.chargeTime;
@@ -299,28 +305,26 @@ public class Suffocate extends AirAbility {
 		final long t2 = (long) (2500 * this.animationSpeed);
 		final long t3 = (long) (5000 * this.animationSpeed);
 		final long t4 = (long) (6000 * this.animationSpeed);
-		for (final LivingEntity lent : this.targets) {
-			final LivingEntity target = lent;
-			if (dt < t1) {
-				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL2);
-			} else if (dt < t2) {
-				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
-			} else if (dt < t3) {
-				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
-			} else if (dt < t4) {
-				new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
-			} else {
-				new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
-			}
+
+		if (dt < t1) {
+			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL2);
+		} else if (dt < t2) {
+			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+		} else if (dt < t3) {
+			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+		} else if (dt < t4) {
+			new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
+		} else {
+			new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
 		}
 	}
 
