@@ -37,6 +37,8 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		} else if (bPlayer.canMetalbend() && ElementalAbility.isMetalBlock(block)) {
 			return true;
 		}
+		if ((player.getLocation().getY() % 1) != 0)
+			player.teleport(player.getLocation().add(0, 0.1, 0));
 
 		if (ElementalAbility.isEarth(block)) {
 			for (final Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
@@ -57,10 +59,8 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 					}
 				}
 			}
-
 			return true;
 		}
-
 		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType(), true, true, false)) || EarthAbility.isEarthbendable(block.getType(), true, true, false) || ElementalAbility.isTransparent(player, block);
 	}
 
