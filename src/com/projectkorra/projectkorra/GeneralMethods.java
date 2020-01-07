@@ -994,7 +994,7 @@ public class GeneralMethods {
 			for (Entity entity : getEntitiesAroundPoint(location, radius)) {
 				Location entityLocation = entity.getLocation();
 				Vector direction = new Vector(1, 0, 0).add(entityLocation.toVector().subtract(location.toVector())).multiply(1);
-				Location blockCheck = location.clone().add(direction.multiply(1));
+				Location blockCheck = location.clone().add(direction);
 
 				if (isTransparent(blockCheck.getBlock()))
 					validEntities.add(entity);
