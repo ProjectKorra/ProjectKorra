@@ -988,19 +988,18 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius, final boolean respectBlocks) {
-		List<Entity> validEntities = new ArrayList<>();
+		List<Entity> validEntities = getEntitiesAroundPoint(location, radius);
 
 		if (respectBlocks) {
-			for (Entity entity : getEntitiesAroundPoint(location, radius)) {
+			for (Entity entity : validEntities) {
 				Location entityLocation = entity.getLocation();
 				Vector direction = new Vector(1, 0, 0).add(entityLocation.toVector().subtract(location.toVector()));
 				Location blockCheck = location.clone().add(direction);
 
-				if (isTransparent(blockCheck.getBlock()))
-					validEntities.add(entity);
+				if (!isTransparent(blockCheck.getBlock()))
+					validEntities.remove(entity);
 			}
-		} else return getEntitiesAroundPoint(location, radius);
-
+		}
 		return validEntities;
 	}
 
