@@ -978,6 +978,32 @@ public class GeneralMethods {
 		return new ArrayList<>(location.getWorld().getNearbyEntities(location, radius, radius, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)))));
 	}
 
+	/**
+	 * Gets a {@code List<Entity>} of entities around a specified radius from
+	 * the specified area while ignoring entities that may be behind walls.
+	 *
+	 * @param location The base location
+	 * @param radius The radius of blocks to look for entities from the location
+	 * @param respectBlocks Whether or not to check for any blocks between the location and entity.
+	 * @return A list of entities around a point
+	 */
+	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius, final boolean respectBlocks) {
+		List<Entity> validEntities = new ArrayList<>();
+
+		if (respectBlocks) {
+			for (Entity entity : getEntitiesAroundPoint(location, radius)) {
+				Location entityLocation = entity.getLocation();
+				Vector direction = new Vector(1, 0, 0).add(entityLocation.toVector().subtract(location.toVector())).multiply(1);
+				Location blockCheck = location.clone().add(direction.multiply(1));
+
+				if (blockCheck.getBlock().getType().equals(Material.AIR))
+					validEntities.add(entity);
+			}
+		} else return getEntitiesAroundPoint(location, radius);
+
+		return validEntities;
+	}
+
 	public static long getGlobalCooldown() {
 		return ConfigManager.defaultConfig.get().getLong("Properties.GlobalCooldown");
 	}
