@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.util.Vector;
 
 public class DensityShift extends EarthAbility implements PassiveAbility {
 	private static final Set<TempBlock> SAND_BLOCKS = new HashSet<>();
@@ -37,9 +38,6 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		} else if (bPlayer.canMetalbend() && ElementalAbility.isMetalBlock(block)) {
 			return true;
 		}
-		if ((player.getLocation().getY() % 1) != 0)
-			player.teleport(player.getLocation().add(0, 0.1, 0));
-
 		if (ElementalAbility.isEarth(block)) {
 			for (final Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
 				if (ElementalAbility.isEarth(affectedBlock)) {
@@ -59,6 +57,10 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 					}
 				}
 			}
+			if ((player.getLocation().getY() % 1) != 0) {
+				player.setVelocity(new Vector(0, 0.07, 0));
+			}
+
 			return true;
 		}
 		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType(), true, true, false)) || EarthAbility.isEarthbendable(block.getType(), true, true, false) || ElementalAbility.isTransparent(player, block);
