@@ -10,7 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -38,12 +40,14 @@ public class SurgeWall extends WaterAbility {
 	private boolean settingUp;
 	private boolean forming;
 	private boolean frozen;
+	private boolean solidifyLava;
 	private long time;
 	private long interval;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DURATION)
 	private long duration;
+	private long obsidianDuration;
 	@Attribute(Attribute.RADIUS)
 	private double radius;
 	@Attribute(Attribute.RANGE)
@@ -65,6 +69,8 @@ public class SurgeWall extends WaterAbility {
 		this.duration = getConfig().getLong("Abilities.Water.Surge.Wall.Duration");
 		this.range = getConfig().getDouble(RANGE_CONFIG);
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
+		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
 		this.locations = new ArrayList<>();
 		this.oldTemps = new HashMap<>();
 
@@ -282,6 +288,17 @@ public class SurgeWall extends WaterAbility {
 				for (final Block blocki : WALL_BLOCKS.keySet()) {
 					if (WALL_BLOCKS.get(blocki) == this.player && !blocks.contains(blocki)) {
 						this.finalRemoveWater(blocki);
+					}
+
+					if (solidifyLava) {
+						for (BlockFace relative : BlockFace.values()) {
+							Block blockRelative = blocki.getRelative(relative);
+							if (blockRelative.getType() == Material.LAVA) {
+								TempBlock tempBlock = new TempBlock(blockRelative, Material.OBSIDIAN);
+								tempBlock.setRevertTime(obsidianDuration);
+								tempBlock.getBlock().getWorld().playSound(tempBlock.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 0.2F, 1);
+							}
+						}
 					}
 				}
 				return;
