@@ -289,7 +289,6 @@ public class SurgeWall extends WaterAbility {
 					if (WALL_BLOCKS.get(blocki) == this.player && !blocks.contains(blocki)) {
 						this.finalRemoveWater(blocki);
 					}
-
 					if (solidifyLava) {
 						for (BlockFace relative : BlockFace.values()) {
 							Block blockRelative = blocki.getRelative(relative);

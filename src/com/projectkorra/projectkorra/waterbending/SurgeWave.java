@@ -77,6 +77,7 @@ public class SurgeWave extends WaterAbility {
 				return;
 			}
 		}
+
 		this.canHitSelf = true;
 		this.currentRadius = 1;
 		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
