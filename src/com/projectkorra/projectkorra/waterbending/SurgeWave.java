@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -325,7 +326,14 @@ public class SurgeWave extends WaterAbility {
 						for (BlockFace relative : BlockFace.values()) {
 							Block blockRelative = block.getRelative(relative);
 							if (blockRelative.getType() == Material.LAVA) {
-								TempBlock tempBlock = new TempBlock(blockRelative, Material.OBSIDIAN);
+								Levelled levelled = (Levelled)blockRelative.getBlockData();
+								TempBlock tempBlock;
+
+								if (levelled.getLevel() == 0)
+									tempBlock = new TempBlock(blockRelative, Material.OBSIDIAN);
+								else
+									tempBlock = new TempBlock(blockRelative, Material.COBBLESTONE);
+
 								tempBlock.setRevertTime(obsidianDuration);
 								tempBlock.getBlock().getWorld().playSound(tempBlock.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 0.2F, 1);
 							}
