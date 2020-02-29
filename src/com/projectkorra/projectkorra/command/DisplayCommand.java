@@ -118,7 +118,7 @@ public class DisplayCommand extends PKCommand {
 						return;
 					}
 
-					sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + ChatColor.WHITE + (ChatColor.BOLD + " Combos"));
+					sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + (ChatColor.BOLD + " Combos"));
 
 					for (final String comboMove : combos) {
 						ChatColor comboColor = color;
@@ -179,7 +179,7 @@ public class DisplayCommand extends PKCommand {
 					return;
 				}
 
-				sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + ChatColor.WHITE + (ChatColor.BOLD + " Passives"));
+				sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + (ChatColor.BOLD + " Passives"));
 
 				for (final String passiveAbil : passives) {
 					ChatColor passiveColor = color;
