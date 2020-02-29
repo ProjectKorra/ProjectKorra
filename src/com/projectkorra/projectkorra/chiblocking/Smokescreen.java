@@ -21,6 +21,7 @@ public class Smokescreen extends ChiAbility {
 	private static final Map<Integer, Smokescreen> SNOWBALLS = new ConcurrentHashMap<>();
 	private static final Map<String, Long> BLINDED_TIMES = new ConcurrentHashMap<>();
 	private static final Map<String, Smokescreen> BLINDED_TO_ABILITY = new ConcurrentHashMap<>();
+	private static int particleAmount;
 
 	@Attribute(Attribute.DURATION)
 	private int duration;
@@ -37,6 +38,7 @@ public class Smokescreen extends ChiAbility {
 		this.cooldown = getConfig().getLong("Abilities.Chi.Smokescreen.Cooldown");
 		this.duration = getConfig().getInt("Abilities.Chi.Smokescreen.Duration");
 		this.radius = getConfig().getDouble("Abilities.Chi.Smokescreen.Radius");
+		particleAmount = getConfig().getInt("Abilities.Chi.Smokescreen.ParticleAmount");
 		this.start();
 	}
 
@@ -48,29 +50,13 @@ public class Smokescreen extends ChiAbility {
 	}
 
 	public static void playEffect(final Location loc) {
-		int z = -2;
-		int x = -2;
-		final int y = 0;
-
-		for (int i = 0; i < 125; i++) {
-			final Location newLoc = new Location(loc.getWorld(), loc.getX() + x, loc.getY() + y, loc.getZ() + z);
-			for (int direction = 0; direction < 8; direction++) {
-				ParticleEffect.SMOKE_NORMAL.display(newLoc, 4, 0.5, 0.5, 0.5);
-			}
-			if (z == 2) {
-				z = -2;
-			}
-			if (x == 2) {
-				x = -2;
-				z++;
-			}
-			x++;
-		}
+		for (int i = 0; i < 125; i++)
+			ParticleEffect.SMOKE_NORMAL.display(loc, particleAmount, Math.random() + 0.7, Math.random() + 0.5, Math.random() + 0.7);
 	}
 
 	public void applyBlindness(final Entity entity) {
 		if (entity instanceof Player) {
-			if (Commands.invincible.contains(((Player) entity).getName())) {
+			if (Commands.invincible.contains(entity.getName())) {
 				return;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				return;

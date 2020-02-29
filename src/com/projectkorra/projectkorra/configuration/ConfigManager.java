@@ -1516,6 +1516,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Smokescreen.Cooldown", 25000);
 			config.addDefault("Abilities.Chi.Smokescreen.Radius", 4);
 			config.addDefault("Abilities.Chi.Smokescreen.Duration", 12);
+			config.addDefault("Abilities.Chi.Smokescreen.ParticleAmount", 5);
 
 			config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
 			config.addDefault("Abilities.Chi.WarriorStance.Cooldown", 0);
