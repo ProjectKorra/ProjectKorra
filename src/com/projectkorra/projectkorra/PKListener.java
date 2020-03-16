@@ -61,6 +61,7 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -197,6 +198,7 @@ public class PKListener implements Listener {
 	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
 	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
 	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
+	private final List<Player> PLAYER_DROPPED_ITEM = new ArrayList<>(); // Player dropped an item.
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
@@ -1590,6 +1592,21 @@ public class PKListener implements Listener {
 		}
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerItemDrop(PlayerDropItemEvent event) {
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		if (bPlayer == null)
+			return;
+
+		if (bPlayer.getBoundAbility() == null)
+			return;
+
+		if (!PLAYER_DROPPED_ITEM.contains(player))
+			PLAYER_DROPPED_ITEM.add(player);
+	}
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerSwing(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
@@ -1600,6 +1617,10 @@ public class PKListener implements Listener {
 			return;
 		}
 		if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.isCancelled()) {
+			return;
+		}
+		if (PLAYER_DROPPED_ITEM.contains(player)) {
+			PLAYER_DROPPED_ITEM.remove(player);
 			return;
 		}
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
