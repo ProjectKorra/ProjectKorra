@@ -828,12 +828,8 @@ public class BendingPlayer {
 	 *
 	 * @param abilities The abilities to set/save
 	 */
-	public void setAbilities(final HashMap<Integer, String> abilities) {
-		this.abilities = abilities;
-
-		for (int i = 1; i <= 9; i++) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + this.uuid + "'");
-		}
+	public void setAbilities(final Map<Integer, String> abilities) {
+		this.abilities = new HashMap<>(abilities);
 	}
 
 	/**

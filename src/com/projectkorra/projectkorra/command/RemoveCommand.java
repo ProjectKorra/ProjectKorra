@@ -55,13 +55,13 @@ public class RemoveCommand extends PKCommand {
 						if (e instanceof SubElement) {
 							if (senderBPlayer.hasElement(e)) {
 								senderBPlayer.getSubElements().remove(e);
-								GeneralMethods.saveSubElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
 								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
 								Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, player, (SubElement) e, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.REMOVE));
 							} else {
 								GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElementSelf);
 							}
+							
 							return;
 						} else if (e instanceof Element) {
 							if (senderBPlayer.hasElement(e)) {
@@ -69,8 +69,6 @@ public class RemoveCommand extends PKCommand {
 								for (final SubElement sub : Element.getSubElements(e)) {
 									senderBPlayer.getSubElements().remove(sub);
 								}
-								GeneralMethods.saveElements(senderBPlayer);
-								GeneralMethods.saveSubElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
 
 								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()));
@@ -79,16 +77,14 @@ public class RemoveCommand extends PKCommand {
 							} else {
 								GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElementSelf);
 							}
-							{
-								return;
-							}
+							
+							return;
 						}
 					} else {
 						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.invalidElement);
 					}
-					{
-						return;
-					}
+					
+					return;
 				}
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerOffline);
 				return;
@@ -112,14 +108,11 @@ public class RemoveCommand extends PKCommand {
 				}
 				if (e instanceof SubElement) {
 					bPlayer.getSubElements().remove(e);
-					GeneralMethods.saveSubElements(bPlayer);
 				} else {
 					bPlayer.getElements().remove(e);
 					for (final SubElement sub : Element.getSubElements(e)) {
 						bPlayer.getSubElements().remove(sub);
 					}
-					GeneralMethods.saveElements(bPlayer);
-					GeneralMethods.saveSubElements(bPlayer);
 				}
 
 				GeneralMethods.removeUnusableAbilities(player.getName());
@@ -131,8 +124,6 @@ public class RemoveCommand extends PKCommand {
 		} else if (args.size() == 1) {
 			bPlayer.getElements().clear();
 			bPlayer.getSubElements().clear();
-			GeneralMethods.saveElements(bPlayer);
-			GeneralMethods.saveSubElements(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
 			if (!player.getName().equalsIgnoreCase(sender.getName())) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));

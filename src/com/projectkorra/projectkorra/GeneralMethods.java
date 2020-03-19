@@ -200,24 +200,26 @@ public class GeneralMethods {
 	 * @param slot
 	 * @see #bindAbility(Player, String)
 	 */
-	public static void bindAbility(final Player player, final String ability, final int slot) {
+	public static boolean bindAbility(final Player player, final String ability, final int slot) {
 		if (MultiAbilityManager.playerAbilities.containsKey(player)) {
 			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + "You can't edit your binds right now!");
-			return;
+			return false;
 		}
 
+		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, ability, slot, true);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if (event.isCancelled()) {
+			return false;
+		}
+		
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 
 		if (bPlayer == null) {
-			return;
+			return true;
 		}
+		
 		bPlayer.getAbilities().put(slot, ability);
-
-		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
-		}
-		saveAbility(bPlayer, slot, ability);
+		return true;
 	}
 
 	/**
@@ -2024,11 +2026,6 @@ public class GeneralMethods {
 		}
 		final String uuid = bPlayer.getUUIDString();
 
-		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(Bukkit.getPlayer(UUID.fromString(uuid)), ability, slot, false);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return;
-		}
 		// Temp code to block modifications of binds, Should be replaced when bind event is added.
 		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID()))) {
 			return;
@@ -2143,6 +2140,16 @@ public class GeneralMethods {
 		final String uuid = bPlayer.getUUIDString();
 		final boolean permaRemoved = bPlayer.isPermaRemoved();
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
+	}
+	
+	public static void savePlayer(final BendingPlayer bPlayer) {
+		for (int slot : bPlayer.getAbilities().keySet()) {
+			saveAbility(bPlayer, slot, bPlayer.getAbilities().get(slot));
+		}
+		
+		saveElements(bPlayer);
+		saveSubElements(bPlayer);
+		savePermaRemoved(bPlayer);
 	}
 
 	public static void setVelocity(final Entity entity, final Vector velocity) {

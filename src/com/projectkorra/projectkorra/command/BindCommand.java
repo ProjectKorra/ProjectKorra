@@ -109,7 +109,11 @@ public class BindCommand extends PKCommand {
 		}
 
 		final String name = coreAbil != null ? coreAbil.getName() : null;
-		GeneralMethods.bindAbility((Player) sender, name, slot);
+		if (GeneralMethods.bindAbility((Player) sender, name, slot)) {
+			GeneralMethods.sendBrandingMessage(sender, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+		} else {
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + "Unable to bind ability!");
+		}
 	}
 
 	@Override

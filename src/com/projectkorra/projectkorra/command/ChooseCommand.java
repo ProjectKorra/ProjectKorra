@@ -169,7 +169,6 @@ public class ChooseCommand extends PKCommand {
 			} else {
 				GeneralMethods.sendBrandingMessage(target, color + this.chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
-			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
 			bPlayer.setElement(element);
@@ -194,8 +193,6 @@ public class ChooseCommand extends PKCommand {
 					GeneralMethods.sendBrandingMessage(target, color + this.chosenAE.replace("{element}", element.getName() + element.getType().getBender()));
 				}
 			}
-			GeneralMethods.saveElements(bPlayer);
-			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
 

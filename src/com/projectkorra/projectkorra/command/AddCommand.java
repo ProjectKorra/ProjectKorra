@@ -118,8 +118,6 @@ public class AddCommand extends PKCommand {
 						}
 					}
 
-					GeneralMethods.saveElements(bPlayer);
-					GeneralMethods.saveSubElements(bPlayer);
 					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
 				}
 			}
@@ -192,8 +190,6 @@ public class AddCommand extends PKCommand {
 					}
 
 				}
-				GeneralMethods.saveElements(bPlayer);
-				GeneralMethods.saveSubElements(bPlayer);
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
 				return;
 
@@ -225,7 +221,6 @@ public class AddCommand extends PKCommand {
 						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", sub.getName() + sub.getType().getBender()));
 					}
 				}
-				GeneralMethods.saveSubElements(bPlayer);
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
 				return;
 

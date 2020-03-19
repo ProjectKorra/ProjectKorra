@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import co.aikar.timings.lib.MCTiming;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -190,6 +188,8 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeTyp
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
+
+import co.aikar.timings.lib.MCTiming;
 
 public class PKListener implements Listener {
 	ProjectKorra plugin;
@@ -1221,7 +1221,52 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerKick(final PlayerKickEvent event) {
-		JUMPS.remove(event.getPlayer());
+		final Player player = event.getPlayer();
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		if (ProjectKorra.isStatisticsEnabled()) {
+			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
+		}
+		
+		if (bPlayer != null) {
+			GeneralMethods.savePlayer(bPlayer);
+			if (ProjectKorra.isDatabaseCooldownsEnabled()) {
+				bPlayer.saveCooldowns();
+			}
+
+			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
+				TOGGLED_OUT.remove(player.getUniqueId());
+			}
+
+			if (!bPlayer.isToggled()) {
+				TOGGLED_OUT.add(player.getUniqueId());
+			}
+		}
+
+		if (Commands.invincible.contains(player.getName())) {
+			Commands.invincible.remove(player.getName());
+		}
+
+		Preset.unloadPreset(player);
+
+		if (TempArmor.hasTempArmor(player)) {
+			for (final TempArmor armor : TempArmor.getTempArmorList(player)) {
+				armor.revert();
+			}
+		}
+
+		if (MetalClips.isControlled(event.getPlayer())) {
+			MetalClips.removeControlledEnitity(event.getPlayer());
+		}
+
+		MultiAbilityManager.remove(player);
+		JUMPS.remove(player);
+
+		for (final CoreAbility ca : CoreAbility.getAbilities()) {
+			if (CoreAbility.getAbility(event.getPlayer(), ca.getClass()) != null) {
+				CoreAbility.getAbility(event.getPlayer(), ca.getClass()).remove();
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1333,7 +1378,9 @@ public class PKListener implements Listener {
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
 		}
+		
 		if (bPlayer != null) {
+			GeneralMethods.savePlayer(bPlayer);
 			if (ProjectKorra.isDatabaseCooldownsEnabled()) {
 				bPlayer.saveCooldowns();
 			}

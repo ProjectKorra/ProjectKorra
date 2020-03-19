@@ -162,7 +162,12 @@ public class ProjectKorra extends JavaPlugin {
 				Manager.getManager(StatisticsManager.class).save(player.getUniqueId(), false);
 			}
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer != null && isDatabaseCooldownsEnabled()) {
+			if (bPlayer == null) {
+				continue;
+			}
+			
+			GeneralMethods.savePlayer(bPlayer);
+			if (isDatabaseCooldownsEnabled()) {
 				bPlayer.saveCooldowns();
 			}
 		}

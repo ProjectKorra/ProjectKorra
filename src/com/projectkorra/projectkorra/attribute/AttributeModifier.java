@@ -62,7 +62,20 @@ public enum AttributeModifier {
 		if (this == DIVISION && modifier.doubleValue() == 0) {
 			throw new IllegalArgumentException("Attribute modifier for DIVISION cannot be zero!");
 		}
-		return this.modifier.performModification(oldValue, modifier);
+		
+		Number result = this.modifier.performModification(oldValue, modifier);
+		
+		if (oldValue instanceof Double) {
+			return result.doubleValue();
+		} else if (oldValue instanceof Float) {
+			return result.floatValue();
+		} else if (oldValue instanceof Long) {
+			return result.longValue();
+		} else if (oldValue instanceof Integer) {
+			return result.intValue();
+		}
+		
+		return result;
 	}
 
 	/**
