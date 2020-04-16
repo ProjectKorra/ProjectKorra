@@ -40,6 +40,8 @@ public class PresetCommand extends PKCommand {
 	private final String alreadyExists;
 	private final String createdNewPreset;
 	private final String cantEditBinds;
+	private final String playerNotFound;
+	private final String needPresetName;
 
 	public PresetCommand() {
 		super("preset", "/bending preset <Bind/Create/Delete/List> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
@@ -58,6 +60,8 @@ public class PresetCommand extends PKCommand {
 		this.alreadyExists = ConfigManager.languageConfig.get().getString("Commands.Preset.AlreadyExists");
 		this.createdNewPreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Created");
 		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Preset.CantEditBinds");
+		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound");
+		this.needPresetName = ConfigManager.languageConfig.get().getString("Commands.Preset.NeedPresetName");
 	}
 
 	@Override
@@ -177,7 +181,7 @@ public class PresetCommand extends PKCommand {
 					}
 					return;
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound"));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				}
 			} else if (this.hasPermission(sender, "bind.assign") && Preset.presetExists(player, name)) {
 				if (!Preset.presetExists(player, name)) {
@@ -207,10 +211,15 @@ public class PresetCommand extends PKCommand {
 					}
 					return;
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound"));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				}
 			}
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && this.hasPermission(sender, "create")) { // bending preset create name.
+			if (name == null) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.needPresetName);
+				return;
+			}
+
 			final int limit = GeneralMethods.getMaxPresets(player);
 
 			if (Preset.presets.get(player.getUniqueId()) != null && Preset.presets.get(player.getUniqueId()).size() >= limit) {

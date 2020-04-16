@@ -125,6 +125,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Description", "This command manages Presets, which are saved bindings. Use /bending preset list to view your existing presets, use /bending [create|delete] [name] to manage your presets, and use /bending bind [name] to bind an existing preset.");
 			config.addDefault("Commands.Preset.NoPresets", "You do not have any presets.");
 			config.addDefault("Commands.Preset.NoPresetName", "You don't have a preset with that name.");
+			config.addDefault("Commands.Preset.NeedPresetName", "You must enter a name for your preset.");
 			config.addDefault("Commands.Preset.Created", "Created a new preset named '{name}'.");
 			config.addDefault("Commands.Preset.Delete", "You have deleted your '{name}' preset.");
 			config.addDefault("Commands.Preset.Removed", "Your bending has been permanently removed.");
