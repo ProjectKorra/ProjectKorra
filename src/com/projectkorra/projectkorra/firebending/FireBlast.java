@@ -22,7 +22,6 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -127,8 +126,8 @@ public class FireBlast extends FireAbility {
 		}
 		
 		if (this.showParticles) {
-			ParticleEffect.FLAME.display(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
-			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, this.smokeRadius, this.smokeRadius, this.smokeRadius);
+			playFirebendingParticles(this.location, 12, this.flameRadius, this.flameRadius, this.flameRadius);
+			ParticleEffect.SMOKE_NORMAL.display(this.location, 2, this.smokeRadius, this.smokeRadius, this.smokeRadius);
 		}
 		
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
@@ -154,27 +153,21 @@ public class FireBlast extends FireAbility {
 				entity.setFireTicks((int) (this.fireTicks * 20));
 				DamageHandler.damageEntity(entity, this.damage, this);
 				AirAbility.breakBreathbendingHold(entity);
-				new FireDamageTimer(entity, this.player);
 				this.remove();
 			}
 		}
 	}
 
 	private void ignite(final Location location) {
-		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
+		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, 1 + this.collisionRadius)) {
 			if (BlazeArc.isIgnitable(this.player, block) && !this.safeBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
 					if (isPlant(block) || isSnow(block)) {
 						new PlantRegrowth(this.player, block);
 					}
-					block.setType(Material.FIRE);
+					block.setType(getFireColor(bPlayer));
 				} else {
-					createTempFire(block.getLocation());
-				}
-
-				if (this.dissipate) {
-					BlazeArc.getIgnitedBlocks().put(block, this.player);
-					BlazeArc.getIgnitedTimes().put(block, System.currentTimeMillis());
+					createTempFire(block, bPlayer);
 				}
 			}
 		}
@@ -221,6 +214,11 @@ public class FireBlast extends FireAbility {
 			this.affect(entity);
 		}
 
+		Entity target = GeneralMethods.getTargetedEntity(player, range);
+		
+		if (target != null) {
+			this.direction.add(GeneralMethods.getDirection(location, target.getLocation().add(0, 1, 0)).normalize().multiply(0.025));
+		}
 		this.advanceLocation();
 	}
 

@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class TorrentWave extends WaterAbility {
@@ -140,7 +141,7 @@ public class TorrentWave extends WaterAbility {
 				}
 
 				if (isTransparent(this.player, block)) {
-					final TempBlock tempBlock = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+					final TempBlock tempBlock = new TempBlock(block, Material.WATER);
 					this.blocks.add(tempBlock);
 					torrentBlocks.add(block);
 				} else {
@@ -178,9 +179,7 @@ public class TorrentWave extends WaterAbility {
 
 	private void affect(final Entity entity) {
 		final Vector direction = GeneralMethods.getDirection(this.origin, entity.getLocation());
-		direction.setY(0);
-		direction.normalize();
-		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(this.knockback)));
+		new VelocityBuilder(direction).knockback(this.knockback).knockup(0).apply(entity, this, true, false);
 	}
 
 	@Override

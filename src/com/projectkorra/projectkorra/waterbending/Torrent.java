@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,6 +28,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -207,7 +207,7 @@ public class Torrent extends WaterAbility {
 						this.sourceBlock.setType(Material.AIR);
 					}
 
-					this.source = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(0));
+					this.source = new TempBlock(this.sourceBlock, Material.WATER);
 					this.location = this.sourceBlock.getLocation();
 				} else {
 					playFocusWaterEffect(this.sourceBlock);
@@ -261,7 +261,7 @@ public class Torrent extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.source = new TempBlock(this.location.getBlock(), Material.WATER, GeneralMethods.getWaterData(0));
+					this.source = new TempBlock(this.location.getBlock(), Material.WATER);
 				}
 			}
 			if (this.forming && !this.player.isSneaking()) {
@@ -354,7 +354,7 @@ public class Torrent extends WaterAbility {
 				final Block block = blockloc.getBlock();
 				if (!doneBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, blockloc)) {
 					if (isTransparent(this.player, block)) {
-						this.launchedBlocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
+						this.launchedBlocks.add(new TempBlock(block, Material.WATER));
 						doneBlocks.add(block);
 					} else if (!isTransparent(this.player, block)) {
 						break;
@@ -422,7 +422,7 @@ public class Torrent extends WaterAbility {
 				if (isWater(locBlock)) {
 					ParticleEffect.WATER_BUBBLE.display(locBlock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 				}
-				newBlocks.add(new TempBlock(locBlock, Material.WATER, GeneralMethods.getWaterData(0)));
+				newBlocks.add(new TempBlock(locBlock, Material.WATER));
 			} else {
 				if (this.layer < this.maxLayer) {
 					if (this.layer == 0) {
@@ -487,7 +487,7 @@ public class Torrent extends WaterAbility {
 			final Block block = blockLoc.getBlock();
 			if (!doneBlocks.contains(block)) {
 				if (isTransparent(this.player, block)) {
-					this.blocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
+					this.blocks.add(new TempBlock(block, Material.WATER));
 					doneBlocks.add(block);
 					for (final Entity entity : entities) {
 						if (entity.getWorld() != blockLoc.getWorld()) {
@@ -607,11 +607,14 @@ public class Torrent extends WaterAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 			return;
 		}
+		
+		VelocityBuilder velocity = new VelocityBuilder(direction);
+		
 		if (direction.getY() > this.knockup) {
-			direction.setY(this.knockup);
+			velocity.knockup(this.knockup);
 		}
 		if (!this.freeze) {
-			entity.setVelocity(direction.multiply(this.knockback));
+			velocity.knockback(this.knockback).apply(entity, this, false, false);
 		}
 		if (entity instanceof LivingEntity && !this.hurtEntities.contains(entity)) {
 			double damageDealt = this.getNightFactor(this.damage);

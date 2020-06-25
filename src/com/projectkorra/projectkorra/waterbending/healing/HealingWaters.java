@@ -214,7 +214,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(final Player player) {
 		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation())) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, this.potionPotency));
 			AirAbility.breakBreathbendingHold(player);
 			this.healing = true;
 			this.healingSelf = true;
@@ -223,7 +223,7 @@ public class HealingWaters extends HealingAbility {
 
 	private void applyHealing(final LivingEntity livingEntity) {
 		if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
-			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
+			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, this.potionPotency));
 			AirAbility.breakBreathbendingHold(livingEntity);
 			this.healing = true;
 			this.healingSelf = false;

@@ -57,10 +57,11 @@ public class Element {
 	public static final SubElement SAND = new SubElement("Sand", EARTH);
 	public static final SubElement LIGHTNING = new SubElement("Lightning", FIRE);
 	public static final SubElement COMBUSTION = new SubElement("Combustion", FIRE);
+	public static final SubElement BLUE_FIRE = new SubElement("Blue Fire", FIRE);
 
 	private static final Element[] ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI, FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION };
 	private static final Element[] MAIN_ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI };
-	private static final SubElement[] SUB_ELEMENTS = { FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION };
+	private static final SubElement[] SUB_ELEMENTS = { FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION, BLUE_FIRE };
 
 	private final String name;
 	private final ElementType type;
@@ -101,7 +102,7 @@ public class Element {
 		this.name = name;
 		this.type = type;
 		this.plugin = plugin;
-		ALL_ELEMENTS.put(name.toLowerCase(), this);
+		ALL_ELEMENTS.put(name.toLowerCase().replace(" ", ""), this);
 	}
 
 	public String getPrefix() {
@@ -146,7 +147,7 @@ public class Element {
 		if (name == null) {
 			return null;
 		}
-		return ALL_ELEMENTS.get(name.toLowerCase());
+		return ALL_ELEMENTS.get(name.toLowerCase().replace(" ", ""));
 	}
 
 	/**

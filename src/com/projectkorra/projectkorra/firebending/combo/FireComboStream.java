@@ -2,8 +2,6 @@ package com.projectkorra.projectkorra.firebending.combo;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -18,8 +16,8 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -61,9 +59,9 @@ public class FireComboStream extends BukkitRunnable {
 		this.checkCollisionCounter = 0;
 		this.spread = 0;
 		this.collisionRadius = 2;
-		this.particleEffect = ParticleEffect.FLAME;
 		this.player = player;
 		this.bPlayer = BendingPlayer.getBendingPlayer(player);
+		this.particleEffect = FireAbility.getFireParticle(bPlayer);
 		this.coreAbility = coreAbility;
 		this.direction = direction;
 		this.speed = speed;
@@ -79,12 +77,13 @@ public class FireComboStream extends BukkitRunnable {
 			this.remove();
 			return;
 		}
-		for (int i = 0; i < this.density; i++) {
-			if (this.useNewParticles) {
-				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
-			} else {
-				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
+		
+		if (this.useNewParticles) {
+			if (particleEffect != null) {
+				this.particleEffect.display(this.location, this.density, this.spread, this.spread, this.spread);
 			}
+		} else {
+			FireAbility.getFireParticle(bPlayer).display(this.location, this.density, this.spread, this.spread, this.spread);
 		}
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
@@ -144,7 +143,6 @@ public class FireComboStream extends BukkitRunnable {
 				jetBlaze.getAffectedEntities().add(entity);
 				DamageHandler.damageEntity(entity, this.damage, coreAbility);
 				entity.setFireTicks((int) (this.fireTicks * 20));
-				new FireDamageTimer(entity, this.player);
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("FireWheel")) {
 			final FireWheel fireWheel = CoreAbility.getAbility(this.player, FireWheel.class);
@@ -153,7 +151,6 @@ public class FireComboStream extends BukkitRunnable {
 				fireWheel.getAffectedEntities().add(entity);
 				DamageHandler.damageEntity(entity, this.damage, coreAbility);
 				entity.setFireTicks((int) (this.fireTicks * 20));
-				new FireDamageTimer(entity, this.player);
 				this.remove();
 			}
 		}

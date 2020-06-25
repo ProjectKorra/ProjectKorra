@@ -90,7 +90,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 			final FireComboStream fs = new FireComboStream(this.player, this, this.player.getVelocity().clone().multiply(-1), this.player.getLocation(), 3, 0.5);
 
-			fs.setDensity(1);
+			fs.setDensity(2);
 			fs.setSpread(0.9F);
 			fs.setUseNewParticles(true);
 			fs.setCollides(false);

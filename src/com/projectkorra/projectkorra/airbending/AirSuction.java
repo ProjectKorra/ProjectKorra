@@ -23,7 +23,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction extends AirAbility {
@@ -232,8 +232,7 @@ public class AirSuction extends AirAbility {
 					push.normalize().add(entity.getVelocity()).multiply(knockback);
 				}
 
-				GeneralMethods.setVelocity(entity, push.normalize().multiply(knockback));
-				new HorizontalVelocityTracker(entity, this.player, 200l, this);
+				new VelocityBuilder(push).knockback(knockback).apply(entity, this, true, false);
 				entity.setFallDistance(0);
 
 				if (entity.getFireTicks() > 0) {

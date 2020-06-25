@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class Twister extends AirAbility implements ComboAbility {
 
@@ -146,7 +147,7 @@ public class Twister extends AirAbility implements ComboAbility {
 				continue;
 			}
 			final Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc.clone().add(0, height, 0));
-			entity.setVelocity(forceDir.clone().normalize().multiply(0.3));
+			new VelocityBuilder(forceDir).knockback(0.3).apply(entity, this);
 		}
 	}
 

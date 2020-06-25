@@ -15,7 +15,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -115,7 +114,6 @@ public class WallOfFire extends FireAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (this.fireTicks * 20));
-		new FireDamageTimer(entity, this.player);
 	}
 
 	private void damage() {
@@ -147,7 +145,7 @@ public class WallOfFire extends FireAbility {
 			if (!this.isTransparent(block)) {
 				continue;
 			}
-			ParticleEffect.FLAME.display(block.getLocation(), 3, 0.6, 0.6, 0.6);
+			playFirebendingParticles(block.getLocation(), 3, 0.6, 0.6, 0.6);
 			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.6, 0.6, 0.6);
 
 			if (this.random.nextInt(7) == 0) {

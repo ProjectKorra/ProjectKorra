@@ -6,6 +6,7 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.inventory.ItemStack;
 
 public enum ParticleEffect {
+	ASH (Particle.ASH),
 	BARRIER (Particle.BARRIER),
 	
 	/**
@@ -21,7 +22,7 @@ public enum ParticleEffect {
 	BUBBLE_POP (Particle.BUBBLE_POP),
 	CLOUD (Particle.CLOUD),
 	CRIT (Particle.CRIT),
-	CRIT_MAGIC (Particle.CRIT_MAGIC), @Deprecated MAGIC_CRIT (Particle.CRIT_MAGIC),
+	CRIT_MAGIC (Particle.CRIT_MAGIC),
 	CURRENT_DOWN (Particle.CURRENT_DOWN),
 	DAMAGE_INDICATOR (Particle.DAMAGE_INDICATOR),
 	DOLPHIN (Particle.DOLPHIN),
@@ -30,9 +31,9 @@ public enum ParticleEffect {
 	DRIP_WATER (Particle.DRIP_WATER),
 	ENCHANTMENT_TABLE (Particle.ENCHANTMENT_TABLE),
 	END_ROD (Particle.END_ROD),
-	EXPLOSION_HUGE (Particle.EXPLOSION_HUGE), @Deprecated HUGE_EXPLOSION (Particle.EXPLOSION_HUGE),
-	EXPLOSION_LARGE (Particle.EXPLOSION_LARGE), @Deprecated LARGE_EXPLODE (Particle.EXPLOSION_LARGE),
-	EXPLOSION_NORMAL (Particle.EXPLOSION_NORMAL), @Deprecated EXPLODE (Particle.EXPLOSION_NORMAL),
+	EXPLOSION_HUGE (Particle.EXPLOSION_HUGE),
+	EXPLOSION_LARGE (Particle.EXPLOSION_LARGE),
+	EXPLOSION_NORMAL (Particle.EXPLOSION_NORMAL),
 	
 	/**
 	 * Applicable data: {@link BlockData}
@@ -55,30 +56,32 @@ public enum ParticleEffect {
 	/**
 	 * Applicable data: {@link DustOptions}
 	 */
-	REDSTONE (Particle.REDSTONE), @Deprecated RED_DUST (Particle.REDSTONE),
+	REDSTONE (Particle.REDSTONE),
 	SLIME (Particle.SLIME),
-	SMOKE_NORMAL (Particle.SMOKE_NORMAL), @Deprecated SMOKE (Particle.SMOKE_NORMAL),
-	SMOKE_LARGE (Particle.SMOKE_LARGE), @Deprecated LARGE_SMOKE (Particle.SMOKE_LARGE),
+	SMOKE_NORMAL (Particle.SMOKE_NORMAL),
+	SMOKE_LARGE (Particle.SMOKE_LARGE),
 	SNOW_SHOVEL (Particle.SNOW_SHOVEL),
-	SNOWBALL (Particle.SNOWBALL), @Deprecated SNOWBALL_PROOF (Particle.SNOWBALL),
+	SNOWBALL (Particle.SNOWBALL),
 	SPELL (Particle.SPELL),
-	SPELL_INSTANT (Particle.SPELL_INSTANT), @Deprecated INSTANT_SPELL (Particle.SPELL_INSTANT),
-	SPELL_MOB (Particle.SPELL_MOB), @Deprecated MOB_SPELL (Particle.SPELL_MOB),
-	SPELL_MOB_AMBIENT (Particle.SPELL_MOB_AMBIENT), @Deprecated MOB_SPELL_AMBIENT (Particle.SPELL_MOB_AMBIENT),
-	SPELL_WITCH (Particle.SPELL_WITCH), @Deprecated WITCH_SPELL (Particle.SPELL_WITCH),
+	SPELL_INSTANT (Particle.SPELL_INSTANT),
+	SPELL_MOB (Particle.SPELL_MOB),
+	SPELL_MOB_AMBIENT (Particle.SPELL_MOB_AMBIENT),
+	SPELL_WITCH (Particle.SPELL_WITCH),
 	SPIT (Particle.SPIT),
+	SOUL (Particle.SOUL),
+	SOUL_FLAME (Particle.SOUL_FIRE_FLAME),
 	SQUID_INK (Particle.SQUID_INK),
-	SUSPENDED (Particle.SUSPENDED), @Deprecated SUSPEND (Particle.SUSPENDED),
-	SUSPENDED_DEPTH (Particle.SUSPENDED_DEPTH), @Deprecated DEPTH_SUSPEND (Particle.SUSPENDED_DEPTH),
+	SUSPENDED (Particle.SUSPENDED),
+	SUSPENDED_DEPTH (Particle.SUSPENDED_DEPTH),
 	SWEEP_ATTACK (Particle.SWEEP_ATTACK),
 	TOTEM (Particle.TOTEM),
 	TOWN_AURA (Particle.TOWN_AURA),
-	VILLAGER_ANGRY (Particle.VILLAGER_ANGRY), @Deprecated ANGRY_VILLAGER (Particle.VILLAGER_ANGRY),
-	VILLAGER_HAPPY (Particle.VILLAGER_HAPPY), @Deprecated HAPPY_VILLAGER (Particle.VILLAGER_HAPPY),
-	WATER_BUBBLE (Particle.WATER_BUBBLE), @Deprecated BUBBLE (Particle.WATER_BUBBLE),
+	VILLAGER_ANGRY (Particle.VILLAGER_ANGRY),
+	VILLAGER_HAPPY (Particle.VILLAGER_HAPPY),
+	WATER_BUBBLE (Particle.WATER_BUBBLE),
 	WATER_DROP (Particle.WATER_DROP),
-	WATER_SPLASH (Particle.WATER_SPLASH), @Deprecated SPLASH (Particle.WATER_SPLASH),
-	WATER_WAKE (Particle.WATER_WAKE), @Deprecated WAKE (Particle.WATER_WAKE);
+	WATER_SPLASH (Particle.WATER_SPLASH),
+	WATER_WAKE (Particle.WATER_WAKE);
 	
 	Particle particle;
 	Class<?> dataClass;

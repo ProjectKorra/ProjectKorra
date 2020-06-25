@@ -1,13 +1,9 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -16,14 +12,12 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class BlazeArc extends FireAbility {
 
 	private static final long DISSIPATE_REMOVE_TIME = 400;
-	private static final Map<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<Block, Long> IGNITED_TIMES = new ConcurrentHashMap<>();
-	private static final Map<Location, BlockState> REPLACED_BLOCKS = new ConcurrentHashMap<>();
 
 	private long time;
 	private long interval;
@@ -53,19 +47,19 @@ public class BlazeArc extends FireAbility {
 	}
 
 	private void ignite(final Block block) {
-		if (block.getType() != Material.FIRE && !isAir(block.getType())) {
+		if (!GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
+			return;
+		}
+		
+		if (!isFire(block) && !isAir(block.getType())) {
 			if (canFireGrief()) {
 				if (isPlant(block) || isSnow(block)) {
 					new PlantRegrowth(this.player, block);
 				}
-			} else if (block.getType() != Material.FIRE) {
-				REPLACED_BLOCKS.put(block.getLocation(), block.getState());
 			}
 		}
 
-		block.setType(Material.FIRE);
-		IGNITED_BLOCKS.put(block, this.player);
-		IGNITED_TIMES.put(block, System.currentTimeMillis());
+		new TempBlock(block, getFireColor()).setRevertTime(DISSIPATE_REMOVE_TIME);
 	}
 
 	@Override
@@ -78,7 +72,7 @@ public class BlazeArc extends FireAbility {
 			this.time = System.currentTimeMillis();
 
 			final Block block = this.location.getBlock();
-			if (block.getType() == Material.FIRE) {
+			if (isFire(block)) {
 				return;
 			}
 
@@ -96,32 +90,8 @@ public class BlazeArc extends FireAbility {
 		}
 	}
 
-	public static void dissipateAll() {
-		if (DISSIPATE_REMOVE_TIME != 0) {
-			for (final Block block : IGNITED_TIMES.keySet()) {
-				if (block.getType() != Material.FIRE) {
-					removeBlock(block);
-				} else {
-					final long time = IGNITED_TIMES.get(block);
-					if (System.currentTimeMillis() > time + DISSIPATE_REMOVE_TIME) {
-						block.setType(Material.AIR);
-						removeBlock(block);
-					}
-				}
-			}
-		}
-	}
-
-	public static void handleDissipation() {
-		for (final Block block : IGNITED_BLOCKS.keySet()) {
-			if (block.getType() != Material.FIRE) {
-				IGNITED_BLOCKS.remove(block);
-			}
-		}
-	}
-
 	public static Block getIgnitable(final Block block) {
-		Block top = block;
+		Block top = GeneralMethods.isSolid(block) ? block.getRelative(BlockFace.UP) : block;
 
 		for (int i = 0; i < 2; i++) {
 			if (GeneralMethods.isSolid(top.getRelative(BlockFace.DOWN))) {
@@ -158,12 +128,6 @@ public class BlazeArc extends FireAbility {
 		}
 	}
 
-	public static void removeAllCleanup() {
-		for (final Block block : IGNITED_BLOCKS.keySet()) {
-			removeBlock(block);
-		}
-	}
-
 	public static void removeAroundPoint(final Location location, final double radius) {
 		for (final BlazeArc stream : getAbilities(BlazeArc.class)) {
 			if (stream.location.getWorld().equals(location.getWorld())) {
@@ -171,20 +135,6 @@ public class BlazeArc extends FireAbility {
 					stream.remove();
 				}
 			}
-		}
-	}
-
-	public static void removeBlock(final Block block) {
-		if (IGNITED_BLOCKS.containsKey(block)) {
-			IGNITED_BLOCKS.remove(block);
-		}
-		if (IGNITED_TIMES.containsKey(block)) {
-			IGNITED_TIMES.remove(block);
-		}
-		if (REPLACED_BLOCKS.containsKey(block.getLocation())) {
-			block.setType(REPLACED_BLOCKS.get(block.getLocation()).getType());
-			block.setBlockData(REPLACED_BLOCKS.get(block.getLocation()).getBlockData());
-			REPLACED_BLOCKS.remove(block.getLocation());
 		}
 	}
 
@@ -266,18 +216,6 @@ public class BlazeArc extends FireAbility {
 
 	public static long getDissipateRemoveTime() {
 		return DISSIPATE_REMOVE_TIME;
-	}
-
-	public static Map<Block, Player> getIgnitedBlocks() {
-		return IGNITED_BLOCKS;
-	}
-
-	public static Map<Block, Long> getIgnitedTimes() {
-		return IGNITED_TIMES;
-	}
-
-	public static Map<Location, BlockState> getReplacedBlocks() {
-		return REPLACED_BLOCKS;
 	}
 
 	public void setLocation(final Location location) {

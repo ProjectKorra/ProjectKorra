@@ -76,7 +76,10 @@ public class ConfigManager {
 			config.addDefault("Chat.Prefixes.Chi", "[Chi]");
 			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
-
+			
+			config.addDefault("Extras.Autosave.Message.Enabled", true);
+			config.addDefault("Extras.Autosave.Message.Text", "&6Autosaving bending player data!");
+			config.addDefault("Extras.Autosave.Message.Permission", "bending.admin");
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
 			config.addDefault("Extras.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
@@ -235,6 +238,7 @@ public class ConfigManager {
 
 			config.addDefault("DeathMessages.Enabled", true);
 			config.addDefault("DeathMessages.Default", "{victim} was slain by {attacker}'s {ability}");
+			config.addDefault("DeathMessages.VelocityImpactDefault", "{victim} was thrown by {attacker}'s {ability}");
 
 			config.addDefault("Abilities.Avatar.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Left click to activate to become " + "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from " + "all sources, regenerates health rapidly, and is granted extreme speed. Nearly all abilities " + "are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able " + "abilities and last until you deactivate them or the Avatar State. Left click again with the Avatar " + "State selected to deactivate it.");
 
@@ -242,11 +246,11 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.Description", "AirBlast is the most fundamental bending technique of an airbender. It allows the bender to be extremely agile and possess great mobility, but also has many utility options, such as cooling lava, opening doors and flicking levers.");
 			config.addDefault("Abilities.Air.AirBlast.Instructions", "\n" + "(Push) " + "Left click while aiming at an entity to push them back." + "\n" + "(Throw) " + "Tap sneak to select a location and left click in a direction to throw entities away from the selected location.");
 			config.addDefault("Abilities.Air.AirBlast.DeathMessage", "{victim} was flung by {attacker}'s {ability}");
-			config.addDefault("Abilities.Air.AirBlast.HorizontalVelocityDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.AirBlast.VelocityImpactDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. It allows the bender to create space between them and whoever is close to them. AirBurst is extremely useful when you're surrounded by mobs, of if you're low in health and need to escape. It can also be useful for confusing your target also.");
 			config.addDefault("Abilities.Air.AirBurst.Instructions", "\n" + "(Sphere) Hold sneak until particles appear and then release shift to create air that expands outwards, pushing entities back. If you fall from great height while you are on this slot, the burst will automatically activate." + "\n" + "(Cone) While charging the move with shift, click to send the burst in a cone only going in one direction.");
 			config.addDefault("Abilities.Air.AirBurst.DeathMessage", "{victim} was thrown down by {attacker}'s {ability}");
-			config.addDefault("Abilities.Air.AirBurst.HorizontalVelocityDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.AirBurst.VelocityImpactDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. It can be used to escape from enemies or confuse them by using air scooter around them.");
 			config.addDefault("Abilities.Air.AirScooter.Instructions", "Sprint, jump, and left click while in the air to activate air scooter. You will then move forward in the direction you're looking.");
 			config.addDefault("Abilities.Air.Tornado.Description", "Tornado is one of the most powerful and advanced abilities that an Airbender knows. If the tornado meets a player or mob, it will push them around. Tornado can also be used to push back projectiles and used for mobility. Use a tornado directly under you to propel yourself upwards.");
@@ -257,7 +261,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSpout.Instructions", "Left click to activate a spout beneath you and hold spacebar to go higher. If you wish to go lower, simply hold sneak. To disable this ability, left click once again.");
 			config.addDefault("Abilities.Air.AirSuction.Description", "AirSuction is a basic ability that allows you to manipulation an entity's movement. It can be used to bring someone back to you when they're running away, or even to get yourself to great heights.");
 			config.addDefault("Abilities.Air.AirSuction.Instructions", "\n" + "(Pull) Left click while aiming at a target to pull them towards you." + "\n" + "(Manipulation) Sneak to select a point and then left click at a target or yourself to send you or your target to the point that you selected.");
-			config.addDefault("Abilities.Air.AirSuction.HorizontalVelocityDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.AirSuction.VelocityImpactDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.AirSwipe.Description", "AirSwipe is the most commonly used damage ability in an airbender's arsenal. An arc of air will flow from you towards the direction you're facing, cutting and pushing back anything in its path. This ability will extinguish fires, cool lava, and cut things like grass, mushrooms, and flowers.");
 			config.addDefault("Abilities.Air.AirSwipe.Instructions", "\n" + "(Uncharged) Simply left click to send an air swipe out that will damage targets that it comes into contact with." + "\n" + "(Charged) Hold sneak until particles appear, then release sneak to send a more powerful air swipe out that damages entity's that it comes into contact with.");
 			config.addDefault("Abilities.Air.AirSwipe.DeathMessage", "{victim} was struck by {attacker}'s {ability}");
@@ -273,6 +277,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Combo.AirSweep.Description", "Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
 			config.addDefault("Abilities.Air.Combo.AirSweep.DeathMessage", "{victim} was swept away by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.Combo.AirSweep.Instructions", "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
+			config.addDefault("Abilities.Air.Combo.AirSweep.VelocityImpactDeath", "{attacker}'s {ability} flung {victim} into a hard surface");
 			config.addDefault("Abilities.Air.Passive.AirAgility.Description", "AirAgility is a passive ability which enables airbenders to run faster and jump higher.");
 			config.addDefault("Abilities.Air.Passive.AirSaturation.Description", "AirSaturation is a passive ability which causes airbenders' hunger to deplete at a slower rate.");
 			config.addDefault("Abilities.Air.Passive.GracefulDescent.Description", "GracefulDescent is a passive ability which allows airbenders to make a gentle landing, negating all fall damage on any surface.");
@@ -297,6 +302,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.PhaseChange.Instructions", "\n" + "(Melt) To melt ice, hold sneak while looking at an ice block." + "\n" + "(Freeze) To freeze water and turn it into ice, simply left click at water. This ice will stay so long as you are in range, otherwise it will revert back to water. This only freezes the top layer of ice.");
 			config.addDefault("Abilities.Water.Surge.Description", "Surge offers great utility and is one of the most important defence abilities for waterbender's. It can be used to push entities back, used to push yourself in a direction, trap entities and protect yourself with a shield.");
 			config.addDefault("Abilities.Water.Surge.Instructions", "\n" + "(Shield) Left click on a water source and then hold sneak while looking up to create a water shield that will move wherever you look. Additionally, you can left click to turn this shield into ice. If you let go of sneak at any point, this ability will cancel." + "\n" + "(Surge) Tap sneak at a water source and click in a direction to fire a surge of water that will knock entities back. Additionally, if you tap sneak again before the surge reaches an entity, when it hits them it will encase them in ice.");
+			config.addDefault("Abilities.Water.Surge.VelocityImpactDeath", "{victim} was crushed by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. It has the potential to do immense damage and to be comboed with other abilities to perform a deal a large damage burst. Torrent is fundamental for waterbender's. ");
 			config.addDefault("Abilities.Water.Torrent.Instructions", "\n" + "(Torrent) Left click at a water source and hold sneak to form the torrent. Then, left click and the torrent will shoot out, moving in the direction you're looking. If the torrent hits an entity, it can drag them and deal damage. Additionally, if you left click before the torrent hits a surface or entity it will freeze on impact." + "\n" + "(Wave) Left click a water source and hold sneak to form a torrent around you. Then, release sneak to send a wave of water expanding outwards every direction that will push entities back.");
 			config.addDefault("Abilities.Water.Torrent.DeathMessage", "{victim} was washed away by {attacker}'s {ability}");
@@ -345,6 +351,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthSmash.Description", "EarthSmash is an advanced earthbending technique that has lots of utility. It can be comboed with abilities such as Shockwave, but also be used for mobility and to produce high damage. EarthSmash is great for escaping when at low health.");
 			config.addDefault("Abilities.Earth.EarthSmash.Instructions", "\n" + "(Smash) Hold sneak until particles appear, then release sneak while looking at an earthbendable block which will raise an earth boulder. Then, hold sneak while looking at this boulder to control it. Left click to send the bounder in the direction you're facing, damanging entities and knocking them back." + "\n" + "(Ride) After you have created an earth boulder, hold sneak and right click on the boulder to ride it. You will now ride the boulder in whatever direction you look. Additionally, you can ride the boulder by going on top of it and holding sneak. If you come into contact with an entity while riding the boulder, it will drag them along with you. If you left go of sneak, the ability will cancel.");
 			config.addDefault("Abilities.Earth.EarthSmash.DeathMessage", "{victim} was crushed by {attacker}'s {ability}");
+			config.addDefault("Abilities.Earth.EarthSmash.VelocityImpactDeath", "{victim} was launched by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips is an advanced metalbending ability that allows you to take control of a fight. It gives the metalbender the ability to control an entity, create space between them and a player and even added utility.");
 			config.addDefault("Abilities.Earth.MetalClips.Instructions", "\n" + "(Clips) This ability requires iron ingots in your inventory. Left click to throw an ingot at an entity, dealing damage to them. This ingot will form into armor, wrapping itself around the entity. Once enough armor pieces are around the entity, you can then control them. To control them, hold sneak while looking at them and then they will be moved in the direction you look. Additionally, you can release sneak to throw them in the direction you're looking." + "\n" + "(Magnet) Hold sneak with this ability to pull iron ingots towards you.");
 			config.addDefault("Abilities.Earth.MetalClips.DeathMessage", "{victim} was too slow for {attacker}'s {ability}");
@@ -353,6 +360,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Shockwave.Description", "Shockwave is one of the most powerful earthbending abilities. It allows the earthbender to deal mass damage to everyone around them and knock them back. It's extremely useful when fighting more than one target or if you're surrounded by mobs.");
 			config.addDefault("Abilities.Earth.Shockwave.Instructions", "Hold sneak until you see particles and then release sneak to send a wave of earth outwards, damaging and knocking entities back that it collides with. Additionally, instead of releasing sneak you can send a cone of earth forwards by left clicking. If you are on the Shockwave slot and you fall from a great height, your Shockwave will automatically activate.");
 			config.addDefault("Abilities.Earth.Shockwave.DeathMessage", "{victim} was blown away by {attacker}'s {ability}");
+			config.addDefault("Abilities.Earth.Shockwave.VelocityImpactDeath", "{victim} was shell-shocked {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
 			config.addDefault("Abilities.Earth.Tremorsense.Instructions", "Simply left click while on an earthbendable block.");
 			config.addDefault("Abilities.Earth.Combo.EarthDome.Description", "EarthDome allows earthbenders to surround themselves or another entity in earth, temporarily preventing anything from entering or escaping the dome.");
@@ -549,11 +557,16 @@ public class ConfigManager {
 			config.addDefault("Properties.SeaLevel", 62);
 			config.addDefault("Properties.ChooseCooldown", 0L);
 			config.addDefault("Properties.MaxPresets", 10);
+			config.addDefault("Properties.AbilityDamageTimestampDuration", 5000);
+			
+			config.addDefault("Properties.Autosave.Interval", 6000);
 
-			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
-			config.addDefault("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock", false);
-			config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance", 5.0);
-			config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageCap", 5.0);
+			config.addDefault("Properties.CollisionPhysics.Enabled", true);
+			config.addDefault("Properties.CollisionPhysics.ImpactOnBarrierBlock", false);
+			config.addDefault("Properties.CollisionPhysics.ImpactMinimumDistance", 5.0);
+			config.addDefault("Properties.CollisionPhysics.ImpactDamageCap", 5.0);
+			config.addDefault("Properties.CollisionPhysics.ImpactDamageFactor", 0.42);
+			config.addDefault("Properties.CollisionPhysics.VelocityChangeThreshold", 0.52);
 
 			config.addDefault("Properties.RegionProtection.AllowHarmlessAbilities", true);
 			config.addDefault("Properties.RegionProtection.RespectWorldGuard", true);
@@ -900,6 +913,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Tornado.Speed", 1);
 			config.addDefault("Abilities.Air.Tornado.NpcPushFactor", 1);
 			config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
+			config.addDefault("Abilities.Air.Tornado.StreamCount", 3);
 
 			config.addDefault("Abilities.Air.Twister.Enabled", true);
 			config.addDefault("Abilities.Air.Twister.Speed", 0.35);
@@ -1317,6 +1331,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
 
+			config.addDefault("Abilities.Fire.Passives.BlueFlames.DamageMultiplier", 1.3);
+			
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);
 			config.addDefault("Abilities.Fire.Blaze.Arc", 14);
 			config.addDefault("Abilities.Fire.Blaze.Range", 7);

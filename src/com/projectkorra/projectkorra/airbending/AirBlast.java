@@ -1,9 +1,10 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -26,13 +27,14 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class AirBlast extends AirAbility {
 
@@ -70,8 +72,9 @@ public class AirBlast extends AirAbility {
 	private Vector direction;
 	private AirBurst source;
 	private Random random;
-	private ArrayList<Block> affectedLevers;
-	private ArrayList<Entity> affectedEntities;
+	private Set<Block> affectedLevers;
+	private Set<Entity> affectedEntities;
+	private VelocityBuilder velocity;
 
 	public AirBlast(final Player player) {
 		super(player);
@@ -116,9 +119,6 @@ public class AirBlast extends AirAbility {
 
 		this.setFields();
 
-		this.affectedLevers = new ArrayList<>();
-		this.affectedEntities = new ArrayList<>();
-
 		// prevent the airburst related airblasts from triggering doors/levers/buttons.
 		this.canOpenDoors = false;
 		this.canPressButtons = false;
@@ -151,8 +151,9 @@ public class AirBlast extends AirAbility {
 		this.isFromOtherOrigin = false;
 		this.showParticles = true;
 		this.random = new Random();
-		this.affectedLevers = new ArrayList<>();
-		this.affectedEntities = new ArrayList<>();
+		this.affectedLevers = new HashSet<>();
+		this.affectedEntities = new HashSet<>();
+		this.velocity = new VelocityBuilder();
 	}
 
 	private static void playOriginEffect(final Player player) {
@@ -198,7 +199,7 @@ public class AirBlast extends AirAbility {
 
 	private void advanceLocation() {
 		if (this.showParticles) {
-			playAirbendingParticles(this.location, this.particles, 0.275F, 0.275F, 0.275F);
+			playAirbendingParticles(this.location, this.particles, 0.4, 0.4, 0.4);
 		}
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.location);
@@ -244,32 +245,21 @@ public class AirBlast extends AirAbility {
 			knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
 		}
 		
-		if (GeneralMethods.isSolid(entity.getLocation().add(0, -0.5, 0).getBlock()) && source == null) {
-			knockback *= 0.85;
-		}
-		
 		push.normalize().multiply(knockback);
 		
-		if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
-			push.normalize().add(entity.getVelocity()).multiply(knockback);
+		if (Math.abs(entity.getVelocity().dot(push)) > knockback * knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
+			push.add(entity.getVelocity());
 		}
 		
-		GeneralMethods.setVelocity(entity, push);
-		
+		CoreAbility source = this;
 		if (this.source != null) {
-			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
-		} else {
-			new HorizontalVelocityTracker(entity, this.player, 200l, this);
+			source = this.source;
 		}
+		
+		velocity.direction(push).knockback(knockback).apply(entity, source, true, true);
 
-		if (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
-			if (this.source != null) {
-				DamageHandler.damageEntity(entity, this.damage, this.source);
-			} else {
-				DamageHandler.damageEntity(entity, this.damage, this);
-			}
-			
-			this.affectedEntities.add(entity);
+		if (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !affectedEntities.contains(entity)) {
+			DamageHandler.damageEntity(entity, this.damage, source);
 		}
 
 		if (entity.getFireTicks() > 0) {
@@ -278,6 +268,7 @@ public class AirBlast extends AirAbility {
 
 		entity.setFireTicks(0);
 		breakBreathbendingHold(entity);
+		this.affectedEntities.add(entity);
 	}
 
 	@Override
@@ -618,11 +609,11 @@ public class AirBlast extends AirAbility {
 		this.source = source;
 	}
 
-	public ArrayList<Block> getAffectedLevers() {
+	public Set<Block> getAffectedLevers() {
 		return this.affectedLevers;
 	}
 
-	public ArrayList<Entity> getAffectedEntities() {
+	public Set<Entity> getAffectedEntities() {
 		return this.affectedEntities;
 	}
 

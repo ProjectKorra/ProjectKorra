@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class EarthSmash extends EarthAbility {
 
@@ -76,6 +77,7 @@ public class EarthSmash extends EarthAbility {
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BlockRepresenter> currentBlocks;
 	private ArrayList<TempBlock> affectedBlocks;
+	private VelocityBuilder velocity;
 
 	public EarthSmash(final Player player, final ClickType type) {
 		super(player);
@@ -87,6 +89,7 @@ public class EarthSmash extends EarthAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.currentBlocks = new ArrayList<>();
 		this.affectedBlocks = new ArrayList<>();
+		this.velocity = new VelocityBuilder();
 
 		if (type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {
 			final EarthSmash flySmash = flyingInSmashCheck(player);
@@ -293,7 +296,8 @@ public class EarthSmash extends EarthAbility {
 					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 						continue;
 					}
-					entity.setVelocity(direction.clone().multiply(this.flightSpeed));
+					
+					velocity.direction(direction).knockback(this.flightSpeed).apply(entity, this);
 				}
 
 				// These values tend to work well when dealing with a person aiming upward or downward.
@@ -573,7 +577,7 @@ public class EarthSmash extends EarthAbility {
 				final double damage = this.currentBlocks.size() / 13.0 * this.damage;
 				DamageHandler.damageEntity(entity, damage, this);
 				final Vector travelVec = GeneralMethods.getDirection(this.location, entity.getLocation());
-				entity.setVelocity(travelVec.setY(this.knockup).normalize().multiply(this.knockback));
+				velocity.direction(travelVec).knockback(this.knockback).knockup(this.knockup).apply(entity, this, true, true);
 			}
 		}
 	}

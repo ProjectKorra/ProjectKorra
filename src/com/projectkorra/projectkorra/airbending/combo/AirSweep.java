@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.airbending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -22,6 +21,8 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class AirSweep extends AirAbility implements ComboAbility {
 
@@ -152,7 +153,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
-				fs.setParticleEffect(getAirbendingParticles());
+				fs.setParticleEffect(null);
 				fs.setCollides(false);
 				fs.runTaskTimer(ProjectKorra.plugin, (long) (i / 2.5), 1L);
 				this.tasks.add(fs);
@@ -187,6 +188,9 @@ public class AirSweep extends AirAbility implements ComboAbility {
 					return;
 				}
 			}
+			
+			playAirbendingParticles(loc, 1, 0, 0, 0);
+			
 			if (i % 3 == 0) {
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
 					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
@@ -196,8 +200,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 					if (!entity.equals(this.player) && !(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 						if (this.knockback != 0) {
 							final Vector force = fstream.getLocation().getDirection();
-							GeneralMethods.setVelocity(entity, force.clone().multiply(this.knockback));
-							new HorizontalVelocityTracker(entity, this.player, 200l, this);
+							new VelocityBuilder(force).knockback(knockback).apply(entity, this, true, false);
 							entity.setFallDistance(0);
 						}
 						if(!this.affectedEntities.contains(entity)) {

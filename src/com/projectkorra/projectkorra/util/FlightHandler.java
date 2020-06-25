@@ -10,6 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.object.VelocityTracker;
 
 public class FlightHandler extends Manager {
 
@@ -82,6 +83,11 @@ public class FlightHandler extends Manager {
 	 * @param identifier The ability using Flight
 	 */
 	public void createInstance(final Player player, final Player source, final long duration, final String identifier) {
+		VelocityTracker vt = VelocityTracker.getTracker(player);
+		if (vt != null) {
+			vt.cancel();
+		}
+		
 		if (this.INSTANCES.containsKey(player.getUniqueId())) {
 			final Flight flight = this.INSTANCES.get(player.getUniqueId());
 			final FlightAbility ability = new FlightAbility(player, identifier, duration);

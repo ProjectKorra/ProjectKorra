@@ -1,10 +1,13 @@
-package com.projectkorra.projectkorra.ability;
+	package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,6 +21,8 @@ import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public abstract class AirAbility extends ElementalAbility {
+	
+	private static final DustOptions COLOR = new DustOptions(Color.fromRGB(217, 253, 255), 1.12f);
 
 	public AirAbility(final Player player) {
 		super(player);
@@ -83,6 +88,12 @@ public abstract class AirAbility extends ElementalAbility {
 			return ParticleEffect.CLOUD;
 		} else if (particle.equalsIgnoreCase("smallsmoke")) {
 			return ParticleEffect.SNOW_SHOVEL;
+		} else if (particle.equalsIgnoreCase("colorsmoke")) {
+			return ParticleEffect.CLOUD;
+		} else if (particle.equalsIgnoreCase("colorspell")) {
+			return ParticleEffect.SPELL_MOB_AMBIENT;
+		} else if (particle.equalsIgnoreCase("ash")) {
+			return ParticleEffect.ASH;
 		} else {
 			return ParticleEffect.CLOUD;
 		}
@@ -125,7 +136,18 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param zOffset The zOffset to use
 	 */
 	public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
+		if (getConfig().getString("Properties.Air.Particles").equalsIgnoreCase("colorsmoke")) {
+			ParticleEffect.REDSTONE.display(loc, amount, xOffset, yOffset, zOffset, COLOR);
+		} else if (getConfig().getString("Properties.Air.Particles").equalsIgnoreCase("colorspell")) {
+			for (int i = 0; i < amount; i++) {
+				double x = loc.getX() + 2 * xOffset * (Math.random() - 0.5);
+				double y = loc.getY() + 2 * yOffset * (Math.random() - 0.5);
+				double z = loc.getZ() + 2 * zOffset * (Math.random() - 0.5);
+				loc.getWorld().spawnParticle(Particle.SPELL_MOB_AMBIENT, x, y, z, 0, 98 / 255D, 188 / 255D, 192 / 255D, 1);
+			}
+	    } else {
+			getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
+		}
 	}
 
 	/**

@@ -28,6 +28,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
@@ -299,8 +300,8 @@ public class WaterSpoutWave extends WaterAbility {
 				if (this.bPlayer.isAvatarState()) {
 					currentSpeed = this.getNightFactor(this.speed);
 				}
-
-				this.player.setVelocity(this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
+				
+				new VelocityBuilder(this.player.getEyeLocation().getDirection()).knockback(currentSpeed).apply(player, this);
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
 					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (this.iceWave) {

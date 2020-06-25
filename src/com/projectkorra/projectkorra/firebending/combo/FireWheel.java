@@ -18,10 +18,8 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireWheel extends FireAbility implements ComboAbility {
 
@@ -120,7 +118,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		if (topBlock == null || isWater(topBlock)) {
 			this.remove();
 			return;
-		} else if (topBlock.getType() == Material.FIRE) {
+		} else if (isFire(topBlock)) {
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		} else if (ElementalAbility.isPlant(topBlock)) {
 			topBlock.breakNaturally();
@@ -139,7 +137,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			final Vector newDir = this.direction.clone().multiply(this.radius * Math.cos(Math.toRadians(i)));
 			tempLoc.add(newDir);
 			tempLoc.setY(tempLoc.getY() + (this.radius * Math.sin(Math.toRadians(i))));
-			ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
+			playFirebendingParticles(tempLoc, 0, 0, 0, 0, 1);
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius + 0.5)) {
@@ -148,7 +146,6 @@ public class FireWheel extends FireAbility implements ComboAbility {
 					this.affectedEntities.add((LivingEntity) entity);
 					DamageHandler.damageEntity(entity, this.damage, this);
 					entity.setFireTicks((int) (this.fireTicks * 20));
-					new FireDamageTimer(entity, this.player);
 				}
 			}
 		}

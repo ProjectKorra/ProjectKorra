@@ -119,6 +119,7 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.object.VelocityTracker;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
@@ -157,6 +158,7 @@ public class GeneralMethods {
 
 	private static Method getAbsorption;
 	private static Method setAbsorption;
+	private static Method getHandle;
 
 	public GeneralMethods(final ProjectKorra plugin) {
 		GeneralMethods.plugin = plugin;
@@ -164,6 +166,7 @@ public class GeneralMethods {
 		try {
 			getAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
 			setAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
+			getHandle = ReflectionHandler.getMethod("CraftPlayer", PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -464,6 +467,9 @@ public class GeneralMethods {
 						if (split[0].contains("p")) {
 							subelements.add(Element.PLANT);
 						}
+						if (split[0].contains("r")) {
+							subelements.add(Element.BLUE_FIRE);
+						}
 						if (hasAddon) {
 							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
 							final long startTime = System.currentTimeMillis();
@@ -574,6 +580,10 @@ public class GeneralMethods {
 
 	@Deprecated
 	public static void displayColoredParticle(final Location loc, ParticleEffect type, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
+		if (type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.SPELL_MOB_AMBIENT) {
+			type = ParticleEffect.REDSTONE;
+		}
+		
 		int r = 0;
 		int g = 0;
 		int b = 0;
@@ -596,20 +606,7 @@ public class GeneralMethods {
 		loc.setY(loc.getY() + (Math.random() * 2 - 1) * yOffset);
 		loc.setZ(loc.getZ() + (Math.random() * 2 - 1) * zOffset);
 
-		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
-			type = ParticleEffect.RED_DUST;
-		}
 		type.display(loc, 0, red, green, blue);
-	}
-
-	@Deprecated
-	public static void displayColoredParticle(final Location loc, final String hexVal) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, 0, 0, 0);
-	}
-
-	@Deprecated
-	public static void displayColoredParticle(final Location loc, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, xOffset, yOffset, zOffset);
 	}
 
 	public static void displayColoredParticle(String hexVal, final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
@@ -674,7 +671,7 @@ public class GeneralMethods {
 	public static float getAbsorbationHealth(final Player player) {
 
 		try {
-			final Object entityplayer = ActionBar.getHandle.invoke(player);
+			final Object entityplayer = getHandle.invoke(player);
 			final Object hearts = getAbsorption.invoke(entityplayer);
 			return (float) hearts;
 		} catch (final Exception e) {
@@ -686,7 +683,7 @@ public class GeneralMethods {
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
 
 		try {
-			final Object entityplayer = ActionBar.getHandle.invoke(player);
+			final Object entityplayer = getHandle.invoke(player);
 			setAbsorption.invoke(entityplayer, hearts);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -1660,15 +1657,16 @@ public class GeneralMethods {
 			case SKELETON:
 			case STRAY:
 			case WITHER_SKELETON:
-			case WITHER:
 			case ZOMBIE:
-			case HUSK:
-			case ZOMBIE_VILLAGER:
-			case PIG_ZOMBIE:
 			case DROWNED:
-			case ZOMBIE_HORSE:
-			case SKELETON_HORSE:
+			case HUSK:
+			case ZOMBIFIED_PIGLIN:
+			case ZOMBIE_VILLAGER:
 			case PHANTOM:
+			case WITHER:
+			case SKELETON_HORSE:
+			case ZOMBIE_HORSE:
+			case ZOGLIN:
 				return true;
 			default:
 				return false;
@@ -1739,9 +1737,15 @@ public class GeneralMethods {
 			sender.sendMessage(ChatColor.RED + "Reload event cancelled");
 			return;
 		}
+		
+		for (BendingPlayer bPlayer : BendingPlayer.getPlayers().values()) {
+			savePlayer(bPlayer);
+		}
+		
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
 		}
+		
 		GeneralMethods.stopBending();
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
@@ -1764,11 +1768,13 @@ public class GeneralMethods {
 			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
 			stopPlugin();
 		}
+		
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			PassiveManager.registerPassives(player);
 		}
+		
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
 	}
@@ -2115,6 +2121,9 @@ public class GeneralMethods {
 		if (bPlayer.hasSubElement(Element.PLANT)) {
 			subs.append("p");
 		}
+		if (bPlayer.hasSubElement(Element.BLUE_FIRE)) {
+			subs.append("r");
+		}
 		boolean hasAddon = false;
 		for (final Element element : bPlayer.getSubElements()) {
 			if (Arrays.asList(Element.getAddonSubElements()).contains(element)) {
@@ -2297,8 +2306,8 @@ public class GeneralMethods {
 		CoreAbility.removeAll();
 		EarthAbility.stopBending();
 		WaterAbility.stopBending();
-		FireAbility.stopBending();
 
+		VelocityTracker.cancelAll();
 		TempBlock.removeAll();
 		TempArmor.revertAll();
 		TempArmorStand.removeAll();

@@ -6,6 +6,7 @@ import java.util.List;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -498,6 +499,7 @@ public class Lightning extends LightningAbility {
 				this.cancel();
 			} else if (this.count == 1) {
 				if (!Lightning.this.isTransparentForLightning(Lightning.this.player, this.location.getBlock())) {
+					this.location.getWorld().playSound(location, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 3, 0.3f);
 					this.arc.cancel();
 					return;
 				}
@@ -546,6 +548,7 @@ public class Lightning extends LightningAbility {
 						}
 
 						Lightning.this.electrocute(lent);
+						this.location.getWorld().playSound(lent.getLocation().add(0, 1, 0), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 3, 0.3f);
 
 						// Handle Chain Lightning.
 						if (Lightning.this.maxChainArcs >= 1 && Math.random() <= Lightning.this.chainArcChance) {

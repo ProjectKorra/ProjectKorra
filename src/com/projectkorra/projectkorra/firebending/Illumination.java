@@ -125,7 +125,7 @@ public class Illumination extends FireAbility {
 		}
 
 		this.revert();
-		this.block = new TempBlock(standingBlock, Material.TORCH);
+		this.block = new TempBlock(standingBlock, bPlayer.hasSubElement(Element.BLUE_FIRE) ? Material.SOUL_TORCH : Material.TORCH);
 		BLOCKS.put(this.block, this.player);
 	}
 

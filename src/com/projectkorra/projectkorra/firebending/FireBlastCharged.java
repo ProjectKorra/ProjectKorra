@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -207,7 +206,7 @@ public class FireBlastCharged extends FireAbility {
 
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
-			ParticleEffect.FLAME.display(block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
+			playFirebendingParticles(block.getLocation(), 5, 0.5, 0.5, 0.5);
 			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.5, 0.5, 0.5, 0);
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
@@ -234,14 +233,7 @@ public class FireBlastCharged extends FireAbility {
 	private void ignite(final Location location) {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
 			if (BlazeArc.isIgnitable(this.player, block)) {
-				if (block.getType() != Material.FIRE) {
-					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState());
-				}
-				block.setType(Material.FIRE);
-				if (this.dissipate) {
-					BlazeArc.getIgnitedBlocks().put(block, this.player);
-					BlazeArc.getIgnitedTimes().put(block, System.currentTimeMillis());
-				}
+				createTempFire(block, bPlayer);
 			}
 		}
 	}
@@ -282,7 +274,7 @@ public class FireBlastCharged extends FireAbility {
 			if (!this.launched && !this.charged) {
 				return;
 			} else if (!this.launched) {
-				this.player.getWorld().playEffect(this.player.getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 0, 3);
+				playFirebendingParticles(player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize()), 1, 0, 0, 0);
 				return;
 			}
 

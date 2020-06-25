@@ -193,9 +193,7 @@ public class HeatControl extends FireAbility {
 			}
 
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {
-				final Material material = block.getType();
-				if (material == Material.FIRE && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-
+				if (isFire(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 					block.setType(Material.AIR);
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 				}
@@ -281,7 +279,7 @@ public class HeatControl extends FireAbility {
 	}
 
 	public void displayCookParticles() {
-		ParticleEffect.FLAME.display(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
+		playFirebendingParticles(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
 		ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation().clone().add(0, 1, 0), 2, 0.5, 0.5, 0.5);
 	}
 

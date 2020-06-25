@@ -281,6 +281,9 @@ public class WhoCommand extends PKCommand {
 					if (bPlayer.canLightningbend()) {
 						sender.sendMessage(Element.LIGHTNING.getColor() + "    Can Lightningbend");
 					}
+					if (bPlayer.hasSubElement(Element.BLUE_FIRE)) {
+						sender.sendMessage(Element.BLUE_FIRE.getColor() + "    Creates Blue Flames");
+					}
 					for (final SubElement se : Element.getAddonSubElements(Element.FIRE)) {
 						if (bPlayer.canUseSubElement(se)) {
 							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());

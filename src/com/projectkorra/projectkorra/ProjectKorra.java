@@ -3,18 +3,15 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
-
-import co.aikar.timings.lib.MCTiming;
-import co.aikar.timings.lib.TimingManager;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
@@ -26,7 +23,6 @@ import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
-import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.hooks.PlaceholderAPIHook;
 import com.projectkorra.projectkorra.hooks.WorldGuardFlag;
 import com.projectkorra.projectkorra.object.Preset;
@@ -37,6 +33,9 @@ import com.projectkorra.projectkorra.util.StatisticsManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+
+import co.aikar.timings.lib.MCTiming;
+import co.aikar.timings.lib.TimingManager;
 
 public class ProjectKorra extends JavaPlugin {
 
@@ -83,7 +82,6 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
@@ -102,6 +100,23 @@ public class ProjectKorra extends JavaPlugin {
 			}, (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20), (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20));
 		}
 		TempBlock.startReversion();
+		
+		final int autosaveInterval = ConfigManager.defaultConfig.get().getInt("Properties.Autosave.Interval");
+		final String autosaveMessage = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Autosave.Message.Text"));
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				if (ConfigManager.languageConfig.get().getBoolean("Extras.Autosave.Message.Enabled")) {
+					Bukkit.getServer().broadcast(autosaveMessage, ConfigManager.languageConfig.get().getString("Extras.Autosave.Message.Permission"));
+				}
+				
+				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+					GeneralMethods.savePlayer(BendingPlayer.getBendingPlayer(player));
+				}
+			}
+			
+		}.runTaskTimer(this, autosaveInterval, autosaveInterval);
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));

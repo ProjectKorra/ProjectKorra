@@ -827,6 +827,18 @@ public abstract class CoreAbility implements Ability {
 		}
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + this.getName() + ".Description");
 	}
+	
+	@Override
+	public String getDeathMessage(boolean velocityImpact) {
+		String message = velocityImpact ? ConfigManager.languageConfig.get().getString("DeathMessages.VelocityImpactDefault") : ConfigManager.languageConfig.get().getString("DeathMessages.Default");
+		String path = "Abilities." + this.getElement().getName() + (this instanceof ComboAbility ? ".Combo." : ".") + this.getName() + (velocityImpact ? ".VelocityImpactDeath" : ".DeathMessage");
+		
+		if (ConfigManager.languageConfig.get().contains(path)) {
+			message = ConfigManager.languageConfig.get().getString(path);
+		}
+		
+		return message;
+	}
 
 	public String getMovePreview(final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -1032,6 +1044,19 @@ public abstract class CoreAbility implements Ability {
 				field.setAccessible(accessibility);
 			}
 		});
+	}
+	
+	/**
+	 * Checks if the ability has a specific attribute, which are case-sensitive
+	 * @param attribute Attribute to check for
+	 * @return true if ability has attribute
+	 */
+	public boolean hasAttribute(String attribute) {
+		if (!ATTRIBUTE_FIELDS.containsKey(this.getClass())) {
+			return false;
+		}
+		
+		return ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute);
 	}
 
 	/**

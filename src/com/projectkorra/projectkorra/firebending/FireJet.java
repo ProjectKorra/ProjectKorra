@@ -7,14 +7,16 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class FireJet extends FireAbility {
 
@@ -60,12 +62,12 @@ public class FireJet extends FireAbility {
 		if (BlazeArc.isIgnitable(player, block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
-				if (ElementalAbility.isAir(block.getType())) {
-					createTempFire(block.getLocation());
+				if (ElementalAbility.isAir(block.getType()) && GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
+					createTempFire(block, bPlayer);
 				}
 
 			} else if (ElementalAbility.isAir(block.getType())) {
-				block.setType(Material.FIRE);
+				block.setType(getFireColor());
 			}
 
 			this.flightHandler.createInstance(player, this.getName());
@@ -93,7 +95,7 @@ public class FireJet extends FireAbility {
 				playFirebendingSound(this.player.getLocation());
 			}
 
-			ParticleEffect.FLAME.display(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
+			playFirebendingParticles(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
 			ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
 			double timefactor;
 
@@ -103,8 +105,7 @@ public class FireJet extends FireAbility {
 				timefactor = 1 - (System.currentTimeMillis() - this.time) / (2.0 * this.duration);
 			}
 
-			final Vector velocity = this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed * timefactor);
-			this.player.setVelocity(velocity);
+			new VelocityBuilder(player.getEyeLocation().getDirection()).knockback(this.speed * timefactor).apply(player, this);
 			this.player.setFallDistance(0);
 		}
 	}

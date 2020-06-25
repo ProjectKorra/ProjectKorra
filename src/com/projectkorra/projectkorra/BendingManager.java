@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.UUID;
 
-import co.aikar.timings.lib.MCTiming;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -14,12 +12,13 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+
+import co.aikar.timings.lib.MCTiming;
 
 public class BendingManager implements Runnable {
 
@@ -30,7 +29,7 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
 
-	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING;
+	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING;
 
 	public BendingManager() {
 		instance = this;
@@ -39,7 +38,6 @@ public class BendingManager implements Runnable {
 		this.CORE_ABILITY_TIMING = ProjectKorra.timing("CoreAbility#ProgressAll");
 		this.TEMP_POTION_TIMING = ProjectKorra.timing("TempPotion#ProgressAll");
 		this.DAY_NIGHT_TIMING = ProjectKorra.timing("HandleDayNight");
-		this.HORIZONTAL_VELOCITY_TRACKER_TIMING = ProjectKorra.timing("HorizontalVelocityTracker#UpdateAll");
 		this.COOLDOWN_TIMING = ProjectKorra.timing("HandleCooldowns");
 		this.TEMP_ARMOR_TIMING = ProjectKorra.timing("TempArmor#Cleanup");
 		this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
@@ -126,10 +124,6 @@ public class BendingManager implements Runnable {
 		}
 
 		RevertChecker.revertAirBlocks();
-
-		try (MCTiming timing = this.HORIZONTAL_VELOCITY_TRACKER_TIMING.startTiming()) {
-			HorizontalVelocityTracker.updateAll();
-		}
 
 		try (MCTiming timing = this.COOLDOWN_TIMING.startTiming()) {
 			this.handleCooldowns();

@@ -22,9 +22,9 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class Bloodbending extends BloodAbility {
 
@@ -128,11 +128,10 @@ public class Bloodbending extends BloodAbility {
 			}
 
 			DamageHandler.damageEntity(this.target, 0, this);
-			HorizontalVelocityTracker.remove(this.target);
 			AirAbility.breakBreathbendingHold(this.target);
 			TARGETED_ENTITIES.put(this.target, player);
 		}
-
+		
 		this.time = System.currentTimeMillis();
 		this.start();
 	}
@@ -152,9 +151,8 @@ public class Bloodbending extends BloodAbility {
 			if (location.getWorld().equals(target.getWorld())) {
 				vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(this.player, location.distance(target)));
 			}
-			vector.normalize();
-			entity.setVelocity(vector.multiply(this.knockback));
-			new HorizontalVelocityTracker(entity, this.player, 200, this);
+			
+			new VelocityBuilder(vector).knockback(knockback).apply(entity, this, true, false);
 		}
 		this.remove();
 		this.bPlayer.addCooldown(this);

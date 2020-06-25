@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class AirShield extends AirAbility {
 
@@ -38,6 +39,7 @@ public class AirShield extends AirAbility {
 	private Random random;
 	private HashMap<Integer, Integer> angles;
 	private boolean dynamicCooldown;
+	private VelocityBuilder velocity;
 
 	public AirShield(final Player player) {
 		super(player);
@@ -57,6 +59,7 @@ public class AirShield extends AirAbility {
 		}
 		this.random = new Random();
 		this.angles = new HashMap<>();
+		this.velocity = new VelocityBuilder();
 
 		if (this.bPlayer.isAvatarState() && hasAbility(player, AirShield.class) && this.isToggledByAvatarState) {
 			getAbility(player, AirShield.class).remove();
@@ -160,8 +163,7 @@ public class AirShield extends AirAbility {
 					}
 				}
 
-				velocity.multiply(0.5);
-				GeneralMethods.setVelocity(entity, velocity);
+				this.velocity.direction(velocity).knockback(0.5).apply(entity, this);
 				entity.setFallDistance(0);
 			}
 		}

@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -179,7 +180,7 @@ public class OctopusForm extends WaterAbility {
 		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock) && this.sourceBlock != null) {
 			this.sourceBlock.setType(Material.AIR);
 		}
-		this.source = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(0));
+		this.source = new TempBlock(this.sourceBlock, Material.WATER);
 	}
 
 	private void attack() {
@@ -206,7 +207,7 @@ public class OctopusForm extends WaterAbility {
 			}
 
 			final double knock = this.bPlayer.isAvatarState() ? AvatarState.getValue(this.knockback) : this.knockback;
-			entity.setVelocity(GeneralMethods.getDirection(this.player.getLocation(), location).normalize().multiply(knock));
+			new VelocityBuilder(GeneralMethods.getDirection(this.player.getLocation(), location)).knockback(knock).apply(entity, this);
 
 			if (entity instanceof LivingEntity) {
 				DamageHandler.damageEntity(entity, this.damage, this);
@@ -253,7 +254,7 @@ public class OctopusForm extends WaterAbility {
 					this.sourceLocation = newBlock.getLocation();
 
 					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, Material.WATER, GeneralMethods.getWaterData(0));
+						this.source = new TempBlock(newBlock, Material.WATER);
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
@@ -266,7 +267,7 @@ public class OctopusForm extends WaterAbility {
 					this.sourceLocation = newBlock.getLocation();
 
 					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, Material.WATER, GeneralMethods.getWaterData(0));
+						this.source = new TempBlock(newBlock, Material.WATER);
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
@@ -282,7 +283,7 @@ public class OctopusForm extends WaterAbility {
 							this.source.revertBlock();
 						}
 						if (!GeneralMethods.isSolid(newBlock)) {
-							this.source = new TempBlock(newBlock, Material.WATER, GeneralMethods.getWaterData(0));
+							this.source = new TempBlock(newBlock, Material.WATER);
 							this.sourceBlock = newBlock;
 						}
 					}
@@ -426,7 +427,7 @@ public class OctopusForm extends WaterAbility {
 				if (!SurgeWave.canThaw(block)) {
 					SurgeWave.thaw(block);
 				}
-				tblock.setType(Material.WATER, GeneralMethods.getWaterData(0));
+				tblock.setType(Material.WATER);
 				this.newBlocks.add(tblock);
 			} else if (this.blocks.contains(tblock)) {
 				this.newBlocks.add(tblock);
@@ -435,7 +436,7 @@ public class OctopusForm extends WaterAbility {
 			if (isWater(block) && !TempBlock.isTempBlock(block)) {
 				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(0.5, 0.5, 0.5), 5, Math.random(), Math.random(), Math.random(), 0);
 			}
-			this.newBlocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
+			this.newBlocks.add(new TempBlock(block, Material.WATER));
 		}
 	}
 

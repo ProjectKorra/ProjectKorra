@@ -16,7 +16,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireShield extends FireAbility {
@@ -129,7 +128,7 @@ public class FireShield extends FireAbility {
 						ParticleEffect.SMOKE_NORMAL.display(display, 1, 0, 0, 0);
 					}
 					if (this.random.nextInt(4) == 0) {
-						ParticleEffect.FLAME.display(display, 1, 0.1, 0.1, 0.1, 0.013);
+						playFirebendingParticles(display, 1, 0.1, 0.1, 0.1, 0.013);
 					}
 					if (this.random.nextInt(7) == 0) {
 						playFirebendingSound(display);
@@ -143,7 +142,7 @@ public class FireShield extends FireAbility {
 			}
 
 			for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.shieldRadius)) {
-				if (testblock.getType() == Material.FIRE) {
+				if (isFire(testblock)) {
 					testblock.setType(Material.AIR);
 					testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 				}
@@ -155,7 +154,6 @@ public class FireShield extends FireAbility {
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
 						entity.setFireTicks((int) (this.shieldFireTicks * 20));
-						new FireDamageTimer(entity, this.player);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();
@@ -165,7 +163,7 @@ public class FireShield extends FireAbility {
 			this.location = this.player.getEyeLocation().clone();
 			final Vector direction = this.location.getDirection();
 			this.location.add(direction.multiply(this.shieldRadius));
-			ParticleEffect.FLAME.display(this.location, 3, 0.2, 0.2, 0.2, 0.00023);
+			playFirebendingParticles(this.location, 3, 0.2, 0.2, 0.2, 0.00023);
 
 			for (double theta = 0; theta < 360; theta += 20) {
 				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
@@ -173,7 +171,7 @@ public class FireShield extends FireAbility {
 				if (this.random.nextInt(6) == 0) {
 					ParticleEffect.SMOKE_NORMAL.display(display, 1, 0, 0, 0);
 				}
-				ParticleEffect.FLAME.display(display, 2, 0.3, 0.2, 0.3, 0.023);
+				playFirebendingParticles(display, 2, 0.3, 0.2, 0.3, 0.023);
 				if (this.random.nextInt(4) == 0) {
 					playFirebendingSound(display);
 				}
@@ -186,7 +184,6 @@ public class FireShield extends FireAbility {
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
 						entity.setFireTicks((int) (this.discFireTicks * 20));
-						new FireDamageTimer(entity, this.player);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();

@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class Tornado extends AirAbility {
 
@@ -40,7 +41,8 @@ public class Tornado extends AirAbility {
 	private double currentRadius;
 	private Location origin;
 	private final Random random;
-	private final Map<Integer, Integer> angles;
+	private final Map<Integer, Double> angles;
+	private VelocityBuilder velocity;
 
 	public Tornado(final Player player) {
 		super(player);
@@ -55,18 +57,19 @@ public class Tornado extends AirAbility {
 		this.radius = getConfig().getDouble("Abilities.Air.Tornado.Radius");
 		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.NpcPushFactor");
 		this.speed = getConfig().getDouble("Abilities.Air.Tornado.Speed");
-		this.numberOfStreams = (int) (.3 * this.maxHeight);
+		this.numberOfStreams = getConfig().getInt("Abilities.Air.Tornado.StreamCount");
 		this.currentHeight = 2;
-		this.currentRadius = this.currentHeight / this.maxHeight * this.radius;
+		this.currentRadius = 0;
 		this.random = new Random();
 		this.angles = new ConcurrentHashMap<>();
+		this.velocity = new VelocityBuilder();
 
-		int angle = 0;
+		double angle = 0;
 		for (int i = 0; i <= this.maxHeight; i += (int) this.maxHeight / this.numberOfStreams) {
 			this.angles.put(i, angle);
-			angle += 90;
-			if (angle == 360) {
-				angle = 0;
+			angle += 360 / this.numberOfStreams;
+			if (angle >= 360) {
+				angle -= 360;
 			}
 		}
 
@@ -101,7 +104,7 @@ public class Tornado extends AirAbility {
 	}
 
 	private void rotateTornado() {
-		this.origin = this.player.getTargetBlock((HashSet<Material>) null, (int) this.range).getLocation();
+		this.origin = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterials()).subtract(0, 1, 0);
 		final double timefactor = this.currentHeight / this.maxHeight;
 		this.currentRadius = timefactor * this.radius;
 
@@ -164,40 +167,43 @@ public class Tornado extends AirAbility {
 							}
 						}
 
-						final Vector velocity = entity.getVelocity().clone();
-						velocity.setX(vx);
-						velocity.setZ(vz);
-						velocity.setY(vy);
-						velocity.multiply(timefactor);
-						GeneralMethods.setVelocity(entity, velocity);
+						Vector dir = new Vector(vx, vy, vz);
+						this.velocity.direction(dir).knockback(dir.length() * timefactor).apply(entity, this);
 						entity.setFallDistance(0);
 
 						breakBreathbendingHold(entity);
 					}
 				}
 			}
-
-			for (final int i : this.angles.keySet()) {
-				double x, y, z, factor;
-				double angle = this.angles.get(i);
-				angle = Math.toRadians(angle);
-
-				y = this.origin.getY() + timefactor * i;
-				factor = i / this.currentHeight;
-
-				x = this.origin.getX() + timefactor * factor * this.currentRadius * Math.cos(angle);
-				z = this.origin.getZ() + timefactor * factor * this.currentRadius * Math.sin(angle);
-
-				final Location effect = new Location(this.origin.getWorld(), x, y, z);
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
-					playAirbendingParticles(effect, this.particleCount);
-					if (this.random.nextInt(20) == 0) {
-						playAirbendingSound(effect);
+			
+			double x, z;
+			for (double j = 0; j < currentHeight; j += 0.4) {
+				for (final int i : this.angles.keySet()) {
+					if (Math.random() < 0.4) {
+						continue;
+					}
+					
+					double angle = this.angles.get(i);
+					angle = Math.toRadians(angle);
+	
+					x = this.origin.getX() + (j / this.maxHeight) * this.radius * Math.cos(angle + j);
+					z = this.origin.getZ() + (j / this.maxHeight) * this.radius * Math.sin(angle + j);
+	
+					final Location effect = new Location(this.origin.getWorld(), x, origin.getY() + j, z);
+					if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
+						playAirbendingParticles(effect, 1, 0.14, 0.14, 0.14);
+						if (this.random.nextInt(20) == 0) {
+							playAirbendingSound(effect);
+						}
 					}
 				}
-				this.angles.put(i, this.angles.get(i) + 25 * (int) this.speed);
 			}
 		}
+		
+		for (int i : this.angles.keySet()) {
+			this.angles.put(i, this.angles.get(i) + this.speed * 360 / this.numberOfStreams / 10);
+		}
+		
 		this.currentHeight = this.currentHeight > this.maxHeight ? this.maxHeight : this.currentHeight + 1;
 	}
 
@@ -319,7 +325,7 @@ public class Tornado extends AirAbility {
 		this.currentRadius = currentRadius;
 	}
 
-	public Map<Integer, Integer> getAngles() {
+	public Map<Integer, Double> getAngles() {
 		return this.angles;
 	}
 }

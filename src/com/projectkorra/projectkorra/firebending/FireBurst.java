@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -137,8 +136,7 @@ public class FireBurst extends FireAbility {
 				this.remove();
 			}
 		} else if (this.charged) {
-			final Location location = this.player.getEyeLocation();
-			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 4, 3);
+			playFirebendingParticles(player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize()), 1, 0, 0, 0);
 		}
 	}
 

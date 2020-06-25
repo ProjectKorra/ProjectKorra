@@ -153,4 +153,12 @@ public interface Ability {
 	 * @see BendingPlayer#canBend(CoreAbility)
 	 */
 	public Location getLocation();
+	
+	/**
+	 * The death message is what shows when a player is killed using this ability.
+	 * <br>For formatting: {victim} is the killed player, {attacker} is the killer
+	 * @param horizontalVelocity Whether to get the HorizontalVelocityDeath message or not
+	 * @return the death message for this ability
+	 */
+	public String getDeathMessage(boolean velocityImpact);
 }

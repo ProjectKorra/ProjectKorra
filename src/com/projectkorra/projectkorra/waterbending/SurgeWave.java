@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -107,7 +108,7 @@ public class SurgeWave extends WaterAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+			new TempBlock(block, Material.WATER);
 			this.waveBlocks.put(block, block);
 		}
 	}
@@ -349,8 +350,7 @@ public class SurgeWave extends WaterAbility {
 							continue;
 						}
 						final Vector dir = direction.clone();
-						dir.setY(dir.getY() * this.knockup);
-						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.knockback))));
+						new VelocityBuilder(dir).knockback(this.knockback).knockup(dir.getY() * this.knockup).apply(entity, this, true, canHitSelf);
 
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {

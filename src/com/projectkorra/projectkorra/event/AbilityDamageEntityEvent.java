@@ -22,7 +22,6 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	private final Entity entity;
 	private final Ability ability;
 	private double damage;
-	private final boolean ignoreArmor;
 
 	/**
 	 * Create a new AbilityDamageEntityEvent
@@ -31,11 +30,10 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	 * @param ability The damaging ability
 	 * @param damage The amount of damage done
 	 */
-	public AbilityDamageEntityEvent(final Entity entity, final Ability ability, final double damage, final boolean ignoreArmor) {
+	public AbilityDamageEntityEvent(final Entity entity, final Ability ability, final double damage) {
 		this.entity = entity;
 		this.ability = ability;
 		this.damage = damage;
-		this.ignoreArmor = ignoreArmor;
 	}
 
 	/**
@@ -72,10 +70,6 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	 */
 	public Ability getAbility() {
 		return this.ability;
-	}
-
-	public boolean doesIgnoreArmor() {
-		return this.ignoreArmor;
 	}
 
 	/**

@@ -34,7 +34,6 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.FluidLevelChangeEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -65,7 +64,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -76,7 +74,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.AirAbility;
@@ -101,6 +98,8 @@ import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.HighJump;
@@ -136,12 +135,11 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
+import com.projectkorra.projectkorra.event.AbilityStartEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
-import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
-import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
@@ -154,15 +152,15 @@ import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.firebending.HeatControl.HeatControlType;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
+import com.projectkorra.projectkorra.firebending.bluefire.BlueFlames;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.object.VelocityTracker;
+import com.projectkorra.projectkorra.util.AbilityDamageTimestamp;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.FlightHandler.Flight;
 import com.projectkorra.projectkorra.util.MovementHandler;
@@ -194,8 +192,6 @@ import co.aikar.timings.lib.MCTiming;
 public class PKListener implements Listener {
 	ProjectKorra plugin;
 
-	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
-	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
 	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
@@ -219,6 +215,25 @@ public class PKListener implements Listener {
 		TimingPlayerMoveAirChiPassiveCheck = ProjectKorra.timing("PlayerMoveAirChiPassiveCheck");
 		TimingPlayerMoveFirePassiveCheck = ProjectKorra.timing("PlayerMoveFirePassiveCheck");
 		TimingPlayerMoveJumpCheck = ProjectKorra.timing("PlayerMoveJumpCheck");
+	}
+	
+	@EventHandler
+	public void onAbilityStart(final AbilityStartEvent event) {
+		if (!(event.getAbility() instanceof CoreAbility)) {
+			return;
+		}
+		
+		CoreAbility ability = (CoreAbility) event.getAbility();
+		BendingPlayer bPlayer = ability.getBendingPlayer();
+		
+		if (bPlayer == null) {
+			return;
+		}
+		
+		CoreAbility bf = CoreAbility.getAbility(BlueFlames.class);
+		if (bf != null && bPlayer.canBendPassive(bf) && bPlayer.canUsePassive(bf) && ability instanceof FireAbility && ability.hasAttribute(Attribute.DAMAGE)) {
+			ability.addAttributeModifier(Attribute.DAMAGE, ConfigManager.getConfig().getDouble("Abilities.Fire.Passives.BlueFlames.DamageMultiplier"), AttributeModifier.MULTIPLICATION);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -372,10 +387,6 @@ public class PKListener implements Listener {
 		if (!event.isCancelled()) {
 			event.setCancelled(!Torrent.canThaw(block));
 		}
-
-		if (BlazeArc.getIgnitedBlocks().containsKey(block)) {
-			BlazeArc.removeBlock(block);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -474,15 +485,6 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onEntityCombust(final EntityCombustEvent event) {
-		final Entity entity = event.getEntity();
-		final Block block = entity.getLocation().getBlock();
-		if (BlazeArc.getIgnitedBlocks().containsKey(block) && entity instanceof LivingEntity) {
-			new FireDamageTimer(entity, BlazeArc.getIgnitedBlocks().get(block));
-		}
-	}
-
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageBlock(final EntityDamageByBlockEvent event) {}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -503,15 +505,6 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageEvent(final EntityDamageEvent event) {
 		final Entity entity = event.getEntity();
-
-		if (event.getCause() == DamageCause.FIRE && BlazeArc.getIgnitedBlocks().containsKey(entity.getLocation().getBlock())) {
-			new FireDamageTimer(entity, BlazeArc.getIgnitedBlocks().get(entity.getLocation().getBlock()));
-		}
-
-		if (FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
-			event.setCancelled(true);
-			FireDamageTimer.dealFlameDamage(entity);
-		}
 
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			if (event.isApplicable(DamageModifier.ARMOR)) {
@@ -568,52 +561,63 @@ public class PKListener implements Listener {
 			}
 		}
 
-		final CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
-
-		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
-			final CoreAbility coreAbility = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
-			for (final CoreAbility fireCombo : cookingFireCombos) {
-				if (coreAbility.getName().equalsIgnoreCase(fireCombo.getName())) {
-					final List<ItemStack> drops = event.getDrops();
-					final List<ItemStack> newDrops = new ArrayList<>();
-					for (int i = 0; i < drops.size(); i++) {
-						ItemStack cooked = drops.get(i);
-						final Material material = drops.get(i).getType();
-						switch (material) {
-							case BEEF:
-								cooked = new ItemStack(Material.COOKED_BEEF);
-								break;
-							case SALMON:
-								cooked = new ItemStack(Material.COOKED_SALMON);
-								break;
-							case CHICKEN:
-								cooked = new ItemStack(Material.COOKED_CHICKEN);
-								break;
-							case PORKCHOP:
-								cooked = new ItemStack(Material.COOKED_PORKCHOP);
-								break;
-							case MUTTON:
-								cooked = new ItemStack(Material.COOKED_MUTTON);
-								break;
-							case RABBIT:
-								cooked = new ItemStack(Material.COOKED_RABBIT);
-								break;
-							case COD:
-								cooked = new ItemStack(Material.COOKED_COD);
-								break;
-							default:
-								break;
-						}
-
-						newDrops.add(cooked);
-					}
-					event.getDrops().clear();
-					event.getDrops().addAll(newDrops);
-
-					break;
-				}
-			}
+		Ability ability = null;
+		VelocityTracker tracker = VelocityTracker.getTracker(event.getEntity());
+		AbilityDamageTimestamp adt = AbilityDamageTimestamp.get(event.getEntity());
+		
+		if (tracker != null) {
+			ability = tracker.getAbility();
+		} else if (adt != null) {
+			ability = adt.getAbility();
+		} else {
+			return;
 		}
+		
+		EntityBendingDeathEvent bendingDeath = new EntityBendingDeathEvent(event.getEntity(), ability);
+		Bukkit.getServer().getPluginManager().callEvent(bendingDeath);
+		
+		final List<String> cookingFireCombos = Arrays.asList("JetBlaze", "FireWheel", "FireSpin", "FireKick");
+		
+		if (!cookingFireCombos.contains(ability.getName())) {
+			return;
+		}
+
+		final List<ItemStack> drops = event.getDrops();
+		final List<ItemStack> newDrops = new ArrayList<>();
+		for (int i = 0; i < drops.size(); i++) {
+			ItemStack cooked = drops.get(i);
+			final Material material = drops.get(i).getType();
+			switch (material) {
+				case BEEF:
+					cooked = new ItemStack(Material.COOKED_BEEF);
+					break;
+				case SALMON:
+					cooked = new ItemStack(Material.COOKED_SALMON);
+					break;
+				case CHICKEN:
+					cooked = new ItemStack(Material.COOKED_CHICKEN);
+					break;
+				case PORKCHOP:
+					cooked = new ItemStack(Material.COOKED_PORKCHOP);
+					break;
+				case MUTTON:
+					cooked = new ItemStack(Material.COOKED_MUTTON);
+					break;
+				case RABBIT:
+					cooked = new ItemStack(Material.COOKED_RABBIT);
+					break;
+				case COD:
+					cooked = new ItemStack(Material.COOKED_COD);
+					break;
+				default:
+					break;
+			}
+
+			newDrops.add(cooked);
+		}
+		
+		event.getDrops().clear();
+		event.getDrops().addAll(newDrops);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -732,24 +736,6 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onHorizontalCollision(final HorizontalVelocityChangeEvent e) {
-		if (e.getEntity() instanceof LivingEntity) {
-			if (e.getEntity().getEntityId() != e.getInstigator().getEntityId()) {
-				final double minimumDistance = this.plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
-				final double maxDamage = this.plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageCap");
-				final double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
-				if (damage > 0) {
-					if (damage <= maxDamage) {
-						DamageHandler.damageEntity(e.getEntity(), damage, e.getAbility());
-					} else {
-						DamageHandler.damageEntity(e.getEntity(), maxDamage, e.getAbility());
-					}
-				}
-			}
-		}
-	}
-
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClick(final InventoryClickEvent event) {
 		for (final MetalClips clips : CoreAbility.getAbilities(MetalClips.class)) {
@@ -768,29 +754,11 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityBendingDeath(final EntityBendingDeathEvent event) {
-		BENDING_ENTITY_DEATH.put(event.getEntity(), event.getAbility());
-		if (event.getEntity() instanceof Player) {
-			if (ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled")) {
-				final Ability ability = event.getAbility();
-				if (ability == null) {
-					return;
-				}
-
-				BENDING_PLAYER_DEATH.put((Player) event.getEntity(), ability.getElement().getColor() + ability.getName());
-				final Player player = (Player) event.getEntity();
-
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						BENDING_PLAYER_DEATH.remove(player);
-					}
-				}.runTaskLater(ProjectKorra.plugin, 20);
-			}
-			if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
+		if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
+			if (event.getEntity() instanceof Player) {
 				StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.PLAYER_KILLS, 1);
 			}
-		}
-		if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
+			
 			StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.TOTAL_KILLS, 1);
 		}
 	}
@@ -1021,50 +989,24 @@ public class PKListener implements Listener {
 					armor.revert();
 				}
 			}
-		} else {
-			// Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath.
 		}
 
-		if (event.getEntity().getKiller() != null) {
-			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
-				String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
-				final String ability = BENDING_PLAYER_DEATH.get(event.getEntity());
-				final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
-				final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
-				Element element = null;
-				final boolean isAvatarAbility = false;
-
-				if (coreAbil != null) {
-					element = coreAbil.getElement();
-				}
-
-				if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
-					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
-					}
-				} else if (element != null) {
-					if (element instanceof SubElement) {
-						element = ((SubElement) element).getParentElement();
-					}
-					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
-					} else if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
-					}
-				} else {
-					if (isAvatarAbility) {
-						if (ConfigManager.languageConfig.get().contains("Abilities.Avatar." + tempAbility + ".DeathMessage")) {
-							message = ConfigManager.languageConfig.get().getString("Abilities.Avatar." + tempAbility + ".DeathMessage");
-						}
-					} else if (ConfigManager.languageConfig.get().contains("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage");
-					}
-				}
-				message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);
-				event.setDeathMessage(message);
-				BENDING_PLAYER_DEATH.remove(event.getEntity());
-			}
+		if (event.getEntity().getKiller() == null) {
+			return;
+		} else if (!ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled")) {
+			return;
 		}
+		
+		AbilityDamageTimestamp adt = AbilityDamageTimestamp.get(event.getEntity());
+		
+		if (adt == null) {
+			return;
+		}
+		
+		String message = adt.getAbility().getDeathMessage(adt.isVelocityDamage());
+		String ability = adt.getAbility().getElement().getColor() + adt.getAbility().getName();
+		message = message.replace("{victim}", event.getEntity().getDisplayName()).replace("{attacker}", event.getEntity().getKiller().getDisplayName()).replace("{ability}", ability);
+		event.setDeathMessage(message);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1217,56 +1159,6 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
 		PassiveManager.registerPassives(event.getPlayer());
-	}
-
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onPlayerKick(final PlayerKickEvent event) {
-		final Player player = event.getPlayer();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (ProjectKorra.isStatisticsEnabled()) {
-			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
-		}
-		
-		if (bPlayer != null) {
-			GeneralMethods.savePlayer(bPlayer);
-			if (ProjectKorra.isDatabaseCooldownsEnabled()) {
-				bPlayer.saveCooldowns();
-			}
-
-			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
-				TOGGLED_OUT.remove(player.getUniqueId());
-			}
-
-			if (!bPlayer.isToggled()) {
-				TOGGLED_OUT.add(player.getUniqueId());
-			}
-		}
-
-		if (Commands.invincible.contains(player.getName())) {
-			Commands.invincible.remove(player.getName());
-		}
-
-		Preset.unloadPreset(player);
-
-		if (TempArmor.hasTempArmor(player)) {
-			for (final TempArmor armor : TempArmor.getTempArmorList(player)) {
-				armor.revert();
-			}
-		}
-
-		if (MetalClips.isControlled(event.getPlayer())) {
-			MetalClips.removeControlledEnitity(event.getPlayer());
-		}
-
-		MultiAbilityManager.remove(player);
-		JUMPS.remove(player);
-
-		for (final CoreAbility ca : CoreAbility.getAbilities()) {
-			if (CoreAbility.getAbility(event.getPlayer(), ca.getClass()) != null) {
-				CoreAbility.getAbility(event.getPlayer(), ca.getClass()).remove();
-			}
-		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1960,10 +1852,6 @@ public class PKListener implements Listener {
 				break;
 			}
 		}
-	}
-
-	public static HashMap<Player, String> getBendingPlayerDeath() {
-		return BENDING_PLAYER_DEATH;
 	}
 
 	public static List<UUID> getRightClickInteract() {

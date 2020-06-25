@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class Ripple extends EarthAbility {
 
@@ -283,9 +284,8 @@ public class Ripple extends EarthAbility {
 		}
 
 		final Vector vector = this.direction.clone();
-		vector.setY(.5);
 		final double knock = this.bPlayer.isAvatarState() ? AvatarState.getValue(this.knockback) : this.knockback;
-		entity.setVelocity(vector.clone().normalize().multiply(knock));
+		new VelocityBuilder(vector).knockback(knock).knockup(0.5).apply(entity, this, true, false);
 		AirAbility.breakBreathbendingHold(entity);
 	}
 
