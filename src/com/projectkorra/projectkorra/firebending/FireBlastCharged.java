@@ -207,8 +207,7 @@ public class FireBlastCharged extends FireAbility {
 
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
-			ParticleEffect.FLAME.display(block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
-			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.5, 0.5, 0.5, 0);
+			playFirebendingParticles(block.getLocation(), 5, 0.5, 0.5, 0.5);
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
 			}
@@ -233,15 +232,8 @@ public class FireBlastCharged extends FireAbility {
 
 	private void ignite(final Location location) {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
-			if (BlazeArc.isIgnitable(this.player, block)) {
-				if (block.getType() != Material.FIRE) {
-					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState());
-				}
-				block.setType(Material.FIRE);
-				if (this.dissipate) {
-					BlazeArc.getIgnitedBlocks().put(block, this.player);
-					BlazeArc.getIgnitedTimes().put(block, System.currentTimeMillis());
-				}
+			if (isIgnitable(block)) {
+				createTempFire(block.getLocation());
 			}
 		}
 	}

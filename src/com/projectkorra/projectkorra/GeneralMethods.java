@@ -1662,7 +1662,6 @@ public class GeneralMethods {
 			case ZOMBIE:
 			case HUSK:
 			case ZOMBIE_VILLAGER:
-			case PIG_ZOMBIE:
 			case DROWNED:
 			case ZOMBIE_HORSE:
 			case SKELETON_HORSE:

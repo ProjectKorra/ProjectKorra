@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
@@ -51,8 +52,9 @@ public abstract class FireAbility extends ElementalAbility {
 	@Override
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
+		Material fireType = this.bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
 		if (collision.isRemovingFirst()) {
-			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.FIRE.createBlockData());
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, fireType.createBlockData());
 		}
 	}
 
@@ -68,13 +70,20 @@ public abstract class FireAbility extends ElementalAbility {
 	 * Creates a fire block meant to replace other blocks but reverts when the
 	 * fire dissipates or is destroyed.
 	 */
-	public static void createTempFire(final Location loc) {
+	public void createTempFire(final Location loc) {
+		createTempFire(loc, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
+	}
+	
+	
+	public void createTempFire(final Location loc, final long time) {
+		Material fireType = this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
+		
+		
 		if (ElementalAbility.isAir(loc.getBlock().getType())) {
-			loc.getBlock().setType(Material.FIRE);
+			loc.getBlock().setType(fireType);
 			return;
 		}
 		Information info = new Information();
-		final long time = getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks"));
 		if (TEMP_FIRE.containsKey(loc)) {
 			info = TEMP_FIRE.get(loc);
 		} else {
@@ -83,7 +92,7 @@ public abstract class FireAbility extends ElementalAbility {
 			info.setState(loc.getBlock().getState());
 		}
 		info.setTime(time + System.currentTimeMillis());
-		loc.getBlock().setType(Material.FIRE);
+		loc.getBlock().setType(fireType);
 		TEMP_FIRE.put(loc, info);
 	}
 
@@ -158,8 +167,12 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 	}
 
-	public static void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
+			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+		} else {
+			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+		}
 	}
 
 	public static void playFirebendingSound(final Location loc) {
@@ -228,7 +241,7 @@ public abstract class FireAbility extends ElementalAbility {
 			return;
 		}
 		final Information info = TEMP_FIRE.get(location);
-		if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
+		if (!isFire(info.getLocation().getBlock().getType()) && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
 			if (info.getState().getType().isBurnable() && !info.getState().getType().isOccluding()) {
 				final ItemStack itemStack = new ItemStack(info.getState().getType(), 1);
 				info.getState().getBlock().getWorld().dropItemNaturally(info.getLocation(), itemStack);
@@ -241,7 +254,6 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void stopBending() {
-		BlazeArc.removeAllCleanup();
 		for (final Location loc : TEMP_FIRE.keySet()) {
 			revertTempFire(loc);
 		}

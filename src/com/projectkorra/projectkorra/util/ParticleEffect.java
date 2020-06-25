@@ -40,6 +40,7 @@ public enum ParticleEffect {
 	FALLING_DUST (Particle.FALLING_DUST),
 	FIREWORKS_SPARK (Particle.FIREWORKS_SPARK),
 	FLAME (Particle.FLAME),
+	SOUL_FIRE_FLAME (Particle.SOUL_FIRE_FLAME),
 	HEART (Particle.HEART),
 	
 	/**

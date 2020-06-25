@@ -14,9 +14,7 @@ public class FirebendingManager implements Runnable {
 
 	@Override
 	public void run() {
-		BlazeArc.handleDissipation();
 		FireDamageTimer.handleFlames();
-		BlazeArc.dissipateAll();
 		FireAbility.removeFire();
 	}
 }
