@@ -43,7 +43,7 @@ public class HeatControl extends FireAbility {
 		COOK, EXTINGUISH, MELT, SOLIDIFY
 	}
 
-	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON, Material.KELP };
+	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON, Material.KELP, Material.WET_SPONGE, Material.CHORUS_FRUIT };
 
 	private HeatControlType heatControlType;
 
@@ -289,7 +289,7 @@ public class HeatControl extends FireAbility {
 	}
 
 	public void displayCookParticles() {
-		ParticleEffect.FLAME.display(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
+		playFirebendingParticles(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
 		ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation().clone().add(0, 1, 0), 2, 0.5, 0.5, 0.5);
 	}
 

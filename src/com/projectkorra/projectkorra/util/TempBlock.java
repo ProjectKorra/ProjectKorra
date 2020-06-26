@@ -30,29 +30,34 @@ public class TempBlock {
 	});
 
 	private final Block block;
-	private BlockData newdata;
+	private BlockData newData;
 	private BlockState state;
 	private long revertTime;
 	private boolean inRevertQueue;
 	private RevertTask revertTask = null;
 
 	public TempBlock(final Block block, final Material newtype) {
-		this(block, newtype.createBlockData());
+		this(block, newtype.createBlockData(), 0);
 	}
 
 	@Deprecated
-	public TempBlock(final Block block, final Material newtype, final BlockData newdata) {
-		this(block, newdata);
+	public TempBlock(final Block block, final Material newtype, final BlockData newData) {
+		this(block, newData, 0);
+	}
+	
+	public TempBlock(final Block block, final BlockData newData) {
+		this(block, newData, 0);
 	}
 
-	public TempBlock(final Block block, final BlockData newdata) {
+	public TempBlock(final Block block, final BlockData newData, final long revertTime) {
 		this.block = block;
-		this.newdata = newdata;
+		this.newData = newData;
+		this.setRevertTime(revertTime);
 		if (instances.containsKey(block)) {
 			final TempBlock temp = instances.get(block);
-			if (!newdata.equals(temp.block.getBlockData())) {
-				temp.block.setBlockData(newdata, GeneralMethods.isLightEmitting(newdata.getMaterial()));
-				temp.newdata = newdata;
+			if (!newData.equals(temp.block.getBlockData())) {
+				temp.block.setBlockData(newData, GeneralMethods.isLightEmitting(newData.getMaterial()));
+				temp.newData = newData;
 			}
 			this.state = temp.state;
 			instances.put(block, temp);
@@ -62,7 +67,7 @@ public class TempBlock {
 				return;
 			}
 			instances.put(block, this);
-			block.setBlockData(newdata, GeneralMethods.isLightEmitting(newdata.getMaterial()));
+			block.setBlockData(newData, GeneralMethods.isLightEmitting(newData.getMaterial()));
 		}
 		if (this.state.getType() == Material.FIRE) {
 			this.state.setType(Material.AIR);
@@ -139,7 +144,7 @@ public class TempBlock {
 	}
 
 	public BlockData getBlockData() {
-		return this.newdata;
+		return this.newData;
 	}
 
 	public Location getLocation() {
@@ -163,6 +168,10 @@ public class TempBlock {
 	}
 
 	public void setRevertTime(final long revertTime) {
+		if(revertTime == 0) {
+			return;
+		}
+		
 		if (this.inRevertQueue) {
 			REVERT_QUEUE.remove(this);
 		}
@@ -194,7 +203,7 @@ public class TempBlock {
 	}
 
 	public void setType(final BlockData data) {
-		this.newdata = data;
+		this.newData = data;
 		this.block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
 	}
 

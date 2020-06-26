@@ -65,7 +65,7 @@ public class FireJet extends FireAbility {
 				}
 
 			} else if (ElementalAbility.isAir(block.getType())) {
-				block.setType(Material.FIRE);
+				createTempFire(block.getLocation());
 			}
 
 			this.flightHandler.createInstance(player, this.getName());
@@ -93,8 +93,7 @@ public class FireJet extends FireAbility {
 				playFirebendingSound(this.player.getLocation());
 			}
 
-			ParticleEffect.FLAME.display(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
-			ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
+			ParticleEffect.FLAME.display(this.player.getLocation(), 10, 0.3, 0.3, 0.3);
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

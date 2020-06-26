@@ -273,7 +273,7 @@ public class FireBlastCharged extends FireAbility {
 			if (!this.launched && !this.charged) {
 				return;
 			} else if (!this.launched) {
-				this.player.getWorld().playEffect(this.player.getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 0, 3);
+				playFirebendingParticles(this.player.getEyeLocation(), 3, 0, 0, 0);
 				return;
 			}
 

@@ -127,8 +127,7 @@ public class FireBlast extends FireAbility {
 		}
 		
 		if (this.showParticles) {
-			ParticleEffect.FLAME.display(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
-			ParticleEffect.SMOKE_NORMAL.display(this.location, 3, this.smokeRadius, this.smokeRadius, this.smokeRadius);
+			playFirebendingParticles(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
 		}
 		
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
@@ -167,7 +166,7 @@ public class FireBlast extends FireAbility {
 					if (isPlant(block) || isSnow(block)) {
 						new PlantRegrowth(this.player, block);
 					}
-					block.setType(Material.FIRE);
+					createTempFire(block.getLocation());
 				} else {
 					createTempFire(block.getLocation());
 				}

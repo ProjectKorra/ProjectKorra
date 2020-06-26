@@ -56,7 +56,9 @@ public class BlazeArc extends FireAbility {
 			}
 		}
 		
-		createTempFire(block.getLocation(), DISSIPATE_REMOVE_TIME);
+		if(isIgnitable(block)) {
+			createTempFire(block.getLocation(), DISSIPATE_REMOVE_TIME);
+		}
 	}
 
 	@Override

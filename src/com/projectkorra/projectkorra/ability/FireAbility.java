@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,6 +25,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class FireAbility extends ElementalAbility {
 
@@ -78,22 +80,8 @@ public abstract class FireAbility extends ElementalAbility {
 	public void createTempFire(final Location loc, final long time) {
 		Material fireType = this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
 		
+		new TempBlock(loc.getBlock(), fireType.createBlockData(), time);
 		
-		if (ElementalAbility.isAir(loc.getBlock().getType())) {
-			loc.getBlock().setType(fireType);
-			return;
-		}
-		Information info = new Information();
-		if (TEMP_FIRE.containsKey(loc)) {
-			info = TEMP_FIRE.get(loc);
-		} else {
-			info.setBlock(loc.getBlock());
-			info.setLocation(loc);
-			info.setState(loc.getBlock().getState());
-		}
-		info.setTime(time + System.currentTimeMillis());
-		loc.getBlock().setType(fireType);
-		TEMP_FIRE.put(loc, info);
 		SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 	}
 
@@ -128,7 +116,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static boolean isIgnitable(final Block block) {
-		return block != null ? isIgnitable(block.getType()) : false;
+		return isIgnitable(block.getType()) || (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN)) && isAir(block.getType()));
 	}
 
 	public static boolean isIgnitable(final Material material) {

@@ -57,7 +57,7 @@ public class Element {
 	public static final SubElement SAND = new SubElement("Sand", EARTH);
 	public static final SubElement LIGHTNING = new SubElement("Lightning", FIRE);
 	public static final SubElement COMBUSTION = new SubElement("Combustion", FIRE);
-	public static final SubElement BLUE_FIRE = new SubElement("Blue Fire", FIRE);
+	public static final SubElement BLUE_FIRE = new SubElement("Blue_Fire", FIRE);
 
 	private static final Element[] ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI, FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION, BLUE_FIRE };
 	private static final Element[] MAIN_ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI };
