@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -179,7 +180,7 @@ public class OctopusForm extends WaterAbility {
 		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock) && this.sourceBlock != null) {
 			this.sourceBlock.setType(Material.AIR);
 		}
-		this.source = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(0));
+		this.source = new TempBlock(this.sourceBlock, GeneralMethods.getWaterData(0));
 	}
 
 	private void attack() {
@@ -253,7 +254,7 @@ public class OctopusForm extends WaterAbility {
 					this.sourceLocation = newBlock.getLocation();
 
 					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, Material.WATER, GeneralMethods.getWaterData(0));
+						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
@@ -266,7 +267,7 @@ public class OctopusForm extends WaterAbility {
 					this.sourceLocation = newBlock.getLocation();
 
 					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, Material.WATER, GeneralMethods.getWaterData(0));
+						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
@@ -282,7 +283,7 @@ public class OctopusForm extends WaterAbility {
 							this.source.revertBlock();
 						}
 						if (!GeneralMethods.isSolid(newBlock)) {
-							this.source = new TempBlock(newBlock, Material.WATER, GeneralMethods.getWaterData(0));
+							this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
 							this.sourceBlock = newBlock;
 						}
 					}
@@ -426,16 +427,16 @@ public class OctopusForm extends WaterAbility {
 				if (!SurgeWave.canThaw(block)) {
 					SurgeWave.thaw(block);
 				}
-				tblock.setType(Material.WATER, GeneralMethods.getWaterData(0));
+				tblock.setType(GeneralMethods.getWaterData(0));
 				this.newBlocks.add(tblock);
 			} else if (this.blocks.contains(tblock)) {
 				this.newBlocks.add(tblock);
 			}
-		} else if (this.isWaterbendable(this.player, block) || block.getType() == Material.FIRE || isAir(block.getType())) {
+		} else if (this.isWaterbendable(this.player, block) || FireAbility.isFire(block.getType()) || isAir(block.getType())) {
 			if (isWater(block) && !TempBlock.isTempBlock(block)) {
 				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(0.5, 0.5, 0.5), 5, Math.random(), Math.random(), Math.random(), 0);
 			}
-			this.newBlocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
+			this.newBlocks.add(new TempBlock(block, GeneralMethods.getWaterData(0)));
 		}
 	}
 

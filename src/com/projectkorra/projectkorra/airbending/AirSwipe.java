@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
@@ -157,7 +158,7 @@ public class AirSwipe extends AirAbility {
 					}
 
 					for (final Block testblock : GeneralMethods.getBlocksAroundPoint(location, this.radius)) {
-						if (testblock.getType() == Material.FIRE) {
+						if (FireAbility.isFire(testblock.getType())) {
 							testblock.setType(Material.AIR);
 						}
 					}
