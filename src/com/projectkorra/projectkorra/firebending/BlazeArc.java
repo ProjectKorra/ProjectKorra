@@ -1,20 +1,15 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
+
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -22,8 +17,6 @@ import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 public class BlazeArc extends FireAbility {
 
 	private static final long DISSIPATE_REMOVE_TIME = 400;
-	private static final Map<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<Location, BlockState> REPLACED_BLOCKS = new ConcurrentHashMap<>();
 
 	private long time;
 	private long interval;
@@ -59,12 +52,11 @@ public class BlazeArc extends FireAbility {
 					new PlantRegrowth(this.player, block);
 				}
 			} else if (!isFire(block.getType())) {
-				REPLACED_BLOCKS.put(block.getLocation(), block.getState());
+				
 			}
 		}
 		
-		createTempFire(block.getLocation());
-		IGNITED_BLOCKS.put(block, this.getPlayer());
+		createTempFire(block.getLocation(), DISSIPATE_REMOVE_TIME);
 	}
 
 	@Override
@@ -117,12 +109,6 @@ public class BlazeArc extends FireAbility {
 		}
 	}
 
-	public static void removeAllCleanup() {
-		for (final Block block : IGNITED_BLOCKS.keySet()) {
-			removeBlock(block);
-		}
-	}
-
 	public static void removeAroundPoint(final Location location, final double radius) {
 		for (final BlazeArc stream : getAbilities(BlazeArc.class)) {
 			if (stream.location.getWorld().equals(location.getWorld())) {
@@ -130,14 +116,6 @@ public class BlazeArc extends FireAbility {
 					stream.remove();
 				}
 			}
-		}
-	}
-
-	public static void removeBlock(final Block block) {
-		if (REPLACED_BLOCKS.containsKey(block.getLocation())) {
-			block.setType(REPLACED_BLOCKS.get(block.getLocation()).getType());
-			block.setBlockData(REPLACED_BLOCKS.get(block.getLocation()).getBlockData());
-			REPLACED_BLOCKS.remove(block.getLocation());
 		}
 	}
 
@@ -219,10 +197,6 @@ public class BlazeArc extends FireAbility {
 
 	public static long getDissipateRemoveTime() {
 		return DISSIPATE_REMOVE_TIME;
-	}
-
-	public static Map<Location, BlockState> getReplacedBlocks() {
-		return REPLACED_BLOCKS;
 	}
 
 	public void setLocation(final Location location) {

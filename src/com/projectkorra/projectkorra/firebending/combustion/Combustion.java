@@ -103,8 +103,7 @@ public class Combustion extends CombustionAbility {
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
-		ParticleEffect.FLAME.display(this.location, 2, Math.random() / 2, Math.random() / 2, Math.random() / 2);
+		ParticleEffect.FIREWORKS_SPARK.display(this.location, 8, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
 		playCombustionSound(this.location);
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 	}

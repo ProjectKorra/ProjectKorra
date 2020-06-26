@@ -162,7 +162,7 @@ public class FireBlast extends FireAbility {
 
 	private void ignite(final Location location) {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
-			if (isIgnitable(this.player, block) && !this.safeBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (isIgnitable(block) && !this.safeBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
 					if (isPlant(block) || isSnow(block)) {
 						new PlantRegrowth(this.player, block);
@@ -201,7 +201,7 @@ public class FireBlast extends FireAbility {
 				furnace.setBurnTime((short) 800);
 				furnace.setCookTime((short) 800);
 				furnace.update();
-			} else if (BlazeArc.isIgnitable(this.player, block.getRelative(BlockFace.UP))) {
+			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
 				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
 					this.ignite(this.location);
 				}

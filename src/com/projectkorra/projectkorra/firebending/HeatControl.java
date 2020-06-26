@@ -194,7 +194,7 @@ public class HeatControl extends FireAbility {
 
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {
 				final Material material = block.getType();
-				if (material == Material.FIRE && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (isFire(material) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 
 					block.setType(Material.AIR);
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
@@ -273,6 +273,14 @@ public class HeatControl extends FireAbility {
 			case KELP:
 				cooked = new ItemStack(Material.DRIED_KELP);
 				break;
+			case CHORUS_FRUIT:
+				cooked = new ItemStack(Material.POPPED_CHORUS_FRUIT);
+				break;
+			case WHEAT:
+				cooked = new ItemStack(Material.BREAD);
+				break;
+			case WET_SPONGE:
+				cooked = new ItemStack(Material.SPONGE);
 			default:
 				break;
 		}

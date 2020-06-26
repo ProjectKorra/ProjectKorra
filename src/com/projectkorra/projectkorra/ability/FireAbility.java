@@ -22,14 +22,14 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public abstract class FireAbility extends ElementalAbility {
 
 	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
-
+	private static final Map<Block, Player> SOURCE_PLAYERS = new ConcurrentHashMap<>();
+	
 	public FireAbility(final Player player) {
 		super(player);
 	}
@@ -94,6 +94,7 @@ public abstract class FireAbility extends ElementalAbility {
 		info.setTime(time + System.currentTimeMillis());
 		loc.getBlock().setType(fireType);
 		TEMP_FIRE.put(loc, info);
+		SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 	}
 
 	public double getDayFactor(final double value) {
@@ -257,6 +258,14 @@ public abstract class FireAbility extends ElementalAbility {
 		for (final Location loc : TEMP_FIRE.keySet()) {
 			revertTempFire(loc);
 		}
+	}
+	
+	public static Map<Location, Information> getTempFire() {
+		return TEMP_FIRE;
+	}
+
+	public static Map<Block, Player> getSourcePlayers() {
+		return SOURCE_PLAYERS;
 	}
 
 }

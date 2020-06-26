@@ -15,6 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
@@ -61,9 +62,9 @@ public class FireComboStream extends BukkitRunnable {
 		this.checkCollisionCounter = 0;
 		this.spread = 0;
 		this.collisionRadius = 2;
-		this.particleEffect = ParticleEffect.FLAME;
 		this.player = player;
 		this.bPlayer = BendingPlayer.getBendingPlayer(player);
+		this.particleEffect = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? ParticleEffect.SOUL_FIRE_FLAME : ParticleEffect.FLAME;
 		this.coreAbility = coreAbility;
 		this.direction = direction;
 		this.speed = speed;

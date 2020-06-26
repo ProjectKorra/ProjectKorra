@@ -143,7 +143,6 @@ import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
-import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
@@ -372,10 +371,6 @@ public class PKListener implements Listener {
 		if (!event.isCancelled()) {
 			event.setCancelled(!Torrent.canThaw(block));
 		}
-
-		if (BlazeArc.getIgnitedBlocks().containsKey(block)) {
-			BlazeArc.removeBlock(block);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -477,8 +472,8 @@ public class PKListener implements Listener {
 	public void onEntityCombust(final EntityCombustEvent event) {
 		final Entity entity = event.getEntity();
 		final Block block = entity.getLocation().getBlock();
-		if (BlazeArc.getIgnitedBlocks().containsKey(block) && entity instanceof LivingEntity) {
-			new FireDamageTimer(entity, BlazeArc.getIgnitedBlocks().get(block));
+		if (FireAbility.getSourcePlayers().containsKey(block) && entity instanceof LivingEntity) {
+			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(block));
 		}
 	}
 
@@ -504,8 +499,8 @@ public class PKListener implements Listener {
 	public void onEntityDamageEvent(final EntityDamageEvent event) {
 		final Entity entity = event.getEntity();
 
-		if (event.getCause() == DamageCause.FIRE && BlazeArc.getIgnitedBlocks().containsKey(entity.getLocation().getBlock())) {
-			new FireDamageTimer(entity, BlazeArc.getIgnitedBlocks().get(entity.getLocation().getBlock()));
+		if (event.getCause() == DamageCause.FIRE && FireAbility.getSourcePlayers().containsKey(entity.getLocation().getBlock())) {
+			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(entity.getLocation().getBlock()));
 		}
 
 		if (FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
