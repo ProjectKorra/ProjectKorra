@@ -156,33 +156,21 @@ public class RemoveCommand extends PKCommand {
 		}
 		final List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
+			for (Element e : Element.getAllElements()) {
+				l.add(e.getName().replace(" ", ""));
+			}
+			for (Element e : Element.getAllSubElements()) {
+				l.add(e.getName().replace(" ", ""));
+			}
 			for (final Player p : Bukkit.getOnlinePlayers()) {
 				l.add(p.getName());
 			}
 		} else {
-			l.add("Air");
-			l.add("Earth");
-			l.add("Fire");
-			l.add("Water");
-			l.add("Chi");
-			for (final Element e : Element.getAddonElements()) {
-				l.add(e.getName());
+			for (Element e : Element.getAllElements()) {
+				l.add(e.getName().replace(" ", ""));
 			}
-
-			l.add("Blood");
-			l.add("Combustion");
-			l.add("Flight");
-			l.add("Healing");
-			l.add("Ice");
-			l.add("Lava");
-			l.add("Lightning");
-			l.add("Metal");
-			l.add("Plant");
-			l.add("Sand");
-			l.add("Spiritual");
-
-			for (final SubElement e : Element.getAddonSubElements()) {
-				l.add(e.getName());
+			for (Element e : Element.getAllSubElements()) {
+				l.add(e.getName().replace(" ", ""));
 			}
 		}
 		return l;

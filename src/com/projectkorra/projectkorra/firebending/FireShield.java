@@ -168,9 +168,6 @@ public class FireShield extends FireAbility {
 			for (double theta = 0; theta < 360; theta += 20) {
 				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
 				final Location display = this.location.add(vector);
-				if (this.random.nextInt(6) == 0) {
-					ParticleEffect.SMOKE_NORMAL.display(display, 1, 0, 0, 0);
-				}
 				playFirebendingParticles(display, 2, 0.3, 0.2, 0.3, 0.023);
 				if (this.random.nextInt(4) == 0) {
 					playFirebendingSound(display);

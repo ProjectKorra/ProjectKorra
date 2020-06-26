@@ -15,7 +15,6 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class FireJet extends FireAbility {
@@ -96,7 +95,6 @@ public class FireJet extends FireAbility {
 			}
 
 			playFirebendingParticles(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
-			ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

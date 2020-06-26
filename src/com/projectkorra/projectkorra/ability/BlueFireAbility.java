@@ -17,7 +17,7 @@ public abstract class BlueFireAbility extends FireAbility implements SubAbility 
 
 	@Override
 	public Element getElement() {
-		return Element.COMBUSTION;
+		return Element.BLUE_FIRE;
 	}
 
 }

@@ -23,7 +23,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class FireBlast extends FireAbility {
@@ -52,7 +51,6 @@ public class FireBlast extends FireAbility {
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	private double flameRadius;
-	private double smokeRadius;
 	private Random random;
 	private Location location;
 	private Location origin;
@@ -115,19 +113,16 @@ public class FireBlast extends FireAbility {
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
 		this.knockback = getConfig().getDouble("Abilities.Fire.FireBlast.Knockback");
 		this.flameRadius = getConfig().getDouble("Abilities.Fire.FireBlast.FlameParticleRadius");
-		this.smokeRadius = getConfig().getDouble("Abilities.Fire.FireBlast.SmokeParticleRadius");
 		this.random = new Random();
 	}
 
 	private void advanceLocation() {
 		if (this.isFireBurst) {
 			this.flameRadius += 0.06;
-			this.smokeRadius += 0.06;
 		}
 		
 		if (this.showParticles) {
 			playFirebendingParticles(this.location, 12, this.flameRadius, this.flameRadius, this.flameRadius);
-			ParticleEffect.SMOKE_NORMAL.display(this.location, 2, this.smokeRadius, this.smokeRadius, this.smokeRadius);
 		}
 		
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
@@ -217,7 +212,7 @@ public class FireBlast extends FireAbility {
 		Entity target = GeneralMethods.getTargetedEntity(player, range);
 		
 		if (target != null) {
-			this.direction.add(GeneralMethods.getDirection(location, target.getLocation().add(0, 1, 0)).normalize().multiply(0.025));
+			this.direction.add(GeneralMethods.getDirection(location, target.getLocation().add(0, 1, 0)).normalize().multiply(0.04));
 		}
 		this.advanceLocation();
 	}
