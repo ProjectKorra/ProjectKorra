@@ -175,7 +175,18 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @return null if no ignitable block found in the range
 	 */
 	public static Block getIgnitable(final Block block, final int range) {
-		Block top = GeneralMethods.getTopBlock(block.getLocation(), range).getRelative(BlockFace.UP);
+		return getIgnitable(block, range, range);
+	}
+	
+	/**
+	 * Gets the topmost ignitable block within the specified range from the given block
+	 * @param block checked block and center of range
+	 * @param up up on the y-axis from the block to check
+	 * @param down down on the y-axis from the block to check
+	 * @return null if no ignitable block found in the range
+	 */
+	public static Block getIgnitable(final Block block, final int up, final int down) {
+		Block top = GeneralMethods.getTopBlock(block.getLocation(), up, down).getRelative(BlockFace.UP);
 		
 		if (isIgnitable(top)) {
 			return top;

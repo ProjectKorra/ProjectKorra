@@ -78,7 +78,7 @@ public class BlazeArc extends FireAbility {
 				return;
 			}
 
-			final Block ignitable = getIgnitable(block, 1);
+			final Block ignitable = getIgnitable(block, 0, 2);
 			if (ignitable != null) {
 				this.ignite(ignitable);
 			}
