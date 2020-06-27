@@ -292,7 +292,7 @@ public class AirBlast extends AirAbility {
 		final Block block = this.location.getBlock();
 
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
-			if (testblock.getType() == Material.FIRE) {
+			if (isFire(testblock)) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 				continue;

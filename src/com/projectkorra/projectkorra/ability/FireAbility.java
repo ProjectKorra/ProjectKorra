@@ -196,15 +196,6 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 	
 	/**
-	 * Checks if the block is a type of fire
-	 * @param block checked block
-	 * @return true if fire type
-	 */
-	public static boolean isFire(final Block block) {
-		return block.getType() == Material.FIRE || block.getType() == Material.SOUL_FIRE;
-	}
-
-	/**
 	 * Checks if the given block can be ignited
 	 * @param block checked block
 	 * @return true if fire can be placed in a mostly vanilla fashion at the block

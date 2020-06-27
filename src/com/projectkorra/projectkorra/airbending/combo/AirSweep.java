@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -21,7 +23,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.VelocityBuilder;
 
 public class AirSweep extends AirAbility implements ComboAbility {
@@ -169,10 +170,12 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				i--;
 			}
 		}
+		
 		if (this.tasks.size() == 0) {
 			this.remove();
 			return;
 		}
+		
 		for (int i = 0; i < this.tasks.size(); i++) {
 			final FireComboStream fstream = (FireComboStream) this.tasks.get(i);
 			final Location loc = fstream.getLocation();
@@ -186,6 +189,12 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				if (!this.isTransparent(loc.clone().add(0, 0.2, 0).getBlock())) {
 					fstream.remove();
 					return;
+				}
+			}
+			
+			for (final Block block : GeneralMethods.getBlocksAroundPoint(fstream.getLocation(), 2.5)) {
+				if (isFire(block)) {
+					block.setType(Material.AIR);
 				}
 			}
 			

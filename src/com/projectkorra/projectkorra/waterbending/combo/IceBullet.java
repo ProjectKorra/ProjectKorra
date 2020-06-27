@@ -58,7 +58,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private long cooldown;
 	private long shotcooldown;
 	private long time;
-	private String name;
 	private AbilityState state;
 	private Location origin;
 	private Location location;
@@ -87,7 +86,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		this.maxShots = getConfig().getInt("Abilities.Water.IceBullet.MaxShots");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.IceBullet.AnimationSpeed");
 		this.speed = 1;
-		this.name = this.getName();
 
 		double aug = getNightFactor(player.getWorld());
 		if (aug > 1) {
@@ -192,11 +190,11 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, mat.createBlockData());
+		this.createBlock(block, mat.createBlockData());
 	}
 
-	public void createBlock(final Block block, final Material mat, final BlockData data) {
-		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
+	public void createBlock(final Block block, final BlockData data) {
+		this.affectedBlocks.put(block, new TempBlock(block, data));
 	}
 
 	public void drawWaterCircle(final Location loc, final double theta, final double increment, final double radius) {
@@ -214,7 +212,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			this.location = block.getLocation();
 
 			if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", block.getLocation())) {
-				this.createBlock(block, mat, data);
+				this.createBlock(block, data);
 			}
 		}
 	}
@@ -518,9 +516,5 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
 	}
 }

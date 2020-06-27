@@ -178,7 +178,7 @@ public class WaterArmsSpear extends WaterAbility {
 				return;
 			}
 
-			new TempBlock(this.location.getBlock(), Material.WATER, GeneralMethods.getWaterData(0));
+			new TempBlock(this.location.getBlock(), GeneralMethods.getWaterData(0));
 			getIceBlocks().put(this.location.getBlock(), System.currentTimeMillis() + 600L);
 			final Vector direction = GeneralMethods.getDirection(this.initLocation, GeneralMethods.getTargetedLocation(this.player, this.spearRange, getTransparentMaterials())).normalize();
 

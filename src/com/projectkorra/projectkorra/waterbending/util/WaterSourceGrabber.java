@@ -63,7 +63,7 @@ public class WaterSourceGrabber {
 				return;
 			}
 
-			this.createBlock(block, this.material, this.data);
+			this.createBlock(block, this.data);
 			if (Math.abs(locDiff) < 1) {
 				this.state = AnimationState.TOWARD;
 			}
@@ -80,7 +80,7 @@ public class WaterSourceGrabber {
 				return;
 			}
 
-			this.createBlock(block, this.material, this.data);
+			this.createBlock(block, this.data);
 			if (this.currentLoc.distanceSquared(eyeLoc) < 1.2) {
 				this.state = AnimationState.FINISHED;
 				this.revertBlocks();
@@ -106,11 +106,11 @@ public class WaterSourceGrabber {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, mat.createBlockData());
+		this.createBlock(block, mat.createBlockData());
 	}
 
-	public void createBlock(final Block block, final Material mat, final BlockData data) {
-		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
+	public void createBlock(final Block block, final BlockData data) {
+		this.affectedBlocks.put(block, new TempBlock(block, data));
 	}
 
 	public Player getPlayer() {

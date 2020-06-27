@@ -329,13 +329,13 @@ public class WaterArms extends WaterAbility {
 			final TempBlock tb = TempBlock.get(b);
 
 			if (this.right.contains(b) || this.left.contains(b)) {
-				tb.setType(m, data);
+				tb.setType(data);
 				tb.setRevertTime(revertTime);
 			} else {
 				this.external.add(tb);
 			}
 		} else {
-			new TempBlock(b, m, data).setRevertTime(revertTime);
+			new TempBlock(b, data).setRevertTime(revertTime);
 		}
 	}
 

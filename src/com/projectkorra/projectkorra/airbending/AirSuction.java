@@ -196,6 +196,12 @@ public class AirSuction extends AirAbility {
 				this.remove();
 				return;
 			}
+			
+			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
+				if (isFire(block)) {
+					block.setType(Material.AIR);
+				}
+			}
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {

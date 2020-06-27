@@ -157,7 +157,7 @@ public class AirSwipe extends AirAbility {
 					}
 
 					for (final Block testblock : GeneralMethods.getBlocksAroundPoint(location, this.radius)) {
-						if (testblock.getType() == Material.FIRE) {
+						if (isFire(block)) {
 							testblock.setType(Material.AIR);
 						}
 					}

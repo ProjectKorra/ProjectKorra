@@ -305,9 +305,9 @@ public class WaterSpoutWave extends WaterAbility {
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
 					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (this.iceWave) {
-							this.createBlockDelay(block, Material.ICE, Material.ICE.createBlockData(), 2L);
+							this.createBlockDelay(block, Material.ICE.createBlockData(), 2L);
 						} else {
-							this.createBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+							this.createBlock(block, GeneralMethods.getWaterData(0));
 						}
 					}
 				}
@@ -352,7 +352,7 @@ public class WaterSpoutWave extends WaterAbility {
 			final Block block = this.player.getEyeLocation().add(dir).getBlock();
 			this.location = block.getLocation();
 			if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-				this.createBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+				this.createBlock(block, GeneralMethods.getWaterData(0));
 			}
 		}
 	}
@@ -369,11 +369,11 @@ public class WaterSpoutWave extends WaterAbility {
 		}
 	}
 
-	public void createBlockDelay(final Block block, final Material mat, final BlockData data, final long delay) {
+	public void createBlockDelay(final Block block, final BlockData data, final long delay) {
 		final BukkitRunnable br = new BukkitRunnable() {
 			@Override
 			public void run() {
-				WaterSpoutWave.this.createBlock(block, mat, data);
+				WaterSpoutWave.this.createBlock(block, data);
 			}
 		};
 		br.runTaskLater(ProjectKorra.plugin, delay);
@@ -381,11 +381,11 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, mat.createBlockData());
+		this.createBlock(block, mat.createBlockData());
 	}
 
-	public void createBlock(final Block block, final Material mat, final BlockData data) {
-		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
+	public void createBlock(final Block block, final BlockData data) {
+		this.affectedBlocks.put(block, new TempBlock(block, data));
 	}
 
 	public void revertBlocks() {

@@ -80,6 +80,15 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isEarth(final Material material) {
 		return getConfig().getStringList("Properties.Earth.EarthBlocks").contains(material.toString());
 	}
+	
+	/**
+	 * Checks if the block is a type of fire
+	 * @param block checked block
+	 * @return true if fire type
+	 */
+	public static boolean isFire(final Block block) {
+		return block.getType() == Material.FIRE || block.getType() == Material.SOUL_FIRE;
+	}
 
 	public static boolean isFullMoon(final World world) {
 		final double days = Math.ceil(world.getFullTime() / 24000) + 1;

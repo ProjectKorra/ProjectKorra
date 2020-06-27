@@ -224,7 +224,7 @@ public class PresetCommand extends PKCommand {
 			if (bPlayer == null) {
 				return;
 			}
-			final HashMap<Integer, String> abilities = (HashMap<Integer, String>) bPlayer.getAbilities().clone();
+			final HashMap<Integer, String> abilities = new HashMap<>(bPlayer.getAbilities());
 
 			final Preset preset = new Preset(player.getUniqueId(), name, abilities);
 			preset.save(player);

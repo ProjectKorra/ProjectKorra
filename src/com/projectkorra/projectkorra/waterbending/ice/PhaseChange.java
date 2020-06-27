@@ -383,7 +383,7 @@ public class PhaseChange extends IceAbility {
 					} else {
 						tb.revertBlock();
 						snow.setLayers(snow.getLayers() - 1);
-						new TempBlock(b, Material.SNOW, snow).setRevertTime(120 * 1000L);
+						new TempBlock(b, snow).setRevertTime(120 * 1000L);
 					}
 				}
 			}
@@ -398,7 +398,7 @@ public class PhaseChange extends IceAbility {
 				b.setType(Material.WATER);
 				b.setBlockData(GeneralMethods.getWaterData(0));
 			} else {
-				new TempBlock(b, Material.WATER, GeneralMethods.getWaterData(0));
+				new TempBlock(b, GeneralMethods.getWaterData(0));
 			}
 			this.melted_blocks.add(b);
 		} else if (b.getType() == Material.SNOW_BLOCK || b.getType() == Material.SNOW) {
@@ -408,7 +408,7 @@ public class PhaseChange extends IceAbility {
 					new TempBlock(b, Material.AIR).setRevertTime(120 * 1000L);
 				} else {
 					snow.setLayers(snow.getLayers() - 1);
-					new TempBlock(b, Material.SNOW, snow).setRevertTime(120 * 1000L);
+					new TempBlock(b, snow).setRevertTime(120 * 1000L);
 				}
 			}
 
