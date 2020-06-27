@@ -429,6 +429,9 @@ public class GeneralMethods {
 							}
 						}
 					} else if (split[0] != null) {
+						if (split[0].contains("r")) {
+							subelements.add(Element.BLUE_FIRE);
+						}
 						if (split[0].contains("m")) {
 							subelements.add(Element.METAL);
 						}
@@ -462,6 +465,7 @@ public class GeneralMethods {
 						if (split[0].contains("p")) {
 							subelements.add(Element.PLANT);
 						}
+
 						if (hasAddon) {
 							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
 							final long startTime = System.currentTimeMillis();
@@ -700,32 +704,32 @@ public class GeneralMethods {
 	 */
 	public static BlockFace getBlockFaceFromValue(final int xyz, final double value) {
 		switch (xyz) {
-			case 0:
-				if (value > 0) {
-					return BlockFace.EAST;
-				} else if (value < 0) {
-					return BlockFace.WEST;
-				} else {
-					return BlockFace.SELF;
-				}
-			case 1:
-				if (value > 0) {
-					return BlockFace.UP;
-				} else if (value < 0) {
-					return BlockFace.DOWN;
-				} else {
-					return BlockFace.SELF;
-				}
-			case 2:
-				if (value > 0) {
-					return BlockFace.SOUTH;
-				} else if (value < 0) {
-					return BlockFace.NORTH;
-				} else {
-					return BlockFace.SELF;
-				}
-			default:
-				return null;
+		case 0:
+			if (value > 0) {
+				return BlockFace.EAST;
+			} else if (value < 0) {
+				return BlockFace.WEST;
+			} else {
+				return BlockFace.SELF;
+			}
+		case 1:
+			if (value > 0) {
+				return BlockFace.UP;
+			} else if (value < 0) {
+				return BlockFace.DOWN;
+			} else {
+				return BlockFace.SELF;
+			}
+		case 2:
+			if (value > 0) {
+				return BlockFace.SOUTH;
+			} else if (value < 0) {
+				return BlockFace.NORTH;
+			} else {
+				return BlockFace.SELF;
+			}
+		default:
+			return null;
 		}
 	}
 
@@ -863,7 +867,7 @@ public class GeneralMethods {
 		}
 		return circleblocks;
 	}
-	
+
 	/**
 	 * Gets the closest entity within the specified radius around a point
 	 * @param center point to check around
@@ -873,10 +877,10 @@ public class GeneralMethods {
 	public static Entity getClosestEntity(Location center, double radius) {
 		Entity found = null;
 		Double distance = null;
-		
+
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
 			double check = center.distanceSquared(entity.getLocation());
-			
+
 			if (distance == null || check < distance) {
 				found = entity;
 				distance = check;
@@ -885,7 +889,7 @@ public class GeneralMethods {
 
 		return found;
 	}
-	
+
 	/**
 	 * Gets the closest LivingEntity within the specified radius around a point
 	 * @param center point to check around
@@ -895,16 +899,16 @@ public class GeneralMethods {
 	public static LivingEntity getClosestLivingEntity(Location center, double radius) {
 		LivingEntity le = null;
 		Double distance = null;
-		
+
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
 			double check = center.distanceSquared(entity.getLocation());
-			
+
 			if (entity instanceof LivingEntity && (distance == null || check < distance)) {
 				le = (LivingEntity) entity;
 				distance = check;
 			}
 		}
-		
+
 		return le;
 	}
 
@@ -998,24 +1002,24 @@ public class GeneralMethods {
 		final BlockFace face = getCardinalDirection(vector);
 
 		switch (face) {
-			case SOUTH:
-				return 7;
-			case SOUTH_WEST:
-				return 6;
-			case WEST:
-				return 3;
-			case NORTH_WEST:
-				return 0;
-			case NORTH:
-				return 1;
-			case NORTH_EAST:
-				return 2;
-			case EAST:
-				return 5;
-			case SOUTH_EAST:
-				return 8;
-			default:
-				return 4;
+		case SOUTH:
+			return 7;
+		case SOUTH_WEST:
+			return 6;
+		case WEST:
+			return 3;
+		case NORTH_WEST:
+			return 0;
+		case NORTH:
+			return 1;
+		case NORTH_EAST:
+			return 2;
+		case EAST:
+			return 5;
+		case SOUTH_EAST:
+			return 8;
+		default:
+			return 4;
 		}
 	}
 
@@ -1187,7 +1191,7 @@ public class GeneralMethods {
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
-	
+
 	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... nonOpaque2) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
@@ -1208,7 +1212,7 @@ public class GeneralMethods {
 
 		for (double i = 0; i < range; i += 0.2) {
 			location.add(vec);
-			
+
 			if (checkDiagonals && checkDiagonalWall(location, vec)) {
 				location.subtract(vec);
 				break;
@@ -1653,22 +1657,22 @@ public class GeneralMethods {
 		if (entity == null) {
 			return false;
 		}
-		
+
 		switch (entity.getType()) {
-			case SKELETON:
-			case STRAY:
-			case WITHER_SKELETON:
-			case WITHER:
-			case ZOMBIE:
-			case HUSK:
-			case ZOMBIE_VILLAGER:
-			case DROWNED:
-			case ZOMBIE_HORSE:
-			case SKELETON_HORSE:
-			case PHANTOM:
-				return true;
-			default:
-				return false;
+		case SKELETON:
+		case STRAY:
+		case WITHER_SKELETON:
+		case WITHER:
+		case ZOMBIE:
+		case HUSK:
+		case ZOMBIE_VILLAGER:
+		case DROWNED:
+		case ZOMBIE_HORSE:
+		case SKELETON_HORSE:
+		case PHANTOM:
+			return true;
+		default:
+			return false;
 		}
 	}
 
@@ -2334,19 +2338,19 @@ public class GeneralMethods {
 
 	public static boolean isLightEmitting(final Material material) {
 		switch (material) {
-			case GLOWSTONE:
-			case TORCH:
-			case SEA_LANTERN:
-			case BEACON:
-			case REDSTONE_LAMP:
-			case REDSTONE_TORCH:
-			case MAGMA_BLOCK:
-			case LAVA:
-			case JACK_O_LANTERN:
-			case END_ROD:
-				return true;
-			default:
-				return false;
+		case GLOWSTONE:
+		case TORCH:
+		case SEA_LANTERN:
+		case BEACON:
+		case REDSTONE_LAMP:
+		case REDSTONE_TORCH:
+		case MAGMA_BLOCK:
+		case LAVA:
+		case JACK_O_LANTERN:
+		case END_ROD:
+			return true;
+		default:
+			return false;
 		}
 	}
 }

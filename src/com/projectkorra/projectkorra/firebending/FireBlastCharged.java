@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -16,7 +15,9 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -78,15 +79,29 @@ public class FireBlastCharged extends FireAbility {
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
 		this.innerRadius = this.damageRadius / 2;
 
+
+		long chargeTimeMod = 0;
+		int damageMod = 0;
+		int rangeMod = 0;
+
 		if (isDay(player.getWorld())) {
-			this.chargeTime = (long) (this.chargeTime / getDayFactor());
-			this.maxDamage = this.getDayFactor(this.maxDamage);
-			this.range = this.getDayFactor(this.range);
+			chargeTimeMod = (long) (this.chargeTime / getDayFactor()) - this.chargeTime;
+			damageMod = (int) (this.getDayFactor(this.maxDamage) - this.maxDamage);
+			rangeMod = (int) (this.getDayFactor(this.range) - this.range);
 		}
+
+		chargeTimeMod = (long) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (chargeTime / BlueFireAbility.getCooldownFactor() - chargeTime) + chargeTimeMod : chargeTimeMod);
+		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * maxDamage - maxDamage) + damageMod : damageMod);
+		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
+
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");
 			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.Damage");
 		}
+
+		this.chargeTime += chargeTimeMod;
+		this.maxDamage += damageMod;
+		this.range += rangeMod;
 
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			this.start();
@@ -273,7 +288,7 @@ public class FireBlastCharged extends FireAbility {
 			if (!this.launched && !this.charged) {
 				return;
 			} else if (!this.launched) {
-				playFirebendingParticles(this.player.getEyeLocation(), 3, 0, 0, 0);
+				playFirebendingParticles(this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().clone()), 3, 0, 0, 0);
 				return;
 			}
 

@@ -6,9 +6,12 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Campfire;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.Smoker;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -16,7 +19,9 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -24,7 +29,6 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class FireBlast extends FireAbility {
@@ -53,7 +57,6 @@ public class FireBlast extends FireAbility {
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	private double flameRadius;
-	private double smokeRadius;
 	private Random random;
 	private Location location;
 	private Location origin;
@@ -69,13 +72,23 @@ public class FireBlast extends FireAbility {
 
 		this.setFields();
 		this.safeBlocks = safeBlocks;
-		this.damage = damage;
 
 		this.location = location.clone();
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
-		this.range = this.getDayFactor(this.range);
-		this.damage = this.getDayFactor(damage);
+
+		int damageMod = 0;
+		int rangeMod = 0;
+
+		damageMod = (int) (this.getDayFactor(damage) - damage);
+		rangeMod = (int) (this.getDayFactor(this.range) - this.range);
+
+		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
+		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
+
+		this.range += rangeMod;
+		this.damage += damageMod;
+
 
 		this.start();
 	}
@@ -91,13 +104,24 @@ public class FireBlast extends FireAbility {
 
 		this.setFields();
 		this.isFireBurst = false;
-		this.damage = this.getDayFactor(getConfig().getDouble("Abilities.Fire.FireBlast.Damage"));
+		this.damage = getConfig().getDouble("Abilities.Fire.FireBlast.Damage");
 		this.safeBlocks = new ArrayList<>();
-		this.range = this.getDayFactor(this.range);
 		this.location = player.getEyeLocation();
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.location.add(this.direction.clone());
+
+		int damageMod = 0;
+		int rangeMod = 0;
+
+		damageMod = (int) (this.getDayFactor(damage) - damage);
+		rangeMod = (int) (this.getDayFactor(this.range) - this.range);
+
+		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
+		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
+
+		this.range += rangeMod;
+		this.damage += damageMod;
 
 		this.start();
 		this.bPlayer.addCooldown("FireBlast", this.cooldown);
@@ -116,27 +140,25 @@ public class FireBlast extends FireAbility {
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
 		this.knockback = getConfig().getDouble("Abilities.Fire.FireBlast.Knockback");
 		this.flameRadius = getConfig().getDouble("Abilities.Fire.FireBlast.FlameParticleRadius");
-		this.smokeRadius = getConfig().getDouble("Abilities.Fire.FireBlast.SmokeParticleRadius");
 		this.random = new Random();
 	}
 
 	private void advanceLocation() {
 		if (this.isFireBurst) {
 			this.flameRadius += 0.06;
-			this.smokeRadius += 0.06;
 		}
-		
+
 		if (this.showParticles) {
 			playFirebendingParticles(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
 		}
-		
+
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
 			return;
 		}
-		
+
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
-		
+
 		if (this.random.nextInt(4) == 0) {
 			playFirebendingSound(this.location);
 		}
@@ -200,7 +222,24 @@ public class FireBlast extends FireAbility {
 				furnace.setBurnTime((short) 800);
 				furnace.setCookTime((short) 800);
 				furnace.update();
-			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
+			} else if (block.getType() == Material.SMOKER && this.powerFurnace) {
+				final Smoker smoker = (Smoker) block.getState();
+				smoker.setBurnTime((short) 800);
+				smoker.setCookTime((short) 800);
+				smoker.update();
+		    } else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
+		    	final BlastFurnace blastF = (BlastFurnace) block.getState();
+				blastF.setBurnTime((short) 800);
+				blastF.setCookTime((short) 800);
+				blastF.update();
+		    } else if (block instanceof Campfire) {
+		    	final Campfire campfire = (Campfire) block.getBlockData();
+		    	if(!campfire.isLit()) {
+		    		if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
+		    			campfire.setLit(true);
+		    		}
+		    	}
+		    } else if (isIgnitable(block.getRelative(BlockFace.UP))) {
 				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
 					this.ignite(this.location);
 				}
@@ -431,5 +470,5 @@ public class FireBlast extends FireAbility {
 		this.isFireBurst = isFireBurst;
 	}
 
-	
+
 }

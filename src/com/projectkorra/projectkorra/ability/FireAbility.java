@@ -31,7 +31,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
 	private static final Map<Block, Player> SOURCE_PLAYERS = new ConcurrentHashMap<>();
-	
+
 	public FireAbility(final Player player) {
 		super(player);
 	}
@@ -75,13 +75,13 @@ public abstract class FireAbility extends ElementalAbility {
 	public void createTempFire(final Location loc) {
 		createTempFire(loc, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
 	}
-	
-	
+
+
 	public void createTempFire(final Location loc, final long time) {
 		Material fireType = this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
-		
+
 		new TempBlock(loc.getBlock(), fireType.createBlockData(), time);
-		
+
 		SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 	}
 
@@ -247,7 +247,7 @@ public abstract class FireAbility extends ElementalAbility {
 			revertTempFire(loc);
 		}
 	}
-	
+
 	public static Map<Location, Information> getTempFire() {
 		return TEMP_FIRE;
 	}

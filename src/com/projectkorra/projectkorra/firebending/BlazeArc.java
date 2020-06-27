@@ -8,8 +8,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -33,6 +34,11 @@ public class BlazeArc extends FireAbility {
 		this.range = this.getDayFactor(range);
 		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
 		this.interval = (long) (1000. / this.speed);
+
+		if(bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
+			this.range += BlueFireAbility.getRangeFactor() * range;
+		}
+
 		this.origin = location.clone();
 		this.location = this.origin.clone();
 
@@ -51,11 +57,9 @@ public class BlazeArc extends FireAbility {
 				if (isPlant(block) || isSnow(block)) {
 					new PlantRegrowth(this.player, block);
 				}
-			} else if (!isFire(block.getType())) {
-				
 			}
 		}
-		
+
 		if(isIgnitable(block)) {
 			createTempFire(block.getLocation(), DISSIPATE_REMOVE_TIME);
 		}

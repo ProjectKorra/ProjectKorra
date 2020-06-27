@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -43,7 +44,7 @@ public class HeatControl extends FireAbility {
 		COOK, EXTINGUISH, MELT, SOLIDIFY
 	}
 
-	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON, Material.KELP, Material.WET_SPONGE, Material.CHORUS_FRUIT };
+	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON, Material.KELP, Material.WET_SPONGE, Material.CHORUS_FRUIT, Material.STICK };
 
 	private HeatControlType heatControlType;
 
@@ -281,6 +282,9 @@ public class HeatControl extends FireAbility {
 				break;
 			case WET_SPONGE:
 				cooked = new ItemStack(Material.SPONGE);
+				break;
+			case STICK:
+				cooked = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? new ItemStack(Material.SOUL_TORCH) : new ItemStack(Material.TORCH);
 			default:
 				break;
 		}

@@ -11,6 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -123,7 +124,7 @@ public class Illumination extends FireAbility {
 		}
 
 		this.revert();
-		this.block = new TempBlock(standingBlock, Material.TORCH);
+		this.block = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? new TempBlock(standingBlock, Material.SOUL_TORCH) : new TempBlock(standingBlock, Material.TORCH);
 		BLOCKS.put(this.block, this.player);
 	}
 
