@@ -1,14 +1,11 @@
 package com.projectkorra.projectkorra.firebending;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -37,9 +34,7 @@ public class BlazeArc extends FireAbility {
 		this.origin = location.clone();
 		this.location = this.origin.clone();
 
-		this.direction = direction.clone();
-		this.direction.setY(0);
-		this.direction = this.direction.clone().normalize();
+		this.direction = direction.clone().setY(0).normalize();
 		this.location = this.location.clone().add(this.direction);
 
 		this.time = System.currentTimeMillis();
@@ -68,7 +63,7 @@ public class BlazeArc extends FireAbility {
 			this.remove();
 			return;
 		} else if (System.currentTimeMillis() - this.time >= this.interval) {
-			this.location = this.location.clone().add(this.direction);
+			this.location.add(this.direction);
 			this.time = System.currentTimeMillis();
 
 			final Block block = this.location.getBlock();
@@ -83,48 +78,10 @@ public class BlazeArc extends FireAbility {
 				return;
 			}
 
-			final Block ignitable = getIgnitable(block);
+			final Block ignitable = getIgnitable(block, 1);
 			if (ignitable != null) {
 				this.ignite(ignitable);
 			}
-		}
-	}
-
-	public static Block getIgnitable(final Block block) {
-		Block top = GeneralMethods.isSolid(block) ? block.getRelative(BlockFace.UP) : block;
-
-		for (int i = 0; i < 2; i++) {
-			if (GeneralMethods.isSolid(top.getRelative(BlockFace.DOWN))) {
-				break;
-			}
-
-			top = top.getRelative(BlockFace.DOWN);
-		}
-
-		if (top.getType() == Material.FIRE) {
-			return top;
-		} else if (top.getType().isBurnable()) {
-			return top;
-		} else if (isAir(top.getType())) {
-			return top;
-		} else {
-			return null;
-		}
-	}
-
-	public static boolean isIgnitable(final Player player, final Block block) {
-		if (!BendingPlayer.getBendingPlayer(player).hasElement(Element.FIRE)) {
-			return false;
-		} else if (!GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
-			return false;
-		} else if (block.getType() == Material.FIRE) {
-			return true;
-		} else if (block.getType().isBurnable()) {
-			return true;
-		} else if (isAir(block.getType())) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 

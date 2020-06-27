@@ -112,7 +112,7 @@ public class Illumination extends FireAbility {
 		final Block standingBlock = this.player.getLocation().getBlock();
 		final Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
 
-		if (!BlazeArc.isIgnitable(this.player, standingBlock)) {
+		if (isIgnitable(standingBlock)) {
 			return;
 		} else if (!GeneralMethods.isSolid(standBlock)) {
 			return;

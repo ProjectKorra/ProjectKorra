@@ -230,8 +230,8 @@ public class FireBlastCharged extends FireAbility {
 
 	private void ignite(final Location location) {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
-			if (BlazeArc.isIgnitable(this.player, block)) {
-				createTempFire(block, bPlayer);
+			if (isIgnitable(block)) {
+				createTempFire(block);
 			}
 		}
 	}

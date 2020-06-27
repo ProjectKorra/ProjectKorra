@@ -21,14 +21,18 @@ public enum ParticleEffect {
 	BUBBLE_COLUMN_UP (Particle.BUBBLE_COLUMN_UP),
 	BUBBLE_POP (Particle.BUBBLE_POP),
 	CLOUD (Particle.CLOUD),
+	COMPOSTER (Particle.COMPOSTER),
+	CRIMSON_SPORE (Particle.CRIMSON_SPORE),
 	CRIT (Particle.CRIT),
 	CRIT_MAGIC (Particle.CRIT_MAGIC),
 	CURRENT_DOWN (Particle.CURRENT_DOWN),
 	DAMAGE_INDICATOR (Particle.DAMAGE_INDICATOR),
 	DOLPHIN (Particle.DOLPHIN),
 	DRAGON_BREATH (Particle.DRAGON_BREATH),
-	DRIP_LAVA (Particle.DRIP_LAVA),
-	DRIP_WATER (Particle.DRIP_WATER),
+	DRIPPING_HONEY (Particle.DRIPPING_HONEY),
+	DRIPPING_LAVA (Particle.DRIP_LAVA), @Deprecated DRIP_LAVA (Particle.DRIP_LAVA),
+	DRIPPING_OBSIDIAN_TEAR (Particle.DRIPPING_OBSIDIAN_TEAR),
+	DRIPPING_WATER (Particle.DRIP_WATER), @Deprecated DRIP_WATER (Particle.DRIP_WATER),
 	ENCHANTMENT_TABLE (Particle.ENCHANTMENT_TABLE),
 	END_ROD (Particle.END_ROD),
 	EXPLOSION_HUGE (Particle.EXPLOSION_HUGE),
@@ -39,6 +43,11 @@ public enum ParticleEffect {
 	 * Applicable data: {@link BlockData}
 	 */
 	FALLING_DUST (Particle.FALLING_DUST),
+	FALLING_HONEY (Particle.FALLING_HONEY),
+	FALLING_LAVA (Particle.FALLING_LAVA),
+	FALLING_NECTAR (Particle.FALLING_NECTAR),
+	FALLING_OBSIDIAN_TEAR (Particle.FALLING_OBSIDIAN_TEAR),
+	FALLING_WATER (Particle.FALLING_WATER),
 	FIREWORKS_SPARK (Particle.FIREWORKS_SPARK),
 	FLAME (Particle.FLAME),
 	HEART (Particle.HEART),
@@ -47,6 +56,9 @@ public enum ParticleEffect {
 	 * Applicable data: {@link ItemStack}
 	 */
 	ITEM_CRACK (Particle.ITEM_CRACK),
+	LANDING_HONEY (Particle.LANDING_HONEY),
+	LANDING_LAVA (Particle.LANDING_LAVA),
+	LANDING_OBSIDIAN_TEAR (Particle.LANDING_OBSIDIAN_TEAR),
 	LAVA (Particle.LAVA),
 	MOB_APPEARANCE (Particle.MOB_APPEARANCE),
 	NAUTILUS (Particle.NAUTILUS),
@@ -57,6 +69,7 @@ public enum ParticleEffect {
 	 * Applicable data: {@link DustOptions}
 	 */
 	REDSTONE (Particle.REDSTONE),
+	REVERSE_PORTAL (Particle.REVERSE_PORTAL),
 	SLIME (Particle.SLIME),
 	SMOKE_NORMAL (Particle.SMOKE_NORMAL),
 	SMOKE_LARGE (Particle.SMOKE_LARGE),
@@ -78,10 +91,12 @@ public enum ParticleEffect {
 	TOWN_AURA (Particle.TOWN_AURA),
 	VILLAGER_ANGRY (Particle.VILLAGER_ANGRY),
 	VILLAGER_HAPPY (Particle.VILLAGER_HAPPY),
+	WARPED_SPORE (Particle.WARPED_SPORE),
 	WATER_BUBBLE (Particle.WATER_BUBBLE),
 	WATER_DROP (Particle.WATER_DROP),
 	WATER_SPLASH (Particle.WATER_SPLASH),
-	WATER_WAKE (Particle.WATER_WAKE);
+	WATER_WAKE (Particle.WATER_WAKE),
+	WHITE_ASH (Particle.WHITE_ASH);
 	
 	Particle particle;
 	Class<?> dataClass;

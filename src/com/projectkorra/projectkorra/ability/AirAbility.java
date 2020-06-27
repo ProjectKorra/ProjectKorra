@@ -143,7 +143,7 @@ public abstract class AirAbility extends ElementalAbility {
 				double x = loc.getX() + 2 * xOffset * (Math.random() - 0.5);
 				double y = loc.getY() + 2 * yOffset * (Math.random() - 0.5);
 				double z = loc.getZ() + 2 * zOffset * (Math.random() - 0.5);
-				loc.getWorld().spawnParticle(Particle.SPELL_MOB_AMBIENT, x, y, z, 0, 98 / 255D, 188 / 255D, 192 / 255D, 1);
+				loc.getWorld().spawnParticle(Particle.SPELL_MOB, x, y, z, 0, 98 / 255D, 188 / 255D, 192 / 255D, 1);
 			}
 	    } else {
 			getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);

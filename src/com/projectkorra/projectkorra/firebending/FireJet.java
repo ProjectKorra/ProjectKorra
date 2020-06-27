@@ -31,6 +31,7 @@ public class FireJet extends FireAbility {
 	private Random random;
 	private Boolean previousGlidingState;
 	private Boolean showGliding;
+	private VelocityBuilder velocity;
 
 	public FireJet(final Player player) {
 		super(player);
@@ -54,17 +55,17 @@ public class FireJet extends FireAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");
 		this.showGliding = getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding");
 		this.random = new Random();
+		this.velocity = new VelocityBuilder();
 
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (BlazeArc.isIgnitable(player, block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
+		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
 				if (ElementalAbility.isAir(block.getType()) && GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
-					createTempFire(block, bPlayer);
+					createTempFire(block);
 				}
-
 			} else if (ElementalAbility.isAir(block.getType())) {
 				block.setType(getFireColor());
 			}
@@ -103,7 +104,7 @@ public class FireJet extends FireAbility {
 				timefactor = 1 - (System.currentTimeMillis() - this.time) / (2.0 * this.duration);
 			}
 
-			new VelocityBuilder(player.getEyeLocation().getDirection()).knockback(this.speed * timefactor).apply(player, this);
+			velocity.direction(player.getEyeLocation().getDirection()).knockback(this.speed * timefactor).apply(player, this);
 			this.player.setFallDistance(0);
 		}
 	}
