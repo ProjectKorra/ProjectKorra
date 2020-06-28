@@ -305,7 +305,7 @@ public class DisplayCommand extends PKCommand {
 				abilitiesSent.add(ability.getName());
 			}
 		}
-		sender.sendMessage(element.getParentElement().getColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
+		sender.sendMessage(element.getParentElement().getColor() + "Passives: " + element.getColor() + "/bending display " + element.getName().replace(" ", "") + "Passives");
 	}
 
 	/**
@@ -370,6 +370,7 @@ public class DisplayCommand extends PKCommand {
 		list.add("Plantbending");
 		list.add("Sand");
 		list.add("Spiritual");
+		list.add("BlueFire");
 
 		for (final SubElement se : Element.getAddonSubElements()) {
 			list.add(se.getName());
