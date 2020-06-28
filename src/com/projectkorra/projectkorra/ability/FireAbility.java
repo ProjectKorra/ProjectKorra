@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -15,7 +14,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -23,13 +21,11 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class FireAbility extends ElementalAbility {
 
-	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
 	private static final Map<Block, Player> SOURCE_PLAYERS = new ConcurrentHashMap<>();
 
 	public FireAbility(final Player player) {
@@ -205,51 +201,9 @@ public abstract class FireAbility extends ElementalAbility {
 			}
 		}
 	}
-
-	/** Removes all temp fire that no longer needs to be there */
-	public static void removeFire() {
-		final Iterator<Location> it = TEMP_FIRE.keySet().iterator();
-		while (it.hasNext()) {
-			final Location loc = it.next();
-			final Information info = TEMP_FIRE.get(loc);
-			if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
-				revertTempFire(loc);
-			} else if (ElementalAbility.isAir(info.getBlock().getType()) || System.currentTimeMillis() > info.getTime()) {
-				revertTempFire(loc);
-			}
-		}
-	}
-
-	/**
-	 * Revert the temp fire at the location if any is there.
-	 *
-	 * @param location The Location
-	 */
-	public static void revertTempFire(final Location location) {
-		if (!TEMP_FIRE.containsKey(location)) {
-			return;
-		}
-		final Information info = TEMP_FIRE.get(location);
-		if (!isFire(info.getLocation().getBlock().getType()) && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
-			if (info.getState().getType().isBurnable() && !info.getState().getType().isOccluding()) {
-				final ItemStack itemStack = new ItemStack(info.getState().getType(), 1);
-				info.getState().getBlock().getWorld().dropItemNaturally(info.getLocation(), itemStack);
-			}
-		} else {
-			info.getBlock().setType(info.getState().getType());
-			info.getBlock().setBlockData(info.getState().getBlockData());
-		}
-		TEMP_FIRE.remove(location);
-	}
-
+	
 	public static void stopBending() {
-		for (final Location loc : TEMP_FIRE.keySet()) {
-			revertTempFire(loc);
-		}
-	}
-
-	public static Map<Location, Information> getTempFire() {
-		return TEMP_FIRE;
+		SOURCE_PLAYERS.clear();
 	}
 
 	public static Map<Block, Player> getSourcePlayers() {

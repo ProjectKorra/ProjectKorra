@@ -188,14 +188,8 @@ public class FireBlast extends FireAbility {
 					if (isPlant(block) || isSnow(block)) {
 						new PlantRegrowth(this.player, block);
 					}
-					createTempFire(block.getLocation());
-				} else {
-					createTempFire(block.getLocation());
 				}
-
-				if (this.dissipate) {
-					removeFire();
-				}
+				createTempFire(block.getLocation());	
 			}
 		}
 	}

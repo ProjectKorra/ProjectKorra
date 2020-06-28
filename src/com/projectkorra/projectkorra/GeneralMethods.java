@@ -1666,6 +1666,8 @@ public class GeneralMethods {
 		case ZOMBIE:
 		case HUSK:
 		case ZOMBIE_VILLAGER:
+		case ZOMBIFIED_PIGLIN:
+		case ZOGLIN:
 		case DROWNED:
 		case ZOMBIE_HORSE:
 		case SKELETON_HORSE:
@@ -2347,6 +2349,18 @@ public class GeneralMethods {
 		case MAGMA_BLOCK:
 		case LAVA:
 		case JACK_O_LANTERN:
+		case CRYING_OBSIDIAN:
+		case SHROOMLIGHT:
+		case CAMPFIRE:
+		case SOUL_CAMPFIRE:
+		case SOUL_TORCH:
+		case LANTERN:
+		case CONDUIT:
+		case RESPAWN_ANCHOR:
+		case BROWN_MUSHROOM:
+		case BREWING_STAND:
+		case ENDER_CHEST:
+		case END_PORTAL_FRAME:
 		case END_ROD:
 			return true;
 		default:

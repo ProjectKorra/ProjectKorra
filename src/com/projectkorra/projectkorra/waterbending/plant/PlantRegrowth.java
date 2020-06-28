@@ -112,12 +112,20 @@ public class PlantRegrowth extends PlantAbility {
 		this.block = block;
 	}
 
-	public TempBlock getPlant1() {
+	public TempBlock getBottomPlant() {
 		return bottomPlant;
 	}
 
-	public void setPlant1(TempBlock plant1) {
-		this.bottomPlant = plant1;
+	public void setBottomPlant(TempBlock plant) {
+		this.bottomPlant = plant;
+	}
+	
+	public TempBlock getTopPlant() {
+		return topPlant;
+	}
+
+	public void setTopPlant(TempBlock plant) {
+		this.topPlant = plant;
 	}
 
 }
