@@ -1171,8 +1171,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBullet.Cooldown", 10000);
 			config.addDefault("Abilities.Water.IceBullet.ShotCooldown", 500);
 
-			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Enabled", true);
+			config.addDefault("Abilities.Earth.Passive.DensityShift.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.FerroControl.Enabled", true);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
@@ -1331,7 +1331,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
 
-			config.addDefault("Abilities.Fire.Passives.BlueFlames.DamageMultiplier", 1.3);
+			config.addDefault("Abilities.Fire.Passive.BlueFlames.Enabled", true);
+			config.addDefault("Abilities.Fire.Passive.BlueFlames.DamageMultiplier", 1.3);
 			
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);
 			config.addDefault("Abilities.Fire.Blaze.Arc", 14);

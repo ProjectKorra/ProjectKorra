@@ -232,7 +232,7 @@ public class PKListener implements Listener {
 		
 		CoreAbility bf = CoreAbility.getAbility(BlueFlames.class);
 		if (bf != null && bPlayer.canBendPassive(bf) && bPlayer.canUsePassive(bf) && ability instanceof FireAbility && ability.hasAttribute(Attribute.DAMAGE)) {
-			ability.addAttributeModifier(Attribute.DAMAGE, ConfigManager.getConfig().getDouble("Abilities.Fire.Passives.BlueFlames.DamageMultiplier"), AttributeModifier.MULTIPLICATION);
+			ability.addAttributeModifier(Attribute.DAMAGE, ConfigManager.getConfig().getDouble("Abilities.Fire.Passive.BlueFlames.DamageMultiplier"), AttributeModifier.MULTIPLICATION);
 		}
 	}
 

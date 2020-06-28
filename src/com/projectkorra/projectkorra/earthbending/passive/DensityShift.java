@@ -95,7 +95,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	}
 
 	public static long getDuration() {
-		return ConfigManager.getConfig().getLong("Abilities.Earth.Passive.Duration");
+		return ConfigManager.getConfig().getLong("Abilities.Earth.Passive.DensityShift.Duration");
 	}
 
 	@Override
