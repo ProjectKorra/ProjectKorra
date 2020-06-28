@@ -54,7 +54,10 @@ public abstract class FireAbility extends ElementalAbility {
 			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, getFireType().createBlockData());
 		}
 	}
-	
+	/**
+	 * 
+	 * @return Material based on whether the player is a Blue Firebender, SOUL_FIRE if true, FIRE if false.
+	 */
 	public Material getFireType() {
 		return getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
 	}
