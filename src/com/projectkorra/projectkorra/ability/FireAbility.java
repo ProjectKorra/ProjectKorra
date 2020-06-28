@@ -50,12 +50,15 @@ public abstract class FireAbility extends ElementalAbility {
 	@Override
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
-		Material fireType = this.bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
 		if (collision.isRemovingFirst()) {
-			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, fireType.createBlockData());
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, getFireType().createBlockData());
 		}
 	}
-
+	
+	public Material getFireType() {
+		return getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
+	}
+	
 	/**
 	 * Returns if fire is allowed to completely replace blocks or if it should
 	 * place a temp fire block.
@@ -74,9 +77,8 @@ public abstract class FireAbility extends ElementalAbility {
 
 
 	public void createTempFire(final Location loc, final long time) {
-		Material fireType = this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
 
-		new TempBlock(loc.getBlock(), fireType.createBlockData(), time);
+		new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
 
 		SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 	}
