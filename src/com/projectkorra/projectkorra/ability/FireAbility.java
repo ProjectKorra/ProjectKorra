@@ -57,6 +57,14 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	/**
+	 * 
+	 * @return Material based on whether the player is a Blue Firebender, SOUL_FIRE if true, FIRE if false.
+	 */
+	public Material getFireType() {
+		return getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
+	}
+
+	/**
 	 * Returns if fire is allowed to completely replace blocks or if it should
 	 * place a temp fire block.
 	 */
@@ -74,9 +82,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 
 	public void createTempFire(final Location loc, final long time) {
-		Material fireType = this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
-
-		new TempBlock(loc.getBlock(), fireType.createBlockData(), time);
+		new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
 
 		SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 	}
@@ -153,7 +159,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
+		if (getFireType() == Material.SOUL_FIRE) {
 			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
 		} else {
 			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
