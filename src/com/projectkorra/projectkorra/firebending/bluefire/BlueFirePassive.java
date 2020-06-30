@@ -68,7 +68,7 @@ public class BlueFirePassive extends BlueFireAbility implements PassiveAbility {
 	@Override
 	public boolean isInstantiable() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

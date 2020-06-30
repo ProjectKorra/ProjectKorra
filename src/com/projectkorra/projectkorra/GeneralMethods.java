@@ -429,9 +429,6 @@ public class GeneralMethods {
 							}
 						}
 					} else if (split[0] != null) {
-						if (split[0].contains("r")) {
-							subelements.add(Element.BLUE_FIRE);
-						}
 						if (split[0].contains("m")) {
 							subelements.add(Element.METAL);
 						}
@@ -464,6 +461,9 @@ public class GeneralMethods {
 						}
 						if (split[0].contains("p")) {
 							subelements.add(Element.PLANT);
+						}
+						if (split[0].contains("r")) {
+							subelements.add(Element.BLUE_FIRE);
 						}
 
 						if (hasAddon) {
