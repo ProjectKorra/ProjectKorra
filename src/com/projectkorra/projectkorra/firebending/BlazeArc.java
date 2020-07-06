@@ -36,7 +36,7 @@ public class BlazeArc extends FireAbility {
 		this.interval = (long) (1000. / this.speed);
 
 		if(bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
-			this.range += BlueFireAbility.getRangeFactor() * range;
+			this.range += BlueFireAbility.getRangeFactor() * range - range;
 		}
 
 		this.origin = location.clone();

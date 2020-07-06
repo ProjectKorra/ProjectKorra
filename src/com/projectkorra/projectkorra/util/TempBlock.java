@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -68,9 +69,6 @@ public class TempBlock {
 			}
 			instances.put(block, this);
 			block.setBlockData(newData, GeneralMethods.isLightEmitting(newData.getMaterial()));
-		}
-		if (this.state.getType() == Material.FIRE) {
-			this.state.setType(Material.AIR);
 		}
 	}
 
@@ -168,7 +166,7 @@ public class TempBlock {
 	}
 
 	public void setRevertTime(final long revertTime) {
-		if(revertTime == 0) {
+		if(revertTime <= 0) {
 			return;
 		}
 		
@@ -181,7 +179,7 @@ public class TempBlock {
 	}
 
 	public void revertBlock() {
-		PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> this.state.update(true, GeneralMethods.isLightEmitting(this.state.getType())));
+		PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> this.state.update(true, GeneralMethods.isLightEmitting(this.state.getType()) || !(state.getBlockData() instanceof Bisected)));
 		instances.remove(this.block);
 		REVERT_QUEUE.remove(this);
 		if (this.revertTask != null) {

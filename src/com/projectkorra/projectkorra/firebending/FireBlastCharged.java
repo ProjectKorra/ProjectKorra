@@ -80,6 +80,15 @@ public class FireBlastCharged extends FireAbility {
 		this.innerRadius = this.damageRadius / 2;
 
 
+		this.applyModifiers();
+
+		if (!player.getEyeLocation().getBlock().isLiquid()) {
+			this.start();
+		}
+	}
+
+	private void applyModifiers() {
+		// TODO Auto-generated method stub
 		long chargeTimeMod = 0;
 		int damageMod = 0;
 		int rangeMod = 0;
@@ -102,10 +111,6 @@ public class FireBlastCharged extends FireAbility {
 		this.chargeTime += chargeTimeMod;
 		this.maxDamage += damageMod;
 		this.range += rangeMod;
-
-		if (!player.getEyeLocation().getBlock().isLiquid()) {
-			this.start();
-		}
 	}
 
 	public static boolean annihilateBlasts(final Location location, final double radius, final Player source) {

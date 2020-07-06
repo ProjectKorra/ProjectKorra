@@ -76,23 +76,15 @@ public class FireBlast extends FireAbility {
 		this.location = location.clone();
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
-
-		int damageMod = 0;
-		int rangeMod = 0;
-
-		damageMod = (int) (this.getDayFactor(damage) - damage);
-		rangeMod = (int) (this.getDayFactor(this.range) - this.range);
-
-		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
-		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
-
-		this.range += rangeMod;
-		this.damage += damageMod;
+		
+		
+		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
+		this.applyModifiers();
 
 
 		this.start();
 	}
-
+	
 	public FireBlast(final Player player) {
 		super(player);
 
@@ -110,7 +102,18 @@ public class FireBlast extends FireAbility {
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.location.add(this.direction.clone());
+		
+		
+		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
+		
+		this.applyModifiers();
 
+		this.start();
+		this.bPlayer.addCooldown("FireBlast", this.cooldown);
+	}
+	
+	private void applyModifiers() {
+		// TODO Auto-generated method stub
 		int damageMod = 0;
 		int rangeMod = 0;
 
@@ -122,10 +125,8 @@ public class FireBlast extends FireAbility {
 
 		this.range += rangeMod;
 		this.damage += damageMod;
-
-		this.start();
-		this.bPlayer.addCooldown("FireBlast", this.cooldown);
 	}
+
 
 	private void setFields() {
 		this.isFireBurst = true;

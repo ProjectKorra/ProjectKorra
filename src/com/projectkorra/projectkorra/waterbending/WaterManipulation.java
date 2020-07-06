@@ -167,7 +167,6 @@ public class WaterManipulation extends WaterAbility {
 
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
-						this.sourceBlock.setType(Material.AIR);
 					} else if (!isIce(this.sourceBlock)) {
 						addWater(this.sourceBlock);
 					}

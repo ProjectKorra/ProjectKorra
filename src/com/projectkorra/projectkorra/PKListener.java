@@ -153,6 +153,7 @@ import com.projectkorra.projectkorra.firebending.FireManipulation.FireManipulati
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.firebending.HeatControl.HeatControlType;
+import com.projectkorra.projectkorra.firebending.bluefire.BlueFirePassive;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
@@ -1304,6 +1305,10 @@ public class PKListener implements Listener {
 					}
 				}
 			}
+		}
+		
+		if(bPlayer.canUseSubElement(Element.BLUE_FIRE)) {
+			new BlueFirePassive(player);
 		}
 	}
 

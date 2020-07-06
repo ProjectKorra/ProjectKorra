@@ -3,6 +3,9 @@ package com.projectkorra.projectkorra.firebending.bluefire;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.BlueFireAbility;
@@ -13,21 +16,30 @@ public class BlueFirePassive extends BlueFireAbility implements PassiveAbility {
 
 	public BlueFirePassive(Player player) {
 		super(player);
-		// TODO Auto-generated constructor stub
 
 	}
 
 	@Override
 	public void progress() {
-		// TODO Auto-generated method stub
 		if(bPlayer.canBendPassive(this)) {
 			for(Block b : GeneralMethods.getBlocksAroundPoint(player.getLocation(), 5)) {
 				if (b.getType() == Material.TORCH ) { 
-					new TempBlock(b, Material.SOUL_TORCH.createBlockData(), 5000);
+					new TempBlock(b, Material.SOUL_TORCH.createBlockData(), 20000);
 				} else if (b.getType() == Material.WALL_TORCH) {
-					new TempBlock(b, Material.SOUL_WALL_TORCH.createBlockData(), 5000);
+
+					Directional data = (Directional) b.getBlockData();
+
+					BlockFace dir = data.getFacing();
+
+					BlockData newData = Material.SOUL_WALL_TORCH.createBlockData();
+
+					Directional newDir =  (Directional) newData;
+
+					newDir.setFacing(dir);
+
+					new TempBlock(b, newData, 20000);
 				} else if (b.getType() == Material.FIRE) {
-					new TempBlock(b, Material.SOUL_FIRE.createBlockData(), 5000);
+					new TempBlock(b, Material.SOUL_FIRE.createBlockData(), 20000);
 				} else {
 					// do nothing
 				}
@@ -37,43 +49,43 @@ public class BlueFirePassive extends BlueFireAbility implements PassiveAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public boolean isHarmlessAbility() {
-		// TODO Auto-generated method stub
-		return false;
+
+		return true;
 	}
 
 	@Override
 	public long getCooldown() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return "Burn";
 	}
 
 	@Override
 	public Location getLocation() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public boolean isInstantiable() {
-		// TODO Auto-generated method stub
+
 		return true;
 	}
 
 	@Override
 	public boolean isProgressable() {
-		// TODO Auto-generated method stub
+
 		return true;
 	}
 

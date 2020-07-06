@@ -157,6 +157,7 @@ public class GeneralMethods {
 
 	private static Method getAbsorption;
 	private static Method setAbsorption;
+	private static Method getHandle;
 
 	public GeneralMethods(final ProjectKorra plugin) {
 		GeneralMethods.plugin = plugin;
@@ -164,6 +165,7 @@ public class GeneralMethods {
 		try {
 			getAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
 			setAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
+			getHandle = ReflectionHandler.getMethod("CraftPlayer", PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -676,7 +678,7 @@ public class GeneralMethods {
 	public static float getAbsorbationHealth(final Player player) {
 
 		try {
-			final Object entityplayer = ActionBar.getHandle.invoke(player);
+			final Object entityplayer = getHandle.invoke(player);
 			final Object hearts = getAbsorption.invoke(entityplayer);
 			return (float) hearts;
 		} catch (final Exception e) {
@@ -688,7 +690,7 @@ public class GeneralMethods {
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
 
 		try {
-			final Object entityplayer = ActionBar.getHandle.invoke(player);
+			final Object entityplayer = getHandle.invoke(player);
 			setAbsorption.invoke(entityplayer, hearts);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -2122,6 +2124,9 @@ public class GeneralMethods {
 		}
 		if (bPlayer.hasSubElement(Element.PLANT)) {
 			subs.append("p");
+		}
+		if (bPlayer.hasSubElement(Element.BLUE_FIRE)) {
+			subs.append("r");
 		}
 		boolean hasAddon = false;
 		for (final Element element : bPlayer.getSubElements()) {
