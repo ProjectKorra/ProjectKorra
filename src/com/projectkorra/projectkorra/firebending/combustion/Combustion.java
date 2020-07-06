@@ -104,12 +104,14 @@ public class Combustion extends CombustionAbility {
 
 	private void advanceLocation() {
 		ParticleEffect.FIREWORKS_SPARK.display(this.location, 2, .001, .001, .001, 0);
-		ParticleEffect.CRIT.display(this.location, 3, Math.random() * 2, Math.random() * 2, Math.random() * 2, 0);
+		ParticleEffect.CRIT.display(this.location, 3, Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5, 0);
 		playCombustionSound(this.location);
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 	}
 
 	private void createExplosion(final Location block, final float power, final boolean canBreakBlocks) {
+		ParticleEffect.EXPLOSION_LARGE.display(block, 3, 2, 2, 2, 0);
+		
 		if (canFireGrief()) {
 			block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
 		}
@@ -121,6 +123,7 @@ public class Combustion extends CombustionAbility {
 				}
 			}
 		}
+		
 		this.remove();
 	}
 
