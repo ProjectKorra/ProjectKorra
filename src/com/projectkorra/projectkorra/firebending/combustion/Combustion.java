@@ -104,7 +104,7 @@ public class Combustion extends CombustionAbility {
 
 	private void advanceLocation() {
 		ParticleEffect.FIREWORKS_SPARK.display(this.location, 2, .001, .001, .001, 0);
-		ParticleEffect.CRIT.display(this.location, 3, Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5, 0);
+		ParticleEffect.EXPLOSION_NORMAL.display(this.location, 1, Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5, 0);
 		playCombustionSound(this.location);
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 	}

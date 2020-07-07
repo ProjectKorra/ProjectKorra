@@ -180,9 +180,6 @@ public class AddCommand extends PKCommand {
 					if (e != Element.AIR && e != Element.EARTH && e != Element.BLUE_FIRE) {
 						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
 						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
-					} else if (e == Element.BLUE_FIRE) {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", "Blue Fire" + e.getType().getBender()));
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}",  "Blue Fire" + e.getType().getBender()));
 					} else {
 						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
 						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.getName() + e.getType().getBender()));
@@ -190,9 +187,7 @@ public class AddCommand extends PKCommand {
 				} else {
 					if (e != Element.AIR && e != Element.EARTH) {
 						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
-					} else if (e == Element.BLUE_FIRE) {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", "Blue Fire" + e.getType().getBender()));
-					}  else {
+					} else {
 						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.getName() + e.getType().getBender()));
 					}
 
@@ -273,7 +268,7 @@ public class AddCommand extends PKCommand {
 			l.add("Plant");
 			l.add("Sand");
 			l.add("Spiritual");
-			l.add("Blue_Fire");
+			l.add("BlueFire");
 			for (final SubElement e : Element.getAddonSubElements()) {
 				l.add(e.getName());
 			}

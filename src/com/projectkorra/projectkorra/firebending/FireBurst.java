@@ -147,8 +147,8 @@ public class FireBurst extends FireAbility {
 				this.remove();
 			}
 		} else if (this.charged) {
-			final Location location = this.player.getEyeLocation().clone();
-			location.add(location.getDirection().clone());
+			final Location location = this.player.getEyeLocation();
+			location.add(location.getDirection());
 			playFirebendingParticles(location, 1, .01, .01, .01);
 		}
 	}
