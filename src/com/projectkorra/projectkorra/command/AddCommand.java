@@ -109,7 +109,7 @@ public class AddCommand extends PKCommand {
 					if (elements.length() > 1) {
 						elements.append(ChatColor.YELLOW + ", ");
 					}
-					elements.append(e.getColor() + e.getName());
+					elements.append(e.toString());
 
 					bPlayer.getSubElements().clear();
 					for (final SubElement sub : Element.getAllSubElements()) {
@@ -178,17 +178,17 @@ public class AddCommand extends PKCommand {
 				final ChatColor color = e.getColor();
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 					if (e != Element.AIR && e != Element.EARTH && e != Element.BLUE_FIRE) {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
 					} else {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
-						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.getName() + e.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
 					}
 				} else {
 					if (e != Element.AIR && e != Element.EARTH) {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
 					} else {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.getName() + e.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
 					}
 
 				}
@@ -213,16 +213,16 @@ public class AddCommand extends PKCommand {
 
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 					if (e != Element.AIR && e != Element.EARTH) {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
 					} else {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
 					}
 
 				} else {
 					if (e != Element.AIR && e != Element.EARTH) {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", sub.toString() + sub.getType().getBender()));
 					} else {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", sub.getName() + sub.getType().getBender()));
+						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", sub.toString() + sub.getType().getBender()));
 					}
 				}
 				GeneralMethods.saveSubElements(bPlayer);

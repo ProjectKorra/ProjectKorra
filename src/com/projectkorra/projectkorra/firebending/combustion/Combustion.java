@@ -41,6 +41,8 @@ public class Combustion extends CombustionAbility {
 	private Location origin;
 	private Vector direction;
 
+	private int explosionCount;
+
 	public Combustion(final Player player) {
 		super(player);
 
@@ -59,6 +61,7 @@ public class Combustion extends CombustionAbility {
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.origin.clone();
+		this.explosionCount = 0;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.range = AvatarState.getValue(this.range);
@@ -104,9 +107,11 @@ public class Combustion extends CombustionAbility {
 
 	private void advanceLocation() {
 		ParticleEffect.FIREWORKS_SPARK.display(this.location, 2, .001, .001, .001, 0);
-		ParticleEffect.EXPLOSION_NORMAL.display(this.location, 1, Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5, 0);
+		if(explosionCount % 5 == 0) 
+			ParticleEffect.EXPLOSION_LARGE.display(this.location, 1, .001, .001, .001, 0);
 		playCombustionSound(this.location);
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
+		this.explosionCount++;
 	}
 
 	private void createExplosion(final Location block, final float power, final boolean canBreakBlocks) {

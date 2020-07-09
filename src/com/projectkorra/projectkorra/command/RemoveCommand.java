@@ -57,7 +57,7 @@ public class RemoveCommand extends PKCommand {
 								senderBPlayer.getSubElements().remove(e);
 								GeneralMethods.saveSubElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
-								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
+								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.toString() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
 								Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, player, (SubElement) e, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.REMOVE));
 							} else {
 								GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElementSelf);
@@ -73,7 +73,7 @@ public class RemoveCommand extends PKCommand {
 								GeneralMethods.saveSubElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
 
-								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()));
+								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.toString() + e.getType().getBending()));
 								Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
 								return;
 							} else {
@@ -123,8 +123,8 @@ public class RemoveCommand extends PKCommand {
 				}
 
 				GeneralMethods.removeUnusableAbilities(player.getName());
-				GeneralMethods.sendBrandingMessage(player, e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
-				GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
+				GeneralMethods.sendBrandingMessage(player, e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", e.toString() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
+				GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.toString() + e.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 				return;
 			}

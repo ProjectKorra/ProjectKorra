@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -80,10 +81,11 @@ public abstract class FireAbility extends ElementalAbility {
 
 
 	public void createTempFire(final Location loc, final long time) {
+		if(isIgnitable(loc.getBlock())) {
+			new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
 
-		new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
-
-		SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
+			SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
+		}
 	}
 
 	public double getDayFactor(final double value) {
@@ -117,7 +119,8 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static boolean isIgnitable(final Block block) {
-		return isIgnitable(block.getType()) || (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN)) && isAir(block.getType()));
+		
+		return (isIgnitable(block.getType()) && Arrays.asList(getTransparentMaterials()).contains(block.getType())) || (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN)) && isAir(block.getType()));
 	}
 
 	public static boolean isIgnitable(final Material material) {

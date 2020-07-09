@@ -265,11 +265,11 @@ public class DisplayCommand extends PKCommand {
 			sender.sendMessage(ChatColor.YELLOW + "Combos: " + ChatColor.GOLD + "/bending display ChiCombos");
 			sender.sendMessage(ChatColor.YELLOW + "Passives: " + ChatColor.GOLD + "/bending display ChiPassives");
 		} else {
-			sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.getName() + "Combos");
-			sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
+			sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.toString() + "Combos");
+			sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.toString() + "Passives");
 			for (final SubElement sub : Element.getSubElements(element)) {
 				if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
-					sender.sendMessage(sub.getColor() + sub.getName() + " abilities: " + element.getColor() + "/bending display " + sub.getName());
+					sender.sendMessage(sub.toString() + " abilities: " + element.getColor() + "/bending display " + sub.toString());
 				}
 			}
 		}

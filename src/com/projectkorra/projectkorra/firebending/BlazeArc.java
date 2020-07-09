@@ -5,6 +5,8 @@ package com.projectkorra.projectkorra.firebending;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -33,7 +35,7 @@ public class BlazeArc extends FireAbility {
 		super(player);
 		this.range = this.getDayFactor(range);
 		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
-		this.interval = (long) (1000. / this.speed);
+		this.interval = (long) (1000.0 / this.speed);
 
 		if(bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
 			this.range += BlueFireAbility.getRangeFactor() * range - range;
@@ -59,8 +61,8 @@ public class BlazeArc extends FireAbility {
 				}
 			}
 		}
-
-		if(isIgnitable(block)) {
+		
+		if (isIgnitable(block)) {
 			createTempFire(block.getLocation(), DISSIPATE_REMOVE_TIME);
 		}
 	}
@@ -77,8 +79,7 @@ public class BlazeArc extends FireAbility {
 			final Block block = this.location.getBlock();
 			if (isFire(block.getType())) {
 				return;
-			}
-
+			} 
 			if (this.location.distanceSquared(this.origin) > this.range * this.range) {
 				this.remove();
 				return;
@@ -89,30 +90,26 @@ public class BlazeArc extends FireAbility {
 			final Block ignitable = getIgnitable(block);
 			if (ignitable != null) {
 				this.ignite(ignitable);
+				int difference = ignitable.getY() - this.location.getBlockY();
+				this.location.add(0, difference, 0);
+			} else {
+				remove();
+				return;
 			}
 		}
 	}
 
-	public static Block getIgnitable(final Block block) {
-		Block top = block;
+	public Block getIgnitable(final Block block) {
 
-		for (int i = 0; i < 2; i++) {
-			if (GeneralMethods.isSolid(top.getRelative(BlockFace.DOWN))) {
-				break;
+		Block[] blockArr = { block.getRelative(BlockFace.UP), block, block.getRelative(BlockFace.DOWN) };
+
+		for (int i = 0; i < 3; i++) {
+			if (isFire(blockArr[i].getType()) || isIgnitable(blockArr[i])) {
+				return blockArr[i];
 			}
-
-			top = top.getRelative(BlockFace.DOWN);
 		}
-
-		if (isFire(block.getType())) {
-			return top;
-		} else if (top.getType().isBurnable()) {
-			return top;
-		} else if (isAir(top.getType())) {
-			return top;
-		} else {
-			return null;
-		}
+		
+		return null;
 	}
 
 	public static void removeAroundPoint(final Location location, final double radius) {

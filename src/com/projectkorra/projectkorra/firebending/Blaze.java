@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -49,7 +50,7 @@ public class Blaze extends FireAbility {
 
 			direction.setX(vx);
 			direction.setZ(vz);
-
+			
 			new BlazeArc(player, location, direction, this.range);
 		}
 

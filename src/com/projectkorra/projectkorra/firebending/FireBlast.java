@@ -215,17 +215,14 @@ public class FireBlast extends FireAbility {
 			if (block.getType() == Material.FURNACE && this.powerFurnace) {
 				final Furnace furnace = (Furnace) block.getState();
 				furnace.setBurnTime((short) 800);
-				furnace.setCookTime((short) 800);
 				furnace.update();
 			} else if (block.getType() == Material.SMOKER && this.powerFurnace) {
 				final Smoker smoker = (Smoker) block.getState();
 				smoker.setBurnTime((short) 800);
-				smoker.setCookTime((short) 800);
 				smoker.update();
 		    } else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
 		    	final BlastFurnace blastF = (BlastFurnace) block.getState();
 				blastF.setBurnTime((short) 800);
-				blastF.setCookTime((short) 800);
 				blastF.update();
 		    } else if (block instanceof Campfire) {
 		    	final Campfire campfire = (Campfire) block.getBlockData();
