@@ -277,9 +277,6 @@ public class HeatControl extends FireAbility {
 			case CHORUS_FRUIT:
 				cooked = new ItemStack(Material.POPPED_CHORUS_FRUIT);
 				break;
-			case WHEAT:
-				cooked = new ItemStack(Material.BREAD);
-				break;
 			case WET_SPONGE:
 				cooked = new ItemStack(Material.SPONGE);
 				break;

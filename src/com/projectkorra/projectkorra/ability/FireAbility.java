@@ -79,11 +79,9 @@ public abstract class FireAbility extends ElementalAbility {
 		createTempFire(loc, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
 	}
 
-
 	public void createTempFire(final Location loc, final long time) {
 		if(isIgnitable(loc.getBlock())) {
 			new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
-
 			SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 		}
 	}
@@ -119,7 +117,6 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static boolean isIgnitable(final Block block) {
-		
 		return (isIgnitable(block.getType()) && Arrays.asList(getTransparentMaterials()).contains(block.getType())) || (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN)) && isAir(block.getType()));
 	}
 
@@ -149,7 +146,6 @@ public abstract class FireAbility extends ElementalAbility {
 			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
 
 			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
@@ -174,7 +170,6 @@ public abstract class FireAbility extends ElementalAbility {
 			final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
 
 			Sound sound = Sound.BLOCK_FIRE_AMBIENT;
-
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
@@ -199,7 +194,6 @@ public abstract class FireAbility extends ElementalAbility {
 			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
 
 			Sound sound = Sound.ENTITY_CREEPER_HURT;
-
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
 			} catch (final IllegalArgumentException exception) {

@@ -88,7 +88,6 @@ public class FireBlastCharged extends FireAbility {
 	}
 
 	private void applyModifiers() {
-		// TODO Auto-generated method stub
 		long chargeTimeMod = 0;
 		int damageMod = 0;
 		int rangeMod = 0;

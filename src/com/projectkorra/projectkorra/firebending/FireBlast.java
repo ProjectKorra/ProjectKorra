@@ -77,10 +77,8 @@ public class FireBlast extends FireAbility {
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
 		
-		
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
 		this.applyModifiers();
-
 
 		this.start();
 	}
@@ -103,9 +101,7 @@ public class FireBlast extends FireAbility {
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.location.add(this.direction.clone());
 		
-		
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		
 		this.applyModifiers();
 
 		this.start();
@@ -113,7 +109,6 @@ public class FireBlast extends FireAbility {
 	}
 	
 	private void applyModifiers() {
-		// TODO Auto-generated method stub
 		int damageMod = 0;
 		int rangeMod = 0;
 
@@ -126,7 +121,6 @@ public class FireBlast extends FireAbility {
 		this.range += rangeMod;
 		this.damage += damageMod;
 	}
-
 
 	private void setFields() {
 		this.isFireBurst = true;

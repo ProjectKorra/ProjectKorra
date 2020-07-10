@@ -50,7 +50,6 @@ public class FireBurst extends FireAbility {
 			return;
 		}
 
-
 		long chargeTimeMod = 0;
 
 		if (isDay(player.getWorld())) {
@@ -58,7 +57,6 @@ public class FireBurst extends FireAbility {
 		}
 
 		chargeTimeMod = (long) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (chargeTime / BlueFireAbility.getCooldownFactor() - chargeTime) + chargeTimeMod : chargeTimeMod);
-
 
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
