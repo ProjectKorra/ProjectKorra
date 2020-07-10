@@ -29,7 +29,7 @@ public abstract class BlueFireAbility extends FireAbility implements SubAbility 
 	}
 
 	public static double getRangeFactor() {
-		return getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor");
+		return getConfig().getDouble("Properties.Fire.BlueFire.RangeFactor");
 	}
 
 }

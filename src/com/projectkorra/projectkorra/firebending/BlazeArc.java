@@ -57,7 +57,7 @@ public class BlazeArc extends FireAbility {
 				}
 			}
 		}
-		
+
 		if (isIgnitable(block)) {
 			createTempFire(block.getLocation(), DISSIPATE_REMOVE_TIME);
 		}
@@ -104,7 +104,7 @@ public class BlazeArc extends FireAbility {
 				return blockArr[i];
 			}
 		}
-		
+
 		return null;
 	}
 

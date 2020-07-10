@@ -76,7 +76,7 @@ public class FireBlast extends FireAbility {
 		this.location = location.clone();
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
-		
+
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
 		this.applyModifiers();
 
@@ -107,7 +107,7 @@ public class FireBlast extends FireAbility {
 		this.start();
 		this.bPlayer.addCooldown("FireBlast", this.cooldown);
 	}
-	
+
 	private void applyModifiers() {
 		int damageMod = 0;
 		int rangeMod = 0;
@@ -455,6 +455,5 @@ public class FireBlast extends FireAbility {
 	public void setFireBurst(final boolean isFireBurst) {
 		this.isFireBurst = isFireBurst;
 	}
-
 
 }

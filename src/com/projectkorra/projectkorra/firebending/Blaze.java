@@ -49,7 +49,7 @@ public class Blaze extends FireAbility {
 
 			direction.setX(vx);
 			direction.setZ(vz);
-			
+
 			new BlazeArc(player, location, direction, this.range);
 		}
 

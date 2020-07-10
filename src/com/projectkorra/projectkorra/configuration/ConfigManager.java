@@ -520,6 +520,7 @@ public class ConfigManager {
 			plantBlocks.add(Material.FERN.toString());
 			plantBlocks.add(Material.LILY_OF_THE_VALLEY.toString());
 			plantBlocks.add(Material.WITHER_ROSE.toString());
+			plantBlocks.add(Material.CORNFLOWER.toString());
 			plantBlocks.add(Material.LARGE_FERN.toString());
 			plantBlocks.add(Material.RED_MUSHROOM.toString());
 			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.toString());
