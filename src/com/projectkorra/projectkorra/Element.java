@@ -140,7 +140,7 @@ public class Element {
 
 	@Override
 	public String toString() {
-		return this == Element.BLUE_FIRE ?  this.getColor() + "Blue Fire": this.getColor() + this.getName();
+		return (this == Element.BLUE_FIRE) ? this.getColor() + "Blue Fire": this.getColor() + this.getName();
 	}
 
 	public static Element getElement(final String name) {

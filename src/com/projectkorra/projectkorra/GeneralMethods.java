@@ -706,32 +706,32 @@ public class GeneralMethods {
 	 */
 	public static BlockFace getBlockFaceFromValue(final int xyz, final double value) {
 		switch (xyz) {
-		case 0:
-			if (value > 0) {
-				return BlockFace.EAST;
-			} else if (value < 0) {
-				return BlockFace.WEST;
-			} else {
-				return BlockFace.SELF;
-			}
-		case 1:
-			if (value > 0) {
-				return BlockFace.UP;
-			} else if (value < 0) {
-				return BlockFace.DOWN;
-			} else {
-				return BlockFace.SELF;
-			}
-		case 2:
-			if (value > 0) {
-				return BlockFace.SOUTH;
-			} else if (value < 0) {
-				return BlockFace.NORTH;
-			} else {
-				return BlockFace.SELF;
-			}
-		default:
-			return null;
+			case 0:
+				if (value > 0) {
+					return BlockFace.EAST;
+				} else if (value < 0) {
+					return BlockFace.WEST;
+				} else {
+					return BlockFace.SELF;
+				}
+			case 1:
+				if (value > 0) {
+					return BlockFace.UP;
+				} else if (value < 0) {
+					return BlockFace.DOWN;
+				} else {
+					return BlockFace.SELF;
+				}
+			case 2:
+				if (value > 0) {
+					return BlockFace.SOUTH;
+				} else if (value < 0) {
+					return BlockFace.NORTH;
+				} else {
+					return BlockFace.SELF;
+				}
+			default:
+				return null;
 		}
 	}
 
@@ -1004,24 +1004,24 @@ public class GeneralMethods {
 		final BlockFace face = getCardinalDirection(vector);
 
 		switch (face) {
-		case SOUTH:
-			return 7;
-		case SOUTH_WEST:
-			return 6;
-		case WEST:
-			return 3;
-		case NORTH_WEST:
-			return 0;
-		case NORTH:
-			return 1;
-		case NORTH_EAST:
-			return 2;
-		case EAST:
-			return 5;
-		case SOUTH_EAST:
-			return 8;
-		default:
-			return 4;
+			case SOUTH:
+				return 7;
+			case SOUTH_WEST:
+				return 6;
+			case WEST:
+				return 3;
+			case NORTH_WEST:
+				return 0;
+			case NORTH:
+				return 1;
+			case NORTH_EAST:
+				return 2;
+			case EAST:
+				return 5;
+			case SOUTH_EAST:
+				return 8;
+			default:
+				return 4;
 		}
 	}
 
@@ -1661,22 +1661,22 @@ public class GeneralMethods {
 		}
 
 		switch (entity.getType()) {
-		case SKELETON:
-		case STRAY:
-		case WITHER_SKELETON:
-		case WITHER:
-		case ZOMBIE:
-		case HUSK:
-		case ZOMBIE_VILLAGER:
-		case ZOMBIFIED_PIGLIN:
-		case ZOGLIN:
-		case DROWNED:
-		case ZOMBIE_HORSE:
-		case SKELETON_HORSE:
-		case PHANTOM:
-			return true;
-		default:
-			return false;
+			case SKELETON:
+			case STRAY:
+			case WITHER_SKELETON:
+			case WITHER:
+			case ZOMBIE:
+			case HUSK:
+			case ZOMBIE_VILLAGER:
+			case ZOMBIFIED_PIGLIN:
+			case ZOGLIN:
+			case DROWNED:
+			case ZOMBIE_HORSE:
+			case SKELETON_HORSE:
+			case PHANTOM:
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -2345,31 +2345,32 @@ public class GeneralMethods {
 
 	public static boolean isLightEmitting(final Material material) {
 		switch (material) {
-		case GLOWSTONE:
-		case TORCH:
-		case SEA_LANTERN:
-		case BEACON:
-		case REDSTONE_LAMP:
-		case REDSTONE_TORCH:
-		case MAGMA_BLOCK:
-		case LAVA:
-		case JACK_O_LANTERN:
-		case CRYING_OBSIDIAN:
-		case SHROOMLIGHT:
-		case CAMPFIRE:
-		case SOUL_CAMPFIRE:
-		case SOUL_TORCH:
-		case LANTERN:
-		case CONDUIT:
-		case RESPAWN_ANCHOR:
-		case BROWN_MUSHROOM:
-		case BREWING_STAND:
-		case ENDER_CHEST:
-		case END_PORTAL_FRAME:
-		case END_ROD:
-			return true;
-		default:
-			return false;
+			case GLOWSTONE:
+			case TORCH:
+			case SEA_LANTERN:
+			case BEACON:
+			case REDSTONE_LAMP:
+			case REDSTONE_TORCH:
+			case MAGMA_BLOCK:
+			case LAVA:
+			case JACK_O_LANTERN:
+			case CRYING_OBSIDIAN:
+			case SHROOMLIGHT:
+			case CAMPFIRE:
+			case SOUL_CAMPFIRE:
+			case SOUL_TORCH:
+			case LANTERN:
+			case SOUL_LANTERN:
+			case CONDUIT:
+			case RESPAWN_ANCHOR:
+			case BROWN_MUSHROOM:
+			case BREWING_STAND:
+			case ENDER_CHEST:
+			case END_PORTAL_FRAME:
+			case END_ROD:
+				return true;
+			default:
+				return false;
 		}
 	}
 }
