@@ -14,7 +14,6 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireJet extends FireAbility {
 
@@ -57,7 +56,7 @@ public class FireJet extends FireAbility {
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (BlazeArc.isIgnitable(player, block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
+		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
 				if (ElementalAbility.isAir(block.getType())) {
@@ -65,7 +64,7 @@ public class FireJet extends FireAbility {
 				}
 
 			} else if (ElementalAbility.isAir(block.getType())) {
-				block.setType(Material.FIRE);
+				createTempFire(block.getLocation());
 			}
 
 			this.flightHandler.createInstance(player, this.getName());
@@ -93,8 +92,7 @@ public class FireJet extends FireAbility {
 				playFirebendingSound(this.player.getLocation());
 			}
 
-			ParticleEffect.FLAME.display(this.player.getLocation(), 20, 0.6, 0.6, 0.6);
-			ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation(), 10, 0.6, 0.6, 0.6);
+			playFirebendingParticles(this.player.getLocation(), 10, 0.3, 0.3, 0.3);
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

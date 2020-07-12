@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,6 +11,8 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 
@@ -49,14 +50,21 @@ public class FireBurst extends FireAbility {
 			return;
 		}
 
+		long chargeTimeMod = 0;
+
 		if (isDay(player.getWorld())) {
-			this.chargeTime /= getDayFactor();
+			chargeTimeMod = (long) (this.getDayFactor(chargeTime) - chargeTime);
 		}
+
+		chargeTimeMod = (long) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (chargeTime / BlueFireAbility.getCooldownFactor() - chargeTime) + chargeTimeMod : chargeTimeMod);
+
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
 			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown");
 		}
+
+		this.chargeTime += chargeTimeMod;
 
 		this.start();
 	}
@@ -138,7 +146,8 @@ public class FireBurst extends FireAbility {
 			}
 		} else if (this.charged) {
 			final Location location = this.player.getEyeLocation();
-			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 4, 3);
+			location.add(location.getDirection());
+			playFirebendingParticles(location, 1, .01, .01, .01);
 		}
 	}
 

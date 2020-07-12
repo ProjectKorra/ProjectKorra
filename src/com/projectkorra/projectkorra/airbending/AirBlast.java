@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
@@ -301,7 +302,7 @@ public class AirBlast extends AirAbility {
 		final Block block = this.location.getBlock();
 
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
-			if (testblock.getType() == Material.FIRE) {
+			if (FireAbility.isFire(testblock.getType())) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 				continue;

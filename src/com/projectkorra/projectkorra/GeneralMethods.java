@@ -157,6 +157,7 @@ public class GeneralMethods {
 
 	private static Method getAbsorption;
 	private static Method setAbsorption;
+	private static Method getHandle;
 
 	public GeneralMethods(final ProjectKorra plugin) {
 		GeneralMethods.plugin = plugin;
@@ -164,6 +165,7 @@ public class GeneralMethods {
 		try {
 			getAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
 			setAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
+			getHandle = ReflectionHandler.getMethod("CraftPlayer", PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -462,6 +464,10 @@ public class GeneralMethods {
 						if (split[0].contains("p")) {
 							subelements.add(Element.PLANT);
 						}
+						if (split[0].contains("r")) {
+							subelements.add(Element.BLUE_FIRE);
+						}
+
 						if (hasAddon) {
 							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
 							final long startTime = System.currentTimeMillis();
@@ -672,7 +678,7 @@ public class GeneralMethods {
 	public static float getAbsorbationHealth(final Player player) {
 
 		try {
-			final Object entityplayer = ActionBar.getHandle.invoke(player);
+			final Object entityplayer = getHandle.invoke(player);
 			final Object hearts = getAbsorption.invoke(entityplayer);
 			return (float) hearts;
 		} catch (final Exception e) {
@@ -684,7 +690,7 @@ public class GeneralMethods {
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
 
 		try {
-			final Object entityplayer = ActionBar.getHandle.invoke(player);
+			final Object entityplayer = getHandle.invoke(player);
 			setAbsorption.invoke(entityplayer, hearts);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -863,7 +869,7 @@ public class GeneralMethods {
 		}
 		return circleblocks;
 	}
-	
+
 	/**
 	 * Gets the closest entity within the specified radius around a point
 	 * @param center point to check around
@@ -873,10 +879,10 @@ public class GeneralMethods {
 	public static Entity getClosestEntity(Location center, double radius) {
 		Entity found = null;
 		Double distance = null;
-		
+
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
 			double check = center.distanceSquared(entity.getLocation());
-			
+
 			if (distance == null || check < distance) {
 				found = entity;
 				distance = check;
@@ -885,7 +891,7 @@ public class GeneralMethods {
 
 		return found;
 	}
-	
+
 	/**
 	 * Gets the closest LivingEntity within the specified radius around a point
 	 * @param center point to check around
@@ -895,16 +901,16 @@ public class GeneralMethods {
 	public static LivingEntity getClosestLivingEntity(Location center, double radius) {
 		LivingEntity le = null;
 		Double distance = null;
-		
+
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
 			double check = center.distanceSquared(entity.getLocation());
-			
+
 			if (entity instanceof LivingEntity && (distance == null || check < distance)) {
 				le = (LivingEntity) entity;
 				distance = check;
 			}
 		}
-		
+
 		return le;
 	}
 
@@ -1187,7 +1193,7 @@ public class GeneralMethods {
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<Entity>());
 	}
-	
+
 	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... nonOpaque2) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
@@ -1208,7 +1214,7 @@ public class GeneralMethods {
 
 		for (double i = 0; i < range; i += 0.2) {
 			location.add(vec);
-			
+
 			if (checkDiagonals && checkDiagonalWall(location, vec)) {
 				location.subtract(vec);
 				break;
@@ -1653,7 +1659,7 @@ public class GeneralMethods {
 		if (entity == null) {
 			return false;
 		}
-		
+
 		switch (entity.getType()) {
 			case SKELETON:
 			case STRAY:
@@ -1662,7 +1668,8 @@ public class GeneralMethods {
 			case ZOMBIE:
 			case HUSK:
 			case ZOMBIE_VILLAGER:
-			case PIG_ZOMBIE:
+			case ZOMBIFIED_PIGLIN:
+			case ZOGLIN:
 			case DROWNED:
 			case ZOMBIE_HORSE:
 			case SKELETON_HORSE:
@@ -2118,6 +2125,9 @@ public class GeneralMethods {
 		if (bPlayer.hasSubElement(Element.PLANT)) {
 			subs.append("p");
 		}
+		if (bPlayer.hasSubElement(Element.BLUE_FIRE)) {
+			subs.append("r");
+		}
 		boolean hasAddon = false;
 		for (final Element element : bPlayer.getSubElements()) {
 			if (Arrays.asList(Element.getAddonSubElements()).contains(element)) {
@@ -2344,6 +2354,19 @@ public class GeneralMethods {
 			case MAGMA_BLOCK:
 			case LAVA:
 			case JACK_O_LANTERN:
+			case CRYING_OBSIDIAN:
+			case SHROOMLIGHT:
+			case CAMPFIRE:
+			case SOUL_CAMPFIRE:
+			case SOUL_TORCH:
+			case LANTERN:
+			case SOUL_LANTERN:
+			case CONDUIT:
+			case RESPAWN_ANCHOR:
+			case BROWN_MUSHROOM:
+			case BREWING_STAND:
+			case ENDER_CHEST:
+			case END_PORTAL_FRAME:
 			case END_ROD:
 				return true;
 			default:

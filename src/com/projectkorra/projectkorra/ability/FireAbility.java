@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -13,21 +13,21 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.firebending.BlazeArc;
-import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class FireAbility extends ElementalAbility {
 
-	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
+	private static final Map<Block, Player> SOURCE_PLAYERS = new ConcurrentHashMap<>();
 
 	public FireAbility(final Player player) {
 		super(player);
@@ -52,10 +52,17 @@ public abstract class FireAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.FIRE.createBlockData());
+			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, getFireType().createBlockData());
 		}
 	}
-
+	/**
+	 * 
+	 * @return Material based on whether the player is a Blue Firebender, SOUL_FIRE if true, FIRE if false.
+	 */
+	public Material getFireType() {
+		return getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
+	}
+	
 	/**
 	 * Returns if fire is allowed to completely replace blocks or if it should
 	 * place a temp fire block.
@@ -68,23 +75,15 @@ public abstract class FireAbility extends ElementalAbility {
 	 * Creates a fire block meant to replace other blocks but reverts when the
 	 * fire dissipates or is destroyed.
 	 */
-	public static void createTempFire(final Location loc) {
-		if (ElementalAbility.isAir(loc.getBlock().getType())) {
-			loc.getBlock().setType(Material.FIRE);
-			return;
+	public void createTempFire(final Location loc) {
+		createTempFire(loc, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
+	}
+
+	public void createTempFire(final Location loc, final long time) {
+		if(isIgnitable(loc.getBlock())) {
+			new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
+			SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 		}
-		Information info = new Information();
-		final long time = getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks"));
-		if (TEMP_FIRE.containsKey(loc)) {
-			info = TEMP_FIRE.get(loc);
-		} else {
-			info.setBlock(loc.getBlock());
-			info.setLocation(loc);
-			info.setState(loc.getBlock().getState());
-		}
-		info.setTime(time + System.currentTimeMillis());
-		loc.getBlock().setType(Material.FIRE);
-		TEMP_FIRE.put(loc, info);
 	}
 
 	public double getDayFactor(final double value) {
@@ -118,7 +117,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static boolean isIgnitable(final Block block) {
-		return block != null ? isIgnitable(block.getType()) : false;
+		return (isIgnitable(block.getType()) && Arrays.asList(getTransparentMaterials()).contains(block.getType())) || (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN)) && isAir(block.getType()));
 	}
 
 	public static boolean isIgnitable(final Material material) {
@@ -147,7 +146,6 @@ public abstract class FireAbility extends ElementalAbility {
 			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
 
 			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
@@ -158,8 +156,12 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 	}
 
-	public static void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
+			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+		} else {
+			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+		}
 	}
 
 	public static void playFirebendingSound(final Location loc) {
@@ -168,7 +170,6 @@ public abstract class FireAbility extends ElementalAbility {
 			final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
 
 			Sound sound = Sound.BLOCK_FIRE_AMBIENT;
-
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
@@ -193,7 +194,6 @@ public abstract class FireAbility extends ElementalAbility {
 			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
 
 			Sound sound = Sound.ENTITY_CREEPER_HURT;
-
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
@@ -203,48 +203,13 @@ public abstract class FireAbility extends ElementalAbility {
 			}
 		}
 	}
-
-	/** Removes all temp fire that no longer needs to be there */
-	public static void removeFire() {
-		final Iterator<Location> it = TEMP_FIRE.keySet().iterator();
-		while (it.hasNext()) {
-			final Location loc = it.next();
-			final Information info = TEMP_FIRE.get(loc);
-			if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
-				revertTempFire(loc);
-			} else if (ElementalAbility.isAir(info.getBlock().getType()) || System.currentTimeMillis() > info.getTime()) {
-				revertTempFire(loc);
-			}
-		}
-	}
-
-	/**
-	 * Revert the temp fire at the location if any is there.
-	 *
-	 * @param location The Location
-	 */
-	public static void revertTempFire(final Location location) {
-		if (!TEMP_FIRE.containsKey(location)) {
-			return;
-		}
-		final Information info = TEMP_FIRE.get(location);
-		if (info.getLocation().getBlock().getType() != Material.FIRE && !ElementalAbility.isAir(info.getLocation().getBlock().getType())) {
-			if (info.getState().getType().isBurnable() && !info.getState().getType().isOccluding()) {
-				final ItemStack itemStack = new ItemStack(info.getState().getType(), 1);
-				info.getState().getBlock().getWorld().dropItemNaturally(info.getLocation(), itemStack);
-			}
-		} else {
-			info.getBlock().setType(info.getState().getType());
-			info.getBlock().setBlockData(info.getState().getBlockData());
-		}
-		TEMP_FIRE.remove(location);
-	}
-
+	
 	public static void stopBending() {
-		BlazeArc.removeAllCleanup();
-		for (final Location loc : TEMP_FIRE.keySet()) {
-			revertTempFire(loc);
-		}
+		SOURCE_PLAYERS.clear();
+	}
+
+	public static Map<Block, Player> getSourcePlayers() {
+		return SOURCE_PLAYERS;
 	}
 
 }

@@ -21,7 +21,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireWheel extends FireAbility implements ComboAbility {
 
@@ -139,7 +138,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			final Vector newDir = this.direction.clone().multiply(this.radius * Math.cos(Math.toRadians(i)));
 			tempLoc.add(newDir);
 			tempLoc.setY(tempLoc.getY() + (this.radius * Math.sin(Math.toRadians(i))));
-			ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
+			playFirebendingParticles(tempLoc, 0, 0, 0, 0);
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius + 0.5)) {

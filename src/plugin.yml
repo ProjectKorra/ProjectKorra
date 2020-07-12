@@ -24,6 +24,7 @@ permissions:
       bending.ability.AvatarState: true
       bending.water.bloodbending.anytime: true
       bending.water.bloodbending: true
+      bending.fire.bluefire: true
       bending.ability.Flight: true
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true

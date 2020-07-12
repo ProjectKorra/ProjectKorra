@@ -11,13 +11,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WallOfFire extends FireAbility {
@@ -72,12 +73,22 @@ public class WallOfFire extends FireAbility {
 
 		this.origin = GeneralMethods.getTargetedLocation(player, this.range);
 
+		int widthMod = 0;
+		int heightMod = 0;
+		long durationMod = 0;
+		int damageMod = 0;
+
 		if (isDay(player.getWorld())) {
-			this.width = (int) this.getDayFactor(this.width);
-			this.height = (int) this.getDayFactor(this.height);
-			this.duration = (long) this.getDayFactor(this.duration);
-			this.damage = (int) this.getDayFactor(this.damage);
+			widthMod = (int) this.getDayFactor(this.width) - this.width;
+			heightMod = (int) this.getDayFactor(this.height) - this.height;
+			durationMod = ((long) this.getDayFactor(this.duration) - this.duration);
+			damageMod = (int) (this.getDayFactor(this.damage) - this.damage);
 		}
+
+		widthMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * width - width) + widthMod : widthMod);
+		heightMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * height - height) + heightMod : heightMod);
+		durationMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (duration / BlueFireAbility.getCooldownFactor() - duration) + durationMod : durationMod);
+		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
 
 		if (this.bPlayer.isAvatarState()) {
 			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Width");
@@ -86,6 +97,11 @@ public class WallOfFire extends FireAbility {
 			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Damage");
 			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.WallOfFire.FireTicks");
 		}
+
+		this.width += widthMod;
+		this.height += heightMod;
+		this.duration += durationMod;
+		this.damage += damageMod;
 
 		this.time = System.currentTimeMillis();
 		final Block block = this.origin.getBlock();
@@ -147,9 +163,7 @@ public class WallOfFire extends FireAbility {
 			if (!this.isTransparent(block)) {
 				continue;
 			}
-			ParticleEffect.FLAME.display(block.getLocation(), 3, 0.6, 0.6, 0.6);
-			ParticleEffect.SMOKE_NORMAL.display(block.getLocation(), 2, 0.6, 0.6, 0.6);
-
+			playFirebendingParticles(block.getLocation(), 3, 0.6, 0.6, 0.6);
 			if (this.random.nextInt(7) == 0) {
 				playFirebendingSound(block.getLocation());
 			}

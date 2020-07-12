@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -43,7 +44,7 @@ public class HeatControl extends FireAbility {
 		COOK, EXTINGUISH, MELT, SOLIDIFY
 	}
 
-	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON, Material.KELP };
+	private static final Material[] COOKABLE_MATERIALS = { Material.BEEF, Material.CHICKEN, Material.COD, Material.PORKCHOP, Material.POTATO, Material.RABBIT, Material.MUTTON, Material.SALMON, Material.KELP, Material.WET_SPONGE, Material.CHORUS_FRUIT, Material.STICK };
 
 	private HeatControlType heatControlType;
 
@@ -194,7 +195,7 @@ public class HeatControl extends FireAbility {
 
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {
 				final Material material = block.getType();
-				if (material == Material.FIRE && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (isFire(material) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 
 					block.setType(Material.AIR);
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
@@ -273,6 +274,14 @@ public class HeatControl extends FireAbility {
 			case KELP:
 				cooked = new ItemStack(Material.DRIED_KELP);
 				break;
+			case CHORUS_FRUIT:
+				cooked = new ItemStack(Material.POPPED_CHORUS_FRUIT);
+				break;
+			case WET_SPONGE:
+				cooked = new ItemStack(Material.SPONGE);
+				break;
+			case STICK:
+				cooked = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? new ItemStack(Material.SOUL_TORCH) : new ItemStack(Material.TORCH);
 			default:
 				break;
 		}
@@ -281,7 +290,7 @@ public class HeatControl extends FireAbility {
 	}
 
 	public void displayCookParticles() {
-		ParticleEffect.FLAME.display(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
+		playFirebendingParticles(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
 		ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation().clone().add(0, 1, 0), 2, 0.5, 0.5, 0.5);
 	}
 

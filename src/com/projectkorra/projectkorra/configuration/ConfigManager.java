@@ -442,6 +442,8 @@ public class ConfigManager {
 
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
 			earthBlocks.add(Material.DIRT.toString());
+			earthBlocks.add(Material.COARSE_DIRT.toString());
+			earthBlocks.add(Material.PODZOL.toString());
 			earthBlocks.add(Material.MYCELIUM.toString());
 			earthBlocks.add(Material.STONE.toString());
 			earthBlocks.add(Material.GRAVEL.toString());
@@ -460,14 +462,20 @@ public class ConfigManager {
 			earthBlocks.add(Material.ANDESITE.toString());
 			earthBlocks.add(Material.GRANITE.toString());
 			earthBlocks.add(Material.DIORITE.toString());
+			earthBlocks.add(Material.BASALT.toString());
+			earthBlocks.add(Material.ANCIENT_DEBRIS.toString());
+			earthBlocks.add(Material.BLACKSTONE.toString());
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
 			metalBlocks.add(Material.IRON_ORE.toString());
 			metalBlocks.add(Material.GOLD_ORE.toString());
 			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
+			earthBlocks.add(Material.GILDED_BLACKSTONE.toString());
 			metalBlocks.add(Material.IRON_BLOCK.toString());
 			metalBlocks.add(Material.GOLD_BLOCK.toString());
 			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
+			metalBlocks.add(Material.CHAIN.toString());
+			metalBlocks.add(Material.NETHERITE_BLOCK.toString());
 
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
 			sandBlocks.add(Material.SAND.toString());
@@ -512,12 +520,20 @@ public class ConfigManager {
 			plantBlocks.add(Material.SUNFLOWER.toString());
 			plantBlocks.add(Material.POPPY.toString());
 			plantBlocks.add(Material.FERN.toString());
+			plantBlocks.add(Material.LILY_OF_THE_VALLEY.toString());
+			plantBlocks.add(Material.WITHER_ROSE.toString());
+			plantBlocks.add(Material.CORNFLOWER.toString());
 			plantBlocks.add(Material.LARGE_FERN.toString());
 			plantBlocks.add(Material.RED_MUSHROOM.toString());
 			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.toString());
 			plantBlocks.add(Material.BROWN_MUSHROOM.toString());
 			plantBlocks.add(Material.BROWN_MUSHROOM_BLOCK.toString());
 			plantBlocks.add(Material.MUSHROOM_STEM.toString());
+			plantBlocks.add(Material.WARPED_ROOTS.toString());
+			plantBlocks.add(Material.CRIMSON_ROOTS.toString());
+			plantBlocks.add(Material.TWISTING_VINES_PLANT.toString());
+			plantBlocks.add(Material.WEEPING_VINES_PLANT.toString());
+			plantBlocks.add(Material.NETHER_SPROUTS.toString());
 			plantBlocks.add(Material.CACTUS.toString());
 			plantBlocks.add(Material.PUMPKIN.toString());
 			plantBlocks.add(Material.PUMPKIN_STEM.toString());
@@ -633,7 +649,10 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
 			config.addDefault("Properties.Fire.LightningSound.Volume", 1);
 			config.addDefault("Properties.Fire.LightningSound.Pitch", 0);
-
+			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
+			config.addDefault("Properties.Fire.BlueFire.CooldownFactor", .9);
+			config.addDefault("Properties.Fire.BlueFire.RangeFactor", 1.2);
+			
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
 			final ArrayList<String> disabledWorlds = new ArrayList<String>();
