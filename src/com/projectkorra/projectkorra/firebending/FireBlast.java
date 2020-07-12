@@ -214,18 +214,18 @@ public class FireBlast extends FireAbility {
 				final Smoker smoker = (Smoker) block.getState();
 				smoker.setBurnTime((short) 800);
 				smoker.update();
-		    } else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
-		    	final BlastFurnace blastF = (BlastFurnace) block.getState();
+			} else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
+				final BlastFurnace blastF = (BlastFurnace) block.getState();
 				blastF.setBurnTime((short) 800);
 				blastF.update();
-		    } else if (block instanceof Campfire) {
-		    	final Campfire campfire = (Campfire) block.getBlockData();
-		    	if(!campfire.isLit()) {
-		    		if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
-		    			campfire.setLit(true);
-		    		}
-		    	}
-		    } else if (isIgnitable(block.getRelative(BlockFace.UP))) {
+			} else if (block instanceof Campfire) {
+				final Campfire campfire = (Campfire) block.getBlockData();
+				if(!campfire.isLit()) {
+					if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
+						campfire.setLit(true);
+					}
+				}
+			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
 				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
 					this.ignite(this.location);
 				}

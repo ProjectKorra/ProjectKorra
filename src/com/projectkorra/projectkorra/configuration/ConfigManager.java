@@ -442,6 +442,8 @@ public class ConfigManager {
 
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
 			earthBlocks.add(Material.DIRT.toString());
+			earthBlocks.add(Material.COARSE_DIRT.toString());
+			earthBlocks.add(Material.PODZOL.toString());
 			earthBlocks.add(Material.MYCELIUM.toString());
 			earthBlocks.add(Material.STONE.toString());
 			earthBlocks.add(Material.GRAVEL.toString());
