@@ -808,7 +808,7 @@ public class PKListener implements Listener {
 		String e = "Nonbender";
 		ChatColor c = ChatColor.WHITE;
 		if (bPlayer != null) {
-			if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
+			if (player.hasPermission("bending.avatar") || bPlayer.getElements().size() > 1) {
 				c = Element.AVATAR.getColor();
 				e = Element.AVATAR.getName();
 			} else if (bPlayer.getElements().size() > 0) {

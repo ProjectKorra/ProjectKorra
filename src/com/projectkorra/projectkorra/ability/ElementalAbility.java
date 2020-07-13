@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
@@ -215,8 +216,8 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isWater(final Block block) {
 		if (block == null) {
 			return false;
-		} else if (isWater(block.getType())) {
-			return true;
+		} else if (block.getState() instanceof Container) {
+			return false; 
 		} else {
 			return isWater(block.getBlockData());
 		}

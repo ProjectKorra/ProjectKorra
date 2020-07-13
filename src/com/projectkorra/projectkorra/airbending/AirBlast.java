@@ -91,7 +91,7 @@ public class AirBlast extends AirAbility {
 			ORIGINS.remove(player);
 
 			if (entity != null) {
-				this.direction = GeneralMethods.getDirection(this.origin, entity.getLocation()).normalize();
+				this.direction = GeneralMethods.getDirection(this.origin, GeneralMethods.getTargetedLocation(player, this.range, false, false)).normalize();
 			} else {
 				this.direction = GeneralMethods.getDirection(this.origin, GeneralMethods.getTargetedLocation(player, this.range)).normalize();
 			}
@@ -99,7 +99,9 @@ public class AirBlast extends AirAbility {
 			this.origin = player.getEyeLocation();
 			this.direction = player.getEyeLocation().getDirection().normalize();
 		}
-
+		if(!Double.isFinite(this.direction.getX()) || !Double.isFinite(this.direction.getY()) || !Double.isFinite(this.direction.getZ())) {
+			return;
+		}
 		this.location = this.origin.clone();
 		this.bPlayer.addCooldown(this);
 		this.start();
@@ -255,7 +257,7 @@ public class AirBlast extends AirAbility {
 			push.normalize().add(entity.getVelocity()).multiply(knockback);
 		}
 		
-		GeneralMethods.setVelocity(entity, push);
+		GeneralMethods.setVelocity(entity, push.normalize().multiply(knockback));
 		
 		if (this.source != null) {
 			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
