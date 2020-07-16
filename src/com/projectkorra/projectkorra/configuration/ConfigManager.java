@@ -135,6 +135,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.AlreadyExists", "A preset with that name already exists.");
 			config.addDefault("Commands.Preset.BendingPermanentlyRemoved", "Your bending was permanently removed.");
 			config.addDefault("Commands.Preset.PlayerNotFound", "Player not found.");
+			config.addDefault("Commands.Preset.InvalidName", "You must enter a valid name for your preset.");
 			config.addDefault("Commands.Preset.MaxPresets", "You've reached your maximum number of presets.");
 			config.addDefault("Commands.Preset.CantEditBinds", "You can't edit your binds right now!");
 			config.addDefault("Commands.Preset.Other.BendingPermanentlyRemoved", "That player's bending was permanently removed.");
