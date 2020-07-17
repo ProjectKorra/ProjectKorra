@@ -209,6 +209,9 @@ public class AirBlast extends AirAbility {
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
 			return;
+		} else if (this.location.distance(this.origin) > this.range) {
+			this.remove();
+			return;
 		}
 
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
