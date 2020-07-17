@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.hooks;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
-
 import com.projectkorra.projectkorra.ProjectKorra;
 
 public class WorldGuardFlag {

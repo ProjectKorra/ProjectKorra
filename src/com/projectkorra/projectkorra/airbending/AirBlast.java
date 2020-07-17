@@ -209,9 +209,6 @@ public class AirBlast extends AirAbility {
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
 			return;
-		} else if (this.location.distance(this.origin) > this.range) {
-			this.remove();
-			return;
 		}
 
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
@@ -333,10 +330,12 @@ public class AirBlast extends AirAbility {
 
 						if (bf == face) {
 							if (!door.isOpen()) {
+								this.remove();
 								return;
 							}
 						} else if (bf.getOppositeFace() == face) {
 							if (door.isOpen()) {
+								this.remove();
 								return;
 							}
 						}
@@ -353,10 +352,12 @@ public class AirBlast extends AirAbility {
 
 					if (this.origin.getY() < block.getY()) {
 						if (!tDoor.isOpen()) {
+							this.remove();
 							return;
 						}
 					} else {
 						if (tDoor.isOpen()) {
+							this.remove();
 							return;
 						}
 					}

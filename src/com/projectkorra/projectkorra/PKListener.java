@@ -1069,6 +1069,9 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
+		if (event.isCancelled())
+			return;
+
 		if (bPlayer == null)
 			return;
 

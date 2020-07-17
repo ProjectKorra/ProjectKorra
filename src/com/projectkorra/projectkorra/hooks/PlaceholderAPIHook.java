@@ -9,8 +9,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
