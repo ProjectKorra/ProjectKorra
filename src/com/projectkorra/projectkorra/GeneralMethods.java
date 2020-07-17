@@ -317,6 +317,10 @@ public class GeneralMethods {
 		final boolean c = xyzsolid[1] && xyzsolid[2];
 		return (a || b || c || (a && b));
 	}
+	
+	public static int compareArmor(Material first, Material second) {
+		return getArmorTier(first) - getArmorTier(second);
+	}
 
 	/**
 	 * Creates a {@link BendingPlayer} with the data from the database. This
@@ -694,6 +698,81 @@ public class GeneralMethods {
 			setAbsorption.invoke(entityplayer, hearts);
 		} catch (final Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static int getArmorTier(Material mat) {
+		switch (mat) {
+			case NETHERITE_HELMET:
+			case NETHERITE_CHESTPLATE:
+			case NETHERITE_LEGGINGS:
+			case NETHERITE_BOOTS:
+				return 7;
+			case DIAMOND_HELMET:
+			case DIAMOND_CHESTPLATE:
+			case DIAMOND_LEGGINGS:
+			case DIAMOND_BOOTS:
+				return 6;
+			case TURTLE_HELMET:
+				return 5;
+			case IRON_HELMET:
+			case IRON_CHESTPLATE:
+			case IRON_LEGGINGS:
+			case IRON_BOOTS:
+				return 4;
+			case CHAINMAIL_HELMET:
+			case CHAINMAIL_CHESTPLATE:
+			case CHAINMAIL_LEGGINGS:
+			case CHAINMAIL_BOOTS:
+				return 3;
+			case GOLDEN_HELMET:
+			case GOLDEN_CHESTPLATE:
+			case GOLDEN_LEGGINGS:
+			case GOLDEN_BOOTS:
+				return 2;
+			case LEATHER_HELMET:
+			case LEATHER_CHESTPLATE:
+			case LEATHER_LEGGINGS:
+			case LEATHER_BOOTS:
+				return 1;
+			default:
+				return 0;
+		}
+	}
+	
+	public static int getArmorIndex(Material mat) {
+		switch (mat) {
+			case NETHERITE_HELMET:
+			case DIAMOND_HELMET:
+			case TURTLE_HELMET:
+			case IRON_HELMET:
+			case CHAINMAIL_HELMET:
+			case GOLDEN_HELMET:
+			case LEATHER_HELMET:
+				return 3;
+			case NETHERITE_CHESTPLATE:
+			case DIAMOND_CHESTPLATE:
+			case IRON_CHESTPLATE:
+			case CHAINMAIL_CHESTPLATE:
+			case GOLDEN_CHESTPLATE:
+			case LEATHER_CHESTPLATE:
+				return 2;
+			case NETHERITE_LEGGINGS:
+			case DIAMOND_LEGGINGS:
+			case IRON_LEGGINGS:
+			case CHAINMAIL_LEGGINGS:
+			case GOLDEN_LEGGINGS:
+			case LEATHER_LEGGINGS:
+				return 1;
+			case NETHERITE_BOOTS:
+			case DIAMOND_BOOTS:
+			case IRON_BOOTS:
+			case CHAINMAIL_BOOTS:
+			case GOLDEN_BOOTS:
+			case LEATHER_BOOTS:
+				return 0;
+			default:
+				return -1;
 		}
 	}
 
@@ -1340,6 +1419,39 @@ public class GeneralMethods {
 	public static boolean hasSpirits() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraSpirits") != null;
 	}
+	
+	public static boolean isArmor(Material mat) {
+		switch (mat) {
+			case NETHERITE_HELMET:
+			case NETHERITE_CHESTPLATE:
+			case NETHERITE_LEGGINGS:
+			case NETHERITE_BOOTS:
+			case DIAMOND_HELMET:
+			case DIAMOND_CHESTPLATE:
+			case DIAMOND_LEGGINGS:
+			case DIAMOND_BOOTS:
+			case TURTLE_HELMET:
+			case IRON_HELMET:
+			case IRON_CHESTPLATE:
+			case IRON_LEGGINGS:
+			case IRON_BOOTS:
+			case CHAINMAIL_HELMET:
+			case CHAINMAIL_CHESTPLATE:
+			case CHAINMAIL_LEGGINGS:
+			case CHAINMAIL_BOOTS:
+			case GOLDEN_HELMET:
+			case GOLDEN_CHESTPLATE:
+			case GOLDEN_LEGGINGS:
+			case GOLDEN_BOOTS:
+			case LEATHER_HELMET:
+			case LEATHER_CHESTPLATE:
+			case LEATHER_LEGGINGS:
+			case LEATHER_BOOTS:
+				return true;
+			default:
+				return false;
+		}
+	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
 		return isAdjacentToThreeOrMoreSources(block, false);
@@ -1636,6 +1748,16 @@ public class GeneralMethods {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isSameArmor(Material a, Material b) {
+		int ai = getArmorIndex(a), bi = getArmorIndex(b);
+		
+		if (ai == -1 || bi == -1) {
+			return false;
+		}
+		
+		return ai == bi;
 	}
 
 	public static boolean isSolid(final Block block) {

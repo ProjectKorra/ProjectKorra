@@ -197,14 +197,20 @@ public class TempArmor {
 		this.removeAbilOnForceRevert = bool;
 	}
 
+	public void revert() {
+		revert(null);
+	}
+	
 	/**
 	 * Destroys the TempArmor instance and removes it from the display queue.
 	 * <br>
 	 * <br>
 	 * Will also restore the player's armor to the state it was before any
 	 * TempArmor instance was started, if the display queue is empty.
+	 * 
+	 * @param drops A list of drops to filter temporary armor from when reverting, null if n/a
 	 */
-	public void revert() {
+	public void revert(List<ItemStack> drops) {
 		final PriorityQueue<TempArmor> queue = INSTANCES.get(this.entity);
 
 		if (queue.contains(this)) {
@@ -218,8 +224,24 @@ public class TempArmor {
 				queue.remove(this);
 			}
 		}
+		
+		if (drops != null) {
+			for (ItemStack is : newArmor) {
+				if (is != null) {
+					drops.remove(is);
+				}
+			}
+		}
 
 		if (queue.isEmpty()) {
+			if (drops != null) {
+				for (ItemStack is : ORIGINAL.get(this.entity)) {
+					if (is != null) {
+						drops.add(is);
+					}
+				}
+			}
+			
 			this.entity.getEquipment().setArmorContents(ORIGINAL.get(this.entity));
 			INSTANCES.remove(this.entity);
 			ORIGINAL.remove(this.entity);
@@ -236,7 +258,7 @@ public class TempArmor {
 			while (!queue.isEmpty()) {
 				final TempArmor tarmor = queue.peek();
 				if (System.currentTimeMillis() >= tarmor.getStartTime() + tarmor.getDuration()) {
-					tarmor.revert();
+					tarmor.revert(null);
 				} else {
 					break;
 				}
@@ -252,7 +274,7 @@ public class TempArmor {
 		for (final LivingEntity entity : INSTANCES.keySet()) {
 			while (!INSTANCES.get(entity).isEmpty()) {
 				final TempArmor armor = INSTANCES.get(entity).poll();
-				armor.revert();
+				armor.revert(null);
 			}
 		}
 	}
