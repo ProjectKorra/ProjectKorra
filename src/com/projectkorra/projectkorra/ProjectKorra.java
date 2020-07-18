@@ -64,7 +64,6 @@ public class ProjectKorra extends JavaPlugin {
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
-		BendingBoardManager.setup();
 		collisionManager = new CollisionManager();
 		collisionInitializer = new CollisionInitializer(collisionManager);
 		CoreAbility.registerAbilities();
@@ -79,6 +78,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		Manager.startup();
+		BendingBoardManager.setup();
 
 		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
@@ -157,7 +157,6 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		BendingBoardManager.saveChanges();
 		this.revertChecker.cancel();
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {

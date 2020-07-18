@@ -1324,6 +1324,8 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
+		BendingBoardManager.clean(player);
+
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
 		}

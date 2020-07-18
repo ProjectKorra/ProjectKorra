@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.board;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,8 +24,8 @@ public class BendingBoardInstance {
 	private final Objective bendingSlots;
 	private int selectedSlot;
 
-	public BendingBoardInstance(final Player player) {
-		bendingPlayer = BendingPlayer.getBendingPlayer(player);
+	public BendingBoardInstance(final Player player, final BendingPlayer bPlayer) {
+		bendingPlayer = bPlayer;
 		selectedSlot = player.getInventory().getHeldItemSlot() + 1;
 
 		bendingBoard = Bukkit.getScoreboardManager().getNewScoreboard();

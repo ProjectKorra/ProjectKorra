@@ -47,7 +47,6 @@ public class ConfigManager {
 			config = boardConfig.get();
 
 			config.addDefault("Enable", false);
-			config.addDefault("DisabledPlayers", new String[]{});
 
 			boardConfig.save();
 		} else if (type == ConfigType.LANGUAGE) {
