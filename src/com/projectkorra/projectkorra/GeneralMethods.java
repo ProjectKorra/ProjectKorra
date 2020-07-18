@@ -1997,22 +1997,27 @@ public class GeneralMethods {
 		final ClassLoader loader = ProjectKorra.class.getClassLoader();
 		try {
 			for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
-				if (info.getName().startsWith("com.projectkorra.")) {
-					final Class<?> clazz = info.load();
-					for (final Field field : clazz.getDeclaredFields()) {
-						final String simpleName = clazz.getSimpleName();
-						field.setAccessible(true);
-						try {
-							final Object obj = field.get(null);
-							if (obj instanceof Collection) {
-								writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Collection<?>) obj).size());
-							} else if (obj instanceof Map) {
-								writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?, ?>) obj).size());
-							}
-						} catch (final Exception e) {
+				if (info.getName().startsWith("com.projectkorra.") && !info.getName().contains("hooks")) {
+					try {
+						final Class<?> clazz = info.load();
+						for (final Field field : clazz.getDeclaredFields()) {
+							final String simpleName = clazz.getSimpleName();
+							field.setAccessible(true);
+							try {
+								final Object obj = field.get(null);
+								if (obj instanceof Collection) {
+									writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Collection<?>) obj).size());
+								} else if (obj instanceof Map) {
+									writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?, ?>) obj).size());
+								}
+							} catch (final Exception e) {
 
+							}
 						}
+					}  catch (Exception e) {
+						continue;
 					}
+					
 				}
 			}
 		} catch (final IOException e) {

@@ -178,7 +178,7 @@ public class WaterArmsSpear extends WaterAbility {
 				return;
 			}
 
-			new TempBlock(this.location.getBlock(), Material.WATER, GeneralMethods.getWaterData(0));
+			new TempBlock(this.location.getBlock(), Material.WATER);
 			getIceBlocks().put(this.location.getBlock(), System.currentTimeMillis() + 600L);
 			final Vector direction = GeneralMethods.getDirection(this.initLocation, GeneralMethods.getTargetedLocation(this.player, this.spearRange, getTransparentMaterials())).normalize();
 
@@ -256,7 +256,7 @@ public class WaterArmsSpear extends WaterAbility {
 	private boolean canPlaceBlock(final Block block) {
 		if (!isTransparent(this.player, block) && !((isWater(block) || this.isIcebendable(block)) && (TempBlock.isTempBlock(block) && !getIceBlocks().containsKey(block)))) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isSolid(block)) {
 			return false;
 		} else if (WaterArms.isUnbreakable(block) && !isWater(block)) {
 			return false;
