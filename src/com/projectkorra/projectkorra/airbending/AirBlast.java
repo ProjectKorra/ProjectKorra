@@ -330,10 +330,12 @@ public class AirBlast extends AirAbility {
 
 						if (bf == face) {
 							if (!door.isOpen()) {
+								this.remove();
 								return;
 							}
 						} else if (bf.getOppositeFace() == face) {
 							if (door.isOpen()) {
+								this.remove();
 								return;
 							}
 						}
@@ -350,10 +352,12 @@ public class AirBlast extends AirAbility {
 
 					if (this.origin.getY() < block.getY()) {
 						if (!tDoor.isOpen()) {
+							this.remove();
 							return;
 						}
 					} else {
 						if (tDoor.isOpen()) {
+							this.remove();
 							return;
 						}
 					}
