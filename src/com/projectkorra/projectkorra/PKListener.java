@@ -1554,9 +1554,14 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerSlotChange(final PlayerItemHeldEvent event) {
 		final Player player = event.getPlayer();
+		if (!MultiAbilityManager.canChangeSlot(player, event.getNewSlot())) {
+			event.setCancelled(true);
+			return;
+		}
+
 		final int slot = event.getNewSlot() + 1;
 		GeneralMethods.displayMovePreview(player, slot);
 		BendingBoardManager.changeActiveSlot(player, event.getPreviousSlot(), event.getNewSlot());

@@ -148,7 +148,6 @@ public class Preset {
 		}
 		bPlayer.setAbilities(abilities);
 		BendingBoardManager.updateAllSlots(player);
-		System.out.println("board "+player.getName()+" "+abilities.entrySet().toString());
 		return boundAll;
 	}
 

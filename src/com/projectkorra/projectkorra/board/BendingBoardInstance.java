@@ -50,9 +50,10 @@ public class BendingBoardInstance {
 		if (name == null || name.isEmpty()) {
 			sb.append(ChatColor.GRAY).append("-- Slot ").append(slot).append(" --");
 		} else {
-			CoreAbility coreAbility = CoreAbility.getAbility(name);
-			if (coreAbility == null || coreAbility instanceof ComboAbility) {
-				sb.append(ChatColor.GRAY).append("-- Slot ").append(slot).append(" --");
+			CoreAbility coreAbility = CoreAbility.getAbility(ChatColor.stripColor(name));
+			if (coreAbility == null) { // MultiAbility
+				if (cooldown || bendingPlayer.isOnCooldown(name)) sb.append(ChatColor.STRIKETHROUGH);
+				sb.append(name);
 			} else {
 				sb.append(coreAbility.getElement().getColor());
 				if (cooldown || bendingPlayer.isOnCooldown(coreAbility)) sb.append(ChatColor.STRIKETHROUGH);
@@ -80,6 +81,9 @@ public class BendingBoardInstance {
 	}
 
 	public void setActiveSlot(int oldSlot, int newSlot) {
+		if (selectedSlot != oldSlot) {
+			oldSlot = selectedSlot; // Fixes bug when slot is set using setHeldItemSlot
+		}
 		selectedSlot = newSlot;
 		setSlot(oldSlot, bendingPlayer.getAbilities().getOrDefault(oldSlot, ""), false);
 		setSlot(newSlot, bendingPlayer.getAbilities().getOrDefault(newSlot, ""), false);

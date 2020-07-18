@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.board;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -105,7 +106,10 @@ public class BendingBoardManager {
 				scoreboardPlayers.get(player).clearSlot(slot);
 				return;
 			}
-
+			if (MultiAbilityManager.hasMultiAbilityBound(player)) {
+				scoreboardPlayers.get(player).updateAll();
+				return;
+			}
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);
 			if (coreAbility != null && ComboManager.getComboAbilities().containsKey(abilityName)) {
 				scoreboardPlayers.get(player).updateCombo("  " + coreAbility.getElement().getColor() + ChatColor.STRIKETHROUGH + abilityName, cooldown);
@@ -116,8 +120,6 @@ public class BendingBoardManager {
 	}
 
 	public static void changeActiveSlot(Player player, int oldSlot, int newSlot) {
-		if (oldSlot == newSlot) return;
-
 		if (canUseScoreboard(player)) {
 			scoreboardPlayers.get(player).setActiveSlot(++oldSlot, ++newSlot);
 		}
