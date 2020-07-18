@@ -11,14 +11,17 @@ public class ConfigManager {
 	public static Config presetConfig;
 	public static Config defaultConfig;
 	public static Config languageConfig;
+	public static Config boardConfig;
 
 	public ConfigManager() {
 		presetConfig = new Config(new File("presets.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		languageConfig = new Config(new File("language.yml"));
+		boardConfig = new Config(new File("board.yml"));
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.LANGUAGE);
 		configCheck(ConfigType.PRESETS);
+		configCheck(ConfigType.BOARD);
 	}
 
 	public static void configCheck(final ConfigType type) {
@@ -40,6 +43,13 @@ public class ConfigManager {
 			config.addDefault("Example", abilities);
 
 			presetConfig.save();
+		} else if (type == ConfigType.BOARD) {
+			config = boardConfig.get();
+
+			config.addDefault("Enable", false);
+			config.addDefault("DisabledPlayers", new String[]{});
+
+			boardConfig.save();
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
@@ -179,6 +189,11 @@ public class ConfigManager {
 
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
 			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
+
+			config.addDefault("Commands.Board.Description", "Toggle bending board visibility.");
+			config.addDefault("Commands.Board.Disabled", "Bending board is disabled.");
+			config.addDefault("Commands.Board.ToggledOn", "You have made your bending board visible again.");
+			config.addDefault("Commands.Board.ToggledOff", "You have hidden your bending board.");
 
 			config.addDefault("Commands.Copy.Description", "This command will allow the user to copy the binds of another player either for himself or assign them to <Player> if specified.");
 			config.addDefault("Commands.Copy.PlayerNotFound", "Couldn't find player.");
@@ -653,7 +668,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
 			config.addDefault("Properties.Fire.BlueFire.CooldownFactor", .9);
 			config.addDefault("Properties.Fire.BlueFire.RangeFactor", 1.2);
-			
+
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
 			final ArrayList<String> disabledWorlds = new ArrayList<String>();

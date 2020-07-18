@@ -12,7 +12,8 @@ public class ConfigType {
 	public static final ConfigType DEFAULT = new ConfigType("Default");
 	public static final ConfigType PRESETS = new ConfigType("Presets");
 	public static final ConfigType LANGUAGE = new ConfigType("Language");
-	public static final ConfigType[] CORE_TYPES = { DEFAULT, PRESETS, LANGUAGE };
+	public static final ConfigType BOARD = new ConfigType("Board");
+	public static final ConfigType[] CORE_TYPES = { DEFAULT, PRESETS, LANGUAGE, BOARD };
 
 	private final String string;
 

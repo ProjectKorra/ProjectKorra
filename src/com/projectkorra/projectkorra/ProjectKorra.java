@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -63,6 +64,7 @@ public class ProjectKorra extends JavaPlugin {
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
+		BendingBoardManager.setup();
 		collisionManager = new CollisionManager();
 		collisionInitializer = new CollisionInitializer(collisionManager);
 		CoreAbility.registerAbilities();
@@ -155,6 +157,7 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		BendingBoardManager.saveChanges();
 		this.revertChecker.cancel();
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
