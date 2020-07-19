@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import co.aikar.timings.lib.MCTiming;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -19,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -188,6 +187,8 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeTyp
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
+
+import co.aikar.timings.lib.MCTiming;
 
 public class PKListener implements Listener {
 	ProjectKorra plugin;
@@ -546,20 +547,12 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDeath(final EntityDeathEvent event) {
 		if (TempArmor.hasTempArmor(event.getEntity())) {
-			final TempArmor armor = TempArmor.getVisibleTempArmor(event.getEntity());
-
-			if (armor != null) {
-				final List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
-				event.getDrops().clear();
-				event.getDrops().addAll(newDrops);
+			for (final TempArmor tarmor : TempArmor.getTempArmorList(event.getEntity())) {
+				tarmor.revert(event.getDrops());
 			}
 
 			if (MetalClips.isControlled(event.getEntity())) {
 				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
-			}
-
-			for (final TempArmor tarmor : TempArmor.getTempArmorList(event.getEntity())) {
-				tarmor.revert();
 			}
 		}
 
@@ -714,7 +707,7 @@ public class PKListener implements Listener {
 
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			for (final TempArmor armor : TempArmor.getTempArmorList((LivingEntity) entity)) {
-				armor.revert();
+				armor.revert(null);
 			}
 		}
 
@@ -1013,7 +1006,7 @@ public class PKListener implements Listener {
 		if (event.getKeepInventory()) {
 			if (TempArmor.hasTempArmor(event.getEntity())) {
 				for (final TempArmor armor : TempArmor.getTempArmorList(event.getEntity())) {
-					armor.revert();
+					armor.revert(event.getDrops());
 				}
 			}
 		} else {
@@ -1371,7 +1364,7 @@ public class PKListener implements Listener {
 
 		if (TempArmor.hasTempArmor(player)) {
 			for (final TempArmor armor : TempArmor.getTempArmorList(player)) {
-				armor.revert();
+				armor.revert(null);
 			}
 		}
 
@@ -1900,6 +1893,33 @@ public class PKListener implements Listener {
 		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);
+			}
+		}
+		
+		if (event.isCancelled()) {
+			return;
+		}
+		
+		if (event.getEntity() instanceof LivingEntity) {
+			LivingEntity lent = (LivingEntity) event.getEntity();
+			
+			if (TempArmor.hasTempArmor(lent)) {
+				TempArmor armor = TempArmor.getVisibleTempArmor(lent);
+				ItemStack is = event.getItem().getItemStack();
+				int index = GeneralMethods.getArmorIndex(is.getType());
+				
+				if (index == -1) {
+					return;
+				}
+				
+				event.setCancelled(true);
+				ItemStack prev = armor.getOldArmor()[index];
+				
+				if (GeneralMethods.compareArmor(is.getType(), prev.getType()) > 0) {
+					event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), prev);
+					armor.getOldArmor()[index] = is;
+					event.getItem().remove();
+				}
 			}
 		}
 	}
