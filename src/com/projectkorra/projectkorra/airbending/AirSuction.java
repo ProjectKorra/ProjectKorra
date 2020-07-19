@@ -245,6 +245,19 @@ public class AirSuction extends AirAbility {
 
 			this.advanceLocation();
 		} else {
+			if (bPlayer == null || player.isDead() || !player.isOnline()) {
+				return;
+			} else if (!origin.getWorld().equals(player.getWorld())) {
+				remove();
+				return;
+			} else if (!bPlayer.canBendIgnoreCooldowns(this)) {
+				remove();
+				return;
+			} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange() * getSelectRange()) {
+				remove();
+				return;
+			}
+
 			playAirbendingParticles(this.origin, 5, 0.5, 0.5, 0.5);
 		}
 	}
