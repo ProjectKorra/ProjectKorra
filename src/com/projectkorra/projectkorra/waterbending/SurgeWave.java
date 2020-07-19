@@ -9,7 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -37,12 +40,14 @@ public class SurgeWave extends WaterAbility {
 	private boolean activateFreeze;
 	private boolean progressing;
 	private boolean canHitSelf;
+	private boolean solidifyLava;
 	private long time;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
 	@Attribute("IceRevertTime")
 	private long iceRevertTime;
+	private long obsidianDuration;
 	private double currentRadius;
 	@Attribute(Attribute.RADIUS)
 	private double maxRadius;
@@ -86,6 +91,8 @@ public class SurgeWave extends WaterAbility {
 		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
 		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
+		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wave.SolidifyLava.Enabled");
+		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wave.SolidifyLava.Duration");
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
 
@@ -315,6 +322,24 @@ public class SurgeWave extends WaterAbility {
 				for (final Block block : this.waveBlocks.keySet()) {
 					if (!blocks.contains(block)) {
 						this.finalRemoveWater(block);
+					}
+
+					if (solidifyLava) {
+						for (BlockFace relative : BlockFace.values()) {
+							Block blockRelative = block.getRelative(relative);
+							if (blockRelative.getType() == Material.LAVA) {
+								Levelled levelled = (Levelled)blockRelative.getBlockData();
+								TempBlock tempBlock;
+
+								if (levelled.getLevel() == 0)
+									tempBlock = new TempBlock(blockRelative, Material.OBSIDIAN);
+								else
+									tempBlock = new TempBlock(blockRelative, Material.COBBLESTONE);
+
+								tempBlock.setRevertTime(obsidianDuration);
+								tempBlock.getBlock().getWorld().playSound(tempBlock.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 0.2F, 1);
+							}
+						}
 					}
 				}
 				for (final Block block : blocks) {
