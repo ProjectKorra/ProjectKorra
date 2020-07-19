@@ -203,20 +203,20 @@ public class EarthGrab extends EarthAbility {
 			this.mHandler = new MovementHandler(this.target, this);
 			this.mHandler.stop(Element.EARTH.getColor() + "* Trapped *");
 
-//			if (this.target instanceof Player || this.target instanceof Zombie || this.target instanceof Skeleton) {
-//				final ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS);
-//				final LeatherArmorMeta legmeta = (LeatherArmorMeta) legs.getItemMeta();
-//				legmeta.setColor(Color.fromRGB(EarthArmor.getColor(m)));
-//				legs.setItemMeta(legmeta);
-//
-//				final ItemStack feet = new ItemStack(Material.LEATHER_BOOTS);
-//				final LeatherArmorMeta footmeta = (LeatherArmorMeta) feet.getItemMeta();
-//				footmeta.setColor(Color.fromRGB(EarthArmor.getColor(m)));
-//				feet.setItemMeta(footmeta);
-//
-//				final ItemStack[] pieces = { (this.target.getEquipment().getArmorContents()[0] == null || this.target.getEquipment().getArmorContents()[0].getType() == Material.AIR) ? feet : null, (this.target.getEquipment().getArmorContents()[1] == null || this.target.getEquipment().getArmorContents()[1].getType() == Material.AIR) ? legs : null, null, null };
-//				this.armor = new TempArmor(this.target, 36000000L, this, pieces);
-//			}
+			if (this.target instanceof Player || this.target instanceof Zombie || this.target instanceof Skeleton) {
+				final ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS);
+				final LeatherArmorMeta legmeta = (LeatherArmorMeta) legs.getItemMeta();
+				legmeta.setColor(Color.fromRGB(EarthArmor.getColor(m)));
+				legs.setItemMeta(legmeta);
+
+				final ItemStack feet = new ItemStack(Material.LEATHER_BOOTS);
+				final LeatherArmorMeta footmeta = (LeatherArmorMeta) feet.getItemMeta();
+				footmeta.setColor(Color.fromRGB(EarthArmor.getColor(m)));
+				feet.setItemMeta(footmeta);
+
+				final ItemStack[] pieces = { (this.target.getEquipment().getArmorContents()[0] == null || this.target.getEquipment().getArmorContents()[0].getType() == Material.AIR) ? feet : null, (this.target.getEquipment().getArmorContents()[1] == null || this.target.getEquipment().getArmorContents()[1].getType() == Material.AIR) ? legs : null, null, null };
+				this.armor = new TempArmor(this.target, 36000000L, this, pieces);
+			}
 
 			playEarthbendingSound(this.target.getLocation());
 			this.initiated = true;
@@ -330,7 +330,7 @@ public class EarthGrab extends EarthAbility {
 		if (System.currentTimeMillis() >= this.lastHit + this.interval) {
 			this.trapHP -= 1;
 			this.lastHit = System.currentTimeMillis();
-			ParticleEffect.BLOCK_CRACK.display(this.target.getLocation().clone().add(0, 1, 0), 17, 0.1, 0.5, 0.1, this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
+			ParticleEffect.BLOCK_CRACK.display(this.target.getLocation().clone().add(0, 1, 0), 7, 0.06, 0.3, 0.06, this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
 			playEarthbendingSound(this.target.getLocation());
 		}
 	}

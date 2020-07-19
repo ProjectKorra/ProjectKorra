@@ -172,29 +172,25 @@ public class MetalClips extends MetalAbility {
 
 		this.metalClipsCount = (this.metalClipsCount < 4) ? this.metalClipsCount + 1 : 4;
 
-		for (final TempArmor armor : TempArmor.getTempArmorList(this.targetEntity)) {
-			armor.revert();
-		}
-
 		if (this.targetEntity instanceof Player) {
 			final Player target = (Player) this.targetEntity;
 
 			final ItemStack[] metalArmor = new ItemStack[4];
 
-			metalArmor[2] = (this.metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : new ItemStack(Material.AIR);
-			metalArmor[0] = (this.metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : new ItemStack(Material.AIR);
-			metalArmor[1] = (this.metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : new ItemStack(Material.AIR);
-			metalArmor[3] = (this.metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
+			metalArmor[2] = (this.metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : null;
+			metalArmor[0] = (this.metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : null;
+			metalArmor[1] = (this.metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : null;
+			metalArmor[3] = (this.metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : null;
 			ENTITY_CLIPS_COUNT.put(target, this.metalClipsCount);
 
 			new TempArmor(target, this, metalArmor);
 		} else {
 			final ItemStack[] metalarmor = new ItemStack[4];
 
-			metalarmor[2] = (this.metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : new ItemStack(Material.AIR);
-			metalarmor[0] = (this.metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : new ItemStack(Material.AIR);
-			metalarmor[1] = (this.metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : new ItemStack(Material.AIR);
-			metalarmor[3] = (this.metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
+			metalarmor[2] = (this.metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : null;
+			metalarmor[0] = (this.metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : null;
+			metalarmor[1] = (this.metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : null;
+			metalarmor[3] = (this.metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : null;
 			ENTITY_CLIPS_COUNT.put(this.targetEntity, this.metalClipsCount);
 
 			new TempArmor(this.targetEntity, this, metalarmor);
@@ -208,7 +204,9 @@ public class MetalClips extends MetalAbility {
 			return;
 		}
 
-		TempArmor.getVisibleTempArmor(this.targetEntity).revert();
+		for (final TempArmor tarmor : TempArmor.getTempArmorList(targetEntity)) {
+			tarmor.revert();
+		}
 		this.dropIngots(this.targetEntity.getLocation());
 		this.isBeingWorn = false;
 	}
