@@ -1,11 +1,17 @@
 package com.projectkorra.projectkorra.earthbending.combo;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
-public class EarthDomeSelf extends EarthAbility {
+import com.projectkorra.projectkorra.util.ClickType;
+
+public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 
 	public EarthDomeSelf(final Player player) {
 		super(player);
@@ -38,11 +44,19 @@ public class EarthDomeSelf extends EarthAbility {
 
 	@Override
 	public Location getLocation() {
-		return player.getLocation();
+		return null;
 	}
 
 	@Override
-	public boolean isHiddenAbility() {
-		return true;
+	public Object createNewComboInstance(final Player player) {
+		return new EarthDomeSelf(player);
+	}
+
+	@Override
+	public ArrayList<AbilityInformation> getCombination() {
+		final ArrayList<AbilityInformation> combo = new ArrayList<>();
+		combo.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
+		combo.add(new AbilityInformation("Shockwave", ClickType.RIGHT_CLICK_BLOCK));
+		return combo;
 	}
 }

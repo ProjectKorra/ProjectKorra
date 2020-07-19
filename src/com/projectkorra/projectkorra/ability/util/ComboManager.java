@@ -15,10 +15,8 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.combo.EarthDomeOthers;
-import com.projectkorra.projectkorra.earthbending.combo.EarthDomeSelf;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
 
@@ -40,11 +38,6 @@ public class ComboManager {
 			earthDomeOthers.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
 			earthDomeOthers.add(new AbilityInformation("Shockwave", ClickType.LEFT_CLICK));
 			COMBO_ABILITIES.put("EarthDomeOthers", new ComboAbilityInfo("EarthDomeOthers", earthDomeOthers, EarthDomeOthers.class));
-
-			final ArrayList<AbilityInformation> earthDomeSelf = new ArrayList<>();
-			earthDomeSelf.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
-			earthDomeSelf.add(new AbilityInformation("Shockwave", ClickType.RIGHT_CLICK_BLOCK));
-			COMBO_ABILITIES.put("EarthDomeSelf", new ComboAbilityInfo("EarthDomeSelf", earthDomeSelf, EarthDomeSelf.class));
 		}
 
 		startCleanupTask();
