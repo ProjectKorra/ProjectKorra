@@ -179,6 +179,7 @@ import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterBubble;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
@@ -236,6 +237,8 @@ public class PKListener implements Listener {
 				ability = CoreAbility.getAbility(SurgeWall.class);
 			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
 				ability = CoreAbility.getAbility(Torrent.class);
+			} else if (abil != null && abil.equalsIgnoreCase("WaterSpout")) {
+				ability = CoreAbility.getAbility(WaterSpoutWave.class);
 			} else {
 				ability = CoreAbility.getAbility(abil);
 			}

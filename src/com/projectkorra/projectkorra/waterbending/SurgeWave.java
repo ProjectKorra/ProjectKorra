@@ -20,8 +20,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -115,7 +113,7 @@ public class SurgeWave extends WaterAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+			new TempBlock(block, Material.WATER);
 			this.waveBlocks.put(block, block);
 		}
 	}
@@ -275,6 +273,9 @@ public class SurgeWave extends WaterAbility {
 	@Override
 	public void progress() {
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			this.remove();
+			return;
+		} else if (!isWaterbendable(this.sourceBlock) && !this.progressing) {
 			this.remove();
 			return;
 		}
