@@ -10,7 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -39,12 +42,14 @@ public class SurgeWall extends WaterAbility {
 	private boolean settingUp;
 	private boolean forming;
 	private boolean frozen;
+	private boolean solidifyLava;
 	private long time;
 	private long interval;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DURATION)
 	private long duration;
+	private long obsidianDuration;
 	@Attribute(Attribute.RADIUS)
 	private double radius;
 	@Attribute(Attribute.RANGE)
@@ -66,6 +71,8 @@ public class SurgeWall extends WaterAbility {
 		this.duration = getConfig().getLong("Abilities.Water.Surge.Wall.Duration");
 		this.range = getConfig().getDouble(RANGE_CONFIG);
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
+		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
 		this.locations = new ArrayList<>();
 		this.oldTemps = new HashMap<>();
 
@@ -102,7 +109,7 @@ public class SurgeWall extends WaterAbility {
 			final Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
-				final TempBlock tempBlock = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+				final TempBlock tempBlock = new TempBlock(block, Material.WATER);
 				SOURCE_BLOCKS.add(tempBlock);
 
 				wave = new SurgeWave(player);
@@ -145,7 +152,7 @@ public class SurgeWall extends WaterAbility {
 		this.frozen = false;
 		for (final Block block : WALL_BLOCKS.keySet()) {
 			if (WALL_BLOCKS.get(block) == this.player) {
-				new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+				new TempBlock(block, Material.WATER);
 			}
 		}
 	}
@@ -232,7 +239,11 @@ public class SurgeWall extends WaterAbility {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
+		} else if (!isWaterbendable(this.sourceBlock) && !this.settingUp && !this.forming && !this.progressing) {
+			remove();
+			return;
 		}
+
 		this.locations.clear();
 
 		if (System.currentTimeMillis() - this.time >= this.interval) {
@@ -284,7 +295,26 @@ public class SurgeWall extends WaterAbility {
 					if (WALL_BLOCKS.get(blocki) == this.player && !blocks.contains(blocki)) {
 						this.finalRemoveWater(blocki);
 					}
+
+					if (solidifyLava) {
+						for (BlockFace relative : BlockFace.values()) {
+							Block blockRelative = blocki.getRelative(relative);
+							if (blockRelative.getType() == Material.LAVA) {
+								Levelled levelled = (Levelled)blockRelative.getBlockData();
+								TempBlock tempBlock;
+
+								if (levelled.getLevel() == 0)
+									tempBlock = new TempBlock(blockRelative, Material.OBSIDIAN);
+								else
+									tempBlock = new TempBlock(blockRelative, Material.COBBLESTONE);
+
+								tempBlock.setRevertTime(obsidianDuration);
+								tempBlock.getBlock().getWorld().playSound(tempBlock.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 0.2F, 1);
+							}
+						}
+					}
 				}
+
 				return;
 			}
 
@@ -334,7 +364,7 @@ public class SurgeWall extends WaterAbility {
 		if (this.frozen) {
 			new TempBlock(block, Material.ICE);
 		} else {
-			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+			new TempBlock(block, Material.WATER);
 		}
 	}
 
@@ -401,7 +431,7 @@ public class SurgeWall extends WaterAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+			new TempBlock(block, Material.WATER);
 			AFFECTED_BLOCKS.put(block, block);
 		}
 	}
@@ -443,7 +473,7 @@ public class SurgeWall extends WaterAbility {
 				final Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 
 				if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
-					final TempBlock tempBlock = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+					final TempBlock tempBlock = new TempBlock(block, Material.WATER);
 					SOURCE_BLOCKS.add(tempBlock);
 
 					wall = new SurgeWall(player);

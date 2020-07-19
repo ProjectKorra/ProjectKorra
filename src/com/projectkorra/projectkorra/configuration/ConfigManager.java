@@ -686,7 +686,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Range", 24);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius", 0.75);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle", true);
@@ -876,7 +876,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.Enabled", true);
 			config.addDefault("Abilities.Air.AirSwipe.Damage", 2);
 			config.addDefault("Abilities.Air.AirSwipe.Range", 14);
-			config.addDefault("Abilities.Air.AirSwipe.Radius", 2);
+			config.addDefault("Abilities.Air.AirSwipe.Radius", 0.5);
 			config.addDefault("Abilities.Air.AirSwipe.Push", 0.5);
 			config.addDefault("Abilities.Air.AirSwipe.Arc", 16);
 			config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
@@ -1035,11 +1035,15 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Wave.MaxFreezeRadius", 7);
 			config.addDefault("Abilities.Water.Surge.Wave.Cooldown", 500);
 			config.addDefault("Abilities.Water.Surge.Wave.Interval", 30);
+			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Enabled", true);
+			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Duration", 36000);
 			config.addDefault("Abilities.Water.Surge.Wall.Range", 5);
 			config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
 			config.addDefault("Abilities.Water.Surge.Wall.Cooldown", 0);
 			config.addDefault("Abilities.Water.Surge.Wall.Duration", 0);
 			config.addDefault("Abilities.Water.Surge.Wall.Interval", 30);
+			config.addDefault("Abilities.Water.Surge.Wall.SolidifyLava.Enabled", true);
+			config.addDefault("Abilities.Water.Surge.Wall.SolidifyLava.Duration", 36000);
 			config.addDefault("Abilities.Water.Surge.Wave.IceRevertTime", 60000);
 
 			config.addDefault("Abilities.Water.Torrent.Enabled", true);
