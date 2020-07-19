@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -39,6 +40,10 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		}
 
 		if (ElementalAbility.isEarth(block)) {
+			if ((player.getLocation().getY() % 1) != 0) {
+				return true;
+			}
+
 			for (final Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
 				if (ElementalAbility.isEarth(affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
