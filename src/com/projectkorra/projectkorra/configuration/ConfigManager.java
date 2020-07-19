@@ -686,7 +686,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Range", 24);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius", 0.75);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle", true);
@@ -876,7 +876,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.Enabled", true);
 			config.addDefault("Abilities.Air.AirSwipe.Damage", 2);
 			config.addDefault("Abilities.Air.AirSwipe.Range", 14);
-			config.addDefault("Abilities.Air.AirSwipe.Radius", 2);
+			config.addDefault("Abilities.Air.AirSwipe.Radius", 0.5);
 			config.addDefault("Abilities.Air.AirSwipe.Push", 0.5);
 			config.addDefault("Abilities.Air.AirSwipe.Arc", 16);
 			config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
