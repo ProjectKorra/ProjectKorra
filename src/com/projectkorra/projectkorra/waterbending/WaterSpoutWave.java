@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -305,7 +304,7 @@ public class WaterSpoutWave extends WaterAbility {
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
 					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (this.iceWave) {
-							this.createBlockDelay(block, Material.ICE, Material.ICE.createBlockData(), 2L);
+							this.createBlockDelay(block, Material.ICE, 2L);
 						} else {
 							this.createBlock(block, Material.WATER);
 						}
@@ -369,11 +368,11 @@ public class WaterSpoutWave extends WaterAbility {
 		}
 	}
 
-	public void createBlockDelay(final Block block, final Material mat, final BlockData data, final long delay) {
+	public void createBlockDelay(final Block block, final Material mat, final long delay) {
 		final BukkitRunnable br = new BukkitRunnable() {
 			@Override
 			public void run() {
-				WaterSpoutWave.this.createBlock(block, mat, data);
+				WaterSpoutWave.this.createBlock(block, mat);
 			}
 		};
 		br.runTaskLater(ProjectKorra.plugin, delay);
@@ -381,11 +380,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		this.createBlock(block, mat, mat.createBlockData());
-	}
-
-	public void createBlock(final Block block, final Material mat, final BlockData data) {
-		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
+		this.affectedBlocks.put(block, new TempBlock(block, mat));
 	}
 
 	public void revertBlocks() {

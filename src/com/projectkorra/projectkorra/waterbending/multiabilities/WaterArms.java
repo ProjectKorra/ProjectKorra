@@ -233,7 +233,7 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(this.getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))) {
-			this.addBlock(r1.getBlock(), Material.WATER, GeneralMethods.getWaterData(3), 100);
+			this.addBlock(r1.getBlock(), GeneralMethods.getWaterData(3), 100);
 			newBlocks.add(r1.getBlock());
 		}
 
@@ -244,7 +244,7 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 
-		this.addBlock(r2.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
+		this.addBlock(r2.getBlock(), Material.WATER.createBlockData(), 100);
 		newBlocks.add(r2.getBlock());
 
 		for (int j = 1; j <= this.initLength; j++) {
@@ -257,9 +257,9 @@ public class WaterArms extends WaterAbility {
 
 			newBlocks.add(r3.getBlock());
 			if (j >= 1 && this.selectedSlot == this.freezeSlot && this.bPlayer.canIcebend()) {
-				this.addBlock(r3.getBlock(), Material.ICE, Material.ICE.createBlockData(), 100);
+				this.addBlock(r3.getBlock(), Material.ICE.createBlockData(), 100);
 			} else {
-				this.addBlock(r3.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
+				this.addBlock(r3.getBlock(), Material.WATER.createBlockData(), 100);
 			}
 		}
 
@@ -288,7 +288,7 @@ public class WaterArms extends WaterAbility {
 		}
 
 		if (!(this.getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))) {
-			this.addBlock(l1.getBlock(), Material.WATER, GeneralMethods.getWaterData(3), 100);
+			this.addBlock(l1.getBlock(), GeneralMethods.getWaterData(3), 100);
 			newBlocks.add(l1.getBlock());
 		}
 
@@ -299,7 +299,7 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 
-		this.addBlock(l2.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
+		this.addBlock(l2.getBlock(), Material.WATER.createBlockData(), 100);
 		newBlocks.add(l2.getBlock());
 
 		for (int j = 1; j <= this.initLength; j++) {
@@ -312,9 +312,9 @@ public class WaterArms extends WaterAbility {
 
 			newBlocks.add(l3.getBlock());
 			if (j >= 1 && this.selectedSlot == this.freezeSlot && this.bPlayer.canIcebend()) {
-				this.addBlock(l3.getBlock(), Material.ICE, Material.ICE.createBlockData(), 100);
+				this.addBlock(l3.getBlock(), Material.ICE.createBlockData(), 100);
 			} else {
-				this.addBlock(l3.getBlock(), Material.WATER, GeneralMethods.getWaterData(0), 100);
+				this.addBlock(l3.getBlock(), Material.WATER.createBlockData(), 100);
 			}
 		}
 
@@ -324,18 +324,18 @@ public class WaterArms extends WaterAbility {
 		return true;
 	}
 
-	public void addBlock(final Block b, final Material m, final BlockData data, final long revertTime) {
+	public void addBlock(final Block b, final BlockData data, final long revertTime) {
 		if (TempBlock.isTempBlock(b)) {
 			final TempBlock tb = TempBlock.get(b);
 
 			if (this.right.contains(b) || this.left.contains(b)) {
-				tb.setType(m, data);
+				tb.setType(data);
 				tb.setRevertTime(revertTime);
 			} else {
 				this.external.add(tb);
 			}
 		} else {
-			new TempBlock(b, m, data).setRevertTime(revertTime);
+			new TempBlock(b, data, revertTime);
 		}
 	}
 

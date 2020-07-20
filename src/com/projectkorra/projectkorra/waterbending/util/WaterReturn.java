@@ -44,7 +44,7 @@ public class WaterReturn extends WaterAbility {
 
 		if (this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			if (isTransparent(player, block) && ((TempBlock.isTempBlock(block) && block.isLiquid()) || !block.isLiquid()) && this.hasEmptyWaterBottle()) {
-				this.block = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+				this.block = new TempBlock(block, Material.WATER);
 			}
 		}
 		this.start();
@@ -84,7 +84,7 @@ public class WaterReturn extends WaterAbility {
 		final Block newblock = this.location.getBlock();
 		if (isTransparent(this.player, newblock) && !newblock.isLiquid()) {
 			this.block.revertBlock();
-			this.block = new TempBlock(newblock, Material.WATER, GeneralMethods.getWaterData(0));
+			this.block = new TempBlock(newblock, Material.WATER);
 		} else if (isTransparent(this.player, newblock)) {
 			if (isWater(newblock)) {
 				ParticleEffect.WATER_BUBBLE.display(newblock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);

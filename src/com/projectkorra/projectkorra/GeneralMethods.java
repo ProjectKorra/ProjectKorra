@@ -317,7 +317,7 @@ public class GeneralMethods {
 		final boolean c = xyzsolid[1] && xyzsolid[2];
 		return (a || b || c || (a && b));
 	}
-	
+
 	public static int compareArmor(Material first, Material second) {
 		return getArmorTier(first) - getArmorTier(second);
 	}
@@ -700,7 +700,7 @@ public class GeneralMethods {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static int getArmorTier(Material mat) {
 		switch (mat) {
 			case NETHERITE_HELMET:
@@ -739,7 +739,7 @@ public class GeneralMethods {
 				return 0;
 		}
 	}
-	
+
 	public static int getArmorIndex(Material mat) {
 		switch (mat) {
 			case NETHERITE_HELMET:
@@ -1225,19 +1225,11 @@ public class GeneralMethods {
 	}
 
 	public static BlockData getLavaData(final int level) {
-		final BlockData data = Material.LAVA.createBlockData();
-		if (data instanceof Levelled) {
-			((Levelled) data).setLevel(level);
-		}
-		return data;
+		return Material.LAVA.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > 15) ? 0 : level));
 	}
 
 	public static BlockData getWaterData(final int level) {
-		final BlockData data = Material.WATER.createBlockData();
-		if (data instanceof Levelled) {
-			((Levelled) data).setLevel(level);
-		}
-		return data;
+		return Material.WATER.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > 15) ? 0 : level));
 	}
 
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
@@ -1419,7 +1411,7 @@ public class GeneralMethods {
 	public static boolean hasSpirits() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraSpirits") != null;
 	}
-	
+
 	public static boolean isArmor(Material mat) {
 		switch (mat) {
 			case NETHERITE_HELMET:
@@ -1749,14 +1741,14 @@ public class GeneralMethods {
 		}
 		return false;
 	}
-	
+
 	public static boolean isSameArmor(Material a, Material b) {
 		int ai = getArmorIndex(a), bi = getArmorIndex(b);
-		
+
 		if (ai == -1 || bi == -1) {
 			return false;
 		}
-		
+
 		return ai == bi;
 	}
 
@@ -2136,7 +2128,7 @@ public class GeneralMethods {
 					}  catch (Exception e) {
 						continue;
 					}
-					
+
 				}
 			}
 		} catch (final IOException e) {

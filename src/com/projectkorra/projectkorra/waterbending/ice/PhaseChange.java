@@ -379,11 +379,10 @@ public class PhaseChange extends IceAbility {
 					final Snow snow = (Snow) b.getBlockData();
 					if (snow.getLayers() == snow.getMinimumLayers()) {
 						tb.revertBlock();
-						new TempBlock(b, Material.AIR).setRevertTime(120 * 1000L);
+						new TempBlock(b, Material.AIR.createBlockData(), 120 * 1000L);
 					} else {
 						tb.revertBlock();
-						snow.setLayers(snow.getLayers() - 1);
-						new TempBlock(b, Material.SNOW, snow).setRevertTime(120 * 1000L);
+						new TempBlock(b, Material.SNOW.createBlockData(d -> ((Snow) d).setLayers(snow.getLayers() - 1)), 120 * 1000L);
 					}
 				}
 			}
@@ -398,17 +397,17 @@ public class PhaseChange extends IceAbility {
 				b.setType(Material.WATER);
 				b.setBlockData(GeneralMethods.getWaterData(0));
 			} else {
-				new TempBlock(b, Material.WATER, GeneralMethods.getWaterData(0));
+				new TempBlock(b, Material.WATER);
 			}
 			this.melted_blocks.add(b);
 		} else if (b.getType() == Material.SNOW_BLOCK || b.getType() == Material.SNOW) {
 			if (b.getBlockData() instanceof Snow) {
 				final Snow snow = (Snow) b.getBlockData();
 				if (snow.getLayers() == snow.getMinimumLayers()) {
-					new TempBlock(b, Material.AIR).setRevertTime(120 * 1000L);
+					new TempBlock(b, Material.AIR.createBlockData(), 120 * 1000L);
 				} else {
 					snow.setLayers(snow.getLayers() - 1);
-					new TempBlock(b, Material.SNOW, snow).setRevertTime(120 * 1000L);
+					new TempBlock(b, Material.SNOW.createBlockData(d -> ((Snow) d).setLayers(snow.getLayers() - 1)), 120 * 1000L);
 				}
 			}
 

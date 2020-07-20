@@ -1,8 +1,5 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,9 +16,6 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class Tremorsense extends EarthAbility {
-
-	@Deprecated
-	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<Block, Player>();
 
 	private byte lightThreshold;
 	@Attribute("Depth")
@@ -108,11 +102,11 @@ public class Tremorsense extends EarthAbility {
 		
 		if (isBendable && this.block == null) {
 			this.block = standBlock;
-			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE, (byte) 1);
+			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE.createBlockData());
 		} else if (isBendable && !this.block.equals(standBlock)) {
 			this.revertGlowBlock();
 			this.block = standBlock;
-			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE, (byte) 1);
+			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE.createBlockData());
 		} else if (this.block == null) {
 			return;
 		} else if (!this.player.getWorld().equals(this.block.getWorld())) {
@@ -133,7 +127,7 @@ public class Tremorsense extends EarthAbility {
 
 	public void revertGlowBlock() {
 		if (this.block != null) {
-			this.player.sendBlockChange(this.block.getLocation(), this.block.getType(), this.block.getData());
+			this.player.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
 		}
 	}
 
@@ -170,12 +164,6 @@ public class Tremorsense extends EarthAbility {
 		}
 
 		return false;
-	}
-
-	@Deprecated
-	/** No longer used; will be removed in the next version. */
-	public static Map<Block, Player> getBlocks() {
-		return BLOCKS;
 	}
 
 	@Override
