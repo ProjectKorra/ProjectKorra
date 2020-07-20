@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -101,6 +102,10 @@ public class Tremorsense extends EarthAbility {
 
 		final boolean isBendable = this.isEarthbendable(standBlock);
 
+		if (standBlock.getBlockData() instanceof Slab) {
+			return;
+		}
+		
 		if (isBendable && this.block == null) {
 			this.block = standBlock;
 			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE, (byte) 1);

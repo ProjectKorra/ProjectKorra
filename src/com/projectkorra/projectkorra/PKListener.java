@@ -17,7 +17,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -231,6 +230,15 @@ public class PKListener implements Listener {
 		final String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability = null;
 
+		if (Illumination.isIlluminationTorch(block.getRelative(BlockFace.UP))) {
+			TempBlock torch = TempBlock.get(block.getRelative(BlockFace.UP));
+			Player user = Illumination.getBlocks().get(torch);
+			Illumination illumination = CoreAbility.getAbility(user, Illumination.class);
+			if (illumination != null) {
+				illumination.remove();
+			}
+		}
+
 		if (bPlayer.isElementToggled(Element.WATER) && bPlayer.isToggled()) {
 			if (abil != null && abil.equalsIgnoreCase("Surge")) {
 				ability = CoreAbility.getAbility(SurgeWall.class);
@@ -395,7 +403,8 @@ public class PKListener implements Listener {
 		}
 
 		try (MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
-			if (Illumination.isIlluminationTorch(block)) {
+			if (Illumination.isIlluminationTorch(block) || Illumination.isIlluminationTorch(block.getRelative(BlockFace.UP))) {
+				System.out.println("Ran Timing Physics Check");
 				event.setCancelled(true);
 				return;
 			}
