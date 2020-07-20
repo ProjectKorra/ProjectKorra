@@ -404,7 +404,6 @@ public class PKListener implements Listener {
 
 		try (MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
 			if (Illumination.isIlluminationTorch(block) || Illumination.isIlluminationTorch(block.getRelative(BlockFace.UP))) {
-				System.out.println("Ran Timing Physics Check");
 				event.setCancelled(true);
 				return;
 			}
