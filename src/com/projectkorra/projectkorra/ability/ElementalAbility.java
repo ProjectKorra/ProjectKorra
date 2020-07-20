@@ -91,10 +91,8 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isFullMoon(final World world) {
-		final double days = Math.ceil(world.getFullTime() / 24000) + 1;
-		final double phase = days % 8;
 
-		return phase == 0;
+		return (world.getFullTime() / 24000) % 8 == 0;
 	}
 
 	public static boolean isIce(final Block block) {
