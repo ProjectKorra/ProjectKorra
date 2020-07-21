@@ -400,8 +400,8 @@ public class AirBlast extends AirAbility {
 			}
 		}
 
-		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !this.affectedLevers.contains(block) && this.canCoolLava) {
-			if (block.getType() == Material.LAVA) {
+		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !this.affectedLevers.contains(block)) {
+			if (block.getType() == Material.LAVA  && this.canCoolLava) {
 				if (LavaFlow.isLavaFlowBlock(block)) {
 					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
 				} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {

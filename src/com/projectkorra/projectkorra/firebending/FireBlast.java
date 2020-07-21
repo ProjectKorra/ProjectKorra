@@ -72,13 +72,13 @@ public class FireBlast extends FireAbility {
 
 		this.setFields();
 		this.safeBlocks = safeBlocks;
-
+		this.damage = damage;
 		this.location = location.clone();
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
 
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers();
+		this.applyModifiers(this.damage, this.range);
 
 		this.start();
 	}
@@ -102,18 +102,18 @@ public class FireBlast extends FireAbility {
 		this.location = this.location.add(this.direction.clone());
 		
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers();
+		this.applyModifiers(this.damage, this.range);
 
 		this.start();
 		this.bPlayer.addCooldown("FireBlast", this.cooldown);
 	}
 
-	private void applyModifiers() {
+	private void applyModifiers(double damage, double range) {
 		int damageMod = 0;
 		int rangeMod = 0;
 
 		damageMod = (int) (this.getDayFactor(damage) - damage);
-		rangeMod = (int) (this.getDayFactor(this.range) - this.range);
+		rangeMod = (int) (this.getDayFactor(range) - range);
 
 		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
 		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
