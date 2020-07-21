@@ -1225,11 +1225,11 @@ public class GeneralMethods {
 	}
 
 	public static BlockData getLavaData(final int level) {
-		return Material.LAVA.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > 15) ? 0 : level));
+		return Material.LAVA.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
 	}
 
 	public static BlockData getWaterData(final int level) {
-		return Material.WATER.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > 15) ? 0 : level));
+		return Material.WATER.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
 	}
 
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
