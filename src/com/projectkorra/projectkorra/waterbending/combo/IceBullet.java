@@ -196,7 +196,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat, final BlockData data) {
-		this.affectedBlocks.put(block, new TempBlock(block, mat, data));
+		this.affectedBlocks.put(block, new TempBlock(block, data));
 	}
 
 	public void drawWaterCircle(final Location loc, final double theta, final double increment, final double radius) {

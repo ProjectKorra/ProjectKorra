@@ -253,7 +253,7 @@ public class LavaSurgeWave extends LavaAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
+			new TempBlock(block, Material.LAVA);
 			this.waveBlocks.put(block, block);
 		}
 	}

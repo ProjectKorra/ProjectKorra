@@ -262,7 +262,7 @@ public class WaterArmsWhip extends WaterAbility {
 
 				final int j = (int) Math.ceil(8 / (Math.pow(i, 1 / 3)));
 				this.waterArms.addToArm(l2.getBlock(), this.arm);
-				this.waterArms.addBlock(l2.getBlock(), Material.WATER, GeneralMethods.getWaterData(j), 40);
+				this.waterArms.addBlock(l2.getBlock(), GeneralMethods.getWaterData(j), 40);
 
 				if (i == this.activeLength) {
 					this.end = l2.clone();
@@ -282,7 +282,7 @@ public class WaterArmsWhip extends WaterAbility {
 					}
 
 					this.waterArms.addToArm(this.end.getBlock(), this.arm);
-					this.waterArms.addBlock(this.end.getBlock(), Material.WATER, GeneralMethods.getWaterData(5), 40);
+					this.waterArms.addBlock(this.end.getBlock(), GeneralMethods.getWaterData(5), 40);
 					this.performAction(this.end);
 				} else {
 					this.performAction(l2);

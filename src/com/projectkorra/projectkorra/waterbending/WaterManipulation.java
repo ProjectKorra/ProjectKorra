@@ -311,9 +311,9 @@ public class WaterManipulation extends WaterAbility {
 				}
 				if (this.trail != null) {
 					this.trail2 = this.trail;
-					this.trail2.setType(Material.WATER, GeneralMethods.getWaterData(6));
+					this.trail2.setType(GeneralMethods.getWaterData(6));
 				}
-				this.trail = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(7));
+				this.trail = new TempBlock(this.sourceBlock, GeneralMethods.getWaterData(7));
 				this.sourceBlock = block;
 
 				if (this.location.distanceSquared(this.targetDestination) <= 1 || this.location.distanceSquared(this.firstDestination) > this.range * this.range) {
@@ -366,7 +366,7 @@ public class WaterManipulation extends WaterAbility {
 			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
 				PhaseChange.getFrozenBlocksAsBlock().remove(block);
 			}
-			new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+			new TempBlock(block, Material.WATER);
 		} else {
 			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
 				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
@@ -500,7 +500,7 @@ public class WaterManipulation extends WaterAbility {
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
-					final TempBlock tb = new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0));
+					final TempBlock tb = new TempBlock(block, Material.WATER);
 
 					final WaterManipulation waterManip = new WaterManipulation(player, block);
 					waterManip.moveWater();
