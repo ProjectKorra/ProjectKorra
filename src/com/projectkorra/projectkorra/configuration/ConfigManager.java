@@ -812,7 +812,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Passive.GracefulDescent.Enabled", true);
 
 			config.addDefault("Abilities.Air.AirBlast.Enabled", true);
-			config.addDefault("Abilities.Air.AirBlast.Speed", 20);
+			config.addDefault("Abilities.Air.AirBlast.Speed", 15);
 			config.addDefault("Abilities.Air.AirBlast.Range", 20);
 			config.addDefault("Abilities.Air.AirBlast.Radius", .5);
 			config.addDefault("Abilities.Air.AirBlast.SelectRange", 10);
