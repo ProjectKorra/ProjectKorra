@@ -206,12 +206,38 @@ public class AirBlast extends AirAbility {
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.location);
 		}
+		
+		for (double d = 0; d < speedFactor; d += 0.1) {
+			if (!checkLocation()) {
+				remove();
+				break;
+			}
+			this.location.add(this.direction.clone().multiply(d));
+		}
+	}
+
+	public boolean checkLocation() {
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
-			return;
+			return false;
 		}
-
-		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
+		
+		Block block = location.getBlock();
+		if ((!block.isPassable() || block.isLiquid()) && !this.affectedLevers.contains(block)) {
+			if (block.getType() == Material.LAVA && this.canCoolLava) {
+				if (LavaFlow.isLavaFlowBlock(block)) {
+					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
+				} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
+					new TempBlock(block, Material.OBSIDIAN);
+				} else {
+					new TempBlock(block, Material.COBBLESTONE);
+				}
+			}
+			this.remove();
+			return false;
+		}
+		
+		return true;
 	}
 
 	private void affect(final Entity entity) {
@@ -398,20 +424,6 @@ public class AirBlast extends AirAbility {
 					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
 				}
 			}
-		}
-
-		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !this.affectedLevers.contains(block)) {
-			if (block.getType() == Material.LAVA  && this.canCoolLava) {
-				if (LavaFlow.isLavaFlowBlock(block)) {
-					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
-				} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
-					new TempBlock(block, Material.OBSIDIAN);
-				} else {
-					new TempBlock(block, Material.COBBLESTONE);
-				}
-			}
-			this.remove();
-			return;
 		}
 
 		/*
