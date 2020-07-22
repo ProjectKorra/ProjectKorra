@@ -171,6 +171,9 @@ public class Torrent extends WaterAbility {
 		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
 			return;
+		} else if (!isWaterbendable(this.sourceBlock) && !this.settingUp && !this.forming && !this.formed && !this.launching) {
+			this.remove();
+			return;
 		}
 
 		if (System.currentTimeMillis() > this.time + this.interval) {
@@ -207,7 +210,7 @@ public class Torrent extends WaterAbility {
 						this.sourceBlock.setType(Material.AIR);
 					}
 
-					this.source = new TempBlock(this.sourceBlock, Material.WATER, GeneralMethods.getWaterData(0));
+					this.source = new TempBlock(this.sourceBlock, Material.WATER);
 					this.location = this.sourceBlock.getLocation();
 				} else {
 					playFocusWaterEffect(this.sourceBlock);
@@ -261,7 +264,7 @@ public class Torrent extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.source = new TempBlock(this.location.getBlock(), Material.WATER, GeneralMethods.getWaterData(0));
+					this.source = new TempBlock(this.location.getBlock(), Material.WATER);
 				}
 			}
 			if (this.forming && !this.player.isSneaking()) {
@@ -354,7 +357,7 @@ public class Torrent extends WaterAbility {
 				final Block block = blockloc.getBlock();
 				if (!doneBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, blockloc)) {
 					if (isTransparent(this.player, block)) {
-						this.launchedBlocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
+						this.launchedBlocks.add(new TempBlock(block, Material.WATER));
 						doneBlocks.add(block);
 					} else if (!isTransparent(this.player, block)) {
 						break;
@@ -422,7 +425,7 @@ public class Torrent extends WaterAbility {
 				if (isWater(locBlock)) {
 					ParticleEffect.WATER_BUBBLE.display(locBlock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 				}
-				newBlocks.add(new TempBlock(locBlock, Material.WATER, GeneralMethods.getWaterData(0)));
+				newBlocks.add(new TempBlock(locBlock, Material.WATER));
 			} else {
 				if (this.layer < this.maxLayer) {
 					if (this.layer == 0) {
@@ -487,7 +490,7 @@ public class Torrent extends WaterAbility {
 			final Block block = blockLoc.getBlock();
 			if (!doneBlocks.contains(block)) {
 				if (isTransparent(this.player, block)) {
-					this.blocks.add(new TempBlock(block, Material.WATER, GeneralMethods.getWaterData(0)));
+					this.blocks.add(new TempBlock(block, Material.WATER));
 					doneBlocks.add(block);
 					for (final Entity entity : entities) {
 						if (entity.getWorld() != blockLoc.getWorld()) {

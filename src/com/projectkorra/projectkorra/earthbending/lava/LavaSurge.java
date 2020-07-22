@@ -215,7 +215,7 @@ public class LavaSurge extends LavaAbility {
 				playEarthbendingSound(b.getLocation());
 
 				for (int i = 0; i < 2; i++) {
-					final TempBlock tb = new TempBlock(b, Material.LAVA, GeneralMethods.getLavaData(0));
+					final TempBlock tb = new TempBlock(b, Material.LAVA);
 					this.fractureTempBlocks.add(tb);
 				}
 			}

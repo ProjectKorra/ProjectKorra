@@ -17,7 +17,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -177,6 +176,7 @@ import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterBubble;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
@@ -229,11 +229,22 @@ public class PKListener implements Listener {
 		final String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability = null;
 
+		if (Illumination.isIlluminationTorch(block.getRelative(BlockFace.UP))) {
+			TempBlock torch = TempBlock.get(block.getRelative(BlockFace.UP));
+			Player user = Illumination.getBlocks().get(torch);
+			Illumination illumination = CoreAbility.getAbility(user, Illumination.class);
+			if (illumination != null) {
+				illumination.remove();
+			}
+		}
+
 		if (bPlayer.isElementToggled(Element.WATER) && bPlayer.isToggled()) {
 			if (abil != null && abil.equalsIgnoreCase("Surge")) {
 				ability = CoreAbility.getAbility(SurgeWall.class);
 			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
 				ability = CoreAbility.getAbility(Torrent.class);
+			} else if (abil != null && abil.equalsIgnoreCase("WaterSpout")) {
+				ability = CoreAbility.getAbility(WaterSpoutWave.class);
 			} else {
 				ability = CoreAbility.getAbility(abil);
 			}
@@ -393,7 +404,7 @@ public class PKListener implements Listener {
 		}
 
 		try (MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
-			if (Illumination.isIlluminationTorch(block)) {
+			if (Illumination.isIlluminationTorch(block) || Illumination.isIlluminationTorch(block.getRelative(BlockFace.UP))) {
 				event.setCancelled(true);
 				return;
 			}

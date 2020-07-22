@@ -233,7 +233,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	private void addWallBlock(final Block block) {
-		new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
+		new TempBlock(block, Material.LAVA);
 	}
 
 	private void breakBlock() {
@@ -273,7 +273,7 @@ public class LavaSurgeWall extends LavaAbility {
 			return;
 		}
 		if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
+			new TempBlock(block, Material.LAVA);
 			AFFECTED_BLOCKS.put(block, block);
 		}
 	}

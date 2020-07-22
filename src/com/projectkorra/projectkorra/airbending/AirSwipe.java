@@ -57,7 +57,7 @@ public class AirSwipe extends AirAbility {
 	private double maxChargeFactor;
 	private Location origin;
 	private Random random;
-	private Map<Vector, Location> elements;
+	private Map<Vector, Location> streams;
 	private ArrayList<Entity> affectedEntities;
 
 	public AirSwipe(final Player player) {
@@ -91,7 +91,7 @@ public class AirSwipe extends AirAbility {
 		this.radius = getConfig().getDouble("Abilities.Air.AirSwipe.Radius");
 		this.maxChargeFactor = getConfig().getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 		this.random = new Random();
-		this.elements = new ConcurrentHashMap<>();
+		this.streams = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 
 		if (this.bPlayer.isOnCooldown(this) || player.getEyeLocation().getBlock().isLiquid()) {
@@ -127,8 +127,8 @@ public class AirSwipe extends AirAbility {
 	public static boolean removeSwipesAroundPoint(final Location loc, final double radius) {
 		boolean removed = false;
 		for (final AirSwipe aswipe : getAbilities(AirSwipe.class)) {
-			for (final Vector vec : aswipe.elements.keySet()) {
-				final Location vectorLoc = aswipe.elements.get(vec);
+			for (final Vector vec : aswipe.streams.keySet()) {
+				final Location vectorLoc = aswipe.streams.get(vec);
 				if (vectorLoc != null && vectorLoc.getWorld().equals(loc.getWorld())) {
 					if (vectorLoc.distanceSquared(loc) <= radius * radius) {
 						aswipe.remove();
@@ -142,19 +142,19 @@ public class AirSwipe extends AirAbility {
 
 	private void advanceSwipe() {
 		this.affectedEntities.clear();
-		for (final Vector direction : this.elements.keySet()) {
-			Location location = this.elements.get(direction);
+		for (final Vector direction : this.streams.keySet()) {
+			Location location = this.streams.get(direction);
 			if (direction != null && location != null) {
 				location = location.clone().add(direction.clone().multiply(this.speed));
-				this.elements.put(direction, location);
+				this.streams.put(direction, location);
 
 				if (location.distanceSquared(this.origin) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-					this.elements.clear();
+					this.streams.clear();
 				} else {
 					final Block block = location.getBlock();
 					if (!ElementalAbility.isTransparent(this.player, block)) {
-						this.remove();
-						return;
+						this.streams.remove(direction);
+						continue;
 					}
 
 					for (final Block testblock : GeneralMethods.getBlocksAroundPoint(location, this.radius)) {
@@ -169,7 +169,7 @@ public class AirSwipe extends AirAbility {
 						} else if (isPlant(block.getType())) {
 							block.breakNaturally();
 						} else {
-							this.elements.remove(direction);
+							this.streams.remove(direction);
 						}
 						if (isLava(block)) {
 							if (LavaFlow.isLavaFlowBlock(block)) {
@@ -190,7 +190,7 @@ public class AirSwipe extends AirAbility {
 				}
 			}
 		}
-		if (this.elements.isEmpty()) {
+		if (this.streams.isEmpty()) {
 			this.remove();
 		}
 	}
@@ -198,6 +198,14 @@ public class AirSwipe extends AirAbility {
 	private void affectPeople(final Location location, final Vector direction) {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, this.radius);
 		final Vector fDirection = direction.clone();
+
+		for (int i = 0; i < entities.size(); i++) {
+			Location entityLocation = entities.get(i).getLocation();
+			Vector dir = new Vector(entityLocation.getX() - location.getX(), entityLocation.getY() - location.getY(), entityLocation.getZ() - location.getZ());
+			if (GeneralMethods.checkDiagonalWall(location, dir)) {
+				entities.remove(entities.get(i--));
+			}
+		}
 
 		for (int i = 0; i < entities.size(); i++) {
 			final Entity entity = entities.get(i);
@@ -226,7 +234,7 @@ public class AirSwipe extends AirAbility {
 							AirSwipe.this.affectedEntities.add(entity);
 						}
 						breakBreathbendingHold(entity);
-						AirSwipe.this.elements.remove(direction);
+						AirSwipe.this.streams.remove(direction);
 					} else if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && !(entity instanceof LivingEntity)) {
 
 						GeneralMethods.setVelocity(entity, fDirection.multiply(AirSwipe.this.pushFactor));
@@ -254,7 +262,7 @@ public class AirSwipe extends AirAbility {
 			direction.setX(vx);
 			direction.setZ(vz);
 
-			this.elements.put(direction, this.origin);
+			this.streams.put(direction, this.origin);
 		}
 	}
 
@@ -271,7 +279,7 @@ public class AirSwipe extends AirAbility {
 		}
 
 		if (!this.charging) {
-			if (this.elements.isEmpty()) {
+			if (this.streams.isEmpty()) {
 				this.remove();
 				return;
 			}
@@ -303,7 +311,7 @@ public class AirSwipe extends AirAbility {
 
 	@Override
 	public Location getLocation() {
-		return this.elements.size() != 0 ? this.elements.values().iterator().next() : null;
+		return this.streams.size() != 0 ? this.streams.values().iterator().next() : null;
 	}
 
 	@Override
@@ -334,7 +342,7 @@ public class AirSwipe extends AirAbility {
 	@Override
 	public List<Location> getLocations() {
 		final ArrayList<Location> locations = new ArrayList<>();
-		for (final Location swipeLoc : this.elements.values()) {
+		for (final Location swipeLoc : this.streams.values()) {
 			locations.add(swipeLoc);
 		}
 		return locations;
@@ -433,7 +441,7 @@ public class AirSwipe extends AirAbility {
 	}
 
 	public Map<Vector, Location> getElements() {
-		return this.elements;
+		return this.streams;
 	}
 
 	public ArrayList<Entity> getAffectedEntities() {

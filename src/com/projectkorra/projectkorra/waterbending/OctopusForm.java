@@ -236,6 +236,9 @@ public class OctopusForm extends WaterAbility {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
+		} else if (!isWaterbendable(this.sourceBlock) && !this.settingUp && !this.forming && !this.formed) {
+			this.remove();
+			return;
 		}
 
 		final Random random = new Random();

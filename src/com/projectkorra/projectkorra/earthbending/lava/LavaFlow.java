@@ -415,7 +415,7 @@ public class LavaFlow extends LavaAbility {
 				block.setType(Material.LAVA);
 				block.setBlockData(GeneralMethods.getLavaData(0));
 			} else {
-				tblock = new TempBlock(block, Material.LAVA, GeneralMethods.getLavaData(0));
+				tblock = new TempBlock(block, Material.LAVA);
 			}
 
 			if (tblock != null) {

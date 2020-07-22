@@ -197,7 +197,7 @@ public class Illumination extends FireAbility {
 	public static boolean isIlluminationTorch(final Block block) {
 		final TempBlock tempBlock = TempBlock.get(block);
 
-		if (tempBlock == null || block.getType() != Material.TORCH || !BLOCKS.containsKey(tempBlock)) {
+		if (tempBlock == null || (block.getType() != Material.TORCH && block.getType() != Material.SOUL_TORCH) || !BLOCKS.containsKey(tempBlock)) {
 			return false;
 		}
 

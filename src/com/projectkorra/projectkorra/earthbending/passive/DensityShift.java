@@ -39,6 +39,10 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 		}
 
 		if (ElementalAbility.isEarth(block)) {
+			if ((player.getLocation().getY() % 1) != 0) {
+				return true;
+			}
+
 			for (final Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
 				if (ElementalAbility.isEarth(affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {

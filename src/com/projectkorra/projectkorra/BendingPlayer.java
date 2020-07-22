@@ -266,12 +266,12 @@ public class BendingPlayer {
 			return false;
 		}
 
-		if (!ignoreCooldowns && this.cooldowns.containsKey(this.name)) {
-			if (this.cooldowns.get(this.name).getCooldown() + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+		if (!ignoreCooldowns && this.cooldowns.containsKey(ability.getName())) {
+			if (this.cooldowns.get(ability.getName()).getCooldown() + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
 				return false;
 			}
 
-			this.cooldowns.remove(this.name);
+			this.cooldowns.remove(ability.getName());
 		}
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
