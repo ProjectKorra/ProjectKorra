@@ -138,7 +138,15 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
-import com.projectkorra.projectkorra.event.*;
+import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
+import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
+import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
+import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerJumpEvent;
+import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -1906,26 +1914,26 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
-		
+
 		if (event.isCancelled()) {
 			return;
 		}
-		
+
 		if (event.getEntity() instanceof LivingEntity) {
 			LivingEntity lent = (LivingEntity) event.getEntity();
-			
+
 			if (TempArmor.hasTempArmor(lent)) {
 				TempArmor armor = TempArmor.getVisibleTempArmor(lent);
 				ItemStack is = event.getItem().getItemStack();
 				int index = GeneralMethods.getArmorIndex(is.getType());
-				
+
 				if (index == -1) {
 					return;
 				}
-				
+
 				event.setCancelled(true);
 				ItemStack prev = armor.getOldArmor()[index];
-				
+
 				if (GeneralMethods.compareArmor(is.getType(), prev.getType()) > 0) {
 					event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), prev);
 					armor.getOldArmor()[index] = is;
@@ -2007,6 +2015,18 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		if (player == null) return;
 		BendingBoardManager.updateBoard(player, event.getAbility(), event.getResult().equals(PlayerCooldownChangeEvent.Result.ADDED), 0);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerStanceChange(final PlayerStanceChangeEvent event) {
+		final Player player = event.getPlayer();
+		if (player == null) return;
+		if (!event.getOldStance().isEmpty()) {
+			BendingBoardManager.updateBoard(player, event.getOldStance(), false, 0);
+		}
+		if (!event.getNewStance().isEmpty()) {
+			BendingBoardManager.updateBoard(player, event.getNewStance(), false, 0);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

@@ -9,7 +9,12 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a player's scoreboard for bending purposes
@@ -54,9 +59,7 @@ public class BendingBoardInstance {
 				if (cooldown || bendingPlayer.isOnCooldown(name)) sb.append(ChatColor.STRIKETHROUGH);
 				sb.append(name);
 			} else {
-				sb.append(coreAbility.getElement().getColor());
-				if (cooldown || bendingPlayer.isOnCooldown(coreAbility)) sb.append(ChatColor.STRIKETHROUGH);
-				sb.append(coreAbility.getName());
+				sb.append(coreAbility.getMovePreviewWithoutCooldownTimer(bendingPlayer.getPlayer(), cooldown));
 			}
 		}
 		sb.append(String.join("", Collections.nCopies(slot, ChatColor.RESET.toString())));
