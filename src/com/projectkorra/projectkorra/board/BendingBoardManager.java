@@ -51,7 +51,7 @@ public class BendingBoardManager {
 
 	private static void initialize() {
 		loadDisabledPlayers();
-		enabled = ConfigManager.boardConfig.get().getBoolean("Enable");
+		enabled = ConfigManager.defaultConfig.get().getBoolean("Properties.BendingBoard");
 		disabledWorlds.addAll(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 	}
 

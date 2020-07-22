@@ -1866,7 +1866,6 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
-		ConfigManager.boardConfig.reload();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();

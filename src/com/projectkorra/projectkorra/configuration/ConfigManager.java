@@ -11,17 +11,14 @@ public class ConfigManager {
 	public static Config presetConfig;
 	public static Config defaultConfig;
 	public static Config languageConfig;
-	public static Config boardConfig;
 
 	public ConfigManager() {
 		presetConfig = new Config(new File("presets.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		languageConfig = new Config(new File("language.yml"));
-		boardConfig = new Config(new File("board.yml"));
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.LANGUAGE);
 		configCheck(ConfigType.PRESETS);
-		configCheck(ConfigType.BOARD);
 	}
 
 	public static void configCheck(final ConfigType type) {
@@ -43,12 +40,6 @@ public class ConfigManager {
 			config.addDefault("Example", abilities);
 
 			presetConfig.save();
-		} else if (type == ConfigType.BOARD) {
-			config = boardConfig.get();
-
-			config.addDefault("Enable", false);
-
-			boardConfig.save();
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
@@ -570,6 +561,7 @@ public class ConfigManager {
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
 			config.addDefault("Properties.DatabaseCooldowns", true);
+			config.addDefault("Properties.BendingBoard", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
