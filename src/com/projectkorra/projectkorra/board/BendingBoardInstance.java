@@ -21,16 +21,18 @@ import java.util.Set;
  */
 public class BendingBoardInstance {
 	private final String[] cachedSlots = new String[10];
-	private final Set<String> combos = new HashSet<>();
+	private final Set<String> misc = new HashSet<>(); // Stores scoreboard scores for combos and misc abilities
 
+	private final Player player;
 	private final BendingPlayer bendingPlayer;
 
 	private final Scoreboard bendingBoard;
 	private final Objective bendingSlots;
 	private int selectedSlot;
 
-	public BendingBoardInstance(final Player player, final BendingPlayer bPlayer) {
+	public BendingBoardInstance(final BendingPlayer bPlayer) {
 		bendingPlayer = bPlayer;
+		player = bPlayer.getPlayer();
 		selectedSlot = player.getInventory().getHeldItemSlot() + 1;
 
 		bendingBoard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -45,11 +47,11 @@ public class BendingBoardInstance {
 	public void disableScoreboard() {
 		bendingBoard.clearSlot(DisplaySlot.SIDEBAR);
 		bendingSlots.unregister();
-		bendingPlayer.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+		player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 	}
 
 	private void setSlot(int slot, String name, boolean cooldown) {
-		if (slot < 1 || slot > 9 || !bendingPlayer.getPlayer().getScoreboard().equals(bendingBoard)) return;
+		if (slot < 1 || slot > 9 || !player.getScoreboard().equals(bendingBoard)) return;
 		StringBuilder sb = new StringBuilder(slot == selectedSlot ? ">" : "  ");
 		if (name == null || name.isEmpty()) {
 			sb.append(ChatColor.GRAY).append("-- Slot ").append(slot).append(" --");
@@ -59,7 +61,7 @@ public class BendingBoardInstance {
 				if (cooldown || bendingPlayer.isOnCooldown(name)) sb.append(ChatColor.STRIKETHROUGH);
 				sb.append(name);
 			} else {
-				sb.append(coreAbility.getMovePreviewWithoutCooldownTimer(bendingPlayer.getPlayer(), cooldown));
+				sb.append(coreAbility.getMovePreviewWithoutCooldownTimer(player, cooldown));
 			}
 		}
 		sb.append(String.join("", Collections.nCopies(slot, ChatColor.RESET.toString())));
@@ -96,18 +98,18 @@ public class BendingBoardInstance {
 		boundAbilities.keySet().stream().filter(key -> name.equals(boundAbilities.get(key))).forEach(slot -> setSlot(slot, name, cooldown));
 	}
 
-	public void updateCombo(String text, boolean show) {
+	public void updateMisc(String text, boolean show, boolean isCombo) {
 		if (show) {
-			if (combos.isEmpty()) {
+			if (misc.isEmpty()) {
 				bendingSlots.getScore("  -----------  ").setScore(-10);
 			}
-			combos.add(text);
-			bendingSlots.getScore(text).setScore(-10);
+			misc.add(text);
+			bendingSlots.getScore(text).setScore(isCombo ? -10 : -11);
 
 		} else {
-			combos.remove(text);
+			misc.remove(text);
 			bendingBoard.resetScores(text);
-			if (combos.isEmpty()) {
+			if (misc.isEmpty()) {
 				bendingBoard.resetScores("  -----------  ");
 			}
 		}

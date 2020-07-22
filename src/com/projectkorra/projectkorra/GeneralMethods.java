@@ -1867,7 +1867,6 @@ public class GeneralMethods {
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
 		ConfigManager.boardConfig.reload();
-		BendingBoardManager.reload();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
@@ -1891,6 +1890,7 @@ public class GeneralMethods {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			PassiveManager.registerPassives(player);
 		}
+		BendingBoardManager.reload();
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
 	}

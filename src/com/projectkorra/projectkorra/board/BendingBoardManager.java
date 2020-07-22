@@ -28,16 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BendingBoardManager {
 	private static final Set<String> disabledWorlds = new HashSet<>();
+	private static final Set<String> trackedCooldowns = new HashSet<>();
 	private static final Set<UUID> disabledPlayers = Collections.synchronizedSet(new HashSet<>());
 	private static final Map<Player, BendingBoardInstance> scoreboardPlayers = new ConcurrentHashMap<>();
 
 	private static boolean enabled;
 
 	public static void setup() {
-		enabled = ConfigManager.boardConfig.get().getBoolean("Enable");
-		loadDisabledPlayers();
-		scoreboardPlayers.clear();
-		disabledWorlds.addAll(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
+		initialize();
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			canUseScoreboard(player);
 		}
@@ -45,7 +43,17 @@ public class BendingBoardManager {
 
 	public static void reload() {
 		scoreboardPlayers.values().forEach(BendingBoardInstance::disableScoreboard);
-		setup();
+		disabledWorlds.clear();
+		trackedCooldowns.clear();
+		scoreboardPlayers.clear();
+		initialize();
+	}
+
+	private static void initialize() {
+		loadDisabledPlayers();
+		enabled = ConfigManager.boardConfig.get().getBoolean("Enable");
+		disabledWorlds.addAll(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
+		trackedCooldowns.addAll(ConfigManager.boardConfig.get().getStringList("TrackedAbilities"));
 	}
 
 	/**
@@ -93,7 +101,7 @@ public class BendingBoardManager {
 		if (!scoreboardPlayers.containsKey(player)) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) return false;
-			scoreboardPlayers.put(player, new BendingBoardInstance(player, bPlayer));
+			scoreboardPlayers.put(player, new BendingBoardInstance(bPlayer));
 		}
 		return true;
 	}
@@ -116,7 +124,10 @@ public class BendingBoardManager {
 			}
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);
 			if (coreAbility != null && ComboManager.getComboAbilities().containsKey(abilityName)) {
-				scoreboardPlayers.get(player).updateCombo("  " + coreAbility.getElement().getColor() + ChatColor.STRIKETHROUGH + abilityName, cooldown);
+				scoreboardPlayers.get(player).updateMisc("  " + coreAbility.getElement().getColor() + ChatColor.STRIKETHROUGH + abilityName, cooldown, true);
+				return;
+			} else if (coreAbility == null && trackedCooldowns.contains(abilityName)) {
+				scoreboardPlayers.get(player).updateMisc("  " + ChatColor.GRAY + ChatColor.STRIKETHROUGH + abilityName, cooldown, false);
 				return;
 			}
 			scoreboardPlayers.get(player).setAbility(abilityName, cooldown);
@@ -127,6 +138,17 @@ public class BendingBoardManager {
 		if (canUseScoreboard(player)) {
 			scoreboardPlayers.get(player).setActiveSlot(++oldSlot, ++newSlot);
 		}
+	}
+
+	/**
+	 * Some abilities use internal cooldowns with custom names that don't correspond to bound abilities' names.
+	 * Adds internal cooldown to the set of tracked abilities so it will appear on the bending baord.
+	 * @param cooldownName the internal cooldown name
+	 * @return if added successfully to set
+	 */
+	public static boolean addCooldownToTrack(String cooldownName) {
+		if (CoreAbility.getAbility(cooldownName) != null) return false; // Ignore cooldown if already corresponds to a CoreAbility name
+		return trackedCooldowns.add(cooldownName);
 	}
 
 	/**
