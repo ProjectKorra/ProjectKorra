@@ -505,7 +505,6 @@ public class ConfigManager {
 			plantBlocks.add(Material.JUNGLE_LEAVES.toString());
 			plantBlocks.add(Material.OAK_LEAVES.toString());
 			plantBlocks.add(Material.SPRUCE_LEAVES.toString());
-			plantBlocks.add(Material.DEAD_BUSH.toString());
 			plantBlocks.add(Material.ORANGE_TULIP.toString());
 			plantBlocks.add(Material.PINK_TULIP.toString());
 			plantBlocks.add(Material.RED_TULIP.toString());
