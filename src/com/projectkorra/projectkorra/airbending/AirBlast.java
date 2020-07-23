@@ -20,6 +20,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -206,23 +207,20 @@ public class AirBlast extends AirAbility {
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.location);
 		}
+
+		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
+
+		while (blocks.hasNext() && checkLocation(blocks.next()));
 		
-		for (double d = 0; d < speedFactor; d += 0.1) {
-			if (!checkLocation()) {
-				remove();
-				break;
-			}
-			this.location.add(this.direction.clone().multiply(d));
-		}
+		this.location.add(this.direction.clone().multiply(speedFactor));
 	}
 
-	public boolean checkLocation() {
-		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
+	public boolean checkLocation(Block block) {
+		if (GeneralMethods.checkDiagonalWall(block.getLocation(), this.direction)) {
 			this.remove();
 			return false;
 		}
-		
-		Block block = location.getBlock();
+
 		if ((!block.isPassable() || block.isLiquid()) && !this.affectedLevers.contains(block)) {
 			if (block.getType() == Material.LAVA && this.canCoolLava) {
 				if (LavaFlow.isLavaFlowBlock(block)) {
