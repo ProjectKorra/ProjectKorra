@@ -652,7 +652,6 @@ public class GeneralMethods {
 		for (final ItemStack item : items) {
 			if(item.getType() != Material.AIR) {
 				block.getWorld().dropItem(block.getLocation(), item);
-				continue;
 			}
 		}
 	}
