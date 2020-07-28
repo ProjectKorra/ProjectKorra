@@ -14,6 +14,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -145,6 +146,15 @@ public class AirSwipe extends AirAbility {
 		for (final Vector direction : this.streams.keySet()) {
 			Location location = this.streams.get(direction);
 			if (direction != null && location != null) {
+				
+				BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), location.toVector(), direction, 0, (int) Math.ceil(direction.clone().multiply(speed).length()));
+
+				while (blocks.hasNext()) {
+					if(!blocks.next().isPassable()) {
+						this.streams.remove(direction);
+					}
+				}
+				
 				location = location.clone().add(direction.clone().multiply(this.speed));
 				this.streams.put(direction, location);
 
@@ -152,7 +162,7 @@ public class AirSwipe extends AirAbility {
 					this.streams.clear();
 				} else {
 					final Block block = location.getBlock();
-					if (!ElementalAbility.isTransparent(this.player, block)) {
+					if (!ElementalAbility.isTransparent(this.player, block) || !block.isPassable()) {
 						this.streams.remove(direction);
 						continue;
 					}

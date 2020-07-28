@@ -15,6 +15,7 @@ import org.bukkit.block.Smoker;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -72,13 +73,13 @@ public class FireBlast extends FireAbility {
 
 		this.setFields();
 		this.safeBlocks = safeBlocks;
-
+		this.damage = damage;
 		this.location = location.clone();
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
 
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers();
+		this.applyModifiers(this.damage, this.range);
 
 		this.start();
 	}
@@ -102,18 +103,18 @@ public class FireBlast extends FireAbility {
 		this.location = this.location.add(this.direction.clone());
 		
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers();
+		this.applyModifiers(this.damage, this.range);
 
 		this.start();
 		this.bPlayer.addCooldown("FireBlast", this.cooldown);
 	}
 
-	private void applyModifiers() {
+	private void applyModifiers(double damage, double range) {
 		int damageMod = 0;
 		int rangeMod = 0;
 
 		damageMod = (int) (this.getDayFactor(damage) - damage);
-		rangeMod = (int) (this.getDayFactor(this.range) - this.range);
+		rangeMod = (int) (this.getDayFactor(range) - range);
 
 		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
 		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
@@ -152,6 +153,12 @@ public class FireBlast extends FireAbility {
 			return;
 		}
 
+		
+		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
+
+		while (blocks.hasNext() && checkLocation(blocks.next()));
+		
+		this.location.add(this.direction.clone().multiply(speedFactor));
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 
 		if (this.random.nextInt(4) == 0) {
@@ -159,6 +166,14 @@ public class FireBlast extends FireAbility {
 		}
 	}
 
+	public boolean checkLocation(Block block) {
+		if (GeneralMethods.checkDiagonalWall(block.getLocation(), this.direction) || !block.isPassable()) {
+			this.remove();
+			return false;
+		}
+		
+		return true;
+	}
 	private void affect(final Entity entity) {
 		if (entity.getUniqueId() != this.player.getUniqueId() && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) && !((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			if (this.bPlayer.isAvatarState()) {
