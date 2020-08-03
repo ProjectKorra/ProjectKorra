@@ -150,7 +150,7 @@ public class AirSwipe extends AirAbility {
 				BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), location.toVector(), direction, 0, (int) Math.ceil(direction.clone().multiply(speed).length()));
 
 				while (blocks.hasNext()) {
-					if(!blocks.next().isPassable()) {
+					if(checkLocation(blocks.next(), direction)) {
 						this.streams.remove(direction);
 					}
 				}
@@ -204,7 +204,12 @@ public class AirSwipe extends AirAbility {
 			this.remove();
 		}
 	}
-
+	public boolean checkLocation(Block block, Vector direction) {
+		if (GeneralMethods.checkDiagonalWall(block.getLocation(), direction) || !block.isPassable()) {
+			return false;
+		}
+		return true;
+	}
 	private void affectPeople(final Location location, final Vector direction) {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, this.radius);
 		final Vector fDirection = direction.clone();
