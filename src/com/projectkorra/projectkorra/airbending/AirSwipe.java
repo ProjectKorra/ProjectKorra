@@ -150,7 +150,7 @@ public class AirSwipe extends AirAbility {
 				BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), location.toVector(), direction, 0, (int) Math.ceil(direction.clone().multiply(speed).length()));
 
 				while (blocks.hasNext()) {
-					if(checkLocation(blocks.next(), direction)) {
+					if(!checkLocation(blocks.next(), direction)) {
 						this.streams.remove(direction);
 					}
 				}
