@@ -253,6 +253,9 @@ public class AirSuction extends AirAbility {
 			} else if (!bPlayer.canBendIgnoreCooldowns(this)) {
 				remove();
 				return;
+			} else if (origin.distanceSquared(player.getLocation()) > this.range * this.range) {
+				remove();
+				return;
 			}
 
 			playAirbendingParticles(this.origin, 5, 0.5, 0.5, 0.5);

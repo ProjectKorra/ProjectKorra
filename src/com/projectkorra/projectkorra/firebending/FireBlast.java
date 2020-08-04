@@ -159,7 +159,6 @@ public class FireBlast extends FireAbility {
 		while (blocks.hasNext() && checkLocation(blocks.next()));
 		
 		this.location.add(this.direction.clone().multiply(speedFactor));
-		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 
 		if (this.random.nextInt(4) == 0) {
 			playFirebendingSound(this.location);
@@ -168,6 +167,30 @@ public class FireBlast extends FireAbility {
 
 	public boolean checkLocation(Block block) {
 		if (GeneralMethods.checkDiagonalWall(block.getLocation(), this.direction) || !block.isPassable()) {
+			if (block.getType() == Material.FURNACE && this.powerFurnace) {
+				final Furnace furnace = (Furnace) block.getState();
+				furnace.setBurnTime((short) 800);
+				furnace.update();
+			} else if (block.getType() == Material.SMOKER && this.powerFurnace) {
+				final Smoker smoker = (Smoker) block.getState();
+				smoker.setBurnTime((short) 800);
+				smoker.update();
+			} else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
+				final BlastFurnace blastF = (BlastFurnace) block.getState();
+				blastF.setBurnTime((short) 800);
+				blastF.update();
+			} else if (block instanceof Campfire) {
+				final Campfire campfire = (Campfire) block.getBlockData();
+				if(!campfire.isLit()) {
+					if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
+						campfire.setLit(true);
+					}
+				}
+			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
+				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
+					this.ignite(this.location);
+				}
+			}
 			this.remove();
 			return false;
 		}
@@ -215,36 +238,6 @@ public class FireBlast extends FireAbility {
 		this.ticks++;
 
 		if (this.ticks > MAX_TICKS) {
-			this.remove();
-			return;
-		}
-
-		final Block block = this.location.getBlock();
-		if (GeneralMethods.isSolid(block) || block.isLiquid()) {
-			if (block.getType() == Material.FURNACE && this.powerFurnace) {
-				final Furnace furnace = (Furnace) block.getState();
-				furnace.setBurnTime((short) 800);
-				furnace.update();
-			} else if (block.getType() == Material.SMOKER && this.powerFurnace) {
-				final Smoker smoker = (Smoker) block.getState();
-				smoker.setBurnTime((short) 800);
-				smoker.update();
-			} else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
-				final BlastFurnace blastF = (BlastFurnace) block.getState();
-				blastF.setBurnTime((short) 800);
-				blastF.update();
-			} else if (block instanceof Campfire) {
-				final Campfire campfire = (Campfire) block.getBlockData();
-				if(!campfire.isLit()) {
-					if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
-						campfire.setLit(true);
-					}
-				}
-			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
-				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
-					this.ignite(this.location);
-				}
-			}
 			this.remove();
 			return;
 		}
