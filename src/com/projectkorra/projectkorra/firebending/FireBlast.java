@@ -166,7 +166,7 @@ public class FireBlast extends FireAbility {
 	}
 
 	public boolean checkLocation(Block block) {
-		if (GeneralMethods.checkDiagonalWall(block.getLocation(), this.direction) || !block.isPassable()) {
+		if (!block.isPassable()) {
 			if (block.getType() == Material.FURNACE && this.powerFurnace) {
 				final Furnace furnace = (Furnace) block.getState();
 				furnace.setBurnTime((short) 800);
@@ -194,7 +194,6 @@ public class FireBlast extends FireAbility {
 			this.remove();
 			return false;
 		}
-		
 		return true;
 	}
 	private void affect(final Entity entity) {

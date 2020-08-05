@@ -254,7 +254,6 @@ public class AirSwipe extends AirAbility {
 							AirSwipe.this.affectedEntities.add(entity);
 						}
 						breakBreathbendingHold(entity);
-						AirSwipe.this.streams.remove(direction);
 					} else if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && !(entity instanceof LivingEntity)) {
 
 						GeneralMethods.setVelocity(entity, fDirection.multiply(AirSwipe.this.pushFactor));
