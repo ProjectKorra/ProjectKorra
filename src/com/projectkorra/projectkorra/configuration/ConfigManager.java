@@ -949,6 +949,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Passive.FastSwim.Cooldown", 0);
 			config.addDefault("Abilities.Water.Passive.FastSwim.Duration", 0);
 			config.addDefault("Abilities.Water.Passive.FastSwim.SpeedFactor", 0.7);
+			config.addDefault("Abilities.Water.Passive.FastSwim.AllowWaterArms", false);
 			config.addDefault("Abilities.Water.Passive.Hydrosink.Enabled", true);
 
 			config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
