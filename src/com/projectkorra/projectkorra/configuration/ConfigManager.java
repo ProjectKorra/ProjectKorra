@@ -943,6 +943,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSweep.Damage", 3);
 			config.addDefault("Abilities.Air.AirSweep.Knockback", 3.5);
 			config.addDefault("Abilities.Air.AirSweep.Cooldown", 6000);
+			config.addDefault("Abilities.Air.AirSweep.HitRadius", 1.5);
 
 			config.addDefault("Abilities.Water.Passive.FastSwim.Enabled", true);
 			config.addDefault("Abilities.Water.Passive.FastSwim.Cooldown", 0);
@@ -1071,6 +1072,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
 			config.addDefault("Abilities.Water.WaterArms.Enabled", true);
+			config.addDefault("Abilities.Water.WaterArms.DisplayBoundMsg", false);
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.InitialLength", 4);
 			config.addDefault("Abilities.Water.WaterArms.Arms.SourceGrabRange", 12);
