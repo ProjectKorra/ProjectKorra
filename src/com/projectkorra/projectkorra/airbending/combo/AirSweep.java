@@ -42,6 +42,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
+	private double hitRadius;
 
 	public AirSweep(final Player player) {
 		super(player);
@@ -62,6 +63,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		this.speed = getConfig().getDouble("Abilities.Air.AirSweep.Speed");
 		this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSweep.Cooldown");
+		this.hitRadius = getConfig().getDouble("Abilities.Air.AirSweep.HitRadius");
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
@@ -188,7 +190,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				}
 			}
 			if (i % 3 == 0) {
-				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
+				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, hitRadius)) {
 					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 						this.remove();
 						return;
