@@ -1583,13 +1583,16 @@ public class PKListener implements Listener {
 	public void onPlayerSlotChange(final PlayerItemHeldEvent event) {
 		final Player player = event.getPlayer();
 		final int slot = event.getNewSlot() + 1;
-		GeneralMethods.displayMovePreview(player, slot);
 
+		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+			GeneralMethods.displayMovePreview(player, slot);
+		}
+		
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 			if (waterArms != null) {
-				waterArms.displayBoundMsg(event.getNewSlot() + 1);
-				return;
+					waterArms.displayBoundMsg(event.getNewSlot() + 1);
+					return;
 			}
 		}
 	}
