@@ -943,11 +943,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSweep.Damage", 3);
 			config.addDefault("Abilities.Air.AirSweep.Knockback", 3.5);
 			config.addDefault("Abilities.Air.AirSweep.Cooldown", 6000);
+			config.addDefault("Abilities.Air.AirSweep.Radius", 1);
 
 			config.addDefault("Abilities.Water.Passive.FastSwim.Enabled", true);
 			config.addDefault("Abilities.Water.Passive.FastSwim.Cooldown", 0);
 			config.addDefault("Abilities.Water.Passive.FastSwim.Duration", 0);
 			config.addDefault("Abilities.Water.Passive.FastSwim.SpeedFactor", 0.7);
+			config.addDefault("Abilities.Water.Passive.FastSwim.AllowWaterArms", false);
 			config.addDefault("Abilities.Water.Passive.Hydrosink.Enabled", true);
 
 			config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
@@ -1071,6 +1073,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
 			config.addDefault("Abilities.Water.WaterArms.Enabled", true);
+			config.addDefault("Abilities.Water.WaterArms.DisplayBoundMsg", false);
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.InitialLength", 4);
 			config.addDefault("Abilities.Water.WaterArms.Arms.SourceGrabRange", 12);
