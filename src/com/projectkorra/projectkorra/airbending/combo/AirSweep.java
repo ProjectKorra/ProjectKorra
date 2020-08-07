@@ -63,7 +63,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		this.speed = getConfig().getDouble("Abilities.Air.AirSweep.Speed");
 		this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSweep.Cooldown");
-		this.hitRadius = getConfig().getDouble("Abilities.Air.AirSweep.Radius");
+		this.radius = getConfig().getDouble("Abilities.Air.AirSweep.Radius");
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = 0;
