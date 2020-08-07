@@ -1591,8 +1591,8 @@ public class PKListener implements Listener {
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 			if (waterArms != null) {
-					waterArms.displayBoundMsg(event.getNewSlot() + 1);
-					return;
+				waterArms.displayBoundMsg(event.getNewSlot() + 1);
+				return;
 			}
 		}
 	}
