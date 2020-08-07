@@ -943,7 +943,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSweep.Damage", 3);
 			config.addDefault("Abilities.Air.AirSweep.Knockback", 3.5);
 			config.addDefault("Abilities.Air.AirSweep.Cooldown", 6000);
-			config.addDefault("Abilities.Air.AirSweep.HitRadius", 1);
+			config.addDefault("Abilities.Air.AirSweep.Radius", 1);
 
 			config.addDefault("Abilities.Water.Passive.FastSwim.Enabled", true);
 			config.addDefault("Abilities.Water.Passive.FastSwim.Cooldown", 0);
