@@ -24,7 +24,7 @@ public class ToggleCommand extends PKCommand {
 	private final String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, toggledOffSingleElement, toggledOnSingleElement, wrongElementOther, toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound;
 
 	public ToggleCommand() {
-		super("toggle", "/bending toggle <All/Element/Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
+		super("toggle", "/bending toggle <All/Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
 
 		final FileConfiguration c = ConfigManager.languageConfig.get();
 
