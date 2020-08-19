@@ -102,7 +102,7 @@ public abstract class CoreAbility implements Ability {
 	private boolean hidden;
 	private int id;
 	private long startTime;
-	private long startTick;
+	private long currentTick;
 	private boolean attributesModified;
 
 	static {
@@ -149,7 +149,6 @@ public abstract class CoreAbility implements Ability {
 		this.startTime = System.currentTimeMillis();
 		this.started = false;
 		this.id = CoreAbility.idCounter;
-		this.startTick = this.getCurrentTick();
 
 		if (idCounter == Integer.MAX_VALUE) {
 			idCounter = Integer.MIN_VALUE;
@@ -274,6 +273,7 @@ public abstract class CoreAbility implements Ability {
 						abil.progress();
 					}
 
+					abil.currentTick++;
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 				} catch (final Exception e) {
 					e.printStackTrace();
@@ -742,11 +742,11 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public long getStartTick() {
-		return this.startTick;
+		return 0;
 	}
 
 	public long getCurrentTick() {
-		return this.player.getWorld().getFullTime();
+		return this.currentTick;
 	}
 
 	public boolean isStarted() {
