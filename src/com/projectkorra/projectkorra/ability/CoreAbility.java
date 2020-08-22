@@ -90,6 +90,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
+	private static long currentTick;
 
 	protected Player player;
 	protected BendingPlayer bPlayer;
@@ -102,7 +103,7 @@ public abstract class CoreAbility implements Ability {
 	private boolean hidden;
 	private int id;
 	private long startTime;
-	private long currentTick;
+	private long startTick;
 	private boolean attributesModified;
 
 	static {
@@ -180,6 +181,7 @@ public abstract class CoreAbility implements Ability {
 
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
+		this.startTick = getCurrentTick();
 		final Class<? extends CoreAbility> clazz = this.getClass();
 		final UUID uuid = this.player.getUniqueId();
 
@@ -273,7 +275,6 @@ public abstract class CoreAbility implements Ability {
 						abil.progress();
 					}
 
-					abil.currentTick++;
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 				} catch (final Exception e) {
 					e.printStackTrace();
@@ -291,6 +292,7 @@ public abstract class CoreAbility implements Ability {
 				}
 			}
 		}
+		currentTick++;
 	}
 
 	/**
@@ -742,11 +744,11 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public long getStartTick() {
-		return 0;
+		return this.startTick;
 	}
 
 	public long getCurrentTick() {
-		return this.currentTick;
+		return currentTick;
 	}
 
 	public boolean isStarted() {
