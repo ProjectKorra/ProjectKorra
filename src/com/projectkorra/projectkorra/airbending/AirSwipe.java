@@ -146,65 +146,75 @@ public class AirSwipe extends AirAbility {
 		for (final Vector direction : this.streams.keySet()) {
 			Location location = this.streams.get(direction);
 			if (direction != null && location != null) {
-				
+
 				BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), location.toVector(), direction, 0, (int) Math.ceil(direction.clone().multiply(speed).length()));
 
 				while (blocks.hasNext()) {
-					if(!blocks.next().isPassable()) {
+					if(!checkLocation(blocks.next(), direction)) {
 						this.streams.remove(direction);
+						break;
 					}
 				}
 				
+				if(!this.streams.containsKey(direction)) {
+					continue;
+				}
+
 				location = location.clone().add(direction.clone().multiply(this.speed));
 				this.streams.put(direction, location);
-
-				if (location.distanceSquared(this.origin) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-					this.streams.clear();
-				} else {
-					final Block block = location.getBlock();
-					if (!ElementalAbility.isTransparent(this.player, block) || !block.isPassable()) {
-						this.streams.remove(direction);
-						continue;
-					}
-
-					for (final Block testblock : GeneralMethods.getBlocksAroundPoint(location, this.radius)) {
-						if (FireAbility.isFire(testblock.getType())) {
-							testblock.setType(Material.AIR);
-						}
-					}
-
-					if (!isAir(block.getType())) {
-						if (block.getType().equals(Material.SNOW)) {
-							continue;
-						} else if (isPlant(block.getType())) {
-							block.breakNaturally();
-						} else {
-							this.streams.remove(direction);
-						}
-						if (isLava(block)) {
-							if (LavaFlow.isLavaFlowBlock(block)) {
-								LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
-							} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
-								new TempBlock(block, Material.OBSIDIAN);
-							} else {
-								new TempBlock(block, Material.COBBLESTONE);
-							}
-						}
-					} else {
-						playAirbendingParticles(location, this.particles, 0.2F, 0.2F, 0);
-						if (this.random.nextInt(4) == 0) {
-							playAirbendingSound(location);
-						}
-						this.affectPeople(location, direction);
-					}
+				playAirbendingParticles(location, this.particles, 0.2F, 0.2F, 0);
+				if (this.random.nextInt(4) == 0) {
+					playAirbendingSound(location);
 				}
+				this.affectPeople(location, direction);
 			}
 		}
 		if (this.streams.isEmpty()) {
 			this.remove();
 		}
 	}
+	public boolean checkLocation(Block block, Vector direction) {
+		if (GeneralMethods.checkDiagonalWall(block.getLocation(), direction) || !block.isPassable()) {
+			return false;
+		}  else {
+			if (block.getLocation().distanceSquared(this.origin) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				this.streams.clear();
+			} else {
+				if (!ElementalAbility.isTransparent(this.player, block) || !block.isPassable()) {
+					return false;
+				}
 
+				for (final Block testblock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), this.radius)) {
+					if (FireAbility.isFire(testblock.getType())) {
+						testblock.setType(Material.AIR);
+					}
+				}
+
+				if (!isAir(block.getType())) {
+					if (block.getType().equals(Material.SNOW)) {
+						return true;
+					} else if (isPlant(block.getType())) {
+						block.breakNaturally();
+						return false;
+					} else if (isLava(block)) {
+						if (LavaFlow.isLavaFlowBlock(block)) {
+							LavaFlow.removeBlock(block);
+							return false;// TODO: Make more generic for future lava generating moves.
+						} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
+							new TempBlock(block, Material.OBSIDIAN);
+							return false;
+						} else {
+							new TempBlock(block, Material.COBBLESTONE);
+							return false;
+						}
+					} else {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 	private void affectPeople(final Location location, final Vector direction) {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, this.radius);
 		final Vector fDirection = direction.clone();
@@ -244,7 +254,6 @@ public class AirSwipe extends AirAbility {
 							AirSwipe.this.affectedEntities.add(entity);
 						}
 						breakBreathbendingHold(entity);
-						AirSwipe.this.streams.remove(direction);
 					} else if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && !(entity instanceof LivingEntity)) {
 
 						GeneralMethods.setVelocity(entity, fDirection.multiply(AirSwipe.this.pushFactor));

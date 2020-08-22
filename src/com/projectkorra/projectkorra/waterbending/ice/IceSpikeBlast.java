@@ -157,11 +157,8 @@ public class IceSpikeBlast extends IceAbility {
 		} else if (!this.bPlayer.getBoundAbilityName().equals(this.getName()) && this.prepared) {
 			this.remove();
 			return;
-		} else if (!isWaterbendable(this.sourceBlock) && !this.progressing && !this.settingUp) {
-			this.remove();
-			return;
 		}
-
+		
 		if (System.currentTimeMillis() < this.time + this.interval) {
 			return;
 		}
