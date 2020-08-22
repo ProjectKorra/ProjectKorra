@@ -651,7 +651,9 @@ public class GeneralMethods {
 	 */
 	public static void dropItems(final Block block, final Collection<ItemStack> items) {
 		for (final ItemStack item : items) {
-			block.getWorld().dropItem(block.getLocation(), item);
+			if(item.getType() != Material.AIR) {
+				block.getWorld().dropItem(block.getLocation(), item);
+			}
 		}
 	}
 
@@ -1796,7 +1798,45 @@ public class GeneralMethods {
 	}
 
 	public static boolean isWeapon(final Material mat) {
-		return mat != null && (mat == Material.WOODEN_AXE || mat == Material.WOODEN_PICKAXE || mat == Material.WOODEN_SHOVEL || mat == Material.WOODEN_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SHOVEL || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SHOVEL || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SHOVEL || mat == Material.GOLDEN_AXE || mat == Material.GOLDEN_HOE || mat == Material.GOLDEN_SWORD || mat == Material.GOLDEN_PICKAXE || mat == Material.GOLDEN_SHOVEL || mat == Material.TRIDENT);
+	
+		switch(mat) {
+			case BOW:
+			case CROSSBOW:
+			case DIAMOND_AXE:
+			case DIAMOND_HOE:
+			case DIAMOND_PICKAXE:
+			case DIAMOND_SHOVEL:
+			case DIAMOND_SWORD:
+			case GOLDEN_AXE:
+			case GOLDEN_HOE:
+			case GOLDEN_PICKAXE:
+			case GOLDEN_SHOVEL:
+			case GOLDEN_SWORD:
+			case IRON_AXE:
+			case IRON_HOE:
+			case IRON_PICKAXE:
+			case IRON_SHOVEL:
+			case IRON_SWORD:
+			case NETHERITE_AXE:
+			case NETHERITE_HOE:
+			case NETHERITE_PICKAXE:
+			case NETHERITE_SHOVEL:
+			case NETHERITE_SWORD:
+			case STONE_AXE:
+			case STONE_HOE:
+			case STONE_PICKAXE:
+			case STONE_SHOVEL:
+			case STONE_SWORD:
+			case TRIDENT:
+			case WOODEN_AXE:
+			case WOODEN_HOE:
+			case WOODEN_PICKAXE:
+			case WOODEN_SHOVEL:
+			case WOODEN_SWORD:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	public static void loadBendingPlayer(final BendingPlayer pl) {

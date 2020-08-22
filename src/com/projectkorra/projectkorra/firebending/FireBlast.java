@@ -15,6 +15,7 @@ import org.bukkit.block.Smoker;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -72,13 +73,13 @@ public class FireBlast extends FireAbility {
 
 		this.setFields();
 		this.safeBlocks = safeBlocks;
-
+		this.damage = damage;
 		this.location = location.clone();
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
 
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers();
+		this.applyModifiers(this.damage, this.range);
 
 		this.start();
 	}
@@ -102,18 +103,18 @@ public class FireBlast extends FireAbility {
 		this.location = this.location.add(this.direction.clone());
 		
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers();
+		this.applyModifiers(this.damage, this.range);
 
 		this.start();
 		this.bPlayer.addCooldown("FireBlast", this.cooldown);
 	}
 
-	private void applyModifiers() {
+	private void applyModifiers(double damage, double range) {
 		int damageMod = 0;
 		int rangeMod = 0;
 
 		damageMod = (int) (this.getDayFactor(damage) - damage);
-		rangeMod = (int) (this.getDayFactor(this.range) - this.range);
+		rangeMod = (int) (this.getDayFactor(range) - range);
 
 		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
 		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
@@ -152,13 +153,49 @@ public class FireBlast extends FireAbility {
 			return;
 		}
 
-		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
+		
+		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
+
+		while (blocks.hasNext() && checkLocation(blocks.next()));
+		
+		this.location.add(this.direction.clone().multiply(speedFactor));
 
 		if (this.random.nextInt(4) == 0) {
 			playFirebendingSound(this.location);
 		}
 	}
 
+	public boolean checkLocation(Block block) {
+		if (!block.isPassable()) {
+			if (block.getType() == Material.FURNACE && this.powerFurnace) {
+				final Furnace furnace = (Furnace) block.getState();
+				furnace.setBurnTime((short) 800);
+				furnace.update();
+			} else if (block.getType() == Material.SMOKER && this.powerFurnace) {
+				final Smoker smoker = (Smoker) block.getState();
+				smoker.setBurnTime((short) 800);
+				smoker.update();
+			} else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
+				final BlastFurnace blastF = (BlastFurnace) block.getState();
+				blastF.setBurnTime((short) 800);
+				blastF.update();
+			} else if (block instanceof Campfire) {
+				final Campfire campfire = (Campfire) block.getBlockData();
+				if(!campfire.isLit()) {
+					if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
+						campfire.setLit(true);
+					}
+				}
+			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
+				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
+					this.ignite(this.location);
+				}
+			}
+			this.remove();
+			return false;
+		}
+		return true;
+	}
 	private void affect(final Entity entity) {
 		if (entity.getUniqueId() != this.player.getUniqueId() && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) && !((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			if (this.bPlayer.isAvatarState()) {
@@ -200,36 +237,6 @@ public class FireBlast extends FireAbility {
 		this.ticks++;
 
 		if (this.ticks > MAX_TICKS) {
-			this.remove();
-			return;
-		}
-
-		final Block block = this.location.getBlock();
-		if (GeneralMethods.isSolid(block) || block.isLiquid()) {
-			if (block.getType() == Material.FURNACE && this.powerFurnace) {
-				final Furnace furnace = (Furnace) block.getState();
-				furnace.setBurnTime((short) 800);
-				furnace.update();
-			} else if (block.getType() == Material.SMOKER && this.powerFurnace) {
-				final Smoker smoker = (Smoker) block.getState();
-				smoker.setBurnTime((short) 800);
-				smoker.update();
-			} else if (block.getType() == Material.BLAST_FURNACE && this.powerFurnace) {
-				final BlastFurnace blastF = (BlastFurnace) block.getState();
-				blastF.setBurnTime((short) 800);
-				blastF.update();
-			} else if (block instanceof Campfire) {
-				final Campfire campfire = (Campfire) block.getBlockData();
-				if(!campfire.isLit()) {
-					if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
-						campfire.setLit(true);
-					}
-				}
-			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
-				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
-					this.ignite(this.location);
-				}
-			}
 			this.remove();
 			return;
 		}

@@ -35,6 +35,7 @@ public class Lightning extends LightningAbility {
 	private boolean hitIce;
 	private boolean selfHitWater;
 	private boolean selfHitClose;
+	private boolean allowOnFireJet;
 	@Attribute("ArcOnIce")
 	private boolean arcOnIce;
 	private int waterArcs;
@@ -110,6 +111,7 @@ public class Lightning extends LightningAbility {
 		this.waterArcs = getConfig().getInt("Abilities.Fire.Lightning.WaterArcs");
 		this.chargeTime = getConfig().getLong("Abilities.Fire.Lightning.ChargeTime");
 		this.cooldown = getConfig().getLong("Abilities.Fire.Lightning.Cooldown");
+		this.allowOnFireJet = getConfig().getBoolean("Abilities.Fire.Lightning.AllowOnFireJet");
 
 		this.range = this.getDayFactor(this.range);
 		this.subArcChance = this.getDayFactor(this.subArcChance);
@@ -182,7 +184,7 @@ public class Lightning extends LightningAbility {
 		} else if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
 			return;
-		} else if (CoreAbility.hasAbility(player, FireJet.class)){
+		} else if (CoreAbility.hasAbility(player, FireJet.class) && !allowOnFireJet){
 			this.removeWithTasks();
 			return;
 		}

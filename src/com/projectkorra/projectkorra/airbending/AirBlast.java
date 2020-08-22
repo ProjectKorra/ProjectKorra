@@ -20,6 +20,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -206,12 +207,35 @@ public class AirBlast extends AirAbility {
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.location);
 		}
-		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
+
+		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
+
+		while (blocks.hasNext() && checkLocation(blocks.next()));
+		
+		this.location.add(this.direction.clone().multiply(speedFactor));
+	}
+
+	public boolean checkLocation(Block block) {
+		if (GeneralMethods.checkDiagonalWall(block.getLocation(), this.direction)) {
 			this.remove();
-			return;
+			return false;
 		}
 
-		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
+		if ((!block.isPassable() || block.isLiquid()) && !this.affectedLevers.contains(block)) {
+			if (block.getType() == Material.LAVA && this.canCoolLava) {
+				if (LavaFlow.isLavaFlowBlock(block)) {
+					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
+				} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
+					new TempBlock(block, Material.OBSIDIAN);
+				} else {
+					new TempBlock(block, Material.COBBLESTONE);
+				}
+			}
+			this.remove();
+			return false;
+		}
+		
+		return true;
 	}
 
 	private void affect(final Entity entity) {
@@ -398,20 +422,6 @@ public class AirBlast extends AirAbility {
 					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
 				}
 			}
-		}
-
-		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !this.affectedLevers.contains(block) && this.canCoolLava) {
-			if (block.getType() == Material.LAVA) {
-				if (LavaFlow.isLavaFlowBlock(block)) {
-					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
-				} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
-					new TempBlock(block, Material.OBSIDIAN);
-				} else {
-					new TempBlock(block, Material.COBBLESTONE);
-				}
-			}
-			this.remove();
-			return;
 		}
 
 		/*

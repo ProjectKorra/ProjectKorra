@@ -1600,7 +1600,7 @@ public class PKListener implements Listener {
 		GeneralMethods.displayMovePreview(player, slot);
 		BendingBoardManager.changeActiveSlot(player, event.getPreviousSlot(), event.getNewSlot());
 
-		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 			if (waterArms != null) {
 				waterArms.displayBoundMsg(event.getNewSlot() + 1);

@@ -171,10 +171,7 @@ public class Torrent extends WaterAbility {
 		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
 			return;
-		} else if (!isWaterbendable(this.sourceBlock) && !this.settingUp && !this.forming && !this.formed && !this.launching) {
-			this.remove();
-			return;
-		}
+		} 
 
 		if (System.currentTimeMillis() > this.time + this.interval) {
 			this.time = System.currentTimeMillis();

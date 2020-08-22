@@ -253,7 +253,7 @@ public class AirSuction extends AirAbility {
 			} else if (!bPlayer.canBendIgnoreCooldowns(this)) {
 				remove();
 				return;
-			} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange() * getSelectRange()) {
+			} else if (origin.distanceSquared(player.getLocation()) > this.range * this.range) {
 				remove();
 				return;
 			}

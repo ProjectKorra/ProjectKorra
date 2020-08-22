@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -112,8 +111,7 @@ public class Illumination extends FireAbility {
 	private void set() {
 		final Block standingBlock = this.player.getLocation().getBlock();
 		final Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
-
-		if (!GeneralMethods.isSolid(standBlock)) {
+		if (!isIgnitable(standingBlock)) {
 			return;
 		} else if (this.block != null && standingBlock.equals(this.block.getBlock())) {
 			return;
