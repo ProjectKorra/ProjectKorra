@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.kingdoms</groupId>
+  <artifactId>Kingdoms</artifactId>
+  <versioning>
+    <release>1.8.5</release>
+    <versions>
+      <version>1.8.5</version>
+    </versions>
+    <lastUpdated>20200824</lastUpdated>
+  </versioning>
+</metadata>
