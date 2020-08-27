@@ -747,8 +747,12 @@ public abstract class CoreAbility implements Ability {
 		return this.startTick;
 	}
 
-	public long getCurrentTick() {
+	public static long getCurrentTick() {
 		return currentTick;
+	}
+
+	public long getRunningTicks() {
+		return currentTick - this.startTick;
 	}
 
 	public boolean isStarted() {
