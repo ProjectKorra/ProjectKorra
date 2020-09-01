@@ -84,6 +84,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.kingdoms.constants.kingdom.Kingdom;
+import org.kingdoms.constants.land.Invasion;
 import org.kingdoms.constants.land.Land;
 import org.kingdoms.constants.player.KingdomPlayer;
 
@@ -1722,6 +1723,15 @@ public class GeneralMethods {
 				final Land land = Land.getLand(location);
 				if (land != null) {
 					final Kingdom kingdom = land.getKingdom();
+					if (kPlayer.isAdmin()) {
+						return false;
+					}
+					if (land.getInvasion() != null) {
+						final Invasion invasion = land.getInvasion();
+						if (invasion.getInvader().equals(kPlayer) && invasion.getDefender().equals(land)) {
+							return false;
+						}
+					}
 					if (!kPlayer.hasKingdom()) {
 						return true;
 					} else if (!kPlayer.getKingdom().equals(kingdom)) {
