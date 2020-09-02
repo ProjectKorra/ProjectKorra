@@ -1721,12 +1721,13 @@ public class GeneralMethods {
 			if (kingdoms != null && respectKingdoms) {
 				final KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
 				final Land land = Land.getLand(location);
+				final boolean protectDuringInvasions = ConfigManager.getConfig().getBoolean("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions");
 				if (land != null) {
 					final Kingdom kingdom = land.getKingdom();
 					if (kPlayer.isAdmin()) {
 						return false;
 					}
-					if (land.getInvasion() != null) {
+					if (land.getInvasion() != null && !protectDuringInvasions) {
 						final Invasion invasion = land.getInvasion();
 						if (invasion.getInvader().equals(kPlayer) && invasion.getDefender().equals(land)) {
 							return false;
