@@ -90,6 +90,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
+	private static long currentTick;
 
 	protected Player player;
 	protected BendingPlayer bPlayer;
@@ -149,7 +150,6 @@ public abstract class CoreAbility implements Ability {
 		this.startTime = System.currentTimeMillis();
 		this.started = false;
 		this.id = CoreAbility.idCounter;
-		this.startTick = this.getCurrentTick();
 
 		if (idCounter == Integer.MAX_VALUE) {
 			idCounter = Integer.MIN_VALUE;
@@ -181,6 +181,7 @@ public abstract class CoreAbility implements Ability {
 
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
+		this.startTick = getCurrentTick();
 		final Class<? extends CoreAbility> clazz = this.getClass();
 		final UUID uuid = this.player.getUniqueId();
 
@@ -291,6 +292,7 @@ public abstract class CoreAbility implements Ability {
 				}
 			}
 		}
+		currentTick++;
 	}
 
 	/**
@@ -745,8 +747,12 @@ public abstract class CoreAbility implements Ability {
 		return this.startTick;
 	}
 
-	public long getCurrentTick() {
-		return this.player.getWorld().getFullTime();
+	public static long getCurrentTick() {
+		return currentTick;
+	}
+
+	public long getRunningTicks() {
+		return currentTick - this.startTick;
 	}
 
 	public boolean isStarted() {
