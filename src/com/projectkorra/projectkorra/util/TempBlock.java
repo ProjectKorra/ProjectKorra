@@ -53,7 +53,7 @@ public class TempBlock {
 	public TempBlock(final Block block, final BlockData newData, final long revertTime) {
 		this.block = block;
 		this.newData = newData;
-		this.setRevertTime(revertTime);
+
 		if (instances.containsKey(block)) {
 			final TempBlock temp = instances.get(block);
 			if (!newData.equals(temp.block.getBlockData())) {
@@ -64,12 +64,15 @@ public class TempBlock {
 			instances.put(block, temp);
 		} else {
 			this.state = block.getState();
+
 			if (this.state instanceof Container || this.state.getType() == Material.JUKEBOX) {
 				return;
 			}
 			instances.put(block, this);
 			block.setBlockData(newData, GeneralMethods.isLightEmitting(newData.getMaterial()));
 		}
+		
+		this.setRevertTime(revertTime);
 	}
 
 	public static TempBlock get(final Block block) {
@@ -166,7 +169,7 @@ public class TempBlock {
 	}
 
 	public void setRevertTime(final long revertTime) {
-		if(revertTime <= 0) {
+		if(revertTime <= 0 || state instanceof Container) {
 			return;
 		}
 		
