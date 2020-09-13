@@ -112,6 +112,7 @@ import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
+import com.projectkorra.projectkorra.event.AbilityVelocityAffectEntityEvent;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
@@ -2531,5 +2532,24 @@ public class GeneralMethods {
 			default:
 				return false;
 		}
+	}
+
+	public static void setEntityVelocity(Ability ability, Entity entity, Vector vector) {
+		setEntityVelocity(ability, entity, vector, false);
+	}
+	
+	public static void setEntityVelocity(Ability ability, Entity entity, Vector vector, boolean useGeneral) {
+		
+		final AbilityVelocityAffectEntityEvent event = new AbilityVelocityAffectEntityEvent(ability, entity, vector);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if (event.isCancelled()) 
+			return;
+		
+		if(!useGeneral)
+			event.getAffected().setVelocity(event.getNewVector());
+		else
+			GeneralMethods.setVelocity(event.getAffected(), event.getNewVector());
+		
+		
 	}
 }

@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
@@ -180,7 +181,7 @@ public class TorrentWave extends WaterAbility {
 		final Vector direction = GeneralMethods.getDirection(this.origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
-		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(this.knockback)));
+		GeneralMethods.setEntityVelocity((Ability)this, entity, entity.getVelocity().clone().add(direction.multiply(this.knockback)));
 	}
 
 	@Override

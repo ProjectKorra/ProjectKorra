@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -276,7 +277,7 @@ public class EarthBlast extends EarthAbility {
 
 						final Location location = this.player.getEyeLocation();
 						final Vector vector = location.getDirection();
-						entity.setVelocity(vector.normalize().multiply(this.pushFactor));
+						GeneralMethods.setEntityVelocity((Ability)this,	entity, vector.normalize().multiply(this.pushFactor));
 						double damage = this.damage;
 
 						if (isMetal(this.sourceBlock) && this.bPlayer.canMetalbend()) {

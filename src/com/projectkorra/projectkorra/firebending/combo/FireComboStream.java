@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.command.Commands;
@@ -136,7 +137,7 @@ public class FireComboStream extends BukkitRunnable {
 				fireSpin.getAffectedEntities().add(entity);
 				final double newKnockback = this.bPlayer.isAvatarState() ? this.knockback + 0.5 : this.knockback;
 				DamageHandler.damageEntity(entity, this.damage, coreAbility);
-				entity.setVelocity(direction.normalize().multiply(newKnockback));
+				GeneralMethods.setEntityVelocity((Ability)this,	entity, direction.normalize().multiply(newKnockback));
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("JetBlaze")) {
 			final JetBlaze jetBlaze = CoreAbility.getAbility(this.player, JetBlaze.class);

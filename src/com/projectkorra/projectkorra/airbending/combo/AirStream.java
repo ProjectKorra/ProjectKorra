@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
@@ -165,7 +166,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 				continue;
 			}
 			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
-			entity.setVelocity(force.clone().normalize().multiply(this.speed));
+			GeneralMethods.setEntityVelocity((Ability)this,entity, force.clone().normalize().multiply(this.speed));
 			entity.setFallDistance(0F);
 		}
 	}

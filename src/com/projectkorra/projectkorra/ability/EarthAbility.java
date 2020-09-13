@@ -170,13 +170,14 @@ public abstract class EarthAbility extends ElementalAbility {
 							final LivingEntity lentity = (LivingEntity) entity;
 							if (lentity.getEyeLocation().getBlockX() == affectedblock.getX() && lentity.getEyeLocation().getBlockZ() == affectedblock.getZ()) {
 								if (!(entity instanceof FallingBlock)) {
-									entity.setVelocity(norm.clone().multiply(.75));
+									GeneralMethods.setEntityVelocity((Ability)this,entity, norm.clone().multiply(.75));
+									
 								}
 							}
 						} else {
 							if (entity.getLocation().getBlockX() == affectedblock.getX() && entity.getLocation().getBlockZ() == affectedblock.getZ()) {
 								if (!(entity instanceof FallingBlock)) {
-									entity.setVelocity(norm.clone().multiply(.75));
+									GeneralMethods.setEntityVelocity((Ability)this,entity, norm.clone().multiply(.75));
 								}
 							}
 						}

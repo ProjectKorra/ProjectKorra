@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -114,7 +115,7 @@ public class WaterArmsWhip extends WaterAbility {
 				waw.grabbed = false;
 				if (waw.grabbedEntity != null) {
 					GRABBED_ENTITIES.remove(waw.grabbedEntity);
-					waw.grabbedEntity.setVelocity(waw.grabbedEntity.getVelocity().multiply(2.5));
+					GeneralMethods.setEntityVelocity((Ability)this,	waw.grabbedEntity, waw.grabbedEntity.getVelocity().multiply(2.5));
 				}
 				return;
 			}
@@ -300,7 +301,7 @@ public class WaterArmsWhip extends WaterAbility {
 						continue;
 					}
 					final Vector vector = endOfArm.toVector().subtract(entity.getLocation().toVector());
-					entity.setVelocity(vector.multiply(this.pullMultiplier));
+					GeneralMethods.setEntityVelocity((Ability)this, entity, vector.multiply(this.pullMultiplier));
 				}
 				break;
 			case PUNCH:
@@ -310,7 +311,7 @@ public class WaterArmsWhip extends WaterAbility {
 					}
 
 					final Vector vector = entity.getLocation().toVector().subtract(endOfArm.toVector());
-					entity.setVelocity(vector.multiply(0.15));
+					GeneralMethods.setEntityVelocity((Ability)this, entity, vector.multiply(0.15));
 					if (entity instanceof LivingEntity) {
 						if (entity.getEntityId() != this.player.getEntityId()) {
 							this.hasDamaged = true;
@@ -373,9 +374,9 @@ public class WaterArmsWhip extends WaterAbility {
 			final Vector vector = new Vector(dx, dy, dz);
 
 			if (distance > 0.5) {
-				this.grabbedEntity.setVelocity(vector.normalize().multiply(.65));
+				GeneralMethods.setEntityVelocity((Ability)this,	this.grabbedEntity, vector.normalize().multiply(.65));
 			} else {
-				this.grabbedEntity.setVelocity(new Vector(0, 0, 0));
+				GeneralMethods.setEntityVelocity((Ability)this,	this.grabbedEntity, new Vector(0, 0, 0));
 			}
 
 			this.grabbedEntity.setFallDistance(0);
@@ -392,7 +393,7 @@ public class WaterArmsWhip extends WaterAbility {
 			}
 
 			final Vector vector = this.player.getLocation().toVector().subtract(location.toVector());
-			this.player.setVelocity(vector.multiply(-0.25));
+			GeneralMethods.setEntityVelocity((Ability)this, this.player, vector.multiply(-0.25));
 			this.player.setFallDistance(0);
 		}
 	}

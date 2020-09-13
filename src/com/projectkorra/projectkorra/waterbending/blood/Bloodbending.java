@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -153,7 +154,7 @@ public class Bloodbending extends BloodAbility {
 				vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(this.player, location.distance(target)));
 			}
 			vector.normalize();
-			entity.setVelocity(vector.multiply(this.knockback));
+			GeneralMethods.setEntityVelocity((Ability)this, entity, vector.multiply(this.knockback));
 			new HorizontalVelocityTracker(entity, this.player, 200, this);
 		}
 		this.remove();
@@ -220,7 +221,7 @@ public class Bloodbending extends BloodAbility {
 					continue;
 				}
 				if (entity instanceof LivingEntity) {
-					entity.setVelocity(this.vector);
+					GeneralMethods.setEntityVelocity((Ability)this, entity, this.vector);
 					new TempPotionEffect((LivingEntity) entity, effect);
 					entity.setFallDistance(0);
 					if (entity instanceof Creature) {
@@ -281,7 +282,7 @@ public class Bloodbending extends BloodAbility {
 				this.vector = new Vector(0, 0, 0);
 			}
 
-			this.target.setVelocity(this.vector);
+			GeneralMethods.setEntityVelocity((Ability)this, this.target, this.vector);
 
 			new TempPotionEffect((LivingEntity) this.target, effect);
 			this.target.setFallDistance(0);

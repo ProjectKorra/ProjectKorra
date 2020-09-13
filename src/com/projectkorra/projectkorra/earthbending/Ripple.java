@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -285,7 +286,7 @@ public class Ripple extends EarthAbility {
 		final Vector vector = this.direction.clone();
 		vector.setY(.5);
 		final double knock = this.bPlayer.isAvatarState() ? AvatarState.getValue(this.knockback) : this.knockback;
-		entity.setVelocity(vector.clone().normalize().multiply(knock));
+		GeneralMethods.setEntityVelocity((Ability)this, entity, vector.clone().normalize().multiply(knock));
 		AirAbility.breakBreathbendingHold(entity);
 	}
 

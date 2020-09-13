@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -293,7 +294,7 @@ public class EarthSmash extends EarthAbility {
 					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 						continue;
 					}
-					entity.setVelocity(direction.clone().multiply(this.flightSpeed));
+					GeneralMethods.setEntityVelocity((Ability)this,	entity, direction.clone().multiply(this.flightSpeed));
 				}
 
 				// These values tend to work well when dealing with a person aiming upward or downward.
@@ -398,7 +399,7 @@ public class EarthSmash extends EarthAbility {
 			final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, 2.5);
 			for (final Entity entity : entities) {
 				final org.bukkit.util.Vector velocity = entity.getVelocity();
-				entity.setVelocity(velocity.add(new Vector(0, 0.36, 0)));
+				GeneralMethods.setEntityVelocity((Ability)this, entity, velocity.add(new Vector(0, 0.36, 0)));
 			}
 			this.location.getWorld().playEffect(this.location, Effect.GHAST_SHOOT, 0, 7);
 			this.draw();
@@ -573,7 +574,7 @@ public class EarthSmash extends EarthAbility {
 				final double damage = this.currentBlocks.size() / 13.0 * this.damage;
 				DamageHandler.damageEntity(entity, damage, this);
 				final Vector travelVec = GeneralMethods.getDirection(this.location, entity.getLocation());
-				entity.setVelocity(travelVec.setY(this.knockup).normalize().multiply(this.knockback));
+				GeneralMethods.setEntityVelocity((Ability)this,	entity, travelVec.setY(this.knockup).normalize().multiply(this.knockback));
 			}
 		}
 	}

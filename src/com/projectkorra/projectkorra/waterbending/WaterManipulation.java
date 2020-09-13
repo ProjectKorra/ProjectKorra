@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -283,7 +284,7 @@ public class WaterManipulation extends WaterAbility {
 							}
 							final Location location = this.player.getEyeLocation();
 							final Vector vector = location.getDirection();
-							entity.setVelocity(vector.normalize().multiply(this.knockback));
+							GeneralMethods.setEntityVelocity((Ability)this,	entity, vector.normalize().multiply(this.knockback));
 
 							if (this.bPlayer.isAvatarState()) {
 								this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");

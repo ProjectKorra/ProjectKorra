@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
@@ -320,7 +321,7 @@ public class EarthGrab extends EarthAbility {
 				continue;
 			}
 			final Block b = entity.getLocation().getBlock().getRelative(BlockFace.DOWN);
-			entity.setVelocity(GeneralMethods.getDirection(entity.getLocation(), this.player.getLocation()).normalize().multiply(this.dragSpeed));
+			GeneralMethods.setEntityVelocity((Ability)this,	entity, GeneralMethods.getDirection(entity.getLocation(), this.player.getLocation()).normalize().multiply(this.dragSpeed));
 			ParticleEffect.BLOCK_CRACK.display(entity.getLocation(), 2, 0, 0, 0, b.getBlockData());
 			playEarthbendingSound(entity.getLocation());
 		}

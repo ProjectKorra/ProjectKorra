@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
@@ -146,7 +147,8 @@ public class Twister extends AirAbility implements ComboAbility {
 				continue;
 			}
 			final Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc.clone().add(0, height, 0));
-			entity.setVelocity(forceDir.clone().normalize().multiply(0.3));
+			GeneralMethods.setEntityVelocity((Ability)this,entity, forceDir.clone().normalize().multiply(0.3));
+			
 		}
 	}
 

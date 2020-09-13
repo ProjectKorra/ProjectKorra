@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -198,7 +199,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 					if (!entity.equals(this.player) && !(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 						if (this.knockback != 0) {
 							final Vector force = fstream.getLocation().getDirection();
-							GeneralMethods.setVelocity(entity, force.clone().multiply(this.knockback));
+							GeneralMethods.setEntityVelocity((Ability)this,entity, force.clone().multiply(this.knockback),true);
 							new HorizontalVelocityTracker(entity, this.player, 200l, this);
 							entity.setFallDistance(0);
 						}

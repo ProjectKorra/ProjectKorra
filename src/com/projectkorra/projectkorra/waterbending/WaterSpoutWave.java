@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -299,8 +300,7 @@ public class WaterSpoutWave extends WaterAbility {
 				if (this.bPlayer.isAvatarState()) {
 					currentSpeed = this.getNightFactor(this.speed);
 				}
-
-				this.player.setVelocity(this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
+				GeneralMethods.setEntityVelocity((Ability)this,	this.player, this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
 					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (this.iceWave) {

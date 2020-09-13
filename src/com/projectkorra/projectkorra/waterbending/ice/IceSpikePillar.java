@@ -17,6 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
@@ -246,7 +247,7 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	private void affect(final LivingEntity entity) {
-		entity.setVelocity(this.thrownForce);
+		GeneralMethods.setEntityVelocity((Ability)this, entity, this.thrownForce);
 		DamageHandler.damageEntity(entity, this.damage, this);
 		this.damaged.add(entity);
 

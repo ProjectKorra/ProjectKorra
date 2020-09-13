@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -73,7 +74,7 @@ public class Catapult extends EarthAbility {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 					continue;
 				}
-				entity.setVelocity(apply);
+				GeneralMethods.setEntityVelocity((Ability)this,	entity, apply);
 			}
 		}
 		this.moveEarth(this.origin.clone().subtract(direction), direction, 3, false);
@@ -135,7 +136,7 @@ public class Catapult extends EarthAbility {
 		final Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
 		this.target = tar;
 		final Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
-		this.player.setVelocity(apply);
+		GeneralMethods.setEntityVelocity((Ability)this, this.player, apply);
 		this.moveEarth(apply, direction);
 		this.remove();
 	}

@@ -15,6 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -201,9 +202,9 @@ public class AirScooter extends AirAbility {
 		this.player.setSprinting(false);
 		this.player.removePotionEffect(PotionEffectType.SPEED);
 		if (this.useslime) {
-			this.slime.setVelocity(velocity);
+			GeneralMethods.setEntityVelocity((Ability)this,this.slime, velocity);
 		} else {
-			this.player.setVelocity(velocity);
+			GeneralMethods.setEntityVelocity((Ability)this,this.player, velocity);
 		}
 
 		if (this.random.nextInt(4) == 0) {

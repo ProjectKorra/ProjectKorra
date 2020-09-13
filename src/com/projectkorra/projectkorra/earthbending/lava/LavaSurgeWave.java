@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -207,7 +208,7 @@ public class LavaSurgeWave extends LavaAbility {
 				if (knockback) {
 					final Vector dir = direction.clone();
 					dir.setY(dir.getY() * this.verticalPush);
-					entity.setVelocity(entity.getVelocity().clone().add(dir.clone().multiply(this.horizontalPush)));
+					GeneralMethods.setEntityVelocity((Ability)this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.horizontalPush)));
 					entity.setFallDistance(0);
 
 					if (entity.getFireTicks() > 0) {

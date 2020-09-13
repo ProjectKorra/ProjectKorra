@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -162,7 +163,7 @@ public class AirShield extends AirAbility {
 				}
 
 				velocity.multiply(0.5);
-				GeneralMethods.setVelocity(entity, velocity);
+				GeneralMethods.setEntityVelocity((Ability)this,entity, velocity,true);
 				entity.setFallDistance(0);
 			}
 		}

@@ -26,6 +26,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -280,8 +281,7 @@ public class AirBlast extends AirAbility {
 		if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
 			push.normalize().add(entity.getVelocity()).multiply(knockback);
 		}
-		
-		GeneralMethods.setVelocity(entity, push);
+		GeneralMethods.setEntityVelocity((Ability)this,entity, push,true);
 		
 		if (this.source != null) {
 			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
