@@ -321,7 +321,7 @@ public class EarthGrab extends EarthAbility {
 				continue;
 			}
 			final Block b = entity.getLocation().getBlock().getRelative(BlockFace.DOWN);
-			GeneralMethods.setEntityVelocity((Ability)this,	entity, GeneralMethods.getDirection(entity.getLocation(), this.player.getLocation()).normalize().multiply(this.dragSpeed));
+			GeneralMethods.setVelocity((Ability)this,	entity, GeneralMethods.getDirection(entity.getLocation(), this.player.getLocation()).normalize().multiply(this.dragSpeed));
 			ParticleEffect.BLOCK_CRACK.display(entity.getLocation(), 2, 0, 0, 0, b.getBlockData());
 			playEarthbendingSound(entity.getLocation());
 		}

@@ -2315,39 +2315,6 @@ public class GeneralMethods {
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
 	}
 
-	public static void setVelocity(final Entity entity, final Vector velocity) {
-		if (entity instanceof TNTPrimed) {
-			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
-				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier"));
-			}
-		} else if (entity instanceof FallingBlock) {
-			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
-				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier"));
-			}
-		}
-
-		// Attempt to stop velocity from going over the packet cap.
-		if (velocity.getX() > 4) {
-			velocity.setX(4);
-		} else if (velocity.getX() < -4) {
-			velocity.setX(-4);
-		}
-
-		if (velocity.getY() > 4) {
-			velocity.setY(4);
-		} else if (velocity.getY() < -4) {
-			velocity.setY(-4);
-		}
-
-		if (velocity.getZ() > 4) {
-			velocity.setZ(4);
-		} else if (velocity.getZ() < -4) {
-			velocity.setZ(-4);
-		}
-
-		entity.setVelocity(velocity);
-	}
-
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type) {
 		return spawnFallingBlock(loc, type, type.createBlockData());
 	}
@@ -2534,22 +2501,50 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void setEntityVelocity(Ability ability, Entity entity, Vector vector) {
-		setEntityVelocity(ability, entity, vector, false);
+	@Deprecated
+	public static void setVelocity(Entity entity, Vector vector) {
+		setVelocity(null,entity,vector);
 	}
 	
-	public static void setEntityVelocity(Ability ability, Entity entity, Vector vector, boolean useGeneral) {
+	public static void setVelocity(Ability ability, Entity entity, Vector vector) {
 		
 		final AbilityVelocityAffectEntityEvent event = new AbilityVelocityAffectEntityEvent(ability, entity, vector);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) 
 			return;
 		
-		if(!useGeneral)
-			event.getAffected().setVelocity(event.getNewVector());
-		else
-			GeneralMethods.setVelocity(event.getAffected(), event.getNewVector());
+		Vector velocity = event.getNewVector();
 		
+		if (entity instanceof TNTPrimed) {
+			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
+				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier"));
+			}
+		} else if (entity instanceof FallingBlock) {
+			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
+				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier"));
+			}
+		}
+
+		// Attempt to stop velocity from going over the packet cap.
+		if (velocity.getX() > 4) {
+			velocity.setX(4);
+		} else if (velocity.getX() < -4) {
+			velocity.setX(-4);
+		}
+
+		if (velocity.getY() > 4) {
+			velocity.setY(4);
+		} else if (velocity.getY() < -4) {
+			velocity.setY(-4);
+		}
+
+		if (velocity.getZ() > 4) {
+			velocity.setZ(4);
+		} else if (velocity.getZ() < -4) {
+			velocity.setZ(-4);
+		}
+
+		event.getAffected().setVelocity(velocity);
 		
 	}
 }

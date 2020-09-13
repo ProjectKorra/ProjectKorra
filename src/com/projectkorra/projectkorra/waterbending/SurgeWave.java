@@ -377,7 +377,7 @@ public class SurgeWave extends WaterAbility {
 						}
 						final Vector dir = direction.clone();
 						dir.setY(dir.getY() * this.knockup);
-						GeneralMethods.setEntityVelocity(this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.knockback))),true);
+						GeneralMethods.setVelocity(this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.knockback))));
 
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {

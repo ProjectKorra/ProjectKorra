@@ -121,7 +121,7 @@ public class WallOfFire extends FireAbility {
 	}
 
 	private void affect(final Entity entity) {
-		GeneralMethods.setEntityVelocity(this, entity, new Vector(0, 0, 0), true);
+		GeneralMethods.setVelocity(this, entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
 			final Block block = ((LivingEntity) entity).getEyeLocation().getBlock();
 			if (TempBlock.isTempBlock(block) && isIce(block)) {

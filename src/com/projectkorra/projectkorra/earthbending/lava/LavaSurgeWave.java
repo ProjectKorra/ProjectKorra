@@ -208,7 +208,7 @@ public class LavaSurgeWave extends LavaAbility {
 				if (knockback) {
 					final Vector dir = direction.clone();
 					dir.setY(dir.getY() * this.verticalPush);
-					GeneralMethods.setEntityVelocity((Ability)this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.horizontalPush)));
+					GeneralMethods.setVelocity((Ability)this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.horizontalPush)));
 					entity.setFallDistance(0);
 
 					if (entity.getFireTicks() > 0) {

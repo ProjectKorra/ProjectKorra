@@ -237,7 +237,7 @@ public class LavaSurge extends LavaAbility {
 				x = (this.random.nextBoolean()) ? -x : x;
 				z = (this.random.nextBoolean()) ? -z : z;
 
-				GeneralMethods.setEntityVelocity((Ability)this,fbs, this.direction.clone().add(new Vector(x, 0.2, z)).multiply(1.2));
+				GeneralMethods.setVelocity((Ability)this,fbs, this.direction.clone().add(new Vector(x, 0.2, z)).multiply(1.2));
 				fbs.setDropItem(false);
 
 				for (final Block b : this.fracture) {
@@ -245,7 +245,7 @@ public class LavaSurge extends LavaAbility {
 						final FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), Material.MAGMA_BLOCK, Material.MAGMA_BLOCK.createBlockData());
 						ALL_FALLING_BLOCKS.add(fb);
 						this.fallingBlocks.add(fb);
-						GeneralMethods.setEntityVelocity((Ability)this,fb, this.direction.clone().add(new Vector(this.random.nextDouble() / 10, 0.1, this.random.nextDouble() / 10)).multiply(1.2));
+						GeneralMethods.setVelocity((Ability)this,fb, this.direction.clone().add(new Vector(this.random.nextDouble() / 10, 0.1, this.random.nextDouble() / 10)).multiply(1.2));
 						fb.setDropItem(false);
 					}
 				}
@@ -259,7 +259,7 @@ public class LavaSurge extends LavaAbility {
 						if (e.getEntityId() != this.player.getEntityId()) {
 							DamageHandler.damageEntity(e, this.impactDamage, this);
 							e.setFireTicks(100);
-							GeneralMethods.setEntityVelocity(this,e, this.direction.clone(),true);
+							GeneralMethods.setVelocity(this,e, this.direction.clone());
 						}
 					}
 				}

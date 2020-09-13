@@ -228,14 +228,14 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 						if (!GeneralMethods.isRegionProtectedFromBuild(this.player, e.getLocation())) {
 							final LivingEntity le = (LivingEntity) e;
 							DamageHandler.damageEntity(le, this.speed / 2, this);
-							GeneralMethods.setEntityVelocity((Ability)this,le, this.player.getVelocity().clone().multiply(2 / 3));
+							GeneralMethods.setVelocity((Ability)this,le, this.player.getVelocity().clone().multiply(2 / 3));
 						}
 					}
 				}
 			}
 
 			this.particles();
-			GeneralMethods.setEntityVelocity((Ability)this,this.player, this.player.getEyeLocation().getDirection().clone().multiply(this.multiplier));
+			GeneralMethods.setVelocity((Ability)this,this.player, this.player.getEyeLocation().getDirection().clone().multiply(this.multiplier));
 			
 		} else if (this.mode == FlightMode.GLIDE) {
 			this.player.setAllowFlight(false);

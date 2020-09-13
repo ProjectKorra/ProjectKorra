@@ -157,7 +157,7 @@ public class MetalClips extends MetalAbility {
 			vector = GeneralMethods.getDirection(this.player.getLocation(), GeneralMethods.getTargetedLocation(this.player, this.range));
 		}
 
-		GeneralMethods.setEntityVelocity((Ability)this, item, vector.normalize().add(new Vector(0, 0.1, 0).multiply(1.2)));
+		GeneralMethods.setVelocity((Ability)this, item, vector.normalize().add(new Vector(0, 0.1, 0).multiply(1.2)));
 		this.trackedIngots.add(item);
 		this.player.getInventory().removeItem(is);
 	}
@@ -229,7 +229,7 @@ public class MetalClips extends MetalAbility {
 		dz = target.getZ() - location.getZ();
 		final Vector vector = new Vector(dx, dy, dz);
 		vector.normalize();
-		GeneralMethods.setEntityVelocity((Ability)this,	this.targetEntity, vector.multiply(this.metalClipsCount / 2D));
+		GeneralMethods.setVelocity((Ability)this,	this.targetEntity, vector.multiply(this.metalClipsCount / 2D));
 		this.remove();
 	}
 
@@ -343,7 +343,7 @@ public class MetalClips extends MetalAbility {
 					final Item iron = (Item) entity;
 
 					if (Arrays.asList(METAL_ITEMS).contains(iron.getItemStack().getType())) {
-						GeneralMethods.setEntityVelocity((Ability)this,	iron, vector.normalize().multiply(this.magnetSpeed).add(new Vector(0, 0.2, 0)));
+						GeneralMethods.setVelocity((Ability)this,	iron, vector.normalize().multiply(this.magnetSpeed).add(new Vector(0, 0.2, 0)));
 					}
 				}
 			}
@@ -368,7 +368,7 @@ public class MetalClips extends MetalAbility {
 				final Vector vector = GeneralMethods.getDirection(this.targetEntity.getLocation(), this.player.getLocation());
 
 				if (distance > 0.5) {
-					GeneralMethods.setEntityVelocity((Ability)this,	this.targetEntity, vector.normalize().multiply(0.2));
+					GeneralMethods.setVelocity((Ability)this,	this.targetEntity, vector.normalize().multiply(0.2));
 				}
 			}
 
@@ -385,7 +385,7 @@ public class MetalClips extends MetalAbility {
 				final Vector vector = GeneralMethods.getDirection(this.targetEntity.getLocation(), GeneralMethods.getTargetedLocation(this.player, 10));
 
 				if (distance > 1.2) {
-					GeneralMethods.setEntityVelocity((Ability)this, this.targetEntity, vector.normalize().multiply(0.2));
+					GeneralMethods.setVelocity((Ability)this, this.targetEntity, vector.normalize().multiply(0.2));
 				}
 			}
 
@@ -402,9 +402,9 @@ public class MetalClips extends MetalAbility {
 				final Vector vector = GeneralMethods.getDirection(oldLocation, GeneralMethods.getTargetedLocation(this.player, 10));
 
 				if (distance > 1.2) {
-					GeneralMethods.setEntityVelocity((Ability)this, this.targetEntity, vector.normalize().multiply(.5));
+					GeneralMethods.setVelocity((Ability)this, this.targetEntity, vector.normalize().multiply(.5));
 				} else {
-					GeneralMethods.setEntityVelocity((Ability)this, this.targetEntity, new Vector(0, 0, 0));
+					GeneralMethods.setVelocity((Ability)this, this.targetEntity, new Vector(0, 0, 0));
 				}
 
 				this.targetEntity.setFallDistance(0);

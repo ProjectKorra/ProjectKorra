@@ -202,9 +202,9 @@ public class AirScooter extends AirAbility {
 		this.player.setSprinting(false);
 		this.player.removePotionEffect(PotionEffectType.SPEED);
 		if (this.useslime) {
-			GeneralMethods.setEntityVelocity((Ability)this,this.slime, velocity);
+			GeneralMethods.setVelocity((Ability)this,this.slime, velocity);
 		} else {
-			GeneralMethods.setEntityVelocity((Ability)this,this.player, velocity);
+			GeneralMethods.setVelocity((Ability)this,this.player, velocity);
 		}
 
 		if (this.random.nextInt(4) == 0) {

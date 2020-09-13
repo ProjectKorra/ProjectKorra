@@ -154,7 +154,7 @@ public class Bloodbending extends BloodAbility {
 				vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(this.player, location.distance(target)));
 			}
 			vector.normalize();
-			GeneralMethods.setEntityVelocity((Ability)this, entity, vector.multiply(this.knockback));
+			GeneralMethods.setVelocity((Ability)this, entity, vector.multiply(this.knockback));
 			new HorizontalVelocityTracker(entity, this.player, 200, this);
 		}
 		this.remove();
@@ -221,7 +221,7 @@ public class Bloodbending extends BloodAbility {
 					continue;
 				}
 				if (entity instanceof LivingEntity) {
-					GeneralMethods.setEntityVelocity((Ability)this, entity, this.vector);
+					GeneralMethods.setVelocity((Ability)this, entity, this.vector);
 					new TempPotionEffect((LivingEntity) entity, effect);
 					entity.setFallDistance(0);
 					if (entity instanceof Creature) {
@@ -282,7 +282,7 @@ public class Bloodbending extends BloodAbility {
 				this.vector = new Vector(0, 0, 0);
 			}
 
-			GeneralMethods.setEntityVelocity((Ability)this, this.target, this.vector);
+			GeneralMethods.setVelocity((Ability)this, this.target, this.vector);
 
 			new TempPotionEffect((LivingEntity) this.target, effect);
 			this.target.setFallDistance(0);

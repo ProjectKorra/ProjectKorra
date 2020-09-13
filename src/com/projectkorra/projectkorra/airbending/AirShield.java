@@ -163,7 +163,7 @@ public class AirShield extends AirAbility {
 				}
 
 				velocity.multiply(0.5);
-				GeneralMethods.setEntityVelocity((Ability)this,entity, velocity,true);
+				GeneralMethods.setVelocity((Ability)this,entity, velocity);
 				entity.setFallDistance(0);
 			}
 		}
