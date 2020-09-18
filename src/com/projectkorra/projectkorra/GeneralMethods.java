@@ -84,8 +84,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.kingdoms.constants.kingdom.Kingdom;
+import org.kingdoms.constants.kingdom.KingdomRelation;
 import org.kingdoms.constants.land.Invasion;
 import org.kingdoms.constants.land.Land;
+import org.kingdoms.constants.player.KingdomPermission;
 import org.kingdoms.constants.player.KingdomPlayer;
 
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -1734,8 +1736,13 @@ public class GeneralMethods {
 						}
 					}
 					if (!kPlayer.hasKingdom()) {
+						// Player has no kingdom, deny
 						return true;
-					} else if (!kPlayer.getKingdom().equals(kingdom)) {
+					} else if (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(KingdomPermission.BUILD)) {
+						// Player is a member of this kingdom but cannot build here, deny
+						return true;
+					} else if (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD)) {
+						// Player is not a member of this kingdom and cannot build here, deny
 						return true;
 					}
 				}
