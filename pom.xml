@@ -161,8 +161,8 @@
     <!-- Kingdoms -->
     <dependency>
       <groupId>org.kingdoms</groupId>
-      <artifactId>Kingdoms</artifactId>
-      <version>1.8.5</version>
+      <artifactId>kingdoms</artifactId>
+      <version>1.0.0</version>
       <scope>provided</scope>
     </dependency>
     <!-- PlaceholderAPI -->
