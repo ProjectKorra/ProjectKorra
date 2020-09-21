@@ -277,7 +277,7 @@ public class EarthBlast extends EarthAbility {
 
 						final Location location = this.player.getEyeLocation();
 						final Vector vector = location.getDirection();
-						GeneralMethods.setVelocity((Ability)this,	entity, vector.normalize().multiply(this.pushFactor));
+						GeneralMethods.setVelocity(this, entity, vector.normalize().multiply(this.pushFactor));
 						double damage = this.damage;
 
 						if (isMetal(this.sourceBlock) && this.bPlayer.canMetalbend()) {

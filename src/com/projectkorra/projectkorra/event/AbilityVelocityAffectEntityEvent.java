@@ -9,10 +9,11 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.ability.Ability;
 
 /**
- * Cancellable event called when an ability would push or alter the velocity of an entity.
+ * Cancellable event called when an ability would push or alter the velocity of
+ * an entity.
  * 
- * the entity can be changed, vector can be modified, 
- * and the ability that caused the change can be accessed.
+ * the entity can be changed, vector can be modified, and the ability that
+ * caused the change can be accessed.
  *
  * @author dNiym
  *
@@ -20,55 +21,55 @@ import com.projectkorra.projectkorra.ability.Ability;
 
 public class AbilityVelocityAffectEntityEvent extends Event implements Cancellable {
 
-	Entity affected;
-	Vector newVector;
-	Ability ability;
-	boolean cancelled = false;
-	
-	private static final HandlerList handlers = new HandlerList();
-	
-	public AbilityVelocityAffectEntityEvent(Ability ability, Entity entity, Vector vector) {
-		this.affected = entity;
-		this.ability = ability;
-		this.newVector = vector;
-	}
+    Entity affected;
+    Vector newVector;
+    Ability ability;
+    boolean cancelled = false;
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
+    private static final HandlerList handlers = new HandlerList();
 
-	@Override
-	public void setCancelled(boolean cancel) {
-		this.cancelled = cancel;
-	}
+    public AbilityVelocityAffectEntityEvent(Ability ability, Entity entity, Vector vector) {
+        this.affected = entity;
+        this.ability = ability;
+        this.newVector = vector;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	public Entity getAffected() {
-		return affected;
-	}
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
 
-	public void setAffected(Entity affected) {
-		this.affected = affected;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	public Vector getNewVector() {
-		return newVector;
-	}
+    public Entity getAffected() {
+        return affected;
+    }
 
-	public void setNewVector(Vector newVector) {
-		this.newVector = newVector;
-	}
+    public void setAffected(Entity affected) {
+        this.affected = affected;
+    }
 
-	public Ability getAbility() {
-		return ability;
-	}
+    public Vector getNewVector() {
+        return newVector;
+    }
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public void setNewVector(Vector newVector) {
+        this.newVector = newVector;
+    }
+
+    public Ability getAbility() {
+        return ability;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

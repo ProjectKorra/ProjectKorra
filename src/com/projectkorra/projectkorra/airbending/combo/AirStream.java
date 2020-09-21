@@ -166,7 +166,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 				continue;
 			}
 			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
-			GeneralMethods.setVelocity((Ability)this,entity, force.clone().normalize().multiply(this.speed));
+			GeneralMethods.setVelocity(this,entity, force.clone().normalize().multiply(this.speed));
 			entity.setFallDistance(0F);
 		}
 	}

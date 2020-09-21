@@ -300,7 +300,7 @@ public class WaterSpoutWave extends WaterAbility {
 				if (this.bPlayer.isAvatarState()) {
 					currentSpeed = this.getNightFactor(this.speed);
 				}
-				GeneralMethods.setVelocity((Ability)this,	this.player, this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
+				GeneralMethods.setVelocity(this, this.player, this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
 					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (this.iceWave) {
