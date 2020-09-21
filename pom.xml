@@ -162,7 +162,7 @@
     <dependency>
       <groupId>org.kingdoms</groupId>
       <artifactId>kingdoms</artifactId>
-      <version>1.0.0</version>
+      <version>1.8.5</version>
       <scope>provided</scope>
     </dependency>
     <!-- PlaceholderAPI -->
