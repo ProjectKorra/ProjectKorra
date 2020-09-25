@@ -87,6 +87,8 @@ import org.kingdoms.constants.kingdom.Kingdom;
 import org.kingdoms.constants.kingdom.KingdomRelation;
 import org.kingdoms.constants.land.Invasion;
 import org.kingdoms.constants.land.Land;
+import org.kingdoms.constants.land.structures.managers.Regulator;
+import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
 import org.kingdoms.constants.player.KingdomPermission;
 import org.kingdoms.constants.player.KingdomPlayer;
 
@@ -1732,6 +1734,13 @@ public class GeneralMethods {
 					if (land.getInvasion() != null && !protectDuringInvasions) {
 						final Invasion invasion = land.getInvasion();
 						if (invasion.getInvader().equals(kPlayer) && invasion.getDefender().equals(land)) {
+							return false;
+						}
+					}
+					if (land.getStructure() != null && land.getStructure() instanceof Regulator) {
+						final Regulator regulator = (Regulator) land.getStructure();
+						if (regulator.hasAttribute(player, Attribute.BUILD)) {
+							// There is a regulator on site which allows the player to build; allow bending
 							return false;
 						}
 					}
