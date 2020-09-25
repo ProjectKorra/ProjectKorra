@@ -180,6 +180,11 @@ public class ConfigManager {
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
 			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
 
+			config.addDefault("Commands.Board.Description", "Toggle bending board visibility.");
+			config.addDefault("Commands.Board.Disabled", "Bending board is disabled.");
+			config.addDefault("Commands.Board.ToggledOn", "You have made your bending board visible again.");
+			config.addDefault("Commands.Board.ToggledOff", "You have hidden your bending board.");
+
 			config.addDefault("Commands.Copy.Description", "This command will allow the user to copy the binds of another player either for himself or assign them to <Player> if specified.");
 			config.addDefault("Commands.Copy.PlayerNotFound", "Couldn't find player.");
 			config.addDefault("Commands.Copy.SuccessfullyCopied", "Your binds have been set to match {target}'s!");
@@ -555,6 +560,7 @@ public class ConfigManager {
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
 			config.addDefault("Properties.DatabaseCooldowns", true);
+			config.addDefault("Properties.BendingBoard", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
@@ -652,7 +658,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
 			config.addDefault("Properties.Fire.BlueFire.CooldownFactor", .9);
 			config.addDefault("Properties.Fire.BlueFire.RangeFactor", 1.2);
-			
+
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
 			final ArrayList<String> disabledWorlds = new ArrayList<String>();

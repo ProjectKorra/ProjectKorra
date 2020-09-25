@@ -834,7 +834,7 @@ public abstract class CoreAbility implements Ability {
 
 	public String getMovePreview(final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		String displayedMessage = getMovePreviewWithoutCooldownTimer(player);
+		String displayedMessage = getMovePreviewWithoutCooldownTimer(player, false);
 		if (bPlayer.isOnCooldown(this)) {
 			final long cooldown = bPlayer.getCooldown(this.getName()) - System.currentTimeMillis();
 			displayedMessage += this.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
@@ -843,10 +843,10 @@ public abstract class CoreAbility implements Ability {
 		return displayedMessage;
 	}
 
-	public String getMovePreviewWithoutCooldownTimer(final Player player) {
+	public String getMovePreviewWithoutCooldownTimer(final Player player, boolean forceCooldown) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		String displayedMessage = "";
-		if (bPlayer.isOnCooldown(this)) {
+		if (forceCooldown || bPlayer.isOnCooldown(this)) {
 			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName();
 		} else {
 			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName())) {

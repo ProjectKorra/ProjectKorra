@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -858,11 +859,17 @@ public class BendingPlayer {
 
 	/**
 	 * Sets the player's {@link ChiAbility Chi stance}
+	 * Also update any previews
 	 *
 	 * @param stance The player's new stance object
 	 */
 	public void setStance(final ChiAbility stance) {
+		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
+		final String newStance = (stance == null) ? "" : stance.getName();
 		this.stance = stance;
+		GeneralMethods.displayMovePreview(player);
+		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(Bukkit.getPlayer(this.uuid), oldStance, newStance);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	/**

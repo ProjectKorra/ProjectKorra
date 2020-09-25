@@ -68,6 +68,11 @@ public class DBConnection {
 				final String query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
 				sql.modifyQuery(query, false);
 			}
+			if (!sql.tableExists("pk_board")) {
+				ProjectKorra.log.info("Creating pk_board table");
+				final String query = "CREATE TABLE `pk_board` (uuid VARCHAR(36) NOT NULL, enabled BOOLEAN NOT NULL, PRIMARY KEY (uuid));";
+				sql.modifyQuery(query, false);
+			}
 		} else {
 			sql = new SQLite(ProjectKorra.log, "Establishing SQLite Connection.", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
 			if (((SQLite) sql).open() == null) {
@@ -110,6 +115,11 @@ public class DBConnection {
 			if (!sql.tableExists("pk_cooldowns")) {
 				ProjectKorra.log.info("Creating pk_cooldowns table");
 				final String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) NOT NULL, cooldown_id INTEGER NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown_id));";
+				sql.modifyQuery(query, false);
+			}
+			if (!sql.tableExists("pk_board")) {
+				ProjectKorra.log.info("Creating pk_board table");
+				final String query = "CREATE TABLE `pk_board` (uuid TEXT(36) NOT NULL, enabled INTEGER NOT NULL, PRIMARY KEY (uuid));";
 				sql.modifyQuery(query, false);
 			}
 		}

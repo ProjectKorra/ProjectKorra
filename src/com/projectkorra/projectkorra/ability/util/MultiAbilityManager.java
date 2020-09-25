@@ -33,7 +33,6 @@ public class MultiAbilityManager {
 		waterArms.add(new MultiAbilityInfoSub("Freeze", Element.ICE));
 		waterArms.add(new MultiAbilityInfoSub("Spear", Element.ICE));
 		multiAbilityList.add(new MultiAbilityInfo("WaterArms", waterArms));
-		manage();
 	}
 
 	/**
@@ -144,15 +143,6 @@ public class MultiAbilityManager {
 		return false;
 	}
 
-	public static void manage() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				scrollHotBarSlots();
-			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
-	}
-
 	/**
 	 * Clears all MultiAbility data for a player. Called on player quit event.
 	 *
@@ -176,24 +166,17 @@ public class MultiAbilityManager {
 	/**
 	 * Keeps track of the player's selected slot while a MultiAbility is active.
 	 */
-	public static void scrollHotBarSlots() {
-		if (!playerAbilities.isEmpty()) {
-			for (final Player player : playerAbilities.keySet()) {
-				final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-				if (bPlayer == null) {
-					continue;
-				}
-				if (playerBoundAbility.containsKey(player)) {
-					if (bPlayer.getBoundAbility() == null) {
-						if (multiAbilityList.contains(getMultiAbility(playerBoundAbility.get(player)))) {
-							if (player.getInventory().getHeldItemSlot() >= getMultiAbility(playerBoundAbility.get(player)).getAbilities().size()) {
-								player.getInventory().setHeldItemSlot(getMultiAbility(playerBoundAbility.get(player)).getAbilities().size() - 1);
-							}
-						}
-					}
-				}
+	public static boolean canChangeSlot(final Player player, int slot) {
+		if (playerAbilities.isEmpty()) {
+			return true;
+		}
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer != null) {
+			if (bPlayer.getBoundAbility() == null && multiAbilityList.contains(getMultiAbility(playerBoundAbility.getOrDefault(player, "")))) {
+				return slot < getMultiAbility(playerBoundAbility.get(player)).getAbilities().size();
 			}
 		}
+		return true;
 	}
 
 	/**

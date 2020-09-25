@@ -103,6 +103,7 @@ import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.HighJump;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
@@ -137,10 +138,15 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
+import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
+import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
+import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -877,7 +883,7 @@ public class PKListener implements Listener {
 					new AirBurst(player, true);
 				}
 			}
-			
+
 			CoreAbility gd = CoreAbility.getAbility(GracefulDescent.class);
 			CoreAbility ds = CoreAbility.getAbility(DensityShift.class);
 			CoreAbility hs = CoreAbility.getAbility(HydroSink.class);
@@ -918,7 +924,7 @@ public class PKListener implements Listener {
 			}
 
 			CoreAbility hc = CoreAbility.getAbility(HeatControl.class);
-			
+
 			if (hc != null && bPlayer.hasElement(Element.FIRE) && bPlayer.canBendPassive(hc) && bPlayer.canUsePassive(hc) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 				event.setCancelled(!HeatControl.canBurn(player));
 			}
@@ -1236,6 +1242,7 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
 		PassiveManager.registerPassives(event.getPlayer());
+		BendingBoardManager.forceToggleScoreboard(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1348,6 +1355,8 @@ public class PKListener implements Listener {
 	public void onPlayerQuit(final PlayerQuitEvent event) {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		BendingBoardManager.clean(player);
 
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
@@ -1579,15 +1588,18 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerSlotChange(final PlayerItemHeldEvent event) {
 		final Player player = event.getPlayer();
-		final int slot = event.getNewSlot() + 1;
-
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
-			GeneralMethods.displayMovePreview(player, slot);
+		if (!MultiAbilityManager.canChangeSlot(player, event.getNewSlot())) {
+			event.setCancelled(true);
+			return;
 		}
-		
+
+		final int slot = event.getNewSlot() + 1;
+		GeneralMethods.displayMovePreview(player, slot);
+		BendingBoardManager.changeActiveSlot(player, event.getPreviousSlot(), event.getNewSlot());
+
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 			if (waterArms != null) {
@@ -1902,26 +1914,26 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
-		
+
 		if (event.isCancelled()) {
 			return;
 		}
-		
+
 		if (event.getEntity() instanceof LivingEntity) {
 			LivingEntity lent = (LivingEntity) event.getEntity();
-			
+
 			if (TempArmor.hasTempArmor(lent)) {
 				TempArmor armor = TempArmor.getVisibleTempArmor(lent);
 				ItemStack is = event.getItem().getItemStack();
 				int index = GeneralMethods.getArmorIndex(is.getType());
-				
+
 				if (index == -1) {
 					return;
 				}
-				
+
 				event.setCancelled(true);
 				ItemStack prev = armor.getOldArmor()[index];
-				
+
 				if (GeneralMethods.compareArmor(is.getType(), prev.getType()) > 0) {
 					event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), prev);
 					armor.getOldArmor()[index] = is;
@@ -1967,6 +1979,60 @@ public class PKListener implements Listener {
 				break;
 			}
 		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onBendingElementChange(final PlayerChangeElementEvent event) {
+		final Player player = event.getTarget();
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) return;
+
+		if (event.getResult() == PlayerChangeElementEvent.Result.CHOOSE || event.getResult() == PlayerChangeElementEvent.Result.REMOVE || event.getResult() == PlayerChangeElementEvent.Result.PERMAREMOVE) {
+			BendingBoardManager.updateAllSlots(player);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onBendingSubElementChange(final PlayerChangeSubElementEvent event) {
+		final Player player = event.getTarget();
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) return;
+
+		if (event.getResult() == PlayerChangeSubElementEvent.Result.CHOOSE || event.getResult() == PlayerChangeSubElementEvent.Result.REMOVE || event.getResult() == PlayerChangeSubElementEvent.Result.PERMAREMOVE) {
+			BendingBoardManager.updateAllSlots(player);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onBindChange(final PlayerBindChangeEvent event) {
+		final Player player = event.getPlayer();
+		if (player == null) return;
+		BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onCooldownChange(final PlayerCooldownChangeEvent event) {
+		final Player player = event.getPlayer();
+		if (player == null) return;
+		BendingBoardManager.updateBoard(player, event.getAbility(), event.getResult().equals(PlayerCooldownChangeEvent.Result.ADDED), 0);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerStanceChange(final PlayerStanceChangeEvent event) {
+		final Player player = event.getPlayer();
+		if (player == null) return;
+		if (!event.getOldStance().isEmpty()) {
+			BendingBoardManager.updateBoard(player, event.getOldStance(), false, 0);
+		}
+		if (!event.getNewStance().isEmpty()) {
+			BendingBoardManager.updateBoard(player, event.getNewStance(), false, 0);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onBendingPlayerCreation(final BendingPlayerCreationEvent event) {
+		final Player player = event.getBendingPlayer().getPlayer();
+		BendingBoardManager.canUseScoreboard(player);
 	}
 
 	public static HashMap<Player, String> getBendingPlayerDeath() {
