@@ -586,7 +586,8 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.RespectLWC", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
-			config.addDefault("Properties.RegionProtection.RespectKingdoms", true);
+			config.addDefault("Properties.RegionProtection.Kingdoms.Respect", true);
+			config.addDefault("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions", false);
 			config.addDefault("Properties.RegionProtection.RespectPlotSquared", true);
 			config.addDefault("Properties.RegionProtection.RespectRedProtect", true);
 			config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
