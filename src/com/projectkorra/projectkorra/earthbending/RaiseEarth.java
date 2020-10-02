@@ -102,7 +102,7 @@ public class RaiseEarth extends EarthAbility {
 
 	private boolean canInstantiate() {
 		for (final Block block : this.affectedBlocks.keySet()) {
-			if (!this.isEarthbendable(block) || TempBlock.isTempBlock(block)) {
+			if (!this.isEarthbendable(block) || (TempBlock.isTempBlock(block) && !EarthAbility.isBendableEarthTempBlock(block))) {
 				return false;
 			}
 		}
