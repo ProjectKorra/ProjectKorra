@@ -166,6 +166,10 @@ public class FireBlast extends FireAbility {
 	}
 
 	public boolean checkLocation(Block block) {
+		if (block.isLiquid()) {
+			this.remove();
+			return false;
+		}
 		if (!block.isPassable()) {
 			if (block.getType() == Material.FURNACE && this.powerFurnace) {
 				final Furnace furnace = (Furnace) block.getState();
