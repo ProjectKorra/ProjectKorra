@@ -201,6 +201,9 @@ public class EarthSmash extends EarthAbility {
 					if (this.origin == null) {
 						this.remove();
 						return;
+					} else if (TempBlock.isTempBlock(this.origin) && !isBendableEarthTempBlock(this.origin)) {
+						this.remove();
+						return;
 					}
 					this.bPlayer.addCooldown(this);
 					this.location = this.origin.getLocation();

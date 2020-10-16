@@ -161,7 +161,7 @@ public class BlockSource {
 	public static Block getSourceBlock(final Player player, final double range, final BlockSourceType sourceType, final ClickType clickType) {
 		final BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
 		if (info != null) {
-			if (TempBlock.isTempBlock(info.getBlock()) && !WaterAbility.isBendableWaterTempBlock(info.getBlock())) {
+			if (TempBlock.isTempBlock(info.getBlock()) && !WaterAbility.isBendableWaterTempBlock(info.getBlock()) && !EarthAbility.isBendableEarthTempBlock(info.getBlock())) {
 				return null;
 			}
 			return info.getBlock();

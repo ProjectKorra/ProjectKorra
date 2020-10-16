@@ -1302,7 +1302,7 @@ public class GeneralMethods {
 
 			if (trans.contains(block.getType())) {
 				continue;
-			} else if (ignoreTempBlocks && (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block))) {
+			} else if (ignoreTempBlocks && (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block) && !EarthAbility.isBendableEarthTempBlock(block))) {
 				continue;
 			} else {
 				location.subtract(vec);
