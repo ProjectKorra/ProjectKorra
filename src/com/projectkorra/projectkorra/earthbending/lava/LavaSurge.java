@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -237,7 +236,7 @@ public class LavaSurge extends LavaAbility {
 				x = (this.random.nextBoolean()) ? -x : x;
 				z = (this.random.nextBoolean()) ? -z : z;
 
-				GeneralMethods.setVelocity(this,fbs, this.direction.clone().add(new Vector(x, 0.2, z)).multiply(1.2));
+				GeneralMethods.setVelocity(this, fbs, this.direction.clone().add(new Vector(x, 0.2, z)).multiply(1.2));
 				fbs.setDropItem(false);
 
 				for (final Block b : this.fracture) {
@@ -245,7 +244,7 @@ public class LavaSurge extends LavaAbility {
 						final FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), Material.MAGMA_BLOCK, Material.MAGMA_BLOCK.createBlockData());
 						ALL_FALLING_BLOCKS.add(fb);
 						this.fallingBlocks.add(fb);
-						GeneralMethods.setVelocity(this,fb, this.direction.clone().add(new Vector(this.random.nextDouble() / 10, 0.1, this.random.nextDouble() / 10)).multiply(1.2));
+						GeneralMethods.setVelocity(this, fb, this.direction.clone().add(new Vector(this.random.nextDouble() / 10, 0.1, this.random.nextDouble() / 10)).multiply(1.2));
 						fb.setDropItem(false);
 					}
 				}
@@ -259,7 +258,7 @@ public class LavaSurge extends LavaAbility {
 						if (e.getEntityId() != this.player.getEntityId()) {
 							DamageHandler.damageEntity(e, this.impactDamage, this);
 							e.setFireTicks(100);
-							GeneralMethods.setVelocity(this,e, this.direction.clone());
+							GeneralMethods.setVelocity(this, e, this.direction.clone());
 						}
 					}
 				}
