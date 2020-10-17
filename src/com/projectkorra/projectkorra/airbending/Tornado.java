@@ -169,7 +169,7 @@ public class Tornado extends AirAbility {
 						velocity.setZ(vz);
 						velocity.setY(vy);
 						velocity.multiply(timefactor);
-						GeneralMethods.setVelocity(this,entity, velocity);
+						GeneralMethods.setVelocity(this, entity, velocity);
 						entity.setFallDistance(0);
 
 						breakBreathbendingHold(entity);
