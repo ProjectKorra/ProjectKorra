@@ -235,7 +235,6 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 			this.particles();
 			GeneralMethods.setVelocity(this, this.player, this.player.getEyeLocation().getDirection().clone().multiply(this.multiplier));
-			
 		} else if (this.mode == FlightMode.GLIDE) {
 			this.player.setAllowFlight(false);
 			this.player.setFlying(false);
