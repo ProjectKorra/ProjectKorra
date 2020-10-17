@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
@@ -101,7 +100,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 					if (lent instanceof Player && !((Player) lent).isOnline()) {
 						continue;
 					}
-					GeneralMethods.setVelocity(this,lent, new Vector(0, this.knockup, 0));
+					GeneralMethods.setVelocity(this, lent, new Vector(0, this.knockup, 0));
 				}
 				if (this.damaging) {
 					DamageHandler.damageEntity(lent, this.damage, this);
