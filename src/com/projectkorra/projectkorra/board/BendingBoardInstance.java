@@ -36,7 +36,7 @@ public class BendingBoardInstance {
 		selectedSlot = player.getInventory().getHeldItemSlot() + 1;
 
 		bendingBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-		bendingSlots = bendingBoard.registerNewObjective("Board Slots", "dummy", ChatColor.BOLD + "Slots");
+		bendingSlots = bendingBoard.registerNewObjective("Board Slots", "dummy", ChatColor.BOLD + "Abilities");
 		bendingSlots.setDisplaySlot(DisplaySlot.SIDEBAR);
 		player.setScoreboard(bendingBoard);
 
@@ -54,7 +54,7 @@ public class BendingBoardInstance {
 		if (slot < 1 || slot > 9 || !player.getScoreboard().equals(bendingBoard)) return;
 		StringBuilder sb = new StringBuilder(slot == selectedSlot ? ">" : "  ");
 		if (name == null || name.isEmpty()) {
-			sb.append(ChatColor.GRAY).append("-- Slot ").append(slot).append(" --");
+			sb.append(ChatColor.DARK_GRAY).append("-- Slot ").append(slot).append(" --");
 		} else {
 			CoreAbility coreAbility = CoreAbility.getAbility(ChatColor.stripColor(name));
 			if (coreAbility == null) { // MultiAbility

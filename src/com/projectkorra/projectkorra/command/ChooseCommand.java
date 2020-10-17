@@ -170,7 +170,8 @@ public class ChooseCommand extends PKCommand {
 				GeneralMethods.sendBrandingMessage(target, color + this.chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
 			GeneralMethods.saveSubElements(bPlayer);
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
+			GeneralMethods.removeUnusableAbilities(target.getName());
+			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
 			bPlayer.setElement(element);
 			bPlayer.getSubElements().clear();
@@ -196,11 +197,9 @@ public class ChooseCommand extends PKCommand {
 			}
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);
+			GeneralMethods.removeUnusableAbilities(target.getName());
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
-
-		GeneralMethods.removeUnusableAbilities(target.getName());
-
 	}
 
 	public static boolean isVowel(final char c) {
