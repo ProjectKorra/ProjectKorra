@@ -2513,7 +2513,9 @@ public class GeneralMethods {
 		if (event.isCancelled()) 
 			return;
 		
-		Vector velocity = event.getNewVector();
+		Vector velocity = event.getVelocity();
+		if(velocity == null || Double.isNaN(velocity.length()))
+		    return;
 		
 		if (entity instanceof TNTPrimed) {
 			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
