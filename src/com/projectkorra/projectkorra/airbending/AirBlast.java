@@ -280,7 +280,7 @@ public class AirBlast extends AirAbility {
 		if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
 			push.normalize().add(entity.getVelocity()).multiply(knockback);
 		}
-		GeneralMethods.setVelocity(this,entity, push);
+		GeneralMethods.setVelocity(this, entity, push);
 		
 		if (this.source != null) {
 			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
