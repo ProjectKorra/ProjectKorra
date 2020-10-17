@@ -19,7 +19,6 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FlightAbility;
 import com.projectkorra.projectkorra.ability.MultiAbility;
@@ -228,14 +227,14 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 						if (!GeneralMethods.isRegionProtectedFromBuild(this.player, e.getLocation())) {
 							final LivingEntity le = (LivingEntity) e;
 							DamageHandler.damageEntity(le, this.speed / 2, this);
-							GeneralMethods.setVelocity(this,le, this.player.getVelocity().clone().multiply(2 / 3));
+							GeneralMethods.setVelocity(this, le, this.player.getVelocity().clone().multiply(2 / 3));
 						}
 					}
 				}
 			}
 
 			this.particles();
-			GeneralMethods.setVelocity(this,this.player, this.player.getEyeLocation().getDirection().clone().multiply(this.multiplier));
+			GeneralMethods.setVelocity(this, this.player, this.player.getEyeLocation().getDirection().clone().multiply(this.multiplier));
 			
 		} else if (this.mode == FlightMode.GLIDE) {
 			this.player.setAllowFlight(false);
