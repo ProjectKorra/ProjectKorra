@@ -7,7 +7,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip;
@@ -36,7 +35,7 @@ public class HighJump extends ChiAbility {
 		}
 		final Vector vec = p.getVelocity();
 		vec.setY(this.height);
-		GeneralMethods.setVelocity(this,p, vec);
+		GeneralMethods.setVelocity(this, p, vec);
 		this.bPlayer.addCooldown(this);
 		return;
 	}
