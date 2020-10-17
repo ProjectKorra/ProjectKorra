@@ -2507,7 +2507,6 @@ public class GeneralMethods {
 	}
 	
 	public static void setVelocity(Ability ability, Entity entity, Vector vector) {
-		
 		final AbilityVelocityAffectEntityEvent event = new AbilityVelocityAffectEntityEvent(ability, entity, vector);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) 
@@ -2547,6 +2546,5 @@ public class GeneralMethods {
 		}
 
 		event.getAffected().setVelocity(velocity);
-		
 	}
 }
