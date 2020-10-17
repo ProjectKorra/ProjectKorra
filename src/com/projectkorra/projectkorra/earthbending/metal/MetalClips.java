@@ -20,7 +20,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -229,7 +228,7 @@ public class MetalClips extends MetalAbility {
 		dz = target.getZ() - location.getZ();
 		final Vector vector = new Vector(dx, dy, dz);
 		vector.normalize();
-		GeneralMethods.setVelocity(this,	this.targetEntity, vector.multiply(this.metalClipsCount / 2D));
+		GeneralMethods.setVelocity(this, this.targetEntity, vector.multiply(this.metalClipsCount / 2D));
 		this.remove();
 	}
 
