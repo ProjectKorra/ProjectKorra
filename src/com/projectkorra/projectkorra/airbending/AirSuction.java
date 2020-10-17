@@ -18,7 +18,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
@@ -232,7 +231,7 @@ public class AirSuction extends AirAbility {
 				if (Math.abs(entity.getVelocity().dot(push)) > knockback) {
 					push.normalize().add(entity.getVelocity()).multiply(knockback);
 				}
-				GeneralMethods.setVelocity(this,entity, push.normalize().multiply(knockback));
+				GeneralMethods.setVelocity(this, entity, push.normalize().multiply(knockback));
 				
 				new HorizontalVelocityTracker(entity, this.player, 200l, this);
 				entity.setFallDistance(0);
