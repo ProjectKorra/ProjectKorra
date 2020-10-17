@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.ability.Ability;
 public class AbilityVelocityAffectEntityEvent extends Event implements Cancellable {
 
     Entity affected;
-    Vector newVector;
+    Vector velocity;
     Ability ability;
     boolean cancelled = false;
 
@@ -31,7 +31,7 @@ public class AbilityVelocityAffectEntityEvent extends Event implements Cancellab
     public AbilityVelocityAffectEntityEvent(Ability ability, Entity entity, Vector vector) {
         this.affected = entity;
         this.ability = ability;
-        this.newVector = vector;
+        this.velocity = vector;
     }
 
     @Override
@@ -57,12 +57,12 @@ public class AbilityVelocityAffectEntityEvent extends Event implements Cancellab
         this.affected = affected;
     }
 
-    public Vector getNewVector() {
-        return newVector;
+    public Vector getVelocity() {
+        return velocity;
     }
 
-    public void setNewVector(Vector newVector) {
-        this.newVector = newVector;
+    public void setVelocity(Vector velocity) {
+        this.velocity = velocity;
     }
 
     public Ability getAbility() {
