@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
@@ -57,7 +58,7 @@ public class FireJet extends FireAbility {
 		final Block block = player.getLocation().getBlock();
 
 		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
-			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
+			GeneralMethods.setVelocity(this, player, player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
 				if (ElementalAbility.isAir(block.getType())) {
 					createTempFire(block.getLocation());
@@ -102,7 +103,7 @@ public class FireJet extends FireAbility {
 			}
 
 			final Vector velocity = this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed * timefactor);
-			this.player.setVelocity(velocity);
+			GeneralMethods.setVelocity(this, this.player, velocity);
 			this.player.setFallDistance(0);
 		}
 	}

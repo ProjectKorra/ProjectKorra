@@ -198,7 +198,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 					if (!entity.equals(this.player) && !(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 						if (this.knockback != 0) {
 							final Vector force = fstream.getLocation().getDirection();
-							GeneralMethods.setVelocity(entity, force.clone().multiply(this.knockback));
+							GeneralMethods.setVelocity(this, entity, force.clone().multiply(this.knockback));
 							new HorizontalVelocityTracker(entity, this.player, 200l, this);
 							entity.setFallDistance(0);
 						}

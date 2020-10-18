@@ -136,7 +136,7 @@ public class FireComboStream extends BukkitRunnable {
 				fireSpin.getAffectedEntities().add(entity);
 				final double newKnockback = this.bPlayer.isAvatarState() ? this.knockback + 0.5 : this.knockback;
 				DamageHandler.damageEntity(entity, this.damage, coreAbility);
-				entity.setVelocity(direction.normalize().multiply(newKnockback));
+				GeneralMethods.setVelocity(coreAbility, entity, direction.normalize().multiply(newKnockback));
 			}
 		} else if (coreAbility.getName().equalsIgnoreCase("JetBlaze")) {
 			final JetBlaze jetBlaze = CoreAbility.getAbility(this.player, JetBlaze.class);

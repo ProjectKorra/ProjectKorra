@@ -35,7 +35,7 @@ public class HighJump extends ChiAbility {
 		}
 		final Vector vec = p.getVelocity();
 		vec.setY(this.height);
-		p.setVelocity(vec);
+		GeneralMethods.setVelocity(this, p, vec);
 		this.bPlayer.addCooldown(this);
 		return;
 	}

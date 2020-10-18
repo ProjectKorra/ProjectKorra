@@ -285,7 +285,7 @@ public class Ripple extends EarthAbility {
 		final Vector vector = this.direction.clone();
 		vector.setY(.5);
 		final double knock = this.bPlayer.isAvatarState() ? AvatarState.getValue(this.knockback) : this.knockback;
-		entity.setVelocity(vector.clone().normalize().multiply(knock));
+		GeneralMethods.setVelocity(this, entity, vector.clone().normalize().multiply(knock));
 		AirAbility.breakBreathbendingHold(entity);
 	}
 
