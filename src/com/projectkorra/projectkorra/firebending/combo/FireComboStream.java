@@ -94,7 +94,15 @@ public class FireComboStream extends BukkitRunnable {
 		}
 
 		this.location.add(this.direction.normalize().multiply(this.speed));
-		if (this.initialLocation.distanceSquared(this.location) > this.distance * this.distance) {
+		
+		try {
+			this.location.checkFinite();
+		} catch (IllegalArgumentException e) {
+			this.remove();
+			return;
+		}
+		
+		if (this.initialLocation.distanceSquared(this.location) > this.distance * this.distance || !Double.isFinite(this.collisionRadius)) {
 			this.remove();
 			return;
 		} else if (this.collides && this.checkCollisionCounter % this.checkCollisionDelay == 0) {
