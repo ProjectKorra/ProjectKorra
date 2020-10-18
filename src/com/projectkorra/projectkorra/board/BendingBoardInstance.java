@@ -64,7 +64,7 @@ public class BendingBoardInstance {
 				sb.append(coreAbility.getMovePreviewWithoutCooldownTimer(player, cooldown));
 			}
 		}
-		sb.append(String.join("", Collections.nCopies(slot, ChatColor.RESET.toString())));
+		sb.append(ChatColor.values()[slot].toString()); // Unique suffix
 
 		if (!cachedSlots[slot].equals(sb.toString())) {
 			bendingBoard.resetScores(cachedSlots[slot]);
