@@ -39,19 +39,8 @@ import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
-import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.Coord;
-import com.palmergames.bukkit.towny.object.PlayerCache;
-import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.palmergames.bukkit.towny.object.TownyWorld;
-import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
-import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
-import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -1663,38 +1652,8 @@ public class GeneralMethods {
 			}
 
 			if (twnp != null && respectTowny) {
-				final Towny twn = (Towny) twnp;
-
-				WorldCoord worldCoord;
-
-				try {
-					final TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(world.getName());
-					worldCoord = new WorldCoord(tWorld.getName(), Coord.parseCoord(location));
-					final boolean bBuild = PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, TownyPermission.ActionType.BUILD);
-
-					if (!bBuild) {
-						final PlayerCache cache = twn.getCache(player);
-						final TownBlockStatus status = cache.getStatus();
-
-						if (((status == TownBlockStatus.ENEMY) && TownyWarConfig.isAllowingAttacks())) {
-							try {
-								TownyWar.callAttackCellEvent(twn, player, location.getBlock(), worldCoord);
-							} catch (final Exception e) {
-								TownyMessaging.sendErrorMsg(player, e.getMessage());
-							}
-							return true;
-						} else if (status == TownBlockStatus.WARZONE) {
-
-						} else {
-							return true;
-						}
-
-						if ((cache.hasBlockErrMsg())) {
-							TownyMessaging.sendErrorMsg(player, cache.getBlockErrMsg());
-						}
-					}
-				} catch (final Exception e1) {
-					TownyMessaging.sendErrorMsg(player, TownySettings.getLangString("msg_err_not_configured"));
+				if (!PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, ActionType.BUILD)) {
+					return true;
 				}
 			}
 
