@@ -113,8 +113,10 @@ public class FireBlast extends FireAbility {
 		double damageMod = 0;
 		double rangeMod = 0;
 
-		damageMod = this.getDayFactor(damage) - damage;
-		rangeMod = this.getDayFactor(range) - range;
+		if (isDay(player.getWorld())) {
+			damageMod = this.getDayFactor(damage) - damage;
+			rangeMod = this.getDayFactor(range) - range;
+		}
 
 		damageMod = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod;
 		rangeMod = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod;
