@@ -87,7 +87,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public double getDayFactor(final double value) {
-		return this.player != null ? value * getDayFactor() : 1;
+		return (this.player != null && isDay(player.getWorld())) ? value * getDayFactor() : value;
 	}
 
 	public static double getDayFactor() {
