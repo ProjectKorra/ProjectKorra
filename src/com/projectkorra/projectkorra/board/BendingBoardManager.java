@@ -11,7 +11,6 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,24 +34,21 @@ public class BendingBoardManager {
 	private static boolean enabled;
 
 	public static void setup() {
-		initialize();
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			canUseScoreboard(player);
-		}
+		initialize(true);
+		Bukkit.getOnlinePlayers().forEach(BendingBoardManager::canUseScoreboard);
 	}
 
 	public static void reload() {
 		scoreboardPlayers.values().forEach(BendingBoardInstance::disableScoreboard);
-		disabledWorlds.clear();
-		trackedCooldowns.clear();
 		scoreboardPlayers.clear();
-		initialize();
+		initialize(false);
 	}
 
-	private static void initialize() {
-		loadDisabledPlayers();
-		enabled = ConfigManager.defaultConfig.get().getBoolean("Properties.BendingBoard");
-		disabledWorlds.addAll(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
+	private static void initialize(boolean initial) {
+		if (initial) loadDisabledPlayers();
+		enabled = ConfigManager.getConfig().getBoolean("Properties.BendingBoard");
+		disabledWorlds.clear();
+		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
 	}
 
 	/**
@@ -154,20 +150,17 @@ public class BendingBoardManager {
 	 * Load into memory the list of players who have toggled the bending board off.
 	 */
 	public static void loadDisabledPlayers() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				try {
-					disabledPlayers.clear();
-					final ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_board where enabled = 0");
-					while (rs.next()) {
-						disabledPlayers.add(UUID.fromString(rs.getString("uuid")));
-					}
-				} catch (final SQLException ex) {
-					ex.printStackTrace();
-				}
+		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+			Set<UUID> disabled = new HashSet<>();
+			try {
+				final ResultSet rs = DBConnection.sql.readQuery("SELECT uuid FROM pk_board where enabled = 0");
+				while (rs.next()) disabled.add(UUID.fromString(rs.getString("uuid")));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		}.runTaskAsynchronously(ProjectKorra.plugin);
+			disabledPlayers.clear();
+			disabledPlayers.addAll(disabled);
+		});
 	}
 
 	/**
@@ -178,26 +171,22 @@ public class BendingBoardManager {
 	public static void clean(final Player player) {
 		scoreboardPlayers.remove(player);
 		final UUID uuid = player.getUniqueId();
-		StringBuilder updateQuery = new StringBuilder("UPDATE pk_board SET enabled = ");
-		updateQuery.append(disabledPlayers.contains(uuid) ? 0 : 1);
-		updateQuery.append(" WHERE uuid = ?");
-		new BukkitRunnable() {
-			@Override
-				public void run() {
-				try {
-					PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement("SELECT * FROM pk_board where uuid = ? LIMIT 1");
-					ps.setString(1, uuid.toString());
-					if (!ps.executeQuery().next()) { // if the entry doesn't exist in the DB, create it.
-						ps = DBConnection.sql.getConnection().prepareStatement("INSERT INTO pk_board (uuid, enabled) VALUES (?, 1)");
-					} else { // if the entry exists in the DB, update it
-						ps = DBConnection.sql.getConnection().prepareStatement(updateQuery.toString());
-					}
-					ps.setString(1, uuid.toString());
-					ps.execute();
-				} catch (final SQLException e) {
-					e.printStackTrace();
+		final String updateQuery = "UPDATE pk_board SET enabled = " + (disabledPlayers.contains(uuid) ? 0 : 1) + " WHERE uuid = ?";
+		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+			try {
+				PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement("SELECT enabled FROM pk_board where uuid = ? LIMIT 1");
+				ps.setString(1, uuid.toString());
+				PreparedStatement ps2;
+				if (!ps.executeQuery().next()) { // if the entry doesn't exist in the DB, create it.
+					ps2 = DBConnection.sql.getConnection().prepareStatement("INSERT INTO pk_board (uuid, enabled) VALUES (?, 1)");
+				} else { // if the entry exists in the DB, update it
+					ps2 = DBConnection.sql.getConnection().prepareStatement(updateQuery);
 				}
+				ps2.setString(1, uuid.toString());
+				ps2.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		}.runTaskAsynchronously(ProjectKorra.plugin);
+		});
 	}
 }
