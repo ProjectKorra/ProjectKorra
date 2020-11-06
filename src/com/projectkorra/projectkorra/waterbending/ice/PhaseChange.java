@@ -382,7 +382,8 @@ public class PhaseChange extends IceAbility {
 						new TempBlock(b, Material.AIR.createBlockData(), 120 * 1000L);
 					} else {
 						tb.revertBlock();
-						new TempBlock(b, Material.SNOW.createBlockData(d -> ((Snow) d).setLayers(snow.getLayers() - 1)), 120 * 1000L);
+						snow.setLayers(snow.getLayers() - 1);
+						new TempBlock(b, snow, 120 * 1000L);
 					}
 				}
 			}
@@ -407,7 +408,7 @@ public class PhaseChange extends IceAbility {
 					new TempBlock(b, Material.AIR.createBlockData(), 120 * 1000L);
 				} else {
 					snow.setLayers(snow.getLayers() - 1);
-					new TempBlock(b, Material.SNOW.createBlockData(d -> ((Snow) d).setLayers(snow.getLayers() - 1)), 120 * 1000L);
+					new TempBlock(b, snow, 120 * 1000L);
 				}
 			}
 
