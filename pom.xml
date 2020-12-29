@@ -17,7 +17,7 @@
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
     </repository>
-    <!-- GriefPrevention Repo -->
+    <!-- GriefPrevention and Towny Repo -->
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
@@ -125,7 +125,7 @@
       <artifactId>Towny</artifactId>
       <version>0.96.2.0</version>
       <scope>provided</scope>
-    </dependency>
+	</dependency>
     <!-- WorldEdit / WorldGuard -->
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
@@ -160,10 +160,16 @@
     </dependency>
     <!-- Kingdoms -->
     <dependency>
-      <groupId>org.kingdoms</groupId>
+      <groupId>com.github.cryptomorin</groupId>
       <artifactId>kingdoms</artifactId>
-      <version>1.8.5</version>
+      <version>1.10.12.1</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- PlaceholderAPI -->
     <dependency>
