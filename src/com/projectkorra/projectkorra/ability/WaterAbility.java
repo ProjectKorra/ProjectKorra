@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public abstract class WaterAbility extends ElementalAbility {
+	
+	private static final Set<TempBlock> WATERBENDABLE_TEMPBLOCKS = new HashSet<>();
 
 	public WaterAbility(final Player player) {
 		super(player);
@@ -83,12 +86,58 @@ public abstract class WaterAbility extends ElementalAbility {
 		return this.player != null ? value * getNightFactor() : 1;
 	}
 
-	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
+	public static boolean isBendableWaterTempBlock(final Block block) {
 		return isBendableWaterTempBlock(TempBlock.get(block));
 	}
 
 	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
-		return PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock) || Torrent.getFrozenBlocks().containsKey(tempBlock);
+		return WATERBENDABLE_TEMPBLOCKS.contains(tempBlock) 
+				|| PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) 
+				|| HeatControl.getMeltedBlocks().contains(tempBlock) 
+				|| SurgeWall.SOURCE_BLOCKS.contains(tempBlock) 
+				|| Torrent.getFrozenBlocks().containsKey(tempBlock);
+	}
+	
+	/**
+	 * Adds a TempBlock to the set of waterbendable TempBlocks.
+	 * <br><br> Make sure to {@link #removeWaterbendableTempBlock(TempBlock)} when the TempBlock reverts.
+	 * <br> tempBlock.setRevertTask(() -> removeEarthbendableTempBlock(tempBlock)) should do it.
+	 * @see {@link TempBlock#setRevertTask(com.projectkorra.projectkorra.util.TempBlock.RevertTask)}
+	 * @param tempBlock - the TempBlock to add
+	 * @author Aztl
+	 */
+	public static void addWaterbendableTempBlock(final TempBlock tempBlock) {
+		WATERBENDABLE_TEMPBLOCKS.add(tempBlock);
+	}
+	
+	/**
+	 * Adds a collection of TempBlocks to the set of waterbendable TempBlocks.
+	 * <br><br> Make sure to {@link #removeWaterbendableTempBlocks(Collection)} when the TempBlocks revert.
+	 * <br> tempBlock.setRevertTask(() -> removeEarthbendableTempBlock(tempBlock)) should do it.
+	 * @see {@link TempBlock#setRevertTask(com.projectkorra.projectkorra.util.TempBlock.RevertTask)}
+	 * @param tempBlocks - the Collection of TempBlocks to add
+	 * @author Aztl
+	 */
+	public static void addWaterbendableTempBlocks(final Collection<TempBlock> tempBlocks) {
+		WATERBENDABLE_TEMPBLOCKS.addAll(tempBlocks);
+	}
+	
+	/**
+	 * Removes a TempBlock from the set of waterbendable TempBlocks.
+	 * @param tempBlock - the TempBlock to remove
+	 * @author Aztl
+	 */
+	public static void removeWaterbendableTempBlock(final TempBlock tempBlock) {
+		WATERBENDABLE_TEMPBLOCKS.add(tempBlock);
+	}
+	
+	/**
+	 * Removes a collection of TempBlocks from the set of waterbendable TempBlocks.
+	 * @param tempBlocks - the Collection of TempBlocks to remove
+	 * @author Aztl
+	 */
+	public static void removeWaterbendableTempBlocks(final Collection<TempBlock> tempBlocks) {
+		WATERBENDABLE_TEMPBLOCKS.removeAll(tempBlocks);
 	}
 
 	public boolean isIcebendable(final Block block) {
