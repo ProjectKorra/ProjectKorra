@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
@@ -39,6 +41,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	private static final Map<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
 	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
+	private static final Set<TempBlock> EARTHBENDABLE_TEMPBLOCKS = new HashSet<TempBlock>();
 
 	public EarthAbility(final Player player) {
 		super(player);
@@ -54,6 +57,10 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 		}
 		return maxlength;
+	}
+	
+	public static double getEarthPush() {
+		return getConfig().getDouble("Properties.Earth.EarthPush");
 	}
 
 	public Block getEarthSourceBlock(final double range) {
@@ -91,12 +98,65 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 	
+	/**
+	 * Checks whether a block is an earthbendable TempBlock
+	 * @see {@link #isBendableEarthTempBlock(TempBlock)}
+	 * @param block - the Block to check
+	 * @author Aztl
+	 */
 	public static boolean isBendableEarthTempBlock(final Block block) {
 		return isBendableEarthTempBlock(TempBlock.get(block));
 	}
 	
+	/**
+	 * Checks whether a TempBlock is earthbendable.
+	 * By default the only earthbendable TempBlocks are the sand blocks from DensityShift.
+	 * To add your own, see {@link #addEarthbendableTempBlock(TempBlock)}
+	 * @param tempBlock - the TempBlock to check
+	 * @return true if the TempBlock was created by DensityShift or the earthbendable TempBlocks set contains the block
+	 * @author Aztl
+	 */
 	public static boolean isBendableEarthTempBlock(final TempBlock tempBlock) {
-		return DensityShift.getSandBlocks().contains(tempBlock);
+		return EARTHBENDABLE_TEMPBLOCKS.contains(tempBlock) || DensityShift.getSandBlocks().contains(tempBlock);
+	}
+	
+	/**
+	 * Adds a TempBlock to the set of earthbendable TempBlocks.
+	 * <br><br> Make sure to {@link #removeEarthbendableTempBlock(TempBlock)} when the TempBlock reverts.
+	 * <br> tempBlock.setRevertTask(() -> removeEarthbendableTempBlock(tempBlock)) should do it.
+	 * @see {@link TempBlock#setRevertTask(com.projectkorra.projectkorra.util.TempBlock.RevertTask)}
+	 * @param tempBlock - the TempBlock to add
+	 * @author Aztl
+	 */
+	public static void addEarthbendableTempBlock(final TempBlock tempBlock) {
+		EARTHBENDABLE_TEMPBLOCKS.add(tempBlock);
+	}
+	
+	/**
+	 * Adds a collection of TempBlocks to the set of earthbendable TempBlocks.
+	 * <br><br> Make sure to {@link #removeEarthbendableTempBlocks(Collection)} when the TempBlocks revert.
+	 * @see {@link TempBlock#setRevertTask(com.projectkorra.projectkorra.util.TempBlock.RevertTask)}
+	 * @param tempBlocks - the Collection of TempBlocks to add
+	 * @author Aztl
+	 */
+	public static void addEarthbendableTempBlocks(final Collection<TempBlock> tempBlocks) {
+		EARTHBENDABLE_TEMPBLOCKS.addAll(tempBlocks);
+	}
+	
+	/**
+	 * Removes a TempBlock from the set of earthbendable TempBlocks.
+	 * @param tempBlock - the TempBlock to remove
+	 */
+	public static void removeEarthbendableTempBlock(final TempBlock tempBlock) {
+		EARTHBENDABLE_TEMPBLOCKS.remove(tempBlock);
+	}
+	
+	/**
+	 * Removes a collection of TempBlocks from the set of earthbendable TempBlocks.
+	 * @param tempBlocks - the Collection of TempBlocks to remove
+	 */
+	public static void removeEarthbendableTempBlocks(final Collection<TempBlock> tempBlocks) {
+		EARTHBENDABLE_TEMPBLOCKS.removeAll(tempBlocks);
 	}
 
 	public static boolean isEarthbendable(final Material material, final boolean metal, final boolean sand, final boolean lava) {
@@ -178,13 +238,13 @@ public abstract class EarthAbility extends ElementalAbility {
 							final LivingEntity lentity = (LivingEntity) entity;
 							if (lentity.getEyeLocation().getBlockX() == affectedblock.getX() && lentity.getEyeLocation().getBlockZ() == affectedblock.getZ()) {
 								if (!(entity instanceof FallingBlock)) {
-									entity.setVelocity(norm.clone().multiply(.75));
+									entity.setVelocity(norm.clone().multiply(getEarthPush()));
 								}
 							}
 						} else {
 							if (entity.getLocation().getBlockX() == affectedblock.getX() && entity.getLocation().getBlockZ() == affectedblock.getZ()) {
 								if (!(entity instanceof FallingBlock)) {
-									entity.setVelocity(norm.clone().multiply(.75));
+									entity.setVelocity(norm.clone().multiply(getEarthPush()));
 								}
 							}
 						}
@@ -629,8 +689,6 @@ public abstract class EarthAbility extends ElementalAbility {
 
 			if (ElementalAbility.isAir(sourceblock.getType()) || sourceblock.isLiquid()) {
 				info.getState().update(true, false);
-			} else {
-
 			}
 
 			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block, false)) {
