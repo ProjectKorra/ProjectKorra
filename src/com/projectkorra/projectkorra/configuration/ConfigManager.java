@@ -623,6 +623,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);
 			config.addDefault("Properties.Earth.RevertCheckTime", 300000);
+			config.addDefault("Properties.Earth.EarthPush", 0.75);
 			config.addDefault("Properties.Earth.CanBendWithWeapons", true);
 			config.addDefault("Properties.Earth.EarthBlocks", earthBlocks);
 			config.addDefault("Properties.Earth.MetalBlocks", metalBlocks);
