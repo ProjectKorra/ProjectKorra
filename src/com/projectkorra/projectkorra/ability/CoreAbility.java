@@ -275,7 +275,13 @@ public abstract class CoreAbility implements Ability {
 						abil.progress();
 					}
 
-					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
+					final AbilityProgressEvent event = new AbilityProgressEvent(abil);
+					Bukkit.getServer().getPluginManager().callEvent(event);
+					if (event.isCancelled()) {
+						abil.remove();
+						return;
+					}
+
 				} catch (final Exception e) {
 					e.printStackTrace();
 					Bukkit.getLogger().severe(abil.toString());
