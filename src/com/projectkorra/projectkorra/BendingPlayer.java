@@ -311,6 +311,8 @@ public class BendingPlayer {
 			return false;
 		} else if (!this.player.hasPermission("bending." + element.getName() + ".passive")) {
 			return false;
+		} else if (!this.player.hasPermission("bending.ability." + ability.getName())) {
+			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
