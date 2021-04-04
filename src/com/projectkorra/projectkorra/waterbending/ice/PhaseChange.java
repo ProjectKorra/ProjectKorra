@@ -352,7 +352,10 @@ public class PhaseChange extends IceAbility {
 			return;
 		}
 		if (!Torrent.canThaw(b)) {
-			Torrent.thaw(b);
+			TempBlock tb = TempBlock.get(b);
+			if (tb != null) {
+				Torrent.thaw(tb);
+			}
 			return;
 		}
 		if (WaterArmsSpear.canThaw(b)) {

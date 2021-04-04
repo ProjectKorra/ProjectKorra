@@ -318,7 +318,10 @@ public class HeatControl extends FireAbility {
 			SurgeWave.thaw(block);
 			return;
 		} else if (!Torrent.canThaw(block)) {
-			Torrent.thaw(block);
+			TempBlock tempBlock = TempBlock.get(block);
+			if (tempBlock != null) {
+				Torrent.thaw(tempBlock);
+			}
 			return;
 		} else if (WaterArmsSpear.canThaw(block)) {
 			WaterArmsSpear.thaw(block);

@@ -217,7 +217,7 @@ public class WaterSpoutWave extends WaterAbility {
 				if (TempBlock.isTempBlock(this.origin.getBlock())) {
 					final TempBlock tb = TempBlock.get(this.origin.getBlock());
 
-					if (Torrent.getFrozenBlocks().containsKey(tb)) {
+					if (Torrent.getFrozenBlocks().contains(tb)) {
 						Torrent.massThaw(tb);
 					} else if (!isBendableWaterTempBlock(tb)) {
 						this.remove();

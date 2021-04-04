@@ -250,7 +250,7 @@ public class SurgeWave extends WaterAbility {
 
 				if (TempBlock.isTempBlock(this.sourceBlock)) {
 					final TempBlock tb = TempBlock.get(this.sourceBlock);
-					if (Torrent.getFrozenBlocks().containsKey(tb)) {
+					if (Torrent.getFrozenBlocks().contains(tb)) {
 						Torrent.massThaw(tb);
 					}
 				}

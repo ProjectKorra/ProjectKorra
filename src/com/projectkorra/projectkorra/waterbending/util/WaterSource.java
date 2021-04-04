@@ -1,4 +1,4 @@
-package com.projectkorra.projectkorra.waterbendingv2.util;
+package com.projectkorra.projectkorra.waterbending.util;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;

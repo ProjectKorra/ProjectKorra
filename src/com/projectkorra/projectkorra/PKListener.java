@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.projectkorra.projectkorra.waterbending.Torrent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -180,7 +181,6 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
-import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterBubble;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
@@ -1511,7 +1511,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("Surge")) {
 						SurgeWall.form(player);
 					} else if (abil.equalsIgnoreCase("Torrent")) {
-						Torrent.create(player);
+						Torrent.onSneak(player);
 					} else if (abil.equalsIgnoreCase("WaterArms")) {
 						new WaterArms(player);
 					}
@@ -1741,7 +1741,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("Surge")) {
 						new SurgeWall(player);
 					} else if (abil.equalsIgnoreCase("Torrent")) {
-						new Torrent(player);
+						new Torrent(player, true);
 					}
 				}
 			}

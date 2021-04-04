@@ -1,5 +1,6 @@
-package com.projectkorra.projectkorra.waterbendingv2;
+package com.projectkorra.projectkorra.waterbending;
 
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -9,9 +10,8 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.TorrentWave;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
-import com.projectkorra.projectkorra.waterbendingv2.util.WaterSource;
+import com.projectkorra.projectkorra.waterbending.util.WaterSource;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,8 +39,18 @@ public class Torrent extends WaterAbility {
 		FREEZE_STREAM, // the stream should freeze on impact
 	}
 
+	private static class IceCreator {
+		private final Player player;
+		private final int torrentId;
+		private IceCreator(Player player, int torrentId) {
+			this.player = player;
+			this.torrentId = torrentId;
+		}
+	}
+
+	private static final double CLEANUP_RANGE = 50;
 	// holds all torrent ice blocks and the ability id they were created with
-	private static final Map<TempBlock, Integer> FROZEN_BLOCKS = new HashMap<>();
+	private static final Map<TempBlock, IceCreator> FROZEN_BLOCKS = new HashMap<>();
 
 	private State state;
 	private WaterSource source;
@@ -104,23 +114,6 @@ public class Torrent extends WaterAbility {
 
 		setFields();
 
-		// try to find a valid source for this torrent
-		if (selectSourceManually) {
-			// check for source in line of sight
-			source = WaterSource.findManualSource(player, sourceRange, bPlayer.canPlantbend());
-			state = State.SOURCE_SELECTED;
-		} else {
-			// find auto source
-			source = WaterSource.findAutoSource(player, sourceRange, bPlayer.canPlantbend());
-			state = State.PULLING_SOURCE;
-		}
-
-		// if we didn't find one, quit setting up
-		if (source == null) {
-			return;
-		}
-
-		// at this point, a source has been selected and we can start setting up a valid torrent
 		// if a torrent was already active, check it's state and handle accordingly
 		Torrent old = getAbility(player, getClass());
 		if (old != null) {
@@ -138,6 +131,22 @@ public class Torrent extends WaterAbility {
 			return;
 		}
 
+		// try to find a valid source for this torrent
+		if (selectSourceManually) {
+			// check for source in line of sight
+			source = WaterSource.findManualSource(player, sourceRange, bPlayer.canPlantbend());
+			state = State.SOURCE_SELECTED;
+		} else {
+			// find auto source
+			source = WaterSource.findAutoSource(player, sourceRange, bPlayer.canPlantbend());
+			state = State.PULLING_SOURCE;
+		}
+
+		// if we didn't find one, quit setting up
+		if (source == null) {
+			return;
+		}
+
 		if (this.bPlayer.isAvatarState()) {
 			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.Push");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.InitialDamage");
@@ -148,6 +157,7 @@ public class Torrent extends WaterAbility {
 		if (state == State.PULLING_SOURCE) {
 			location = source.use(this::handleTorrentTempBlockAsSource);
 		}
+
 		start();
 	}
 
@@ -158,9 +168,9 @@ public class Torrent extends WaterAbility {
 		TempBlock tempBlock = TempBlock.get(block);
 		if (tempBlock == null) return;
 
-		int torrentId = FROZEN_BLOCKS.getOrDefault(tempBlock, -1);
-		if (torrentId != -1) {
-			massThaw(torrentId);
+		IceCreator iceCreator = FROZEN_BLOCKS.getOrDefault(tempBlock, null);
+		if (iceCreator != null) {
+			massThaw(iceCreator.torrentId);
 		} else if (isBendableWaterTempBlock(tempBlock)) {
 			tempBlock.revertBlock();
 		}
@@ -191,8 +201,8 @@ public class Torrent extends WaterAbility {
 		double dZ = radius * Math.sin(startAngle);
 		Location target = player.getEyeLocation().add(dX, 0, dZ);
 
-		double heightDiff = target.getBlockY() - location.getBlockY();
-		heightDiff = Math.abs(heightDiff) / heightDiff;
+		double heightDiff = target.getBlockY() - this.location.getBlockY();
+		heightDiff = heightDiff == 0 ? 0 : Math.abs(heightDiff) / heightDiff;
 
 		if (heightDiff != 0) {
 			this.location.add(new Vector(0, heightDiff, 0));
@@ -239,11 +249,10 @@ public class Torrent extends WaterAbility {
 
 		// display the spinning ring
 		Block lastBlock = null;
-		// List<Entity> affectedEntities = new ArrayList<>();
 		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getEyeLocation(), radius + 2);
 		Location loc = player.getEyeLocation();
 
-		// for loop to display the
+		// for loop to display the ring, currently the entire ring is redrawn every trick, this could be more efficient
 		for (double theta = this.angle; theta < this.streamLength + this.angle; theta += 20) {
 			double phi = Math.toRadians(theta);
 			double x = Math.cos(phi) * this.radius;
@@ -282,14 +291,16 @@ public class Torrent extends WaterAbility {
 			return;
 		}
 
-		Block streamHead = animationBlocks.getLast().getBlock();
-
-		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range, this.hurtEntities);
+		// find where the stream needs to go
+		Entity target = GeneralMethods.getTargetedEntity(this.player, this.range, this.hurtEntities);
 		Location targetLoc = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
 		if (target != null) {
 			targetLoc = target.getLocation();
 		}
 
+		// get the tail of the stream
+		Block streamTail = animationBlocks.getFirst().getBlock();
+		// the direction from the current location of the stream to the target
 		Vector dir = GeneralMethods.getDirection(this.location, targetLoc).normalize();
 
 		// this makes the torrent stream shoot through the target entity instead of stop at it
@@ -297,73 +308,87 @@ public class Torrent extends WaterAbility {
 			targetLoc = location.clone().add(dir.clone().multiply(10));
 		}
 
+		// if we've hit something, we want the stream to finish and not continue to be dragged
 		if (!hit) {
 			this.location.add(dir);
-			animationBlocks.removeFirst().revertBlock();
 		}
 
-		// if stream is too far or in a protected region
-		if (location.distanceSquared(player.getEyeLocation()) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-			if (!hit) {
-				hit = true;
-			}
-			// TODO: Do layer stuff?
-			if (animationBlocks.size() <= 1) {
-				this.remove();
-			}
+		// revert tail of the stream
+		animationBlocks.removeFirst().revertBlock();
+
+		// if no more blocks are left, the stream has ended
+		if (animationBlocks.isEmpty()) {
+			remove();
+			return;
+		}
+
+		// if stream is in a protected region, we act like we've hit something
+		if (GeneralMethods.isRegionProtectedFromBuild(this, location) && !hit) {
+			hit = true;
+			return;
+		// we've hit a solid surface
 		} else if (!isTransparent(player, location.getBlock())) {
-			if (state == State.FREEZE_STREAM) {
-				freeze();
-			} else {
-				remove();
-			}
-		} else {
-			if (location.getBlock().equals(streamHead)) {
+			if (!hit) {
+				// if we've set the state to freeze, we want to create the sphere now
+				if (state == State.FREEZE_STREAM) {
+					freeze();
+				}
 				hit = true;
 				return;
 			}
+		} else {
+			// if the target location is at the same block as the stream's tail, remove the stream
+			if (location.getBlock().equals(streamTail)) {
+				remove();
+				return;
+			}
+			// if the stream still has space left to travel
 			if (location.distanceSquared(targetLoc) > 1) {
+				// underwater we display bubbles
 				if (isWaterbendable(location.getBlock())) {
 					ParticleEffect.WATER_BUBBLE.display(location.clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 				}
+				// add tempblock to the end of the list
 				animationBlocks.addLast(new TempBlock(location.getBlock(), Material.WATER));
-			} else if (state == State.FREEZE_STREAM) { // Why was this here in the original?
-				freeze();
 			}
 		}
 
-		// find all nearby entities
-		int radius = (int) Math.floor(animationBlocks.size() / 2.0) + 1;
+		// find all entities around the stream. Radius is half the length of the stream
+		int radius = (int) Math.floor(animationBlocks.size() / 2.0);
 		List<Entity> affectedEntities = GeneralMethods.getEntitiesAroundPoint(
 			animationBlocks.get(radius).getLocation(),
-			radius
+			radius + 1
 		);
 
 		// pull entities in the stream
+		// start at the last block in the list, which is the front of the stream
 		int i = animationBlocks.size();
 		for (TempBlock animationBlock : animationBlocks) {
 			i--;
 			Block block = animationBlock.getBlock();
+			if (affectedEntities.size() == 0) break;
 			Iterator<Entity> it = affectedEntities.iterator();
 			Entity entity;
+			// loop through all nearby entities
 			while (it.hasNext()) {
 				entity = it.next();
+				// skip if they're SOMEHOW in a different world
 				if (entity.getWorld() != block.getWorld()) {
 					it.remove();
 				}
+				// if they're close enough to this particular part of the stream
 				if (entity.getLocation().distanceSquared(block.getLocation()) <= 1.5 * 1.5) {
+					// if we're at the head of the stream, just pull into the normal direction of the stream
 					if (i == animationBlocks.size() - 1) {
 						dragTarget(entity, dir);
 					} else {
+						// otherwise, calculate the direction between the current block and the previous one
 						dragTarget(entity, GeneralMethods.getDirection(block.getLocation(), animationBlocks.get(i + 1).getLocation()).normalize());
 					}
+					// remove the entity from the list cause it was already affected and we don't want to pull it multiple times
 					it.remove();
 				}
 			}
-		}
-
-		if (animationBlocks.isEmpty()) {
-			remove();
 		}
 	}
 
@@ -411,11 +436,22 @@ public class Torrent extends WaterAbility {
 		if (!avoidFreezingHead)
 			blocksToFreeze.removeAll(avoidHead);
 
+		// remove animation blocks if they're inside the ice sphere
+		Iterator<TempBlock> animationIterator = animationBlocks.iterator();
+		while (animationIterator.hasNext()) {
+			TempBlock animationBlock = animationIterator.next();
+			Block block = animationBlock.getBlock();
+			if (blocksToFreeze.contains(block)) {
+				animationBlock.revertBlock();
+				animationIterator.remove();
+			}
+		}
+
 		for (Block toFreeze : blocksToFreeze) {
 			if (!isTransparent(toFreeze) || isIce(toFreeze)) continue;
 
 			TempBlock ice = new TempBlock(toFreeze, Material.ICE);
-			FROZEN_BLOCKS.put(ice, getId());
+			FROZEN_BLOCKS.put(ice, new IceCreator(player, getId()));
 			if (revert) {
 				ice.setRevertTime(revertTime + (new Random().nextInt((500 + 500) + 1) - 500));
 			}
@@ -457,7 +493,7 @@ public class Torrent extends WaterAbility {
 		GeneralMethods.setVelocity(entity, velocity);
 		entity.setFallDistance(0);
 		if (entity instanceof LivingEntity) {
-			final double damageDealt = this.getNightFactor(this.deflectDamage);
+			double damageDealt = this.getNightFactor(this.deflectDamage);
 			DamageHandler.damageEntity(entity, damageDealt, this);
 			AirAbility.breakBreathbendingHold(entity);
 		}
@@ -465,16 +501,18 @@ public class Torrent extends WaterAbility {
 
 	// this method thaws an entire sphere for a given torrent id
 	private static void massThaw(int torrentId) {
-		for (Map.Entry<TempBlock, Integer> entry : FROZEN_BLOCKS.entrySet()) {
-			if (entry.getValue() != torrentId) continue;
-			thaw(entry.getKey());
-		}
+		FROZEN_BLOCKS.entrySet().removeIf(entry -> {
+			if (entry.getValue().torrentId != torrentId) return false;
+			// thaw(entry.getKey());
+			entry.getKey().revertBlock();
+			return true;
+		});
 	}
 
 	public static void massThaw(TempBlock tempBlock) {
-		int torrentId = FROZEN_BLOCKS.getOrDefault(tempBlock, -1);
-		if (torrentId != -1) {
-			massThaw(torrentId);
+		IceCreator iceCreator = FROZEN_BLOCKS.getOrDefault(tempBlock, null);
+		if (iceCreator != null) {
+			massThaw(iceCreator.torrentId);
 		}
 	}
 
@@ -493,6 +531,10 @@ public class Torrent extends WaterAbility {
 			location.getWorld() != player.getLocation().getWorld() ||
 			location.distanceSquared(player.getLocation()) > range * range
 		)) {
+			remove();
+			return;
+		}
+		if (canBeSource() ? !bPlayer.canBendIgnoreBinds(this) : !bPlayer.canBend(this)) {
 			remove();
 			return;
 		}
@@ -541,7 +583,14 @@ public class Torrent extends WaterAbility {
 	 * @return Whether or not the ability should be removed
 	 */
 	private boolean advanceStateByLeftClick() {
+		if (!bPlayer.getBoundAbilityName().equals(getName())) {
+			return false;
+		}
 		switch (state) {
+			case SOURCE_SELECTED:
+				// when left clicking and the previous torrent only had a source selected,
+				// we just want to select a new source
+				return true;
 			case SPINNING:
 				// when left clicking on holding, launch it
 				state = State.STREAM;
@@ -552,16 +601,8 @@ public class Torrent extends WaterAbility {
 				// when left clicking during stream, prepare freeze
 				state = State.FREEZE_STREAM;
 				return false;
-			case SOURCE_SELECTED:
-				// when left clicking and the previous torrent only had a source selected,
-				// we just want to select a new source
-				return true;
 		}
 		return false;
-	}
-
-	private void startRingFormation() {
-		state = State.PULLING_SOURCE;
 	}
 
 	/**
@@ -575,9 +616,6 @@ public class Torrent extends WaterAbility {
 		if (torrent == null) {
 			// create a new torrent instance and let it attempt to find it's own source
 			new Torrent(player, false);
-		} else {
-			// if we already had a torrent instance, we want to tell it to form the ring
-			torrent.startRingFormation();
 		}
 	}
 
@@ -586,11 +624,24 @@ public class Torrent extends WaterAbility {
 	}
 
 	public static void progressAllCleanup() {
-		for (TempBlock block : FROZEN_BLOCKS.keySet()) {
+		FROZEN_BLOCKS.entrySet().removeIf(entry -> {
+			TempBlock block = entry.getKey();
+			IceCreator iceCreator = entry.getValue();
+			Player player = iceCreator.player;
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (block.getBlock().getType() != Material.ICE) {
-				FROZEN_BLOCKS.remove(block);
+				return true;
+			} else if (
+				bPlayer == null ||
+				!player.isOnline() ||
+				block.getLocation().distanceSquared(player.getLocation()) > CLEANUP_RANGE * CLEANUP_RANGE ||
+				!bPlayer.canBendIgnoreBindsCooldowns(getAbility("Torrent"))
+			) {
+				block.revertBlock();
+				return true;
 			}
-		}
+			return false;
+		});
 	}
 
 	public static List<TempBlock> getFrozenBlocks() {
