@@ -29,6 +29,7 @@ public class WaterSource {
 
 	private static final LinkedList<Class<? extends WaterAbility>> SOURCE_ABILITIES = new LinkedList<>(
 		Arrays.asList(
+			Torrent.class,
 			SurgeWall.class,
 			WaterSpoutWave.class,
 			OctopusForm.class
