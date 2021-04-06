@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.util;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -37,8 +39,14 @@ public class DamageHandler {
 		if (source == null) {
 			source = ability.getPlayer();
 		}
+		double damageMultiplier;
+		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+			damageMultiplier = Double.parseDouble(PlaceholderAPI.setPlaceholders(source, ConfigManager.getConfig().getString("Properties.DamageMultiplier")));
+		}else{
+			damageMultiplier = ConfigManager.getConfig().getDouble("Properties.DamageMultiplier");
+		}
 
-		final AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage, ignoreArmor);
+		final AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage*damageMultiplier, ignoreArmor);
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player && Commands.invincible.contains(entity.getName())) {
