@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.projectkorra.projectkorra.waterbending.Torrent;
+import com.projectkorra.projectkorra.waterbending.*;
+import com.projectkorra.projectkorra.waterbending.util.WaterSource;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -178,13 +179,6 @@ import com.projectkorra.projectkorra.util.StatisticsManager;
 import com.projectkorra.projectkorra.util.StatisticsMethods;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.OctopusForm;
-import com.projectkorra.projectkorra.waterbending.SurgeWall;
-import com.projectkorra.projectkorra.waterbending.SurgeWave;
-import com.projectkorra.projectkorra.waterbending.WaterBubble;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
@@ -1411,24 +1405,24 @@ public class PKListener implements Listener {
 		}
 
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
-			if (player.isSneaking()) {
-				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
-			} else {
+			if (event.isSneaking()) {
 				ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
+			} else {
+				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
 			}
 		}
 
 		final String abilName = bPlayer.getBoundAbilityName();
 		if (Suffocate.isBreathbent(player)) {
-			if (!abilName.equalsIgnoreCase("AirSwipe") || !abilName.equalsIgnoreCase("FireBlast") || !abilName.equalsIgnoreCase("EarthBlast") || !abilName.equalsIgnoreCase("WaterManipulation")) {
-				if (!player.isSneaking()) {
+			if (!abilName.equalsIgnoreCase("AirSwipe") && !abilName.equalsIgnoreCase("FireBlast") && !abilName.equalsIgnoreCase("EarthBlast") && !abilName.equalsIgnoreCase("WaterManipulation")) {
+				if (event.isSneaking()) {
 					event.setCancelled(true);
 				}
 			}
 		}
 
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player)) {
-			if (!player.isSneaking()) {
+			if (event.isSneaking()) {
 				event.setCancelled(true);
 				return;
 			}
@@ -1439,7 +1433,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (!player.isSneaking()) {
+		if (event.isSneaking()) {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
@@ -1462,7 +1456,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (!player.isSneaking() && bPlayer.canBendIgnoreCooldowns(coreAbil)) {
+		if (event.isSneaking() && bPlayer.canBendIgnoreCooldowns(coreAbil)) {
 			if (coreAbil instanceof AddonAbility) {
 				return;
 			}
@@ -1496,7 +1490,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("IceSpike")) {
 						new IceSpikeBlast(player);
 					} else if (abil.equalsIgnoreCase("OctopusForm")) {
-						OctopusForm.form(player);
+						OctopusForm.onSneak(player);
 					} else if (abil.equalsIgnoreCase("PhaseChange")) {
 						if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
 							new PhaseChange(player, PhaseChangeType.MELT);
@@ -1599,6 +1593,21 @@ public class PKListener implements Listener {
 		final int slot = event.getNewSlot() + 1;
 		GeneralMethods.displayMovePreview(player, slot);
 		BendingBoardManager.changeActiveSlot(player, event.getPreviousSlot(), event.getNewSlot());
+
+		if (player.isSneaking()) {
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			if (bPlayer == null) return;
+			int oldSlot = event.getPreviousSlot() + 1;
+			if (
+				WaterSource.isSourceableAbility(bPlayer.getAbilities().get(oldSlot)) &&
+				CoreAbility.getAbility(bPlayer.getAbilities().get(slot)).getElement().equals(Element.WATER)
+			) {
+				Bukkit.getScheduler().runTaskLater(
+					plugin,
+					() -> Bukkit.getPluginManager().callEvent(new PlayerToggleSneakEvent(player, true)),
+					1);
+			}
+		}
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
@@ -1724,7 +1733,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("IceSpike")) {
 						IceSpikeBlast.activate(player);
 					} else if (abil.equalsIgnoreCase("OctopusForm")) {
-						new OctopusForm(player);
+						new OctopusForm(player, true);
 					} else if (abil.equalsIgnoreCase("PhaseChange")) {
 						if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
 							new PhaseChange(player, PhaseChangeType.FREEZE);

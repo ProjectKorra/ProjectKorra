@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.*;
+import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,9 +33,11 @@ public class WaterSource {
 			Torrent.class,
 			SurgeWall.class,
 			WaterSpoutWave.class,
+			IceWave.class,
 			OctopusForm.class
 		)
 	);
+	private static final LinkedList<CoreAbility> CACHED_SOURCE_ABILITIES = new LinkedList<>();
 
 	private static final LinkedList<Class<? extends Entity>> SOURCE_ENTITIES = new LinkedList<>(
 		Collections.singletonList(
@@ -46,13 +49,15 @@ public class WaterSource {
 	private final Block block;
 	private final Entity entity;
 	private final WaterAbility ability;
+	private final boolean bottle;
 	private final boolean allowPlantbending;
 
-	private WaterSource(Player player, Block block, Entity entity, WaterAbility ability, boolean allowPlantbending) {
+	private WaterSource(Player player, Block block, Entity entity, WaterAbility ability, boolean bottle, boolean allowPlantbending) {
 		this.player = player;
 		this.block = block;
 		this.entity = entity;
 		this.ability = ability;
+		this.bottle = bottle;
 		this.allowPlantbending = allowPlantbending;
 	}
 
@@ -123,8 +128,19 @@ public class WaterSource {
 			return block.getLocation();
 		}
 		if (isAbility()) {
+			ability.setIsBeingReused(true);
 			ability.remove();
-			return ability.getLocation();
+			Location loc = ability.getLocation();
+			if (loc.getBlock() == player.getEyeLocation().getBlock()) {
+				Location eyeLoc = player.getEyeLocation();
+				return eyeLoc.add(eyeLoc.getDirection().normalize());
+			}
+			return loc;
+		}
+		if (isBottle()) {
+			WaterReturn.emptyWaterBottle(player);
+			Location eyeLoc = player.getEyeLocation();
+			return eyeLoc.add(eyeLoc.getDirection().normalize());
 		}
 		return null;
 	}
@@ -141,6 +157,10 @@ public class WaterSource {
 		return ability != null;
 	}
 
+	public boolean isBottle() {
+		return bottle;
+	}
+
 	/**
 	 * Tries to find a source for a player, as if they are manually trying to select one.
 	 * @param player The player that tries to manually select a source
@@ -154,7 +174,7 @@ public class WaterSource {
 		if (targetEntity != null) {
 			for (Class<? extends Entity> sourceEntity : SOURCE_ENTITIES) {
 				if (targetEntity.getClass() == sourceEntity) {
-					return new WaterSource(player, null, targetEntity, null, plantbending);
+					return new WaterSource(player, null, targetEntity, null, false, plantbending);
 				}
 			}
 		}
@@ -162,7 +182,7 @@ public class WaterSource {
 		// try to find source block
 		Block targetBlock = WaterAbility.getWaterSourceBlock(player, range, plantbending);
 		if (targetBlock != null) {
-			return new WaterSource(player, targetBlock, null, null, plantbending);
+			return new WaterSource(player, targetBlock, null, null, false, plantbending);
 		}
 
 		return null;
@@ -180,7 +200,16 @@ public class WaterSource {
 		for (Class<? extends WaterAbility> sourceAbility : SOURCE_ABILITIES) {
 			WaterAbility potentialSource = CoreAbility.getAbility(player, sourceAbility);
 			if (potentialSource != null && potentialSource.canBeSource()) {
-				return new WaterSource(player, null, null, potentialSource, plantbending);
+				return new WaterSource(player, null, null, potentialSource, false, plantbending);
+			}
+		}
+
+		// try bottle bending
+		if (WaterReturn.hasWaterBottle(player)) {
+			Location eyeLoc = player.getEyeLocation();
+			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
+			if (WaterAbility.isTransparent(player, block)) {
+				return new WaterSource(player, null, null, null, true, plantbending);
 			}
 		}
 
@@ -189,7 +218,7 @@ public class WaterSource {
 		if (targetEntities.size() > 0) {
 			for (Entity targetEntity : targetEntities) {
 				if (SOURCE_ENTITIES.contains(targetEntity.getClass())) {
-					return new WaterSource(player, null, targetEntity, null, plantbending);
+					return new WaterSource(player, null, targetEntity, null, false, plantbending);
 				}
 			}
 		}
@@ -197,9 +226,26 @@ public class WaterSource {
 		// try to find source block
 		Block targetBlock = BlockSource.getWaterSourceBlock(player, range, true, true, plantbending);
 		if (targetBlock != null) {
-			return new WaterSource(player, targetBlock, null, null, plantbending);
+			return new WaterSource(player, targetBlock, null, null, false, plantbending);
 		}
 
 		return null;
 	}
+
+	public static boolean isSourceableAbility(String name) {
+		if (CACHED_SOURCE_ABILITIES.size() != SOURCE_ABILITIES.size()) {
+			cacheSourceAbilities();
+		}
+		for (CoreAbility sourceAbility : CACHED_SOURCE_ABILITIES) {
+			if (sourceAbility.getName().equals(name)) return true;
+		}
+		return false;
+	}
+
+	private static void cacheSourceAbilities() {
+		for (Class<? extends WaterAbility> sourceAbility : SOURCE_ABILITIES) {
+			CACHED_SOURCE_ABILITIES.add(CoreAbility.getAbility(sourceAbility));
+		}
+	}
+
 }

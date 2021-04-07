@@ -80,6 +80,9 @@ public class Torrent extends WaterAbility {
 	private boolean revert;
 	private long revertTime;
 	private long cooldown;
+	private long interval;
+
+	private long time;
 
 	public void setFields() {
 		this.angle = 0;
@@ -99,6 +102,7 @@ public class Torrent extends WaterAbility {
 		this.revert = getConfig().getBoolean("Abilities.Water.Torrent.Revert");
 		this.revertTime = getConfig().getLong("Abilities.Water.Torrent.RevertTime");
 		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Cooldown");
+		this.interval = getConfig().getLong("Abilities.Water.Torrent.Interval");
 
 		animationBlocks = new LinkedList<>();
 		hurtEntities = new ArrayList<>();
@@ -117,7 +121,7 @@ public class Torrent extends WaterAbility {
 		// if a torrent was already active, check it's state and handle accordingly
 		Torrent old = getAbility(player, getClass());
 		if (old != null) {
-			if (old.advanceStateByLeftClick()) {
+			if (selectSourceManually && old.advanceStateByLeftClick()) {
 				// the advance state returned true, remove it
 				old.remove();
 			} else {
@@ -155,7 +159,7 @@ public class Torrent extends WaterAbility {
 		}
 
 		if (state == State.PULLING_SOURCE) {
-			location = source.use(this::handleTorrentTempBlockAsSource);
+			location = source.use();
 		}
 
 		start();
@@ -213,11 +217,15 @@ public class Torrent extends WaterAbility {
 		// if the source has arrived at it's destination
 		if (this.location.distanceSquared(target) <= 1) {
 			state = State.FORMING;
-			sourceTempBlock.revertBlock();
-			sourceTempBlock = null;
+			if (sourceTempBlock != null) {
+				sourceTempBlock.revertBlock();
+				sourceTempBlock = null;
+			}
 		} else {
 			// revert the old tempblock
-			sourceTempBlock.revertBlock();
+			if (sourceTempBlock != null) {
+				sourceTempBlock.revertBlock();
+			}
 			// check if new location is transparent, if not we've hit a wall
 			Block block = location.getBlock();
 			if (!isTransparent(player, block)) {
@@ -538,21 +546,24 @@ public class Torrent extends WaterAbility {
 			remove();
 			return;
 		}
-		switch (state) {
-			case SOURCE_SELECTED:
-				handleSourceSelected();
-				break;
-			case PULLING_SOURCE:
-				handlePullingSource();
-				break;
-			case FORMING:
-			case SPINNING:
-				handleHolding();
-				break;
-			case STREAM:
-			case FREEZE_STREAM:
-				handleStream();
-				break;
+		if (System.currentTimeMillis() > this.time + this.interval) {
+			this.time = System.currentTimeMillis();
+			switch (state) {
+				case SOURCE_SELECTED:
+					handleSourceSelected();
+					break;
+				case PULLING_SOURCE:
+					handlePullingSource();
+					break;
+				case FORMING:
+				case SPINNING:
+					handleHolding();
+					break;
+				case STREAM:
+				case FREEZE_STREAM:
+					handleStream();
+					break;
+			}
 		}
 	}
 
@@ -567,7 +578,7 @@ public class Torrent extends WaterAbility {
 			this.sourceTempBlock.revertBlock();
 		}
 
-		if (this.location != null) {
+		if (this.location != null && !isBeingReused()) {
 			// remove until bottlebending are supported?
 			new WaterReturn(this.player, location.getBlock());
 		}

@@ -32,6 +32,8 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public abstract class WaterAbility extends ElementalAbility {
 
+	private boolean isBeingReused = false;
+
 	public WaterAbility(final Player player) {
 		super(player);
 	}
@@ -45,6 +47,14 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public boolean canBeSource() { return false; }
+
+	public void setIsBeingReused(boolean b) {
+		isBeingReused = b;
+	}
+
+	public boolean isBeingReused() {
+		return isBeingReused;
+	}
 
 	@Override
 	public Element getElement() {
