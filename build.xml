@@ -5,7 +5,7 @@
     <property name="dir.jar"     value="${dir.build}/jar"/>
 	<property name="dir.lib"     value="lib"/>
 
-    <property name="main-class"  value="com.projectkorra.projectkorra.ProjectKorra"/>
+    <property name="main-class"  value="main.java.com.projectkorra.projectkorra.ProjectKorra"/>
 
     <target name="clean">
         <delete dir="${dir.build}"/>
@@ -28,7 +28,7 @@
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
-            <fileset file="${dir.src}/plugin.yml"/>
+            <fileset file="src/main/plugin.yml"/>
         </jar>
     </target>
 
