@@ -73,8 +73,6 @@ class FireBlast : FireAbility {
         origin = location.clone()
         this.direction = direction.clone().normalize()
 
-        levelManager=LevelManager(player)
-
         // The following code determines the total additive modifier between Blue Fire & Day Modifiers
         applyModifiers(this.damage, range)
         start()
