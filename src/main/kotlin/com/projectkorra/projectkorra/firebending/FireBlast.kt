@@ -56,7 +56,6 @@ class FireBlast : FireAbility {
     lateinit var origin: Location
     lateinit var direction: Vector
     lateinit var safeBlocks: List<Block>
-    lateinit var levelManager: LevelManager
         private set
 
 
@@ -73,7 +72,6 @@ class FireBlast : FireAbility {
         origin = location.clone()
         this.direction = direction.clone().normalize()
 
-        levelManager=LevelManager(player)
 
         // The following code determines the total additive modifier between Blue Fire & Day Modifiers
         applyModifiers(this.damage, range)

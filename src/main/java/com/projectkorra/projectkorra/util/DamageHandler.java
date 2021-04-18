@@ -46,7 +46,7 @@ public class DamageHandler {
 			damageMultiplier = ConfigManager.getConfig().getDouble("Properties.DamageMultiplier");
 		}
 
-		final AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage*damageMultiplier, ignoreArmor);
+		final AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage*(damageMultiplier/100), ignoreArmor);
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player && Commands.invincible.contains(entity.getName())) {
