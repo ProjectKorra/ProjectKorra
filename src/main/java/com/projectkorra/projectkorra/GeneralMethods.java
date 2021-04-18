@@ -116,7 +116,6 @@ import com.projectkorra.projectkorra.event.AbilityVelocityAffectEntityEvent;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
-import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.object.Preset;

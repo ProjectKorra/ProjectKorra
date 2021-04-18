@@ -25,7 +25,6 @@ import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.Ripple;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
-import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.firebending.FireJet;

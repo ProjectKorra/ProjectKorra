@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.utils.manager.LevelManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -80,10 +81,13 @@ public class WaterSpoutWave extends WaterAbility {
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
+	private LevelManager levelManager;
 
 	public WaterSpoutWave(final Player player, final AbilityType type) {
 		super(player);
 
+
+		this.levelManager = new LevelManager(player);
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
