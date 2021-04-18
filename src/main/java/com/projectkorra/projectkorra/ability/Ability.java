@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.command.HelpCommand;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.firebending.Blaze;
+import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.waterbending.TorrentWave;
