@@ -75,6 +75,11 @@ public class PresetCommand extends PKCommand {
 
 		final Player player = (Player) sender;
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		if (args.size() != 3) {
+		player.sendMessage(ChatColor.RED + "Please use the correct format! /bending preset <Bind/Create/Delete/List> [PresetName]");
+			
+		}
 
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
