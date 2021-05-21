@@ -63,7 +63,7 @@ public class Shockwave extends EarthAbility {
 
 	@Override
 	public void progress() {
-		if (!this.player.isOnline() && stage == Stage.RIPPLE) {
+		if ((!this.player.isOnline() || this.player.isDead()) && stage == Stage.RIPPLE) {
 			progressRipples(false);
 		} else if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
