@@ -1,16 +1,17 @@
 package com.projectkorra.projectkorra.earthbending;
 
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Shockwave extends EarthAbility {
 
-	private boolean charged;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
 	@Attribute(Attribute.COOLDOWN)
@@ -20,19 +21,33 @@ public class Shockwave extends EarthAbility {
 	@Attribute(Attribute.RANGE)
 	private double range;
 
+	@Attribute(Attribute.DAMAGE)
+	private double damage;
+	@Attribute(Attribute.KNOCKBACK)
+	private double knockback;
+
+	private List<Ripple> ripple = new ArrayList<>();
+
+	private Stage stage = Stage.CHARGING;
+
 	public Shockwave(final Player player, final boolean fall) {
 		super(player);
 
 		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
-		this.cooldown = getConfig().getLong("Abilities.Earth.Shockwave.Cooldown");
-		this.chargeTime = getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
 		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
-		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
 
 		if (this.bPlayer.isAvatarState()) {
 			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage");
+			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback");
+		} else {
+			this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
+			this.cooldown = getConfig().getLong("Abilities.Earth.Shockwave.Cooldown");
+			this.chargeTime = getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
+			this.damage = getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
+			this.knockback = getConfig().getDouble("Abilities.Earth.Shockwave.Knockback");
 		}
 
 		if (!this.bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
@@ -40,50 +55,36 @@ public class Shockwave extends EarthAbility {
 		}
 
 		if (fall) {
-			this.fallShockwave();
-			return;
+			createRipples();
 		}
 
 		this.start();
 	}
 
-	public void fallShockwave() {
-		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
-			return;
-		} else if (this.player.getFallDistance() < this.threshold || !this.isEarthbendable(this.player.getLocation().clone().subtract(0, 1, 0).getBlock())) {
-			return;
-		} else if (this.bPlayer.isOnCooldown("Shockwave")) {
-			return;
-		}
-
-		this.areaShockwave();
-		this.bPlayer.addCooldown(this);
-		this.remove();
-	}
-
 	@Override
 	public void progress() {
-		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+		if ((!this.player.isOnline() || this.player.isDead()) && stage == Stage.RIPPLE) {
+			progressRipples(false);
+		} else if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
 			return;
 		}
 
-		if (System.currentTimeMillis() > this.getStartTime() + this.chargeTime && !this.charged) {
-			this.charged = true;
-		}
-
-		if (!this.player.isSneaking()) {
-			if (this.charged) {
-				this.areaShockwave();
+		if (stage == Stage.CHARGING) {
+			if (System.currentTimeMillis() > this.getStartTime() + this.chargeTime) {
+				this.stage = Stage.CHARGED;
+			} else if (!this.player.isSneaking()) {
 				this.remove();
-				return;
-			} else {
-				this.remove();
-				return;
 			}
-		} else if (this.charged) {
-			final Location location = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection());
-			ParticleEffect.SMOKE_NORMAL.display(location, 1);
+		} else if (stage == Stage.CHARGED) {
+			ParticleEffect.SMOKE_NORMAL.display(player.getEyeLocation().add(this.player.getEyeLocation().getDirection()), 1);
+			if (!this.player.isSneaking()) {
+				createRipples();
+			} else if (leftClick) {
+				createConeRipples();
+			}
+		} else {
+			progressRipples(true);
 		}
 	}
 
@@ -91,32 +92,50 @@ public class Shockwave extends EarthAbility {
 		Ripple.progressAllCleanup();
 	}
 
-	public void areaShockwave() {
-		final double dtheta = 360.0 / (2 * Math.PI * this.range) - 1;
+	private void progressRipples(boolean damage) {
+		for (Ripple rip : new ArrayList<>(ripple)) {
+			if (rip.isToBeRemoved()) {
+				ripple.remove(rip);
+			} else {
+				rip.progress(damage);
+			}
+		}
+		if (ripple.isEmpty()) {
+			remove();
+		}
+	}
+
+	private void createRipples() {
+		final double dtheta = 360.0 / (2 * Math.PI * range) - 1;
 		for (double theta = 0; theta < 360; theta += dtheta) {
 			final double rtheta = Math.toRadians(theta);
 			final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
-			new Ripple(this.player, vector.normalize());
+			ripple.add(new Ripple(this, vector.normalize(), range, damage, knockback));
 		}
 		this.bPlayer.addCooldown(this);
+		stage = Stage.RIPPLE;
 	}
 
-	public static void coneShockwave(final Player player) {
-		final Shockwave shockWave = getAbility(player, Shockwave.class);
-		if (shockWave != null) {
-			if (shockWave.charged) {
-				final double dtheta = 360.0 / (2 * Math.PI * shockWave.range) - 1;
+	private void createConeRipples() {
+		final double dtheta = 360.0 / (2 * Math.PI * range) - 1;
 
-				for (double theta = 0; theta < 360; theta += dtheta) {
-					final double rtheta = Math.toRadians(theta);
-					final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
-					if (vector.angle(player.getEyeLocation().getDirection()) < shockWave.angle) {
-						new Ripple(player, vector.normalize());
-					}
-				}
-				shockWave.bPlayer.addCooldown(shockWave);
-				shockWave.remove();
+		for (double theta = 0; theta < 360; theta += dtheta) {
+			final double rtheta = Math.toRadians(theta);
+			final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
+			if (vector.angle(player.getEyeLocation().getDirection()) < angle) {
+				ripple.add(new Ripple(this, vector.normalize(), range, damage, knockback));
 			}
+		}
+		this.bPlayer.addCooldown(this);
+		stage = Stage.RIPPLE;
+	}
+
+	private boolean leftClick = false;
+
+	public static void leftClick(final Player player) {
+		final Shockwave shockWave = getAbility(player, Shockwave.class);
+		if (shockWave != null && shockWave.getStage() == Stage.CHARGED) {
+			shockWave.leftClick = true;
 		}
 	}
 
@@ -145,16 +164,28 @@ public class Shockwave extends EarthAbility {
 		return false;
 	}
 
-	public boolean isCharged() {
-		return this.charged;
-	}
-
-	public void setCharged(final boolean charged) {
-		this.charged = charged;
+	public Stage getStage() {
+		return stage;
 	}
 
 	public long getChargeTime() {
 		return this.chargeTime;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public double getKnockback() {
+		return knockback;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public void setKnockback(double knockback) {
+		this.knockback = knockback;
 	}
 
 	public void setChargeTime(final long chargeTime) {
@@ -187,6 +218,12 @@ public class Shockwave extends EarthAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+
+	public enum Stage {
+		CHARGING,
+		CHARGED,
+		RIPPLE
 	}
 
 }

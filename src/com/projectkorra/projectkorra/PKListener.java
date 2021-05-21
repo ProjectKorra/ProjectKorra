@@ -1757,7 +1757,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("Collapse")) {
 						new Collapse(player);
 					} else if (abil.equalsIgnoreCase("Shockwave")) {
-						Shockwave.coneShockwave(player);
+						Shockwave.leftClick(player);
 					} else if (abil.equalsIgnoreCase("EarthArmor")) {
 						final EarthArmor armor = CoreAbility.getAbility(player, EarthArmor.class);
 						if (armor != null && armor.isFormed()) {

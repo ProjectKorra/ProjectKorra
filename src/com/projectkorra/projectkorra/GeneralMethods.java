@@ -167,7 +167,7 @@ public class GeneralMethods {
 
 	/**
 	 * Checks to see if an AbilityExists. Uses method
-	 * {@link #getAbility(String)} to check if it exists.
+	 * {@link CoreAbility#getAbility(String)} to check if it exists.
 	 *
 	 * @param string Ability Name
 	 * @return true if ability exists

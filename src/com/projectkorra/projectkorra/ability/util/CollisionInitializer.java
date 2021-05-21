@@ -100,7 +100,6 @@ public class CollisionInitializer {
 		CoreAbility.getAbility(EarthTunnel.class);
 		CoreAbility.getAbility(LavaFlow.class);
 		CoreAbility.getAbility(RaiseEarth.class);
-		CoreAbility.getAbility(Ripple.class);
 
 		final CoreAbility blazeArc = CoreAbility.getAbility(BlazeArc.class);
 		final CoreAbility combustion = CoreAbility.getAbility(Combustion.class);
