@@ -1,57 +1,27 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import java.util.ArrayList;
-
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirBurst;
-import com.projectkorra.projectkorra.airbending.AirScooter;
-import com.projectkorra.projectkorra.airbending.AirShield;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.airbending.AirSuction;
-import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.airbending.Suffocate;
-import com.projectkorra.projectkorra.airbending.Tornado;
+import com.projectkorra.projectkorra.airbending.*;
 import com.projectkorra.projectkorra.airbending.combo.AirStream;
 import com.projectkorra.projectkorra.airbending.combo.AirSweep;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
-import com.projectkorra.projectkorra.earthbending.Catapult;
-import com.projectkorra.projectkorra.earthbending.Collapse;
-import com.projectkorra.projectkorra.earthbending.EarthArmor;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.earthbending.EarthSmash;
-import com.projectkorra.projectkorra.earthbending.EarthTunnel;
-import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.earthbending.Ripple;
+import com.projectkorra.projectkorra.earthbending.*;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
-import com.projectkorra.projectkorra.firebending.BlazeArc;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.FireBlastCharged;
-import com.projectkorra.projectkorra.firebending.FireBurst;
-import com.projectkorra.projectkorra.firebending.FireJet;
-import com.projectkorra.projectkorra.firebending.FireManipulation;
-import com.projectkorra.projectkorra.firebending.FireShield;
-import com.projectkorra.projectkorra.firebending.WallOfFire;
+import com.projectkorra.projectkorra.firebending.*;
 import com.projectkorra.projectkorra.firebending.combo.FireKick;
 import com.projectkorra.projectkorra.firebending.combo.FireSpin;
 import com.projectkorra.projectkorra.firebending.combo.FireWheel;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
-import com.projectkorra.projectkorra.waterbending.OctopusForm;
-import com.projectkorra.projectkorra.waterbending.SurgeWall;
-import com.projectkorra.projectkorra.waterbending.SurgeWave;
-import com.projectkorra.projectkorra.waterbending.Torrent;
-import com.projectkorra.projectkorra.waterbending.TorrentWave;
-import com.projectkorra.projectkorra.waterbending.WaterBubble;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
+import com.projectkorra.projectkorra.waterbending.*;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
+
+import java.util.ArrayList;
 
 /**
  * CollisionInitializer is used to create the default Collisions for a given
@@ -100,7 +70,6 @@ public class CollisionInitializer {
 		CoreAbility.getAbility(EarthTunnel.class);
 		CoreAbility.getAbility(LavaFlow.class);
 		CoreAbility.getAbility(RaiseEarth.class);
-		CoreAbility.getAbility(Ripple.class);
 
 		final CoreAbility blazeArc = CoreAbility.getAbility(BlazeArc.class);
 		final CoreAbility combustion = CoreAbility.getAbility(Combustion.class);

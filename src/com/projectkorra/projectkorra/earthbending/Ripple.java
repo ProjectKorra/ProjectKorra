@@ -1,9 +1,10 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -13,25 +14,20 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class Ripple extends EarthAbility {
+public class Ripple {
 
 	private static final Map<Integer[], Block> BLOCKS = new ConcurrentHashMap<Integer[], Block>();
 
+	private Player player;
+	private Shockwave shockwave;
 	private int step;
 	private int maxStep;
-	@Attribute(Attribute.RANGE)
 	private double range;
-	@Attribute(Attribute.DAMAGE)
 	private double damage;
-	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	private Vector direction;
 	private Location origin;
@@ -43,41 +39,34 @@ public class Ripple extends EarthAbility {
 	private ArrayList<Location> locations = new ArrayList<Location>();
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
 
-	public Ripple(final Player player, final Vector direction) {
-		super(player);
-		this.initialize(player, this.getInitialLocation(player, direction), direction);
+	public Ripple(Shockwave shockwave, final Vector direction, double range, double damage, double knockback) {
+		this.initialize(shockwave, this.getInitialLocation(shockwave.getPlayer(), direction), direction, range, damage, knockback);
 	}
 
-	public Ripple(final Player player, final Location origin, final Vector direction) {
-		super(player);
-		this.initialize(player, origin, direction);
+	public Ripple(Shockwave shockwave, final Location origin, final Vector direction, double range, double damage, double knockback) {
+		this.initialize(shockwave, origin, direction, range, damage, knockback);
 	}
 
-	private void initialize(final Player player, final Location origin, final Vector direction) {
+	private void initialize(Shockwave shockwave, final Location origin, final Vector direction, double range, double damage, double knockback) {
 		if (origin == null) {
 			return;
 		}
-
-		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
-		this.damage = getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
-		this.knockback = getConfig().getDouble("Abilities.Earth.Shockwave.Knockback");
+		this.shockwave = shockwave;
+		this.player = shockwave.getPlayer();
+		this.range = range;
+		this.damage = damage;
+		this.knockback = knockback;
 		this.direction = direction.clone().normalize();
 		this.origin = origin.clone();
 		this.location = origin.clone();
 		this.locations = new ArrayList<>();
 		this.entities = new ArrayList<>();
 
-		if (this.bPlayer.isAvatarState()) {
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback");
-		}
-
 		this.initializeLocations();
 		this.maxStep = this.locations.size();
 
-		if (this.isEarthbendable(origin.getBlock())) {
-			this.start();
+		if (!EarthAbility.isEarthbendable(player, origin.getBlock())) {
+			remove = true;
 		}
 	}
 
@@ -96,7 +85,7 @@ public class Ripple extends EarthAbility {
 			final Block topBlock = loc.getBlock();
 			final Block botBlock = loc.clone().add(0, -1, 0).getBlock();
 
-			if (this.isTransparent(topBlock) && this.isEarthbendable(botBlock)) {
+			if (GeneralMethods.isTransparent(topBlock) && EarthAbility.isEarthbendable(player, botBlock)) {
 				location = loc.clone().add(0, -1, 0);
 				return location;
 			}
@@ -105,9 +94,14 @@ public class Ripple extends EarthAbility {
 		return null;
 	}
 
-	@Override
-	public void progress() {
-		if (this.step < this.maxStep) {
+	private boolean remove = false;
+
+	public boolean isToBeRemoved() {
+		return remove;
+	}
+
+	public void progress(boolean damage) {
+		if (this.step < this.maxStep && !remove) {
 			final Location newlocation = this.locations.get(this.step);
 			final Block block = this.location.getBlock();
 			this.location = newlocation.clone();
@@ -196,12 +190,12 @@ public class Ripple extends EarthAbility {
 			if (this.decrease(this.block4)) {
 				this.block4 = this.block4.getRelative(BlockFace.DOWN);
 			}
-			this.remove();
+			remove = true;
 		}
 
 		this.step += 1;
 		for (final Entity entity : this.entities) {
-			this.affect(entity);
+			this.affect(entity, damage);
 		}
 		this.entities.clear();
 	}
@@ -218,7 +212,7 @@ public class Ripple extends EarthAbility {
 				final Block topblock = loc.getBlock();
 				final Block botblock = loc.clone().add(0, -1, 0).getBlock();
 
-				if (this.isTransparent(topblock) && !topblock.isLiquid() && this.isEarthbendable(botblock)) {
+				if (GeneralMethods.isTransparent(topblock) && !topblock.isLiquid() && EarthAbility.isEarthbendable(player, botblock)) {
 					location = loc.clone().add(0, -1, 0);
 					this.locations.add(location);
 					break;
@@ -240,11 +234,11 @@ public class Ripple extends EarthAbility {
 		final Block botBlock = block.getRelative(BlockFace.DOWN);
 		int length = 1;
 
-		if (this.isEarthbendable(botBlock)) {
+		if (EarthAbility.isEarthbendable(player, botBlock)) {
 			length = 2;
 			block = botBlock;
 		}
-		return this.moveEarth(block, new Vector(0, -1, 0), length, false);
+		return shockwave.moveEarth(block, new Vector(0, -1, 0), length, false);
 	}
 
 	private boolean increase(final Block block) {
@@ -258,10 +252,10 @@ public class Ripple extends EarthAbility {
 		final Block botblock = block.getRelative(BlockFace.DOWN);
 		int length = 1;
 
-		if (this.isEarthbendable(botblock)) {
+		if (shockwave.isEarthbendable(botblock)) {
 			length = 2;
 		}
-		if (this.moveEarth(block, new Vector(0, 1, 0), length, false)) {
+		if (shockwave.moveEarth(block, new Vector(0, 1, 0), length, false)) {
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2)) {
 				if (entity.getEntityId() != this.player.getEntityId() && !this.entities.contains(entity)) {
 					if (!(entity instanceof FallingBlock)) {
@@ -274,18 +268,18 @@ public class Ripple extends EarthAbility {
 		return false;
 	}
 
-	private void affect(final Entity entity) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+	private void affect(final Entity entity, boolean damage) {
+		if (GeneralMethods.isRegionProtectedFromBuild(shockwave, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			return;
 		}
-		if (entity instanceof LivingEntity) {
-			DamageHandler.damageEntity(entity, this.damage, this);
+		if (damage && entity instanceof LivingEntity) {
+			DamageHandler.damageEntity(entity, this.damage, shockwave);
 		}
 
 		final Vector vector = this.direction.clone();
 		vector.setY(.5);
-		final double knock = this.bPlayer.isAvatarState() ? AvatarState.getValue(this.knockback) : this.knockback;
-		GeneralMethods.setVelocity(this, entity, vector.clone().normalize().multiply(knock));
+		final double knock = knockback;
+		GeneralMethods.setVelocity(shockwave, entity, vector.clone().normalize().multiply(knock));
 		AirAbility.breakBreathbendingHold(entity);
 	}
 
@@ -312,36 +306,6 @@ public class Ripple extends EarthAbility {
 
 	public static Map<Integer[], Block> getBlocks() {
 		return BLOCKS;
-	}
-
-	@Override
-	public String getName() {
-		return "Shockwave";
-	}
-
-	@Override
-	public Location getLocation() {
-		return this.location;
-	}
-
-	@Override
-	public long getCooldown() {
-		return 0;
-	}
-
-	@Override
-	public boolean isSneakAbility() {
-		return true;
-	}
-
-	@Override
-	public boolean isHarmlessAbility() {
-		return false;
-	}
-
-	@Override
-	public ArrayList<Location> getLocations() {
-		return this.locations;
 	}
 
 	public int getStep() {
