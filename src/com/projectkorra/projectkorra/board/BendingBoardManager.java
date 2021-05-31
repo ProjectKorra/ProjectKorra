@@ -95,7 +95,10 @@ public class BendingBoardManager {
 		}
 		if (!scoreboardPlayers.containsKey(player)) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer == null) return false;
+			if (bPlayer == null) {
+				return false;
+			}
+			
 			scoreboardPlayers.put(player, new BendingBoardInstance(bPlayer));
 		}
 		return true;

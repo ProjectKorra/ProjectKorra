@@ -364,7 +364,7 @@ public class WaterManipulation extends WaterAbility {
 				AFFECTED_BLOCKS.put(block, block);
 			}
 			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
-				PhaseChange.getFrozenBlocksAsBlock().remove(block);
+				PhaseChange.thaw(block);
 			}
 			new TempBlock(block, Material.WATER);
 		} else {
