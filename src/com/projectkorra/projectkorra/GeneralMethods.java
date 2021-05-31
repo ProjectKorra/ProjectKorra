@@ -73,12 +73,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.kingdom.KingdomRelation;
+import org.kingdoms.constants.kingdom.model.KingdomRelation;
 import org.kingdoms.constants.land.Invasion;
 import org.kingdoms.constants.land.Land;
 import org.kingdoms.constants.land.structures.managers.Regulator;
 import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
-import org.kingdoms.constants.player.KingdomPermission;
+import org.kingdoms.constants.player.DefaultKingdomPermission;
 import org.kingdoms.constants.player.KingdomPlayer;
 
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -1698,8 +1698,7 @@ public class GeneralMethods {
 						}
 					}
 					if (land.getStructure() != null && land.getStructure() instanceof Regulator) {
-						final Regulator regulator = (Regulator) land.getStructure();
-						if (regulator.hasAttribute(player, Attribute.BUILD)) {
+						if (((Regulator) land.getStructure()).hasAttribute(player, Attribute.BUILD)) {
 							// There is a regulator on site which allows the player to build; allow bending
 							return false;
 						}
@@ -1707,7 +1706,7 @@ public class GeneralMethods {
 					if (!kPlayer.hasKingdom()) {
 						// Player has no kingdom, deny
 						return true;
-					} else if (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(KingdomPermission.BUILD)) {
+					} else if (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(DefaultKingdomPermission.BUILD)) {
 						// Player is a member of this kingdom but cannot build here, deny
 						return true;
 					} else if (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD)) {

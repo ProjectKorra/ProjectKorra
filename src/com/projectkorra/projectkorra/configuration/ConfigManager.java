@@ -1300,6 +1300,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthSmash.Grab.DetectionRadius", 2.5);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.Range", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.AnimationInterval", 25);
+			config.addDefault("Abilities.Earth.EarthSmash.Shoot.CollisionRadius", 2.5);
 			config.addDefault("Abilities.Earth.EarthSmash.RequiredBendableBlocks", 11);
 			config.addDefault("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough", 3);
 			config.addDefault("Abilities.Earth.EarthSmash.LiftAnimationInterval", 30);
