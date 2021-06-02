@@ -1695,7 +1695,7 @@ public class GeneralMethods {
 					if (!kPlayer.hasKingdom() // Player has no kingdom; deny
 							|| (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(DefaultKingdomPermission.BUILD)) // Player is a member of this kingdom but cannot build here; deny
 							|| (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD))) { // Player is not a member of this kingdom and cannot build here; deny
-						return false;
+						return true;
 					}
 				}
 			}
