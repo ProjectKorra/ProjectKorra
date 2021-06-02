@@ -2451,12 +2451,10 @@ public class GeneralMethods {
 			}
 
 			final File saveTo = new File(plugin.getDataFolder(), "debug.txt");
-			if (!saveTo.exists()) {
-				saveTo.createNewFile();
-			} else {
+			if (saveTo.exists()) {
 				saveTo.delete();
-				saveTo.createNewFile();
 			}
+			saveTo.createNewFile();
 
 			final FileWriter fw = new FileWriter(saveTo, true);
 			final PrintWriter pw = new PrintWriter(fw);
