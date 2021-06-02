@@ -74,7 +74,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.kingdoms.constants.kingdom.Kingdom;
 import org.kingdoms.constants.kingdom.model.KingdomRelation;
-import org.kingdoms.constants.land.Invasion;
 import org.kingdoms.constants.land.Land;
 import org.kingdoms.constants.land.structures.managers.Regulator;
 import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
@@ -1558,7 +1557,7 @@ public class GeneralMethods {
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectKingdoms");
+		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
 
 		boolean isIgnite = false;
@@ -1688,30 +1687,15 @@ public class GeneralMethods {
 				final boolean protectDuringInvasions = ConfigManager.getConfig().getBoolean("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions");
 				if (land != null) {
 					final Kingdom kingdom = land.getKingdom();
-					if (kPlayer.isAdmin()) {
+					if (kPlayer.isAdmin()
+							|| (!protectDuringInvasions && !land.getInvasions().isEmpty() && land.getInvasions().values().stream().anyMatch(i -> i.getInvader().equals(kPlayer))) // Protection during invasions is off, and player is currently invading; allow
+							|| (land.getStructure() != null && land.getStructure() instanceof Regulator && ((Regulator) land.getStructure()).hasAttribute(player, Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow bending
 						return false;
 					}
-					if (land.getInvasion() != null && !protectDuringInvasions) {
-						final Invasion invasion = land.getInvasion();
-						if (invasion.getInvader().equals(kPlayer) && invasion.getDefender().equals(land)) {
-							return false;
-						}
-					}
-					if (land.getStructure() != null && land.getStructure() instanceof Regulator) {
-						if (((Regulator) land.getStructure()).hasAttribute(player, Attribute.BUILD)) {
-							// There is a regulator on site which allows the player to build; allow bending
-							return false;
-						}
-					}
-					if (!kPlayer.hasKingdom()) {
-						// Player has no kingdom, deny
-						return true;
-					} else if (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(DefaultKingdomPermission.BUILD)) {
-						// Player is a member of this kingdom but cannot build here, deny
-						return true;
-					} else if (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD)) {
-						// Player is not a member of this kingdom and cannot build here, deny
-						return true;
+					if (!kPlayer.hasKingdom() // Player has no kingdom, deny
+							|| (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(DefaultKingdomPermission.BUILD)) // Player is a member of this kingdom but cannot build here, deny
+							|| (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD))) { // Player is not a member of this kingdom and cannot build here, deny
+						return false;
 					}
 				}
 			}
@@ -2048,7 +2032,7 @@ public class GeneralMethods {
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
+		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
 		final PluginManager pm = Bukkit.getPluginManager();
 
@@ -2468,6 +2452,9 @@ public class GeneralMethods {
 
 			final File saveTo = new File(plugin.getDataFolder(), "debug.txt");
 			if (!saveTo.exists()) {
+				saveTo.createNewFile();
+			} else {
+				saveTo.delete();
 				saveTo.createNewFile();
 			}
 
