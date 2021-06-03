@@ -39,28 +39,36 @@ public class DBCooldownManager extends Manager {
 	}
 
 	public int getCooldownId(final String cooldown, final boolean async) {
-		try (ResultSet rs = DBConnection.sql.readQuery("SELECT id FROM pk_cooldown_ids WHERE cooldown_name = '" + cooldown + "'")) {
-			if (rs.next()) {
-				return rs.getInt("id");
-			} else {
-				DBConnection.sql.modifyQuery("INSERT INTO pk_cooldown_ids (cooldown_name) VALUES ('" + cooldown + "')", async);
-				return this.getCooldownId(cooldown, async);
-			}
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-		return -1;
+		int res = (int) DBConnection.sql.readQuery("SELECT id FROM pk_cooldown_ids WHERE cooldown_name = '" + cooldown + "'",
+				(rs) -> {
+					try {
+						if (rs.next()) {
+							return rs.getInt("id");
+						} else {
+							DBConnection.sql.modifyQuery("INSERT INTO pk_cooldown_ids (cooldown_name) VALUES ('" + cooldown + "')", async);
+							return this.getCooldownId(cooldown, async);
+						}
+					} catch (final SQLException e) {
+						e.printStackTrace();
+					}
+					return -1;
+				});
+		return res;
 	}
 
 	public String getCooldownName(final int id) {
-		try (ResultSet rs = DBConnection.sql.readQuery("SELECT cooldown_name FROM pk_cooldown_ids WHERE id = " + id)) {
-			if (rs.next()) {
-				return rs.getString("cooldown_name");
-			}
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-		return "";
+		String res = (String) DBConnection.sql.readQuery("SELECT cooldown_name FROM pk_cooldown_ids WHERE id = " + id,
+				(rs) -> {
+					try {
+						if (rs.next()) {
+							return rs.getString("cooldown_name");
+						}
+					} catch (final SQLException e) {
+						e.printStackTrace();
+					}
+					return "";
+				});
+		return res;
 	}
 
 }

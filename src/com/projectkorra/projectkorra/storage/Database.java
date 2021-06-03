@@ -5,6 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.bukkit.scheduler.BukkitRunnable;
@@ -114,15 +115,17 @@ public abstract class Database {
 	 * @param query Query to run
 	 * @return Result set of ran query
 	 */
-	public ResultSet readQuery(final String query) {
+	public Object readQuery(final String query, Function<ResultSet, Object> func) {
 		try {
 			if (this.connection == null || this.connection.isClosed()) {
 				this.open();
 			}
 			final PreparedStatement stmt = this.connection.prepareStatement(query);
 			final ResultSet rs = stmt.executeQuery();
-
-			return rs;
+			Object res = func.apply(rs);
+			rs.close();
+			stmt.close();
+			return res;
 		} catch (final SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -143,7 +146,9 @@ public abstract class Database {
 			final DatabaseMetaData dmd = this.connection.getMetaData();
 			final ResultSet rs = dmd.getTables(null, null, table, null);
 
-			return rs.next();
+			boolean result = rs.next();
+			rs.close();
+			return result;
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return false;
@@ -164,7 +169,9 @@ public abstract class Database {
 			}
 			final DatabaseMetaData dmd = this.connection.getMetaData();
 			final ResultSet rs = dmd.getColumns(null, null, table, column);
-			return rs.next();
+			boolean result = rs.next();
+			rs.close();
+			return result;
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return false;

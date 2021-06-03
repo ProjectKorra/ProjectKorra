@@ -335,216 +335,219 @@ public class GeneralMethods {
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-		final ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
-						ProjectKorra.log.info("Created new BendingPlayer for " + player);
-					}
-				}.runTask(ProjectKorra.plugin);
-			} else {
-				// The player has at least played before.
-				final String player2 = rs2.getString("player");
-				if (!player.equalsIgnoreCase(player2)) {
-					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
-					// They have changed names.
-					ProjectKorra.log.info("Updating Player Name for " + player);
-				}
-				final String subelement = rs2.getString("subelement");
-				final String element = rs2.getString("element");
-				final String permaremoved = rs2.getString("permaremoved");
-				boolean p = false;
-				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null && !element.equals("NULL")) {
-					final boolean hasAddon = element.contains(";");
-					final String[] split = element.split(";");
-					if (split[0] != null) { // Player has an element.
-						if (split[0].contains("a")) {
-							elements.add(Element.AIR);
-						}
-						if (split[0].contains("w")) {
-							elements.add(Element.WATER);
-						}
-						if (split[0].contains("e")) {
-							elements.add(Element.EARTH);
-						}
-						if (split[0].contains("f")) {
-							elements.add(Element.FIRE);
-						}
-						if (split[0].contains("c")) {
-							elements.add(Element.CHI);
-						}
-						if (hasAddon) {
-							/*
-							 * Because plugins which depend on ProjectKorra
-							 * would be loaded after ProjectKorra, addon
-							 * elements would = null. To work around this, we
-							 * keep trying to load in the elements from the
-							 * database until it successfully loads everything
-							 * in, or it times out.
-							 */
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
+		DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'",
+				(rs2) -> {
+					try {
+						if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
+							DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
 							new BukkitRunnable() {
 								@Override
 								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon elements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
-										ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon elements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null) {
-												elements.add(Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
+									new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
+									ProjectKorra.log.info("Created new BendingPlayer for " + player);
 								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
-					}
-				}
-				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
-				boolean shouldSave = false;
-				if (subelement != null && !subelement.equals("NULL")) {
-					final boolean hasAddon = subelement.contains(";");
-					final String[] split = subelement.split(";");
-					if (subelement.equals("-")) {
-						final Player playero = Bukkit.getPlayer(uuid);
-						for (final SubElement sub : Element.getAllSubElements()) {
-							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
-								subelements.add(sub);
-								shouldSave = true && playero != null;
-							}
-						}
-					} else if (split[0] != null) {
-						if (split[0].contains("m")) {
-							subelements.add(Element.METAL);
-						}
-						if (split[0].contains("v")) {
-							subelements.add(Element.LAVA);
-						}
-						if (split[0].contains("s")) {
-							subelements.add(Element.SAND);
-						}
-						if (split[0].contains("c")) {
-							subelements.add(Element.COMBUSTION);
-						}
-						if (split[0].contains("l")) {
-							subelements.add(Element.LIGHTNING);
-						}
-						if (split[0].contains("t")) {
-							subelements.add(Element.SPIRITUAL);
-						}
-						if (split[0].contains("f")) {
-							subelements.add(Element.FLIGHT);
-						}
-						if (split[0].contains("i")) {
-							subelements.add(Element.ICE);
-						}
-						if (split[0].contains("h")) {
-							subelements.add(Element.HEALING);
-						}
-						if (split[0].contains("b")) {
-							subelements.add(Element.BLOOD);
-						}
-						if (split[0].contains("p")) {
-							subelements.add(Element.PLANT);
-						}
-						if (split[0].contains("r")) {
-							subelements.add(Element.BLUE_FIRE);
-						}
-
-						if (hasAddon) {
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon subelements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
-										ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon subelements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
-												subelements.add((SubElement) Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
-					}
-				}
-
-				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-				final ConcurrentHashMap<Integer, String> abilitiesClone = new ConcurrentHashMap<Integer, String>(abilities);
-				for (int i = 1; i <= 9; i++) {
-					final String ability = rs2.getString("slot" + i);
-					abilitiesClone.put(i, ability);
-				}
-				final long startTime = System.currentTimeMillis();
-				final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if (abilitiesClone.isEmpty()) {
-							// All abilities loaded.
-							this.cancel();
-						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
-							ProjectKorra.log.severe("These abilities have taken too long to load in, resulting in users having lost them if bound.");
-							this.cancel();
+							}.runTask(ProjectKorra.plugin);
 						} else {
-							for (final int slot : abilitiesClone.keySet()) {
-								final String ability = abilitiesClone.get(slot);
-								if (ability.equalsIgnoreCase("null")) {
-									abilitiesClone.remove(slot);
-									continue;
-								} else if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
-									abilities.put(slot, ability);
-									abilitiesClone.remove(slot);
-									continue;
+							// The player has at least played before.
+							final String player2 = rs2.getString("player");
+							if (!player.equalsIgnoreCase(player2)) {
+								DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
+								// They have changed names.
+								ProjectKorra.log.info("Updating Player Name for " + player);
+							}
+							final String subelement = rs2.getString("subelement");
+							final String element = rs2.getString("element");
+							final String permaremoved = rs2.getString("permaremoved");
+							boolean p = false;
+							final ArrayList<Element> elements = new ArrayList<Element>();
+							if (element != null && !element.equals("NULL")) {
+								final boolean hasAddon = element.contains(";");
+								final String[] split = element.split(";");
+								if (split[0] != null) { // Player has an element.
+									if (split[0].contains("a")) {
+										elements.add(Element.AIR);
+									}
+									if (split[0].contains("w")) {
+										elements.add(Element.WATER);
+									}
+									if (split[0].contains("e")) {
+										elements.add(Element.EARTH);
+									}
+									if (split[0].contains("f")) {
+										elements.add(Element.FIRE);
+									}
+									if (split[0].contains("c")) {
+										elements.add(Element.CHI);
+									}
+									if (hasAddon) {
+										/*
+										 * Because plugins which depend on ProjectKorra
+										 * would be loaded after ProjectKorra, addon
+										 * elements would = null. To work around this, we
+										 * keep trying to load in the elements from the
+										 * database until it successfully loads everything
+										 * in, or it times out.
+										 */
+										final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
+										final long startTime = System.currentTimeMillis();
+										final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
+										new BukkitRunnable() {
+											@Override
+											public void run() {
+												if (addonClone.isEmpty()) {
+													ProjectKorra.log.info("Successfully loaded in all addon elements!");
+													this.cancel();
+												} else if (System.currentTimeMillis() - startTime > timeoutLength) {
+													ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
+													ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
+													this.cancel();
+												} else {
+													ProjectKorra.log.info("Attempting to load in the following addon elements... " + addonClone.toString());
+													for (final String addon : addonClone) {
+														if (Element.getElement(addon) != null) {
+															elements.add(Element.getElement(addon));
+															addonClone.remove(addon);
+														}
+													}
+												}
+											}
+										}.runTaskTimer(ProjectKorra.plugin, 0, 20);
+									}
 								}
 							}
-						}
-					}
-				}.runTaskTimer(ProjectKorra.plugin, 0, 20);
+							final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
+							boolean shouldSave = false;
+							if (subelement != null && !subelement.equals("NULL")) {
+								final boolean hasAddon = subelement.contains(";");
+								final String[] split = subelement.split(";");
+								if (subelement.equals("-")) {
+									final Player playero = Bukkit.getPlayer(uuid);
+									for (final SubElement sub : Element.getAllSubElements()) {
+										if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
+											subelements.add(sub);
+											shouldSave = true && playero != null;
+										}
+									}
+								} else if (split[0] != null) {
+									if (split[0].contains("m")) {
+										subelements.add(Element.METAL);
+									}
+									if (split[0].contains("v")) {
+										subelements.add(Element.LAVA);
+									}
+									if (split[0].contains("s")) {
+										subelements.add(Element.SAND);
+									}
+									if (split[0].contains("c")) {
+										subelements.add(Element.COMBUSTION);
+									}
+									if (split[0].contains("l")) {
+										subelements.add(Element.LIGHTNING);
+									}
+									if (split[0].contains("t")) {
+										subelements.add(Element.SPIRITUAL);
+									}
+									if (split[0].contains("f")) {
+										subelements.add(Element.FLIGHT);
+									}
+									if (split[0].contains("i")) {
+										subelements.add(Element.ICE);
+									}
+									if (split[0].contains("h")) {
+										subelements.add(Element.HEALING);
+									}
+									if (split[0].contains("b")) {
+										subelements.add(Element.BLOOD);
+									}
+									if (split[0].contains("p")) {
+										subelements.add(Element.PLANT);
+									}
+									if (split[0].contains("r")) {
+										subelements.add(Element.BLUE_FIRE);
+									}
 
-				p = (permaremoved != null && (permaremoved.equals("true")));
+									if (hasAddon) {
+										final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
+										final long startTime = System.currentTimeMillis();
+										final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
+										new BukkitRunnable() {
+											@Override
+											public void run() {
+												if (addonClone.isEmpty()) {
+													ProjectKorra.log.info("Successfully loaded in all addon subelements!");
+													this.cancel();
+												} else if (System.currentTimeMillis() - startTime > timeoutLength) {
+													ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
+													ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
+													this.cancel();
+												} else {
+													ProjectKorra.log.info("Attempting to load in the following addon subelements... " + addonClone.toString());
+													for (final String addon : addonClone) {
+														if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
+															subelements.add((SubElement) Element.getElement(addon));
+															addonClone.remove(addon);
+														}
+													}
+												}
+											}
+										}.runTaskTimer(ProjectKorra.plugin, 0, 20);
+									}
+								}
+							}
 
-				final boolean boolean_p = p;
-				final boolean shouldSave_ = shouldSave;
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
-						if (shouldSave_) {
-							saveSubElements(BendingPlayer.getBendingPlayer(player));
+							final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+							final ConcurrentHashMap<Integer, String> abilitiesClone = new ConcurrentHashMap<Integer, String>(abilities);
+							for (int i = 1; i <= 9; i++) {
+								final String ability = rs2.getString("slot" + i);
+								abilitiesClone.put(i, ability);
+							}
+							final long startTime = System.currentTimeMillis();
+							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									if (abilitiesClone.isEmpty()) {
+										// All abilities loaded.
+										this.cancel();
+									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
+										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
+										ProjectKorra.log.severe("These abilities have taken too long to load in, resulting in users having lost them if bound.");
+										this.cancel();
+									} else {
+										for (final int slot : abilitiesClone.keySet()) {
+											final String ability = abilitiesClone.get(slot);
+											if (ability.equalsIgnoreCase("null")) {
+												abilitiesClone.remove(slot);
+												continue;
+											} else if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
+												abilities.put(slot, ability);
+												abilitiesClone.remove(slot);
+												continue;
+											}
+										}
+									}
+								}
+							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
+
+							p = (permaremoved != null && (permaremoved.equals("true")));
+
+							final boolean boolean_p = p;
+							final boolean shouldSave_ = shouldSave;
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
+									if (shouldSave_) {
+										saveSubElements(BendingPlayer.getBendingPlayer(player));
+									}
+								}
+							}.runTask(ProjectKorra.plugin);
 						}
+					} catch (final SQLException ex) {
+						ex.printStackTrace();
 					}
-				}.runTask(ProjectKorra.plugin);
-			}
-		} catch (final SQLException ex) {
-			ex.printStackTrace();
-		}
+					return true;
+				});
 	}
 
 	/**
@@ -1034,7 +1037,6 @@ public class GeneralMethods {
 	 * @param block The single block
 	 * @param type The Material type to change the block into
 	 * @param data The block data to change the block into
-	 * @param breakitem Unused
 	 * @return The item drops fromt the specified block
 	 */
 	public static Collection<ItemStack> getDrops(final Block block, final Material type, final BlockData data) {

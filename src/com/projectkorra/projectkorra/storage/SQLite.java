@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 public class SQLite extends Database {
@@ -28,10 +29,12 @@ public class SQLite extends Database {
 	@Override
 	public Connection open() {
 		try {
-			Class.forName("org.sqlite.JDBC");
+			if (this.connection == null || this.connection.isClosed()) {
+				Class.forName("org.sqlite.JDBC");
 
-			this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.SQLfile.getAbsolutePath());
-			this.printInfo("Connection established!");
+				this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.SQLfile.getAbsolutePath());
+				this.printInfo("Connection established!");
+			}
 
 			return this.connection;
 		} catch (final ClassNotFoundException e) {

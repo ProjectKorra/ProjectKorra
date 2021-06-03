@@ -155,18 +155,27 @@ public class BendingPlayer {
 	}
 
 	public Map<String, Cooldown> loadCooldowns() {
-		final Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
+		Map<String, Cooldown> cooldowns;
 		if (ProjectKorra.isDatabaseCooldownsEnabled()) {
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'")) {
-				while (rs.next()) {
-					final int cooldownId = rs.getInt("cooldown_id");
-					final long value = rs.getLong("value");
-					final String name = this.cooldownManager.getCooldownName(cooldownId);
-					cooldowns.put(name, new Cooldown(value, true));
-				}
-			} catch (final SQLException e) {
-				e.printStackTrace();
-			}
+			cooldowns = (Map<String, Cooldown>) DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'",
+					(rs) -> {
+						final Map<String, Cooldown> cds = new ConcurrentHashMap<>();
+						try {
+							while (rs.next()) {
+								final int cooldownId = rs.getInt("cooldown_id");
+								final long value = rs.getLong("value");
+								final String name = this.cooldownManager.getCooldownName(cooldownId);
+								cds.put(name, new Cooldown(value, true));
+							}
+							return cds;
+						} catch (final SQLException e) {
+							e.printStackTrace();
+						}
+						return null;
+					});
+		}
+		else {
+			cooldowns = new ConcurrentHashMap<>();
 		}
 		return cooldowns;
 	}
@@ -177,15 +186,20 @@ public class BendingPlayer {
 			final String name = entry.getKey();
 			final Cooldown cooldown = entry.getValue();
 			final int cooldownId = this.cooldownManager.getCooldownId(name, false);
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
-				if (rs.next()) {
-					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
-				} else {
-					DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
-				}
-			} catch (final SQLException e) {
-				e.printStackTrace();
-			}
+			DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId,
+					(rs) -> {
+						try {
+							if (rs.next()) {
+								DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
+							} else {
+								DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
+							}
+						} catch (final SQLException e) {
+							e.printStackTrace();
+						}
+						return null;
+					});
+
 		}
 	}
 
@@ -425,7 +439,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can MetalBend.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.earth.metalbending"
 	 */
 	public boolean canMetalbend() {
@@ -435,7 +448,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can PlantBend.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.ability.plantbending"
 	 */
 	public boolean canPlantbend() {
@@ -445,7 +457,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can SandBend.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.earth.sandbending"
 	 */
 	public boolean canSandbend() {
@@ -464,7 +475,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can use SpiritualProjection.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node
 	 *         "bending.air.spiritualprojection"
 	 */
