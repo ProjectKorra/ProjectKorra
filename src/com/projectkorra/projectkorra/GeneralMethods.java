@@ -61,8 +61,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
@@ -100,6 +98,8 @@ import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
+import com.projectkorra.projectkorra.event.SimulatedBlockBreakEvent;
+import com.projectkorra.projectkorra.event.SimulatedBlockPlaceEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
@@ -1598,13 +1598,13 @@ public class GeneralMethods {
 			
 			final Block block = location.getBlock();
 			if (isReplaceable(block)) {
-				final BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+				final SimulatedBlockPlaceEvent event = new SimulatedBlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
 				pm.callEvent(event);
 				
 				if (event.isCancelled())
 					return true;
 			} else {
-				final BlockBreakEvent event = new BlockBreakEvent(block, player);
+				final SimulatedBlockBreakEvent event = new SimulatedBlockBreakEvent(block, player);
 				pm.callEvent(event);
 				
 				if (event.isCancelled())
