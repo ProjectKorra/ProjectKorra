@@ -233,7 +233,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(final BlockBreakEvent event) {
-		if (event instanceof SimulatedBlockBreakEvent) return;
+		if (event instanceof SimulatedBlockBreakEvent) {
+			return;
+		}
 		
 		final Block block = event.getBlock();
 		final Player player = event.getPlayer();
@@ -439,7 +441,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPlace(final BlockPlaceEvent event) {
-		if (event instanceof SimulatedBlockPlaceEvent) return;
+		if (event instanceof SimulatedBlockPlaceEvent) {
+			return;
+		}
 		
 		final Player player = event.getPlayer();
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
