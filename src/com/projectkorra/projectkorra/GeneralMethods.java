@@ -1562,18 +1562,22 @@ public class GeneralMethods {
 			
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
 				final WorldGuard wg = WorldGuard.getInstance();
-				if (!player.isOnline())
+				if (!player.isOnline()) {
 					return true;
+				}
 				
-				if (isIgnite && !player.hasPermission("worldguard.override.lighter") && wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(world)).blockLighter)
+				if (isIgnite && !player.hasPermission("worldguard.override.lighter") && wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(world)).blockLighter) {
 					return true;
+				}
 
 				if (isExplosive) {
-					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions)
+					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions) {
 						return true;
+					}
 					final StateFlag.State tntflag = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT);
-					if (tntflag != null && tntflag.equals(StateFlag.State.DENY))
+					if (tntflag != null && tntflag.equals(StateFlag.State.DENY)) {
 						return true;
+					}
 				}
 				
 				final StateFlag bendingflag = (StateFlag) WorldGuard.getInstance().getFlagRegistry().get("bending");
@@ -1592,8 +1596,9 @@ public class GeneralMethods {
 			
 			if (residence != null && respectResidence) {
 				final ClaimedResidence claim = Residence.getInstance().getResidenceManagerAPI().getByLoc(location);
-				if (claim != null && !claim.getPermissions().hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag")))
+				if (claim != null && !claim.getPermissions().hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
 					return true;
+				}
 			}
 			
 			final Block block = location.getBlock();
@@ -1601,14 +1606,16 @@ public class GeneralMethods {
 				final SimulatedBlockPlaceEvent event = new SimulatedBlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
 				pm.callEvent(event);
 				
-				if (event.isCancelled())
+				if (event.isCancelled()) {
 					return true;
+				}
 			} else {
 				final SimulatedBlockBreakEvent event = new SimulatedBlockBreakEvent(block, player);
 				pm.callEvent(event);
 				
-				if (event.isCancelled())
+				if (event.isCancelled()) {
 					return true;
+				}
 			}
 		}
 		
@@ -1621,7 +1628,9 @@ public class GeneralMethods {
 	 * @return true if the block type is among the blocks that can be replaced by a solid block, false otherwise.
 	 */
 	public static boolean isReplaceable(final Block block) {
-		if (block.isEmpty() || block.isLiquid()) return true;
+		if (block.isEmpty() || block.isLiquid()) {
+			return true;
+		}
 		
 		switch (block.getType()) {
 		case SNOW:
