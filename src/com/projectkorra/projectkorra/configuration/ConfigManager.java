@@ -579,17 +579,8 @@ public class ConfigManager {
 
 			config.addDefault("Properties.RegionProtection.AllowHarmlessAbilities", true);
 			config.addDefault("Properties.RegionProtection.RespectWorldGuard", true);
-			config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
-			config.addDefault("Properties.RegionProtection.RespectFactions", true);
-			config.addDefault("Properties.RegionProtection.RespectTowny", true);
-			config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
-			config.addDefault("Properties.RegionProtection.RespectLWC", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
-			config.addDefault("Properties.RegionProtection.Kingdoms.Respect", true);
-			config.addDefault("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions", false);
-			config.addDefault("Properties.RegionProtection.RespectPlotSquared", true);
-			config.addDefault("Properties.RegionProtection.RespectRedProtect", true);
 			config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
 
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
