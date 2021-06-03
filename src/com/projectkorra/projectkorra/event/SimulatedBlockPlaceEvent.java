@@ -13,7 +13,7 @@ import org.bukkit.inventory.EquipmentSlot;
 public class SimulatedBlockPlaceEvent extends BlockPlaceEvent {
 
 	public SimulatedBlockPlaceEvent(Block block, Player player) {
-		super(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+		super(block, block.getState(), block.getRelative(BlockFace.DOWN), new ItemStack(Material.PETRIFIED_OAK_SLAB), player, true, EquipmentSlot.HAND);
 	}
 
 }
