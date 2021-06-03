@@ -61,7 +61,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
@@ -1603,7 +1602,7 @@ public class GeneralMethods {
 			
 			final Block block = location.getBlock();
 			if (isReplaceable(block)) {
-				final SimulatedBlockPlaceEvent event = new SimulatedBlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+				final SimulatedBlockPlaceEvent event = new SimulatedBlockPlaceEvent(block, player);
 				pm.callEvent(event);
 				
 				if (event.isCancelled()) {
