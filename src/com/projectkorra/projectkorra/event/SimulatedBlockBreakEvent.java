@@ -10,8 +10,8 @@ import org.bukkit.event.block.BlockBreakEvent;
  */
 public class SimulatedBlockBreakEvent extends BlockBreakEvent {
 
-	public SimulatedBlockBreakEvent(Block theBlock, Player player) {
-		super(theBlock, player);
+	public SimulatedBlockBreakEvent(Block block, Player player) {
+		super(block, player);
 	}
 
 }
