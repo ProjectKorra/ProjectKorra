@@ -1557,7 +1557,7 @@ public class GeneralMethods {
 		final Plugin wgp = pm.getPlugin("WorldGuard");
 		final Plugin residence = pm.getPlugin("Residence");
 		
-		for (Location location : new Location[] { loc, player.getLocation() }) {
+		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
 			
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
@@ -1596,15 +1596,15 @@ public class GeneralMethods {
 					return true;
 			}
 			
-			Block block = location.getBlock();
+			final Block block = location.getBlock();
 			if (isReplaceable(block)) {
-				BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+				final BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
 				pm.callEvent(event);
 				
 				if (event.isCancelled())
 					return true;
 			} else {
-				BlockBreakEvent event = new BlockBreakEvent(block, player);
+				final BlockBreakEvent event = new BlockBreakEvent(block, player);
 				pm.callEvent(event);
 				
 				if (event.isCancelled())
