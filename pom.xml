@@ -17,11 +17,6 @@
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
     </repository>
-    <!-- GriefPrevention and Towny Repo -->
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
     <!-- NoCheat Repo -->
     <repository>
       <id>md_5-snapshots</id>
@@ -74,27 +69,6 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.8.1</version>
     </dependency>
-    <!-- Factions -->
-    <dependency>
-      <groupId>me.markeh</groupId>
-      <artifactId>factionsframework</artifactId>
-      <version>1.2.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- GriefPrevention -->
-    <dependency>
-      <groupId>com.github.TechFortress</groupId>
-      <artifactId>GriefPrevention</artifactId>
-      <version>16.7.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- LWC -->
-    <dependency>
-      <groupId>com.griefcraft</groupId>
-      <artifactId>lwc</artifactId>
-      <version>2.1.2</version>
-      <scope>provided</scope>
-    </dependency>
     <!-- NoCheatPlus -->
     <dependency>
       <groupId>fr.neatmonster</groupId>
@@ -102,28 +76,11 @@
       <version>3.16.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    <!-- PreciousStones -->
-    <!-- outdated
-<dependency>
-  <groupId>net.sacredlabyrinth.Phaed</groupId>
-  <artifactId>PreciousStones</artifactId>
-  <version>LATEST</version>
-  <scope>system</scope>
-  <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
-</dependency>
--->
     <!-- Residence -->
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>
       <artifactId>residence</artifactId>
       <version>4.8.3.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Towny -->
-    <dependency>
-      <groupId>com.github.TownyAdvanced</groupId>
-      <artifactId>Towny</artifactId>
-      <version>0.96.2.0</version>
       <scope>provided</scope>
     </dependency>
     <!-- WorldEdit / WorldGuard -->
@@ -150,26 +107,6 @@
       <artifactId>worldguard-legacy</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <scope>provided</scope>
-    </dependency>
-    <!-- RedProtect -->
-    <dependency>
-      <groupId>br.net.fabiozumbi12</groupId>
-      <artifactId>RedProtect</artifactId>
-      <version>7.5.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Kingdoms -->
-    <dependency>
-      <groupId>com.github.cryptomorin</groupId>
-      <artifactId>kingdoms</artifactId>
-      <version>1.10.19.1</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!-- PlaceholderAPI -->
     <dependency>
