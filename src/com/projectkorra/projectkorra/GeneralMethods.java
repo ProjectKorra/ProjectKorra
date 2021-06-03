@@ -36,11 +36,6 @@ import com.bekvon.bukkit.residence.api.ResidenceInterface;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import com.google.common.reflect.ClassPath;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -59,12 +54,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
@@ -72,13 +71,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.kingdom.model.KingdomRelation;
-import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.structures.managers.Regulator;
-import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
-import org.kingdoms.constants.player.DefaultKingdomPermission;
-import org.kingdoms.constants.player.KingdomPlayer;
 
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
@@ -126,16 +118,6 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
-import me.markeh.factionsframework.entities.FPlayer;
-import me.markeh.factionsframework.entities.FPlayers;
-import me.markeh.factionsframework.entities.Faction;
-import me.markeh.factionsframework.entities.Factions;
-import me.markeh.factionsframework.enums.Rel;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -1551,14 +1533,7 @@ public class GeneralMethods {
 	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
 		final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		//final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1573,57 +1548,34 @@ public class GeneralMethods {
 		if (ability == null && allowHarmless) {
 			return false;
 		}
+
 		if (isHarmless && allowHarmless) {
 			return false;
 		}
 
 		final PluginManager pm = Bukkit.getPluginManager();
-
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		//final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin facsfw = pm.getPlugin("FactionsFramework");
-		final Plugin twnp = pm.getPlugin("Towny");
-		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
-		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin redprotect = pm.getPlugin("RedProtect");
-
-		for (final Location location : new Location[] { loc, player.getLocation() }) {
+		
+		for (Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
-
-			if (lwc != null && respectLWC) {
-				final LWCPlugin lwcp = (LWCPlugin) lwc;
-				final LWC lwc2 = lwcp.getLWC();
-				final Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
-				if (protection != null) {
-					if (!lwc2.canAccessProtection(player, protection)) {
-						return true;
-					}
-				}
-			}
+			
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
 				final WorldGuard wg = WorldGuard.getInstance();
-				if (!player.isOnline()) {
+				if (!player.isOnline())
 					return true;
-				}
-				if (isIgnite) {
-					if (!player.hasPermission("worldguard.override.lighter")) {
-						if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(world)).blockLighter) {
-							return true;
-						}
-					}
-				}
+				
+				if (isIgnite && !player.hasPermission("worldguard.override.lighter") && wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(world)).blockLighter)
+					return true;
 
 				if (isExplosive) {
-					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions) {
+					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions)
 						return true;
-					}
 					final StateFlag.State tntflag = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT);
-					if (tntflag != null && tntflag.equals(StateFlag.State.DENY)) {
+					if (tntflag != null && tntflag.equals(StateFlag.State.DENY))
 						return true;
-					}
 				}
+				
 				final StateFlag bendingflag = (StateFlag) WorldGuard.getInstance().getFlagRegistry().get("bending");
 				if (bendingflag != null) {
 					final StateFlag.State bendingflagstate = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), bendingflag);
@@ -1633,82 +1585,64 @@ public class GeneralMethods {
 					if (bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY)) {
 						return true;
 					}
-				} else {
-					if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
-						return true;
-					}
-				}
-			}
-
-			if (facsfw != null && respectFactions) {
-				final FPlayer fPlayer = FPlayers.getBySender(player);
-				final Faction faction = Factions.getFactionAt(location);
-				final Rel relation = fPlayer.getRelationTo(faction);
-
-				if (!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)) {
+				} else if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
 					return true;
 				}
 			}
-
-			if (twnp != null && respectTowny) {
-				if (!PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, ActionType.BUILD)) {
-					return true;
-				}
-			}
-
-			if (gpp != null && respectGriefPrevention) {
-				Material type = player.getWorld().getBlockAt(location).getType();
-				if (type == null) {
-					type = Material.AIR;
-				}
-				final String reason = GriefPrevention.instance.allowBuild(player, location); // WORKING with WorldGuard 6.0 BETA 4.
-
-				final Claim claim = GriefPrevention.instance.dataStore.getClaimAt(loc, true, null);
-
-				if (reason != null && claim != null) {
-					return true;
-				}
-			}
-
+			
 			if (residence != null && respectResidence) {
-				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
-				final ClaimedResidence claim = res.getByLoc(location);
-				if (claim != null) {
-					final ResidencePermissions perms = claim.getPermissions();
-					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
-						return true;
-					}
-				}
-			}
-
-			if (kingdoms != null && respectKingdoms) {
-				final KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
-				final Land land = Land.getLand(location);
-				final boolean protectDuringInvasions = ConfigManager.getConfig().getBoolean("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions");
-				if (land != null) {
-					final Kingdom kingdom = land.getKingdom();
-					if (kPlayer.isAdmin()
-							|| (!protectDuringInvasions && !land.getInvasions().isEmpty() && land.getInvasions().values().stream().anyMatch(i -> i.getInvader().equals(kPlayer))) // Protection during invasions is off, and player is currently invading; allow
-							|| (land.getStructure() != null && land.getStructure() instanceof Regulator && ((Regulator) land.getStructure()).hasAttribute(player, Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow
-						return false;
-					}
-					if (!kPlayer.hasKingdom() // Player has no kingdom; deny
-							|| (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(DefaultKingdomPermission.BUILD)) // Player is a member of this kingdom but cannot build here; deny
-							|| (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD))) { // Player is not a member of this kingdom and cannot build here; deny
-						return true;
-					}
-				}
-			}
-
-			if (redprotect != null && respectRedProtect) {
-				final RedProtectAPI api = RedProtect.get().getAPI();
-				final Region region = api.getRegion(location);
-				if (!(region != null && region.canBuild(player))) {
+				final ClaimedResidence claim = Residence.getInstance().getResidenceManagerAPI().getByLoc(location);
+				if (claim != null && !claim.getPermissions().hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag")))
 					return true;
-				}
+			}
+			
+			Block block = location.getBlock();
+			if (isReplaceable(block)) {
+				BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block.getRelative(BlockFace.DOWN), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+				pm.callEvent(event);
+				
+				if (event.isCancelled())
+					return true;
+			} else {
+				BlockBreakEvent event = new BlockBreakEvent(block, player);
+				pm.callEvent(event);
+				
+				if (event.isCancelled())
+					return true;
 			}
 		}
+		
 		return false;
+	}
+	
+	/**
+	 * Checks if a solid block can be placed where this block is, e.g. air, water, grass, 1-layer snow, fire.
+	 * @param block - the block to check
+	 * @return true if the block type is among the blocks that can be replaced by a solid block, false otherwise.
+	 */
+	public static boolean isReplaceable(final Block block) {
+		if (block.isEmpty() || block.isLiquid()) return true;
+		
+		switch (block.getType()) {
+		case SNOW:
+			return block.getBlockData() instanceof Snow && ((Snow) block.getBlockData()).getLayers() == 1;
+		case FIRE:
+		case SOUL_FIRE:
+		case GRASS:
+		case TALL_GRASS:
+		case FERN:
+		case LARGE_FERN:
+		case SEAGRASS:
+		case TALL_SEAGRASS:
+		case VINE:
+		case DEAD_BUSH:
+		case CRIMSON_ROOTS:
+		case WARPED_ROOTS:
+		case NETHER_SPROUTS:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	public static boolean isSameArmor(Material a, Material b) {
@@ -2026,52 +1960,17 @@ public class GeneralMethods {
 		writeToDebug("====================");
 
 		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin fcp = pm.getPlugin("FactionsFramework");
-		final Plugin twnp = pm.getPlugin("Towny");
-		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin lwc = pm.getPlugin("LWC");
 		final Plugin residence = pm.getPlugin("Residence");
-		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin redprotect = pm.getPlugin("RedProtect");
 
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
 		}
-		if (psp != null && respectPreciousStones) {
-			writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
-		}
-		if (fcp != null && respectFactions) {
-			writeToDebug("FactionsFramework v" + fcp.getDescription().getVersion());
-		}
-		if (twnp != null && respectTowny) {
-			writeToDebug("Towny v" + twnp.getDescription().getVersion());
-		}
-		if (gpp != null && respectGriefPrevention) {
-			writeToDebug("GriefPrevention v" + gpp.getDescription().getVersion());
-		}
-		if (lwc != null && respectLWC) {
-			writeToDebug("LWC v" + lwc.getDescription().getVersion());
-		}
 		if (residence != null && respectResidence) {
 			writeToDebug("Residence v" + residence.getDescription().getVersion());
-		}
-		if (kingdoms != null && respectKingdoms) {
-			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
-		}
-		if (redprotect != null && respectRedProtect) {
-			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
 		}
 
 		writeToDebug("");
@@ -2149,7 +2048,6 @@ public class GeneralMethods {
 		for (final String line : CoreAbility.getDebugString().split("\\n")) {
 			writeToDebug(line);
 		}
-
 	}
 
 	public static void saveAbility(final BendingPlayer bPlayer, final int slot, final String ability) {
