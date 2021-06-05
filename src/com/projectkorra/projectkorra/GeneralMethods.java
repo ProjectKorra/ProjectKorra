@@ -166,7 +166,7 @@ public class GeneralMethods {
 
 	/**
 	 * Checks to see if an AbilityExists. Uses method
-	 * {@link #getAbility(String)} to check if it exists.
+	 * {@link CoreAbility#getAbility(String)} to check if it exists.
 	 *
 	 * @param string Ability Name
 	 * @return true if ability exists
@@ -1034,7 +1034,6 @@ public class GeneralMethods {
 	 * @param block The single block
 	 * @param type The Material type to change the block into
 	 * @param data The block data to change the block into
-	 * @param breakitem Unused
 	 * @return The item drops fromt the specified block
 	 */
 	public static Collection<ItemStack> getDrops(final Block block, final Material type, final BlockData data) {
