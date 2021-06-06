@@ -134,7 +134,7 @@ public class MultiAbilityManager {
 			return false;
 		}
 
-		return playerAbilities.containsKey(player) && playerBoundAbility.get(player).equals(multiAbility));
+		return playerAbilities.containsKey(player) && playerBoundAbility.get(player).equals(multiAbility);
 	}
 
 	/**
