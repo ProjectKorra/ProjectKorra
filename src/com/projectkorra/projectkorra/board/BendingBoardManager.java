@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -151,16 +152,16 @@ public class BendingBoardManager {
 	 */
 	public static void loadDisabledPlayers() {
 		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
-			final Set<UUID> disabled = new HashSet<>();
-			DBConnection.sql.readQuery("SELECT uuid FROM pk_board where enabled = 0",
-					(rs) -> {
-						try {
-							while (rs.next()) disabled.add(UUID.fromString(rs.getString("uuid")));
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}
-						return null;
-					});
+			Set<UUID> disabled = new HashSet<>();
+			try {
+				final ResultSet rs = DBConnection.sql.readQuery("SELECT uuid FROM pk_board where enabled = 0");
+				while (rs.next()) disabled.add(UUID.fromString(rs.getString("uuid")));
+				Statement stmt = rs.getStatement();
+				rs.close();
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			disabledPlayers.clear();
 			disabledPlayers.addAll(disabled);
 		});

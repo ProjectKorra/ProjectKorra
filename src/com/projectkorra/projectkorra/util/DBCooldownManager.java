@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -39,36 +40,48 @@ public class DBCooldownManager extends Manager {
 	}
 
 	public int getCooldownId(final String cooldown, final boolean async) {
-		int res = (int) DBConnection.sql.readQuery("SELECT id FROM pk_cooldown_ids WHERE cooldown_name = '" + cooldown + "'",
-				(rs) -> {
-					try {
-						if (rs.next()) {
-							return rs.getInt("id");
-						} else {
-							DBConnection.sql.modifyQuery("INSERT INTO pk_cooldown_ids (cooldown_name) VALUES ('" + cooldown + "')", async);
-							return this.getCooldownId(cooldown, async);
-						}
-					} catch (final SQLException e) {
-						e.printStackTrace();
-					}
-					return -1;
-				});
-		return res;
+		int id = -1;
+		Statement stmt = null;
+		try (ResultSet rs = DBConnection.sql.readQuery("SELECT id FROM pk_cooldown_ids WHERE cooldown_name = '" + cooldown + "'")) {
+			if (rs.next()) {
+				id = rs.getInt("id");
+			} else {
+				DBConnection.sql.modifyQuery("INSERT INTO pk_cooldown_ids (cooldown_name) VALUES ('" + cooldown + "')", async);
+				id = this.getCooldownId(cooldown, async);
+			}
+			stmt = rs.getStatement();
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return id;
 	}
 
 	public String getCooldownName(final int id) {
-		String res = (String) DBConnection.sql.readQuery("SELECT cooldown_name FROM pk_cooldown_ids WHERE id = " + id,
-				(rs) -> {
-					try {
-						if (rs.next()) {
-							return rs.getString("cooldown_name");
-						}
-					} catch (final SQLException e) {
-						e.printStackTrace();
-					}
-					return "";
-				});
-		return res;
+		String name = "";
+		Statement stmt = null;
+		try (ResultSet rs = DBConnection.sql.readQuery("SELECT cooldown_name FROM pk_cooldown_ids WHERE id = " + id)) {
+			if (rs.next()) {
+				name = rs.getString("cooldown_name");
+			}
+			stmt = rs.getStatement();
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return name;
 	}
 
 }

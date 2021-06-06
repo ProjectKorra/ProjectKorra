@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -155,27 +156,27 @@ public class BendingPlayer {
 	}
 
 	public Map<String, Cooldown> loadCooldowns() {
-		Map<String, Cooldown> cooldowns;
+		final Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
 		if (ProjectKorra.isDatabaseCooldownsEnabled()) {
-			cooldowns = (Map<String, Cooldown>) DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'",
-					(rs) -> {
-						final Map<String, Cooldown> cds = new ConcurrentHashMap<>();
-						try {
-							while (rs.next()) {
-								final int cooldownId = rs.getInt("cooldown_id");
-								final long value = rs.getLong("value");
-								final String name = this.cooldownManager.getCooldownName(cooldownId);
-								cds.put(name, new Cooldown(value, true));
-							}
-							return cds;
-						} catch (final SQLException e) {
-							e.printStackTrace();
-						}
-						return null;
-					});
-		}
-		else {
-			cooldowns = new ConcurrentHashMap<>();
+			Statement stmt = null;
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'")) {
+				while (rs.next()) {
+					final int cooldownId = rs.getInt("cooldown_id");
+					final long value = rs.getLong("value");
+					final String name = this.cooldownManager.getCooldownName(cooldownId);
+					cooldowns.put(name, new Cooldown(value, true));
+				}
+				stmt = rs.getStatement();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (final SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return cooldowns;
 	}
@@ -186,20 +187,24 @@ public class BendingPlayer {
 			final String name = entry.getKey();
 			final Cooldown cooldown = entry.getValue();
 			final int cooldownId = this.cooldownManager.getCooldownId(name, false);
-			DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId,
-					(rs) -> {
-						try {
-							if (rs.next()) {
-								DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
-							} else {
-								DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
-							}
-						} catch (final SQLException e) {
-							e.printStackTrace();
-						}
-						return null;
-					});
-
+			Statement stmt = null;
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
+				if (rs.next()) {
+					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
+				} else {
+					DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
+				}
+				stmt = rs.getStatement();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (final SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

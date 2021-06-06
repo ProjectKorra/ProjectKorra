@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -172,18 +173,23 @@ public class StatisticsMethods {
 		}
 		if (!Manager.getManager(StatisticsManager.class).getKeysByName().containsKey(statName)) {
 			DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
-			DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'",
-					(rs) -> {
-						try {
-							if (rs.next()) {
-								Manager.getManager(StatisticsManager.class).getKeysByName().put(rs.getString("statName"), rs.getInt("id"));
-								Manager.getManager(StatisticsManager.class).getKeysById().put(rs.getInt("id"), rs.getString("statName"));
-							}
-						} catch (final SQLException e) {
-							e.printStackTrace();
-						}
-						return null;
-					});
+			Statement stmt = null;
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'")) {
+				if (rs.next()) {
+					Manager.getManager(StatisticsManager.class).getKeysByName().put(rs.getString("statName"), rs.getInt("id"));
+					Manager.getManager(StatisticsManager.class).getKeysById().put(rs.getInt("id"), rs.getString("statName"));
+				}
+				stmt = rs.getStatement();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (final SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return Manager.getManager(StatisticsManager.class).getKeysByName().getOrDefault(statName, -1);
 	}

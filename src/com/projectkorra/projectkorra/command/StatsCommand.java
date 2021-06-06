@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -184,26 +185,32 @@ public class StatsCommand extends PKCommand {
 
 	public List<UUID> pullUUIDs(final Statistic statistic, final Object object) {
 		final Set<UUID> uuids = new HashSet<>();
-		DBConnection.sql.readQuery("SELECT uuid FROM pk_stats",
-				(rs) -> {
-					try {
-						while (rs.next()) {
-							final UUID uuid = UUID.fromString(rs.getString("uuid"));
-							if (object == null) {
-								if (StatisticsMethods.getStatisticTotal(uuid, statistic) > 0) {
-									uuids.add(uuid);
-								}
-							} else {
-								if (StatisticsMethods.getStatistic(uuid, object, statistic) > 0) {
-									uuids.add(uuid);
-								}
-							}
-						}
-					} catch (final SQLException e) {
-						e.printStackTrace();
+		Statement stmt = null;
+		try (ResultSet rs = DBConnection.sql.readQuery("SELECT uuid FROM pk_stats")) {
+			while (rs.next()) {
+				final UUID uuid = UUID.fromString(rs.getString("uuid"));
+				if (object == null) {
+					if (StatisticsMethods.getStatisticTotal(uuid, statistic) > 0) {
+						uuids.add(uuid);
 					}
-					return null;
-				});
+				} else {
+					if (StatisticsMethods.getStatistic(uuid, object, statistic) > 0) {
+						uuids.add(uuid);
+					}
+				}
+			}
+			stmt = rs.getStatement();
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+		if (stmt != null) {
+			try {
+				stmt.close();
+			}
+			catch (final SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		for (final Player player : ProjectKorra.plugin.getServer().getOnlinePlayers()) {
 			final UUID uuid = player.getUniqueId();
 			if (object == null) {

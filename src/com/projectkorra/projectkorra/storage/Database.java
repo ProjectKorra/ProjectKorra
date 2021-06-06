@@ -115,17 +115,14 @@ public abstract class Database {
 	 * @param query Query to run
 	 * @return Result set of ran query
 	 */
-	public Object readQuery(final String query, Function<ResultSet, Object> func) {
+	public ResultSet readQuery(final String query) {
 		try {
 			if (this.connection == null || this.connection.isClosed()) {
 				this.open();
 			}
 			final PreparedStatement stmt = this.connection.prepareStatement(query);
 			final ResultSet rs = stmt.executeQuery();
-			Object res = func.apply(rs);
-			rs.close();
-			stmt.close();
-			return res;
+			return rs;
 		} catch (final SQLException e) {
 			e.printStackTrace();
 			return null;
