@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.board;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,7 +38,9 @@ public class BendingBoardInstance {
 		selectedSlot = player.getInventory().getHeldItemSlot() + 1;
 
 		bendingBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-		bendingSlots = bendingBoard.registerNewObjective("Board Slots", "dummy", ChatColor.BOLD + "Abilities");
+		
+		String title = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.Title"));
+		bendingSlots = bendingBoard.registerNewObjective("Board Slots", "dummy", title);
 		bendingSlots.setDisplaySlot(DisplaySlot.SIDEBAR);
 		player.setScoreboard(bendingBoard);
 
@@ -52,9 +56,11 @@ public class BendingBoardInstance {
 
 	private void setSlot(int slot, String name, boolean cooldown) {
 		if (slot < 1 || slot > 9 || !player.getScoreboard().equals(bendingBoard)) return;
-		StringBuilder sb = new StringBuilder(slot == selectedSlot ? ">" : "  ");
+		String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.SelectionPrefix"));
+		StringBuilder sb = new StringBuilder(slot == selectedSlot ? prefix : String.join("", Collections.nCopies(ChatColor.stripColor(prefix).length(), " ")));
 		if (name == null || name.isEmpty()) {
-			sb.append(ChatColor.DARK_GRAY).append("-- Slot ").append(slot).append(" --");
+			String emptySlot = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.EmptySlot").replaceAll("\\{slot_number\\}", "" + slot));
+			sb.append(emptySlot);
 		} else {
 			CoreAbility coreAbility = CoreAbility.getAbility(ChatColor.stripColor(name));
 			if (coreAbility == null) { // MultiAbility
@@ -99,18 +105,25 @@ public class BendingBoardInstance {
 	}
 
 	public void updateMisc(String text, boolean show, boolean isCombo) {
+		String selection = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.SelectionPrefix"));
+		String prefix = String.join("", Collections.nCopies(ChatColor.stripColor(selection).length(), " "));
+		
+		String miscSeparator = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.MiscSeparator"));
+		String alignedText = prefix + text;
+		
 		if (show) {
 			if (misc.isEmpty()) {
-				bendingSlots.getScore("  -----------  ").setScore(-10);
+				bendingSlots.getScore(miscSeparator).setScore(-10);
 			}
-			misc.add(text);
-			bendingSlots.getScore(text).setScore(isCombo ? -10 : -11);
 
+			misc.add(alignedText);
+			bendingSlots.getScore(alignedText).setScore(isCombo ? -11 : -12);
 		} else {
-			misc.remove(text);
-			bendingBoard.resetScores(text);
+			misc.remove(alignedText);
+			bendingBoard.resetScores(alignedText);
+
 			if (misc.isEmpty()) {
-				bendingBoard.resetScores("  -----------  ");
+				bendingBoard.resetScores(miscSeparator);
 			}
 		}
 	}

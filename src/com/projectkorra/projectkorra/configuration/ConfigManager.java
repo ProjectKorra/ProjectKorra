@@ -43,11 +43,6 @@ public class ConfigManager {
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
-			final ArrayList<String> helpLines = new ArrayList<String>();
-			helpLines.add("&c/bending help [Ability/Command] &eDisplay help.");
-			helpLines.add("&c/bending choose [Element] &eChoose an element.");
-			helpLines.add("&c/bending bind [Ability] # &eBind an ability.");
-
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
@@ -76,6 +71,11 @@ public class ConfigManager {
 			config.addDefault("Chat.Prefixes.Chi", "[Chi]");
 			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
+
+			config.addDefault("Board.Title", "&lAbilities");
+			config.addDefault("Board.SelectionPrefix", ">  &r");
+			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
+			config.addDefault("Board.MiscSeparator", "  ------------");
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");

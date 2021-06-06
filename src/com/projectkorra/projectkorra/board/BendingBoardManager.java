@@ -93,6 +93,11 @@ public class BendingBoardManager {
 		if (!enabled || disabledPlayers.contains(player.getUniqueId()) || disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
 		}
+
+		if (!player.isOnline()) {
+			return false;
+		}
+
 		if (!scoreboardPlayers.containsKey(player)) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
@@ -101,6 +106,7 @@ public class BendingBoardManager {
 			
 			scoreboardPlayers.put(player, new BendingBoardInstance(bPlayer));
 		}
+
 		return true;
 	}
 
@@ -122,10 +128,10 @@ public class BendingBoardManager {
 			}
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);
 			if (coreAbility != null && ComboManager.getComboAbilities().containsKey(abilityName)) {
-				scoreboardPlayers.get(player).updateMisc("  " + coreAbility.getElement().getColor() + ChatColor.STRIKETHROUGH + abilityName, cooldown, true);
+				scoreboardPlayers.get(player).updateMisc("" + coreAbility.getElement().getColor() + ChatColor.STRIKETHROUGH + abilityName, cooldown, true);
 				return;
 			} else if (coreAbility == null && trackedCooldowns.containsKey(abilityName)) {
-				scoreboardPlayers.get(player).updateMisc("  " + trackedCooldowns.get(abilityName) + ChatColor.STRIKETHROUGH + abilityName, cooldown, false);
+				scoreboardPlayers.get(player).updateMisc("" + trackedCooldowns.get(abilityName) + ChatColor.STRIKETHROUGH + abilityName, cooldown, false);
 				return;
 			}
 			scoreboardPlayers.get(player).setAbility(abilityName, cooldown);
@@ -140,12 +146,11 @@ public class BendingBoardManager {
 
 	/**
 	 * Some abilities use internal cooldowns with custom names that don't correspond to bound abilities' names.
-	 * Adds the internal cooldown name and color to the map of tracked abilities so as they can appear on the bending baord.
+	 * Adds the internal cooldown name and color to the map of tracked abilities so as they can appear on the bending board.
 	 * @param cooldownName the internal cooldown name
 	 * @param color the color to use when rendering the board entry
 	 */
 	public static void addCooldownToTrack(String cooldownName, ChatColor color) {
-		if (CoreAbility.getAbility(cooldownName) != null) return; // Ignore cooldown if already corresponds to a CoreAbility name
 		trackedCooldowns.put(cooldownName, color);
 	}
 
