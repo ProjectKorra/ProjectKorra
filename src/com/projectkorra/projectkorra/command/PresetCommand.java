@@ -132,7 +132,11 @@ public class PresetCommand extends PKCommand {
 		} else if (Arrays.asList(bindaliases).contains(args.get(0)) && this.hasPermission(sender, "bind")) { // bending preset bind name.
 			if (args.size() < 3) {
 				boolean boundAll = false;
-				if (Preset.presetExists(player, name)) {
+
+				if (name == null) {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.invalidName);
+					return;
+				} else if (Preset.presetExists(player, name)) {
 					final Preset preset = Preset.getPreset(player, name);
 
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.bound.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));

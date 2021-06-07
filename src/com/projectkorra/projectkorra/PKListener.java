@@ -1540,6 +1540,8 @@ public class PKListener implements Listener {
 						new EarthTunnel(player);
 					} else if (abil.equalsIgnoreCase("Tremorsense")) {
 						bPlayer.toggleTremorSense();
+						GeneralMethods.displayMovePreview(player);
+						BendingBoardManager.updateAllSlots(player);
 					} else if (abil.equalsIgnoreCase("Extraction")) {
 						new Extraction(player);
 					} else if (abil.equalsIgnoreCase("LavaFlow")) {
@@ -1802,6 +1804,8 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("Illumination")) {
 						if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 							bPlayer.toggleIllumination();
+							GeneralMethods.displayMovePreview(player);
+							BendingBoardManager.updateAllSlots(player);
 						} else {
 							new Illumination(player);
 						}
@@ -1843,6 +1847,8 @@ public class PKListener implements Listener {
 			if (coreAbil instanceof AvatarAbility) {
 				if (abil.equalsIgnoreCase("AvatarState")) {
 					new AvatarState(player);
+					GeneralMethods.displayMovePreview(player);
+					BendingBoardManager.updateAllSlots(player);
 				}
 			}
 		}
@@ -2008,13 +2014,6 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		if (player == null) return;
 		BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onCooldownChange(final PlayerCooldownChangeEvent event) {
-		final Player player = event.getPlayer();
-		if (player == null) return;
-		BendingBoardManager.updateBoard(player, event.getAbility(), event.getResult().equals(PlayerCooldownChangeEvent.Result.ADDED), 0);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

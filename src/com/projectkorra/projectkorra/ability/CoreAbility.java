@@ -849,12 +849,18 @@ public abstract class CoreAbility implements Ability {
 		if (forceCooldown || bPlayer.isOnCooldown(this)) {
 			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName();
 		} else {
-			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName())) {
+			boolean isActiveStance = bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName());
+			boolean isActiveAvatarState = bPlayer.isAvatarState() && this.getName().equals("AvatarState");
+			boolean isActiveIllumination = bPlayer.isIlluminating() && this.getName().equals("Illumination");
+			boolean isActiveTremorSense = bPlayer.isTremorSensing() && this.getName().equals("Tremorsense");
+			
+			if (isActiveStance || isActiveAvatarState || isActiveIllumination || isActiveTremorSense) {
 				displayedMessage = this.getElement().getColor() + "" + ChatColor.UNDERLINE + this.getName();
 			} else {
 				displayedMessage = this.getElement().getColor() + this.getName();
 			}
 		}
+
 		return displayedMessage;
 	}
 
