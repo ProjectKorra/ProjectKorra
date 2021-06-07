@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
 
@@ -146,6 +147,7 @@ public class Preset {
 			}
 		}
 		bPlayer.setAbilities(abilities);
+		BendingBoardManager.updateAllSlots(player);
 		return boundAll;
 	}
 
@@ -256,6 +258,7 @@ public class Preset {
 				}
 			}
 			bPlayer.setAbilities(abilities);
+			BendingBoardManager.updateAllSlots(player);
 			return boundAll;
 		}
 		return false;

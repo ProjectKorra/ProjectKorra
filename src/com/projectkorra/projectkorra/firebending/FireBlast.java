@@ -110,14 +110,14 @@ public class FireBlast extends FireAbility {
 	}
 
 	private void applyModifiers(double damage, double range) {
-		int damageMod = 0;
-		int rangeMod = 0;
+		double damageMod = 0;
+		double rangeMod = 0;
 
-		damageMod = (int) (this.getDayFactor(damage) - damage);
-		rangeMod = (int) (this.getDayFactor(range) - range);
+		damageMod = this.getDayFactor(damage) - damage;
+		rangeMod = this.getDayFactor(range) - range;
 
-		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
-		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
+		damageMod = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod;
+		rangeMod = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod;
 
 		this.range += rangeMod;
 		this.damage += damageMod;
@@ -166,6 +166,10 @@ public class FireBlast extends FireAbility {
 	}
 
 	public boolean checkLocation(Block block) {
+		if (block.isLiquid()) {
+			this.remove();
+			return false;
+		}
 		if (!block.isPassable()) {
 			if (block.getType() == Material.FURNACE && this.powerFurnace) {
 				final Furnace furnace = (Furnace) block.getState();

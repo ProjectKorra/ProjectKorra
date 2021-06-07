@@ -74,7 +74,7 @@ public class EarthGrab extends EarthAbility {
 			return;
 		}
 
-		if (this.bPlayer.isOnCooldown(this)) {
+		if (bPlayer != null && this.bPlayer.isOnCooldown(this)) { //bPlayer can be null if the ability is disabled. If it is, it just won't start()
 			return;
 		}
 

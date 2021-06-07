@@ -90,6 +90,14 @@ public abstract class EarthAbility extends ElementalAbility {
 			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.DIRT.createBlockData());
 		}
 	}
+	
+	public static boolean isBendableEarthTempBlock(final Block block) {
+		return isBendableEarthTempBlock(TempBlock.get(block));
+	}
+	
+	public static boolean isBendableEarthTempBlock(final TempBlock tempBlock) {
+		return DensityShift.getSandBlocks().contains(tempBlock);
+	}
 
 	public static boolean isEarthbendable(final Material material, final boolean metal, final boolean sand, final boolean lava) {
 		return isEarth(material) || (metal && isMetal(material)) || (sand && isSand(material)) || (lava && isLava(material));
@@ -128,7 +136,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer) {
-		if (!TempBlock.isTempBlock(block) && this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if ((!TempBlock.isTempBlock(block) || isBendableEarthTempBlock(block)) && this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			boolean up = false;
 			boolean down = false;
 			final Vector norm = direction.clone().normalize();

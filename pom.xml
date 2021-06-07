@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>1.9.0</version>
+  <version>1.9.1</version>
   <name>ProjectKorra</name>
   <repositories>
     <!-- local jar files, add more using: mvn install:install-file -Dfile=aaa.jar -DgroupId=aaa -DartifactId=aaa -Dversion=aaa -Dpackaging=jar -DlocalRepositoryPath=path/to/ProjectKorra/localrepo/ -->
@@ -17,7 +17,7 @@
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
     </repository>
-    <!-- GriefPrevention Repo -->
+    <!-- GriefPrevention and Towny Repo -->
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
@@ -80,8 +80,8 @@
       <artifactId>factionsframework</artifactId>
       <version>1.2.0</version>
       <scope>provided</scope>
-  </dependency>
-  <!-- GriefPrevention -->
+    </dependency>
+    <!-- GriefPrevention -->
     <dependency>
       <groupId>com.github.TechFortress</groupId>
       <artifactId>GriefPrevention</artifactId>
@@ -121,9 +121,9 @@
     </dependency>
     <!-- Towny -->
     <dependency>
-      <groupId>com.palmergames</groupId>
+      <groupId>com.github.TownyAdvanced</groupId>
       <artifactId>Towny</artifactId>
-      <version>0.93.0.0</version>
+      <version>0.96.2.0</version>
       <scope>provided</scope>
     </dependency>
     <!-- WorldEdit / WorldGuard -->
@@ -160,10 +160,16 @@
     </dependency>
     <!-- Kingdoms -->
     <dependency>
-      <groupId>com.songoda</groupId>
+      <groupId>com.github.cryptomorin</groupId>
       <artifactId>kingdoms</artifactId>
-      <version>1.2.3</version>
-      <scope>provided</scope>
+      <version>1.10.19.1</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- PlaceholderAPI -->
     <dependency>
@@ -208,9 +214,17 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.4</version>
         <configuration>
           <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+          <filters>
+            <filter>
+              <artifact>com.github.cryptomorin:kingdoms</artifact>
+              <includes>
+                <include>org/kingdoms/constants/player/KingdomPermission.class</include>
+              </includes>
+            </filter>
+          </filters>
           <relocations>
             <relocation>
               <pattern>co.aikar.timings.lib</pattern>

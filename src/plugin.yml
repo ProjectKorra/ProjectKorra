@@ -43,6 +43,7 @@ permissions:
     default: true
     description: Grants access to most abilities and basic commands.
     children:
+      bending.command.board: true
       bending.command.bind: true
       bending.command.display: true
       bending.command.toggle: true

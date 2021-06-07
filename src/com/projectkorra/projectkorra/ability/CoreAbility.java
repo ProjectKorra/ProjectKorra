@@ -90,6 +90,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
+	private static long currentTick;
 
 	protected Player player;
 	protected BendingPlayer bPlayer;
@@ -149,7 +150,6 @@ public abstract class CoreAbility implements Ability {
 		this.startTime = System.currentTimeMillis();
 		this.started = false;
 		this.id = CoreAbility.idCounter;
-		this.startTick = this.getCurrentTick();
 
 		if (idCounter == Integer.MAX_VALUE) {
 			idCounter = Integer.MIN_VALUE;
@@ -181,6 +181,7 @@ public abstract class CoreAbility implements Ability {
 
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
+		this.startTick = getCurrentTick();
 		final Class<? extends CoreAbility> clazz = this.getClass();
 		final UUID uuid = this.player.getUniqueId();
 
@@ -291,6 +292,7 @@ public abstract class CoreAbility implements Ability {
 				}
 			}
 		}
+		currentTick++;
 	}
 
 	/**
@@ -745,8 +747,12 @@ public abstract class CoreAbility implements Ability {
 		return this.startTick;
 	}
 
-	public long getCurrentTick() {
-		return this.player.getWorld().getFullTime();
+	public static long getCurrentTick() {
+		return currentTick;
+	}
+
+	public long getRunningTicks() {
+		return currentTick - this.startTick;
 	}
 
 	public boolean isStarted() {
@@ -828,7 +834,7 @@ public abstract class CoreAbility implements Ability {
 
 	public String getMovePreview(final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		String displayedMessage = getMovePreviewWithoutCooldownTimer(player);
+		String displayedMessage = getMovePreviewWithoutCooldownTimer(player, false);
 		if (bPlayer.isOnCooldown(this)) {
 			final long cooldown = bPlayer.getCooldown(this.getName()) - System.currentTimeMillis();
 			displayedMessage += this.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
@@ -837,18 +843,24 @@ public abstract class CoreAbility implements Ability {
 		return displayedMessage;
 	}
 
-	public String getMovePreviewWithoutCooldownTimer(final Player player) {
+	public String getMovePreviewWithoutCooldownTimer(final Player player, boolean forceCooldown) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		String displayedMessage = "";
-		if (bPlayer.isOnCooldown(this)) {
+		if (forceCooldown || bPlayer.isOnCooldown(this)) {
 			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName();
 		} else {
-			if (bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName())) {
+			boolean isActiveStance = bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName());
+			boolean isActiveAvatarState = bPlayer.isAvatarState() && this.getName().equals("AvatarState");
+			boolean isActiveIllumination = bPlayer.isIlluminating() && this.getName().equals("Illumination");
+			boolean isActiveTremorSense = bPlayer.isTremorSensing() && this.getName().equals("Tremorsense");
+			
+			if (isActiveStance || isActiveAvatarState || isActiveIllumination || isActiveTremorSense) {
 				displayedMessage = this.getElement().getColor() + "" + ChatColor.UNDERLINE + this.getName();
 			} else {
 				displayedMessage = this.getElement().getColor() + this.getName();
 			}
 		}
+
 		return displayedMessage;
 	}
 

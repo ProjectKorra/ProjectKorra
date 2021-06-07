@@ -13,6 +13,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class CopyCommand extends PKCommand {
@@ -107,6 +108,7 @@ public class CopyCommand extends PKCommand {
 			}
 		}
 		target.setAbilities(abilities);
+		BendingBoardManager.updateAllSlots(player2);
 		return boundAll;
 	}
 

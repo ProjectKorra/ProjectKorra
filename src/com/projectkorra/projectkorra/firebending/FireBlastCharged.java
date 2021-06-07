@@ -89,18 +89,18 @@ public class FireBlastCharged extends FireAbility {
 
 	private void applyModifiers() {
 		long chargeTimeMod = 0;
-		int damageMod = 0;
-		int rangeMod = 0;
+		double damageMod = 0;
+		double rangeMod = 0;
 
 		if (isDay(player.getWorld())) {
-			chargeTimeMod = (long) (this.chargeTime / getDayFactor()) - this.chargeTime;
-			damageMod = (int) (this.getDayFactor(this.maxDamage) - this.maxDamage);
-			rangeMod = (int) (this.getDayFactor(this.range) - this.range);
+			chargeTimeMod = (long) (this.chargeTime / getDayFactor() - this.chargeTime);
+			damageMod = this.getDayFactor(this.maxDamage) - this.maxDamage;
+			rangeMod = this.getDayFactor(this.range) - this.range;
 		}
 
 		chargeTimeMod = (long) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (chargeTime / BlueFireAbility.getCooldownFactor() - chargeTime) + chargeTimeMod : chargeTimeMod);
-		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * maxDamage - maxDamage) + damageMod : damageMod);
-		rangeMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
+		damageMod = (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * maxDamage - maxDamage) + damageMod : damageMod);
+		rangeMod =  (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
 
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");

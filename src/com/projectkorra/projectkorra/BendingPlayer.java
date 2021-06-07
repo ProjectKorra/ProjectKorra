@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -27,6 +28,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
@@ -132,7 +134,7 @@ public class BendingPlayer {
 		if (cooldown <= 0) {
 			return;
 		}
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(this.uuid), ability, cooldown, Result.ADDED);
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
@@ -147,9 +149,11 @@ public class BendingPlayer {
 			final String abilityName = event.getAbility();
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+			if (bPlayer != null && bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
 				GeneralMethods.displayMovePreview(player);
 			}
+			
+			BendingBoardManager.updateBoard(player, event.getAbility(), true, 0);
 		}
 	}
 
@@ -309,6 +313,8 @@ public class BendingPlayer {
 		if (element == null || this.player == null) {
 			return false;
 		} else if (!this.player.hasPermission("bending." + element.getName() + ".passive")) {
+			return false;
+		} else if (!this.player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
@@ -803,22 +809,25 @@ public class BendingPlayer {
 	 * @param ability The ability's cooldown to remove
 	 */
 	public void removeCooldown(final String ability) {
-		if (Bukkit.getPlayer(this.uuid) == null) {
-			return;
-		}
-
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(this.uuid), ability, 0, Result.REMOVED);
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
 
 			final Player player = event.getPlayer();
+			
+			if (player == null) {
+				return;
+			}
+			
 			final String abilityName = event.getAbility();
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+			if (bPlayer != null && bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
 				GeneralMethods.displayMovePreview(player);
 			}
+
+			BendingBoardManager.updateBoard(player, event.getAbility(), false, 0);
 		}
 	}
 
@@ -858,11 +867,17 @@ public class BendingPlayer {
 
 	/**
 	 * Sets the player's {@link ChiAbility Chi stance}
+	 * Also update any previews
 	 *
 	 * @param stance The player's new stance object
 	 */
 	public void setStance(final ChiAbility stance) {
+		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
+		final String newStance = (stance == null) ? "" : stance.getName();
 		this.stance = stance;
+		GeneralMethods.displayMovePreview(player);
+		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(Bukkit.getPlayer(this.uuid), oldStance, newStance);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	/**

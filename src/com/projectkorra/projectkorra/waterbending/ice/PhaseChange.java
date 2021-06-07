@@ -46,6 +46,7 @@ public class PhaseChange extends IceAbility {
 
 	private final List<PhaseChangeType> active_types = new ArrayList<>();
 	private static Map<TempBlock, Player> PLAYER_BY_BLOCK = new HashMap<>();
+	private static List<Block> BLOCKS = new ArrayList<>();
 	private final CopyOnWriteArrayList<TempBlock> blocks = new CopyOnWriteArrayList<>();
 	private final Random r = new Random();
 
@@ -99,10 +100,12 @@ public class PhaseChange extends IceAbility {
 					tb.revertBlock();
 					this.blocks.remove(tb);
 					PLAYER_BY_BLOCK.remove(tb);
+					BLOCKS.remove(tb.getBlock());
 				} else if (tb.getLocation().distanceSquared(this.player.getLocation()) > (this.controlRadius * this.controlRadius)) {
 					tb.revertBlock();
 					this.blocks.remove(tb);
 					PLAYER_BY_BLOCK.remove(tb);
+					BLOCKS.remove(tb.getBlock());
 				}
 			}
 		}
@@ -129,10 +132,12 @@ public class PhaseChange extends IceAbility {
 					tb.revertBlock();
 					this.blocks.remove(tb);
 					PLAYER_BY_BLOCK.remove(tb);
+					BLOCKS.remove(tb.getBlock());
 				} else if (tb.getLocation().distanceSquared(this.player.getLocation()) > (this.controlRadius * this.controlRadius)) {
 					tb.revertBlock();
 					this.blocks.remove(tb);
 					PLAYER_BY_BLOCK.remove(tb);
+					BLOCKS.remove(tb.getBlock());
 				}
 			}
 		}
@@ -301,6 +306,7 @@ public class PhaseChange extends IceAbility {
 		}
 		this.blocks.add(tb);
 		PLAYER_BY_BLOCK.put(tb, this.player);
+		BLOCKS.add(tb.getBlock());
 		playIcebendingSound(b.getLocation());
 	}
 
@@ -382,7 +388,8 @@ public class PhaseChange extends IceAbility {
 						new TempBlock(b, Material.AIR.createBlockData(), 120 * 1000L);
 					} else {
 						tb.revertBlock();
-						new TempBlock(b, Material.SNOW.createBlockData(d -> ((Snow) d).setLayers(snow.getLayers() - 1)), 120 * 1000L);
+						snow.setLayers(snow.getLayers() - 1);
+						new TempBlock(b, snow, 120 * 1000L);
 					}
 				}
 			}
@@ -407,7 +414,7 @@ public class PhaseChange extends IceAbility {
 					new TempBlock(b, Material.AIR.createBlockData(), 120 * 1000L);
 				} else {
 					snow.setLayers(snow.getLayers() - 1);
-					new TempBlock(b, Material.SNOW.createBlockData(d -> ((Snow) d).setLayers(snow.getLayers() - 1)), 120 * 1000L);
+					new TempBlock(b, snow, 120 * 1000L);
 				}
 			}
 
@@ -432,6 +439,7 @@ public class PhaseChange extends IceAbility {
 				return false;
 			}
 			PLAYER_BY_BLOCK.remove(tb);
+			BLOCKS.remove(tb.getBlock());
 			if (pc.getFrozenBlocks() != null) {
 				pc.getFrozenBlocks().remove(tb);
 				tb.revertBlock();
@@ -460,18 +468,14 @@ public class PhaseChange extends IceAbility {
 	}
 
 	public static List<Block> getFrozenBlocksAsBlock() {
-		final List<Block> list = new ArrayList<>();
-		for (final TempBlock tb : PLAYER_BY_BLOCK.keySet()) {
-			final Block b = tb.getBlock();
-			list.add(b);
-		}
-		return list;
+		return BLOCKS;
 	}
 
 	public void revertFrozenBlocks() {
 		if (this.active_types.contains(PhaseChangeType.FREEZE)) {
 			for (final TempBlock tb : this.blocks) {
 				PLAYER_BY_BLOCK.remove(tb);
+				BLOCKS.remove(tb.getBlock());
 				tb.revertBlock();
 			}
 			this.blocks.clear();

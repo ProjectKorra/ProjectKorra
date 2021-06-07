@@ -43,11 +43,6 @@ public class ConfigManager {
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
-			final ArrayList<String> helpLines = new ArrayList<String>();
-			helpLines.add("&c/bending help [Ability/Command] &eDisplay help.");
-			helpLines.add("&c/bending choose [Element] &eChoose an element.");
-			helpLines.add("&c/bending bind [Ability] # &eBind an ability.");
-
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
@@ -76,6 +71,11 @@ public class ConfigManager {
 			config.addDefault("Chat.Prefixes.Chi", "[Chi]");
 			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
+
+			config.addDefault("Board.Title", "&lAbilities");
+			config.addDefault("Board.SelectionPrefix", ">  &r");
+			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
+			config.addDefault("Board.MiscSeparator", "  ------------");
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
@@ -180,6 +180,11 @@ public class ConfigManager {
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
 			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
 
+			config.addDefault("Commands.Board.Description", "Toggle bending board visibility.");
+			config.addDefault("Commands.Board.Disabled", "Bending board is disabled.");
+			config.addDefault("Commands.Board.ToggledOn", "You have made your bending board visible again.");
+			config.addDefault("Commands.Board.ToggledOff", "You have hidden your bending board.");
+
 			config.addDefault("Commands.Copy.Description", "This command will allow the user to copy the binds of another player either for himself or assign them to <Player> if specified.");
 			config.addDefault("Commands.Copy.PlayerNotFound", "Couldn't find player.");
 			config.addDefault("Commands.Copy.SuccessfullyCopied", "Your binds have been set to match {target}'s!");
@@ -252,7 +257,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.Instructions", "Sprint, jump, and left click while in the air to activate air scooter. You will then move forward in the direction you're looking.");
 			config.addDefault("Abilities.Air.Tornado.Description", "Tornado is one of the most powerful and advanced abilities that an Airbender knows. If the tornado meets a player or mob, it will push them around. Tornado can also be used to push back projectiles and used for mobility. Use a tornado directly under you to propel yourself upwards.");
 			config.addDefault("Abilities.Air.Tornado.Instructions", "Hold sneak and a tornado will form gradually wherever you look.");
-			config.addDefault("Abilities.Air.AirShield.Description", "Air Shield is one of the most powerful defensive techniques in existence. This ability is mainly used when you are low health and need protection. It's also useful when you're surrounded by mobs.");
+			config.addDefault("Abilities.Air.AirShield.Description", "AirShield is one of the most powerful defensive techniques in existence. This ability is mainly used when you are low health and need protection. It's also useful when you're surrounded by mobs.");
 			config.addDefault("Abilities.Air.AirShield.Instructions", "Hold sneak and a shield of air will form around you, blocking projectiles and pushing entities back.");
 			config.addDefault("Abilities.Air.AirSpout.Description", "This ability gives the airbender limited sustained levitation. It allows an airbender to gain a height advantage to escape from mobs, players or just to dodge from attacks. This ability is also useful for building as it allows you to reach great heights.");
 			config.addDefault("Abilities.Air.AirSpout.Instructions", "Left click to activate a spout beneath you and hold spacebar to go higher. If you wish to go lower, simply hold sneak. To disable this ability, left click once again.");
@@ -357,7 +362,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
 			config.addDefault("Abilities.Earth.Tremorsense.Instructions", "Simply left click while on an earthbendable block.");
 			config.addDefault("Abilities.Earth.Combo.EarthDome.Description", "EarthDome allows earthbenders to surround themselves or another entity in earth, temporarily preventing anything from entering or escaping the dome.");
-			config.addDefault("Abilities.Earth.Combo.EarthDome.Instructions", "(Self) RaiseEarth (Right click) > Shockwave (Right click)\\n(Projection) RaiseEarth(Right click) > Shockwave (Left click)");
+			config.addDefault("Abilities.Earth.Combo.EarthDome.Instructions", "(Self) RaiseEarth (Right click) > Shockwave (Right click)" + "\n" + "(Projection) RaiseEarth (Right click) > Shockwave (Left click)");
 			config.addDefault("Abilities.Earth.Combo.EarthPillars.Description", "Send players and entities flying into the air and possibly stunning them by raising pillars of earth under their feet, dealing damage initally as well. This combo can also be used by falling from high off the ground and landing while on the Catapult ability");
 			config.addDefault("Abilities.Earth.Combo.EarthPillars.Instructions", "Shockwave (Tap sneak) > Shockwave (Hold sneak) > Catapult (Release sneak)");
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Description", "DensityShift is a passive ability which allows earthbenders to make a firm landing negating all fall damage on any earthbendable surface.");
@@ -555,6 +560,7 @@ public class ConfigManager {
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
 			config.addDefault("Properties.DatabaseCooldowns", true);
+			config.addDefault("Properties.BendingBoard", true);
 			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
@@ -580,7 +586,8 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.RespectLWC", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
-			config.addDefault("Properties.RegionProtection.RespectKingdoms", true);
+			config.addDefault("Properties.RegionProtection.Kingdoms.Respect", true);
+			config.addDefault("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions", false);
 			config.addDefault("Properties.RegionProtection.RespectPlotSquared", true);
 			config.addDefault("Properties.RegionProtection.RespectRedProtect", true);
 			config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
@@ -652,7 +659,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
 			config.addDefault("Properties.Fire.BlueFire.CooldownFactor", .9);
 			config.addDefault("Properties.Fire.BlueFire.RangeFactor", 1.2);
-			
+
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
 			final ArrayList<String> disabledWorlds = new ArrayList<String>();
@@ -1293,6 +1300,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthSmash.Grab.DetectionRadius", 2.5);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.Range", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.AnimationInterval", 25);
+			config.addDefault("Abilities.Earth.EarthSmash.Shoot.CollisionRadius", 2.5);
 			config.addDefault("Abilities.Earth.EarthSmash.RequiredBendableBlocks", 11);
 			config.addDefault("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough", 3);
 			config.addDefault("Abilities.Earth.EarthSmash.LiftAnimationInterval", 30);

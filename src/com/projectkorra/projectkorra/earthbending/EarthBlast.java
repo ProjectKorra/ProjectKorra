@@ -156,7 +156,7 @@ public class EarthBlast extends EarthAbility {
 		final Block block = BlockSource.getEarthSourceBlock(this.player, this.range, ClickType.SHIFT_DOWN);
 		if (block == null || !this.isEarthbendable(block)) {
 			return false;
-		} else if (TempBlock.isTempBlock(block)) {
+		} else if (TempBlock.isTempBlock(block) && !EarthAbility.isBendableEarthTempBlock(block)) {
 			return false;
 		}
 

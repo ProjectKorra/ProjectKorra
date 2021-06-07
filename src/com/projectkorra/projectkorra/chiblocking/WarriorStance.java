@@ -7,7 +7,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 
@@ -42,7 +41,6 @@ public class WarriorStance extends ChiAbility {
 		}
 		this.start();
 		this.bPlayer.setStance(this);
-		GeneralMethods.displayMovePreview(player);
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 0.5F, 2F);
 	}
 
@@ -70,7 +68,6 @@ public class WarriorStance extends ChiAbility {
 		this.bPlayer.addCooldown(this);
 		this.bPlayer.setStance(null);
 		if (this.player != null) {
-			GeneralMethods.displayMovePreview(this.player);
 			this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 0.5F, 2F);
 			this.player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 			this.player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);

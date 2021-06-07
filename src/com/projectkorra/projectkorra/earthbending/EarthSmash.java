@@ -68,6 +68,7 @@ public class EarthSmash extends EarthAbility {
 	private double flightSpeed;
 	private double grabbedDistance;
 	private double grabDetectionRadius;
+	private double hitRadius;
 	private double flightDetectionRadius;
 	private State state;
 	private Block origin;
@@ -147,6 +148,7 @@ public class EarthSmash extends EarthAbility {
 		this.liftAnimationInterval = getConfig().getLong("Abilities.Earth.EarthSmash.LiftAnimationInterval");
 		this.grabDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.Grab.DetectionRadius");
 		this.flightDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.Flight.DetectionRadius");
+		this.hitRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.Shoot.CollisionRadius");
 		this.allowGrab = getConfig().getBoolean("Abilities.Earth.EarthSmash.Grab.Enabled");
 		this.allowFlight = getConfig().getBoolean("Abilities.Earth.EarthSmash.Flight.Enabled");
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthSmash.SelectRange");
@@ -199,6 +201,9 @@ public class EarthSmash extends EarthAbility {
 				if (System.currentTimeMillis() - this.getStartTime() >= this.chargeTime) {
 					this.origin = this.getEarthSourceBlock(this.selectRange);
 					if (this.origin == null) {
+						this.remove();
+						return;
+					} else if (TempBlock.isTempBlock(this.origin) && !isBendableEarthTempBlock(this.origin)) {
 						this.remove();
 						return;
 					}
@@ -563,7 +568,7 @@ public class EarthSmash extends EarthAbility {
 	 * already been shot.
 	 */
 	public void shootingCollisionDetection() {
-		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.flightDetectionRadius);
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.hitRadius);
 		for (final Entity entity : entities) {
 			if (entity instanceof LivingEntity && entity != this.player && !this.affectedEntities.contains(entity)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {

@@ -73,16 +73,16 @@ public class WallOfFire extends FireAbility {
 
 		this.origin = GeneralMethods.getTargetedLocation(player, this.range);
 
-		int widthMod = 0;
-		int heightMod = 0;
+		double widthMod = 0;
+		double heightMod = 0;
 		long durationMod = 0;
-		int damageMod = 0;
+		double damageMod = 0;
 
 		if (isDay(player.getWorld())) {
-			widthMod = (int) this.getDayFactor(this.width) - this.width;
-			heightMod = (int) this.getDayFactor(this.height) - this.height;
+			widthMod = this.getDayFactor(this.width) - this.width;
+			heightMod = this.getDayFactor(this.height) - this.height;
 			durationMod = ((long) this.getDayFactor(this.duration) - this.duration);
-			damageMod = (int) (this.getDayFactor(this.damage) - this.damage);
+			damageMod = this.getDayFactor(this.damage) - this.damage;
 		}
 
 		widthMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * width - width) + widthMod : widthMod);

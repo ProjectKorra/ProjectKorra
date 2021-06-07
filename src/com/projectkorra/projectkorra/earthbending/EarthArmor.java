@@ -84,6 +84,10 @@ public class EarthArmor extends EarthAbility {
 			if (!this.moveBlocks()) {
 				return;
 			}
+			if ((TempBlock.isTempBlock(oldHeadBlock) && !isBendableEarthTempBlock(oldHeadBlock))
+					|| (TempBlock.isTempBlock(oldLegsBlock) && !isBendableEarthTempBlock(oldLegsBlock))) {
+				return;
+			}
 			if (isEarthRevertOn()) {
 				addTempAirBlock(oldHeadBlock);
 				addTempAirBlock(oldLegsBlock);
