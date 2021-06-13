@@ -398,13 +398,14 @@ public class EarthSmash extends EarthAbility {
 				 */
 				this.location.add(0, -1, 0);
 
+				// Move any entities that are above the rock.
+				final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, 3.5);
+				for (final Entity entity : entities) {
+					final org.bukkit.util.Vector velocity = entity.getVelocity();
+					entity.setVelocity(velocity.add(new Vector(0, 1.1, 0)));
+				}
 			}
-			// Move any entities that are above the rock.
-			final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, 2.5);
-			for (final Entity entity : entities) {
-				final org.bukkit.util.Vector velocity = entity.getVelocity();
-				entity.setVelocity(velocity.add(new Vector(0, 0.36, 0)));
-			}
+
 			this.location.getWorld().playEffect(this.location, Effect.GHAST_SHOOT, 0, 7);
 			this.draw();
 		} else {
