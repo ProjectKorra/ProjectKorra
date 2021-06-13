@@ -64,6 +64,7 @@ public class EarthSmash extends EarthAbility {
 	private double knockback;
 	@Attribute(Attribute.KNOCKUP)
 	private double knockup;
+	private double lift_knockup;
 	@Attribute(Attribute.SPEED)
 	private double flightSpeed;
 	private double grabbedDistance;
@@ -157,6 +158,7 @@ public class EarthSmash extends EarthAbility {
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
 		this.knockback = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockback");
 		this.knockup = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockup");
+		this.lift_knockup = getConfig().getDouble("Abilities.Earth.EarthSmash.LiftKnockup");
 		this.flightSpeed = getConfig().getDouble("Abilities.Earth.EarthSmash.Flight.Speed");
 		this.chargeTime = getConfig().getLong("Abilities.Earth.EarthSmash.ChargeTime");
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
@@ -402,7 +404,7 @@ public class EarthSmash extends EarthAbility {
 				final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, 3.5);
 				for (final Entity entity : entities) {
 					final org.bukkit.util.Vector velocity = entity.getVelocity();
-					entity.setVelocity(velocity.add(new Vector(0, 1.1, 0)));
+					entity.setVelocity(velocity.add(new Vector(0, this.lift_knockup, 0)));
 				}
 			}
 
