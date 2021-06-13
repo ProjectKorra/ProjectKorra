@@ -118,8 +118,6 @@ import com.projectkorra.projectkorra.util.BlockCacheElement;
 import com.projectkorra.projectkorra.util.ColoredParticle;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -148,20 +146,8 @@ public class GeneralMethods {
 	private static final ArrayList<Ability> INVINCIBLE = new ArrayList<>();
 	private static ProjectKorra plugin;
 
-	private static Method getAbsorption;
-	private static Method setAbsorption;
-	private static Method getHandle;
-
 	public GeneralMethods(final ProjectKorra plugin) {
 		GeneralMethods.plugin = plugin;
-
-		try {
-			getAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
-			setAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
-			getHandle = ReflectionHandler.getMethod("CraftPlayer", PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -674,26 +660,25 @@ public class GeneralMethods {
 		ActionBar.sendActionBar(displayedMessage, player);
 	}
 
+	@Deprecated
+	/**
+	 * Gets the number of absorption hearts of a specified {@link Player}.
+	 * @param player the {@link Player} to get the absorption hearts of.
+	 * @deprecated Use {@link Player#getAbsorptionAmount()}.
+	 */
 	public static float getAbsorbationHealth(final Player player) {
-
-		try {
-			final Object entityplayer = getHandle.invoke(player);
-			final Object hearts = getAbsorption.invoke(entityplayer);
-			return (float) hearts;
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
+		return (float) player.getAbsorptionAmount();
 	}
 
+	@Deprecated
+	/**
+	 * Sets the number of absorption hearts of a specified {@link Player}.
+	 * @param player the {@link Player} to set the absorption hearts of.
+	 * @param hearts a float representing the number of hearts to set.
+	 * @deprecated Use {@link Player#setAbsorptionAmount(double)}
+	 */
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
-
-		try {
-			final Object entityplayer = getHandle.invoke(player);
-			setAbsorption.invoke(entityplayer, hearts);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		player.setAbsorptionAmount(hearts);
 	}
 
 	public static int getArmorTier(Material mat) {
