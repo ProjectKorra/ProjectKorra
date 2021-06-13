@@ -45,7 +45,7 @@ public class EarthArmor extends EarthAbility {
 	private Location legsBlockLocation;
 	private boolean active;
 	private PotionEffect oldAbsorbtion = null;
-	private float goldHearts;
+	private double goldHearts;
 	@Attribute("GoldHearts")
 	private int maxGoldHearts;
 	private TempArmor armor;
@@ -145,7 +145,7 @@ public class EarthArmor extends EarthAbility {
 		this.player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, level, true, false));
 
 		this.goldHearts = this.maxGoldHearts * 2;
-		GeneralMethods.setAbsorbationHealth(this.player, this.goldHearts);
+		this.player.setAbsorptionAmount(this.goldHearts);
 	}
 
 	private boolean inPosition() {
@@ -249,7 +249,7 @@ public class EarthArmor extends EarthAbility {
 		if (this.formed) {
 			if (!this.player.hasPotionEffect(PotionEffectType.ABSORPTION)) {
 				this.player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 1, true, false));
-				GeneralMethods.setAbsorbationHealth(this.player, this.goldHearts);
+				this.player.setAbsorptionAmount(this.goldHearts);
 			}
 
 			if (!this.active) {
@@ -301,7 +301,7 @@ public class EarthArmor extends EarthAbility {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				abil.goldHearts = GeneralMethods.getAbsorbationHealth(EarthArmor.this.player);
+				abil.goldHearts = EarthArmor.this.player.getAbsorptionAmount();
 				if (abil.formed && abil.goldHearts < 0.9F) {
 					abil.bPlayer.addCooldown(abil);
 
@@ -601,7 +601,7 @@ public class EarthArmor extends EarthAbility {
 		this.cooldown = cooldown;
 	}
 
-	public float getGoldHearts() {
+	public double getGoldHearts() {
 		return this.goldHearts;
 	}
 
@@ -609,7 +609,7 @@ public class EarthArmor extends EarthAbility {
 		return this.maxGoldHearts;
 	}
 
-	public void setGoldHearts(final float goldHearts) {
+	public void setGoldHearts(final double goldHearts) {
 		this.goldHearts = goldHearts;
 	}
 
