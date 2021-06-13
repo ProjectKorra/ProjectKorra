@@ -1290,7 +1290,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthSmash.Damage", 5);
 			config.addDefault("Abilities.Earth.EarthSmash.Knockback", 3.5);
 			config.addDefault("Abilities.Earth.EarthSmash.Knockup", 0.15);
-			config.addDefault("Abilities.Earth.EarthSmash.LiftKnockup", 1.1);
+			config.addDefault("Abilities.Earth.EarthSmash.Lift.Knockup", 1.1);
+			config.addDefault("Abilities.Earth.EarthSmash.Lift.Range", 3.5);
 			config.addDefault("Abilities.Earth.EarthSmash.Flight.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthSmash.Flight.Speed", 0.72);
 			config.addDefault("Abilities.Earth.EarthSmash.Flight.Duration", 3000);
