@@ -660,23 +660,23 @@ public class GeneralMethods {
 		ActionBar.sendActionBar(displayedMessage, player);
 	}
 
-	@Deprecated
 	/**
 	 * Gets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to get the absorption hearts of.
 	 * @deprecated Use {@link Player#getAbsorptionAmount()}.
 	 */
+	@Deprecated
 	public static float getAbsorbationHealth(final Player player) {
 		return (float) player.getAbsorptionAmount();
 	}
 
-	@Deprecated
 	/**
 	 * Sets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to set the absorption hearts of.
 	 * @param hearts a float representing the number of hearts to set.
 	 * @deprecated Use {@link Player#setAbsorptionAmount(double)}
 	 */
+	@Deprecated
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
 		player.setAbsorptionAmount(hearts);
 	}
