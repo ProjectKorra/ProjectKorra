@@ -27,6 +27,10 @@ public class IceWave extends IceAbility implements ComboAbility {
 	public IceWave(final Player player) {
 		super(player);
 
+		if (!hasAbility(player, WaterSpoutWave.class)) {
+			return;
+		}
+
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
