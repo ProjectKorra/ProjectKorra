@@ -94,6 +94,10 @@ public class WhoCommand extends PKCommand {
 			}
 			final List<String> players = new ArrayList<String>();
 			for (final Player player : Bukkit.getOnlinePlayers()) {
+				if (sender instanceof Player && !((Player) sender).canSee(player)) {
+					continue;
+				}
+				
 				final String playerName = player.getName();
 				String result = "";
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
@@ -150,12 +154,13 @@ public class WhoCommand extends PKCommand {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + "Player not found!");
 			return;
 		}
-		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + this.playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
-		}
-
+		
 		final Player player_ = (Player) (player.isOnline() ? player : null);
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		if ((!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) || (sender instanceof Player && player_ != null && !((Player) sender).canSee(player_))) {
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + this.playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
+		}
 
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
