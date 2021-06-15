@@ -96,9 +96,11 @@ public class DisplayCommand extends PKCommand {
 							}
 
 							final CoreAbility coreAbil = CoreAbility.getAbility(comboAbil);
-							if (coreAbil != null) {
-								comboColor = coreAbil.getElement().getColor();
+							if (coreAbil == null || coreAbil.isHiddenAbility()) {
+								continue;
 							}
+							comboColor = coreAbil.getElement().getColor();
+
 							String message = (comboColor + comboAbil);
 
 							if (coreAbil instanceof AddonAbility) {
@@ -127,9 +129,10 @@ public class DisplayCommand extends PKCommand {
 						}
 
 						final CoreAbility coreAbil = CoreAbility.getAbility(comboMove);
-						if (coreAbil != null) {
-							comboColor = coreAbil.getElement().getColor();
+						if (coreAbil == null || coreAbil.isHiddenAbility()) {
+							continue;
 						}
+						comboColor = coreAbil.getElement().getColor();
 
 						String message = (comboColor + comboMove);
 
@@ -157,9 +160,11 @@ public class DisplayCommand extends PKCommand {
 							}
 
 							final CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
-							if (coreAbil != null) {
-								passiveColor = coreAbil.getElement().getColor();
+							if (coreAbil == null || coreAbil.isHiddenAbility()) {
+								continue;
 							}
+							passiveColor = coreAbil.getElement().getColor();
+
 							String message = (passiveColor + passiveAbil);
 
 							if (coreAbil instanceof AddonAbility) {
@@ -188,9 +193,11 @@ public class DisplayCommand extends PKCommand {
 					}
 
 					final CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
-					if (coreAbil != null) {
-						passiveColor = coreAbil.getElement().getColor();
+					if (coreAbil == null || coreAbil.isHiddenAbility()) {
+						continue;
 					}
+					passiveColor = coreAbil.getElement().getColor();
+
 					sender.sendMessage(passiveColor + passiveAbil);
 				}
 				return;

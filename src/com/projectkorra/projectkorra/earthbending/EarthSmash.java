@@ -64,6 +64,8 @@ public class EarthSmash extends EarthAbility {
 	private double knockback;
 	@Attribute(Attribute.KNOCKUP)
 	private double knockup;
+	private double liftKnockup;
+	private double liftRange;
 	@Attribute(Attribute.SPEED)
 	private double flightSpeed;
 	private double grabbedDistance;
@@ -157,6 +159,8 @@ public class EarthSmash extends EarthAbility {
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
 		this.knockback = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockback");
 		this.knockup = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockup");
+		this.liftKnockup = getConfig().getDouble("Abilities.Earth.EarthSmash.Lift.Knockup");
+		this.liftRange = getConfig().getDouble("Abilities.Earth.EarthSmash.Lift.Range");
 		this.flightSpeed = getConfig().getDouble("Abilities.Earth.EarthSmash.Flight.Speed");
 		this.chargeTime = getConfig().getLong("Abilities.Earth.EarthSmash.ChargeTime");
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
@@ -398,13 +402,14 @@ public class EarthSmash extends EarthAbility {
 				 */
 				this.location.add(0, -1, 0);
 
+				// Move any entities that are above the rock.
+				final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.liftRange);
+				for (final Entity entity : entities) {
+					final org.bukkit.util.Vector velocity = entity.getVelocity();
+					entity.setVelocity(velocity.add(new Vector(0, this.liftKnockup, 0)));
+				}
 			}
-			// Move any entities that are above the rock.
-			final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, 2.5);
-			for (final Entity entity : entities) {
-				final org.bukkit.util.Vector velocity = entity.getVelocity();
-				GeneralMethods.setVelocity(this, entity, velocity.add(new Vector(0, 0.36, 0)));
-			}
+
 			this.location.getWorld().playEffect(this.location, Effect.GHAST_SHOOT, 0, 7);
 			this.draw();
 		} else {

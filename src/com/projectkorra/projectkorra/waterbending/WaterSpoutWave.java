@@ -371,7 +371,7 @@ public class WaterSpoutWave extends WaterAbility {
 		final BukkitRunnable br = new BukkitRunnable() {
 			@Override
 			public void run() {
-				WaterSpoutWave.this.createBlock(block, mat);
+				WaterSpoutWave.this.createBlock(block, block.getLocation().distance(player.getLocation()) >= 1.6 ? mat : Material.WATER);
 			}
 		};
 		br.runTaskLater(ProjectKorra.plugin, delay);
