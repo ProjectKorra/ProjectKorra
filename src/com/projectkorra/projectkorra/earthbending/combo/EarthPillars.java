@@ -100,8 +100,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 					if (lent instanceof Player && !((Player) lent).isOnline()) {
 						continue;
 					}
-
-					lent.setVelocity(new Vector(0, this.knockup, 0));
+					GeneralMethods.setVelocity(this, lent, new Vector(0, this.knockup, 0));
 				}
 				if (this.damaging) {
 					DamageHandler.damageEntity(lent, this.damage, this);

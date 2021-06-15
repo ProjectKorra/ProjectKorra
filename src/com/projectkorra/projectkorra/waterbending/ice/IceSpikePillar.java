@@ -246,7 +246,7 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	private void affect(final LivingEntity entity) {
-		entity.setVelocity(this.thrownForce);
+		GeneralMethods.setVelocity(this, entity, this.thrownForce);
 		DamageHandler.damageEntity(entity, this.damage, this);
 		this.damaged.add(entity);
 

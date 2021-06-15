@@ -302,7 +302,7 @@ public class EarthSmash extends EarthAbility {
 					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 						continue;
 					}
-					entity.setVelocity(direction.clone().multiply(this.flightSpeed));
+					GeneralMethods.setVelocity(this, entity, direction.clone().multiply(this.flightSpeed));
 				}
 
 				// These values tend to work well when dealing with a person aiming upward or downward.
@@ -583,7 +583,7 @@ public class EarthSmash extends EarthAbility {
 				final double damage = this.currentBlocks.size() / 13.0 * this.damage;
 				DamageHandler.damageEntity(entity, damage, this);
 				final Vector travelVec = GeneralMethods.getDirection(this.location, entity.getLocation());
-				entity.setVelocity(travelVec.setY(this.knockup).normalize().multiply(this.knockback));
+				GeneralMethods.setVelocity(this, entity, travelVec.setY(this.knockup).normalize().multiply(this.knockback));
 			}
 		}
 	}

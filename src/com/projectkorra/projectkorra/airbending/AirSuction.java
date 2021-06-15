@@ -231,8 +231,8 @@ public class AirSuction extends AirAbility {
 				if (Math.abs(entity.getVelocity().dot(push)) > knockback) {
 					push.normalize().add(entity.getVelocity()).multiply(knockback);
 				}
-
-				GeneralMethods.setVelocity(entity, push.normalize().multiply(knockback));
+				GeneralMethods.setVelocity(this, entity, push.normalize().multiply(knockback));
+				
 				new HorizontalVelocityTracker(entity, this.player, 200l, this);
 				entity.setFallDistance(0);
 

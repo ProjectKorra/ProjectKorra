@@ -243,9 +243,7 @@ public class AirSwipe extends AirAbility {
 							}
 						}
 						if (entities.size() < MAX_AFFECTABLE_ENTITIES) {
-
-							GeneralMethods.setVelocity(entity, fDirection.multiply(AirSwipe.this.pushFactor));
-
+							GeneralMethods.setVelocity(AirSwipe.this, entity, fDirection.multiply(AirSwipe.this.pushFactor));
 						}
 						if (!AirSwipe.this.affectedEntities.contains(entity)) {
 							if (AirSwipe.this.damage != 0) {
@@ -255,9 +253,7 @@ public class AirSwipe extends AirAbility {
 						}
 						breakBreathbendingHold(entity);
 					} else if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && !(entity instanceof LivingEntity)) {
-
-						GeneralMethods.setVelocity(entity, fDirection.multiply(AirSwipe.this.pushFactor));
-
+						GeneralMethods.setVelocity(AirSwipe.this, entity, fDirection.multiply(AirSwipe.this.pushFactor));
 					}
 				}
 			}.runTaskLater(ProjectKorra.plugin, i / MAX_AFFECTABLE_ENTITIES);

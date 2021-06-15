@@ -283,7 +283,7 @@ public class WaterManipulation extends WaterAbility {
 							}
 							final Location location = this.player.getEyeLocation();
 							final Vector vector = location.getDirection();
-							entity.setVelocity(vector.normalize().multiply(this.knockback));
+							GeneralMethods.setVelocity(this, entity, vector.normalize().multiply(this.knockback));
 
 							if (this.bPlayer.isAvatarState()) {
 								this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");

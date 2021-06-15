@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.passive;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -57,7 +58,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		if (this.bPlayer.getBoundAbility() == null || (this.bPlayer.getBoundAbility() != null && !this.bPlayer.getBoundAbility().isSneakAbility())) {
 			if (this.player.isSneaking()) {
 				if (isWater(this.player.getLocation().getBlock()) && !this.bPlayer.isOnCooldown(this)) {
-					this.player.setVelocity(this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
+					GeneralMethods.setVelocity(this, this.player, this.player.getEyeLocation().getDirection().clone().normalize().multiply(this.swimSpeed));
 				}
 			} else {
 				this.bPlayer.addCooldown(this);

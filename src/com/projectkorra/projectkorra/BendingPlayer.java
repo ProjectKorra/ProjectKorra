@@ -517,7 +517,7 @@ public class BendingPlayer {
 			return null;
 		}
 
-		return getBendingPlayer(player.getName());
+		return getBendingPlayer((OfflinePlayer)player);
 	}
 
 	/**

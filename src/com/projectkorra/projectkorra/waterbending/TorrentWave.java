@@ -180,7 +180,7 @@ public class TorrentWave extends WaterAbility {
 		final Vector direction = GeneralMethods.getDirection(this.origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
-		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(this.knockback)));
+		GeneralMethods.setVelocity(this, entity, entity.getVelocity().clone().add(direction.multiply(this.knockback)));
 	}
 
 	@Override
