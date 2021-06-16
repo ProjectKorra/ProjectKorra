@@ -1342,6 +1342,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.MaxDepth", 10);
 			config.addDefault("Abilities.Earth.Tremorsense.Radius", 5);
 			config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
+			config.addDefault("Abilities.Earth.Tremorsense.ClickRequiresDarkness", false);
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
 			config.addDefault("Abilities.Earth.Tremorsense.StickyRange", 3);
 
