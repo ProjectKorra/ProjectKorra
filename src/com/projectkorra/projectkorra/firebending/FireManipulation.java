@@ -124,6 +124,7 @@ public class FireManipulation extends FireAbility {
 			}
 		} else if (!this.firing && this.charging) {
 			if (!this.player.isSneaking()) {
+				this.bPlayer.addCooldown(this, this.streamCooldown);
 				this.remove();
 				return;
 			}

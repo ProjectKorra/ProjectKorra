@@ -52,7 +52,7 @@ public class EarthTunnel extends EarthAbility {
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
 		this.ignoreOres = getConfig().getBoolean("Abilities.Earth.EarthTunnel.IgnoreOres");
-		this.revertTime = getConfig().getLong("Properties.Earth.RevertCheckTime");
+		this.revertTime = getConfig().getLong("Properties.Earth.EarthTunnel.RevertCheckTime");
 
 		this.time = System.currentTimeMillis();
 
