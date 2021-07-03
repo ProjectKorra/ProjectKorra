@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -22,6 +21,8 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
+
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * Manages every individual {@link BendingBoardInstance}
@@ -144,7 +145,7 @@ public final class BendingBoardManager {
 			
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);
 			if (coreAbility != null && coreAbility instanceof ComboAbility) {
-				scoreboardPlayers.get(player).updateMisc(abilityName, coreAbility.getElement().getColor());
+				scoreboardPlayers.get(player).updateMisc(abilityName, coreAbility.getElement().getColor().asBungee());
 				return;
 			} else if (coreAbility == null && trackedCooldowns.containsKey(abilityName)) {
 				scoreboardPlayers.get(player).updateMisc(abilityName, trackedCooldowns.get(abilityName));

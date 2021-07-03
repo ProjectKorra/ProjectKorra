@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -16,6 +15,8 @@ import org.bukkit.scoreboard.Team;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * Represents a player's scoreboard for bending purposes
@@ -31,6 +32,7 @@ public class BendingBoardInstance {
 		private String entry;
 		private Optional<BoardSlot> next = Optional.empty();
 		
+		@SuppressWarnings("deprecation")
 		public BoardSlot(Scoreboard board, Objective obj, int slot) {
 			this.board = board;
 			this.obj = obj;
@@ -79,7 +81,8 @@ public class BendingBoardInstance {
 	private final Objective bendingSlots;
 	private int selectedSlot;
 	
-	private String prefix, altPrefix, emptySlot, miscSeparator;
+	private String prefix, emptySlot, miscSeparator;
+	private ChatColor selectedColor, altColor;
 
 	public BendingBoardInstance(final BendingPlayer bPlayer) {
 		bendingPlayer = bPlayer;
@@ -97,8 +100,17 @@ public class BendingBoardInstance {
 			slots[i] = new BoardSlot(bendingBoard, bendingSlots, i);
 		}
 		
-		prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.SelectionPrefix"));
-		altPrefix = ChatColor.BLACK + ChatColor.stripColor(prefix);
+		prefix = ChatColor.stripColor(ConfigManager.languageConfig.get().getString("Board.SelectionPrefix"));
+		
+		try {
+			selectedColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.SelectedColor"));
+			altColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.NonSelectedColor"));
+		} catch (Exception e) {
+			Bukkit.getLogger().warning(ChatColor.RED + "Failed to parse a BendingBord color option, using defaults");
+			selectedColor = ChatColor.WHITE;
+			altColor = ChatColor.DARK_GRAY;
+		}
+		
 		emptySlot = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.EmptySlot"));
 		miscSeparator = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.MiscSeparator"));
 
@@ -133,7 +145,7 @@ public class BendingBoardInstance {
 			}
 		}
 		
-		slots[slot].update(slot == selectedSlot ? prefix : altPrefix, sb.toString());
+		slots[slot].update((slot == selectedSlot ? selectedColor : altColor) + prefix, sb.toString());
 	}
 
 	public void updateAll() {

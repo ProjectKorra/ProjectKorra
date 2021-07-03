@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class ConfigManager {
 
 	public static Config presetConfig;
@@ -73,7 +75,9 @@ public class ConfigManager {
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
 
 			config.addDefault("Board.Title", "&lAbilities");
-			config.addDefault("Board.SelectionPrefix", ">  &r");
+			config.addDefault("Board.SelectionPrefix", "> ");
+			config.addDefault("Board.SelectedColor", ChatColor.WHITE.toString());
+			config.addDefault("Board.NonSelectedColor", ChatColor.DARK_GRAY.toString());
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
 			config.addDefault("Board.MiscSeparator", "  ------------");
 
