@@ -57,10 +57,19 @@ public final class BendingBoardManager {
 		disabledWorlds.clear();
 		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
 	}
+	
+	/**
+	 * Check if the player has the BendingBoard toggled off (disabled)
+	 * @param player {@link Player} to check toggled
+	 * @return true if player has the BendingBoard toggled off
+	 */
+	public static boolean isDisabled(Player player) {
+		return disabledPlayers.contains(player.getUniqueId());
+	}
 
 	/**
 	 * Force toggle the scoreboard for when a player changes worlds (for example when teleporting to a world where bending is disabled)
-	 * @param player
+	 * @param player {@link Player} to force toggle for
 	 */
 	public static void forceToggleScoreboard(Player player) {
 		if (disabledWorlds.contains(player.getWorld().getName())) {
