@@ -75,9 +75,9 @@ public class ConfigManager {
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
 
 			config.addDefault("Board.Title", "&lAbilities");
-			config.addDefault("Board.SelectionPrefix", "> ");
-			config.addDefault("Board.SelectedColor", ChatColor.WHITE.toString());
-			config.addDefault("Board.NonSelectedColor", ChatColor.DARK_GRAY.toString());
+			config.addDefault("Board.Prefix.Text", "> ");
+			config.addDefault("Board.Prefix.SelectedColor", ChatColor.WHITE.toString());
+			config.addDefault("Board.Prefix.NonSelectedColor", ChatColor.DARK_GRAY.toString());
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
 			config.addDefault("Board.MiscSeparator", "  ------------");
 

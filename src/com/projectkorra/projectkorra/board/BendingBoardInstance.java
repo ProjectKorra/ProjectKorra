@@ -100,11 +100,11 @@ public class BendingBoardInstance {
 			slots[i] = new BoardSlot(bendingBoard, bendingSlots, i);
 		}
 		
-		prefix = ChatColor.stripColor(ConfigManager.languageConfig.get().getString("Board.SelectionPrefix"));
+		prefix = ChatColor.stripColor(ConfigManager.languageConfig.get().getString("Board.Prefix.Text"));
 		
 		try {
-			selectedColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.SelectedColor"));
-			altColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.NonSelectedColor"));
+			selectedColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.Prefix.SelectedColor"));
+			altColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.Prefix.NonSelectedColor"));
 		} catch (Exception e) {
 			Bukkit.getLogger().warning(ChatColor.RED + "Failed to parse a BendingBord color option, using defaults");
 			selectedColor = ChatColor.WHITE;
