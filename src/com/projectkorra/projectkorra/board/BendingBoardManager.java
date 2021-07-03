@@ -1,17 +1,5 @@
 package com.projectkorra.projectkorra.board;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.storage.DBConnection;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,10 +10,26 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.storage.DBConnection;
+
 /**
  * Manages every individual {@link BendingBoardInstance}
  */
-public class BendingBoardManager {
+public final class BendingBoardManager {
+	
+	private BendingBoardManager() {}
+	
 	private static final Set<String> disabledWorlds = new HashSet<>();
 	private static final Map<String, ChatColor> trackedCooldowns = new ConcurrentHashMap<>();
 	private static final Set<UUID> disabledPlayers = Collections.synchronizedSet(new HashSet<>());
@@ -45,7 +49,10 @@ public class BendingBoardManager {
 	}
 
 	private static void initialize(boolean initial) {
-		if (initial) loadDisabledPlayers();
+		if (initial) {
+			loadDisabledPlayers();
+		}
+		
 		enabled = ConfigManager.getConfig().getBoolean("Properties.BendingBoard");
 		disabledWorlds.clear();
 		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
@@ -121,26 +128,27 @@ public class BendingBoardManager {
 			if (abilityName == null || abilityName.isEmpty()) {
 				scoreboardPlayers.get(player).clearSlot(slot);
 				return;
-			}
-			if (MultiAbilityManager.hasMultiAbilityBound(player)) {
+			} else if (MultiAbilityManager.hasMultiAbilityBound(player)) {
 				scoreboardPlayers.get(player).updateAll();
 				return;
 			}
+			
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);
-			if (coreAbility != null && ComboManager.getComboAbilities().containsKey(abilityName)) {
-				scoreboardPlayers.get(player).updateMisc("" + coreAbility.getElement().getColor() + ChatColor.STRIKETHROUGH + abilityName, cooldown, true);
+			if (coreAbility != null && coreAbility instanceof ComboAbility) {
+				scoreboardPlayers.get(player).updateMisc(abilityName, coreAbility.getElement().getColor());
 				return;
 			} else if (coreAbility == null && trackedCooldowns.containsKey(abilityName)) {
-				scoreboardPlayers.get(player).updateMisc("" + trackedCooldowns.get(abilityName) + ChatColor.STRIKETHROUGH + abilityName, cooldown, false);
+				scoreboardPlayers.get(player).updateMisc(abilityName, trackedCooldowns.get(abilityName));
 				return;
 			}
+			
 			scoreboardPlayers.get(player).setAbility(abilityName, cooldown);
 		}
 	}
 
-	public static void changeActiveSlot(Player player, int oldSlot, int newSlot) {
+	public static void changeActiveSlot(Player player, int newSlot) {
 		if (canUseScoreboard(player)) {
-			scoreboardPlayers.get(player).setActiveSlot(++oldSlot, ++newSlot);
+			scoreboardPlayers.get(player).setActiveSlot(++newSlot);
 		}
 	}
 
@@ -161,7 +169,7 @@ public class BendingBoardManager {
 		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
 			Set<UUID> disabled = new HashSet<>();
 			try {
-				final ResultSet rs = DBConnection.sql.readQuery("SELECT uuid FROM pk_board where enabled = 0");
+				final ResultSet rs = DBConnection.sql.readQuery("SELECT uuid FROM pk_board WHERE enabled = 0");
 				while (rs.next()) disabled.add(UUID.fromString(rs.getString("uuid")));
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -182,7 +190,7 @@ public class BendingBoardManager {
 		final String updateQuery = "UPDATE pk_board SET enabled = " + (disabledPlayers.contains(uuid) ? 0 : 1) + " WHERE uuid = ?";
 		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
 			try {
-				PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement("SELECT enabled FROM pk_board where uuid = ? LIMIT 1");
+				PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement("SELECT enabled FROM pk_board WHERE uuid = ? LIMIT 1");
 				ps.setString(1, uuid.toString());
 				PreparedStatement ps2;
 				if (!ps.executeQuery().next()) { // if the entry doesn't exist in the DB, create it.
