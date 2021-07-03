@@ -140,19 +140,16 @@ public final class BendingBoardManager {
 				return;
 			} else if (MultiAbilityManager.hasMultiAbilityBound(player)) {
 				scoreboardPlayers.get(player).updateAll();
-				return;
 			}
 			
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);
 			if (coreAbility != null && coreAbility instanceof ComboAbility) {
 				scoreboardPlayers.get(player).updateMisc(abilityName, coreAbility.getElement().getColor().asBungee());
-				return;
 			} else if (coreAbility == null && trackedCooldowns.containsKey(abilityName)) {
 				scoreboardPlayers.get(player).updateMisc(abilityName, trackedCooldowns.get(abilityName));
-				return;
+			} else {
+				scoreboardPlayers.get(player).setAbility(abilityName, cooldown);
 			}
-			
-			scoreboardPlayers.get(player).setAbility(abilityName, cooldown);
 		}
 	}
 
