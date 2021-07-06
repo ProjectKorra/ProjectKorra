@@ -656,6 +656,12 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
 			config.addDefault("Properties.Fire.LightningSound.Volume", 1);
 			config.addDefault("Properties.Fire.LightningSound.Pitch", 0);
+			config.addDefault("Properties.Fire.LightningCharge.Sound", "BLOCK_BEEHIVE_WORK");
+			config.addDefault("Properties.Fire.LightningCharge.Volume", 2);
+			config.addDefault("Properties.Fire.LightningCharge.Pitch", .5);
+			config.addDefault("Properties.Fire.LightningHit.Sound", "ENTITY_LIGHTNING_BOLT_THUNDER");
+			config.addDefault("Properties.Fire.LightningHit.Volume", 1);
+			config.addDefault("Properties.Fire.LightningHit.Pitch", 2);
 			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
 			config.addDefault("Properties.Fire.BlueFire.CooldownFactor", .9);
 			config.addDefault("Properties.Fire.BlueFire.RangeFactor", 1.2);

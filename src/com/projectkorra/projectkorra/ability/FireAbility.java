@@ -203,6 +203,40 @@ public abstract class FireAbility extends ElementalAbility {
 			}
 		}
 	}
+
+	//a method to play beehive buzz when charging a lightning move.
+	public static void playLightningbendingChargingSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");//2
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");//.5
+
+			Sound sound = Sound.BLOCK_BEEHIVE_WORK;
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
+			} finally{
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
+	}
+	
+	//a method to play a hit sound for when lightning strikes.
+	public static void playLightningbendingHitSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
+
+			Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
+			}	finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
+	}
 	
 	public static void stopBending() {
 		SOURCE_PLAYERS.clear();
