@@ -13,6 +13,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
@@ -70,7 +72,7 @@ public class BendingBoardInstance {
 		}
 	}
 	
-	private final BoardSlot[] slots = new BoardSlot[10];
+	private final BoardSlot[] slots = new BoardSlot[9];
 	private final Map<String, BoardSlot> misc = new HashMap<>();
 	private BoardSlot miscTail = null;
 
@@ -96,25 +98,39 @@ public class BendingBoardInstance {
 		bendingSlots.setDisplaySlot(DisplaySlot.SIDEBAR);
 		player.setScoreboard(bendingBoard);
 		
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < 9; ++i) {
 			slots[i] = new BoardSlot(bendingBoard, bendingSlots, i);
 		}
 		
 		prefix = ChatColor.stripColor(ConfigManager.languageConfig.get().getString("Board.Prefix.Text"));
-		
-		try {
-			selectedColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.Prefix.SelectedColor"));
-			altColor = ChatColor.of(ConfigManager.languageConfig.get().getString("Board.Prefix.NonSelectedColor"));
-		} catch (Exception e) {
-			Bukkit.getLogger().warning(ChatColor.RED + "Failed to parse a BendingBord color option, using defaults");
-			selectedColor = ChatColor.WHITE;
-			altColor = ChatColor.DARK_GRAY;
-		}
-		
 		emptySlot = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.EmptySlot"));
 		miscSeparator = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.MiscSeparator"));
 
+		updateColors();
 		updateAll();
+	}
+	
+	private ChatColor getElementColor() {
+		if (bendingPlayer.getElements().size() > 1) {
+			return Element.AVATAR.getColor().asBungee();
+		} else if (bendingPlayer.getElements().size() == 1) {
+			return bendingPlayer.getElements().get(0).getColor().asBungee();
+		} else {
+			return ChatColor.WHITE;
+		}
+	}
+	
+	private ChatColor getColor(String from, ChatColor def) {
+		if (from.equalsIgnoreCase("element")) {
+			return getElementColor();
+		}
+		
+		try {
+			return ChatColor.of(from);
+		} catch (Exception e) {
+			ProjectKorra.plugin.getLogger().warning("Couldn't parse board color from '" + from + "', using default!");
+			return def;
+		}
 	}
 
 	public void disableScoreboard() {
@@ -145,10 +161,23 @@ public class BendingBoardInstance {
 			}
 		}
 		
-		slots[slot].update((slot == selectedSlot ? selectedColor : altColor) + prefix, sb.toString());
+		slots[slot - 1].update((slot == selectedSlot ? selectedColor : altColor) + prefix, sb.toString());
+	}
+	
+	private int updateSelected(int newSlot) {
+		int oldSlot = selectedSlot;
+		selectedSlot = newSlot;
+		return oldSlot;
+	}
+	
+	public void updateColors() {
+		selectedColor = getColor(ConfigManager.languageConfig.get().getString("Board.Prefix.SelectedColor"), ChatColor.WHITE);
+		altColor = getColor(ConfigManager.languageConfig.get().getString("Board.Prefix.NonSelectedColor"), ChatColor.DARK_GRAY);
 	}
 
 	public void updateAll() {
+		updateColors();
+		updateSelected(player.getInventory().getHeldItemSlot() + 1);
 		for (int i = 1; i <= 9; i++) {
 			setSlot(i, bendingPlayer.getAbilities().get(i), false);
 		}
@@ -159,8 +188,7 @@ public class BendingBoardInstance {
 	}
 
 	public void setActiveSlot(int newSlot) {
-		int oldSlot = selectedSlot;
-		selectedSlot = newSlot;
+		int oldSlot = updateSelected(newSlot);
 		setSlot(oldSlot, bendingPlayer.getAbilities().get(oldSlot), false);
 		setSlot(newSlot, bendingPlayer.getAbilities().get(newSlot), false);
 	}

@@ -39,21 +39,18 @@ public final class BendingBoardManager {
 	private static boolean enabled;
 
 	public static void setup() {
-		initialize(true);
+		loadDisabledPlayers();
+		initialize();
 		Bukkit.getOnlinePlayers().forEach(BendingBoardManager::canUseScoreboard);
 	}
 
 	public static void reload() {
 		scoreboardPlayers.values().forEach(BendingBoardInstance::disableScoreboard);
 		scoreboardPlayers.clear();
-		initialize(false);
+		initialize();
 	}
 
-	private static void initialize(boolean initial) {
-		if (initial) {
-			loadDisabledPlayers();
-		}
-		
+	private static void initialize() {
 		enabled = ConfigManager.getConfig().getBoolean("Properties.BendingBoard");
 		disabledWorlds.clear();
 		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
@@ -135,11 +132,13 @@ public final class BendingBoardManager {
 
 	public static void updateBoard(Player player, String abilityName, boolean cooldown, int slot) {
 		if (canUseScoreboard(player)) {
+			if (MultiAbilityManager.hasMultiAbilityBound(player)) {
+				scoreboardPlayers.get(player).updateAll();
+			}
+			
 			if (abilityName == null || abilityName.isEmpty()) {
 				scoreboardPlayers.get(player).clearSlot(slot);
 				return;
-			} else if (MultiAbilityManager.hasMultiAbilityBound(player)) {
-				scoreboardPlayers.get(player).updateAll();
 			}
 			
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);

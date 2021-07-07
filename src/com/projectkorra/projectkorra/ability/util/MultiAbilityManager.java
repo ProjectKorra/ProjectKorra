@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
@@ -186,6 +185,11 @@ public class MultiAbilityManager {
 			if (bPlayer == null) {
 				return;
 			}
+			
+			int slot = playerSlot.getOrDefault(player, 0);
+			playerSlot.remove(player);
+			player.getInventory().setHeldItemSlot(slot);
+			ProjectKorra.plugin.getServer().getPluginManager().callEvent(new PlayerBindChangeEvent(player, playerBoundAbility.get(player), slot, false));
 
 			int lastNonNull = -1;
 			for (int i = 1; i < 10; i++) {
@@ -198,23 +202,10 @@ public class MultiAbilityManager {
 				GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds.get(lastNonNull));
 			}
 
-			if (player.isOnline()) {
-				bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending scoreboards.
-			}
+			bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending scoreboards.
 			playerAbilities.remove(player);
 		}
-
-		if (playerSlot.containsKey(player)) {
-			if (player.isOnline()) {
-				player.getInventory().setHeldItemSlot(playerSlot.get(player));
-			}
-			playerSlot.remove(player);
-		} else {
-			if (player.isOnline()) {
-				player.getInventory().setHeldItemSlot(0);
-			}
-		}
-
+		
 		if (playerBoundAbility.containsKey(player)) {
 			playerBoundAbility.remove(player);
 		}
