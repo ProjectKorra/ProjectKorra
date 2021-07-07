@@ -160,7 +160,7 @@ public class DisplayCommand extends PKCommand {
 							}
 
 							final CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
-							if (coreAbil == null) {
+							if (coreAbil == null || coreAbil.isHiddenAbility()) {
 								continue;
 							}
 							passiveColor = coreAbil.getElement().getColor();
@@ -193,7 +193,7 @@ public class DisplayCommand extends PKCommand {
 					}
 
 					final CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
-					if (coreAbil == null) {
+					if (coreAbil == null || coreAbil.isHiddenAbility()) {
 						continue;
 					}
 					passiveColor = coreAbil.getElement().getColor();
