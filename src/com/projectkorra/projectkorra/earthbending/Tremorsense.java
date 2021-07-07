@@ -22,7 +22,6 @@ public class Tremorsense extends EarthAbility {
 	private int maxDepth;
 	@Attribute(Attribute.RADIUS)
 	private int radius;
-	private boolean requireDarkness;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Block block;
@@ -39,13 +38,8 @@ public class Tremorsense extends EarthAbility {
 		this.setFields();
 		final byte lightLevel = player.getLocation().getBlock().getLightLevel();
 
-		if (!this.requireDarkness && clicked) {
-			this.bPlayer.addCooldown(this);
-			this.activate();
-		}
-
 		if (lightLevel < this.lightThreshold && this.isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
-			if (this.requireDarkness && clicked) {
+			if (clicked) {
 				this.bPlayer.addCooldown(this);
 				this.activate();
 			}
@@ -57,7 +51,6 @@ public class Tremorsense extends EarthAbility {
 		this.maxDepth = getConfig().getInt("Abilities.Earth.Tremorsense.MaxDepth");
 		this.radius = getConfig().getInt("Abilities.Earth.Tremorsense.Radius");
 		this.lightThreshold = (byte) getConfig().getInt("Abilities.Earth.Tremorsense.LightThreshold");
-		this.requireDarkness = getConfig().getBoolean("Abilities.Earth.Tremorsense.ClickRequiresDarkness");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Tremorsense.Cooldown");
 		this.stickyRange = getConfig().getInt("Abilities.Earth.Tremorsense.StickyRange");
 	}
