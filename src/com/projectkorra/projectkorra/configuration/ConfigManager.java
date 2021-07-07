@@ -616,8 +616,8 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.IceSound.Volume", 1);
 			config.addDefault("Properties.Water.IceSound.Pitch", 1);
 			config.addDefault("Properties.Water.PlantSound.Sound", "BLOCK_GRASS_STEP");
-			config.addDefault("Properties.Water.PlantSound.Volume", 1);
-			config.addDefault("Properties.Water.PlantSound.Pitch", 1);
+			config.addDefault("Properties.Water.IceSound.Volume", 1);
+			config.addDefault("Properties.Water.IceSound.Pitch", 1);
 
 			config.addDefault("Properties.Earth.DynamicSourcing", true);
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
