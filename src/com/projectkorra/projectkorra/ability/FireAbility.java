@@ -204,7 +204,6 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 	}
 
-	//a method to play beehive buzz when charging a lightning move.
 	public static void playLightningbendingChargingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
 			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");//2
@@ -221,7 +220,6 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 	}
 	
-	//a method to play a hit sound for when lightning strikes.
 	public static void playLightningbendingHitSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
 			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");

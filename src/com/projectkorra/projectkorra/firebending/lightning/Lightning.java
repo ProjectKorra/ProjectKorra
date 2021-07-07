@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.firebending.lightning;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.firebending.FireJet;
@@ -74,8 +74,6 @@ public class Lightning extends LightningAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<Location> locations;
 
-	private Random random;
-
 	public Lightning(final Player player) {
 		super(player);
 
@@ -132,7 +130,6 @@ public class Lightning extends LightningAbility {
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Lightning.Damage");
 		}
 
-		random = new Random();
 		this.start();
 	}
 
@@ -147,7 +144,6 @@ public class Lightning extends LightningAbility {
 		playLightningbendingHitSound(lent.getLocation());
 		playLightningbendingHitSound(this.player.getLocation());
 		DamageHandler.damageEntity(lent, this.damage, this);
-
 		if (Math.random() <= this.stunChance) {
 			final MovementHandler mh = new MovementHandler(lent, this);
 			mh.stopWithDuration((long) this.stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
@@ -211,8 +207,7 @@ public class Lightning extends LightningAbility {
 					final Location loc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
 					playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
-					if(random.nextDouble() < .2){
-						//In the random if statement to not spam it.
+					if(ThreadLocalRandom.current().nextDouble() < .2){
 						playLightningbendingChargingSound(loc);
 					}
 					
@@ -247,8 +242,7 @@ public class Lightning extends LightningAbility {
 				final Location localLocation2 = new Location(this.player.getWorld(), d7, newY, d8);
 				playLightningbendingParticle(localLocation2);
 				this.particleRotation += 1.0D / d3;
-				if(random.nextDouble() < .2){
-					//In the random if statement to not spam it.
+				if(ThreadLocalRandom.current().nextDouble() < .2){
 					playLightningbendingChargingSound(this.player.getLocation());
 				}
 			}
@@ -511,13 +505,14 @@ public class Lightning extends LightningAbility {
 		@Override
 		public void run() {
 			playLightningbendingParticle(this.location, 0F, 0F, 0F);
-			if(random.nextDouble() < .05){
-				playLightningbendingSound(this.location);
-			}
 			this.count++;
 			if (this.count > 5) {
 				this.cancel();
 			} else if (this.count == 1) {
+				if(ThreadLocalRandom.current().nextDouble() < .1){
+					playLightningbendingSound(location);
+				}
+
 				if (!Lightning.this.isTransparentForLightning(Lightning.this.player, this.location.getBlock())) {
 					this.arc.cancel();
 					return;
