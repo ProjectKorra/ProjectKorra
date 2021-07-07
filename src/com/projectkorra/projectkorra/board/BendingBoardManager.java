@@ -146,8 +146,10 @@ public final class BendingBoardManager {
 				scoreboardPlayers.get(player).updateMisc(abilityName, coreAbility.getElement().getColor().asBungee());
 			} else if (coreAbility == null && trackedCooldowns.containsKey(abilityName)) {
 				scoreboardPlayers.get(player).updateMisc(abilityName, trackedCooldowns.get(abilityName));
+			} else if (coreAbility != null && slot > 0) {
+				scoreboardPlayers.get(player).setSlot(slot, abilityName, cooldown);
 			} else {
-				scoreboardPlayers.get(player).setAbility(abilityName, cooldown);
+				scoreboardPlayers.get(player).setAbilityCooldown(abilityName, cooldown);
 			}
 		}
 	}

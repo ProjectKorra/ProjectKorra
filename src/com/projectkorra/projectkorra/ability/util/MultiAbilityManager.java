@@ -41,7 +41,7 @@ public class MultiAbilityManager {
 	 * @param multiAbility MultiAbility being bound
 	 */
 	public static void bindMultiAbility(final Player player, final String multiAbility) {
-		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, multiAbility, true);
+		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, multiAbility, 0, true, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return;
@@ -189,7 +189,7 @@ public class MultiAbilityManager {
 			int slot = playerSlot.getOrDefault(player, 0);
 			playerSlot.remove(player);
 			player.getInventory().setHeldItemSlot(slot);
-			ProjectKorra.plugin.getServer().getPluginManager().callEvent(new PlayerBindChangeEvent(player, playerBoundAbility.get(player), slot, false));
+			ProjectKorra.plugin.getServer().getPluginManager().callEvent(new PlayerBindChangeEvent(player, playerBoundAbility.get(player), slot, false, true));
 
 			int lastNonNull = -1;
 			for (int i = 1; i < 10; i++) {

@@ -139,23 +139,23 @@ public class BendingBoardInstance {
 		player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 	}
 
-	private void setSlot(int slot, String name, boolean cooldown) {
+	public void setSlot(int slot, String ability, boolean cooldown) {
 		if (slot < 1 || slot > 9 || !player.getScoreboard().equals(bendingBoard)) {
 			return;
 		}
 		
 		StringBuilder sb = new StringBuilder();
 		
-		if (name == null || name.isEmpty()) {
+		if (ability == null || ability.isEmpty()) {
 			sb.append(emptySlot.replaceAll("\\{slot_number\\}", "" + slot));
 		} else {
-			CoreAbility coreAbility = CoreAbility.getAbility(ChatColor.stripColor(name));
+			CoreAbility coreAbility = CoreAbility.getAbility(ChatColor.stripColor(ability));
 			if (coreAbility == null) { // MultiAbility
-				if (cooldown || bendingPlayer.isOnCooldown(name)) {
+				if (cooldown || bendingPlayer.isOnCooldown(ability)) {
 					sb.append(ChatColor.STRIKETHROUGH);
 				}
 				
-				sb.append(name);
+				sb.append(ability);
 			} else {
 				sb.append(coreAbility.getMovePreviewWithoutCooldownTimer(player, cooldown));
 			}
@@ -193,7 +193,7 @@ public class BendingBoardInstance {
 		setSlot(newSlot, bendingPlayer.getAbilities().get(newSlot), false);
 	}
 
-	public void setAbility(String name, boolean cooldown) {
+	public void setAbilityCooldown(String name, boolean cooldown) {
 		bendingPlayer.getAbilities().entrySet().stream().filter(entry -> name.equals(entry.getValue())).forEach(entry -> setSlot(entry.getKey(), name, cooldown));
 	}
 	
