@@ -1992,10 +1992,7 @@ public class PKListener implements Listener {
 		final Player player = event.getTarget();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) return;
-
-		if (event.getResult() == PlayerChangeElementEvent.Result.CHOOSE || event.getResult() == PlayerChangeElementEvent.Result.REMOVE || event.getResult() == PlayerChangeElementEvent.Result.PERMAREMOVE) {
-			BendingBoardManager.updateAllSlots(player);
-		}
+		BendingBoardManager.updateAllSlots(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -2003,10 +2000,7 @@ public class PKListener implements Listener {
 		final Player player = event.getTarget();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) return;
-
-		if (event.getResult() == PlayerChangeSubElementEvent.Result.CHOOSE || event.getResult() == PlayerChangeSubElementEvent.Result.REMOVE || event.getResult() == PlayerChangeSubElementEvent.Result.PERMAREMOVE) {
-			BendingBoardManager.updateAllSlots(player);
-		}
+		BendingBoardManager.updateAllSlots(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
