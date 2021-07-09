@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -52,8 +53,21 @@ public final class BendingBoardManager {
 
 	private static void initialize() {
 		enabled = ConfigManager.getConfig().getBoolean("Properties.BendingBoard");
+		
 		disabledWorlds.clear();
 		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
+		
+		if (ConfigManager.languageConfig.get().contains("Boards.Extra")) {
+			ConfigurationSection section = ConfigManager.languageConfig.get().getConfigurationSection("Board.Extras");
+			for (String key : section.getKeys(false)) {
+				try {
+					trackedCooldowns.put(key, ChatColor.of(section.getString(key)));
+				} catch (Exception e) {
+					ProjectKorra.plugin.getLogger().warning("Couldn't parse color from 'Board.Extras." + key + "', using white.");
+					trackedCooldowns.put(key, ChatColor.WHITE);
+				}
+			}
+		}
 	}
 	
 	/**

@@ -26,6 +26,10 @@ public class PlayerBindChangeEvent extends Event implements Cancellable {
 		this.isBinding = isBinding;
 		this.isMultiAbility = isMultiAbility;
 	}
+	
+	public PlayerBindChangeEvent(Player player, String ability, boolean isBinding, boolean isMultiAbility) {
+		this(player, ability, player.getInventory().getHeldItemSlot(), isBinding, isMultiAbility);
+	}
 
 	public Player getPlayer() {
 		return this.player;
@@ -36,7 +40,7 @@ public class PlayerBindChangeEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Get the slot being changed. 
+	 * Get the slot being changed. Binding normal abilities will return the slot that it is being bound to / unbound from
 	 * <ul>
 	 * <li>In the case of binding a multiability, returns 0
 	 * <li>In the case of unbinding a multiability, returns the original slot

@@ -144,7 +144,6 @@ import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
-import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
@@ -2007,7 +2006,18 @@ public class PKListener implements Listener {
 	public void onBindChange(final PlayerBindChangeEvent event) {
 		final Player player = event.getPlayer();
 		if (player == null) return;
-		BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
+		if (event.isMultiAbility()) {
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					BendingBoardManager.updateAllSlots(player);
+				}
+				
+			}.runTaskLater(ProjectKorra.plugin, 1);
+		} else {
+			BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

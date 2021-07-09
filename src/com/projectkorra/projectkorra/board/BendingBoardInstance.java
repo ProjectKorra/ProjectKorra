@@ -38,22 +38,26 @@ public class BendingBoardInstance {
 		public BoardSlot(Scoreboard board, Objective obj, int slot) {
 			this.board = board;
 			this.obj = obj;
-			this.slot = slot;
-			this.team = board.registerNewTeam("slot" + slot);
+			this.slot = slot + 1;
+			this.team = board.registerNewTeam("slot" + this.slot);
 			this.entry = ChatColor.values()[slot % 10] + "" + ChatColor.values()[slot % 16];
 			
 			team.addEntry(entry);
 		}
 		
-		public void update(String prefix, String name) {
-			team.setPrefix(prefix);
-			team.setSuffix(name);
+		private void set() {
 			obj.getScore(entry).setScore(-slot);
 		}
 		
+		public void update(String prefix, String name) {
+			team.setPrefix(prefix);
+			team.setSuffix(name);
+			set();
+		}
+		
 		public void setSlot(int slot) {
-			this.slot = slot;
-			obj.getScore(entry).setScore(-slot);
+			this.slot = slot + 1;
+			set();
 		}
 		
 		public void decreaseSlot() {
@@ -177,7 +181,7 @@ public class BendingBoardInstance {
 
 	public void updateAll() {
 		updateColors();
-		updateSelected(player.getInventory().getHeldItemSlot() + 1);
+		selectedSlot = player.getInventory().getHeldItemSlot() + 1;
 		for (int i = 1; i <= 9; i++) {
 			setSlot(i, bendingPlayer.getAbilities().get(i), false);
 		}
@@ -207,7 +211,7 @@ public class BendingBoardInstance {
 			
 			misc.remove(name);
 		} else {
-			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 11 + misc.size());
+			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 10 + misc.size());
 			slot.update(String.join("", Collections.nCopies(ChatColor.stripColor(prefix).length() + 1, " ")), color + "" + ChatColor.STRIKETHROUGH + name);
 			
 			if (miscTail != null) {
