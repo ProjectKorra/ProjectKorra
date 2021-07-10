@@ -206,8 +206,8 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playLightningbendingChargingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");//2
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");//.5
+			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
 
 			Sound sound = Sound.BLOCK_BEEHIVE_WORK;
 			try {
