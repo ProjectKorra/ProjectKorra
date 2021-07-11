@@ -242,7 +242,7 @@ public class Lightning extends LightningAbility {
 				final Location localLocation2 = new Location(this.player.getWorld(), d7, newY, d8);
 				playLightningbendingParticle(localLocation2);
 				this.particleRotation += 1.0D / d3;
-				if(ThreadLocalRandom.current().nextDouble() < .2){
+				if(ThreadLocalRandom.current().nextDouble() < .2) {
 					playLightningbendingChargingSound(this.player.getLocation());
 				}
 			}
