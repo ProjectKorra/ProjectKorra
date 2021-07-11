@@ -509,7 +509,7 @@ public class Lightning extends LightningAbility {
 			if (this.count > 5) {
 				this.cancel();
 			} else if (this.count == 1) {
-				if(ThreadLocalRandom.current().nextDouble() < .1){
+				if(ThreadLocalRandom.current().nextDouble() < .1) {
 					playLightningbendingSound(location);
 				}
 
