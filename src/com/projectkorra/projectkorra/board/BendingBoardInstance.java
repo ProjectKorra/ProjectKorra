@@ -201,16 +201,21 @@ public class BendingBoardInstance {
 		bendingPlayer.getAbilities().entrySet().stream().filter(entry -> name.equals(entry.getValue())).forEach(entry -> setSlot(entry.getKey(), name, cooldown));
 	}
 	
-	public void updateMisc(String name, ChatColor color) {
-		if (misc.containsKey(name)) {
-			misc.get(name).clear();
-			
-			if (misc.get(name) == miscTail) {
-				miscTail = null;
+	public void updateMisc(String name, ChatColor color, boolean cooldown) {
+		if (!cooldown) {
+			misc.computeIfPresent(name, (key, slot) -> {
+				if (slot == miscTail) {
+					miscTail = null;
+				}
+				
+				slot.clear();
+				return null;
+			});
+				
+			if (misc.isEmpty()) {
+				bendingBoard.resetScores(miscSeparator);
 			}
-			
-			misc.remove(name);
-		} else {
+		} else if (!misc.containsKey(name)) {
 			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 10 + misc.size());
 			slot.update(String.join("", Collections.nCopies(ChatColor.stripColor(prefix).length() + 1, " ")), color + "" + ChatColor.STRIKETHROUGH + name);
 			
@@ -221,10 +226,6 @@ public class BendingBoardInstance {
 			miscTail = slot;
 			misc.put(name, slot);
 			bendingSlots.getScore(miscSeparator).setScore(-10);
-		}
-		
-		if (misc.isEmpty()) {
-			bendingBoard.resetScores(miscSeparator);
-		}
+		}	
 	}
 }

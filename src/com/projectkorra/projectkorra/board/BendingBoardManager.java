@@ -57,11 +57,12 @@ public final class BendingBoardManager {
 		disabledWorlds.clear();
 		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
 		
-		if (ConfigManager.languageConfig.get().contains("Boards.Extra")) {
+		if (ConfigManager.languageConfig.get().contains("Board.Extras")) {
 			ConfigurationSection section = ConfigManager.languageConfig.get().getConfigurationSection("Board.Extras");
 			for (String key : section.getKeys(false)) {
 				try {
 					trackedCooldowns.put(key, ChatColor.of(section.getString(key)));
+					ProjectKorra.plugin.getLogger().info("Tracking " + key + "");
 				} catch (Exception e) {
 					ProjectKorra.plugin.getLogger().warning("Couldn't parse color from 'Board.Extras." + key + "', using white.");
 					trackedCooldowns.put(key, ChatColor.WHITE);
@@ -157,9 +158,9 @@ public final class BendingBoardManager {
 			
 			CoreAbility coreAbility = CoreAbility.getAbility(abilityName);
 			if (coreAbility != null && coreAbility instanceof ComboAbility) {
-				scoreboardPlayers.get(player).updateMisc(abilityName, coreAbility.getElement().getColor().asBungee());
+				scoreboardPlayers.get(player).updateMisc(abilityName, coreAbility.getElement().getColor().asBungee(), cooldown);
 			} else if (coreAbility == null && trackedCooldowns.containsKey(abilityName)) {
-				scoreboardPlayers.get(player).updateMisc(abilityName, trackedCooldowns.get(abilityName));
+				scoreboardPlayers.get(player).updateMisc(abilityName, trackedCooldowns.get(abilityName), cooldown);
 			} else if (coreAbility != null && slot > 0) {
 				scoreboardPlayers.get(player).setSlot(slot, abilityName, cooldown);
 			} else {
