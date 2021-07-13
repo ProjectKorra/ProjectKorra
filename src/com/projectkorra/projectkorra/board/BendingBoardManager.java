@@ -62,7 +62,6 @@ public final class BendingBoardManager {
 			for (String key : section.getKeys(false)) {
 				try {
 					trackedCooldowns.put(key, ChatColor.of(section.getString(key)));
-					ProjectKorra.plugin.getLogger().info("Tracking " + key + "");
 				} catch (Exception e) {
 					ProjectKorra.plugin.getLogger().warning("Couldn't parse color from 'Board.Extras." + key + "', using white.");
 					trackedCooldowns.put(key, ChatColor.WHITE);
