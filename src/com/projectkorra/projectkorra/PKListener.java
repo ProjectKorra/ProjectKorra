@@ -39,7 +39,6 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
@@ -144,7 +143,6 @@ import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
-import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
@@ -526,12 +524,6 @@ public class PKListener implements Listener {
 		if (FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
 			event.setCancelled(true);
 			FireDamageTimer.dealFlameDamage(entity);
-		}
-
-		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
-			if (event.isApplicable(DamageModifier.ARMOR)) {
-				event.setDamage(DamageModifier.ARMOR, 0);
-			}
 		}
 
 		if (entity instanceof Player) {
@@ -2033,7 +2025,7 @@ public class PKListener implements Listener {
 		final Player player = event.getBendingPlayer().getPlayer();
 		BendingBoardManager.canUseScoreboard(player);
 	}
-
+	
 	public static HashMap<Player, String> getBendingPlayerDeath() {
 		return BENDING_PLAYER_DEATH;
 	}
