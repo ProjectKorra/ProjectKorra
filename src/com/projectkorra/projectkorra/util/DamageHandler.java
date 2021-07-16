@@ -46,7 +46,7 @@ public class DamageHandler {
 				}
 			}
 			
-			if (TempArmor.hasTempArmor((LivingEntity) entity)) {
+			if (TempArmor.hasTempArmor(lent)) {
 				ignoreArmor = true;
 			}
 		}
