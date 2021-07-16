@@ -2025,7 +2025,7 @@ public class PKListener implements Listener {
 		final Player player = event.getBendingPlayer().getPlayer();
 		BendingBoardManager.canUseScoreboard(player);
 	}
-	
+
 	public static HashMap<Player, String> getBendingPlayerDeath() {
 		return BENDING_PLAYER_DEATH;
 	}
