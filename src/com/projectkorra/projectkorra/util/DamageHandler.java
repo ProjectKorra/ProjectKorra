@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.command.Commands;
@@ -34,8 +33,17 @@ public class DamageHandler {
 		}
 		
 		if (entity instanceof LivingEntity) {
-			if (((LivingEntity) entity).getNoDamageTicks() > 0) {
-				return;
+			//following minecraft's noDamageTicks algorithm
+			LivingEntity lent = (LivingEntity) entity;
+			
+			if (lent.getNoDamageTicks() > 0) {
+				if (lent.getNoDamageTicks() <= lent.getMaximumNoDamageTicks() / 2) {
+					return;
+				} else if (damage <= lent.getLastDamage()) {
+					return;
+				} else {
+					damage -= lent.getLastDamage();
+				}
 			}
 			
 			if (TempArmor.hasTempArmor((LivingEntity) entity)) {
