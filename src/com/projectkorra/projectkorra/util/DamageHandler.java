@@ -19,6 +19,10 @@ import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
 public class DamageHandler {
 
+	private static boolean checkTicks(LivingEntity entity, double damage) {
+		return entity.getNoDamageTicks() > entity.getMaximumNoDamageTicks() / 2.0f && damage <= entity.getLastDamage();
+	}
+
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a
 	 * {@link EntityDamageByEntityEvent}.
@@ -33,20 +37,11 @@ public class DamageHandler {
 		}
 		
 		if (entity instanceof LivingEntity) {
-			//following minecraft's noDamageTicks algorithm
-			LivingEntity lent = (LivingEntity) entity;
-			
-			if (lent.getNoDamageTicks() > 0) {
-				if (lent.getNoDamageTicks() <= lent.getMaximumNoDamageTicks() / 2) {
-					return;
-				} else if (damage <= lent.getLastDamage()) {
-					return;
-				} else {
-					damage -= lent.getLastDamage();
-				}
+			if (checkTicks((LivingEntity) entity, damage)) {
+				return;
 			}
 			
-			if (TempArmor.hasTempArmor(lent)) {
+			if (TempArmor.hasTempArmor((LivingEntity) entity)) {
 				ignoreArmor = true;
 			}
 		}
