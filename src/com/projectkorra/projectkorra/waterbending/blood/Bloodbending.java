@@ -165,6 +165,7 @@ public class Bloodbending extends BloodAbility {
 		final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
 		if (!this.player.isSneaking()) {
+			bPlayer.addCooldown(this);
 			this.remove();
 			return;
 		} else if (this.duration > 0 && System.currentTimeMillis() - this.time > this.duration) {
