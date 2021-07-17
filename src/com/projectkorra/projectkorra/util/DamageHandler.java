@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.command.Commands;
@@ -19,6 +18,10 @@ import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
 public class DamageHandler {
+
+	private static boolean checkTicks(LivingEntity entity, double damage) {
+		return entity.getNoDamageTicks() > entity.getMaximumNoDamageTicks() / 2.0f && damage <= entity.getLastDamage();
+	}
 
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a
@@ -34,7 +37,7 @@ public class DamageHandler {
 		}
 		
 		if (entity instanceof LivingEntity) {
-			if (((LivingEntity) entity).getNoDamageTicks() > 0) {
+			if (checkTicks((LivingEntity) entity, damage)) {
 				return;
 			}
 			
