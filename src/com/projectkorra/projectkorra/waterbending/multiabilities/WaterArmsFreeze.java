@@ -167,8 +167,13 @@ public class WaterArmsFreeze extends IceAbility {
 	}
 
 	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+
+	@Override
 	public String getName() {
-		return "WaterArms";
+		return "WaterArmsFreeze";
 	}
 
 	@Override

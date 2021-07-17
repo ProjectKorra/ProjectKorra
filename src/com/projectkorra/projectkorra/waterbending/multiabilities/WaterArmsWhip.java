@@ -427,8 +427,13 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+
+	@Override
 	public String getName() {
-		return "WaterArms";
+		return "WaterArmsWhip";
 	}
 
 	@Override
