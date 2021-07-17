@@ -1243,7 +1243,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthGrab.DamageThreshold", 4);
 
 			config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthTunnel.RevertCheckTime", 30000);
+			config.addDefault("Abilities.Earth.EarthTunnel.RevertCheckTime", 300000);
 			config.addDefault("Abilities.Earth.EarthTunnel.Cooldown", 0);
 			config.addDefault("Abilities.Earth.EarthTunnel.MaxRadius", 1);
 			config.addDefault("Abilities.Earth.EarthTunnel.Range", 10);
