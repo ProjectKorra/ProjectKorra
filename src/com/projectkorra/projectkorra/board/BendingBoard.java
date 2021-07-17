@@ -23,7 +23,7 @@ import net.md_5.bungee.api.ChatColor;
 /**
  * Represents a player's scoreboard for bending purposes
  */
-public class BendingBoardInstance {
+public class BendingBoard {
 	
 	public static class BoardSlot {
 		
@@ -90,7 +90,7 @@ public class BendingBoardInstance {
 	private String prefix, emptySlot, miscSeparator;
 	private ChatColor selectedColor, altColor;
 
-	public BendingBoardInstance(final BendingPlayer bPlayer) {
+	public BendingBoard(final BendingPlayer bPlayer) {
 		bendingPlayer = bPlayer;
 		player = bPlayer.getPlayer();
 		selectedSlot = player.getInventory().getHeldItemSlot() + 1;

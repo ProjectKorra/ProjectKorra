@@ -527,12 +527,6 @@ public class PKListener implements Listener {
 			FireDamageTimer.dealFlameDamage(entity);
 		}
 
-		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
-			if (event.isApplicable(DamageModifier.ARMOR)) {
-				event.setDamage(DamageModifier.ARMOR, 0);
-			}
-		}
-
 		if (entity instanceof Player) {
 			final Player player = (Player) entity;
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -1241,7 +1235,7 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
 		PassiveManager.registerPassives(event.getPlayer());
-		BendingBoardManager.forceToggleScoreboard(event.getPlayer());
+		BendingBoardManager.toggleBoard(event.getPlayer(), true);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1599,7 +1593,7 @@ public class PKListener implements Listener {
 
 		final int slot = event.getNewSlot() + 1;
 		GeneralMethods.displayMovePreview(player, slot);
-		BendingBoardManager.changeActiveSlot(player, event.getNewSlot());
+		BendingBoardManager.changeActiveSlot(player, slot);
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
@@ -2035,7 +2029,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBendingPlayerCreation(final BendingPlayerCreationEvent event) {
 		final Player player = event.getBendingPlayer().getPlayer();
-		BendingBoardManager.canUseScoreboard(player);
+		BendingBoardManager.getBoard(player);
 	}
 
 	public static HashMap<Player, String> getBendingPlayerDeath() {

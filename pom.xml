@@ -15,7 +15,7 @@
     <!-- WorldGuard and WorldEdit Repo -->
     <repository>
       <id>sk89q-repo</id>
-      <url>http://maven.sk89q.com/repo/</url>
+      <url>https://maven.sk89q.com/repo/</url>
     </repository>
     <!-- GriefPrevention and Towny Repo -->
     <repository>
@@ -35,7 +35,7 @@
     <!-- Aikars Repo -->
     <repository>
       <id>aikar</id>
-      <url>http://repo.aikar.co/nexus/content/groups/aikar/</url>
+      <url>https://repo.aikar.co/nexus/content/groups/aikar/</url>
     </repository>
     <!-- Paper Repo -->
     <repository>
@@ -45,7 +45,7 @@
     <!-- Placeholder API Repo -->
     <repository>
       <id>placeholderapi</id>
-      <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+      <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
   </repositories>
   <dependencies>

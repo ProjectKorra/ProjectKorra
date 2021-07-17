@@ -22,6 +22,6 @@ public class BoardCommand extends PKCommand {
 		if (!this.hasPermission(sender) || !this.isPlayer(sender) || !this.correctLength(sender, args.size(), 0, 0)) {
 			return;
 		}
-		BendingBoardManager.toggleScoreboard((Player) sender);
+		BendingBoardManager.toggleBoard((Player) sender, false);
 	}
 }
