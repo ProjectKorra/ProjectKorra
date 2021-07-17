@@ -207,7 +207,7 @@ public class Lightning extends LightningAbility {
 					final Location loc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
 					playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
-					if(ThreadLocalRandom.current().nextDouble() < .2) {
+					if (ThreadLocalRandom.current().nextDouble() < .2) {
 						playLightningbendingChargingSound(loc);
 					}
 					
@@ -242,7 +242,7 @@ public class Lightning extends LightningAbility {
 				final Location localLocation2 = new Location(this.player.getWorld(), d7, newY, d8);
 				playLightningbendingParticle(localLocation2);
 				this.particleRotation += 1.0D / d3;
-				if(ThreadLocalRandom.current().nextDouble() < .2) {
+				if (ThreadLocalRandom.current().nextDouble() < .2) {
 					playLightningbendingChargingSound(this.player.getLocation());
 				}
 			}
@@ -509,7 +509,7 @@ public class Lightning extends LightningAbility {
 			if (this.count > 5) {
 				this.cancel();
 			} else if (this.count == 1) {
-				if(ThreadLocalRandom.current().nextDouble() < .1) {
+				if (ThreadLocalRandom.current().nextDouble() < .1) {
 					playLightningbendingSound(location);
 				}
 
