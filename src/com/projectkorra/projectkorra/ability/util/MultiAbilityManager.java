@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
@@ -42,7 +41,11 @@ public class MultiAbilityManager {
 	 * @param multiAbility MultiAbility being bound
 	 */
 	public static void bindMultiAbility(final Player player, final String multiAbility) {
-		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, multiAbility, true);
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, multiAbility, 0, true, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return;
@@ -51,14 +54,12 @@ public class MultiAbilityManager {
 		if (playerAbilities.containsKey(player)) {
 			unbindMultiAbility(player);
 		}
+		
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
 		playerSlot.put(player, player.getInventory().getHeldItemSlot());
 		playerBoundAbility.put(player, multiAbility);
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final HashMap<Integer, String> currAbilities = new HashMap<Integer, String>();
-		for (final int i : bPlayer.getAbilities().keySet()) {
-			currAbilities.put(i, bPlayer.getAbilities().get(i));
-		}
-		playerAbilities.put(player, currAbilities);
+		playerAbilities.put(player, new HashMap<Integer, String>(bPlayer.getAbilities()));
 
 		final List<MultiAbilityInfoSub> modes = getMultiAbility(multiAbility).getAbilities();
 
@@ -70,11 +71,8 @@ public class MultiAbilityManager {
 				bPlayer.getAbilities().put(i + 1, modes.get(i).getAbilityColor() + modes.get(i).getName());
 			}
 		}
-
-		if (player.isOnline()) {
-			bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending scoreboards.
-			player.getInventory().setHeldItemSlot(0);
-		}
+		
+		player.getInventory().setHeldItemSlot(0);
 	}
 
 	/**
@@ -180,44 +178,33 @@ public class MultiAbilityManager {
 	 * @param player
 	 */
 	public static void unbindMultiAbility(final Player player) {
-		if (playerAbilities.containsKey(player)) {
-			final HashMap<Integer, String> prevBinds = playerAbilities.get(player);
-			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer == null) {
-				return;
-			}
-
-			int lastNonNull = -1;
-			for (int i = 1; i < 10; i++) {
-				if (prevBinds.get(i) != null) {
-					lastNonNull = i;
-				}
-				bPlayer.getAbilities().put(i, prevBinds.get(i));
-			}
-			if (lastNonNull > -1) {
-				GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds.get(lastNonNull));
-			}
-
-			if (player.isOnline()) {
-				bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending scoreboards.
-			}
-			playerAbilities.remove(player);
+		if (!player.isOnline()) {
+			return;
 		}
-
-		if (playerSlot.containsKey(player)) {
-			if (player.isOnline()) {
-				player.getInventory().setHeldItemSlot(playerSlot.get(player));
-			}
-			playerSlot.remove(player);
-		} else {
-			if (player.isOnline()) {
-				player.getInventory().setHeldItemSlot(0);
-			}
+		
+		playerAbilities.compute(player, MultiAbilityManager::resetBinds);
+		playerBoundAbility.remove(player);
+		playerSlot.remove(player);
+	}
+	
+	private static HashMap<Integer, String> resetBinds(Player player, HashMap<Integer, String> prevBinds) {
+		if (prevBinds == null) {
+			return null;
 		}
-
-		if (playerBoundAbility.containsKey(player)) {
-			playerBoundAbility.remove(player);
+		
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return null;
 		}
+		
+		player.getInventory().setHeldItemSlot(playerSlot.getOrDefault(player, 0));
+		ProjectKorra.plugin.getServer().getPluginManager().callEvent(new PlayerBindChangeEvent(player, playerBoundAbility.get(player), false, true));
+
+		for (int i = 1; i < 10; i++) {
+			bPlayer.getAbilities().put(i, prevBinds.get(i));
+		}
+		
+		return null;
 	}
 
 	/**

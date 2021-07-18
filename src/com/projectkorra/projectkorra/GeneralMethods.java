@@ -187,13 +187,19 @@ public class GeneralMethods {
 			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + "You can't edit your binds right now!");
 			return;
 		}
+		
+		PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, ability, slot, ability != null, false);
+		ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
+		if (event.isCancelled()) {
+			return;
+		}
 
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-
 		if (bPlayer == null) {
 			return;
 		}
+		
+		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 		bPlayer.getAbilities().put(slot, ability);
 
 		if (coreAbil != null) {
@@ -2141,20 +2147,14 @@ public class GeneralMethods {
 		if (bPlayer == null) {
 			return;
 		}
-		final String uuid = bPlayer.getUUIDString();
 
-		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(Bukkit.getPlayer(UUID.fromString(uuid)), ability, slot, false);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return;
-		}
 		// Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID()))) {
+		if (MultiAbilityManager.playerAbilities.containsKey(bPlayer.getPlayer())) {
 			return;
 		}
 		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + bPlayer.getUUIDString() + "'");
 	}
 
 	public static void saveElements(final BendingPlayer bPlayer) {

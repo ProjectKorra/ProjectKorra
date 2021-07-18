@@ -1234,7 +1234,7 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
 		PassiveManager.registerPassives(event.getPlayer());
-		BendingBoardManager.forceToggleScoreboard(event.getPlayer());
+		BendingBoardManager.toggleBoard(event.getPlayer(), true);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1592,7 +1592,7 @@ public class PKListener implements Listener {
 
 		final int slot = event.getNewSlot() + 1;
 		GeneralMethods.displayMovePreview(player, slot);
-		BendingBoardManager.changeActiveSlot(player, event.getPreviousSlot(), event.getNewSlot());
+		BendingBoardManager.changeActiveSlot(player, slot);
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
 			final WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
@@ -1984,10 +1984,7 @@ public class PKListener implements Listener {
 		final Player player = event.getTarget();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) return;
-
-		if (event.getResult() == PlayerChangeElementEvent.Result.CHOOSE || event.getResult() == PlayerChangeElementEvent.Result.REMOVE || event.getResult() == PlayerChangeElementEvent.Result.PERMAREMOVE) {
-			BendingBoardManager.updateAllSlots(player);
-		}
+		BendingBoardManager.updateAllSlots(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -1995,17 +1992,25 @@ public class PKListener implements Listener {
 		final Player player = event.getTarget();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) return;
-
-		if (event.getResult() == PlayerChangeSubElementEvent.Result.CHOOSE || event.getResult() == PlayerChangeSubElementEvent.Result.REMOVE || event.getResult() == PlayerChangeSubElementEvent.Result.PERMAREMOVE) {
-			BendingBoardManager.updateAllSlots(player);
-		}
+		BendingBoardManager.updateAllSlots(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBindChange(final PlayerBindChangeEvent event) {
 		final Player player = event.getPlayer();
 		if (player == null) return;
-		BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
+		if (event.isMultiAbility()) {
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					BendingBoardManager.updateAllSlots(player);
+				}
+				
+			}.runTaskLater(ProjectKorra.plugin, 1);
+		} else {
+			BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -2023,7 +2028,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBendingPlayerCreation(final BendingPlayerCreationEvent event) {
 		final Player player = event.getBendingPlayer().getPlayer();
-		BendingBoardManager.canUseScoreboard(player);
+		BendingBoardManager.getBoard(player);
 	}
 
 	public static HashMap<Player, String> getBendingPlayerDeath() {

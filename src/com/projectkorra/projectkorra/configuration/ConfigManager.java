@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class ConfigManager {
 
 	public static Config presetConfig;
@@ -73,9 +75,16 @@ public class ConfigManager {
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
 
 			config.addDefault("Board.Title", "&lAbilities");
-			config.addDefault("Board.SelectionPrefix", ">  &r");
+			config.addDefault("Board.Prefix.Text", "> ");
+			config.addDefault("Board.Prefix.SelectedColor", ChatColor.WHITE.getName());
+			config.addDefault("Board.Prefix.NonSelectedColor", ChatColor.DARK_GRAY.getName());
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
-			config.addDefault("Board.MiscSeparator", "  ------------");
+			config.addDefault("Board.MiscSeparator", "  ----------");
+			
+			if (!config.contains("Board.Extras")) {
+				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
+				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
+			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");

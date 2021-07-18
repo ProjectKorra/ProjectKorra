@@ -278,8 +278,13 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+
+	@Override
 	public String getName() {
-		return "WaterArms";
+		return "WaterArmsSpear";
 	}
 
 	@Override
