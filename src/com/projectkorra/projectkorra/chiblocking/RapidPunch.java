@@ -36,7 +36,7 @@ public class RapidPunch extends ChiAbility {
 		this.interval = getConfig().getLong("Abilities.Chi.RapidPunch.Interval");
 		this.target = targetentity;
 		this.start();
-		if(!isRemoved()) {
+		if (!isRemoved()) {
 			this.bPlayer.addCooldown(this);
 		}
 	}
