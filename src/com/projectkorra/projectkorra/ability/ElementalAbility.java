@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.ability;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -28,6 +28,12 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
 	private static final Set<Material> TRANSPARENT = new HashSet<>();
+	private static final List<String> EARTH_BLOCKS = new ArrayList<>();
+	private static final List<String> ICE_BLOCKS = new ArrayList<>();
+	private static final List<String> SNOW_BLOCKS = new ArrayList<>();
+	private static final List<String> METAL_BLOCKS = new ArrayList<>();
+	private static final List<String> PLANT_BLOCKS = new ArrayList<>();
+	private static final List<String> SAND_BLOCKS = new ArrayList<>();
 
 	static {
 		TRANSPARENT.clear();
@@ -35,6 +41,36 @@ public abstract class ElementalAbility extends CoreAbility {
 			if (GeneralMethods.isTransparent(mat)) {
 				TRANSPARENT.add(mat);
 			}
+		}
+		EARTH_BLOCKS.clear();
+		EARTH_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.EarthBlocks"));
+		for (String tag : getConfig().getStringList("Properties.Earth.EarthMaterialTags")) {
+			EARTH_BLOCKS.addAll(GeneralMethods.tagToMaterials(tag));
+		}
+		ICE_BLOCKS.clear();
+		ICE_BLOCKS.addAll(getConfig().getStringList("Properties.Water.IceBlocks"));
+		for (String tag : getConfig().getStringList("Properties.Water.IceMaterialTags")) {
+			ICE_BLOCKS.addAll(GeneralMethods.tagToMaterials(tag));
+		}
+		SNOW_BLOCKS.clear();
+		SNOW_BLOCKS.addAll(getConfig().getStringList("Properties.Water.SnowBlocks"));
+		for (String tag : getConfig().getStringList("Properties.Water.SnowMaterialTags")) {
+			SNOW_BLOCKS.addAll(GeneralMethods.tagToMaterials(tag));
+		}
+		METAL_BLOCKS.clear();
+		METAL_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.MetalBlocks"));
+		for (String tag : getConfig().getStringList("Properties.Earth.MetalMaterialTags")) {
+			METAL_BLOCKS.addAll(GeneralMethods.tagToMaterials(tag));
+		}
+		PLANT_BLOCKS.clear();
+		METAL_BLOCKS.addAll(getConfig().getStringList("Properties.Water.PlantBlocks"));
+		for (String tag : getConfig().getStringList("Properties.Water.PlantMaterialTags")) {
+			METAL_BLOCKS.addAll(GeneralMethods.tagToMaterials(tag));
+		}
+		SAND_BLOCKS.clear();
+		SAND_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.SandBlocks"));
+		for (String tag : getConfig().getStringList("Properties.Earth.SandMaterialTags")) {
+			SAND_BLOCKS.addAll(GeneralMethods.tagToMaterials(tag));
 		}
 	}
 
@@ -47,11 +83,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public List<String> getEarthbendableBlocks() {
-		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.EarthTags")) {
-			earthBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
-		}
-		return earthBlocks;
+		return EARTH_BLOCKS;
 	}
 
 	public static Material[] getTransparentMaterials() {
@@ -84,11 +116,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isEarth(final Material material) {
-		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.EarthTags")) {
-			earthBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
-		}
-		return earthBlocks.contains(material.toString());
+		return EARTH_BLOCKS.contains(material.toString());
 	}
 	
 	public static boolean isFire(final Block block) {
@@ -109,11 +137,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isIce(final Material material) {
-		List<String> iceBlocks = getConfig().getStringList("Properties.Water.IceBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.IceTags")) {
-			iceBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
-		}
-		return iceBlocks.contains(material.toString());
+		return ICE_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isLava(final Block block) {
@@ -129,11 +153,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSnow(final Material material) {
-		List<String> snowBlocks = getConfig().getStringList("Properties.Water.SnowBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.SnowTags")) {
-			snowBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
-		}
-		return snowBlocks.contains(material.toString());
+		return SNOW_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isMeltable(final Block block) {
@@ -149,11 +169,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMetal(final Material material) {
-		List<String> metalBlocks = getConfig().getStringList("Properties.Earth.MetalBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.MetalTags")) {
-			metalBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
-		}
-		return metalBlocks.contains(material.toString());
+		return METAL_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isMetalBlock(final Block block) {
@@ -203,11 +219,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isPlant(final Material material) {
-		List<String> plantBlocks = getConfig().getStringList("Properties.Water.PlantBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.PlantTags")) {
-			plantBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
-		}
-		return plantBlocks.contains(material.toString());
+		return PLANT_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
@@ -225,11 +237,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSand(final Material material) {
-		List<String> sandBlocks = getConfig().getStringList("Properties.Earth.SandBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.SandTags")) {
-			sandBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
-		}
-		return sandBlocks.contains(material.toString());
+		return SAND_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isTransparent(final Player player, final Block block) {

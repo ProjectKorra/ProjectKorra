@@ -18,7 +18,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -38,7 +48,15 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -2486,14 +2504,17 @@ public class GeneralMethods {
 		event.getAffected().setVelocity(velocity);
 	}
 
-	public static ArrayList<String> tagToMaterialList(String tag) {
+	public static List<String> tagToMaterials(String tag) {
 		ArrayList<String> materials = new ArrayList<>();
 		if (tag != null && !tag.equalsIgnoreCase("")) {
 			if (Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tag), Material.class) != null) {
-				Set<Material> mSet = Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tag), Material.class).getValues();
+				NamespacedKey mTag = NamespacedKey.minecraft(tag);
+				Set<Material> mSet = Bukkit.getTag(Tag.REGISTRY_BLOCKS, mTag, Material.class).getValues();
 				for (Material mat : mSet) {
 					materials.add(mat.toString());
 				}
+			} else {
+				ProjectKorra.log.warning("Could not load material list for tag (does not exist?): " + tag);
 			}
 		}
 		return materials;
