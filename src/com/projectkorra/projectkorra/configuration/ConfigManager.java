@@ -446,6 +446,9 @@ public class ConfigManager {
 		} else if (type == ConfigType.DEFAULT) {
 			config = defaultConfig.get();
 
+			final ArrayList<String> earthTags = new ArrayList<String>();
+			earthTags.add("");
+
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
 			earthBlocks.add(Material.DIRT.toString());
 			earthBlocks.add(Material.COARSE_DIRT.toString());
@@ -472,6 +475,9 @@ public class ConfigManager {
 			earthBlocks.add(Material.ANCIENT_DEBRIS.toString());
 			earthBlocks.add(Material.BLACKSTONE.toString());
 
+			final ArrayList<String> metalTags = new ArrayList<String>();
+			metalTags.add("");
+
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
 			metalBlocks.add(Material.IRON_ORE.toString());
 			metalBlocks.add(Material.GOLD_ORE.toString());
@@ -483,6 +489,9 @@ public class ConfigManager {
 			metalBlocks.add(Material.CHAIN.toString());
 			metalBlocks.add(Material.NETHERITE_BLOCK.toString());
 
+			final ArrayList<String> sandTags = new ArrayList<String>();
+			sandTags.add("");
+
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
 			sandBlocks.add(Material.SAND.toString());
 			sandBlocks.add(Material.SANDSTONE.toString());
@@ -491,11 +500,18 @@ public class ConfigManager {
 			sandBlocks.add(Material.RED_SANDSTONE.toString());
 			sandBlocks.add(Material.RED_SANDSTONE_SLAB.toString());
 
+			final ArrayList<String> iceTags = new ArrayList<String>();
+			iceTags.add("");
+
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
 			iceBlocks.add(Material.ICE.toString());
 			iceBlocks.add(Material.PACKED_ICE.toString());
 			iceBlocks.add(Material.BLUE_ICE.toString());
 			iceBlocks.add(Material.FROSTED_ICE.toString());
+
+			final ArrayList<String> plantTags = new ArrayList<String>();
+			plantTags.add("flowers");
+			plantTags.add("saplings");
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
 			plantBlocks.add(Material.ACACIA_SAPLING.toString());
@@ -554,6 +570,9 @@ public class ConfigManager {
 			plantBlocks.add(Material.GRASS.toString());
 			plantBlocks.add(Material.TALL_GRASS.toString());
 
+			final ArrayList<String> snowTags = new ArrayList<>();
+			snowTags.add("");
+
 			final ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add(Material.SNOW.toString());
 
@@ -603,8 +622,11 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.FreezePlayerHead", true);
 			config.addDefault("Properties.Water.FreezePlayerFeet", true);
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
+			config.addDefault("Properties.Water.IceTags", iceTags);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
+			config.addDefault("Properties.Water.PlantTags", plantTags);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
+			config.addDefault("Properties.Water.SnowTags", snowTags);
 			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.5);
 			config.addDefault("Properties.Water.FullMoonFactor", 1.75);
@@ -624,8 +646,11 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SafeRevert", true);
 			config.addDefault("Properties.Earth.RevertCheckTime", 300000);
 			config.addDefault("Properties.Earth.CanBendWithWeapons", true);
+			config.addDefault("Properties.Earth.EarthTags", earthTags);
 			config.addDefault("Properties.Earth.EarthBlocks", earthBlocks);
+			config.addDefault("Properties.Earth.MetalTags", metalTags);
 			config.addDefault("Properties.Earth.MetalBlocks", metalBlocks);
+			config.addDefault("Properties.Earth.SandTags", sandTags);
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);

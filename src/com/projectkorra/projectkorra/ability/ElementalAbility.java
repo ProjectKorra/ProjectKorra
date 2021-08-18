@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -46,7 +47,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public List<String> getEarthbendableBlocks() {
-		return getConfig().getStringList("Properties.Earth.EarthBlocks");
+		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
+		for (String tag : getConfig().getStringList("Properties.Earth.EarthTags")) {
+			earthBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
+		}
+		return earthBlocks;
 	}
 
 	public static Material[] getTransparentMaterials() {
@@ -79,7 +84,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isEarth(final Material material) {
-		return getConfig().getStringList("Properties.Earth.EarthBlocks").contains(material.toString());
+		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
+		for (String tag : getConfig().getStringList("Properties.Earth.EarthTags")) {
+			earthBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
+		}
+		return earthBlocks.contains(material.toString());
 	}
 	
 	public static boolean isFire(final Block block) {
@@ -100,7 +109,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isIce(final Material material) {
-		return getConfig().getStringList("Properties.Water.IceBlocks").contains(material.toString());
+		List<String> iceBlocks = getConfig().getStringList("Properties.Water.IceBlocks");
+		for (String tag : getConfig().getStringList("Properties.Water.IceTags")) {
+			iceBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
+		}
+		return iceBlocks.contains(material.toString());
 	}
 
 	public static boolean isLava(final Block block) {
@@ -116,7 +129,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSnow(final Material material) {
-		return getConfig().getStringList("Properties.Water.SnowBlocks").contains(material.toString());
+		List<String> snowBlocks = getConfig().getStringList("Properties.Water.SnowBlocks");
+		for (String tag : getConfig().getStringList("Properties.Water.SnowTags")) {
+			snowBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
+		}
+		return snowBlocks.contains(material.toString());
 	}
 
 	public static boolean isMeltable(final Block block) {
@@ -132,7 +149,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMetal(final Material material) {
-		return getConfig().getStringList("Properties.Earth.MetalBlocks").contains(material.toString());
+		List<String> metalBlocks = getConfig().getStringList("Properties.Earth.MetalBlocks");
+		for (String tag : getConfig().getStringList("Properties.Earth.MetalTags")) {
+			metalBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
+		}
+		return metalBlocks.contains(material.toString());
 	}
 
 	public static boolean isMetalBlock(final Block block) {
@@ -182,7 +203,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isPlant(final Material material) {
-		return getConfig().getStringList("Properties.Water.PlantBlocks").contains(material.toString());
+		List<String> plantBlocks = getConfig().getStringList("Properties.Water.PlantBlocks");
+		for (String tag : getConfig().getStringList("Properties.Water.PlantTags")) {
+			plantBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
+		}
+		return plantBlocks.contains(material.toString());
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
@@ -200,7 +225,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSand(final Material material) {
-		return getConfig().getStringList("Properties.Earth.SandBlocks").contains(material.toString());
+		List<String> sandBlocks = getConfig().getStringList("Properties.Earth.SandBlocks");
+		for (String tag : getConfig().getStringList("Properties.Earth.SandTags")) {
+			sandBlocks.addAll(GeneralMethods.tagToMaterialList(tag));
+		}
+		return sandBlocks.contains(material.toString());
 	}
 
 	public static boolean isTransparent(final Player player, final Block block) {
