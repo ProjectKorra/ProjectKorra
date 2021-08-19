@@ -47,7 +47,7 @@ public final class BendingBoardManager {
 	}
 
 	public static void reload() {
-		scoreboardPlayers.values().forEach(BendingBoard::disableScoreboard);
+		scoreboardPlayers.values().forEach(BendingBoard::destroy);
 		scoreboardPlayers.clear();
 		initialize();
 	}
@@ -80,6 +80,10 @@ public final class BendingBoardManager {
 		return disabledPlayers.contains(player.getUniqueId());
 	}
 
+	public static void changeWorld(Player player) {
+		getBoard(player).ifPresent((b) -> b.setVisible(!disabledWorlds.contains(player.getWorld().getName())));
+	}
+
 	/**
 	 * Toggles the bendingboard for the given player if the board is enabled and they are in a bending enabled world
 	 * @param player Player with the bendingboard
@@ -92,13 +96,13 @@ public final class BendingBoardManager {
 		}
 
 		if (scoreboardPlayers.containsKey(player)) {
-			scoreboardPlayers.get(player).disableScoreboard();
+			scoreboardPlayers.get(player).hide();
 			disabledPlayers.add(player.getUniqueId());
 			scoreboardPlayers.remove(player);
 			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Board.ToggledOff"));
 		} else {
 			disabledPlayers.remove(player.getUniqueId());
-			getBoard(player);
+			getBoard(player).ifPresent(BendingBoard::show);
 			GeneralMethods.sendBrandingMessage(player, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Board.ToggledOn"));
 		}
 	}
@@ -110,7 +114,7 @@ public final class BendingBoardManager {
 	 * @return empty if the board is disabled
 	 */
 	public static Optional<BendingBoard> getBoard(Player player) {
-		if (!enabled || disabledPlayers.contains(player.getUniqueId()) || disabledWorlds.contains(player.getWorld().getName())) {
+		if (!enabled || disabledPlayers.contains(player.getUniqueId())) {
 			return Optional.empty();
 		}
 
