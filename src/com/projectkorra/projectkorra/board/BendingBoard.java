@@ -100,7 +100,6 @@ public class BendingBoard {
 		String title = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.Title"));
 		bendingSlots = bendingBoard.registerNewObjective("Board Slots", "dummy", title);
 		bendingSlots.setDisplaySlot(DisplaySlot.SIDEBAR);
-		player.setScoreboard(bendingBoard);
 		
 		for (int i = 0; i < 9; ++i) {
 			slots[i] = new BoardSlot(bendingBoard, bendingSlots, i);
@@ -110,8 +109,12 @@ public class BendingBoard {
 		emptySlot = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.EmptySlot"));
 		miscSeparator = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.MiscSeparator"));
 
-		updateColors();
 		updateAll();
+	}
+
+	void destroy() {
+		bendingBoard.clearSlot(DisplaySlot.SIDEBAR);
+		bendingSlots.unregister();
 	}
 	
 	private ChatColor getElementColor() {
@@ -137,10 +140,25 @@ public class BendingBoard {
 		}
 	}
 
-	public void disableScoreboard() {
-		bendingBoard.clearSlot(DisplaySlot.SIDEBAR);
-		bendingSlots.unregister();
+	public void hide() {
 		player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+	}
+
+	public void show() {
+		player.setScoreboard(bendingBoard);
+		updateAll();
+	}
+
+	public boolean isVisible() {
+		return player.getScoreboard().equals(bendingBoard);
+	}
+
+	public void setVisible(boolean show) {
+		if (show) {
+			show();
+		} else {
+			hide();
+		}
 	}
 
 	public void setSlot(int slot, String ability, boolean cooldown) {
