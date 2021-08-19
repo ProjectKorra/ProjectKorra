@@ -466,6 +466,13 @@ public class ConfigManager {
 			earthBlocks.add(Material.GRASS_BLOCK.toString());
 			earthBlocks.add(Material.GRASS_PATH.toString());
 			earthBlocks.add(Material.ANCIENT_DEBRIS.toString());
+			earthBlocks.add(Material.COAL_ORE.toString());
+			earthBlocks.add(Material.IRON_ORE.toString());
+			earthBlocks.add(Material.GOLD_ORE.toString());
+			earthBlocks.add(Material.LAPIS_ORE.toString());
+			earthBlocks.add(Material.REDSTONE_ORE.toString());
+			earthBlocks.add(Material.DIAMOND_ORE.toString());
+			earthBlocks.add(Material.EMERALD_ORE.toString());
 			earthBlocks.add("SMALL_AMETHYST_BUD");
 			earthBlocks.add("MEDIUM_AMETHYST_BUD");
 			earthBlocks.add("LARGE_AMETHYST_BUD");
