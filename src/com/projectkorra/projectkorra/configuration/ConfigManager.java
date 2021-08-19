@@ -449,11 +449,11 @@ public class ConfigManager {
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
 			earthBlocks.add("#base_stone_overworld");
 			earthBlocks.add("#base_stone_nether");
-			earthBlocks.add("#coal_ores");
-			earthBlocks.add("#lapis_ores");
-			earthBlocks.add("#redstone_ores");
-			earthBlocks.add("#emerald_ores");
-			earthBlocks.add("#diamond_ores");
+			earthBlocks.add("#coal_ores"); // added in 1.17
+			earthBlocks.add("#lapis_ores"); // added in 1.17
+			earthBlocks.add("#redstone_ores"); // added in 1.17
+			earthBlocks.add("#emerald_ores"); // added in 1.17
+			earthBlocks.add("#diamond_ores"); // added in 1.17
 			earthBlocks.add(Material.DIRT.toString());
 			earthBlocks.add(Material.COARSE_DIRT.toString());
 			earthBlocks.add(Material.PODZOL.toString());
@@ -466,13 +466,11 @@ public class ConfigManager {
 			earthBlocks.add(Material.GRASS_BLOCK.toString());
 			earthBlocks.add(Material.GRASS_PATH.toString());
 			earthBlocks.add(Material.ANCIENT_DEBRIS.toString());
-			earthBlocks.add(Material.COAL_ORE.toString());
-			earthBlocks.add(Material.IRON_ORE.toString());
-			earthBlocks.add(Material.GOLD_ORE.toString());
-			earthBlocks.add(Material.LAPIS_ORE.toString());
-			earthBlocks.add(Material.REDSTONE_ORE.toString());
-			earthBlocks.add(Material.DIAMOND_ORE.toString());
-			earthBlocks.add(Material.EMERALD_ORE.toString());
+			earthBlocks.add(Material.COAL_ORE.toString()); // remove in 1.17
+			earthBlocks.add(Material.LAPIS_ORE.toString()); // remove in 1.17
+			earthBlocks.add(Material.REDSTONE_ORE.toString()); // remove in 1.17
+			earthBlocks.add(Material.DIAMOND_ORE.toString()); // remove in 1.17
+			earthBlocks.add(Material.EMERALD_ORE.toString()); // remove in 1.17
 			earthBlocks.add("SMALL_AMETHYST_BUD");
 			earthBlocks.add("MEDIUM_AMETHYST_BUD");
 			earthBlocks.add("LARGE_AMETHYST_BUD");
@@ -480,9 +478,11 @@ public class ConfigManager {
 			earthBlocks.add("CALCITE");
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
-			metalBlocks.add("#copper_ores");
-			metalBlocks.add("#iron_cores");
-			metalBlocks.add("#piglin_loved");
+			metalBlocks.add("#copper_ores"); // added in 1.17
+			metalBlocks.add("#iron_ores"); // added in 1.17
+			metalBlocks.add("#piglin_loved"); // includes all gold ores/blocks
+			earthBlocks.add(Material.IRON_ORE.toString()); // remove in 1.17
+			earthBlocks.add(Material.GOLD_ORE.toString()); // remove in 1.17
 			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
 			metalBlocks.add(Material.IRON_BLOCK.toString());
 			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
@@ -531,7 +531,11 @@ public class ConfigManager {
 			sandBlocks.add(Material.RED_SANDSTONE_SLAB.toString());
 
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
-			iceBlocks.add("#ice");
+			iceBlocks.add("#ice"); // not sure when this was added, not in the history??
+			iceBlocks.add(Material.ICE.toString()); // kept just in case 1.16 doesn't have #ice.
+			iceBlocks.add(Material.BLUE_ICE.toString());
+			iceBlocks.add(Material.PACKED_ICE.toString());
+			iceBlocks.add(Material.FROSTED_ICE.toString());
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
 			plantBlocks.add("#flowers");
@@ -570,7 +574,9 @@ public class ConfigManager {
 			plantBlocks.add("SMALL_DRIPLEAF");
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
-			snowBlocks.add("#inside_step_sound_blocks");
+			snowBlocks.add("#snow"); // added in 1.17
+			snowBlocks.add(Material.SNOW.toString()); // delete for 1.17
+			snowBlocks.add(Material.SNOW_BLOCK.toString()); // delete for 1.17
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
