@@ -48,8 +48,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public List<String> getEarthbendableBlocks() {
 		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.EarthMaterialTags")) {
-			earthBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+		for (String tag : getConfig().getStringList("Properties.Earth.EarthBlocks")) {
+			if (tag.startsWith("#")) {
+				earthBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+			}
 		}
 		return earthBlocks;
 	}
@@ -85,8 +87,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isEarth(final Material material) {
 		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.EarthMaterialTags")) {
-			earthBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+		for (String tag : getConfig().getStringList("Properties.Earth.EarthBlocks")) {
+			if (tag.startsWith("#")) {
+				earthBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+			}
 		}
 		return earthBlocks.contains(material.toString());
 	}
@@ -110,8 +114,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isIce(final Material material) {
 		List<String> iceBlocks = getConfig().getStringList("Properties.Water.IceBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.IceMaterialTags")) {
-			iceBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+		for (String tag : getConfig().getStringList("Properties.Water.IceBlocks")) {
+			if (tag.startsWith("#")) {
+				iceBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+			}
 		}
 		return iceBlocks.contains(material.toString());
 	}
@@ -130,8 +136,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isSnow(final Material material) {
 		List<String> snowBlocks = getConfig().getStringList("Properties.Water.SnowBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.SnowMaterialTags")) {
-			snowBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+		for (String tag : getConfig().getStringList("Properties.Water.SnowBlocks")) {
+			if (tag.startsWith("#")) {
+				snowBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+			}
 		}
 		return snowBlocks.contains(material.toString());
 	}
@@ -150,8 +158,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isMetal(final Material material) {
 		List<String> metalBlocks = getConfig().getStringList("Properties.Earth.MetalBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.MetalMaterialTags")) {
-			metalBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+		for (String tag : getConfig().getStringList("Properties.Earth.MetalBlocks")) {
+			if (tag.startsWith("#")) {
+				metalBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+			}
 		}
 		return metalBlocks.contains(material.toString());
 	}
@@ -203,8 +213,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isPlant(final Material material) {
 		List<String> plantBlocks = getConfig().getStringList("Properties.Water.PlantBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.PlantMaterialTags")) {
-			plantBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+		for (String tag : getConfig().getStringList("Properties.Water.PlantBlocks")) {
+			if (tag.startsWith("#")) {
+				plantBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+			}
 		}
 		return plantBlocks.contains(material.toString());
 	}
@@ -225,8 +237,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isSand(final Material material) {
 		List<String> sandBlocks = getConfig().getStringList("Properties.Earth.SandBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.SandMaterialTags")) {
-			sandBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+		for (String tag : getConfig().getStringList("Properties.Earth.SandBlocks")) {
+			if (tag.startsWith("#")) {
+				sandBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+			}
 		}
 		return sandBlocks.contains(material.toString());
 	}

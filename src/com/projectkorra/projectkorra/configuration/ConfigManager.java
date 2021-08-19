@@ -446,16 +446,14 @@ public class ConfigManager {
 		} else if (type == ConfigType.DEFAULT) {
 			config = defaultConfig.get();
 
-			final ArrayList<String> earthTags = new ArrayList<String>();
-			earthTags.add("base_stone_overworld");
-			earthTags.add("base_stone_nether");
-			earthTags.add("coal_ores");
-			earthTags.add("lapis_ores");
-			earthTags.add("redstone_ores");
-			earthTags.add("emerald_ores");
-			earthTags.add("diamond_ores");
-
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
+			earthBlocks.add("#base_stone_overworld");
+			earthBlocks.add("#base_stone_nether");
+			earthBlocks.add("#coal_ores");
+			earthBlocks.add("#lapis_ores");
+			earthBlocks.add("#redstone_ores");
+			earthBlocks.add("#emerald_ores");
+			earthBlocks.add("#diamond_ores");
 			earthBlocks.add(Material.DIRT.toString());
 			earthBlocks.add(Material.COARSE_DIRT.toString());
 			earthBlocks.add(Material.PODZOL.toString());
@@ -474,12 +472,10 @@ public class ConfigManager {
 			earthBlocks.add("DRIPSTONE_BLOCK");
 			earthBlocks.add("CALCITE");
 
-			final ArrayList<String> metalTags = new ArrayList<String>();
-			metalTags.add("copper_ores");
-			metalTags.add("iron_cores");
-			metalTags.add("piglin_loved");
-
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
+			metalBlocks.add("#copper_ores");
+			metalBlocks.add("#iron_cores");
+			metalBlocks.add("#piglin_loved");
 			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
 			metalBlocks.add(Material.IRON_BLOCK.toString());
 			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
@@ -520,27 +516,21 @@ public class ConfigManager {
 			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_SLAB");
 			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_SLAB");
 
-			final ArrayList<String> sandTags = new ArrayList<String>();
-			sandTags.add("sand");
-
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
+			sandBlocks.add("#sand");
 			sandBlocks.add(Material.SANDSTONE.toString());
 			sandBlocks.add(Material.SANDSTONE_SLAB.toString());
 			sandBlocks.add(Material.RED_SANDSTONE.toString());
 			sandBlocks.add(Material.RED_SANDSTONE_SLAB.toString());
 
-			final ArrayList<String> iceTags = new ArrayList<String>();
-			iceTags.add("ice");
-
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
-
-			final ArrayList<String> plantTags = new ArrayList<String>();
-			plantTags.add("flowers");
-			plantTags.add("saplings");
-			plantTags.add("bee_growables");
-			plantTags.add("leaves");
+			iceBlocks.add("#ice");
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
+			plantBlocks.add("#flowers");
+			plantBlocks.add("#saplings");
+			plantBlocks.add("#bee_growables");
+			plantBlocks.add("#leaves");
 			plantBlocks.add(Material.FERN.toString());
 			plantBlocks.add(Material.LARGE_FERN.toString());
 			plantBlocks.add(Material.RED_MUSHROOM.toString());
@@ -572,10 +562,8 @@ public class ConfigManager {
 			plantBlocks.add("BIG_DRIPLEAF");
 			plantBlocks.add("SMALL_DRIPLEAF");
 
-			final ArrayList<String> snowTags = new ArrayList<>();
-			snowTags.add("inside_step_sound_blocks");
-
 			final ArrayList<String> snowBlocks = new ArrayList<>();
+			snowBlocks.add("#inside_step_sound_blocks");
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
@@ -623,11 +611,8 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.FreezePlayerHead", true);
 			config.addDefault("Properties.Water.FreezePlayerFeet", true);
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
-			config.addDefault("Properties.Water.IceMaterialTags", iceTags);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
-			config.addDefault("Properties.Water.PlantMaterialTags", plantTags);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
-			config.addDefault("Properties.Water.SnowMaterialTags", snowTags);
 			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.5);
 			config.addDefault("Properties.Water.FullMoonFactor", 1.75);
@@ -647,11 +632,8 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SafeRevert", true);
 			config.addDefault("Properties.Earth.RevertCheckTime", 300000);
 			config.addDefault("Properties.Earth.CanBendWithWeapons", true);
-			config.addDefault("Properties.Earth.EarthMaterialTags", earthTags);
 			config.addDefault("Properties.Earth.EarthBlocks", earthBlocks);
-			config.addDefault("Properties.Earth.MetalMaterialTags", metalTags);
 			config.addDefault("Properties.Earth.MetalBlocks", metalBlocks);
-			config.addDefault("Properties.Earth.SandMaterialTags", sandTags);
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);

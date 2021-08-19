@@ -2506,16 +2506,15 @@ public class GeneralMethods {
 
 	public static List<String> tagToMaterials(String tag) {
 		ArrayList<String> materials = new ArrayList<>();
-		if (tag != null && !tag.equalsIgnoreCase("")) {
-			if (Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tag), Material.class) != null) {
-				NamespacedKey mTag = NamespacedKey.minecraft(tag);
-				Set<Material> mSet = Bukkit.getTag(Tag.REGISTRY_BLOCKS, mTag, Material.class).getValues();
-				for (Material mat : mSet) {
-					materials.add(mat.toString());
-				}
-			} else {
-				ProjectKorra.log.warning("Could not load material list for tag (does not exist?): " + tag);
+		tag = tag.replaceFirst("#", "");
+		if (Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tag), Material.class) != null) {
+			NamespacedKey mTag = NamespacedKey.minecraft(tag);
+			Set<Material> mSet = Bukkit.getTag(Tag.REGISTRY_BLOCKS, mTag, Material.class).getValues();
+			for (Material mat : mSet) {
+				materials.add(mat.toString());
 			}
+		} else {
+			ProjectKorra.log.warning("Could not load material list for tag (does not exist?): " + tag);
 		}
 		return materials;
 	}
