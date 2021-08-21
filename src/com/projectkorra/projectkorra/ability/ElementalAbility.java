@@ -29,6 +29,12 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
 	private static final Set<Material> TRANSPARENT = new HashSet<>();
+	private static final Set<String> EARTH_BLOCKS = new HashSet<String>();
+	private static final Set<String> ICE_BLOCKS = new HashSet<String>();
+	private static final Set<String> METAL_BLOCKS = new HashSet<String>();
+	private static final Set<String> PLANT_BLOCKS = new HashSet<String>();
+	private static final Set<String> SAND_BLOCKS = new HashSet<String>();
+	private static final Set<String> SNOW_BLOCKS = new HashSet<String>();
 
 	static {
 		TRANSPARENT.clear();
@@ -37,6 +43,7 @@ public abstract class ElementalAbility extends CoreAbility {
 				TRANSPARENT.add(mat);
 			}
 		}
+		ElementalAbility.setupBendableMaterials();
 	}
 
 	public ElementalAbility(final Player player) {
@@ -47,21 +54,20 @@ public abstract class ElementalAbility extends CoreAbility {
 		return isTransparent(this.player, this.getName(), block);
 	}
 
-	public static List<String> addTagMaterials(List<String> materials) {
+	public static Set<String> getConfiguredTagMaterials(Set<String> materials) {
 		ListIterator<String> iterator = new ArrayList<String>(materials).listIterator();
+		Set<String> tagMaterials = new HashSet<String>();
 		while (iterator.hasNext()) {
 			String tag = iterator.next();
 			if (tag.startsWith("#")) {
-				materials.addAll(GeneralMethods.tagToMaterialList(tag));
+				tagMaterials.addAll(GeneralMethods.tagToMaterialList(tag));
 			}
 		}
-
-		return materials;
+		return tagMaterials;
 	}
 
 	public static List<String> getEarthbendableBlocks() {
-		List<String> materials = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		return ElementalAbility.addTagMaterials(materials);
+		return new ArrayList<String>(ElementalAbility.EARTH_BLOCKS);
 	}
 
 	public static Material[] getTransparentMaterials() {
@@ -90,13 +96,13 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isEarth(final Material material) {
-		return ElementalAbility.getEarthbendableBlocks().contains(material.toString());
+		return ElementalAbility.EARTH_BLOCKS.contains(material.toString());
 	}
-	
+
 	public static boolean isFire(final Block block) {
 		return block != null && isFire(block.getType());
 	}
-	
+
 	public static boolean isFire(final Material material) {
 		return material == Material.SOUL_FIRE || material == Material.FIRE;
 	}
@@ -110,8 +116,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isIce(final Material material) {
-		List<String> materials = getConfig().getStringList("Properties.Water.IceBlocks");
-		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.ICE_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isLava(final Block block) {
@@ -127,8 +132,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSnow(final Material material) {
-		List<String> materials = getConfig().getStringList("Properties.Water.SnowBlocks");
-		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.SNOW_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isMeltable(final Block block) {
@@ -140,8 +144,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMetal(final Material material) {
-		List<String> materials = getConfig().getStringList("Properties.Earth.MetalBlocks");
-		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.METAL_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isMetalBlock(final Block block) {
@@ -182,8 +185,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isPlant(final Material material) {
-		List<String> materials = getConfig().getStringList("Properties.Water.PlantBlocks");
-		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.PLANT_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
@@ -201,8 +203,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSand(final Material material) {
-		List<String> materials = getConfig().getStringList("Properties.Earth.SandBlocks");
-		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.SAND_BLOCKS.contains(material.toString());
 	}
 
 	public static boolean isTransparent(final Player player, final Block block) {
@@ -229,5 +230,26 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isWater(final Material material) {
 		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
+	}
+
+	public static void setupBendableMaterials() {
+		EARTH_BLOCKS.clear();
+		EARTH_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.EarthBlocks"));
+		EARTH_BLOCKS.addAll(getConfiguredTagMaterials(EARTH_BLOCKS));
+		ICE_BLOCKS.clear();
+		ICE_BLOCKS.addAll(getConfig().getStringList("Properties.Water.IceBlocks"));
+		ICE_BLOCKS.addAll(getConfiguredTagMaterials(ICE_BLOCKS));
+		METAL_BLOCKS.clear();
+		METAL_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.MetalBlocks"));
+		METAL_BLOCKS.addAll(getConfiguredTagMaterials(METAL_BLOCKS));
+		PLANT_BLOCKS.clear();
+		PLANT_BLOCKS.addAll(getConfig().getStringList("Properties.Water.PlantBlocks"));
+		PLANT_BLOCKS.addAll(getConfiguredTagMaterials(PLANT_BLOCKS));
+		SAND_BLOCKS.clear();
+		SAND_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.SandBlocks"));
+		SAND_BLOCKS.addAll(getConfiguredTagMaterials(SAND_BLOCKS));
+		SNOW_BLOCKS.clear();
+		SNOW_BLOCKS.addAll(getConfig().getStringList("Properties.Water.SnowBlocks"));
+		SNOW_BLOCKS.addAll(getConfiguredTagMaterials(SNOW_BLOCKS));
 	}
 }

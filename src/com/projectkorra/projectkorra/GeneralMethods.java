@@ -1860,6 +1860,7 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
+		ElementalAbility.setupBendableMaterials();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
