@@ -1,10 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -46,14 +42,21 @@ public abstract class ElementalAbility extends CoreAbility {
 		return isTransparent(this.player, this.getName(), block);
 	}
 
-	public List<String> getEarthbendableBlocks() {
-		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.EarthBlocks")) {
+	public static List<String> addTagMaterials(List<String> materials) {
+		ListIterator<String> iterator = new ArrayList<String>(materials).listIterator();
+		while (iterator.hasNext()) {
+			String tag = iterator.next();
 			if (tag.startsWith("#")) {
-				earthBlocks.addAll(GeneralMethods.tagToMaterials(tag));
+				materials.addAll(GeneralMethods.tagToMaterialList(tag));
 			}
 		}
-		return earthBlocks;
+
+		return materials;
+	}
+
+	public static List<String> getEarthbendableBlocks() {
+		List<String> materials = getConfig().getStringList("Properties.Earth.EarthBlocks");
+		return addTagMaterials(materials);
 	}
 
 	public static Material[] getTransparentMaterials() {
@@ -74,29 +77,19 @@ public abstract class ElementalAbility extends CoreAbility {
 			return true;
 		}
 
-		if (time >= 23500 || time <= 12500) {
-			return true;
-		}
-
-		return false;
+		return time >= 23500 || time <= 12500;
 	}
 
 	public static boolean isEarth(final Block block) {
-		return block != null ? isEarth(block.getType()) : false;
+		return block != null && isEarth(block.getType());
 	}
 
 	public static boolean isEarth(final Material material) {
-		List<String> earthBlocks = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.EarthBlocks")) {
-			if (tag.startsWith("#")) {
-				earthBlocks.addAll(GeneralMethods.tagToMaterials(tag));
-			}
-		}
-		return earthBlocks.contains(material.toString());
+		return ElementalAbility.getEarthbendableBlocks().contains(material.toString());
 	}
 	
 	public static boolean isFire(final Block block) {
-		return block != null ? isFire(block.getType()) : false;
+		return block != null && isFire(block.getType());
 	}
 	
 	public static boolean isFire(final Material material) {
@@ -104,26 +97,20 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isFullMoon(final World world) {
-
 		return (world.getFullTime() / 24000) % 8 == 0;
 	}
 
 	public static boolean isIce(final Block block) {
-		return block != null ? isIce(block.getType()) : false;
+		return block != null && isIce(block.getType());
 	}
 
 	public static boolean isIce(final Material material) {
-		List<String> iceBlocks = getConfig().getStringList("Properties.Water.IceBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.IceBlocks")) {
-			if (tag.startsWith("#")) {
-				iceBlocks.addAll(GeneralMethods.tagToMaterials(tag));
-			}
-		}
-		return iceBlocks.contains(material.toString());
+		List<String> materials = getConfig().getStringList("Properties.Water.IceBlocks");
+		return addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isLava(final Block block) {
-		return block != null ? isLava(block.getType()) : false;
+		return block != null && isLava(block.getType());
 	}
 
 	public static boolean isLava(final Material material) {
@@ -131,46 +118,29 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSnow(final Block block) {
-		return block != null ? isSnow(block.getType()) : false;
+		return block != null && isSnow(block.getType());
 	}
 
 	public static boolean isSnow(final Material material) {
-		List<String> snowBlocks = getConfig().getStringList("Properties.Water.SnowBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.SnowBlocks")) {
-			if (tag.startsWith("#")) {
-				snowBlocks.addAll(GeneralMethods.tagToMaterials(tag));
-			}
-		}
-		return snowBlocks.contains(material.toString());
+		List<String> materials = getConfig().getStringList("Properties.Water.SnowBlocks");
+		return addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isMeltable(final Block block) {
-		if (isIce(block) || isSnow(block)) {
-			return true;
-		}
-
-		return false;
+		return isIce(block) || isSnow(block);
 	}
 
 	public static boolean isMetal(final Block block) {
-		return block != null ? isMetal(block.getType()) : false;
+		return block != null && isMetal(block.getType());
 	}
 
 	public static boolean isMetal(final Material material) {
-		List<String> metalBlocks = getConfig().getStringList("Properties.Earth.MetalBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.MetalBlocks")) {
-			if (tag.startsWith("#")) {
-				metalBlocks.addAll(GeneralMethods.tagToMaterials(tag));
-			}
-		}
-		return metalBlocks.contains(material.toString());
+		List<String> materials = getConfig().getStringList("Properties.Earth.MetalBlocks");
+		return addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isMetalBlock(final Block block) {
-//		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.NETHER_QUARTZ_ORE) {
-//			return true;
-//		}
-		return isMetal(block.getType());
+		return isMetal(block);
 	}
 
 	public static boolean isNegativeEffect(final PotionEffectType effect) {
@@ -194,31 +164,21 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isNight(final World world) {
+		final long time = world.getTime();
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
 			return false;
 		}
 
-		final long time = world.getTime();
-
-		if (time >= 12950 && time <= 23050) {
-			return true;
-		}
-
-		return false;
+		return time >= 12950 && time <= 23050;
 	}
 
 	public static boolean isPlant(final Block block) {
-		return block != null ? isPlant(block.getType()) : false;
+		return block != null && isPlant(block.getType());
 	}
 
 	public static boolean isPlant(final Material material) {
-		List<String> plantBlocks = getConfig().getStringList("Properties.Water.PlantBlocks");
-		for (String tag : getConfig().getStringList("Properties.Water.PlantBlocks")) {
-			if (tag.startsWith("#")) {
-				plantBlocks.addAll(GeneralMethods.tagToMaterials(tag));
-			}
-		}
-		return plantBlocks.contains(material.toString());
+		List<String> materials = getConfig().getStringList("Properties.Water.PlantBlocks");
+		return addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
@@ -232,17 +192,12 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSand(final Block block) {
-		return block != null ? isSand(block.getType()) : false;
+		return block != null && isSand(block.getType());
 	}
 
 	public static boolean isSand(final Material material) {
-		List<String> sandBlocks = getConfig().getStringList("Properties.Earth.SandBlocks");
-		for (String tag : getConfig().getStringList("Properties.Earth.SandBlocks")) {
-			if (tag.startsWith("#")) {
-				sandBlocks.addAll(GeneralMethods.tagToMaterials(tag));
-			}
-		}
-		return sandBlocks.contains(material.toString());
+		List<String> materials = getConfig().getStringList("Properties.Earth.SandBlocks");
+		return addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isTransparent(final Player player, final Block block) {
@@ -270,5 +225,4 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isWater(final Material material) {
 		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
 	}
-
 }

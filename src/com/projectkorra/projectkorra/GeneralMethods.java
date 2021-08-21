@@ -2398,6 +2398,20 @@ public class GeneralMethods {
 		plugin.getServer().getPluginManager().disablePlugin(plugin);
 	}
 
+	public static List<String> tagToMaterialList(String tagName) {
+		tagName = tagName.replaceFirst("#", "");
+		ArrayList<String> materials = new ArrayList<>();
+		if (Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tagName), Material.class) != null) {
+			NamespacedKey key = NamespacedKey.minecraft(tagName);
+			Set<Material> tagMaterials = Bukkit.getTag(Tag.REGISTRY_BLOCKS, key, Material.class).getValues();
+			for (Material material : tagMaterials) {
+				materials.add(material.toString());
+			}
+		}
+
+		return materials;
+	}
+
 	public static void writeToDebug(final String message) {
 		try {
 			final File dataFolder = plugin.getDataFolder();
@@ -2502,20 +2516,5 @@ public class GeneralMethods {
 		}
 
 		event.getAffected().setVelocity(velocity);
-	}
-
-	public static List<String> tagToMaterials(String tag) {
-		ArrayList<String> materials = new ArrayList<>();
-		tag = tag.replaceFirst("#", "");
-		if (Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tag), Material.class) != null) {
-			NamespacedKey mTag = NamespacedKey.minecraft(tag);
-			Set<Material> mSet = Bukkit.getTag(Tag.REGISTRY_BLOCKS, mTag, Material.class).getValues();
-			for (Material mat : mSet) {
-				materials.add(mat.toString());
-			}
-		} else {
-			ProjectKorra.log.warning("Could not load material list for tag (does not exist?): " + tag);
-		}
-		return materials;
 	}
 }
