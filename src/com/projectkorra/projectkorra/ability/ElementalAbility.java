@@ -61,7 +61,7 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static List<String> getEarthbendableBlocks() {
 		List<String> materials = getConfig().getStringList("Properties.Earth.EarthBlocks");
-		return addTagMaterials(materials);
+		return ElementalAbility.addTagMaterials(materials);
 	}
 
 	public static Material[] getTransparentMaterials() {
@@ -111,7 +111,7 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isIce(final Material material) {
 		List<String> materials = getConfig().getStringList("Properties.Water.IceBlocks");
-		return addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isLava(final Block block) {
@@ -128,7 +128,7 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isSnow(final Material material) {
 		List<String> materials = getConfig().getStringList("Properties.Water.SnowBlocks");
-		return addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isMeltable(final Block block) {
@@ -141,7 +141,7 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isMetal(final Material material) {
 		List<String> materials = getConfig().getStringList("Properties.Earth.MetalBlocks");
-		return addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isMetalBlock(final Block block) {
@@ -183,7 +183,7 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isPlant(final Material material) {
 		List<String> materials = getConfig().getStringList("Properties.Water.PlantBlocks");
-		return addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
@@ -202,7 +202,7 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isSand(final Material material) {
 		List<String> materials = getConfig().getStringList("Properties.Earth.SandBlocks");
-		return addTagMaterials(materials).contains(material.toString());
+		return ElementalAbility.addTagMaterials(materials).contains(material.toString());
 	}
 
 	public static boolean isTransparent(final Player player, final Block block) {
