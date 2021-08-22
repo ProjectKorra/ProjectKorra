@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.Element;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -46,7 +47,7 @@ public abstract class ElementalAbility extends CoreAbility {
 				TRANSPARENT.add(mat);
 			}
 		}
-
+		ElementalAbility.clearBendableMaterials();
 		ElementalAbility.setupBendableMaterials();
 	}
 
@@ -58,25 +59,32 @@ public abstract class ElementalAbility extends CoreAbility {
 		return isTransparent(this.player, this.getName(), block);
 	}
 
+	public static void clearBendableMaterials() {
+		EARTH_BLOCKS.clear();
+		ICE_BLOCKS.clear();
+		METAL_BLOCKS.clear();
+		PLANT_BLOCKS.clear();
+		SAND_BLOCKS.clear();
+		SNOW_BLOCKS.clear();
+	}
+
 	public static List<String> getEarthbendableBlocks() {
 		return new ArrayList<String>(ElementalAbility.EARTH_BLOCKS);
 	}
 
-	public static Set<String> getTagToMaterialSet(String tag) {
-		tag = tag.replaceFirst("#", "");
+	public static Set<String> getTagToMaterialSet(final String tag) {
+		String tagString = tag.replaceFirst("#", "");
 		Set<String> materials = new HashSet<String>();
-		if (Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tag), Material.class) != null) {
-			NamespacedKey key = NamespacedKey.minecraft(tag);
+		if (Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft(tagString), Material.class) != null) {
+			NamespacedKey key = NamespacedKey.minecraft(tagString);
 			Set<Material> tagMaterials = Bukkit.getTag(Tag.REGISTRY_BLOCKS, key, Material.class).getValues();
-			for (Material material : tagMaterials) {
-				materials.add(material.toString());
-			}
+			tagMaterials.forEach(material -> materials.add(material.toString()));
 		}
 
 		return materials;
 	}
 
-	public static Set<String> getTagsOnlySet(Set<String> materials) {
+	public static Set<String> getTagsOnlySet(final Set<String> materials) {
 		ListIterator<String> iterator = new ArrayList<String>(materials).listIterator();
 		Set<String> tags = new HashSet<String>();
 		while (iterator.hasNext()) {
@@ -237,7 +245,7 @@ public abstract class ElementalAbility extends CoreAbility {
 		if (block == null) {
 			return false;
 		} else if (block.getState() instanceof Container) {
-			return false; 
+			return false;
 		} else {
 			return isWater(block.getBlockData());
 		}
@@ -253,42 +261,36 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static void setupBendableMaterials() {
 		// Cache Earth-bendable materials/tags
-		EARTH_BLOCKS.clear();
 		EARTH_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.EarthBlocks"));
 		Set<String> earthTags = ElementalAbility.getTagsOnlySet(EARTH_BLOCKS); // Temp. Set so it's not created twice.
 		earthTags.forEach(tag -> EARTH_BLOCKS.addAll(getTagToMaterialSet(tag)));
 		EARTH_BLOCKS.removeAll(earthTags);
 		earthTags.clear();
 		// Cache Ice-bendable materials/tags
-		ICE_BLOCKS.clear();
 		ICE_BLOCKS.addAll(getConfig().getStringList("Properties.Water.IceBlocks"));
 		Set<String> iceTags = ElementalAbility.getTagsOnlySet(ICE_BLOCKS);
 		iceTags.forEach(tag -> ICE_BLOCKS.addAll(getTagToMaterialSet(tag)));
 		ICE_BLOCKS.removeAll(iceTags);
 		iceTags.clear();
 		// Cache Metal-bendable materials/tags
-		METAL_BLOCKS.clear();
 		METAL_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.MetalBlocks"));
 		Set<String> metalTags = ElementalAbility.getTagsOnlySet(METAL_BLOCKS);
 		metalTags.forEach(tag -> METAL_BLOCKS.addAll(getTagToMaterialSet(tag)));
 		METAL_BLOCKS.removeAll(metalTags);
 		metalTags.clear();
 		// Cache Plant-bendable materials/tags
-		PLANT_BLOCKS.clear();
 		PLANT_BLOCKS.addAll(getConfig().getStringList("Properties.Water.PlantBlocks"));
 		Set<String> plantTags = ElementalAbility.getTagsOnlySet(PLANT_BLOCKS);
 		plantTags.forEach(tag -> PLANT_BLOCKS.addAll(getTagToMaterialSet(tag)));
 		PLANT_BLOCKS.removeAll(plantTags);
 		plantTags.clear();
 		// Cache Sand-bendable materials/tags
-		SAND_BLOCKS.clear();
 		SAND_BLOCKS.addAll(getConfig().getStringList("Properties.Earth.SandBlocks"));
 		Set<String> sandTags = ElementalAbility.getTagsOnlySet(SAND_BLOCKS);
 		sandTags.forEach(tag -> SAND_BLOCKS.addAll(getTagToMaterialSet(tag)));
 		SAND_BLOCKS.removeAll(sandTags);
 		sandTags.clear();
 		// Cache Snow-bendable materials/tags
-		SNOW_BLOCKS.clear();
 		SNOW_BLOCKS.addAll(getConfig().getStringList("Properties.Water.SnowBlocks"));
 		Set<String> snowTags = ElementalAbility.getTagsOnlySet(SNOW_BLOCKS);
 		snowTags.forEach(tag -> SNOW_BLOCKS.addAll(getTagToMaterialSet(tag)));

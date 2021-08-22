@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -1857,6 +1856,8 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
+		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
+		ElementalAbility.setupBendableMaterials();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
