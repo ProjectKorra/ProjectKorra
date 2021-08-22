@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -54,8 +53,6 @@ import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -1752,7 +1749,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isWeapon(final Material mat) {
-	
+
 		switch(mat) {
 			case BOW:
 			case CROSSBOW:
@@ -1860,7 +1857,6 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
-		ElementalAbility.setupBendableMaterials();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
