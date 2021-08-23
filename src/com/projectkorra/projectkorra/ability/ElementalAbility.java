@@ -86,7 +86,6 @@ public abstract class ElementalAbility extends CoreAbility {
 				outputSet.add(next.toUpperCase());
 			}
 		});
-		configList.clear();
 	}
 
 	public static Material[] getTransparentMaterials() {
