@@ -456,115 +456,134 @@ public class ConfigManager {
 			config = defaultConfig.get();
 
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
-			earthBlocks.add(Material.DIRT.toString());
-			earthBlocks.add(Material.COARSE_DIRT.toString());
-			earthBlocks.add(Material.PODZOL.toString());
-			earthBlocks.add(Material.MYCELIUM.toString());
-			earthBlocks.add(Material.STONE.toString());
-			earthBlocks.add(Material.GRAVEL.toString());
+			earthBlocks.add("#base_stone_nether"); // added in 1.16.2
+			earthBlocks.add("#base_stone_overworld"); // added in 1.16.2
+			earthBlocks.add("#coal_ores"); // added in 1.17
+			earthBlocks.add("#diamond_ores"); // added in 1.17
+			earthBlocks.add("#emerald_ores"); // added in 1.17
+			earthBlocks.add("#lapis_ores"); // added in 1.17
+			earthBlocks.add("#redstone_ores"); // added in 1.17
+			earthBlocks.add("CALCITE"); // use Material in 1.17
+			earthBlocks.add("DRIPSTONE_BLOCK"); // use Material in 1.17
+			earthBlocks.add("LARGE_AMETHYST_BUD"); // use Material in 1.17
+			earthBlocks.add("MEDIUM_AMETHYST_BUD"); // use Material in 1.17
+			earthBlocks.add("SMALL_AMETHYST_BUD"); // use Material in 1.17
+			earthBlocks.add(Material.ANCIENT_DEBRIS.toString());
 			earthBlocks.add(Material.CLAY.toString());
-			earthBlocks.add(Material.COAL_ORE.toString());
-			earthBlocks.add(Material.REDSTONE_ORE.toString());
-			earthBlocks.add(Material.LAPIS_ORE.toString());
-			earthBlocks.add(Material.DIAMOND_ORE.toString());
-			earthBlocks.add(Material.EMERALD_ORE.toString());
-			earthBlocks.add(Material.NETHERRACK.toString());
+			earthBlocks.add(Material.COAL_ORE.toString()); // no longer needed in 1.17
+			earthBlocks.add(Material.COARSE_DIRT.toString());
 			earthBlocks.add(Material.COBBLESTONE.toString());
-			earthBlocks.add(Material.STONE_SLAB.toString());
 			earthBlocks.add(Material.COBBLESTONE_SLAB.toString());
+			earthBlocks.add(Material.DIAMOND_ORE.toString()); // no longer needed in 1.17
+			earthBlocks.add(Material.DIRT.toString());
+			earthBlocks.add(Material.EMERALD_ORE.toString()); // no longer needed in 1.17
 			earthBlocks.add(Material.GRASS_BLOCK.toString());
 			earthBlocks.add(Material.GRASS_PATH.toString());
-			earthBlocks.add(Material.ANDESITE.toString());
-			earthBlocks.add(Material.GRANITE.toString());
-			earthBlocks.add(Material.DIORITE.toString());
-			earthBlocks.add(Material.BASALT.toString());
-			earthBlocks.add(Material.ANCIENT_DEBRIS.toString());
-			earthBlocks.add(Material.BLACKSTONE.toString());
+			earthBlocks.add(Material.GRAVEL.toString());
+			earthBlocks.add(Material.LAPIS_ORE.toString()); // no longer needed in 1.17
+			earthBlocks.add(Material.MYCELIUM.toString());
+			earthBlocks.add(Material.PODZOL.toString());
+			earthBlocks.add(Material.REDSTONE_ORE.toString()); // no longer needed in 1.17
+			earthBlocks.add(Material.STONE_SLAB.toString());
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
-			metalBlocks.add(Material.IRON_ORE.toString());
-			metalBlocks.add(Material.GOLD_ORE.toString());
-			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
-			earthBlocks.add(Material.GILDED_BLACKSTONE.toString());
-			metalBlocks.add(Material.IRON_BLOCK.toString());
-			metalBlocks.add(Material.GOLD_BLOCK.toString());
-			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
+			metalBlocks.add("#copper_ores"); // added in 1.17
+			metalBlocks.add("#gold_ores"); // added in 1.16.1
+			metalBlocks.add("#iron_ores"); // added in 1.17
+			metalBlocks.add("COPPER_BLOCK"); // use Material in 1.17
+			metalBlocks.add("CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("CUT_COPPER_SLAB");// use Material in 1.17
+			metalBlocks.add("CUT_COPPER_STAIRS"); // use Material in 1.17
+			metalBlocks.add("EXPOSED_COPPER"); // use Material in 1.17
+			metalBlocks.add("EXPOSED_CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("EXPOSED_CUT_COPPER_SLAB"); // use Material in 1.17
+			metalBlocks.add("EXPOSED_CUT_COPPER_STAIRS"); // use Material in 1.17
+			metalBlocks.add("OXIDIZED_COPPER"); // use Material in 1.17
+			metalBlocks.add("OXIDIZED_CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("OXIDIZED_CUT_COPPER_SLAB"); // use Material in 1.17
+			metalBlocks.add("OXIDIZED_CUT_COPPER_STAIRS"); // use Material in 1.17
+			metalBlocks.add("RAW_COPPER_BLOCK"); // use Material in 1.17
+			metalBlocks.add("RAW_GOLD_BLOCK"); // use Material in 1.17
+			metalBlocks.add("RAW_IRON_BLOCK"); // use Material in 1.17
+			metalBlocks.add("WAXED_COPPER_BLOCK"); // use Material in 1.17
+			metalBlocks.add("WAXED_CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("WAXED_CUT_COPPER_SLAB"); // use Material in 1.17
+			metalBlocks.add("WAXED_CUT_COPPER_STAIRS"); // use Material in 1.17
+			metalBlocks.add("WAXED_EXPOSED_COPPER"); // use Material in 1.17
+			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_SLAB"); // use Material in 1.17
+			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_STAIRS"); // use Material in 1.17
+			metalBlocks.add("WAXED_OXIDIZED_COPPER"); // use Material in 1.17
+			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_SLAB"); // use Material in 1.17
+			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_STAIRS"); // use Material in 1.17
+			metalBlocks.add("WAXED_WEATHERED_COPPER"); // use Material in 1.17
+			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_SLAB"); // use Material in 1.17
+			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_STAIRS"); // use Material in 1.17
+			metalBlocks.add("WEATHERED_COPPER"); // use Material in 1.17
+			metalBlocks.add("WEATHERED_CUT_COPPER"); // use Material in 1.17
+			metalBlocks.add("WEATHERED_CUT_COPPER_SLAB"); // use Material in 1.17
+			metalBlocks.add("WEATHERED_CUT_COPPER_STAIRS"); // use Material in 1.17
 			metalBlocks.add(Material.CHAIN.toString());
+			metalBlocks.add(Material.GILDED_BLACKSTONE.toString());
+			metalBlocks.add(Material.GOLD_BLOCK.toString());
+			metalBlocks.add(Material.IRON_BLOCK.toString());
+			metalBlocks.add(Material.IRON_ORE.toString()); // no longer needed in 1.17
 			metalBlocks.add(Material.NETHERITE_BLOCK.toString());
+			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
+			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
 
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
-			sandBlocks.add(Material.SAND.toString());
-			sandBlocks.add(Material.SANDSTONE.toString());
-			sandBlocks.add(Material.SANDSTONE_SLAB.toString());
-			sandBlocks.add(Material.RED_SAND.toString());
+			sandBlocks.add("#sand");
 			sandBlocks.add(Material.RED_SANDSTONE.toString());
 			sandBlocks.add(Material.RED_SANDSTONE_SLAB.toString());
+			sandBlocks.add(Material.SANDSTONE.toString());
+			sandBlocks.add(Material.SANDSTONE_SLAB.toString());
 
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
-			iceBlocks.add(Material.ICE.toString());
-			iceBlocks.add(Material.PACKED_ICE.toString());
-			iceBlocks.add(Material.BLUE_ICE.toString());
-			iceBlocks.add(Material.FROSTED_ICE.toString());
+			iceBlocks.add("#ice");
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
-			plantBlocks.add(Material.ACACIA_SAPLING.toString());
-			plantBlocks.add(Material.BIRCH_SAPLING.toString());
-			plantBlocks.add(Material.DARK_OAK_SAPLING.toString());
-			plantBlocks.add(Material.JUNGLE_SAPLING.toString());
-			plantBlocks.add(Material.OAK_SAPLING.toString());
-			plantBlocks.add(Material.SPRUCE_SAPLING.toString());
-			plantBlocks.add(Material.ACACIA_LEAVES.toString());
-			plantBlocks.add(Material.BIRCH_LEAVES.toString());
-			plantBlocks.add(Material.DARK_OAK_LEAVES.toString());
-			plantBlocks.add(Material.JUNGLE_LEAVES.toString());
-			plantBlocks.add(Material.OAK_LEAVES.toString());
-			plantBlocks.add(Material.SPRUCE_LEAVES.toString());
-			plantBlocks.add(Material.ORANGE_TULIP.toString());
-			plantBlocks.add(Material.PINK_TULIP.toString());
-			plantBlocks.add(Material.RED_TULIP.toString());
-			plantBlocks.add(Material.WHITE_TULIP.toString());
-			plantBlocks.add(Material.ROSE_BUSH.toString());
-			plantBlocks.add(Material.BLUE_ORCHID.toString());
-			plantBlocks.add(Material.ALLIUM.toString());
-			plantBlocks.add(Material.DANDELION.toString());
-			plantBlocks.add(Material.LILAC.toString());
-			plantBlocks.add(Material.OXEYE_DAISY.toString());
-			plantBlocks.add(Material.AZURE_BLUET.toString());
-			plantBlocks.add(Material.PEONY.toString());
-			plantBlocks.add(Material.SUNFLOWER.toString());
-			plantBlocks.add(Material.POPPY.toString());
-			plantBlocks.add(Material.FERN.toString());
-			plantBlocks.add(Material.LILY_OF_THE_VALLEY.toString());
-			plantBlocks.add(Material.WITHER_ROSE.toString());
-			plantBlocks.add(Material.CORNFLOWER.toString());
-			plantBlocks.add(Material.LARGE_FERN.toString());
-			plantBlocks.add(Material.RED_MUSHROOM.toString());
-			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.toString());
+			plantBlocks.add("#bee_growables");
+			plantBlocks.add("#flowers");
+			plantBlocks.add("#leaves");
+			plantBlocks.add("#saplings");
+			plantBlocks.add("BIG_DRIPLEAF"); // use Material in 1.17
+			plantBlocks.add("HANGING_ROOTS"); // use Material in 1.17
+			plantBlocks.add("MOSS_BLOCK"); // use Material in 1.17
+			plantBlocks.add("MOSS_CARPET"); // use Material in 1.17
+			plantBlocks.add("SMALL_DRIPLEAF"); // use Material in 1.17
+			plantBlocks.add("SPORE_BLOSSOM"); // use Material in 1.17
 			plantBlocks.add(Material.BROWN_MUSHROOM.toString());
 			plantBlocks.add(Material.BROWN_MUSHROOM_BLOCK.toString());
-			plantBlocks.add(Material.MUSHROOM_STEM.toString());
-			plantBlocks.add(Material.WARPED_ROOTS.toString());
-			plantBlocks.add(Material.CRIMSON_ROOTS.toString());
-			plantBlocks.add(Material.TWISTING_VINES_PLANT.toString());
-			plantBlocks.add(Material.WEEPING_VINES_PLANT.toString());
-			plantBlocks.add(Material.NETHER_SPROUTS.toString());
 			plantBlocks.add(Material.CACTUS.toString());
-			plantBlocks.add(Material.PUMPKIN.toString());
-			plantBlocks.add(Material.PUMPKIN_STEM.toString());
+			plantBlocks.add(Material.CRIMSON_FUNGUS.toString());
+			plantBlocks.add(Material.CRIMSON_ROOTS.toString());
+			plantBlocks.add(Material.FERN.toString());
+			plantBlocks.add(Material.GRASS.toString());
+			plantBlocks.add(Material.LARGE_FERN.toString());
+			plantBlocks.add(Material.LILY_PAD.toString());
 			plantBlocks.add(Material.MELON.toString());
 			plantBlocks.add(Material.MELON_STEM.toString());
-			plantBlocks.add(Material.VINE.toString());
-			plantBlocks.add(Material.LILY_PAD.toString());
-			plantBlocks.add(Material.WHEAT.toString());
-			plantBlocks.add(Material.BEETROOTS.toString());
-			plantBlocks.add(Material.CARROTS.toString());
-			plantBlocks.add(Material.POTATOES.toString());
+			plantBlocks.add(Material.MUSHROOM_STEM.toString());
+			plantBlocks.add(Material.NETHER_SPROUTS.toString());
+			plantBlocks.add(Material.PUMPKIN.toString());
+			plantBlocks.add(Material.PUMPKIN_STEM.toString());
+			plantBlocks.add(Material.RED_MUSHROOM.toString());
+			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.toString());
 			plantBlocks.add(Material.SUGAR_CANE.toString());
-			plantBlocks.add(Material.GRASS.toString());
 			plantBlocks.add(Material.TALL_GRASS.toString());
+			plantBlocks.add(Material.TWISTING_VINES_PLANT.toString());
+			plantBlocks.add(Material.VINE.toString());
+			plantBlocks.add(Material.WARPED_FUNGUS.toString());
+			plantBlocks.add(Material.WARPED_ROOTS.toString());
+			plantBlocks.add(Material.WEEPING_VINES_PLANT.toString());
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
-			snowBlocks.add(Material.SNOW.toString());
+			snowBlocks.add("#snow"); // added in 1.17
+			snowBlocks.add(Material.SNOW.toString()); // no longer needed in 1.17
+			snowBlocks.add(Material.SNOW_BLOCK.toString()); // no longer needed in 1.17
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
