@@ -40,6 +40,7 @@ import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+import com.projectkorra.projectkorra.ability.sound.SoundManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -1858,6 +1859,7 @@ public class GeneralMethods {
 		ConfigManager.presetConfig.reload();
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
+		SoundManager.loadSounds(); // Reload the static abilitysound objects using new values
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();

@@ -3,9 +3,9 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.ability.sound.water.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -17,7 +17,6 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -296,54 +295,15 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playIcebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
-
-			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
+		new IceSoundTask(GenericIceSound.getSound, loc);
 	}
 
 	public static void playPlantbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
-
-			Sound sound = Sound.BLOCK_GRASS_STEP;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
+		new PlantSoundTask(GenericPlantSound.getSound, loc);
 	}
 
 	public static void playWaterbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
-
-			Sound sound = Sound.BLOCK_WATER_AMBIENT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.WaterSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
+		new WaterSoundTask(GenericWaterSound.getSound, loc);
 	}
 
 	/**

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.sound.water.WaterSoundTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -162,7 +163,7 @@ public class TorrentWave extends WaterAbility {
 
 				final Random random = new Random();
 				for (final Block sound : torrentBlocks) {
-					if (random.nextInt(50) == 0) {
+					if (random.nextInt(500) == 0) {
 						playWaterbendingSound(sound.getLocation());
 					}
 				}
