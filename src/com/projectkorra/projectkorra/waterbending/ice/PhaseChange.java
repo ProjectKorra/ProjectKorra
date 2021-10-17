@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Snow;
@@ -400,12 +401,21 @@ public class PhaseChange extends IceAbility {
 		} else if (isWater(b)) {
 			// Figure out what to do here also.
 		} else if (isIce(b)) {
-			if (this.allowMeltFlow) {
-				b.setType(Material.WATER);
-				b.setBlockData(GeneralMethods.getWaterData(0));
+			if (b.getWorld().getEnvironment() == World.Environment.NETHER) {
+				if (this.allowMeltFlow) {
+					b.setType(Material.AIR);
+				} else {
+					new TempBlock(b, Material.AIR);
+				}
 			} else {
-				new TempBlock(b, Material.WATER);
+				if (this.allowMeltFlow) {
+					b.setType(Material.WATER);
+					b.setBlockData(GeneralMethods.getWaterData(0));
+				} else {
+					new TempBlock(b, Material.WATER);
+				}
 			}
+
 			this.melted_blocks.add(b);
 		} else if (b.getType() == Material.SNOW_BLOCK || b.getType() == Material.SNOW) {
 			if (b.getBlockData() instanceof Snow) {
