@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.UUID;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -130,8 +131,18 @@ public class FlightHandler extends Manager {
 	 */
 	private void wipeInstance(final Player player) {
 		final Flight flight = this.INSTANCES.get(player.getUniqueId());
-		player.setAllowFlight(flight.couldFly);
-		player.setFlying(flight.wasFlying);
+
+		if (player.getGameMode() == GameMode.SPECTATOR) {
+			player.setAllowFlight(true);
+			player.setFlying(true);
+		} else if (player.getGameMode() == GameMode.CREATIVE) {
+			player.setAllowFlight(true);
+			player.setFlying(flight.wasFlying);
+		} else {
+			player.setAllowFlight(flight.couldFly);
+			player.setFlying(flight.wasFlying);
+		}
+
 		flight.abilities.values().forEach(ability -> this.CLEANUP.remove(ability));
 		this.INSTANCES.remove(player.getUniqueId());
 	}
