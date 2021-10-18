@@ -2010,7 +2010,11 @@ public class PKListener implements Listener {
 				
 			}.runTaskLater(ProjectKorra.plugin, 1);
 		} else {
-			BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
+			if (event.isBinding()) {
+				BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
+			} else {
+				BendingBoardManager.updateBoard(player, "", false, event.getSlot());
+			}
 		}
 	}
 
