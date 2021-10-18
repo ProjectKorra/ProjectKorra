@@ -10,8 +10,10 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 
 /**
  * Executor for /bending clear. Extends {@link PKCommand}.
@@ -49,8 +51,19 @@ public class ClearCommand extends PKCommand {
 			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		}
 		if (args.size() == 0) {
-			bPlayer.getAbilities().clear();
 			for (int i = 1; i <= 9; i++) {
+				if (!bPlayer.getAbilities().containsKey(i)) {
+					continue;
+				}
+
+				PlayerBindChangeEvent event = new PlayerBindChangeEvent(bPlayer.getPlayer(), bPlayer.getAbilities().get(i), i, false, false);
+				ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
+				
+				if (event.isCancelled()) {
+					continue;
+				}
+
+				bPlayer.getAbilities().remove(i);
 				GeneralMethods.saveAbility(bPlayer, i, null);
 			}
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
@@ -60,7 +73,15 @@ public class ClearCommand extends PKCommand {
 				if (slot < 1 || slot > 9) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 				}
+
 				if (bPlayer.getAbilities().get(slot) != null) {
+					PlayerBindChangeEvent event = new PlayerBindChangeEvent(bPlayer.getPlayer(), bPlayer.getAbilities().get(slot), slot, false, false);
+					ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
+					
+					if (event.isCancelled()) {
+						return;
+					}
+
 					bPlayer.getAbilities().remove(slot);
 					GeneralMethods.saveAbility(bPlayer, slot, null);
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
