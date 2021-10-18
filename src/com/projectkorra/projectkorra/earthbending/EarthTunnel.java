@@ -98,8 +98,8 @@ public class EarthTunnel extends EarthAbility {
 					this.remove();
 					return;
 				} else {
-					while ((!isEarth(this.block) && !isSand(this.block)) || (this.shouldIgnoreOre(this.block))) {
-						if (!this.isTransparent(this.block) && (!this.shouldIgnoreOre(this.block))) {
+					while ((!isEarth(this.block) && !isSand(this.block)) || (shouldIgnoreBlock(this.block))) {
+						if (!this.isTransparent(this.block) && (!shouldIgnoreBlock(this.block))) {
 							this.remove();
 							return;
 						}
@@ -160,7 +160,7 @@ public class EarthTunnel extends EarthAbility {
 		}
 	}
 
-	private boolean shouldIgnoreOre(final Block block) {
+	private static boolean shouldIgnoreBlock(final Block block) {
 		return IGNORED_BLOCKS.contains(block.getType().toString());
 	}
 
