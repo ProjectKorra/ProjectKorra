@@ -103,6 +103,7 @@ import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.event.AbilityVelocityAffectEntityEvent;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
@@ -1864,6 +1865,8 @@ public class GeneralMethods {
 		ConfigManager.presetConfig.reload();
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
+		EarthTunnel.clearBendableMaterials();
+		EarthTunnel.setupBendableMaterials();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();

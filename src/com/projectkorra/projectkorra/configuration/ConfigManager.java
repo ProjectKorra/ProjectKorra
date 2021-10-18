@@ -1284,7 +1284,28 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 			config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
-			config.addDefault("Abilities.Earth.EarthTunnel.IgnoreOres", false);
+
+			final ArrayList<String> earthTunnelIgnored = new ArrayList<String>();
+			earthTunnelIgnored.add(Material.COAL_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.IRON_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.REDSTONE_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.LAPIS_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.DIAMOND_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.EMERALD_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add("#coal_ores"); // added in 1.17
+			earthTunnelIgnored.add("#iron_ores"); // added in 1.17
+			earthTunnelIgnored.add("#gold_ores"); // added in 1.16.1
+			earthTunnelIgnored.add("#copper_ores"); // added in 1.17
+			earthTunnelIgnored.add("#redstone_ores"); // added in 1.17
+			earthTunnelIgnored.add("#lapis_ores"); // added in 1.17
+			earthTunnelIgnored.add("#diamond_ores"); // added in 1.17
+			earthTunnelIgnored.add("#emerald_ores"); // added in 1.17
+			earthTunnelIgnored.add(Material.ANCIENT_DEBRIS.toString());
+			earthTunnelIgnored.add(Material.GILDED_BLACKSTONE.toString());
+			earthTunnelIgnored.add(Material.NETHER_QUARTZ_ORE.toString());
+
+			config.addDefault("Abilities.Earth.EarthTunnel.IgnoredBlocks", earthTunnelIgnored);
+
 			config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
 			config.addDefault("Abilities.Earth.EarthTunnel.BlocksPerInterval", 1);
 

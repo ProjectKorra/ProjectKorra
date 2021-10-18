@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +18,8 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthTunnel extends EarthAbility {
 
+	private static final Set<String> IGNORED_BLOCKS = new HashSet<String>();
+	
 	private long interval;
 	private int blocksPerInterval;
 	private long time;
@@ -34,7 +37,6 @@ public class EarthTunnel extends EarthAbility {
 	private double radiusIncrement;
 	private boolean revert;
 	private boolean dropLootIfNotRevert;
-	private boolean ignoreOres;
 	private Block block;
 	private Location origin;
 	private Location location;
@@ -51,7 +53,6 @@ public class EarthTunnel extends EarthAbility {
 		this.blocksPerInterval = getConfig().getInt("Abilities.Earth.EarthTunnel.BlocksPerInterval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
-		this.ignoreOres = getConfig().getBoolean("Abilities.Earth.EarthTunnel.IgnoreOres");
 		this.revertTime = getConfig().getLong("Abilities.Earth.EarthTunnel.RevertCheckTime");
 
 		this.time = System.currentTimeMillis();
@@ -97,8 +98,8 @@ public class EarthTunnel extends EarthAbility {
 					this.remove();
 					return;
 				} else {
-					while ((!isEarth(this.block) && !isSand(this.block)) || (this.ignoreOres && this.isOre(this.block))) {
-						if (!this.isTransparent(this.block) && (this.ignoreOres && !this.isOre(this.block))) {
+					while ((!isEarth(this.block) && !isSand(this.block)) || (shouldIgnoreBlock(this.block))) {
+						if (!this.isTransparent(this.block) && (!shouldIgnoreBlock(this.block))) {
 							this.remove();
 							return;
 						}
@@ -159,20 +160,8 @@ public class EarthTunnel extends EarthAbility {
 		}
 	}
 
-	private boolean isOre(final Block block) {
-		switch (block.getType()) {
-			case COAL_ORE:
-			case IRON_ORE:
-			case GOLD_ORE:
-			case LAPIS_ORE:
-			case REDSTONE_ORE:
-			case DIAMOND_ORE:
-			case EMERALD_ORE:
-			case NETHER_QUARTZ_ORE:
-				return true;
-			default: 
-				return false;
-		}
+	private static boolean shouldIgnoreBlock(final Block block) {
+		return IGNORED_BLOCKS.contains(block.getType().toString());
 	}
 
 	@Override
@@ -292,4 +281,11 @@ public class EarthTunnel extends EarthAbility {
 		this.location = location;
 	}
 
+	public static void clearBendableMaterials() {
+		IGNORED_BLOCKS.clear();
+	}
+
+	public static void setupBendableMaterials() {
+		addTags(IGNORED_BLOCKS, getConfig().getStringList("Abilities.Earth.EarthTunnel.IgnoredBlocks"));
+	}
 }
