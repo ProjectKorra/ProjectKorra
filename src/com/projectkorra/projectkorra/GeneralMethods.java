@@ -589,20 +589,20 @@ public class GeneralMethods {
 		loc.setY(loc.getY() + (Math.random() * 2 - 1) * yOffset);
 		loc.setZ(loc.getZ() + (Math.random() * 2 - 1) * zOffset);
 
-		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
-			type = ParticleEffect.RED_DUST;
+		if (type != ParticleEffect.REDSTONE && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.SPELL_MOB_AMBIENT) {
+			type = ParticleEffect.REDSTONE;
 		}
 		type.display(loc, 0, red, green, blue);
 	}
 
 	@Deprecated
 	public static void displayColoredParticle(final Location loc, final String hexVal) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, 0, 0, 0);
+		displayColoredParticle(loc, ParticleEffect.REDSTONE, hexVal, 0, 0, 0);
 	}
 
 	@Deprecated
 	public static void displayColoredParticle(final Location loc, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, xOffset, yOffset, zOffset);
+		displayColoredParticle(loc, ParticleEffect.REDSTONE, hexVal, xOffset, yOffset, zOffset);
 	}
 
 	public static void displayColoredParticle(String hexVal, final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
