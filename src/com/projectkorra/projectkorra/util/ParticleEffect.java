@@ -1,115 +1,164 @@
 package com.projectkorra.projectkorra.util;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.Particle.DustTransition;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 
 public enum ParticleEffect {
 	
-	ASH (Particle.ASH),
-	
-	BARRIER (Particle.BARRIER),
+	ASH,
 	
 	/**
-	 * Applicable data: {@link BlockData}
+	 * Uses BLOCK_MARKER with BARRIER block data
 	 */
-	BLOCK_CRACK (Particle.BLOCK_CRACK),
+	BARRIER (Particle.BLOCK_MARKER, Material.BARRIER.createBlockData()),
 	
 	/**
-	 * Applicable data: {@link BlockData}
+	 * Applicable data: {@link BlockData}, defaults to DIRT block data
 	 */
-	BLOCK_DUST (Particle.BLOCK_DUST),
-	BUBBLE_COLUMN_UP (Particle.BUBBLE_COLUMN_UP),
-	BUBBLE_POP (Particle.BUBBLE_POP),
-	CAMPFIRE_COSY_SMOKE (Particle.CAMPFIRE_COSY_SMOKE),
-	CAMPFIRE_SIGNAL_SMOKE (Particle.CAMPFIRE_SIGNAL_SMOKE),
-	CLOUD (Particle.CLOUD),
-	COMPOSTER (Particle.COMPOSTER),
-	CRIMSON_SPORE (Particle.CRIMSON_SPORE),
-	CRIT (Particle.CRIT),
-	CRIT_MAGIC (Particle.CRIT_MAGIC), @Deprecated MAGIC_CRIT (Particle.CRIT_MAGIC),
-	CURRENT_DOWN (Particle.CURRENT_DOWN),
-	DAMAGE_INDICATOR (Particle.DAMAGE_INDICATOR),
-	DOLPHIN (Particle.DOLPHIN),
-	DRAGON_BREATH (Particle.DRAGON_BREATH),
-	DRIP_LAVA (Particle.DRIP_LAVA),
-	DRIP_WATER (Particle.DRIP_WATER),
-	DRIPPING_HONEY (Particle.DRIPPING_HONEY),
-	DRIPPING_OBSIDIAN_TEAR (Particle.DRIPPING_OBSIDIAN_TEAR),
-	ENCHANTMENT_TABLE (Particle.ENCHANTMENT_TABLE),
-	END_ROD (Particle.END_ROD),
-	EXPLOSION_HUGE (Particle.EXPLOSION_HUGE), @Deprecated HUGE_EXPLOSION (Particle.EXPLOSION_HUGE),
-	EXPLOSION_LARGE (Particle.EXPLOSION_LARGE), @Deprecated LARGE_EXPLODE (Particle.EXPLOSION_LARGE),
-	EXPLOSION_NORMAL (Particle.EXPLOSION_NORMAL), @Deprecated EXPLODE (Particle.EXPLOSION_NORMAL),
+	BLOCK_CRACK (Material.DIRT.createBlockData()),
 	
 	/**
-	 * Applicable data: {@link BlockData}
+	 * Applicable data: {@link BlockData}, defaults to DIRT block data
 	 */
-	FALLING_DUST (Particle.FALLING_DUST),
-	FALLING_HONEY (Particle.FALLING_HONEY),
-	FALLING_LAVA (Particle.FALLING_LAVA),
-	FALLING_NECTAR (Particle.FALLING_NECTAR),
-	FALLING_OBSIDIAN_TEAR (Particle.FALLING_OBSIDIAN_TEAR),
-	FALLING_WATER (Particle.FALLING_WATER),
-	FIREWORKS_SPARK (Particle.FIREWORKS_SPARK),
-	FLAME (Particle.FLAME),
-	FLASH (Particle.FLASH),
-	HEART (Particle.HEART),
+	BLOCK_DUST (Material.DIRT.createBlockData()),
+
+	/**
+	 * Applicable data: {@link BlockData}, defaults to DIRT block data
+	 */
+	BLOCK_MARKER (Material.DIRT.createBlockData()),
+	BUBBLE_COLUMN_UP,
+	BUBBLE_POP,
+	CAMPFIRE_COSY_SMOKE,
+	CAMPFIRE_SIGNAL_SMOKE,
+	CLOUD,
+	COMPOSTER,
+	CRIMSON_SPORE,
+	CRIT,
+	CRIT_MAGIC,
+	CURRENT_DOWN,
+	DAMAGE_INDICATOR,
+	DOLPHIN,
+	DRAGON_BREATH,
+	DRIP_LAVA,
+	DRIP_WATER,
+	DRIPPING_DRIPSTONE_LAVA,
+	DRIPPING_DRIPSTONE_WATER,
+	DRIPPING_HONEY,
+	DRIPPING_OBSIDIAN_TEAR,
+
+	/**
+	 * Applicable data: {@link DustTransition}, defaults to a blue -> green transition of size 1
+	 */
+	DUST_COLOR_TRANSITION (new DustTransition(Color.BLUE, Color.GREEN, 1.0f)),
+	ELECTRIC_SPARK,
+	ENCHANTMENT_TABLE,
+	END_ROD,
+	EXPLOSION_HUGE,
+	EXPLOSION_LARGE,
+	EXPLOSION_NORMAL,
+	FALLING_DRIPSTONE_LAVA,
+	FALLING_DRIPSTONE_WATER,
+
+	/**
+	 * Applicable data: {@link BlockData}, defaults to DIRT block data
+	 */
+	FALLING_DUST (Material.DIRT.createBlockData()),
+	FALLING_HONEY,
+	FALLING_LAVA,
+	FALLING_NECTAR,
+	FALLING_OBSIDIAN_TEAR,
+	FALLING_SPORE_BLOSSOM,
+	FALLING_WATER,
+	FIREWORKS_SPARK,
+	FLAME,
+	FLASH,
+	GLOW,
+	GLOW_SQUID_INK,
+	HEART,
 	
 	/**
-	 * Applicable data: {@link ItemStack}
+	 * Applicable data: {@link ItemStack}, defaults to DIRT item stack
 	 */
-	ITEM_CRACK (Particle.ITEM_CRACK),
-	LANDING_HONEY (Particle.LANDING_HONEY),
-	LANDING_LAVA (Particle.LANDING_LAVA),
-	LANDING_OBSIDIAN_TEAR (Particle.LANDING_OBSIDIAN_TEAR),
-	LAVA (Particle.LAVA),
-	MOB_APPEARANCE (Particle.MOB_APPEARANCE),
-	NAUTILUS (Particle.NAUTILUS),
-	NOTE (Particle.NOTE),
-	PORTAL (Particle.PORTAL),
+	ITEM_CRACK (new ItemStack(Material.DIRT)),
+	LANDING_HONEY,
+	LANDING_LAVA,
+	LANDING_OBSIDIAN_TEAR,
+	LAVA,
+	MOB_APPEARANCE,
+	NAUTILUS,
+	NOTE,
+	PORTAL,
 	
 	/**
-	 * Applicable data: {@link DustOptions}
+	 * Applicable data: {@link DustOptions}, defaults to red color of size 1
 	 */
-	REDSTONE (Particle.REDSTONE), @Deprecated RED_DUST (Particle.REDSTONE),
-	REVERSE_PORTAL (Particle.REVERSE_PORTAL),
-	SLIME (Particle.SLIME),
-	SMOKE_NORMAL (Particle.SMOKE_NORMAL), @Deprecated SMOKE (Particle.SMOKE_NORMAL),
-	SMOKE_LARGE (Particle.SMOKE_LARGE), @Deprecated LARGE_SMOKE (Particle.SMOKE_LARGE),
-	SNEEZE (Particle.SNEEZE),
-	SNOW_SHOVEL (Particle.SNOW_SHOVEL),
-	SNOWBALL (Particle.SNOWBALL), @Deprecated SNOWBALL_PROOF (Particle.SNOWBALL),
-	SOUL (Particle.SOUL),
-	SOUL_FIRE_FLAME (Particle.SOUL_FIRE_FLAME),
-	SPELL (Particle.SPELL),
-	SPELL_INSTANT (Particle.SPELL_INSTANT), @Deprecated INSTANT_SPELL (Particle.SPELL_INSTANT),
-	SPELL_MOB (Particle.SPELL_MOB), @Deprecated MOB_SPELL (Particle.SPELL_MOB),
-	SPELL_MOB_AMBIENT (Particle.SPELL_MOB_AMBIENT), @Deprecated MOB_SPELL_AMBIENT (Particle.SPELL_MOB_AMBIENT),
-	SPELL_WITCH (Particle.SPELL_WITCH), @Deprecated WITCH_SPELL (Particle.SPELL_WITCH),
-	SPIT (Particle.SPIT),
-	SQUID_INK (Particle.SQUID_INK),
-	SUSPENDED (Particle.SUSPENDED), @Deprecated SUSPEND (Particle.SUSPENDED),
-	SUSPENDED_DEPTH (Particle.SUSPENDED_DEPTH), @Deprecated DEPTH_SUSPEND (Particle.SUSPENDED_DEPTH),
-	SWEEP_ATTACK (Particle.SWEEP_ATTACK),
-	TOTEM (Particle.TOTEM),
-	TOWN_AURA (Particle.TOWN_AURA),
-	VILLAGER_ANGRY (Particle.VILLAGER_ANGRY), @Deprecated ANGRY_VILLAGER (Particle.VILLAGER_ANGRY),
-	VILLAGER_HAPPY (Particle.VILLAGER_HAPPY), @Deprecated HAPPY_VILLAGER (Particle.VILLAGER_HAPPY),
-	WARPED_SPORE (Particle.WARPED_SPORE),
-	WATER_BUBBLE (Particle.WATER_BUBBLE), @Deprecated BUBBLE (Particle.WATER_BUBBLE),
-	WATER_DROP (Particle.WATER_DROP),
-	WATER_SPLASH (Particle.WATER_SPLASH), @Deprecated SPLASH (Particle.WATER_SPLASH),
-	WATER_WAKE (Particle.WATER_WAKE), @Deprecated WAKE (Particle.WATER_WAKE),
-	WHITE_ASH (Particle.WHITE_ASH);
+	REDSTONE (new DustOptions(Color.RED, 1.0f)),
+	REVERSE_PORTAL,
+	SCRAPE,
+	SLIME,
+	SMOKE_NORMAL, 
+	SMOKE_LARGE,
+	SNEEZE,
+	SNOW_SHOVEL,
+	SNOWBALL,
+	SNOWFLAKE,
+	SOUL,
+	SOUL_FIRE_FLAME,
+	SPELL,
+	SPELL_INSTANT,
+	SPELL_MOB,
+	SPELL_MOB_AMBIENT,
+	SPELL_WITCH,
+	SPIT,
+	SPORE_BLOSSOM_AIR,
+	SQUID_INK,
+	SUSPENDED,
+	SUSPENDED_DEPTH,
+	SWEEP_ATTACK,
+	TOTEM,
+	TOWN_AURA,
+
+	/**
+	 * Applicable data: {@link Vibration}, has no default meaning it requires data each time.
+	 * Location and offsets will be ignored by spigot
+	 */
+	VIBRATION,
+	VILLAGER_ANGRY,
+	VILLAGER_HAPPY,
+	WARPED_SPORE,
+	WATER_BUBBLE,
+	WATER_DROP,
+	WATER_SPLASH,
+	WATER_WAKE,
+	WAX_OFF,
+	WAX_ON,
+	WHITE_ASH;
 	
 	Particle particle;
-	Class<?> dataClass;
+	Object defaultData = null;
 	
+	private ParticleEffect() {
+		this.particle = Particle.valueOf(this.toString());
+	}
+
+	private ParticleEffect(Object data) {
+		this();
+		this.defaultData = data;
+	}
+
 	private ParticleEffect(Particle particle) {
 		this.particle = particle;
-		this.dataClass = particle.getDataType();
+	}
+
+	private ParticleEffect(Particle particle, Object data) {
+		this(particle);
+		this.defaultData = data;
 	}
 	
 	public Particle getParticle() {
@@ -122,7 +171,7 @@ public enum ParticleEffect {
 	 * @param amount how many of the particle to display
 	 */
 	public void display(Location loc, int amount) {
-		display(loc, amount, 0, 0, 0);
+		display(loc, amount, 0, 0, 0, 0, null);
 	}
 	
 	/**
@@ -134,7 +183,7 @@ public enum ParticleEffect {
 	 * @param offsetZ random offset on the z axis
 	 */
 	public void display(Location loc, int amount, double offsetX, double offsetY, double offsetZ) {
-		display(loc, amount, offsetX, offsetY, offsetZ, 0);
+		display(loc, amount, offsetX, offsetY, offsetZ, 0, null);
 	}
 	
 	/**
@@ -147,7 +196,7 @@ public enum ParticleEffect {
 	 * @param extra extra data to affect the particle, usually affects speed or does nothing
 	 */
 	public void display(Location loc, int amount, double offsetX, double offsetY, double offsetZ, double extra) {
-		loc.getWorld().spawnParticle(particle, loc, amount, offsetX, offsetY, offsetZ, extra, null, true);
+		display(loc, amount, offsetX, offsetY, offsetZ, extra, null);
 	}
 	
 	/**
@@ -174,10 +223,10 @@ public enum ParticleEffect {
 	 * @param data data to display the particle with, only applicable on several particle types (check the enum)
 	 */
 	public void display(Location loc, int amount, double offsetX, double offsetY, double offsetZ, double extra, Object data) {
-		if (dataClass.isAssignableFrom(Void.class) || data == null || !dataClass.isAssignableFrom(data.getClass())) {
-			display(loc, amount, offsetX, offsetY, offsetZ, extra);
-		} else {
-			loc.getWorld().spawnParticle(particle, loc, amount, offsetX, offsetY, offsetZ, extra, data, true);
+		if (defaultData != null && data == null) {
+			data = defaultData;
 		}
+
+		loc.getWorld().spawnParticle(particle, loc, amount, offsetX, offsetY, offsetZ, extra, data, true);
 	}
 }
