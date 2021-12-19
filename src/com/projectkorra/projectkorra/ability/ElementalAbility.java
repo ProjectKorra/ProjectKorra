@@ -77,10 +77,8 @@ public abstract class ElementalAbility extends CoreAbility {
 		iterator.forEachRemaining(next -> {
 			if (next.startsWith("#")) {
 				NamespacedKey key = NamespacedKey.minecraft(next.replaceFirst("#", ""));
-				if (!Bukkit.getTag(Tag.REGISTRY_BLOCKS, key, Material.class).getValues().isEmpty()) {
-					for (Material material : Bukkit.getTag(Tag.REGISTRY_BLOCKS, key, Material.class).getValues()) {
-						outputSet.add(material.toString());
-					}
+				for (Material material : Bukkit.getTag(Tag.REGISTRY_BLOCKS, key, Material.class).getValues()) {
+					outputSet.add(material.toString());
 				}
 			} else {
 				outputSet.add(next.toUpperCase());
