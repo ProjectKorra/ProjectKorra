@@ -9,8 +9,6 @@ public enum ParticleEffect {
 	
 	ASH (Particle.ASH),
 	
-	BARRIER (Particle.BARRIER),
-	
 	/**
 	 * Applicable data: {@link BlockData}
 	 */
