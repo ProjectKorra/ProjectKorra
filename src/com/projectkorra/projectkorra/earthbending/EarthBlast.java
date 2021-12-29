@@ -107,7 +107,6 @@ public class EarthBlast extends EarthAbility {
 		if (DensityShift.isPassiveSand(this.sourceBlock)) {
 			DensityShift.revertSand(this.sourceBlock);
 		}
-
 		if (this.sourceBlock.getType() == Material.SAND) {
 			this.sourceType = Material.SAND;
 			this.sourceBlock.setType(Material.SANDSTONE);

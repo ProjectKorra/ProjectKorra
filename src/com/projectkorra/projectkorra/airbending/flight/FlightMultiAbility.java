@@ -155,7 +155,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 	@Override
 	public void progress() {
-		if (!this.player.isOnline() || this.player.isDead()) {
+		if (!this.player.isOnline() || this.player.isDead() || !this.bPlayer.canBendIgnoreBinds(this)) {
 			this.remove();
 			return;
 		}

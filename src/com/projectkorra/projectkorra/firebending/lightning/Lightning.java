@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending.lightning;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.firebending.FireJet;
@@ -128,6 +129,7 @@ public class Lightning extends LightningAbility {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.Cooldown");
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Lightning.Damage");
 		}
+
 		this.start();
 	}
 
@@ -139,9 +141,10 @@ public class Lightning extends LightningAbility {
 	public void electrocute(final LivingEntity lent) {
 		playLightningbendingSound(lent.getLocation());
 		playLightningbendingSound(this.player.getLocation());
+		playLightningbendingHitSound(lent.getLocation());
+		playLightningbendingHitSound(this.player.getLocation());
 		DamageHandler.damageEntity(lent, this.damage, this);
-
-		if (Math.random() <= this.stunChance) {
+		if (ThreadLocalRandom.current().nextDouble() <= this.stunChance) {
 			final MovementHandler mh = new MovementHandler(lent, this);
 			mh.stopWithDuration((long) this.stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
 		}
@@ -204,6 +207,10 @@ public class Lightning extends LightningAbility {
 					final Location loc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
 					playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
+					if (ThreadLocalRandom.current().nextDouble() < .2) {
+						playLightningbendingChargingSound(loc);
+					}
+					
 				} else {
 					this.state = State.MAINBOLT;
 					this.bPlayer.addCooldown(this);
@@ -235,6 +242,9 @@ public class Lightning extends LightningAbility {
 				final Location localLocation2 = new Location(this.player.getWorld(), d7, newY, d8);
 				playLightningbendingParticle(localLocation2);
 				this.particleRotation += 1.0D / d3;
+				if (ThreadLocalRandom.current().nextDouble() < .2) {
+					playLightningbendingChargingSound(this.player.getLocation());
+				}
 			}
 
 		} else if (this.state == State.MAINBOLT) {
@@ -365,11 +375,11 @@ public class Lightning extends LightningAbility {
 			final ArrayList<Arc> arcs = new ArrayList<>();
 
 			for (int i = 0; i < this.animationLocations.size(); i++) {
-				if (Math.random() < chance) {
+				if (ThreadLocalRandom.current().nextDouble() < chance) {
 					final Location loc = this.animationLocations.get(i).getLocation();
-					final double angle = (Math.random() - 0.5) * maxArcAngle * 2;
+					final double angle = (ThreadLocalRandom.current().nextDouble() - 0.5) * maxArcAngle * 2;
 					final Vector dir = GeneralMethods.rotateXZ(this.direction.clone(), angle);
-					final double randRange = (Math.random() * range) + (range / 3.0);
+					final double randRange = (ThreadLocalRandom.current().nextDouble() * range) + (range / 3.0);
 
 					final Location loc2 = loc.clone().add(dir.normalize().multiply(randRange));
 					final Arc arc = new Arc(loc, loc2);
@@ -405,7 +415,7 @@ public class Lightning extends LightningAbility {
 						adjac = loc1.distance(loc2) / 2;
 					}
 
-					double angle = (Math.random() - 0.5) * Lightning.this.maxArcAngle;
+					double angle = (ThreadLocalRandom.current().nextDouble() - 0.5) * Lightning.this.maxArcAngle;
 
 					angle += angle >= 0 ? 10 : -10;
 
@@ -414,7 +424,7 @@ public class Lightning extends LightningAbility {
 					final Vector dir = GeneralMethods.rotateXZ(this.direction.clone(), angle);
 					final Location newLoc = loc1.clone().add(dir.normalize().multiply(hypot));
 
-					newLoc.add(0, (Math.random() - 0.5) / 2.0, 0);
+					newLoc.add(0, (ThreadLocalRandom.current().nextDouble() - 0.5) / 2.0, 0);
 					this.points.add(j + 1, newLoc);
 				}
 			}
@@ -499,6 +509,10 @@ public class Lightning extends LightningAbility {
 			if (this.count > 5) {
 				this.cancel();
 			} else if (this.count == 1) {
+				if (ThreadLocalRandom.current().nextDouble() < .1) {
+					playLightningbendingSound(location);
+				}
+
 				if (!Lightning.this.isTransparentForLightning(Lightning.this.player, this.location.getBlock())) {
 					this.arc.cancel();
 					return;
@@ -517,8 +531,8 @@ public class Lightning extends LightningAbility {
 
 					for (int i = 0; i < this.waterArcs; i++) {
 						final Location origin = this.location.clone();
-						origin.add(new Vector((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2));
-						Lightning.this.destination = origin.clone().add(new Vector((Math.random() - 0.5) * Lightning.this.waterArcRange, Math.random() - 0.7, (Math.random() - 0.5) * Lightning.this.waterArcRange));
+						origin.add(new Vector((ThreadLocalRandom.current().nextDouble() - 0.5) * 2, 0, (ThreadLocalRandom.current().nextDouble() - 0.5) * 2));
+						Lightning.this.destination = origin.clone().add(new Vector((ThreadLocalRandom.current().nextDouble() - 0.5) * Lightning.this.waterArcRange, ThreadLocalRandom.current().nextDouble() - 0.7, (ThreadLocalRandom.current().nextDouble() - 0.5) * Lightning.this.waterArcRange));
 						final Arc newArc = new Arc(origin, Lightning.this.destination);
 						newArc.generatePoints(POINT_GENERATION);
 						Lightning.this.arcs.add(newArc);
@@ -550,7 +564,7 @@ public class Lightning extends LightningAbility {
 						Lightning.this.electrocute(lent);
 
 						// Handle Chain Lightning.
-						if (Lightning.this.maxChainArcs >= 1 && Math.random() <= Lightning.this.chainArcChance) {
+						if (Lightning.this.maxChainArcs >= 1 && ThreadLocalRandom.current().nextDouble() <= Lightning.this.chainArcChance) {
 							Lightning.this.maxChainArcs--;
 							for (final Entity ent : GeneralMethods.getEntitiesAroundPoint(lent.getLocation(), Lightning.this.chainRange)) {
 								if (!ent.equals(Lightning.this.player) && !ent.equals(lent) && ent instanceof LivingEntity && !Lightning.this.affectedEntities.contains(ent)) {

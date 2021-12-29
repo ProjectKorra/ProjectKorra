@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class ConfigManager {
 
 	public static Config presetConfig;
@@ -73,9 +75,16 @@ public class ConfigManager {
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
 
 			config.addDefault("Board.Title", "&lAbilities");
-			config.addDefault("Board.SelectionPrefix", ">  &r");
+			config.addDefault("Board.Prefix.Text", "> ");
+			config.addDefault("Board.Prefix.SelectedColor", ChatColor.WHITE.getName());
+			config.addDefault("Board.Prefix.NonSelectedColor", ChatColor.DARK_GRAY.getName());
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
-			config.addDefault("Board.MiscSeparator", "  ------------");
+			config.addDefault("Board.MiscSeparator", "  ----------");
+			
+			if (!config.contains("Board.Extras")) {
+				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
+				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
+			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
@@ -447,115 +456,135 @@ public class ConfigManager {
 			config = defaultConfig.get();
 
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
-			earthBlocks.add(Material.DIRT.toString());
-			earthBlocks.add(Material.COARSE_DIRT.toString());
-			earthBlocks.add(Material.PODZOL.toString());
-			earthBlocks.add(Material.MYCELIUM.toString());
-			earthBlocks.add(Material.STONE.toString());
-			earthBlocks.add(Material.GRAVEL.toString());
-			earthBlocks.add(Material.CLAY.toString());
-			earthBlocks.add(Material.COAL_ORE.toString());
-			earthBlocks.add(Material.REDSTONE_ORE.toString());
-			earthBlocks.add(Material.LAPIS_ORE.toString());
-			earthBlocks.add(Material.DIAMOND_ORE.toString());
-			earthBlocks.add(Material.EMERALD_ORE.toString());
-			earthBlocks.add(Material.NETHERRACK.toString());
-			earthBlocks.add(Material.COBBLESTONE.toString());
-			earthBlocks.add(Material.STONE_SLAB.toString());
-			earthBlocks.add(Material.COBBLESTONE_SLAB.toString());
-			earthBlocks.add(Material.GRASS_BLOCK.toString());
-			earthBlocks.add(Material.GRASS_PATH.toString());
-			earthBlocks.add(Material.ANDESITE.toString());
-			earthBlocks.add(Material.GRANITE.toString());
-			earthBlocks.add(Material.DIORITE.toString());
-			earthBlocks.add(Material.BASALT.toString());
-			earthBlocks.add(Material.ANCIENT_DEBRIS.toString());
-			earthBlocks.add(Material.BLACKSTONE.toString());
+			earthBlocks.add("#base_stone_nether"); // added in 1.16.2
+			earthBlocks.add("#base_stone_overworld"); // added in 1.16.2
+			earthBlocks.add("#coal_ores"); // added in 1.17
+			earthBlocks.add("#diamond_ores"); // added in 1.17
+			earthBlocks.add("#emerald_ores"); // added in 1.17
+			earthBlocks.add("#lapis_ores"); // added in 1.17
+			earthBlocks.add("#redstone_ores"); // added in 1.17
+			earthBlocks.add("CALCITE");
+			earthBlocks.add("DRIPSTONE_BLOCK");
+			earthBlocks.add("LARGE_AMETHYST_BUD");
+			earthBlocks.add("MEDIUM_AMETHYST_BUD");
+			earthBlocks.add("SMALL_AMETHYST_BUD");
+			earthBlocks.add("ANCIENT_DEBRIS");
+			earthBlocks.add("CLAY");
+			earthBlocks.add("COAL_ORE"); // no longer needed in 1.17+
+			earthBlocks.add("COARSE_DIRT");
+			earthBlocks.add("COBBLESTONE");
+			earthBlocks.add("COBBLESTONE_SLAB");
+			earthBlocks.add("DIAMOND_ORE"); // no longer needed in 1.17+
+			earthBlocks.add("DIRT");
+			earthBlocks.add("EMERALD_ORE"); // no longer needed in 1.17+
+			earthBlocks.add("GRASS_BLOCK");
+			earthBlocks.add("GRASS_PATH");
+			earthBlocks.add("DIRT_PATH"); // renamed from grass_path in 1.17
+			earthBlocks.add("GRAVEL");
+			earthBlocks.add("LAPIS_ORE"); // no longer needed in 1.17+
+			earthBlocks.add("MYCELIUM");
+			earthBlocks.add("PODZOL");
+			earthBlocks.add("REDSTONE_ORE"); // no longer needed in 1.17+
+			earthBlocks.add("STONE_SLAB");
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
-			metalBlocks.add(Material.IRON_ORE.toString());
-			metalBlocks.add(Material.GOLD_ORE.toString());
-			metalBlocks.add(Material.NETHER_QUARTZ_ORE.toString());
-			earthBlocks.add(Material.GILDED_BLACKSTONE.toString());
-			metalBlocks.add(Material.IRON_BLOCK.toString());
-			metalBlocks.add(Material.GOLD_BLOCK.toString());
-			metalBlocks.add(Material.QUARTZ_BLOCK.toString());
-			metalBlocks.add(Material.CHAIN.toString());
-			metalBlocks.add(Material.NETHERITE_BLOCK.toString());
+			metalBlocks.add("#copper_ores"); // added in 1.17
+			metalBlocks.add("#gold_ores"); // added in 1.16.1
+			metalBlocks.add("#iron_ores"); // added in 1.17
+			metalBlocks.add("COPPER_BLOCK");
+			metalBlocks.add("CUT_COPPER");
+			metalBlocks.add("CUT_COPPER_SLAB");
+			metalBlocks.add("CUT_COPPER_STAIRS");
+			metalBlocks.add("EXPOSED_COPPER");
+			metalBlocks.add("EXPOSED_CUT_COPPER");
+			metalBlocks.add("EXPOSED_CUT_COPPER_SLAB");
+			metalBlocks.add("EXPOSED_CUT_COPPER_STAIRS");
+			metalBlocks.add("OXIDIZED_COPPER");
+			metalBlocks.add("OXIDIZED_CUT_COPPER");
+			metalBlocks.add("OXIDIZED_CUT_COPPER_SLAB");
+			metalBlocks.add("OXIDIZED_CUT_COPPER_STAIRS");
+			metalBlocks.add("RAW_COPPER_BLOCK");
+			metalBlocks.add("RAW_GOLD_BLOCK");
+			metalBlocks.add("RAW_IRON_BLOCK");
+			metalBlocks.add("WAXED_COPPER_BLOCK");
+			metalBlocks.add("WAXED_CUT_COPPER");
+			metalBlocks.add("WAXED_CUT_COPPER_SLAB");
+			metalBlocks.add("WAXED_CUT_COPPER_STAIRS");
+			metalBlocks.add("WAXED_EXPOSED_COPPER");
+			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER");
+			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_SLAB");
+			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_STAIRS");
+			metalBlocks.add("WAXED_OXIDIZED_COPPER");
+			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER");
+			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_SLAB");
+			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_STAIRS");
+			metalBlocks.add("WAXED_WEATHERED_COPPER");
+			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER");
+			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_SLAB");
+			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_STAIRS");
+			metalBlocks.add("WEATHERED_COPPER");
+			metalBlocks.add("WEATHERED_CUT_COPPER");
+			metalBlocks.add("WEATHERED_CUT_COPPER_SLAB");
+			metalBlocks.add("WEATHERED_CUT_COPPER_STAIRS");
+			metalBlocks.add("CHAIN");
+			metalBlocks.add("GILDED_BLACKSTONE");
+			metalBlocks.add("GOLD_BLOCK");
+			metalBlocks.add("IRON_BLOCK");
+			metalBlocks.add("IRON_ORE"); // no longer needed in 1.17+
+			metalBlocks.add("NETHERITE_BLOCK");
+			metalBlocks.add("NETHER_QUARTZ_ORE");
+			metalBlocks.add("QUARTZ_BLOCK");
 
 			final ArrayList<String> sandBlocks = new ArrayList<String>();
-			sandBlocks.add(Material.SAND.toString());
-			sandBlocks.add(Material.SANDSTONE.toString());
-			sandBlocks.add(Material.SANDSTONE_SLAB.toString());
-			sandBlocks.add(Material.RED_SAND.toString());
-			sandBlocks.add(Material.RED_SANDSTONE.toString());
-			sandBlocks.add(Material.RED_SANDSTONE_SLAB.toString());
+			sandBlocks.add("#sand");
+			sandBlocks.add("RED_SANDSTONE");
+			sandBlocks.add("RED_SANDSTONE_SLAB");
+			sandBlocks.add("SANDSTONE");
+			sandBlocks.add("SANDSTONE_SLAB");
 
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
-			iceBlocks.add(Material.ICE.toString());
-			iceBlocks.add(Material.PACKED_ICE.toString());
-			iceBlocks.add(Material.BLUE_ICE.toString());
-			iceBlocks.add(Material.FROSTED_ICE.toString());
+			iceBlocks.add("#ice");
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
-			plantBlocks.add(Material.ACACIA_SAPLING.toString());
-			plantBlocks.add(Material.BIRCH_SAPLING.toString());
-			plantBlocks.add(Material.DARK_OAK_SAPLING.toString());
-			plantBlocks.add(Material.JUNGLE_SAPLING.toString());
-			plantBlocks.add(Material.OAK_SAPLING.toString());
-			plantBlocks.add(Material.SPRUCE_SAPLING.toString());
-			plantBlocks.add(Material.ACACIA_LEAVES.toString());
-			plantBlocks.add(Material.BIRCH_LEAVES.toString());
-			plantBlocks.add(Material.DARK_OAK_LEAVES.toString());
-			plantBlocks.add(Material.JUNGLE_LEAVES.toString());
-			plantBlocks.add(Material.OAK_LEAVES.toString());
-			plantBlocks.add(Material.SPRUCE_LEAVES.toString());
-			plantBlocks.add(Material.ORANGE_TULIP.toString());
-			plantBlocks.add(Material.PINK_TULIP.toString());
-			plantBlocks.add(Material.RED_TULIP.toString());
-			plantBlocks.add(Material.WHITE_TULIP.toString());
-			plantBlocks.add(Material.ROSE_BUSH.toString());
-			plantBlocks.add(Material.BLUE_ORCHID.toString());
-			plantBlocks.add(Material.ALLIUM.toString());
-			plantBlocks.add(Material.DANDELION.toString());
-			plantBlocks.add(Material.LILAC.toString());
-			plantBlocks.add(Material.OXEYE_DAISY.toString());
-			plantBlocks.add(Material.AZURE_BLUET.toString());
-			plantBlocks.add(Material.PEONY.toString());
-			plantBlocks.add(Material.SUNFLOWER.toString());
-			plantBlocks.add(Material.POPPY.toString());
-			plantBlocks.add(Material.FERN.toString());
-			plantBlocks.add(Material.LILY_OF_THE_VALLEY.toString());
-			plantBlocks.add(Material.WITHER_ROSE.toString());
-			plantBlocks.add(Material.CORNFLOWER.toString());
-			plantBlocks.add(Material.LARGE_FERN.toString());
-			plantBlocks.add(Material.RED_MUSHROOM.toString());
-			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.toString());
-			plantBlocks.add(Material.BROWN_MUSHROOM.toString());
-			plantBlocks.add(Material.BROWN_MUSHROOM_BLOCK.toString());
-			plantBlocks.add(Material.MUSHROOM_STEM.toString());
-			plantBlocks.add(Material.WARPED_ROOTS.toString());
-			plantBlocks.add(Material.CRIMSON_ROOTS.toString());
-			plantBlocks.add(Material.TWISTING_VINES_PLANT.toString());
-			plantBlocks.add(Material.WEEPING_VINES_PLANT.toString());
-			plantBlocks.add(Material.NETHER_SPROUTS.toString());
-			plantBlocks.add(Material.CACTUS.toString());
-			plantBlocks.add(Material.PUMPKIN.toString());
-			plantBlocks.add(Material.PUMPKIN_STEM.toString());
-			plantBlocks.add(Material.MELON.toString());
-			plantBlocks.add(Material.MELON_STEM.toString());
-			plantBlocks.add(Material.VINE.toString());
-			plantBlocks.add(Material.LILY_PAD.toString());
-			plantBlocks.add(Material.WHEAT.toString());
-			plantBlocks.add(Material.BEETROOTS.toString());
-			plantBlocks.add(Material.CARROTS.toString());
-			plantBlocks.add(Material.POTATOES.toString());
-			plantBlocks.add(Material.SUGAR_CANE.toString());
-			plantBlocks.add(Material.GRASS.toString());
-			plantBlocks.add(Material.TALL_GRASS.toString());
+			plantBlocks.add("#bee_growables");
+			plantBlocks.add("#flowers");
+			plantBlocks.add("#leaves");
+			plantBlocks.add("#saplings");
+			plantBlocks.add("BIG_DRIPLEAF");
+			plantBlocks.add("HANGING_ROOTS");
+			plantBlocks.add("MOSS_BLOCK");
+			plantBlocks.add("MOSS_CARPET");
+			plantBlocks.add("SMALL_DRIPLEAF");
+			plantBlocks.add("SPORE_BLOSSOM");
+			plantBlocks.add("BROWN_MUSHROOM");
+			plantBlocks.add("BROWN_MUSHROOM_BLOCK");
+			plantBlocks.add("CACTUS");
+			plantBlocks.add("CRIMSON_FUNGUS");
+			plantBlocks.add("CRIMSON_ROOTS");
+			plantBlocks.add("FERN");
+			plantBlocks.add("GRASS");
+			plantBlocks.add("LARGE_FERN");
+			plantBlocks.add("LILY_PAD");
+			plantBlocks.add("MELON");
+			plantBlocks.add("MELON_STEM");
+			plantBlocks.add("MUSHROOM_STEM");
+			plantBlocks.add("NETHER_SPROUTS");
+			plantBlocks.add("PUMPKIN");
+			plantBlocks.add("PUMPKIN_STEM");
+			plantBlocks.add("RED_MUSHROOM");
+			plantBlocks.add("RED_MUSHROOM_BLOCK");
+			plantBlocks.add("SUGAR_CANE");
+			plantBlocks.add("TALL_GRASS");
+			plantBlocks.add("TWISTING_VINES_PLANT");
+			plantBlocks.add("VINE");
+			plantBlocks.add("WARPED_FUNGUS");
+			plantBlocks.add("WARPED_ROOTS");
+			plantBlocks.add("WEEPING_VINES_PLANT");
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
-			snowBlocks.add(Material.SNOW.toString());
+			snowBlocks.add("#snow"); // added in 1.17
+			snowBlocks.add("SNOW"); // no longer needed in 1.17+
+			snowBlocks.add("SNOW_BLOCK"); // no longer needed in 1.17+
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
@@ -656,6 +685,12 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
 			config.addDefault("Properties.Fire.LightningSound.Volume", 1);
 			config.addDefault("Properties.Fire.LightningSound.Pitch", 0);
+			config.addDefault("Properties.Fire.LightningCharge.Sound", "BLOCK_BEEHIVE_WORK");
+			config.addDefault("Properties.Fire.LightningCharge.Volume", 2);
+			config.addDefault("Properties.Fire.LightningCharge.Pitch", .5);
+			config.addDefault("Properties.Fire.LightningHit.Sound", "ENTITY_LIGHTNING_BOLT_THUNDER");
+			config.addDefault("Properties.Fire.LightningHit.Volume", 1);
+			config.addDefault("Properties.Fire.LightningHit.Pitch", 2);
 			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
 			config.addDefault("Properties.Fire.BlueFire.CooldownFactor", .9);
 			config.addDefault("Properties.Fire.BlueFire.RangeFactor", 1.2);
@@ -1243,13 +1278,35 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthGrab.DamageThreshold", 4);
 
 			config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthTunnel.RevertCheckTime", 300000);
 			config.addDefault("Abilities.Earth.EarthTunnel.Cooldown", 0);
 			config.addDefault("Abilities.Earth.EarthTunnel.MaxRadius", 1);
 			config.addDefault("Abilities.Earth.EarthTunnel.Range", 10);
 			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 			config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
-			config.addDefault("Abilities.Earth.EarthTunnel.IgnoreOres", false);
+
+			final ArrayList<String> earthTunnelIgnored = new ArrayList<String>();
+			earthTunnelIgnored.add(Material.COAL_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.IRON_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.REDSTONE_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.LAPIS_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.DIAMOND_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add(Material.EMERALD_ORE.toString()); // no longer needed in 1.17
+			earthTunnelIgnored.add("#coal_ores"); // added in 1.17
+			earthTunnelIgnored.add("#iron_ores"); // added in 1.17
+			earthTunnelIgnored.add("#gold_ores"); // added in 1.16.1
+			earthTunnelIgnored.add("#copper_ores"); // added in 1.17
+			earthTunnelIgnored.add("#redstone_ores"); // added in 1.17
+			earthTunnelIgnored.add("#lapis_ores"); // added in 1.17
+			earthTunnelIgnored.add("#diamond_ores"); // added in 1.17
+			earthTunnelIgnored.add("#emerald_ores"); // added in 1.17
+			earthTunnelIgnored.add(Material.ANCIENT_DEBRIS.toString());
+			earthTunnelIgnored.add(Material.GILDED_BLACKSTONE.toString());
+			earthTunnelIgnored.add(Material.NETHER_QUARTZ_ORE.toString());
+
+			config.addDefault("Abilities.Earth.EarthTunnel.IgnoredBlocks", earthTunnelIgnored);
+
 			config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
 			config.addDefault("Abilities.Earth.EarthTunnel.BlocksPerInterval", 1);
 
