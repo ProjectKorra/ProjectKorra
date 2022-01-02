@@ -34,11 +34,15 @@ public class BendingBoard {
 		private String entry;
 		private Optional<BoardSlot> next = Optional.empty();
 		
-		@SuppressWarnings("deprecation")
 		public BoardSlot(Scoreboard board, Objective obj, int slot) {
 			this.board = board;
 			this.obj = obj;
 			this.slot = slot + 1;
+			this.formTeam();
+		}
+
+		@SuppressWarnings("deprecation")
+		private void formTeam() {
 			this.team = board.registerNewTeam("slot" + this.slot);
 			this.entry = ChatColor.values()[slot % 10] + "" + ChatColor.values()[slot % 16];
 			
@@ -61,7 +65,13 @@ public class BendingBoard {
 		}
 		
 		public void decreaseSlot() {
-			setSlot(--slot);
+			setSlot(slot - 2);
+			String prefix = team.getPrefix(), suffix = team.getSuffix();
+			this.board.resetScores(entry);
+			this.team.unregister();
+			this.formTeam();
+			this.update(prefix, suffix);
+			this.set();
 			next.ifPresent(BoardSlot::decreaseSlot);
 		}
 		
