@@ -205,12 +205,6 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private boolean canPlaceBlock(final Block block) {
-		if (TempBlock.isTempBlock(block)) {
-			if (this.external.contains(TempBlock.get(block))) {
-				return false;
-			}
-		}
-
 		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || ElementalAbility.isAir(block.getType());
 	}
 
@@ -328,11 +322,13 @@ public class WaterArms extends WaterAbility {
 		if (TempBlock.isTempBlock(b)) {
 			final TempBlock tb = TempBlock.get(b);
 
-			if (this.right.contains(b) || this.left.contains(b)) {
-				tb.setType(data);
-				tb.setRevertTime(revertTime);
-			} else {
-				this.external.add(tb);
+			if (!external.contains(tb)) {
+				if (this.right.contains(b) || this.left.contains(b)) {
+					tb.setType(data);
+					tb.setRevertTime(revertTime);
+				} else {
+					this.external.add(tb);
+				}
 			}
 		} else {
 			new TempBlock(b, data, revertTime);
