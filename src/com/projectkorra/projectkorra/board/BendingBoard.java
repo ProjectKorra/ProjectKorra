@@ -65,13 +65,12 @@ public class BendingBoard {
 		}
 		
 		public void decreaseSlot() {
-			setSlot(slot - 2);
+			--this.slot;
 			String prefix = team.getPrefix(), suffix = team.getSuffix();
 			this.board.resetScores(entry);
 			this.team.unregister();
 			this.formTeam();
 			this.update(prefix, suffix);
-			this.set();
 			next.ifPresent(BoardSlot::decreaseSlot);
 		}
 		
