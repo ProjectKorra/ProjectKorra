@@ -23,7 +23,6 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WallOfFire extends FireAbility {
 
-	private boolean active;
 	private int damageTick;
 	private int intervalTick;
 	@Attribute(Attribute.RANGE)
@@ -51,7 +50,6 @@ public class WallOfFire extends FireAbility {
 	public WallOfFire(final Player player) {
 		super(player);
 
-		this.active = true;
 		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
 		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
 		this.range = getConfig().getInt("Abilities.Fire.WallOfFire.Range");
@@ -202,21 +200,14 @@ public class WallOfFire extends FireAbility {
 	public void progress() {
 		this.time = System.currentTimeMillis();
 
-		if (this.time - this.getStartTime() > this.cooldown) {
+		if (this.time > this.getStartTime() + this.duration) {
 			this.remove();
 			return;
-		} else if (!this.active) {
-			return;
-		} else if (this.time - this.getStartTime() > this.duration) {
-			this.active = false;
-			return;
 		}
-
 		if (this.time - this.getStartTime() > this.intervalTick * this.interval) {
 			this.intervalTick++;
 			this.display();
 		}
-
 		if (this.time - this.getStartTime() > this.damageTick * this.damageInterval) {
 			this.damageTick++;
 			this.damage();
@@ -261,14 +252,6 @@ public class WallOfFire extends FireAbility {
 			locations.add(block.getLocation());
 		}
 		return locations;
-	}
-
-	public boolean isActive() {
-		return this.active;
-	}
-
-	public void setActive(final boolean active) {
-		this.active = active;
 	}
 
 	public int getDamageTick() {
