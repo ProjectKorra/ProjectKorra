@@ -26,24 +26,30 @@ public class LightEmitTask implements Runnable {
         this.block = block;
         this.brightness = Math.min(brightness, 15);
         this.delay = Math.max(delay, 15);
+
         if (Material.matchMaterial("LIGHT") == null) {
             if (!warned) { // Warn the admins if their MC version does not contain the LIGHT material
                 ProjectKorra.plugin.getLogger().log(Level.INFO,Bukkit.getVersion() + " does not contain LIGHT. This addon is incompatible.");
                 warned = true;
             }
         }
+
+        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, this, 1L);
     }
 
     @Override
     public void run() {
         final Material type = this.block.getType(); // The Material of the block in question
         final boolean isTempBlock = TempBlock.isTempBlock(block);
+
         // Stop if it's a temp block or anything other than water or air.
         if (isTempBlock || (type != Material.WATER && type != Material.AIR)) return;
+
         // Create the fake light block data to send to clients.
         BlockData lightData = Material.valueOf("LIGHT").createBlockData();
         if (type == Material.WATER) { ((Waterlogged) lightData).setWaterlogged(true); } // For lighting underwater.
         ((Levelled) lightData).setLevel(brightness); // Set the brightness level, 0-15
+
         // Iterate online players and send them the light block change. Clients will handle the rendering.
         final Location blockLoc = this.block.getLocation();
         final BlockData priorData = this.block.getBlockData();
