@@ -7,11 +7,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import com.projectkorra.projectkorra.ability.lighting.LightEmitTask;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -159,8 +156,10 @@ public abstract class FireAbility extends ElementalAbility {
 	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
 			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new LightEmitTask(loc.getBlock(), 13, 25));
 		} else {
 			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new LightEmitTask(loc.getBlock(), 11, 25));
 		}
 	}
 
@@ -186,6 +185,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
 		GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new LightEmitTask(loc.getBlock(), 15, 16));
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
