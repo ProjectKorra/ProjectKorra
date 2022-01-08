@@ -24,6 +24,7 @@ public class LightEmitTask implements Runnable {
     final private int brightness;
     final private long delay;
     final private long startTime;
+    private BlockData lightData;
 
     public LightEmitTask(final Block block, int brightness, long delay) {
         this.block = block;
@@ -38,9 +39,12 @@ public class LightEmitTask implements Runnable {
                 warned = true;
             }
             return;
+        } else {
+            // Create the fake light block data to send to clients.
+            this.lightData = Material.valueOf("LIGHT").createBlockData();
         }
 
-        cachedTasks.putIfAbsent(this.block, this);
+        cachedTasks.put(this.block, this);
         Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, this);
     }
 
@@ -64,14 +68,12 @@ public class LightEmitTask implements Runnable {
         // Stop if it's a temp block or anything other than water or air.
         if (isTempBlock || (type != Material.WATER && type != Material.AIR)) return;
 
-        // Create the fake light block data to send to clients.
-        final BlockData lightData = Material.valueOf("LIGHT").createBlockData();
-        if (type == Material.WATER) { ((Waterlogged) lightData).setWaterlogged(true); } // For lighting underwater.
+        if (type == Material.WATER) { ((Waterlogged) this.lightData).setWaterlogged(true); } // For lighting underwater.
         ((Levelled) lightData).setLevel(brightness); // Set the brightness level, 0-15.
 
         // Iterate online players and send them the light block change. Clients will handle the rendering.
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            player.sendBlockChange(block.getLocation(), lightData); // Sends the light.
+            player.sendBlockChange(block.getLocation(), this.lightData); // Sends the light.
             new LightKillTask(this, player); // Initiate the light removal.
         }
     }

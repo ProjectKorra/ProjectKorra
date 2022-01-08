@@ -30,8 +30,12 @@ public class LightKillTask implements Runnable {
 
     @Override
     public void run() {
-        if (LightEmitTask.cachedTasks.get(this.block) != null) {
-            final LightEmitTask newTask = LightEmitTask.cachedTasks.get(this.block);
+        // TODO: The problem is somewhere here.
+        // Abilities are flickering on charge, and a couple others, like WallOfFire, flash like crazy.
+
+        final LightEmitTask newTask = LightEmitTask.cachedTasks.get(this.block);
+
+        if (newTask != null) {
             if (System.currentTimeMillis() - newTask.getStartTime() < this.delay) {
                 new LightKillTask(newTask, this.player);
                 return;
