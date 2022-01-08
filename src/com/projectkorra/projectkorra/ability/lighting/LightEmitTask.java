@@ -40,7 +40,7 @@ public class LightEmitTask implements Runnable {
             return;
         }
 
-        cachedTasks.put(block, this);
+        cachedTasks.putIfAbsent(this.block, this);
         Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, this);
     }
 
@@ -65,7 +65,7 @@ public class LightEmitTask implements Runnable {
         if (isTempBlock || (type != Material.WATER && type != Material.AIR)) return;
 
         // Create the fake light block data to send to clients.
-        BlockData lightData = Material.valueOf("LIGHT").createBlockData();
+        final BlockData lightData = Material.valueOf("LIGHT").createBlockData();
         if (type == Material.WATER) { ((Waterlogged) lightData).setWaterlogged(true); } // For lighting underwater.
         ((Levelled) lightData).setLevel(brightness); // Set the brightness level, 0-15.
 

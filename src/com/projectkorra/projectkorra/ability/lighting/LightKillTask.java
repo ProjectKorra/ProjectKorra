@@ -12,31 +12,32 @@ public class LightKillTask implements Runnable {
 
     final private LightEmitTask emitTask;
     final private Player player;
+    final private Block block;
+    final private long delay;
     final private Location blockLoc;
     final private BlockData priorData;
 
     public LightKillTask(final LightEmitTask emitTask, final Player player) {
         this.emitTask = emitTask;
         this.player = player;
-
-        Block block = emitTask.getBlock();
-        long delay = emitTask.getDelay();
-
+        this.block = emitTask.getBlock();
+        this.delay = emitTask.getDelay();
         this.blockLoc = block.getLocation();
         this.priorData = block.getBlockData();
 
-        if (LightEmitTask.cachedTasks.get(block) != null) {
-            if (System.currentTimeMillis() - LightEmitTask.cachedTasks.get(block).getStartTime() < delay) {
-                new LightKillTask(this.emitTask, this.player);
-                return;
-            }
-        }
-
-        Bukkit.getScheduler().runTaskLaterAsynchronously(ProjectKorra.plugin, this, delay);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(ProjectKorra.plugin, this, this.delay);
     }
 
     @Override
     public void run() {
+        if (LightEmitTask.cachedTasks.get(this.block) != null) {
+            final LightEmitTask newTask = LightEmitTask.cachedTasks.get(this.block);
+            if (System.currentTimeMillis() - newTask.getStartTime() < this.delay) {
+                new LightKillTask(newTask, this.player);
+                return;
+            }
+        }
+
         player.sendBlockChange(this.blockLoc, this.priorData);
         LightEmitTask.cachedTasks.remove(this.emitTask.getBlock());
     }

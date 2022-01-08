@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import com.projectkorra.projectkorra.ability.lighting.LightEmitTask;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -20,6 +19,7 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.lighting.LightEmitTask;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -84,11 +84,10 @@ public class FireComboStream extends BukkitRunnable {
 		for (int i = 0; i < this.density; i++) {
 			if (this.useNewParticles) {
 				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
-				new LightEmitTask(this.location.getBlock(), 11, 25);
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
-				new LightEmitTask(this.location.getBlock(), 11, 25);
 			}
+			new LightEmitTask(this.location.getBlock(), 11, 25);
 		}
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
