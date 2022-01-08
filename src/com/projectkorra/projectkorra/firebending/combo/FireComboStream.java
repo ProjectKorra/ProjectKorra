@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
+import com.projectkorra.projectkorra.ability.lighting.LightEmitTask;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -83,8 +84,10 @@ public class FireComboStream extends BukkitRunnable {
 		for (int i = 0; i < this.density; i++) {
 			if (this.useNewParticles) {
 				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
+				new LightEmitTask(this.location.getBlock(), 11, 25);
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
+				new LightEmitTask(this.location.getBlock(), 11, 25);
 			}
 		}
 
