@@ -30,19 +30,19 @@ public class LightKillTask implements Runnable {
 
     @Override
     public void run() {
+        // Get the most recent scheduled emit task (with its start time) for this tasks block.
         final LightEmitTask newTask = LightEmitTask.cachedTasks.get(this.block);
-
-        // Recursively call the kill task if the light hasn't lived longer than the delay.
+        // This safely keeps the light on until tasks aren't being scheduled there anymore. (anti-flicker)
         if (newTask != null) {
             if (System.currentTimeMillis() - newTask.getStartTime() < this.delay) {
-                new LightKillTask(newTask, this.player);
+                new LightKillTask(newTask, this.player); // Recursively starts a new kill task.
                 return;
             }
         }
-
-        Bukkit.getScheduler().runTaskLaterAsynchronously(ProjectKorra.plugin, () -> {
-            LightEmitTask.cachedTasks.remove(emitTask.getBlock());
+        // Revert the block (update the client) to its original data (air, or water.)
+        Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
             player.sendBlockChange(blockLoc, priorData);
-        },1L);
+            LightEmitTask.cachedTasks.remove(emitTask.getBlock()); // Remove cached emit task for the block.
+        });
     }
 }

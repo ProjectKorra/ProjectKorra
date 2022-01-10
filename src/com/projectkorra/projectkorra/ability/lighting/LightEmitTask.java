@@ -16,9 +16,8 @@ import java.util.logging.Level;
 
 public class LightEmitTask implements Runnable {
 
-    private static boolean warned;
-
     final public static ConcurrentHashMap<Block, LightEmitTask> cachedTasks = new ConcurrentHashMap<>();
+    private static boolean warned;
 
     final private Block block;
     final private int brightness;
@@ -38,15 +37,14 @@ public class LightEmitTask implements Runnable {
                 ProjectKorra.plugin.getLogger().log(Level.INFO, warning);
                 warned = true;
             }
-            return;
+            return; // Return and do nothing if the server does not have LIGHT.
         } else {
             // Create the fake light block data to send to clients.
             this.lightData = Material.valueOf("LIGHT").createBlockData();
         }
 
-        cachedTasks.put(this.block, this);
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, this);
+        cachedTasks.put(this.block, this); // Cache this task for time checking in LightKillTask.
+        Bukkit.getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, this); // Runs this task.
     }
 
     public Block getBlock() {
@@ -65,19 +63,17 @@ public class LightEmitTask implements Runnable {
     public void run() {
         final Material type = this.block.getType();
         final boolean isTempBlock = TempBlock.isTempBlock(block);
-
-        // Stop if it's a temp block or anything other than water or air.
+        // Return if it's a TempBlock or anything other than water or air.
         if (isTempBlock || (type != Material.WATER && type != Material.AIR)) return;
-
-        if (type == Material.WATER) { ((Waterlogged) this.lightData).setWaterlogged(true); } // For lighting underwater.
+        // For lighting underwater. TODO: needs more testing.
+        if (type == Material.WATER) { ((Waterlogged) this.lightData).setWaterlogged(true); }
         ((Levelled) lightData).setLevel(brightness); // Set the brightness level, 0-15.
-
-        // Iterate online players and send them the light block change. Clients will handle the rendering.
+        // Iterate online players and send them the light block change packet (via sendBlockChange.)
         for (final Player player : Bukkit.getOnlinePlayers()) {
             Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
                 player.sendBlockChange(block.getLocation(), lightData); // Sends the block change packet async.
             });
-            new LightKillTask(this, player); // Initiate the light removal.
+            new LightKillTask(this, player); // Starts the kill task (loop.)
         }
     }
 }
