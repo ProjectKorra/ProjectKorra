@@ -32,9 +32,7 @@ public class LightKillTask implements Runnable {
     public void run() {
         final LightEmitTask newTask = LightEmitTask.cachedTasks.get(this.block);
 
-        // Recursively call this task if the location in question shouldn't have it's light killed prematurely.
-        // Without a check, like this, charging abilities and others will flicker, horribly (since you cannot predict
-        // how long sendBlockChange will take.)
+        // Recursively call the kill task if the light hasn't lived longer than the delay.
         if (newTask != null) {
             if (System.currentTimeMillis() - newTask.getStartTime() < this.delay) {
                 new LightKillTask(newTask, this.player);
