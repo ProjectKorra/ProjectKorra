@@ -26,15 +26,15 @@ public class LightEmitTask implements Runnable {
     final private long startTime;
     private BlockData lightData;
 
-    public LightEmitTask(final Block block, int brightness, long delay) {
+    public LightEmitTask(final Block block, int brightness) {
         this.block = block;
         this.brightness = Math.min(brightness, 15);
-        this.delay = Math.max(delay, 25);
+        this.delay = 30;
         this.startTime = System.currentTimeMillis();
 
         if (Material.matchMaterial("LIGHT") == null) {
             if (!warned) { // Warn the admins if their MC version does not contain the LIGHT material
-                String warning = Bukkit.getVersion() + " does not contain LIGHT. This addon is incompatible.";
+                String warning = Bukkit.getVersion() + " does not contain LIGHT. Lighting will not work.";
                 ProjectKorra.plugin.getLogger().log(Level.INFO, warning);
                 warned = true;
             }
@@ -45,7 +45,8 @@ public class LightEmitTask implements Runnable {
         }
 
         cachedTasks.put(this.block, this);
-        Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, this);
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, this);
     }
 
     public Block getBlock() {
@@ -62,7 +63,7 @@ public class LightEmitTask implements Runnable {
 
     @Override
     public void run() {
-        final Material type = this.block.getType(); // The Material of the block in question
+        final Material type = this.block.getType();
         final boolean isTempBlock = TempBlock.isTempBlock(block);
 
         // Stop if it's a temp block or anything other than water or air.
@@ -73,7 +74,9 @@ public class LightEmitTask implements Runnable {
 
         // Iterate online players and send them the light block change. Clients will handle the rendering.
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            player.sendBlockChange(block.getLocation(), this.lightData); // Sends the light.
+            Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+                player.sendBlockChange(block.getLocation(), lightData); // Sends the block change packet async.
+            });
             new LightKillTask(this, player); // Initiate the light removal.
         }
     }

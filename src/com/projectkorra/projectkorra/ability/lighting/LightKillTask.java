@@ -25,16 +25,16 @@ public class LightKillTask implements Runnable {
         this.blockLoc = block.getLocation();
         this.priorData = block.getBlockData();
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(ProjectKorra.plugin, this, this.delay);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, this, this.delay);
     }
 
     @Override
     public void run() {
-        // TODO: The problem is somewhere here.
-        // Abilities are flickering on charge, and a couple others, like WallOfFire, flash like crazy.
-
         final LightEmitTask newTask = LightEmitTask.cachedTasks.get(this.block);
 
+        // Recursively call this task if the location in question shouldn't have it's light killed prematurely.
+        // Without a check, like this, charging abilities and others will flicker, horribly (since you cannot predict
+        // how long sendBlockChange will take.)
         if (newTask != null) {
             if (System.currentTimeMillis() - newTask.getStartTime() < this.delay) {
                 new LightKillTask(newTask, this.player);
@@ -42,7 +42,9 @@ public class LightKillTask implements Runnable {
             }
         }
 
-        player.sendBlockChange(this.blockLoc, this.priorData);
-        LightEmitTask.cachedTasks.remove(this.emitTask.getBlock());
+        Bukkit.getScheduler().runTaskLaterAsynchronously(ProjectKorra.plugin, () -> {
+            LightEmitTask.cachedTasks.remove(emitTask.getBlock());
+            player.sendBlockChange(blockLoc, priorData);
+        },1L);
     }
 }

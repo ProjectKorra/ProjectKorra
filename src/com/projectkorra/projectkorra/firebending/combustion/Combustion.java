@@ -108,7 +108,7 @@ public class Combustion extends CombustionAbility {
 
 	private void advanceLocation() {
 		ParticleEffect.FIREWORKS_SPARK.display(this.location, 2, .001, .001, .001, 0);
-		new LightEmitTask(this.location.getBlock(), 15, 25);
+		new LightEmitTask(this.location.getBlock(), 15);
 		if(explosionCount % 5 == 0) 
 			ParticleEffect.EXPLOSION_LARGE.display(this.location, 1, .001, .001, .001, 0);
 		playCombustionSound(this.location);
