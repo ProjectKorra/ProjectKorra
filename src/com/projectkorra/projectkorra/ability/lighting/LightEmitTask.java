@@ -27,8 +27,8 @@ public class LightEmitTask implements Runnable {
 
     public LightEmitTask(final Block block, int brightness) {
         this.block = block;
-        this.brightness = Math.min(brightness, 15);
-        this.delay = 30;
+        this.brightness = Math.min(brightness, 13);
+        this.delay = 15;
         this.startTime = System.currentTimeMillis();
 
         if (Material.matchMaterial("LIGHT") == null) {
@@ -49,6 +49,10 @@ public class LightEmitTask implements Runnable {
 
     public Block getBlock() {
         return this.block;
+    }
+
+    public int getBrightness() {
+        return this.brightness;
     }
 
     public long getDelay() {
