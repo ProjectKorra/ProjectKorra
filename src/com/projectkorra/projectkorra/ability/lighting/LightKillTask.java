@@ -8,8 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-import java.util.logging.Level;
-
 public class LightKillTask implements Runnable {
 
     final private LightEmitTask emitTask;
@@ -40,10 +38,10 @@ public class LightKillTask implements Runnable {
                 new LightKillTask(newTask, this.player); // Recursively starts a new kill task.
                 return;
             }
-            if (emitTask.getBrightness() > 6) {
+            if (emitTask.getBrightness() > 3) {
                 // Start a new, dimmer light, to replace the prior light.
                 LightEmitTask.cachedTasks.remove(newTask.getBlock()); // Remove cached emit task for the block.
-                new LightEmitTask(newTask.getBlock(), Math.max(emitTask.getBrightness() - 4, 3));
+                new LightEmitTask(newTask.getBlock(), Math.max(emitTask.getBrightness() - 2, 1), 5L);
                 return;
             }
         }

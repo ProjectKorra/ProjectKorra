@@ -25,10 +25,10 @@ public class LightEmitTask implements Runnable {
     final private long startTime;
     private BlockData lightData;
 
-    public LightEmitTask(final Block block, int brightness) {
+    public LightEmitTask(final Block block, int brightness, long delay) {
         this.block = block;
         this.brightness = Math.min(brightness, 13);
-        this.delay = 15;
+        this.delay = Math.max(delay, 1);
         this.startTime = System.currentTimeMillis();
 
         if (Material.matchMaterial("LIGHT") == null) {

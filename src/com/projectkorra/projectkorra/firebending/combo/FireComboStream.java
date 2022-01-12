@@ -87,7 +87,7 @@ public class FireComboStream extends BukkitRunnable {
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
-			new LightEmitTask(this.location.getBlock(), 13);
+			new LightEmitTask(this.location.getBlock(), 13, 16L);
 		}
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {

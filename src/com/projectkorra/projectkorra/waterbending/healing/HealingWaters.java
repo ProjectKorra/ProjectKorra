@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.healing;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.ability.lighting.LightEmitTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -127,6 +128,7 @@ public class HealingWaters extends HealingAbility {
 			}
 		} else {
 			GeneralMethods.displayColoredParticle(this.hex, this.origin);
+			new LightEmitTask(this.location.getBlock(), 13, 16L); // Light for HealingWaters.
 		}
 
 		// If the ability is charged, try healing.
@@ -243,7 +245,7 @@ public class HealingWaters extends HealingAbility {
 			final double x = centre.getX() + (0.75 * Math.cos(angle));
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
 			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
-
+			new LightEmitTask(this.location.getBlock(), 13, 16L); // Light for HealingWaters.
 			if (this.pstage >= 36) {
 				this.pstage = 0;
 			}
@@ -265,6 +267,7 @@ public class HealingWaters extends HealingAbility {
 
 				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1));
 				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2));
+				new LightEmitTask(this.location.getBlock(), 13, 16L); // Light for HealingWaters.
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;
@@ -300,6 +303,7 @@ public class HealingWaters extends HealingAbility {
 		}
 
 		GeneralMethods.displayColoredParticle(this.hex, this.location);
+		new LightEmitTask(this.location.getBlock(), 13, 16L); // Light for HealingWaters.
 	}
 
 	private void fillBottle() {
