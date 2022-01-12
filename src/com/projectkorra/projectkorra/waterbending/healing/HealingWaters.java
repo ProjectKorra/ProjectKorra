@@ -243,6 +243,7 @@ public class HealingWaters extends HealingAbility {
 			final double x = centre.getX() + (0.75 * Math.cos(angle));
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
 			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
+
 			if (this.pstage >= 36) {
 				this.pstage = 0;
 			}
