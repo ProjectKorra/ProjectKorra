@@ -19,7 +19,7 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.lighting.LightEmitTask;
+import com.projectkorra.projectkorra.ability.lighting.FauxLight;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -87,7 +87,7 @@ public class FireComboStream extends BukkitRunnable {
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
-			new LightEmitTask(this.location.getBlock(), 13, 16L);
+			new FauxLight(this.location.getBlock(), 13, 16L);
 		}
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {

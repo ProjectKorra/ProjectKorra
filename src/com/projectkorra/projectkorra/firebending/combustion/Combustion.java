@@ -12,7 +12,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CombustionAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.lighting.LightEmitTask;
+import com.projectkorra.projectkorra.ability.lighting.FauxLight;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -108,7 +108,7 @@ public class Combustion extends CombustionAbility {
 
 	private void advanceLocation() {
 		ParticleEffect.FIREWORKS_SPARK.display(this.location, 2, .001, .001, .001, 0);
-		new LightEmitTask(this.location.getBlock(), 15, 16L); // Light for combustion bending.ww
+		new FauxLight(this.location.getBlock(), 15, 16L); // Light for combustion bending.ww
 		if(explosionCount % 5 == 0) 
 			ParticleEffect.EXPLOSION_LARGE.display(this.location, 1, .001, .001, .001, 0);
 		playCombustionSound(this.location);
