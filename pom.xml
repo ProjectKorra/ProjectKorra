@@ -68,6 +68,14 @@
       <version>1.16.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Spigot API -->
+    <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>craftbukkit</artifactId>
+      <version>1.18.1-R0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${user.home}/Downloads/CraftBukkit/target/craftbukkit-1.18.1-R0.1-SNAPSHOT.jar</systemPath>
+    </dependency>
     <!-- lang3 -->
     <dependency>
       <groupId>org.apache.commons</groupId>

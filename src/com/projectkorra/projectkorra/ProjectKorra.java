@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.lighting.LightManager;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -46,6 +47,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static CollisionManager collisionManager;
 	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
+	public static LightManager lightManager;
 	public Updater updater;
 	private BukkitTask revertChecker;
 	private static TimingManager timingManager;
@@ -69,6 +71,7 @@ public class ProjectKorra extends JavaPlugin {
 		CoreAbility.registerAbilities();
 		collisionInitializer.initializeDefaultCollisions();
 		collisionManager.startCollisionDetection();
+		lightManager = new LightManager(plugin);
 
 		Preset.loadExternalPresets();
 
