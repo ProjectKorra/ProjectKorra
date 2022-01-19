@@ -1,48 +1,34 @@
 package com.projectkorra.projectkorra.ability.lighting;
 
-import org.bukkit.Location;
+import com.projectkorra.projectkorra.util.TempBlock;
+
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 
-public class Light {
+public record Light(Block block, int brightness, long ticks) {
 
-    private final LightPos lightPos;
-    private final int brightness;
-    private final long duration;
-    private final long genesis;
-
-    public Light(LightPos lightPos, int brightness, long ticks) {
-        this.lightPos = lightPos;
-        this.brightness = brightness;
-        this.duration = ticks;
-        this.genesis = System.currentTimeMillis();
+    public boolean canLight() {
+        int nearby = 0; // Count the total number of nearby blocks. If there are none, no light is necessary.
+        for (BlockFace face : LightManager.blockFaces) {
+            Block block = block();
+            for (int i = 0; i < 6; i++) {
+                block = block.getRelative(face);
+                if (!block.isEmpty()) {
+                    nearby++;
+                }
+            }
+        }
+        if (nearby == 0) return false;
+        return !TempBlock.isTempBlock(block()) && (block().getType() == Material.AIR);
     }
 
-    public LightPos getLightPos() {
-        return lightPos;
+    public boolean isEmitting() {
+        return LightManager.cache.contains(block());
     }
 
-    public int getBrightness() {
-        return brightness;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getGenesis() {
-        return genesis;
-    }
-
-    public Location getLocation() {
-        return lightPos.getLocation();
-    }
-
-    public BlockData getPriorData() {
-        return lightPos.getPriorData();
-    }
-
-    public Block getBlock() {
-        return lightPos.getBlock();
+    public BlockData priorData() {
+        return block.getBlockData();
     }
 }

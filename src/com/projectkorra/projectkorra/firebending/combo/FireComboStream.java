@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import com.projectkorra.projectkorra.ProjectKorra;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -15,7 +14,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -87,8 +88,7 @@ public class FireComboStream extends BukkitRunnable {
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
-
-			ProjectKorra.lightManager.getIlluminator().emitLight(location, 13, 20);
+			ProjectKorra.lightManager.getIlluminator().emitLightAt(location, 13, 20);
 		}
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {

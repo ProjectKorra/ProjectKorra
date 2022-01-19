@@ -5,7 +5,7 @@ import org.bukkit.Location;
 public class Illuminator_1_17_R1 implements Illuminator {
 
     @Override
-    public void emitLight(Location location, int brightness, long ticks) {
+    public void emitLightAt(Location loc, int brightness, long ticks) {
 
     }
 
