@@ -10,18 +10,18 @@ import org.bukkit.block.data.BlockData;
 public record Light(Block block, int brightness, long ticks) {
 
     public boolean canLight() {
-        int nearby = 0; // Count the total number of nearby blocks. If there are none, no light is necessary.
+        boolean hasNearbyBlock = false;
         for (BlockFace face : LightManager.blockFaces) {
             Block block = block();
             for (int i = 0; i < 6; i++) {
                 block = block.getRelative(face);
                 if (!block.isEmpty()) {
-                    nearby++;
+                    hasNearbyBlock = true;
+                    break;
                 }
             }
         }
-        if (nearby == 0) return false;
-        return !TempBlock.isTempBlock(block()) && (block().getType() == Material.AIR);
+        return hasNearbyBlock && !TempBlock.isTempBlock(block()) && block().getType() == Material.AIR;
     }
 
     public boolean isEmitting() {

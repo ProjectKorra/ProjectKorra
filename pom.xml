@@ -185,6 +185,14 @@
       <version>2.9.2</version>
       <scope>provided</scope>
     </dependency>
+    <!-- CraftBukkit 1.18 | these pom changes are temporary, ignore them all for now -->
+    <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>craftbukkit</artifactId>
+      <version>1.18.1-R0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${user.home}/Downloads/CraftBukkit/target/craftbukkit-1.18.1-R0.1-SNAPSHOT.jar</systemPath>
+    </dependency>
   </dependencies>
   <build>
     <defaultGoal>clean package install</defaultGoal>

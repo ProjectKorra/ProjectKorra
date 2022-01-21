@@ -1,10 +1,17 @@
 package com.projectkorra.projectkorra.ability.lighting;
 
+import net.minecraft.core.BlockPosition;
+import net.minecraft.network.protocol.game.PacketPlayOutBlockChange;
+import net.minecraft.world.level.block.state.IBlockData;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class Illuminator_Bukkit implements Illuminator {
+public class Illuminator_1_18_R1 implements Illuminator {
 
     @Override
     public void emitLightAt(final Location loc, int brightness, long ticks) {
@@ -23,7 +30,7 @@ public class Illuminator_Bukkit implements Illuminator {
         LightManager.cache.add(light.block()); // Cache the light's Block.
         for (final Player player : Bukkit.getOnlinePlayers()) {
             if (player.getLocation().distance(light.block().getLocation()) < 32) { // Only send to players within this.
-                player.sendBlockChange(light.block().getLocation(), LightManager.lightData.get(light.brightness()));
+                sendBlockChange(player, light.block().getLocation(), LightManager.lightData.get(light.brightness()));
             }
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(LightManager.getPlugin(), () -> {
@@ -40,7 +47,17 @@ public class Illuminator_Bukkit implements Illuminator {
             return;
         }
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendBlockChange(light.block().getLocation(), light.priorData());
+            sendBlockChange(player, light.block().getLocation(), light.priorData());
+        }
+    }
+
+    private void sendBlockChange(Player player, Location loc, BlockData data) {
+        // Testing out the same method straight from CraftPlayer. Might try something else next.
+        if (((CraftPlayer) player).getHandle().b != null) {
+            BlockPosition blockPosition = new BlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            IBlockData iBlockData = ((CraftBlockData) data).getState();
+            PacketPlayOutBlockChange packet = new PacketPlayOutBlockChange(blockPosition, iBlockData);
+            ((CraftPlayer) player).getHandle().b.a(packet);
         }
     }
 }

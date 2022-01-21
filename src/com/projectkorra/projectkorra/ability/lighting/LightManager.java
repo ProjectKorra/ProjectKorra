@@ -16,7 +16,6 @@ public class LightManager {
 
     public static Set<Block> cache = new HashSet<>();
     public static HashMap<Integer, BlockData> lightData = new HashMap<>();
-
     public static final BlockFace[] blockFaces = {
             BlockFace.DOWN,
             BlockFace.UP,
@@ -30,27 +29,16 @@ public class LightManager {
     private static LightManager instance;
 
     private Illuminator illuminator;
-    private String bukkitVersion;
+    private Material lightMaterial;
 
     public LightManager(final JavaPlugin plugin) {
         owner = plugin;
         instance = this;
-        if (checkVersion()) {
-            // Uses manually constructed packets. Can also implement other ways, versions, or lightengines, here.
-            if (bukkitVersion.equals("v_1_17_R1")) illuminator = new Illuminator_1_17_R1();
-            plugin.getLogger().info("Using packets on " + bukkitVersion + " for ability lighting.");
-        } else {
-            // Use player::sendBlockChange() as a fallback. Not the greatest, but it works.
-            if (Material.matchMaterial("LIGHT") != null) {
-                illuminator = new Illuminator_Bukkit();
-                plugin.getLogger().info("Using the Bukkit API as a fallback for ability lighting.");
-            } else {
-                return; // This will not work at all without at least having LIGHT available.
-            }
-        }
+        if (Material.matchMaterial("LIGHT") != null) lightMaterial = Material.valueOf("LIGHT");
+        if (!checkVersion()) return;
         // Store a reference map of every applicable light level and it's respective blockdata.
         for (int i = 0; i < 16; i++) {
-            BlockData blockData = Material.valueOf("LIGHT").createBlockData(); // Use Enum LIGHT later.
+            BlockData blockData = lightMaterial.createBlockData(); // Use Enum LIGHT later.
             ((Levelled) blockData).setLevel(i);
             lightData.put(i, blockData);
         }
@@ -70,17 +58,18 @@ public class LightManager {
 
     private boolean checkVersion() {
         String className = Bukkit.getServer().getClass().getPackage().getName();
-        this.bukkitVersion = className.substring(className.lastIndexOf('.') + 1);
-        return isCompatible(this.bukkitVersion);
+        return isCompatible(className.substring(className.lastIndexOf('.') + 1));
     }
 
     private boolean isCompatible(String v) {
         switch (v) {
-            case "v_1_17_R1":
+            case "v1_18_R1":
+                illuminator = new Illuminator_1_18_R1();
                 return true;
             default:
-                owner.getLogger().info("Bukkit " + v + " may not be compatible with ability lighting.");
-                return false;
+                if (lightMaterial == null) return false;
+                illuminator = new Illuminator_Bukkit();
+                return true;
         }
     }
 }
