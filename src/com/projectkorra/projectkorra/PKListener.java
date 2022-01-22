@@ -496,9 +496,6 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onEntityDamageBlock(final EntityDamageByBlockEvent event) {}
-
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
 		final Block block = event.getDamager();
@@ -882,20 +879,13 @@ public class PKListener implements Listener {
 			CoreAbility hs = CoreAbility.getAbility(HydroSink.class);
 			CoreAbility ab = CoreAbility.getAbility(Acrobatics.class);
 
-			if (gd != null && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(gd) && bPlayer.canUsePassive(gd) && gd.isEnabled() && PassiveManager.hasPassive(player, gd)) {
-				event.setDamage(0D);
-				event.setCancelled(true);
-			} else if (ds != null && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ds) && bPlayer.canUsePassive(ds) && ds.isEnabled() && PassiveManager.hasPassive(player, ds)) {
-				if (DensityShift.softenLanding(player)) {
-					event.setDamage(0D);
-					event.setCancelled(true);
-				}
-			} else if (hs != null && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(hs) && bPlayer.canUsePassive(hs) && hs.isEnabled() && PassiveManager.hasPassive(player, hs)) {
-				if (HydroSink.applyNoFall(player)) {
-					event.setDamage(0D);
-					event.setCancelled(true);
-				}
+			boolean cancelFall = false;
+			if (event.getCause() == DamageCause.FALL) {
+				cancelFall = gd != null && bPlayer.hasElement(Element.AIR) && bPlayer.canBendPassive(gd) && bPlayer.canUsePassive(gd) && gd.isEnabled() && PassiveManager.hasPassive(player, gd);
+				cancelFall |= ds != null && bPlayer.hasElement(Element.EARTH) && bPlayer.canBendPassive(ds) && bPlayer.canUsePassive(ds) && ds.isEnabled() && PassiveManager.hasPassive(player, ds) && DensityShift.softenLanding(player);
+				cancelFall |= hs != null && bPlayer.hasElement(Element.WATER) && bPlayer.canBendPassive(hs) && bPlayer.canUsePassive(hs) && hs.isEnabled() && PassiveManager.hasPassive(player, hs) && HydroSink.applyNoFall(player);
 			}
+			event.setCancelled(cancelFall);
 
 			if (ab != null && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ab) && bPlayer.canUsePassive(ab) && ab.isEnabled() && PassiveManager.hasPassive(player, ab)) {
 				final double initdamage = event.getDamage();
