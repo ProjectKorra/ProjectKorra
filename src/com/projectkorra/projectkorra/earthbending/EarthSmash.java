@@ -58,8 +58,10 @@ public class EarthSmash extends EarthAbility {
 	private double grabRange;
 	@Attribute("ShootRange")
 	private double shootRange;
-	@Attribute(Attribute.DAMAGE)
-	private double damage;
+	@Attribute("Min" + Attribute.DAMAGE)
+	private double minDamage;
+	@Attribute("Max" + Attribute.DAMAGE)
+	private double maxDamage;
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	@Attribute(Attribute.KNOCKUP)
@@ -156,7 +158,8 @@ public class EarthSmash extends EarthAbility {
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthSmash.SelectRange");
 		this.grabRange = getConfig().getDouble("Abilities.Earth.EarthSmash.Grab.Range");
 		this.shootRange = getConfig().getDouble("Abilities.Earth.EarthSmash.Shoot.Range");
-		this.damage = getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
+		this.minDamage = getConfig().getDouble("Abilities.Earth.EarthSmash.MinimumDamage");
+		this.maxDamage = getConfig().getDouble("Abilities.Earth.EarthSmash.MaximumDamage");
 		this.knockback = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockback");
 		this.knockup = getConfig().getDouble("Abilities.Earth.EarthSmash.Knockup");
 		this.liftKnockup = getConfig().getDouble("Abilities.Earth.EarthSmash.Lift.Knockup");
@@ -172,7 +175,8 @@ public class EarthSmash extends EarthAbility {
 			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange");
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Damage");
+			this.minDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.MinimumDamage");
+			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.MaximumDamage");
 			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback");
 			this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed");
 			this.flightDuration = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer");
@@ -580,7 +584,13 @@ public class EarthSmash extends EarthAbility {
 					continue;
 				}
 				this.affectedEntities.add(entity);
-				final double damage = this.currentBlocks.size() / 13.0 * this.damage;
+				double damage = this.currentBlocks.size() / 13.0 * this.maxDamage;
+				if (damage < this.minDamage) {
+					damage = this.minDamage;
+				} else if (damage > this.maxDamage){
+					damage = this.maxDamage;
+				}
+
 				DamageHandler.damageEntity(entity, damage, this);
 				final Vector travelVec = GeneralMethods.getDirection(this.location, entity.getLocation());
 				GeneralMethods.setVelocity(this, entity, travelVec.setY(this.knockup).normalize().multiply(this.knockback));
@@ -886,12 +896,20 @@ public class EarthSmash extends EarthAbility {
 		this.shootRange = shootRange;
 	}
 
-	public double getDamage() {
-		return this.damage;
+	public double getMaxDamage() {
+		return this.maxDamage;
 	}
 
-	public void setDamage(final double damage) {
-		this.damage = damage;
+	public void setMaxDamage(final double maxDamage) {
+		this.maxDamage = maxDamage;
+	}
+
+	public double getMinDamage() {
+		return this.minDamage;
+	}
+
+	public void setMinDamage(final double minDamage) {
+		this.minDamage = minDamage;
 	}
 
 	public double getKnockback() {

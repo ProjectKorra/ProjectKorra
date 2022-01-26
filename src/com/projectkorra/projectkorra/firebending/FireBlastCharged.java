@@ -39,7 +39,9 @@ public class FireBlastCharged extends FireAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private long interval;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute("Min" + Attribute.DAMAGE)
+	private double minDamage;
+	@Attribute("Max" + Attribute.DAMAGE)
 	private double maxDamage;
 	@Attribute(Attribute.RANGE)
 	private double range;
@@ -72,7 +74,8 @@ public class FireBlastCharged extends FireAbility {
 		this.time = System.currentTimeMillis();
 		this.interval = 25;
 		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius");
-		this.maxDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
+		this.minDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.MinimumDamage");
+		this.maxDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.MaximumDamage");
 		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range");
 		this.damageRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
 		this.explosionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.ExplosionRadius");
@@ -89,26 +92,31 @@ public class FireBlastCharged extends FireAbility {
 
 	private void applyModifiers() {
 		long chargeTimeMod = 0;
-		double damageMod = 0;
+		double minDamageMod = 0;
+		double maxDamageMod = 0;
 		double rangeMod = 0;
 
 		if (isDay(player.getWorld())) {
 			chargeTimeMod = (long) (this.chargeTime / getDayFactor() - this.chargeTime);
-			damageMod = this.getDayFactor(this.maxDamage) - this.maxDamage;
+			minDamageMod = this.getDayFactor(this.minDamage) - this.minDamage;
+			maxDamageMod = this.getDayFactor(this.maxDamage) - this.maxDamage;
 			rangeMod = this.getDayFactor(this.range) - this.range;
 		}
 
 		chargeTimeMod = (long) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (chargeTime / BlueFireAbility.getCooldownFactor() - chargeTime) + chargeTimeMod : chargeTimeMod);
-		damageMod = (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * maxDamage - maxDamage) + damageMod : damageMod);
+		minDamageMod = (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * minDamage - minDamage) + minDamageMod : minDamageMod);
+		maxDamageMod = (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * maxDamage - maxDamage) + maxDamageMod : maxDamageMod);
 		rangeMod =  (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
 
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");
-			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.Damage");
+			this.minDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MinimumDamage");
+			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MaximumDamage");
 		}
 
 		this.chargeTime += chargeTimeMod;
-		this.maxDamage += damageMod;
+		this.minDamage += minDamageMod;
+		this.maxDamage += maxDamageMod;
 		this.range += rangeMod;
 	}
 
@@ -174,7 +182,13 @@ public class FireBlastCharged extends FireAbility {
 		}
 
 		final double slope = -(this.maxDamage * .5) / (this.damageRadius - this.innerRadius);
-		final double damage = slope * (distance - this.innerRadius) + this.maxDamage;
+		double damage = slope * (distance - this.innerRadius) + this.maxDamage;
+		if (damage < this.minDamage) {
+			damage = this.minDamage;
+		} else if (damage > this.maxDamage){
+			damage = this.maxDamage;
+		}
+
 		DamageHandler.damageEntity(entity, damage, this);
 		AirAbility.breakBreathbendingHold(entity);
 	}
@@ -211,6 +225,13 @@ public class FireBlastCharged extends FireAbility {
 						if (entity.getWorld().equals(this.location.getWorld())) {
 							damage = slope * (entity.getLocation().distance(this.location) - this.innerRadius) + this.maxDamage;
 						}
+
+						if (damage < this.minDamage) {
+							damage = this.minDamage;
+						} else if (damage > this.maxDamage){
+							damage = this.maxDamage;
+						}
+
 						DamageHandler.damageEntity(entity, damage, this);
 					}
 				}
@@ -422,6 +443,14 @@ public class FireBlastCharged extends FireAbility {
 
 	public void setMaxDamage(final double maxDamage) {
 		this.maxDamage = maxDamage;
+	}
+
+	public double getMinDamage() {
+		return this.minDamage;
+	}
+
+	public void setMinDamage(final double minDamage) {
+		this.minDamage = minDamage;
 	}
 
 	public double getRange() {
