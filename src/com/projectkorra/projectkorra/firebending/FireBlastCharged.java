@@ -185,8 +185,6 @@ public class FireBlastCharged extends FireAbility {
 		double damage = slope * (distance - this.innerRadius) + this.maxDamage;
 		if (damage < this.minDamage) {
 			damage = this.minDamage;
-		} else if (damage > this.maxDamage){
-			damage = this.maxDamage;
 		}
 
 		DamageHandler.damageEntity(entity, damage, this);
@@ -225,11 +223,8 @@ public class FireBlastCharged extends FireAbility {
 						if (entity.getWorld().equals(this.location.getWorld())) {
 							damage = slope * (entity.getLocation().distance(this.location) - this.innerRadius) + this.maxDamage;
 						}
-
 						if (damage < this.minDamage) {
 							damage = this.minDamage;
-						} else if (damage > this.maxDamage){
-							damage = this.maxDamage;
 						}
 
 						DamageHandler.damageEntity(entity, damage, this);
