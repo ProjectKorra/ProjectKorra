@@ -39,11 +39,12 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 	public JetBlaze(final Player player) {
 		super(player);
 
-		if (!this.bPlayer.canBendIgnoreBinds(this)) {
+		if (!this.bPlayer.canBendIgnoreBinds(this) || this.bPlayer.isOnCooldown("FireJet")) {
 			return;
 		}
 
 		this.firstTime = true;
+		this.progressCounter = 0;
 		this.time = System.currentTimeMillis();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -108,9 +109,12 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 			fs.setFireTicks(this.fireTicks);
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 			this.tasks.add(fs);
+			this.progressCounter++;
 			if (this.progressCounter % 4 == 0) {
 				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
 			}
+		} else {
+			remove();
 		}
 	}
 

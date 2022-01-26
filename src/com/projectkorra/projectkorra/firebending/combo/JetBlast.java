@@ -30,7 +30,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	public JetBlast(final Player player) {
 		super(player);
 
-		if (!this.bPlayer.canBendIgnoreBinds(this)) {
+		if (!this.bPlayer.canBendIgnoreBinds(this) || this.bPlayer.isOnCooldown("FireJet")) {
 			return;
 		}
 
@@ -96,6 +96,8 @@ public class JetBlast extends FireAbility implements ComboAbility {
 			fs.setCollides(false);
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 			this.tasks.add(fs);
+		} else {
+			remove();
 		}
 	}
 

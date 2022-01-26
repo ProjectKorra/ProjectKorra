@@ -152,13 +152,8 @@ public class IceBlast extends IceAbility {
 			if (this.source != null) {
 				this.source.revertBlock();
 			}
+			this.bPlayer.addCooldown(this);
 			this.progressing = false;
-		}
-
-		if (this.player.isOnline()) {
-			if (this.bPlayer != null) {
-				this.bPlayer.addCooldown(this);
-			}
 		}
 	}
 
