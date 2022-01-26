@@ -587,8 +587,6 @@ public class EarthSmash extends EarthAbility {
 				double damage = this.currentBlocks.size() / 13.0 * this.maxDamage;
 				if (damage < this.minDamage) {
 					damage = this.minDamage;
-				} else if (damage > this.maxDamage){
-					damage = this.maxDamage;
 				}
 
 				DamageHandler.damageEntity(entity, damage, this);
