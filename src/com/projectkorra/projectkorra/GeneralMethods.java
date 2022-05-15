@@ -71,11 +71,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.kingdom.model.KingdomRelation;
+import org.kingdoms.constants.group.Kingdom;
+import org.kingdoms.constants.group.model.KingdomRelation;
 import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.structures.managers.Regulator;
-import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
+import org.kingdoms.constants.land.structures.objects.Regulator;
+import org.kingdoms.constants.land.structures.objects.Regulator.Attribute;
 import org.kingdoms.constants.player.DefaultKingdomPermission;
 import org.kingdoms.constants.player.KingdomPlayer;
 
@@ -1680,7 +1680,7 @@ public class GeneralMethods {
 					final Kingdom kingdom = land.getKingdom();
 					if (kPlayer.isAdmin()
 							|| (!protectDuringInvasions && !land.getInvasions().isEmpty() && land.getInvasions().values().stream().anyMatch(i -> i.getInvader().equals(kPlayer))) // Protection during invasions is off, and player is currently invading; allow
-							|| (land.getStructure() != null && land.getStructure() instanceof Regulator && ((Regulator) land.getStructure()).hasAttribute(player, Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow
+							|| (land.getStructures() != null && land.getStructures() instanceof Regulator && ((Regulator) land.getStructures()).hasAttribute(player, Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow
 						return false;
 					}
 					if (!kPlayer.hasKingdom() // Player has no kingdom; deny
