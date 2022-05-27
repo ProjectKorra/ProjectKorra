@@ -70,10 +70,10 @@ public class BendingBoard {
 		}
 
 		public void clear(boolean formNewTeam) {
-			String prefix = team.getPrefix(), suffix = team.getSuffix();
 			board.resetScores(entry);
 			team.unregister();
 			if (formNewTeam) {
+				String prefix = team.getPrefix(), suffix = team.getSuffix();
 				formTeam();
 				update(prefix, suffix);
 			}
