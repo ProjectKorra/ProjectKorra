@@ -63,20 +63,20 @@ public class BendingBoard {
 			this.slot = slot + 1;
 			set();
 		}
-		
+
 		public void decreaseSlot() {
 			--this.slot;
-			String prefix = team.getPrefix(), suffix = team.getSuffix();
-			this.board.resetScores(entry);
-			this.team.unregister();
-			this.formTeam();
-			this.update(prefix, suffix);
-			next.ifPresent(BoardSlot::decreaseSlot);
+			clear(true);
 		}
-		
-		public void clear() {
+
+		public void clear(boolean formNewTeam) {
+			String prefix = team.getPrefix(), suffix = team.getSuffix();
 			board.resetScores(entry);
 			team.unregister();
+			if (formNewTeam) {
+				formTeam();
+				update(prefix, suffix);
+			}
 			next.ifPresent(BoardSlot::decreaseSlot);
 		}
 		
@@ -235,7 +235,7 @@ public class BendingBoard {
 					miscTail = null;
 				}
 				
-				slot.clear();
+				slot.clear(false);
 				return null;
 			});
 				
