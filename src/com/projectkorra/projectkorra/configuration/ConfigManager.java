@@ -767,7 +767,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange", 16);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Damage", 7);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.MinimumDamage", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.MaximumDamage", 7);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed", 1.0);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer", 10000);
@@ -783,7 +784,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.Damage", 5);
+			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MinimumDamage", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MaximumDamage", 5);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireKick.Damage", 5);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireKick.Range", 9);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage", 5);
@@ -1335,7 +1337,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthSmash.SelectRange", 12);
 			config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1500);
 			config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 3000);
-			config.addDefault("Abilities.Earth.EarthSmash.Damage", 5);
+			config.addDefault("Abilities.Earth.EarthSmash.MinimumDamage", 2);
+			config.addDefault("Abilities.Earth.EarthSmash.MaximumDamage", 5);
 			config.addDefault("Abilities.Earth.EarthSmash.Knockback", 3.5);
 			config.addDefault("Abilities.Earth.EarthSmash.Knockup", 0.15);
 			config.addDefault("Abilities.Earth.EarthSmash.Lift.Knockup", 1.1);
@@ -1433,7 +1436,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireBlast.Charged.ChargeTime", 3000);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.Cooldown", 2000);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.CollisionRadius", 2);
-			config.addDefault("Abilities.Fire.FireBlast.Charged.Damage", 4);
+			config.addDefault("Abilities.Fire.FireBlast.Charged.MinimumDamage", 2);
+			config.addDefault("Abilities.Fire.FireBlast.Charged.MaximumDamage", 4);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.DamageRadius", 4);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.DamageBlocks", true);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.ExplosionRadius", 1);
