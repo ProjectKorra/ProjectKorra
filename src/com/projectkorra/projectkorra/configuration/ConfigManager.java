@@ -470,21 +470,15 @@ public class ConfigManager {
 			earthBlocks.add("SMALL_AMETHYST_BUD");
 			earthBlocks.add("ANCIENT_DEBRIS");
 			earthBlocks.add("CLAY");
-			earthBlocks.add("COAL_ORE"); // no longer needed in 1.17+
 			earthBlocks.add("COARSE_DIRT");
 			earthBlocks.add("COBBLESTONE");
 			earthBlocks.add("COBBLESTONE_SLAB");
-			earthBlocks.add("DIAMOND_ORE"); // no longer needed in 1.17+
 			earthBlocks.add("DIRT");
-			earthBlocks.add("EMERALD_ORE"); // no longer needed in 1.17+
 			earthBlocks.add("GRASS_BLOCK");
-			earthBlocks.add("GRASS_PATH");
 			earthBlocks.add("DIRT_PATH"); // renamed from grass_path in 1.17
 			earthBlocks.add("GRAVEL");
-			earthBlocks.add("LAPIS_ORE"); // no longer needed in 1.17+
 			earthBlocks.add("MYCELIUM");
 			earthBlocks.add("PODZOL");
-			earthBlocks.add("REDSTONE_ORE"); // no longer needed in 1.17+
 			earthBlocks.add("STONE_SLAB");
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
@@ -530,7 +524,6 @@ public class ConfigManager {
 			metalBlocks.add("GILDED_BLACKSTONE");
 			metalBlocks.add("GOLD_BLOCK");
 			metalBlocks.add("IRON_BLOCK");
-			metalBlocks.add("IRON_ORE"); // no longer needed in 1.17+
 			metalBlocks.add("NETHERITE_BLOCK");
 			metalBlocks.add("NETHER_QUARTZ_ORE");
 			metalBlocks.add("QUARTZ_BLOCK");
@@ -583,8 +576,6 @@ public class ConfigManager {
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add("#snow"); // added in 1.17
-			snowBlocks.add("SNOW"); // no longer needed in 1.17+
-			snowBlocks.add("SNOW_BLOCK"); // no longer needed in 1.17+
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);

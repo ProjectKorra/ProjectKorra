@@ -13,6 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Switch;
 import org.bukkit.block.data.type.TrapDoor;
@@ -327,11 +328,11 @@ public class AirBlast extends AirAbility {
 		final Block block = this.location.getBlock();
 
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
-			if (FireAbility.isFire(testblock.getType())) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				continue;
+			} else if (FireAbility.isFire(testblock.getType())) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
 			} else if (this.affectedLevers.contains(testblock)) {
 				continue;
@@ -419,6 +420,15 @@ public class AirBlast extends AirAbility {
 					testblock.setBlockData(lever);
 					this.affectedLevers.add(testblock);
 					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
+				}
+			} else if (testblock.getType().toString().contains("CANDLE") || testblock.getType().toString().contains("CAMPFIRE") || testblock.getType() == Material.REDSTONE_WALL_TORCH) {
+				if (testblock.getBlockData() instanceof Lightable) {
+					final Lightable lightable = (Lightable) testblock.getBlockData();
+					if (lightable.isLit()) {
+						lightable.setLit(false);
+						testblock.setBlockData(lightable);
+						testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+					}
 				}
 			}
 		}
