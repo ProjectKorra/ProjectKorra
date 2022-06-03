@@ -38,6 +38,8 @@ import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
+import com.griefdefender.api.GriefDefender;
+import com.griefdefender.api.User;
 import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -1550,6 +1552,7 @@ public class GeneralMethods {
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
+		final boolean respectGriefDefender = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefDefender");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1579,6 +1582,7 @@ public class GeneralMethods {
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
+		final Plugin griefdefender = pm.getPlugin("GriefDefender");
 
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
@@ -1696,6 +1700,13 @@ public class GeneralMethods {
 				final Region region = api.getRegion(location);
 				if (!(region != null && region.canBuild(player))) {
 					return true;
+				}
+			}
+			if (griefdefender != null && respectGriefDefender) {
+				final com.griefdefender.api.claim.Claim claim = GriefDefender.getCore().getClaimAt(location);
+				if (claim != null) {
+					final User user = GriefDefender.getCore().getUser(player.getUniqueId());
+					return !claim.canBreak(player, location, user);
 				}
 			}
 		}
@@ -2029,6 +2040,7 @@ public class GeneralMethods {
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
+		final boolean respectGriefDefender = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.GriefDefender");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
@@ -2040,6 +2052,7 @@ public class GeneralMethods {
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
+		final Plugin griefdefender = pm.getPlugin("GriefDefender");
 
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
@@ -2067,6 +2080,9 @@ public class GeneralMethods {
 		}
 		if (redprotect != null && respectRedProtect) {
 			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
+		}
+		if (griefdefender != null && respectGriefDefender) {
+			writeToDebug("GriefDefender v" + griefdefender.getDescription().getVersion());
 		}
 
 		writeToDebug("");
