@@ -77,25 +77,7 @@ public class Commands {
 		/**
 		 * Set of all of the Classes which extend Command
 		 */
-		new AddCommand();
-		new BindCommand();
-		new CheckCommand();
-		new BoardCommand();
-		new ChooseCommand();
-		new ClearCommand();
-		new CopyCommand();
-		new DebugCommand();
-		new DisplayCommand();
-		new HelpCommand();
-		new InvincibleCommand();
-		new PermaremoveCommand();
-		new PresetCommand();
-		new ReloadCommand();
-		new RemoveCommand();
-		new StatsCommand();
-		new ToggleCommand();
-		new VersionCommand();
-		new WhoCommand();
+		initializeCommands();
 
 		final CommandExecutor exe = (s, c, label, args) -> {
 			if (Arrays.asList(commandaliases).contains(label.toLowerCase())) {
@@ -117,5 +99,31 @@ public class Commands {
 		};
 		projectkorra.setExecutor(exe);
 		projectkorra.setTabCompleter(new BendingTabComplete());
+	}
+
+	/**
+	 * Create all the command instances. In a package level method so this can be called
+	 * when the plugin is reloaded
+	 */
+	static void initializeCommands() {
+		new AddCommand();
+		new BindCommand();
+		new CheckCommand();
+		new BoardCommand();
+		new ChooseCommand();
+		new ClearCommand();
+		new CopyCommand();
+		new DebugCommand();
+		new DisplayCommand();
+		new HelpCommand();
+		new InvincibleCommand();
+		new PermaremoveCommand();
+		new PresetCommand();
+		new ReloadCommand();
+		new RemoveCommand();
+		new StatsCommand();
+		new ToggleCommand();
+		new VersionCommand();
+		new WhoCommand();
 	}
 }

@@ -260,4 +260,12 @@ public abstract class PKCommand implements SubCommand {
 		return new ArrayList<String>();
 	}
 
+	/**
+	 * Create all command instances again. We do this so all commands pull their stuff from
+	 * configs again
+	 */
+	public static void reloadCommands() {
+		instances.clear();
+		Commands.initializeCommands();
+	}
 }

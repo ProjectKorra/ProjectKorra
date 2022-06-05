@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -51,7 +51,8 @@ public class ChooseCommand extends PKCommand {
 	public void execute(final CommandSender sender, final List<String> args) {
 		if (!this.correctLength(sender, args.size(), 1, 2)) {
 			return;
-		} else if (args.size() == 1) {
+		}
+		if (args.size() == 1) {
 			if (!this.hasPermission(sender) || !this.isPlayer(sender)) {
 				return;
 			}

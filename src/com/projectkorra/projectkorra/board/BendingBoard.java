@@ -128,9 +128,9 @@ public class BendingBoard {
 	
 	private ChatColor getElementColor() {
 		if (bendingPlayer.getElements().size() > 1) {
-			return Element.AVATAR.getColor().asBungee();
+			return Element.AVATAR.getColor();
 		} else if (bendingPlayer.getElements().size() == 1) {
-			return bendingPlayer.getElements().get(0).getColor().asBungee();
+			return bendingPlayer.getElements().get(0).getColor();
 		} else {
 			return ChatColor.WHITE;
 		}

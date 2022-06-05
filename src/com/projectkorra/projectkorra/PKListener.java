@@ -77,6 +77,7 @@ import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerSwingEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -94,6 +95,7 @@ import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.hooks.BendingRegionProtection;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -126,8 +128,8 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -190,8 +192,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -1660,6 +1664,13 @@ public class PKListener implements Listener {
 			return;
 		}
 
+		PlayerSwingEvent swingEvent = new PlayerSwingEvent(event.getPlayer()); //Allow addons to handle a swing without
+		Bukkit.getPluginManager().callEvent(swingEvent);                       //needing to repeat the checks above themselves
+		if (swingEvent.isCancelled()) {
+			event.setCancelled(true);
+			return;
+		}
+
 		BlockSource.update(player, ClickType.LEFT_CLICK);
 		AirScooter.check(player);
 
@@ -2022,6 +2033,11 @@ public class PKListener implements Listener {
 	public void onBendingPlayerCreation(final BendingPlayerCreationEvent event) {
 		final Player player = event.getBendingPlayer().getPlayer();
 		BendingBoardManager.getBoard(player).ifPresent(BendingBoard::show);
+	}
+
+	@EventHandler
+	public void onPluginUnload(PluginDisableEvent event) {
+		BendingRegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
 	}
 
 	public static HashMap<Player, String> getBendingPlayerDeath() {

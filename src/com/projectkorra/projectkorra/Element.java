@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -66,6 +67,8 @@ public class Element {
 	private final String name;
 	private final ElementType type;
 	private final Plugin plugin;
+	private ChatColor color;
+	private ChatColor subColor;
 
 	/**
 	 * To be used when creating a new Element. Do not use for comparing
@@ -114,13 +117,44 @@ public class Element {
 	}
 
 	public ChatColor getColor() {
-		final String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.name) : this.plugin.getConfig().getString("Chat.Colors." + this.name);
-		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
+		if (this.color == null) {
+			FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
+			String key = "Chat.Colors." + this.name;
+			String value = config.getString(key);
+
+			try {
+				ChatColor chatColor = ChatColor.of(value);
+				this.color = chatColor;
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return color != null ? color : ChatColor.WHITE;
 	}
 
 	public ChatColor getSubColor() {
-		final String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.name + "Sub") : this.plugin.getConfig().getString("Chat.Colors." + this.name + "Sub");
-		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
+		if (this.subColor == null) {
+			FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
+			String key = "Chat.Colors." + this.name + "Sub";
+			String value = config.getString(key);
+
+			try {
+				ChatColor chatColor = ChatColor.of(value);
+				this.subColor = chatColor;
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+		return subColor != null ? subColor : ChatColor.WHITE;
+	}
+
+	void setColor(ChatColor color) {
+		this.color = color;
+	}
+
+	void setSubColor(ChatColor color) {
+		this.subColor = color;
 	}
 
 	public String getName() {

@@ -42,6 +42,8 @@ import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.User;
 import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+import com.projectkorra.projectkorra.command.PKCommand;
+import com.projectkorra.projectkorra.hooks.BendingRegionProtection;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -1587,6 +1589,14 @@ public class GeneralMethods {
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
 
+			//Loop through all custom registered 3rd party region protections
+			//Do these first so ones added by the plugins themselves can supersede our checks
+			for (BendingRegionProtection protection : BendingRegionProtection.getActiveProtections()) {
+				if (protection.isRegionProtected(player, location.getBlock(), ability, isHarmless, isIgnite, isExplosive)) {
+					return true;
+				}
+			}
+
 			if (lwc != null && respectLWC) {
 				final LWCPlugin lwcp = (LWCPlugin) lwc;
 				final LWC lwc2 = lwcp.getLWC();
@@ -1874,6 +1884,7 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
+		Arrays.stream(Element.getAllElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Load colors from config again
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
 		EarthTunnel.clearBendableMaterials();
@@ -1881,6 +1892,7 @@ public class GeneralMethods {
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
+		PKCommand.reloadCommands();
 		// Stop the previous collision detection task before creating new manager.
 		ProjectKorra.collisionManager.stopCollisionDetection();
 		ProjectKorra.collisionManager = new CollisionManager();
