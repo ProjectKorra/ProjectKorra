@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -33,15 +34,13 @@ public class Preset {
 	 * ConcurrentHashMap that stores a list of every Player's {@link Preset
 	 * presets}, keyed to their UUID
 	 */
-	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
+	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<>();
 	public static FileConfiguration config = ConfigManager.presetConfig.get();
-	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<String, ArrayList<String>>();
+	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<>();
 	static String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";
-	static String loadNameQuery = "SELECT * FROM pk_presets WHERE uuid = ? AND name = ?";
 	static String deleteQuery = "DELETE FROM pk_presets WHERE uuid = ? AND name = ?";
-	static String insertQuery = "INSERT INTO pk_presets (uuid, name) VALUES (?, ?)";
-	static String updateQuery1 = "UPDATE pk_presets SET slot";
-	static String updateQuery2 = " = ? WHERE uuid = ? AND name = ?";
+	static String insertQuery = "INSERT INTO pk_presets (uuid, name, slot1, slot2, slot3, slot4, slot5, slot6, slot7, " +
+			"slot8, slot9) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private final UUID uuid;
 	private final HashMap<Integer, String> abilities;
@@ -60,7 +59,7 @@ public class Preset {
 		this.name = name;
 		this.abilities = abilities;
 		if (!presets.containsKey(uuid)) {
-			presets.put(uuid, new ArrayList<Preset>());
+			presets.put(uuid, new ArrayList<>());
 		}
 		presets.get(uuid).add(this);
 	}
@@ -128,7 +127,7 @@ public class Preset {
 	 * Binds the abilities from a Preset for the given Player.
 	 *
 	 * @param player The Player the Preset should be bound for
-	 * @param name The name of the Preset that should be bound
+	 * @param preset The Preset that should be bound
 	 * @return True if all abilities were successfully bound, or false otherwise
 	 */
 	public static boolean bindPreset(final Player player, final Preset preset) {
@@ -174,7 +173,7 @@ public class Preset {
 	/**
 	 * Gets a Preset for the specified Player.
 	 *
-	 * @param Player The Player who's Preset should be gotten
+	 * @param player The Player who's Preset should be gotten
 	 * @param name The name of the Preset to get
 	 * @return The Preset, if it exists, or null otherwise
 	 */
@@ -267,16 +266,26 @@ public class Preset {
 	/**
 	 * Deletes the Preset from the database.
 	 */
-	public void delete() {
-		try {
-			final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
-			ps.setString(1, this.uuid.toString());
-			ps.setString(2, this.name);
-			ps.execute();
-			presets.get(this.uuid).remove(this);
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
+	public CompletableFuture<Boolean> delete() {
+		Preset instance = this;
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
+					ps.setString(1, uuid.toString());
+					ps.setString(2, name);
+					ps.execute();
+					presets.get(uuid).remove(instance);
+					future.complete(true);
+				} catch (final SQLException e) {
+					e.printStackTrace();
+					future.complete(false);
+				}
+			}
+		}.runTaskAsynchronously(ProjectKorra.plugin);
+		return future;
 	}
 
 	/**
@@ -289,53 +298,36 @@ public class Preset {
 	}
 
 	/**
-	 * Saves the Preset to the database.
+	 * Saves the Preset to the database async
 	 */
-	public void save(final Player player) {
-		try {
-			PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadNameQuery);
-			ps.setString(1, this.uuid.toString());
-			ps.setString(2, this.name);
-			final ResultSet rs = ps.executeQuery();
-			if (!rs.next()) { // if the preset doesn't exist in the DB, create it.
-				ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
-				ps.setString(1, this.uuid.toString());
-				ps.setString(2, this.name);
-				ps.execute();
-			}
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-		for (final Integer i : this.abilities.keySet()) {
-			new BukkitRunnable() {
-				PreparedStatement ps;
-
-				@Override
-				public void run() {
-					try {
-						this.ps = DBConnection.sql.getConnection().prepareStatement(updateQuery1 + i + updateQuery2);
-						this.ps.setString(1, Preset.this.abilities.get(i));
-						this.ps.setString(2, Preset.this.uuid.toString());
-						this.ps.setString(3, Preset.this.name);
-						this.ps.execute();
-					} catch (final SQLException e) {
-						e.printStackTrace();
-					}
-				}
-			}.runTaskAsynchronously(ProjectKorra.plugin);
-		}
-
+	public CompletableFuture<Boolean> save(final Player player) {
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		new BukkitRunnable() {
-
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(1500);
-					reloadPreset(player);
-				} catch (final InterruptedException e) {
+					PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
+					ps.setString(1, uuid.toString());
+					ps.setString(2, name);
+					for (int i = 1; i <= 9; i++) {
+						ps.setString(2 + i, abilities.get(i));
+					}
+					ps.execute();
+					future.complete(true);
+				} catch (final SQLException e) {
 					e.printStackTrace();
+					future.complete(false);
 				}
 			}
 		}.runTaskAsynchronously(ProjectKorra.plugin);
+		return future;
+	}
+
+	public HashMap<Integer, String> getAbilities() {
+		return abilities;
+	}
+
+	public UUID getUUID() {
+		return uuid;
 	}
 }

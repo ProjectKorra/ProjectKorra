@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.hooks;
 
 import static java.util.stream.Collectors.joining;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -45,7 +45,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 			}
 			if (params.equals("element")) {
 				return e;
-			} else if (params.equals("elementcolor")) {
+			} else {
 				return c.toString();
 			}
 		} else if (params.equals("elements")) {
