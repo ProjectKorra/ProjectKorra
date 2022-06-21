@@ -138,9 +138,10 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Delete", "You have deleted your '{name}' preset.");
 			config.addDefault("Commands.Preset.Removed", "Your bending has been permanently removed.");
 			config.addDefault("Commands.Preset.RemovedConfirm", "You have permanently removed {target}'s bending.");
-			config.addDefault("Commands.Preset.SuccesfullyBound", "Your binds have been set to match the {name} preset.");
+			config.addDefault("Commands.Preset.SuccesfullyBound", "Your binds have been set to match the '{name}' preset.");
 			config.addDefault("Commands.Preset.SuccesfullyCopied", "Your binds have been set to match {target}'s binds.");
 			config.addDefault("Commands.Preset.FailedToBindAll", "Some abilities were not bound because you cannot bend the required element.");
+			config.addDefault("Commands.Preset.DatabaseError", "An error occurred while processing the preset '{name}'");
 			config.addDefault("Commands.Preset.AlreadyExists", "A preset with that name already exists.");
 			config.addDefault("Commands.Preset.BendingPermanentlyRemoved", "Your bending was permanently removed.");
 			config.addDefault("Commands.Preset.PlayerNotFound", "Player not found.");
