@@ -134,6 +134,8 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static Block getIceSourceBlock(final Player player, final double range) {
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
+		range = this.checkRange(range);
+		
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceBlast", location)) {
@@ -168,6 +170,8 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static Block getPlantSourceBlock(final Player player, final double range, final boolean onlyLeaves) {
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
+		
+		range = this.checkRange(range);
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
@@ -197,6 +201,8 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static Block getWaterSourceBlock(final Player player, final double range, final boolean plantbending) {
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
+		
+		range = this.checkRange(range);
 
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		final Set<Material> trans = getTransparentMaterialSet();
@@ -344,6 +350,17 @@ public abstract class WaterAbility extends ElementalAbility {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
+	}
+	
+	
+	public double checkRange(double range) {
+	        // We check to make sure the select range is 1 or greater, to avoid crashing the server when spigot's getTarget is called.
+	        if (range < 1) {
+            		ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options to avoid this warning.");
+            		range = Math.max(1, range);
+        	}
+		
+		return range;
 	}
 
 	/**
