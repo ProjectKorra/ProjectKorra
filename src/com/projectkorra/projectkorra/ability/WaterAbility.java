@@ -134,7 +134,6 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static Block getIceSourceBlock(final Player player, final double range) {
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
-		range = checkRange(range, this.getName());
 		
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
@@ -171,8 +170,6 @@ public abstract class WaterAbility extends ElementalAbility {
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
 		
-		range = checkRange(range, this.getName());
-
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
@@ -202,8 +199,6 @@ public abstract class WaterAbility extends ElementalAbility {
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
 		
-		range = checkRange(range, this.getName());
-
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		final Set<Material> trans = getTransparentMaterialSet();
 
