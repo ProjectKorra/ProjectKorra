@@ -159,11 +159,7 @@ public class BlockSource {
 	 * @return a valid bendable block, or null if none was found.
 	 */
 	public static Block getSourceBlock(final Player player, final double range, final BlockSourceType sourceType, final ClickType clickType) {
-	        // We check to make sure the select range is 1 or greater, to avoid crashing the server when spigot's getTarget is called.
-		if (range < 1) {
-            		ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options to avoid this warning.");
-            		range = 1;
-        	}
+		range = checkRange(range, null);
 		
 		final BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
 		if (info != null) {
@@ -375,6 +371,21 @@ public class BlockSource {
 			return lavaBlockInfo.getBlock();
 		}
 		return null;
+	}
+	
+	public static double checkRange(double range, String name) {
+	        // We check to make sure the select range is 1 or greater, to avoid crashing the server when spigot's getTarget is called.
+	        if (range < 1) {
+			if (name != null) {
+				ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options of " + name + " to avoid this warning.");
+
+			} else {
+				ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options to avoid this warning.");
+			}
+            		range = 1;
+        	}
+		
+		return range;
 	}
 
 	/**
