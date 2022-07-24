@@ -305,7 +305,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	 */
 	public static Block getEarthSourceBlock(final Player player, final String abilityName, final double range) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		range = checkRange(range, this.getName());
+		range = checkRange(range, abilityName);
 
 		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
 		if (bPlayer == null) {
@@ -410,7 +410,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static Block getTargetEarthBlock(final Player player, final int range) {
-		range = checkRange(range, this.getName());
+		range = checkRange(range, null);
 
 		return player.getTargetBlock(getTransparentMaterialSet(), range);
 	}
@@ -657,6 +657,21 @@ public abstract class EarthAbility extends ElementalAbility {
 			MOVED_EARTH.remove(block);
 		}
 		return true;
+	}
+	
+	public static double checkRange(double range, String name) {
+	        // We check to make sure the select range is 1 or greater, to avoid crashing the server when spigot's getTarget is called.
+	        if (range < 1) {
+			if (name != null) {
+				ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options of " + name + " to avoid this warning.");
+
+			} else {
+				ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options to avoid this warning.");
+			}
+            		range = 1;
+        	}
+		
+		return range;
 	}
 
 	public static void stopBending() {
