@@ -658,21 +658,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 		return true;
 	}
-	
-	public static double checkRange(double range, String name) {
-	        // We check to make sure the select range is 1 or greater, to avoid crashing the server when spigot's getTarget is called.
-	        if (range < 1) {
-			if (name != null) {
-				ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options of " + name + " to avoid this warning.");
-
-			} else {
-				ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options to avoid this warning.");
-			}
-            		range = 1;
-        	}
-		
-		return range;
-	}
 
 	public static void stopBending() {
 		DensityShift.removeAll();
