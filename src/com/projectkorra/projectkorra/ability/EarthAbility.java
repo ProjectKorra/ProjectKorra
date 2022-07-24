@@ -305,7 +305,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	 */
 	public static Block getEarthSourceBlock(final Player player, final String abilityName, final double range) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		range = BlockSource.checkRange(range, this.getName());
+		range = checkRange(range, this.getName());
 
 		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
 		if (bPlayer == null) {
@@ -410,7 +410,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static Block getTargetEarthBlock(final Player player, final int range) {
-		range = BlockSource.checkRange(range, this.getName());
+		range = checkRange(range, this.getName());
 
 		return player.getTargetBlock(getTransparentMaterialSet(), range);
 	}
