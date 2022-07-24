@@ -162,7 +162,7 @@ public class BlockSource {
 	        // We check to make sure the select range is 1 or greater, to avoid crashing the server when spigot's getTarget is called.
 		if (range < 1) {
             		ProjectKorra.log.warning("This ability's Select Ranges must be 1 or greater. Modifying to 1. Change SelectRange config options to avoid this warning.");
-            		range = Math.max(1, range);
+            		range = 1;
         	}
 		
 		final BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
