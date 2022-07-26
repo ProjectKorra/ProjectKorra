@@ -1,0 +1,25 @@
+PK Changes
+- Make RaiseEarth work on shallow earth
+- Make RaiseEarth work on sides
+- Change tremorsense to show blocks
+- Add torrent redirection
+- Add basic support for @p
+- Add permission caching system
+- Fix custom element loading
+- Rework database for element storing
+- Add hooks for ignoring players/elements
+- Revert subelements to be permission based, with hooks for changing it
+- Add duration/charge time hotbar timer
+- Change GeneralMethods#getEntity to accept a predicate for the kind of entity to get
+- Change CoreAbility#getConfig from static to non static
+- Change GeneralMethods#removeUnusableAbilities from a String argument to a bending player argument
+- Revert Earthgrab
+- Revert EarthArmor colors
+- Add moves for every sub
+- Optimize the config for different versions (1.17 inserts azalea leaves, etc)
+- Fix day/night buffs
+- Add bedrock configuration file
+    - Colors for elements/subs that isnt RGB
+    - Add bedrock specific combonations for combos
+    - Add bedrock particles
+- Fix PK reload making all addons register listeners AGAIN
