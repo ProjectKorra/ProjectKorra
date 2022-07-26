@@ -2555,4 +2555,28 @@ public class GeneralMethods {
 
 		event.getAffected().setVelocity(velocity);
 	}
+
+	public static int getMCVersion() {
+		String version = Bukkit.getBukkitVersion().split("-", 2)[0];
+		if (!version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
+			ProjectKorra.log.warning("Version not valid! Cannot parse version \"" + version + "\"");
+			return 1164; //1.16.4
+		}
+
+		String[] split = version.split("\\.", 3);
+
+		int major = Integer.parseInt(split[0]);
+		int minor = 0;
+		int fix = 0;
+
+		if (split.length > 1) {
+			minor = Integer.parseInt(split[1]);
+
+			if (split.length > 2) {
+				fix = Integer.parseInt(split[2]);
+			}
+		}
+
+		return major * 1000 + minor * 10 + fix; //1.16.4 -> 1164; 1.18 -> 1180
+	}
 }

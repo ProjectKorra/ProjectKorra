@@ -25,6 +25,8 @@ public class Extraction extends MetalAbility {
 	private long cooldown;
 	private Block originBlock;
 
+	private boolean is117;
+
 	public Extraction(final Player player) {
 		super(player);
 
@@ -32,6 +34,8 @@ public class Extraction extends MetalAbility {
 		this.tripleChance = getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
 		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
+
+		this.is117 = GeneralMethods.getMCVersion() >= 1170;
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
@@ -59,42 +63,33 @@ public class Extraction extends MetalAbility {
 		Material type;
 		ItemStack item;
 
-		switch (this.originBlock.getType()) {
-		case IRON_ORE:
+		switch (this.originBlock.getType().name()) {
+		case "IRON_ORE":
+		case "DEEPSLATE_IRON_ORE":
 			type = Material.STONE;
-			item = new ItemStack(Material.RAW_IRON, this.getAmount() * 2);
+			item = new ItemStack(is117 ? Material.getMaterial("RAW_IRON") : Material.IRON_INGOT, this.getAmount() * 2);
 			break;
-		case GOLD_ORE:
+		case "GOLD_ORE":
+		case "DEEPSLATE_GOLD_ORE":
 			type = Material.STONE;
-			item = new ItemStack(Material.RAW_GOLD, this.getAmount() * 2);
+			item = new ItemStack(is117 ? Material.getMaterial("RAW_GOLD") : Material.GOLD_INGOT, this.getAmount() * 2);
 			break;
-		case NETHER_QUARTZ_ORE:
+		case "NETHER_QUARTZ_ORE":
 			type = Material.NETHERRACK;
 			item = new ItemStack(Material.QUARTZ, this.getAmount());
 			break;
-		case NETHER_GOLD_ORE:
+		case "NETHER_GOLD_ORE":
 			type = Material.NETHERRACK;
 			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount() * 6);
 			break;
-		case GILDED_BLACKSTONE:
+		case "GILDED_BLACKSTONE":
 			type = Material.BLACKSTONE;
 			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount() * 5);
 			break;
-		case COPPER_ORE:
+		case "COPPER_ORE":
+		case "DEEPSLATE_COPPER_ORE":
 			type = Material.STONE;
-			item = new ItemStack(Material.RAW_COPPER, this.getAmount() * 2);
-			break;
-		case DEEPSLATE_COPPER_ORE:
-			type = Material.DEEPSLATE;
-			item = new ItemStack(Material.RAW_COPPER, this.getAmount() * 2);
-			break;
-		case DEEPSLATE_GOLD_ORE:
-			type = Material.DEEPSLATE;
-			item = new ItemStack(Material.RAW_GOLD, this.getAmount() * 2);
-			break;
-		case DEEPSLATE_IRON_ORE:
-			type = Material.DEEPSLATE;
-			item = new ItemStack(Material.RAW_IRON, this.getAmount() * 2);
+			item = new ItemStack(Material.getMaterial("RAW_COPPER"), this.getAmount() * 2);
 			break;
 		default:
 			return;

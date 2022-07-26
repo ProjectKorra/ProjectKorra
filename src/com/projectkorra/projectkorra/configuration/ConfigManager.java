@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.configuration;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -456,19 +457,38 @@ public class ConfigManager {
 		} else if (type == ConfigType.DEFAULT) {
 			config = defaultConfig.get();
 
+			final int mcVersion = GeneralMethods.getMCVersion();
 			final ArrayList<String> earthBlocks = new ArrayList<String>();
+
 			earthBlocks.add("#base_stone_nether"); // added in 1.16.2
 			earthBlocks.add("#base_stone_overworld"); // added in 1.16.2
-			earthBlocks.add("#coal_ores"); // added in 1.17
-			earthBlocks.add("#diamond_ores"); // added in 1.17
-			earthBlocks.add("#emerald_ores"); // added in 1.17
-			earthBlocks.add("#lapis_ores"); // added in 1.17
-			earthBlocks.add("#redstone_ores"); // added in 1.17
-			earthBlocks.add("CALCITE");
-			earthBlocks.add("DRIPSTONE_BLOCK");
-			earthBlocks.add("LARGE_AMETHYST_BUD");
-			earthBlocks.add("MEDIUM_AMETHYST_BUD");
-			earthBlocks.add("SMALL_AMETHYST_BUD");
+
+			if (mcVersion >= 1190) { //1.19
+				earthBlocks.add("MUD");
+				earthBlocks.add("MUDDY_MANGROVE_ROOTS");
+			}
+			if (mcVersion >= 1170) { //1.17
+				earthBlocks.add("#coal_ores"); //These tags were only added in 1.17 and above
+				earthBlocks.add("#diamond_ores");
+				earthBlocks.add("#emerald_ores");
+				earthBlocks.add("#lapis_ores");
+				earthBlocks.add("#redstone_ores");
+				earthBlocks.add("CALCITE");
+				earthBlocks.add("DRIPSTONE_BLOCK");
+				earthBlocks.add("LARGE_AMETHYST_BUD");
+				earthBlocks.add("MEDIUM_AMETHYST_BUD");
+				earthBlocks.add("SMALL_AMETHYST_BUD");
+				earthBlocks.add("DIRT_PATH"); // renamed from grass_path in 1.17
+				earthBlocks.add("ROOTED_DIRT");
+			} else { //They are in 1.16
+				earthBlocks.add("COAL_ORE");
+				earthBlocks.add("DIAMOND_ORE");
+				earthBlocks.add("EMERALD_ORE");
+				earthBlocks.add("LAPIS_ORE");
+				earthBlocks.add("REDSTONE_ORE");
+				earthBlocks.add("GRASS_PATH");
+			}
+
 			earthBlocks.add("ANCIENT_DEBRIS");
 			earthBlocks.add("CLAY");
 			earthBlocks.add("COARSE_DIRT");
@@ -476,51 +496,57 @@ public class ConfigManager {
 			earthBlocks.add("COBBLESTONE_SLAB");
 			earthBlocks.add("DIRT");
 			earthBlocks.add("GRASS_BLOCK");
-			earthBlocks.add("DIRT_PATH"); // renamed from grass_path in 1.17
 			earthBlocks.add("GRAVEL");
 			earthBlocks.add("MYCELIUM");
 			earthBlocks.add("PODZOL");
 			earthBlocks.add("STONE_SLAB");
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
-			metalBlocks.add("#copper_ores"); // added in 1.17
-			metalBlocks.add("#gold_ores"); // added in 1.16.1
-			metalBlocks.add("#iron_ores"); // added in 1.17
-			metalBlocks.add("COPPER_BLOCK");
-			metalBlocks.add("CUT_COPPER");
-			metalBlocks.add("CUT_COPPER_SLAB");
-			metalBlocks.add("CUT_COPPER_STAIRS");
-			metalBlocks.add("EXPOSED_COPPER");
-			metalBlocks.add("EXPOSED_CUT_COPPER");
-			metalBlocks.add("EXPOSED_CUT_COPPER_SLAB");
-			metalBlocks.add("EXPOSED_CUT_COPPER_STAIRS");
-			metalBlocks.add("OXIDIZED_COPPER");
-			metalBlocks.add("OXIDIZED_CUT_COPPER");
-			metalBlocks.add("OXIDIZED_CUT_COPPER_SLAB");
-			metalBlocks.add("OXIDIZED_CUT_COPPER_STAIRS");
-			metalBlocks.add("RAW_COPPER_BLOCK");
-			metalBlocks.add("RAW_GOLD_BLOCK");
-			metalBlocks.add("RAW_IRON_BLOCK");
-			metalBlocks.add("WAXED_COPPER_BLOCK");
-			metalBlocks.add("WAXED_CUT_COPPER");
-			metalBlocks.add("WAXED_CUT_COPPER_SLAB");
-			metalBlocks.add("WAXED_CUT_COPPER_STAIRS");
-			metalBlocks.add("WAXED_EXPOSED_COPPER");
-			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER");
-			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_SLAB");
-			metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_STAIRS");
-			metalBlocks.add("WAXED_OXIDIZED_COPPER");
-			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER");
-			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_SLAB");
-			metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_STAIRS");
-			metalBlocks.add("WAXED_WEATHERED_COPPER");
-			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER");
-			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_SLAB");
-			metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_STAIRS");
-			metalBlocks.add("WEATHERED_COPPER");
-			metalBlocks.add("WEATHERED_CUT_COPPER");
-			metalBlocks.add("WEATHERED_CUT_COPPER_SLAB");
-			metalBlocks.add("WEATHERED_CUT_COPPER_STAIRS");
+
+			if (mcVersion >= 1170) { //1.17
+				metalBlocks.add("#copper_ores");
+				metalBlocks.add("#gold_ores");
+				metalBlocks.add("#iron_ores");
+				metalBlocks.add("COPPER_BLOCK");
+				metalBlocks.add("CUT_COPPER");
+				metalBlocks.add("CUT_COPPER_SLAB");
+				metalBlocks.add("CUT_COPPER_STAIRS");
+				metalBlocks.add("EXPOSED_COPPER");
+				metalBlocks.add("EXPOSED_CUT_COPPER");
+				metalBlocks.add("EXPOSED_CUT_COPPER_SLAB");
+				metalBlocks.add("EXPOSED_CUT_COPPER_STAIRS");
+				metalBlocks.add("OXIDIZED_COPPER");
+				metalBlocks.add("OXIDIZED_CUT_COPPER");
+				metalBlocks.add("OXIDIZED_CUT_COPPER_SLAB");
+				metalBlocks.add("OXIDIZED_CUT_COPPER_STAIRS");
+				metalBlocks.add("RAW_COPPER_BLOCK");
+				metalBlocks.add("RAW_GOLD_BLOCK");
+				metalBlocks.add("RAW_IRON_BLOCK");
+				metalBlocks.add("WAXED_COPPER_BLOCK");
+				metalBlocks.add("WAXED_CUT_COPPER");
+				metalBlocks.add("WAXED_CUT_COPPER_SLAB");
+				metalBlocks.add("WAXED_CUT_COPPER_STAIRS");
+				metalBlocks.add("WAXED_EXPOSED_COPPER");
+				metalBlocks.add("WAXED_EXPOSED_CUT_COPPER");
+				metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_SLAB");
+				metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_STAIRS");
+				metalBlocks.add("WAXED_OXIDIZED_COPPER");
+				metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER");
+				metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_SLAB");
+				metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_STAIRS");
+				metalBlocks.add("WAXED_WEATHERED_COPPER");
+				metalBlocks.add("WAXED_WEATHERED_CUT_COPPER");
+				metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_SLAB");
+				metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_STAIRS");
+				metalBlocks.add("WEATHERED_COPPER");
+				metalBlocks.add("WEATHERED_CUT_COPPER");
+				metalBlocks.add("WEATHERED_CUT_COPPER_SLAB");
+				metalBlocks.add("WEATHERED_CUT_COPPER_STAIRS");
+			} else {
+				metalBlocks.add("IRON_ORE");
+				metalBlocks.add("GOLD_ORE");
+			}
+
 			metalBlocks.add("CHAIN");
 			metalBlocks.add("GILDED_BLACKSTONE");
 			metalBlocks.add("GOLD_BLOCK");
@@ -544,12 +570,7 @@ public class ConfigManager {
 			plantBlocks.add("#flowers");
 			plantBlocks.add("#leaves");
 			plantBlocks.add("#saplings");
-			plantBlocks.add("BIG_DRIPLEAF");
-			plantBlocks.add("HANGING_ROOTS");
-			plantBlocks.add("MOSS_BLOCK");
-			plantBlocks.add("MOSS_CARPET");
-			plantBlocks.add("SMALL_DRIPLEAF");
-			plantBlocks.add("SPORE_BLOSSOM");
+
 			plantBlocks.add("BROWN_MUSHROOM");
 			plantBlocks.add("BROWN_MUSHROOM_BLOCK");
 			plantBlocks.add("CACTUS");
@@ -574,6 +595,15 @@ public class ConfigManager {
 			plantBlocks.add("WARPED_FUNGUS");
 			plantBlocks.add("WARPED_ROOTS");
 			plantBlocks.add("WEEPING_VINES_PLANT");
+
+			if (mcVersion >= 1170) {
+				plantBlocks.add("BIG_DRIPLEAF");
+				plantBlocks.add("HANGING_ROOTS");
+				plantBlocks.add("MOSS_BLOCK");
+				plantBlocks.add("MOSS_CARPET");
+				plantBlocks.add("SMALL_DRIPLEAF");
+				plantBlocks.add("SPORE_BLOSSOM");
+			}
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add("#snow"); // added in 1.17
