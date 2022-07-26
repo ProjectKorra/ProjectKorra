@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceInterface;
@@ -63,6 +64,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
@@ -1048,10 +1050,23 @@ public class GeneralMethods {
 	 *
 	 * @param location The base location
 	 * @param radius The radius of blocks to look for entities from the location
+	 * @param acceptable A function that determines if an entity is acceptable or not to be a part of this list
+	 * @return A list of entities around a point
+	 */
+	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius, Predicate<Entity> acceptable) {
+		return new ArrayList<>(location.getWorld().getNearbyEntities(location, radius, radius, radius, acceptable));
+	}
+
+	/**
+	 * Gets a {@code List<Entity>} of entities around a specified radius from
+	 * the specified area. Excludes dead entities, marker armorstands and spectators
+	 *
+	 * @param location The base location
+	 * @param radius The radius of blocks to look for entities from the location
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius) {
-		return new ArrayList<>(location.getWorld().getNearbyEntities(location, radius, radius, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)))));
+		return getEntitiesAroundPoint(location, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker());
 	}
 
 	public static long getGlobalCooldown() {
