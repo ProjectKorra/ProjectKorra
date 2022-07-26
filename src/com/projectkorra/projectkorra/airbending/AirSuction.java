@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -419,11 +420,11 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static int getSelectParticles() {
-		return getConfig().getInt("Abilities.Air.AirSuction.SelectParticles");
+		return ConfigManager.defaultConfig.get().getInt("Abilities.Air.AirSuction.SelectParticles");
 	}
 
 	public static double getSelectRange() {
-		return getConfig().getDouble("Abilities.Air.AirSuction.SelectRange");
+		return ConfigManager.defaultConfig.get().getDouble("Abilities.Air.AirSuction.SelectRange");
 	}
 
 }

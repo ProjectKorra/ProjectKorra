@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
@@ -21,15 +22,15 @@ public abstract class BlueFireAbility extends FireAbility implements SubAbility 
 	}
 
 	public static double getDamageFactor() {
-		return getConfig().getDouble("Properties.Fire.BlueFire.DamageFactor");
+		return ConfigManager.defaultConfig.get().getDouble("Properties.Fire.BlueFire.DamageFactor");
 	}
 
 	public static double getCooldownFactor() {
-		return getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor");
+		return ConfigManager.defaultConfig.get().getDouble("Properties.Fire.BlueFire.CooldownFactor");
 	}
 
 	public static double getRangeFactor() {
-		return getConfig().getDouble("Properties.Fire.BlueFire.RangeFactor");
+		return ConfigManager.defaultConfig.get().getDouble("Properties.Fire.BlueFire.RangeFactor");
 	}
 
 }

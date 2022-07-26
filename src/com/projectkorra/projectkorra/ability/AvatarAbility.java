@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -29,14 +30,14 @@ public abstract class AvatarAbility extends ElementalAbility {
 	}
 
 	public static void playAvatarSound(final Location loc) {
-		if (getConfig().getBoolean("Abilities.Avatar.AvatarState.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Volume");
-			final float pitch = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Pitch");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Avatar.AvatarState.PlaySound")) {
+			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Abilities.Avatar.AvatarState.Sound.Volume");
+			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Abilities.Avatar.AvatarState.Sound.Pitch");
 
 			Sound sound = Sound.BLOCK_ANVIL_LAND;
 
 			try {
-				sound = Sound.valueOf(getConfig().getString("Abilities.Avatar.AvatarState.Sound.Sound"));
+				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Abilities.Avatar.AvatarState.Sound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Abilities.Avatar.AvatarState.Sound.Sound' is not valid.");
 			} finally {

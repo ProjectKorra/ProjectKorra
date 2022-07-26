@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.ice;
 
 import java.util.Random;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -388,7 +389,7 @@ public class IceSpikeBlast extends IceAbility {
 	}
 
 	private static void waterBottle(final Player player) {
-		final long range = getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
+		final long range = ConfigManager.defaultConfig.get().getLong("Abilities.Water.IceSpike.Projectile.Range");
 
 		if (WaterReturn.hasWaterBottle(player)) {
 			final Location eyeLoc = player.getEyeLocation();

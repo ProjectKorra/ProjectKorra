@@ -1057,14 +1057,14 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * @return the current FileConfiguration for the plugin
 	 */
-	public static FileConfiguration getConfig() {
+	public FileConfiguration getConfig() {
 		return ConfigManager.getConfig();
 	}
 
 	/**
 	 * @return the language.yml for the plugin
 	 */
-	public static FileConfiguration getLanguageConfig() {
+	public FileConfiguration getLanguageConfig() {
 		return ConfigManager.languageConfig.get();
 	}
 

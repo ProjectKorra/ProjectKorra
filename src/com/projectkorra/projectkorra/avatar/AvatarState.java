@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.avatar;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -106,7 +107,7 @@ public class AvatarState extends AvatarAbility {
 	}
 
 	public static double getValue(final double value) {
-		final double factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
+		final double factor = ConfigManager.defaultConfig.get().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
 		return factor * value;
 	}
 
