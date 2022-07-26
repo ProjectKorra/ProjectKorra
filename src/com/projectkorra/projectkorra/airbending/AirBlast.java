@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -670,11 +669,11 @@ public class AirBlast extends AirAbility {
 	}
 
 	public static int getSelectParticles() {
-		return ConfigManager.defaultConfig.get().getInt("Abilities.Air.AirBlast.SelectParticles");
+		return getConfig().getInt("Abilities.Air.AirBlast.SelectParticles");
 	}
 
 	public static double getSelectRange() {
-		return ConfigManager.defaultConfig.get().getInt("Abilities.Air.AirBlast.SelectRange");
+		return getConfig().getInt("Abilities.Air.AirBlast.SelectRange");
 	}
 
 }

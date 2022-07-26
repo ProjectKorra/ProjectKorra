@@ -68,7 +68,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * place a temp fire block.
 	 */
 	public static boolean canFireGrief() {
-		return ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.FireGriefing");
+		return getConfig().getBoolean("Properties.Fire.FireGriefing");
 	}
 
 	/**
@@ -91,7 +91,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static double getDayFactor() {
-		return ConfigManager.defaultConfig.get().getDouble("Properties.Fire.DayFactor");
+		return getConfig().getDouble("Properties.Fire.DayFactor");
 	}
 
 	/**
@@ -141,13 +141,13 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playCombustionSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.CombustionSound.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.CombustionSound.Pitch");
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
 
 			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Fire.CombustionSound.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
 			} finally {
@@ -165,13 +165,13 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playFirebendingSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.FireSound.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.FireSound.Pitch");
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
 
 			Sound sound = Sound.BLOCK_FIRE_AMBIENT;
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Fire.FireSound.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
 			} finally {
@@ -189,13 +189,13 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.LightningSound.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.LightningSound.Pitch");
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
 
 			Sound sound = Sound.ENTITY_CREEPER_HURT;
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Fire.LightningSound.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
 			} finally {
@@ -205,13 +205,13 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playLightningbendingChargingSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.LightningCharge.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.LightningCharge.Pitch");
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
 
 			Sound sound = Sound.BLOCK_BEEHIVE_WORK;
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Fire.LightningCharge.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
 			} finally {
@@ -221,13 +221,13 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 	
 	public static void playLightningbendingHitSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.LightningHit.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Fire.LightningHit.Pitch");
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
 
 			Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Fire.LightningHit.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
 			} finally {

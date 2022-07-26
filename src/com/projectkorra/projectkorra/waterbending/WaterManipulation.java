@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -69,7 +68,7 @@ public class WaterManipulation extends WaterAbility {
 	private final HashSet<Byte> waterTypes;
 
 	public WaterManipulation(final Player player) {
-		this(player, prepare(player, ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterManipulation.SelectRange")));
+		this(player, prepare(player, getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange")));
 	}
 
 	public WaterManipulation(final Player player, final Block source) {

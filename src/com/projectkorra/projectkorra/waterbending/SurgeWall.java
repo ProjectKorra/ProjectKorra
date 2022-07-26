@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -448,7 +447,7 @@ public class SurgeWall extends WaterAbility {
 			return;
 		}
 
-		final int range = ConfigManager.defaultConfig.get().getInt(RANGE_CONFIG);
+		final int range = getConfig().getInt(RANGE_CONFIG);
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -250,11 +249,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static void setupBendableMaterials() {
-		addTags(EARTH_BLOCKS, ConfigManager.defaultConfig.get().getStringList( "Properties.Earth.EarthBlocks"));
-		addTags(ICE_BLOCKS, ConfigManager.defaultConfig.get().getStringList("Properties.Water.IceBlocks"));
-		addTags(METAL_BLOCKS, ConfigManager.defaultConfig.get().getStringList("Properties.Earth.MetalBlocks"));
-		addTags(PLANT_BLOCKS, ConfigManager.defaultConfig.get().getStringList("Properties.Water.PlantBlocks"));
-		addTags(SAND_BLOCKS, ConfigManager.defaultConfig.get().getStringList("Properties.Earth.SandBlocks"));
-		addTags(SNOW_BLOCKS, ConfigManager.defaultConfig.get().getStringList("Properties.Water.SnowBlocks"));
+		addTags(EARTH_BLOCKS, getConfig().getStringList( "Properties.Earth.EarthBlocks"));
+		addTags(ICE_BLOCKS, getConfig().getStringList("Properties.Water.IceBlocks"));
+		addTags(METAL_BLOCKS, getConfig().getStringList("Properties.Earth.MetalBlocks"));
+		addTags(PLANT_BLOCKS, getConfig().getStringList("Properties.Water.PlantBlocks"));
+		addTags(SAND_BLOCKS, getConfig().getStringList("Properties.Earth.SandBlocks"));
+		addTags(SNOW_BLOCKS, getConfig().getStringList("Properties.Water.SnowBlocks"));
 	}
 }

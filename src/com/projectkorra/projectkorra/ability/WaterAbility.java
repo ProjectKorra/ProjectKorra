@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -151,7 +150,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static double getNightFactor() {
-		return ConfigManager.defaultConfig.get().getDouble("Properties.Water.NightFactor");
+		return getConfig().getDouble("Properties.Water.NightFactor");
 	}
 
 	public static double getNightFactor(final double value, final World world) {
@@ -297,14 +296,14 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playIcebendingSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Water.IceSound.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Water.IceSound.Pitch");
+		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
 
 			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
 
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Water.IceSound.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
 			} finally {
@@ -314,14 +313,14 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playPlantbendingSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Water.PlantSound.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Water.PlantSound.Pitch");
+		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
 
 			Sound sound = Sound.BLOCK_GRASS_STEP;
 
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Water.PlantSound.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
 			} finally {
@@ -331,14 +330,14 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playWaterbendingSound(final Location loc) {
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Water.WaterSound.Volume");
-			final float pitch = (float) ConfigManager.defaultConfig.get().getDouble("Properties.Water.WaterSound.Pitch");
+		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
 
 			Sound sound = Sound.BLOCK_WATER_AMBIENT;
 
 			try {
-				sound = Sound.valueOf(ConfigManager.defaultConfig.get().getString("Properties.Water.WaterSound.Sound"));
+				sound = Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.WaterSound.Sound' is not valid.");
 			} finally {
