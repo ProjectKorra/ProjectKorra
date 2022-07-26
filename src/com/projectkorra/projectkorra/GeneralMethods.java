@@ -68,6 +68,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
@@ -1897,8 +1898,10 @@ public class GeneralMethods {
 		ProjectKorra.collisionManager.stopCollisionDetection();
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
-		CoreAbility.registerAbilities();
-		reloadAddonPlugins();
+		HandlerList.unregisterAll(ProjectKorra.plugin); //Unregister all listeners registered by addons AND ProjectKorra
+		Bukkit.getPluginManager().registerEvents(new PKListener(ProjectKorra.plugin), ProjectKorra.plugin); //Re-register our listener
+		CoreAbility.registerAbilities(); //Register all abilities again
+		reloadAddonPlugins();  //Register all addons and addon listeners again
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered.
 		ProjectKorra.collisionManager.startCollisionDetection();
 
@@ -1941,7 +1944,12 @@ public class GeneralMethods {
 		}
 	}
 
+	@Deprecated
 	public static void removeUnusableAbilities(final String player) {
+		removeUnusableAbilities(Bukkit.getPlayer(player));
+	}
+
+	public static void removeUnusableAbilities(final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;

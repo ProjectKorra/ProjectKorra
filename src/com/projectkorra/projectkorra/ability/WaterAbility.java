@@ -213,7 +213,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			trans.removeAll(remove);
 		}
 
-		final Block testBlock = player.getTargetBlock(trans, range > 3 ? 3 : (int) range);
+		final Block testBlock = player.getTargetBlock(trans, Math.max(1, Math.min(3, (int)range)));
 		if (bPlayer == null) {
 			return null;
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {

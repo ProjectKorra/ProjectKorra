@@ -11,8 +11,8 @@ PK Changes
 - Revert subelements to be permission based, with hooks for changing it
 - Add duration/charge time hotbar timer
 - Change GeneralMethods#getEntity to accept a predicate for the kind of entity to get
-- Change CoreAbility#getConfig from static to non static
-- Change GeneralMethods#removeUnusableAbilities from a String argument to a bending player argument
+- DONE Change CoreAbility#getConfig from static to non static
+- DONE Change GeneralMethods#removeUnusableAbilities from a String argument to a bending player argument
 - Revert Earthgrab
 - Revert EarthArmor colors
 - Add moves for every sub
@@ -22,4 +22,6 @@ PK Changes
     - Colors for elements/subs that isnt RGB
     - Add bedrock specific combonations for combos
     - Add bedrock particles
-- Fix PK reload making all addons register listeners AGAIN
+- DONE Fix PK reload making all addons register listeners AGAIN
+- Remove announcer
+- Fix bending board showing when logging into a disabled world
