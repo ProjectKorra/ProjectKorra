@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
 import com.projectkorra.projectkorra.command.CooldownCommand;
+import org.bukkit.permissions.Permission;
 import sun.reflect.ReflectionFactory;
 
 import org.apache.commons.lang3.Validate;
@@ -604,6 +605,7 @@ public abstract class CoreAbility implements Ability {
 
 		final AddonAbilityLoader<CoreAbility> abilityLoader = new AddonAbilityLoader<CoreAbility>(plugin, path);
 		final List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
+		final Permission bendingPlayerPerm = Bukkit.getPluginManager().getPermission("bending.player");
 
 		for (final CoreAbility coreAbil : loadedAbilities) {
 			if (!(coreAbil instanceof AddonAbility)) {
@@ -644,6 +646,16 @@ public abstract class CoreAbility implements Ability {
 					if (!PassiveManager.getPassiveClasses().containsKey(passive)) {
 						PassiveManager.getPassiveClasses().put(passive, coreAbil.getClass());
 					}
+				}
+
+				//Define a permission for this addon if none have been defined already
+				//This allows permission plugins to pick up on them and allows players to
+				//use the ability by default, even if the addon author didn't add the permission
+				Permission perm = Bukkit.getPluginManager().getPermission("bending.ability." + coreAbil.getName());
+				if (perm == null) {
+					perm = new Permission("bending.ability." + coreAbil.getName());
+					perm.addParent(bendingPlayerPerm, ((AddonAbility) coreAbil).isDefault());
+					Bukkit.getPluginManager().addPermission(perm);
 				}
 
 				//Register the cooldown of the ability so it appears in the list of cooldowns
