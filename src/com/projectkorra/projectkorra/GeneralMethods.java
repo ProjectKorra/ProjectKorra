@@ -1900,7 +1900,8 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
-		Arrays.stream(Element.getAllElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Load colors from config again
+		Arrays.stream(Element.getElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Load colors from config again
+		Arrays.stream(Element.getSubElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Same for subs
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
 		EarthTunnel.clearBendableMaterials();
@@ -2374,36 +2375,8 @@ public class GeneralMethods {
 			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
 			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra | Fork Roku!\n" + color + "Click for more info.").create()));
 
-			/*
-			 * The commented code below does not work due to an issue with
-			 * Spigot. In the mean time, we'll have to use this incredibly
-			 * 'hacky' method to force the color on the new line.
-			 */
-			String lastColor = "";
-			String newMessage = "";
-			for (int i = 0; i < message.split("").length; i++) {
-				final String c = message.split("")[i];
-				if (c.equalsIgnoreCase("\u00A7")) {
-					lastColor = "\u00A7" + message.split("")[i + 1];
-					newMessage = newMessage + c;
-				} else if (c.equalsIgnoreCase(" ")) { // Add color every word
-					newMessage = newMessage + " " + lastColor;
-				} else {
-					newMessage = newMessage + c;
-				}
-			}
-
-			final TextComponent messageComponent = new TextComponent(newMessage);
+			final TextComponent messageComponent = new TextComponent(TextComponent.fromLegacyText(message, ChatColor.YELLOW.asBungee()));
 			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
-			/*
-			 * boolean prefixSent = false; for (String msg :
-			 * message.split("\n")) { if (!prefixSent) { TextComponent
-			 * messageComponent = new TextComponent(msg); ((Player)
-			 * sender).spigot().sendMessage(new TextComponent(prefixComponent,
-			 * messageComponent)); prefixSent = true; } else {
-			 * sender.sendMessage(msg); } }
-			 */
-
 		}
 	}
 

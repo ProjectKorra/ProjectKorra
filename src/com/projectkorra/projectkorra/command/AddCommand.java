@@ -98,7 +98,7 @@ public class AddCommand extends PKCommand {
 			return;
 		}
 
-		if (element.toLowerCase().equals("all")) {
+		if (element.equalsIgnoreCase("all")) {
 			final StringBuilder elements = new StringBuilder("");
 			boolean elementFound = false;
 			for (final Element e : Element.getAllElements()) {
