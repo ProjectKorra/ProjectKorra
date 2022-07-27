@@ -82,7 +82,8 @@ public abstract class PKCommand implements SubCommand {
 
 	@Override
 	public void help(final CommandSender sender, final boolean description) {
-		sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + this.properUse);
+		String message = ConfigManager.languageConfig.get().getString("Commands.ProperUsage").replace("{command}", ChatColor.DARK_AQUA + this.properUse);
+		sender.sendMessage(ChatColor.GOLD + message);
 		if (description) {
 			sender.sendMessage(ChatColor.YELLOW + this.description);
 		}
