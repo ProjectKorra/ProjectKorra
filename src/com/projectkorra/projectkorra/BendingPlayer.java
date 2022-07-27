@@ -22,6 +22,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.Element.MultiSubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
@@ -220,7 +221,7 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a Player is effected by BloodBending.
 	 *
-	 * @return true If {@link ChiMethods#isChiBlocked(String)} is true <br />
+	 * @return true If {@link #isChiBlocked()} is true <br />
 	 *         false If player is BloodBender and Bending is toggled on, or if
 	 *         player is in AvatarState
 	 */
@@ -428,7 +429,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can MetalBend.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.earth.metalbending"
 	 */
 	public boolean canMetalbend() {
@@ -438,7 +438,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can PlantBend.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.ability.plantbending"
 	 */
 	public boolean canPlantbend() {
@@ -448,7 +447,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can SandBend.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.earth.sandbending"
 	 */
 	public boolean canSandbend() {
@@ -467,7 +465,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can use SpiritualProjection.
 	 *
-	 * @param player The player to check
 	 * @return true If player has permission node
 	 *         "bending.air.spiritualprojection"
 	 */
@@ -523,13 +520,13 @@ public class BendingPlayer {
 	/**
 	 * Attempts to get a {@link BendingPlayer} from specified player name. this
 	 * method tries to get a {@link Player} object and gets the uuid and then
-	 * calls {@link #getBendingPlayer(UUID)}
+	 * calls {@link #getBendingPlayer(OfflinePlayer)}
 	 *
 	 * @param playerName The name of the Player
 	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS}
 	 *         contains the player name
 	 *
-	 * @see #getBendingPlayer(UUID)
+	 * @see #getBendingPlayer(OfflinePlayer)
 	 */
 	public static BendingPlayer getBendingPlayer(final String playerName) {
 		if (playerName == null) {
@@ -675,6 +672,11 @@ public class BendingPlayer {
 			return this.player.hasPermission("bending.avatar") || this.player.hasPermission("bending.ability.AvatarState");
 		} else if (!(element instanceof SubElement)) {
 			return this.elements.contains(element);
+		} else if (element instanceof MultiSubElement) {
+			for (Element ele : this.elements) {
+				if (((Element.MultiSubElement) element).isParentElement(element)) return true;
+			}
+			return false;
 		} else {
 			return this.hasSubElement((SubElement) element);
 		}
@@ -849,7 +851,7 @@ public class BendingPlayer {
 	 * Sets the {@link BendingPlayer}'s element. If the player had elements
 	 * before they will be overwritten.
 	 *
-	 * @param e The element to set
+	 * @param element The element to set
 	 */
 	public void setElement(final Element element) {
 		this.elements.clear();
