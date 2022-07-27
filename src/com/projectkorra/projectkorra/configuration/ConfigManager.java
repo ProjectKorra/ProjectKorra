@@ -128,6 +128,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Toggle.Other.ToggledOffElementByOther", "Your {element} has been toggled off by {sender}.");
 			config.addDefault("Commands.Toggle.Other.PlayerNotFound", "Target is not found.");
 			config.addDefault("Commands.Toggle.Other.WrongElement", "{target} doesn't have that element.");
+			config.addDefault("Commands.Toggle.Reminder", "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
 
 			config.addDefault("Commands.Remove.Description", "This command will remove the element of the targeted [Player]. The player will be able to re-pick their element after this command is run on them, assuming their bending was not permaremoved.");
 			config.addDefault("Commands.Remove.Other.RemovedAllElements", "Your bending has been removed by {sender}.");

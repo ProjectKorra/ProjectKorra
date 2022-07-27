@@ -79,7 +79,7 @@ public class PermaremoveCommand extends PKCommand {
 			GeneralMethods.saveElements(bPlayer);
 			bPlayer.setPermaRemoved(true);
 			GeneralMethods.savePermaRemoved(bPlayer);
-			GeneralMethods.removeUnusableAbilities(player.getName());
+			GeneralMethods.removeUnusableAbilities(player);
 			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + this.removed);
 			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target)) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));

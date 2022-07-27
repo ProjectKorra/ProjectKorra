@@ -1204,7 +1204,8 @@ public class PKListener implements Listener {
 		}
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
 			PassiveManager.registerPassives(player);
-			GeneralMethods.removeUnusableAbilities(player.getName());
+			GeneralMethods.removeUnusableAbilities(player);
+			BendingBoardManager.changeWorld(player);
 		}, 5);
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {

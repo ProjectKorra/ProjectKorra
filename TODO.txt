@@ -19,8 +19,6 @@ PK Changes
     - Colors for elements/subs that isnt RGB
     - Add bedrock specific combonations for combos
     - Add bedrock particles
-- Remove announcer
-- Fix bending board showing when logging into a disabled world
 - Add a default method that gets whether the ability is a default ability or not. If it is, add a permission for it automatically
 - Redo the database cooldown system.
     - The ID system is near pointless.

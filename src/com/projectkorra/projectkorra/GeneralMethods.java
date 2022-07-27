@@ -1843,7 +1843,7 @@ public class GeneralMethods {
 
 		if (PKListener.getToggledOut().contains(player.getUniqueId())) {
 			bPlayer.toggleBending();
-			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
+			GeneralMethods.sendBrandingMessage(bPlayer.getPlayer(), ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
 		}
 
 		Preset.loadPresets(player);
