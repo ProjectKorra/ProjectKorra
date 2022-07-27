@@ -2366,13 +2366,13 @@ public class GeneralMethods {
 			color = ChatColor.GOLD;
 		}
 
-		final String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		final String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectRoku" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
 		} else {
 			final TextComponent prefixComponent = new TextComponent(prefix);
 			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
-			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra!\n" + color + "Click for more info.").create()));
+			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra | Fork Roku!\n" + color + "Click for more info.").create()));
 
 			/*
 			 * The commented code below does not work due to an issue with
@@ -2383,8 +2383,8 @@ public class GeneralMethods {
 			String newMessage = "";
 			for (int i = 0; i < message.split("").length; i++) {
 				final String c = message.split("")[i];
-				if (c.equalsIgnoreCase("§")) {
-					lastColor = "§" + message.split("")[i + 1];
+				if (c.equalsIgnoreCase("\u00A7")) {
+					lastColor = "\u00A7" + message.split("")[i + 1];
 					newMessage = newMessage + c;
 				} else if (c.equalsIgnoreCase(" ")) { // Add color every word
 					newMessage = newMessage + " " + lastColor;

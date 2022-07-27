@@ -21,3 +21,10 @@ PK Changes
     - Add bedrock particles
 - Remove announcer
 - Fix bending board showing when logging into a disabled world
+- Add a default method that gets whether the ability is a default ability or not. If it is, add a permission for it automatically
+- Redo the database cooldown system.
+    - The ID system is near pointless.
+    - Tt seems to save ALL cooldowns to the database, regardless of whether they should be saved or not.
+    - There is no cache system for IDs, so there is needless database calls for every single one
+    - The cooldowns load on the main thread from the database. BAD BAD BAD.
+    - I already fixed cooldowns saving on the main thread

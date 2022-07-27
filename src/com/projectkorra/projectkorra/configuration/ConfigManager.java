@@ -59,13 +59,11 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
 			config.addDefault("Chat.Branding.JoinMessage.Enabled", true);
-			config.addDefault("Chat.Branding.AutoAnnouncer.Enabled", true);
-			config.addDefault("Chat.Branding.AutoAnnouncer.Interval", 30);
 			config.addDefault("Chat.Branding.Color", "GOLD");
 			config.addDefault("Chat.Branding.Borders.TopBorder", "");
 			config.addDefault("Chat.Branding.Borders.BottomBorder", "");
 			config.addDefault("Chat.Branding.ChatPrefix.Prefix", "");
-			config.addDefault("Chat.Branding.ChatPrefix.Suffix", " ");
+			config.addDefault("Chat.Branding.ChatPrefix.Suffix", " \u00BB ");
 
 			config.addDefault("Chat.Prefixes.Air", "[Air]");
 			config.addDefault("Chat.Prefixes.Earth", "[Earth]");
