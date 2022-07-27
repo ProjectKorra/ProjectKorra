@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -155,6 +156,7 @@ public class BendingPlayer {
 			}
 			
 			BendingBoardManager.updateBoard(player, event.getAbility(), true, 0);
+			CooldownCommand.addCooldownType(ability);
 		}
 	}
 
@@ -274,7 +276,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
 			return false;
 		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;

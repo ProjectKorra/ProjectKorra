@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
+import com.projectkorra.projectkorra.command.CooldownCommand;
 import sun.reflect.ReflectionFactory;
 
 import org.apache.commons.lang3.Validate;
@@ -571,6 +572,11 @@ public abstract class CoreAbility implements Ability {
 						PassiveManager.getPassiveClasses().put(passive, coreAbil.getClass());
 					}
 				}
+
+				//Register the cooldown of the ability so it appears in the list of cooldowns
+				if (coreAbil.isEnabled() && !coreAbil.isHiddenAbility() && !(coreAbil instanceof PassiveAbility)) {
+					CooldownCommand.addCooldownType(coreAbil.getName());
+				}
 			} catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
 				e.printStackTrace();
@@ -638,6 +644,11 @@ public abstract class CoreAbility implements Ability {
 					if (!PassiveManager.getPassiveClasses().containsKey(passive)) {
 						PassiveManager.getPassiveClasses().put(passive, coreAbil.getClass());
 					}
+				}
+
+				//Register the cooldown of the ability so it appears in the list of cooldowns
+				if (coreAbil.isEnabled() && !coreAbil.isHiddenAbility() && !(coreAbil instanceof PassiveAbility)) {
+					CooldownCommand.addCooldownType(coreAbil.getName());
 				}
 			} catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");

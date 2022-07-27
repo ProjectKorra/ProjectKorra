@@ -154,11 +154,24 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
 			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
 
+			config.addDefault("Commands.Cooldown.Description", "Set, reset or view a cooldown for a player");
+			config.addDefault("Commands.Cooldown.PlayerOffline", "That player is not online!");
+			config.addDefault("Commands.Cooldown.InvalidCooldown", "Could not find an existing cooldown with the name '{cooldown}'!");
+			config.addDefault("Commands.Cooldown.InvalidTime", "Could not parse {value} as a valid time! ");
+			config.addDefault("Commands.Cooldown.View", "Listing {number} cooldowns for {player}");
+			config.addDefault("Commands.Cooldown.ViewNone", "{player} has nothing on cooldown!");
+			config.addDefault("Commands.Cooldown.ViewMax", "Listing top 10 cooldowns for {player}");
+			config.addDefault("Commands.Cooldown.ResetPreview", "Click to reset {cooldown}");
+			config.addDefault("Commands.Cooldown.Reset", "Cooldown '{cooldown}' reset for {player}!");
+			config.addDefault("Commands.Cooldown.ResetAll", "Cleared all cooldowns for {player}");
+			config.addDefault("Commands.Cooldown.SetAll", "You cannot set the value of every single cooldown to something other than 0!");
+			config.addDefault("Commands.Cooldown.Set", "Set cooldown '{cooldown}' for {player} to {value}");
+			config.addDefault("Commands.Cooldown.SetNoValue", "You must provide a value to set a cooldown to!");
+
 			config.addDefault("Commands.Stats.InvalidLookup", "Invalid lookup argument.");
 			config.addDefault("Commands.Stats.InvalidSearchType", "Invalid search type.");
 			config.addDefault("Commands.Stats.InvalidStatistic", "Invalid statistic.");
 			config.addDefault("Commands.Stats.InvalidPlayer", "Player '%player%' not found.");
-
 			config.addDefault("Commands.Stats.Description", "This command manages statistics. View your own, another player's statistics along with the server leaderboard.");
 
 			config.addDefault("Commands.PermaRemove.Description", "This command will permanently remove the bending of the targeted <Player>. Once removed, a player may only receive bending again if this command is run on them again. This command is typically reserved for administrators.");

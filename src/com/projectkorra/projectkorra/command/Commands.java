@@ -125,5 +125,6 @@ public class Commands {
 		new ToggleCommand();
 		new VersionCommand();
 		new WhoCommand();
+		new CooldownCommand();
 	}
 }
