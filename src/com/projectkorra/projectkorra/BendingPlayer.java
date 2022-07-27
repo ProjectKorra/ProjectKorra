@@ -175,11 +175,13 @@ public class BendingPlayer {
 		return cooldowns;
 	}
 
-	public void saveCooldowns() {
+	//TODO Rewrite cooldowns with the ID system
+	private void saveCooldownsForce() {
 		DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'", false);
 		for (final Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
 			final String name = entry.getKey();
 			final Cooldown cooldown = entry.getValue();
+			if (!cooldown.isDatabase()) continue;
 			final int cooldownId = this.cooldownManager.getCooldownId(name, false);
 			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
 				if (rs.next()) {
@@ -191,6 +193,15 @@ public class BendingPlayer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void saveCooldowns(boolean async) {
+		if (async) Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, this::saveCooldownsForce);
+		else this.saveCooldownsForce();
+	}
+
+	public void saveCooldowns() {
+		this.saveCooldowns(true);
 	}
 
 	/**
