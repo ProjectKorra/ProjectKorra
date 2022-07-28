@@ -117,7 +117,7 @@ public class CooldownCommand extends PKCommand {
             }
             if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
                 if (time == 0) {
-                    bPlayer.getCooldowns().clear();
+                    bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
                     bPlayer.saveCooldowns();
                     GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", player.getName()));
                     return;
@@ -128,7 +128,6 @@ public class CooldownCommand extends PKCommand {
 
             String fixedCooldown = setCooldown(sender, bPlayer, cooldown, time);
             if (fixedCooldown == null) {
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidCooldown").replace("{cooldown}", cooldown));
                 return;
             }
 
@@ -139,7 +138,7 @@ public class CooldownCommand extends PKCommand {
             GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetNoValue"));
         } else {
             if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
-                bPlayer.getCooldowns().clear();
+                bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
                 bPlayer.saveCooldowns(true);
                 GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", player.getName()));
                 return;
@@ -147,7 +146,6 @@ public class CooldownCommand extends PKCommand {
 
             String fixedCooldown = setCooldown(sender, bPlayer, cooldown, 0);
             if (fixedCooldown == null) {
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidCooldown").replace("{cooldown}", cooldown));
                 return;
             }
 
@@ -164,15 +162,21 @@ public class CooldownCommand extends PKCommand {
             return null;
         }
 
-        if (time <= 0) {
-            bPlayer.getCooldowns().remove(fixedCooldown);
+        final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(bPlayer.getPlayer(), cooldown, time, time <= 0 ? PlayerCooldownChangeEvent.Result.REMOVED : PlayerCooldownChangeEvent.Result.SET);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            if (time <= 0) {
+                bPlayer.getCooldowns().remove(fixedCooldown);
+                return fixedCooldown;
+            }
+
+            Cooldown cooldownObject = bPlayer.getCooldowns().get(fixedCooldown);
+            cooldownObject = new Cooldown(time + System.currentTimeMillis(), cooldownObject != null && cooldownObject.isDatabase());
+            bPlayer.getCooldowns().put(fixedCooldown, cooldownObject);
             return fixedCooldown;
         }
 
-        Cooldown cooldownObject = bPlayer.getCooldowns().get(fixedCooldown);
-        cooldownObject = new Cooldown(time + System.currentTimeMillis(), cooldownObject != null && cooldownObject.isDatabase());
-        bPlayer.getCooldowns().put(fixedCooldown, cooldownObject);
-        return fixedCooldown;
+        return null;
     }
 
     @Override
