@@ -124,6 +124,12 @@ public class Element {
 			FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
 			String key = "Chat.Colors." + this.name;
 			String value = config.getString(key);
+
+			if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
+				this.color = ((SubElement) this).parentElement.getSubColor();
+				return this.color;
+			}
+
 			try {
 				ChatColor chatColor = ChatColor.of(value);
 				this.color = chatColor;
@@ -374,26 +380,6 @@ public class Element {
 		public SubElement(final String name, final Element parentElement, final ElementType type, final Plugin plugin) {
 			super(name, type, plugin);
 			this.parentElement = parentElement;
-		}
-
-		@Override
-		public ChatColor getColor() {
-			if (this.color == null) {
-				FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
-				String key = "Chat.Colors." + this.name;
-				String value = config.getString(key);
-				if (value == null && !(this instanceof MultiSubElement)) {
-					value = ConfigManager.languageConfig.get().getString("Chat.Colors." + this.parentElement.name + "Sub");
-				}
-				try {
-					ChatColor chatColor = ChatColor.of(value);
-					this.color = chatColor;
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				}
-			}
-
-			return this.color != null ? this.color : ChatColor.WHITE;
 		}
 
 		public Element getParentElement() {
