@@ -81,11 +81,6 @@ public class PresetCommand extends PKCommand {
 		final Player player = (Player) sender;
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(player);
-		}
-
 		int page = 1;
 		String name = null;
 		if (args.size() == 1 && !Arrays.asList(listaliases).contains(args.get(0))){
@@ -171,10 +166,6 @@ public class PresetCommand extends PKCommand {
 				if (player2 != null && player2.isOnline()) {
 					BendingPlayer bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 
-					if (bPlayer2 == null) {
-						GeneralMethods.createBendingPlayer(player2.getUniqueId(), player2.getName());
-						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
-					}
 					if (bPlayer2.isPermaRemoved()) {
 						GeneralMethods.sendBrandingMessage(player, ChatColor.RED + this.bendingRemovedOther);
 						return;
@@ -199,10 +190,6 @@ public class PresetCommand extends PKCommand {
 				if (player2 != null && player2.isOnline()) {
 					BendingPlayer bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 
-					if (bPlayer2 == null) {
-						GeneralMethods.createBendingPlayer(player2.getUniqueId(), player2.getName());
-						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
-					}
 					if (bPlayer2.isPermaRemoved()) {
 						GeneralMethods.sendBrandingMessage(player, ChatColor.RED + this.bendingRemovedOther);
 						return;

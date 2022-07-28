@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -58,10 +59,6 @@ public class ChooseCommand extends PKCommand {
 			}
 
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			if (bPlayer == null) {
-				GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			}
 			if (bPlayer.isPermaRemoved()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 				return;
@@ -170,7 +167,7 @@ public class ChooseCommand extends PKCommand {
 			} else {
 				GeneralMethods.sendBrandingMessage(target, color + this.chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
-			GeneralMethods.saveSubElements(bPlayer);
+			bPlayer.saveSubElements();
 			GeneralMethods.removeUnusableAbilities(target);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
@@ -196,8 +193,8 @@ public class ChooseCommand extends PKCommand {
 					GeneralMethods.sendBrandingMessage(target, color + this.chosenAE.replace("{element}", element.getName() + element.getType().getBender()));
 				}
 			}
-			GeneralMethods.saveElements(bPlayer);
-			GeneralMethods.saveSubElements(bPlayer);
+			bPlayer.saveElements();
+			bPlayer.saveSubElements();
 			GeneralMethods.removeUnusableAbilities(target);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}

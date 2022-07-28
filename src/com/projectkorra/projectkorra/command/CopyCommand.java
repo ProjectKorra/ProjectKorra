@@ -81,14 +81,6 @@ public class CopyCommand extends PKCommand {
 		BendingPlayer orig = BendingPlayer.getBendingPlayer(player);
 		BendingPlayer target = BendingPlayer.getBendingPlayer(player2);
 
-		if (orig == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			orig = BendingPlayer.getBendingPlayer(player);
-		}
-		if (target == null) {
-			GeneralMethods.createBendingPlayer(player2.getUniqueId(), player2.getName());
-			target = BendingPlayer.getBendingPlayer(player2);
-		}
 		if (orig.isPermaRemoved()) {
 			if (self) {
 				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));

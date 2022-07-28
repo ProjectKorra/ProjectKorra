@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
 import com.bekvon.bukkit.residence.Residence;
@@ -57,6 +55,7 @@ import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -86,7 +85,6 @@ import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
 import org.kingdoms.constants.player.DefaultKingdomPermission;
 import org.kingdoms.constants.player.KingdomPlayer;
 
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -323,229 +321,16 @@ public class GeneralMethods {
 	 * @param player The player name
 	 * @throws SQLException
 	 */
-	public static void createBendingPlayer(final UUID uuid, final String player) {
+	/*public static void createBendingPlayer(final UUID uuid, final String player) {
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				createBendingPlayerAsynchronously(uuid, player);
+				OfflineBendingPlayer.createBendingPlayerAsynchronously(uuid, player);
 			}
 
 		}.runTaskAsynchronously(ProjectKorra.plugin);
-	}
-
-	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-		final ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
-						ProjectKorra.log.info("Created new BendingPlayer for " + player);
-					}
-				}.runTask(ProjectKorra.plugin);
-			} else {
-				// The player has at least played before.
-				final String player2 = rs2.getString("player");
-				if (!player.equalsIgnoreCase(player2)) {
-					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
-					// They have changed names.
-					ProjectKorra.log.info("Updating Player Name for " + player);
-				}
-				final String subelement = rs2.getString("subelement");
-				final String element = rs2.getString("element");
-				final String permaremoved = rs2.getString("permaremoved");
-				boolean p = false;
-				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null && !element.equals("NULL")) {
-					final boolean hasAddon = element.contains(";");
-					final String[] split = element.split(";");
-					if (split[0] != null) { // Player has an element.
-						if (split[0].contains("a")) {
-							elements.add(Element.AIR);
-						}
-						if (split[0].contains("w")) {
-							elements.add(Element.WATER);
-						}
-						if (split[0].contains("e")) {
-							elements.add(Element.EARTH);
-						}
-						if (split[0].contains("f")) {
-							elements.add(Element.FIRE);
-						}
-						if (split[0].contains("c")) {
-							elements.add(Element.CHI);
-						}
-						if (hasAddon) {
-							/*
-							 * Because plugins which depend on ProjectKorra
-							 * would be loaded after ProjectKorra, addon
-							 * elements would = null. To work around this, we
-							 * keep trying to load in the elements from the
-							 * database until it successfully loads everything
-							 * in, or it times out.
-							 */
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon elements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
-										ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon elements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null) {
-												elements.add(Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
-					}
-				}
-				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
-				boolean shouldSave = false;
-				if (subelement != null && !subelement.equals("NULL")) {
-					final boolean hasAddon = subelement.contains(";");
-					final String[] split = subelement.split(";");
-					if (subelement.equals("-")) {
-						final Player playero = Bukkit.getPlayer(uuid);
-						for (final SubElement sub : Element.getAllSubElements()) {
-							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
-								subelements.add(sub);
-								shouldSave = true && playero != null;
-							}
-						}
-					} else if (split[0] != null) {
-						if (split[0].contains("m")) {
-							subelements.add(Element.METAL);
-						}
-						if (split[0].contains("v")) {
-							subelements.add(Element.LAVA);
-						}
-						if (split[0].contains("s")) {
-							subelements.add(Element.SAND);
-						}
-						if (split[0].contains("c")) {
-							subelements.add(Element.COMBUSTION);
-						}
-						if (split[0].contains("l")) {
-							subelements.add(Element.LIGHTNING);
-						}
-						if (split[0].contains("t")) {
-							subelements.add(Element.SPIRITUAL);
-						}
-						if (split[0].contains("f")) {
-							subelements.add(Element.FLIGHT);
-						}
-						if (split[0].contains("i")) {
-							subelements.add(Element.ICE);
-						}
-						if (split[0].contains("h")) {
-							subelements.add(Element.HEALING);
-						}
-						if (split[0].contains("b")) {
-							subelements.add(Element.BLOOD);
-						}
-						if (split[0].contains("p")) {
-							subelements.add(Element.PLANT);
-						}
-						if (split[0].contains("r")) {
-							subelements.add(Element.BLUE_FIRE);
-						}
-
-						if (hasAddon) {
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon subelements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
-										ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon subelements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
-												subelements.add((SubElement) Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
-					}
-				}
-
-				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-				final ConcurrentHashMap<Integer, String> abilitiesClone = new ConcurrentHashMap<Integer, String>(abilities);
-				for (int i = 1; i <= 9; i++) {
-					final String ability = rs2.getString("slot" + i);
-					abilitiesClone.put(i, ability);
-				}
-				final long startTime = System.currentTimeMillis();
-				final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if (abilitiesClone.isEmpty()) {
-							// All abilities loaded.
-							this.cancel();
-						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
-							ProjectKorra.log.severe("These abilities have taken too long to load in, resulting in users having lost them if bound.");
-							this.cancel();
-						} else {
-							for (final int slot : abilitiesClone.keySet()) {
-								final String ability = abilitiesClone.get(slot);
-								if (ability.equalsIgnoreCase("null")) {
-									abilitiesClone.remove(slot);
-									continue;
-								} else if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
-									abilities.put(slot, ability);
-									abilitiesClone.remove(slot);
-									continue;
-								}
-							}
-						}
-					}
-				}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-
-				p = (permaremoved != null && (permaremoved.equals("true")));
-
-				final boolean boolean_p = p;
-				final boolean shouldSave_ = shouldSave;
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
-						if (shouldSave_) {
-							saveSubElements(BendingPlayer.getBendingPlayer(player));
-						}
-					}
-				}.runTask(ProjectKorra.plugin);
-			}
-		} catch (final SQLException ex) {
-			ex.printStackTrace();
-		}
-	}
+	}*/
 
 	/**
 	 * Deserializes the configuration file "bendingPlayers.yml" of the old
@@ -1833,20 +1618,19 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void loadBendingPlayer(final BendingPlayer pl) {
-		final Player player = Bukkit.getPlayer(pl.getUUID());
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
+	public static void loadBendingPlayer(final BendingPlayer bPlayer) {
 		if (bPlayer == null) {
 			return;
 		}
 
-		if (PKListener.getToggledOut().contains(player.getUniqueId())) {
+		final Player player = bPlayer.getPlayer();
+
+		if (PKListener.getToggledOut().contains(bPlayer.getUUID())) {
 			bPlayer.toggleBending();
-			GeneralMethods.sendBrandingMessage(bPlayer.getPlayer(), ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
+			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
 		}
 
-		Preset.loadPresets(player);
+		Preset.loadPresets(bPlayer.getPlayer());
 		Element element = null;
 		String prefix = "";
 
@@ -1929,7 +1713,8 @@ public class GeneralMethods {
 		}
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			//GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			OfflineBendingPlayer.loadAsync(player.getUniqueId(), false);
 			PassiveManager.registerPassives(player);
 		}
 		BendingBoardManager.reload();
@@ -2213,115 +1998,31 @@ public class GeneralMethods {
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + bPlayer.getUUIDString() + "'");
 	}
 
+	/**
+	 * Deprecated. Please use {@link BendingPlayer#saveElements()} instead
+	 * @param bPlayer The bending player
+	 */
+	@Deprecated
 	public static void saveElements(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-
-		final StringBuilder elements = new StringBuilder();
-		if (bPlayer.hasElement(Element.AIR)) {
-			elements.append("a");
-		}
-		if (bPlayer.hasElement(Element.WATER)) {
-			elements.append("w");
-		}
-		if (bPlayer.hasElement(Element.EARTH)) {
-			elements.append("e");
-		}
-		if (bPlayer.hasElement(Element.FIRE)) {
-			elements.append("f");
-		}
-		if (bPlayer.hasElement(Element.CHI)) {
-			elements.append("c");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getElements()) {
-			if (Arrays.asList(Element.getAddonElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					elements.append(";");
-				}
-				elements.append(element.getName() + ",");
-			}
-		}
-
-		if (elements.length() == 0) {
-			elements.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
+		bPlayer.saveElements();
 	}
 
+	/**
+	 * Deprecated. Please use {@link BendingPlayer#saveSubElements()} instead
+	 * @param bPlayer The bending player
+	 */
+	@Deprecated
 	public static void saveSubElements(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-
-		final StringBuilder subs = new StringBuilder();
-		if (bPlayer.hasSubElement(Element.METAL)) {
-			subs.append("m");
-		}
-		if (bPlayer.hasSubElement(Element.LAVA)) {
-			subs.append("v");
-		}
-		if (bPlayer.hasSubElement(Element.SAND)) {
-			subs.append("s");
-		}
-		if (bPlayer.hasSubElement(Element.COMBUSTION)) {
-			subs.append("c");
-		}
-		if (bPlayer.hasSubElement(Element.LIGHTNING)) {
-			subs.append("l");
-		}
-		if (bPlayer.hasSubElement(Element.SPIRITUAL)) {
-			subs.append("t");
-		}
-		if (bPlayer.hasSubElement(Element.FLIGHT)) {
-			subs.append("f");
-		}
-		if (bPlayer.hasSubElement(Element.ICE)) {
-			subs.append("i");
-		}
-		if (bPlayer.hasSubElement(Element.HEALING)) {
-			subs.append("h");
-		}
-		if (bPlayer.hasSubElement(Element.BLOOD)) {
-			subs.append("b");
-		}
-		if (bPlayer.hasSubElement(Element.PLANT)) {
-			subs.append("p");
-		}
-		if (bPlayer.hasSubElement(Element.BLUE_FIRE)) {
-			subs.append("r");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getSubElements()) {
-			if (Arrays.asList(Element.getAddonSubElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					subs.append(";");
-				}
-				subs.append(element.getName() + ",");
-			}
-		}
-
-		if (subs.length() == 0) {
-			subs.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
+		bPlayer.saveSubElements();
 	}
 
-	public static void savePermaRemoved(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-		final boolean permaRemoved = bPlayer.isPermaRemoved();
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
-	}
+	/**
+	 * <strong>Literally</strong> does nothing anymore. Instead, just set the permaremove state
+	 * inside the bPlayer and it will update
+	 * @param bPlayer Stop, this is useless
+	 */
+	@Deprecated
+	public static void savePermaRemoved(final BendingPlayer bPlayer) {}
 
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type) {
 		return spawnFallingBlock(loc, type, type.createBlockData());

@@ -1198,7 +1198,8 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 
-		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+		//GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+		OfflineBendingPlayer.loadAsync(player.getUniqueId(), false);
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}

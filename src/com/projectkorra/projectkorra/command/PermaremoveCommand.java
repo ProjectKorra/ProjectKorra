@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -62,23 +63,17 @@ public class PermaremoveCommand extends PKCommand {
 		}
 
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		}
 
 		if (bPlayer.isPermaRemoved()) {
 			bPlayer.setPermaRemoved(false);
-			GeneralMethods.savePermaRemoved(bPlayer);
 			GeneralMethods.sendBrandingMessage(player, ChatColor.GREEN + this.restored);
 			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target)) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 			}
 		} else {
 			bPlayer.getElements().clear();
-			GeneralMethods.saveElements(bPlayer);
+			bPlayer.saveElements();
 			bPlayer.setPermaRemoved(true);
-			GeneralMethods.savePermaRemoved(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player);
 			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + this.removed);
 			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target)) {

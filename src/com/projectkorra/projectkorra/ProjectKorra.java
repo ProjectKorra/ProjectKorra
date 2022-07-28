@@ -94,7 +94,7 @@ public class ProjectKorra extends JavaPlugin {
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
 
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			OfflineBendingPlayer.loadAsync(player.getUniqueId(), true);
 			GeneralMethods.removeUnusableAbilities(player);
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {

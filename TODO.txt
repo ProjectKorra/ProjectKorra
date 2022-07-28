@@ -26,3 +26,5 @@ PK Changes
     - There is no cache system for IDs, so there is needless database calls for every single one
     - The cooldowns load on the main thread from the database. BAD BAD BAD.
     - I already fixed cooldowns saving on the main thread
+- Change BendingPlayer#setAbilities to use one SQL command and not 9
+- Allow toggled bending to remain when you logout

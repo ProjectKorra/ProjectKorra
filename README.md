@@ -14,6 +14,7 @@ The development team are going in the wrong direction with ProjectKorra. This wi
 - Added a cooldown command to view/set/reset cooldowns for a player
 - Made the config generate blocks based on the current server version
 - Better supports 1.16
+- The [ProjectKorra] prefix in front of commands is completely configurable
 - Removed autoannouncer
 
 ### Fixes
@@ -30,4 +31,5 @@ The development team are going in the wrong direction with ProjectKorra. This wi
 - Fixed bending boards showing up in disabled worlds when you log in
 - Fixed bending toggle reminder not being translatable
 - Fixed "Proper Usage: xxx" in commands being untranslatable
+- Fixes addon abilities that do not define their own permissions being unusable until the permission is set by the server owner
 

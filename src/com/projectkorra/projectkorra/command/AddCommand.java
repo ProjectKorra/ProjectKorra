@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -90,10 +91,7 @@ public class AddCommand extends PKCommand {
 
 		// if they aren't a BendingPlayer, create them.
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(target);
-		} else if (bPlayer.isPermaRemoved()) { // ignore permabanned users.
+		if (bPlayer.isPermaRemoved()) { // ignore permabanned users.
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 			return;
 		}
@@ -118,8 +116,8 @@ public class AddCommand extends PKCommand {
 						}
 					}
 
-					GeneralMethods.saveElements(bPlayer);
-					GeneralMethods.saveSubElements(bPlayer);
+					bPlayer.saveElements();
+					bPlayer.saveSubElements();
 					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
 				}
 			}
@@ -192,8 +190,8 @@ public class AddCommand extends PKCommand {
 					}
 
 				}
-				GeneralMethods.saveElements(bPlayer);
-				GeneralMethods.saveSubElements(bPlayer);
+				bPlayer.saveElements();
+				bPlayer.saveSubElements();
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
 				return;
 
@@ -225,7 +223,7 @@ public class AddCommand extends PKCommand {
 						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", sub.toString() + sub.getType().getBender()));
 					}
 				}
-				GeneralMethods.saveSubElements(bPlayer);
+				bPlayer.saveSubElements();
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
 				return;
 

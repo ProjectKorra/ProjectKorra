@@ -102,10 +102,6 @@ public class WhoCommand extends PKCommand {
 				String result = "";
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
 
-				if (bp == null) {
-					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-					bp = BendingPlayer.getBendingPlayer(player.getName());
-				}
 				for (final Element element : bp.getElements()) {
 					if (result == "") {
 						result = ChatColor.WHITE + playerName + " - " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
@@ -162,7 +158,8 @@ public class WhoCommand extends PKCommand {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + this.playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
 		}
 
-		if (bPlayer == null) {
+		//TODO
+		/*if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
 			final BukkitRunnable runnable = new BukkitRunnable() {
 				@Override
@@ -188,7 +185,7 @@ public class WhoCommand extends PKCommand {
 			};
 			runnable.runTaskAsynchronously(ProjectKorra.plugin);
 			return;
-		}
+		}*/
 
 		bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null) {

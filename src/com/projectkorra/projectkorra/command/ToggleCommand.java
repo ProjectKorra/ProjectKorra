@@ -57,10 +57,7 @@ public class ToggleCommand extends PKCommand {
 				return;
 			}
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			if (bPlayer == null) {
-				GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			}
+
 			if (bPlayer.isToggled()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggleOffSelf);
 				bPlayer.toggleBending();

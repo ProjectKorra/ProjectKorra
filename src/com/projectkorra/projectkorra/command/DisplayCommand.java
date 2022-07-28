@@ -322,10 +322,6 @@ public class DisplayCommand extends PKCommand {
 	 */
 	private void displayBinds(final CommandSender sender) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		}
 		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 		if (abilities.isEmpty()) {
