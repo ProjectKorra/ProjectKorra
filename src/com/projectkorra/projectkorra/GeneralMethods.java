@@ -2367,17 +2367,59 @@ public class GeneralMethods {
 			color = ChatColor.GOLD;
 		}
 
-		final String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectRoku" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		final String start = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix", ""));
+		final String main = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Main", "ProjectRoku"));
+		final String end = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatSuffix.Suffix", ""));
+		final String prefix = color + start + main + end;
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
 		} else {
 			final TextComponent prefixComponent = new TextComponent(prefix);
-			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
-			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra | Fork Roku!\n" + color + "Click for more info.").create()));
+			final String hover = multiline(color + ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Hover", color + "Bending brought to you by ProjectKorra | Fork Roku!\n" + color + "Click for more info."));
+			final String click = ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Click", "https://www.projectkorra.com");
+			if (!hover.equals(""))
+				prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create()));
+			if (!click.equals("")) {
+				ClickEvent.Action action = ClickEvent.Action.RUN_COMMAND;
+				if (click.toLowerCase().startsWith("http://") || click.toLowerCase().startsWith("https://") || click.toLowerCase().startsWith("www.")) {
+					action = ClickEvent.Action.OPEN_URL;
+				}
+				prefixComponent.setClickEvent(new ClickEvent(action, click));
+			}
 
 			final TextComponent messageComponent = new TextComponent(TextComponent.fromLegacyText(message, ChatColor.YELLOW.asBungee()));
 			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
 		}
+	}
+
+	/**
+	 * Ensures a multiline string is properly formatted with color codes
+	 * @param string The string to format
+	 * @return The formatted string
+	 */
+	public static String multiline(String string) {
+		string = ChatColor.translateAlternateColorCodes('&', string.replaceAll("\\\\n", "\n")
+				.replaceAll("[\u00A7&]#([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})",
+						"\u00A7x\u00A7$1\u00A7$2\u00A7$3\u00A7$4\u00A7$5\u00A7$6")); //Replaces &#RRGGBB to &x&R&R&B&B&G&G (how hex actually works)
+		char lastColor = 'f';
+		String hex = null;
+		List<String> l = new ArrayList<String>();
+		for (String line : string.split("\n")) {
+			String prefix = "\u00A7" + lastColor; //Make the prefix the current color
+			if (hex != null) prefix += hex; //If the current color is a hex code, add on the RGB as well
+
+			if (l.size() == 0 && string.charAt(0) == '\u00A7') prefix = ""; //Don't bother adding a pointless color code
+
+			l.add(prefix + line);
+			if (line.contains("\u00A7")) {
+				int index = line.lastIndexOf('\u00A7');
+				lastColor = line.charAt(index + 1);
+				if (lastColor == 'x') {
+					hex = line.substring(index + 2, index + 14);
+				} else hex = null;
+			}
+		}
+		return String.join("\n", l);
 	}
 
 	public static void startCacheCleaner(final double period) {

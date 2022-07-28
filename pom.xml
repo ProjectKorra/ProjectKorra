@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>ROKU-1.11</version>
+  <version>ROKU-1.12</version>
   <name>ProjectKorra</name>
   <repositories>
     <!-- local jar files, add more using: mvn install:install-file -Dfile=aaa.jar -DgroupId=aaa -DartifactId=aaa -Dversion=aaa -Dpackaging=jar -DlocalRepositoryPath=path/to/ProjectKorra/localrepo/ -->
