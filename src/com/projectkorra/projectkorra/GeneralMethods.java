@@ -2369,7 +2369,7 @@ public class GeneralMethods {
 
 		final String start = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix", ""));
 		final String main = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Main", "ProjectRoku"));
-		final String end = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatSuffix.Suffix", ""));
+		final String end = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix", " \u00BB "));
 		final String prefix = color + start + main + end;
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
