@@ -578,7 +578,7 @@ public class OfflineBendingPlayer {
      * @return The Ability name bounded to the slot
      */
     public String getBoundAbilityName() {
-        final int slot = getCurrentSlot();
+        final int slot = getCurrentSlot() + 1;
         final String name = this.getAbilities().get(slot);
 
         return name != null ? name : "";
