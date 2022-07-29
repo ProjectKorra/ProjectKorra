@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -582,6 +583,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 *
 	 * @param ability The ability's cooldown to remove
 	 */
+	@Override
 	public void removeCooldown(final String ability) {
 		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
@@ -591,11 +593,42 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			
 			final String abilityName = event.getAbility();
 
-			if (this.getBoundAbility() != null && this.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+			if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
 				GeneralMethods.displayMovePreview(player);
 			}
 
 			BendingBoardManager.updateBoard(player, event.getAbility(), false, 0);
+		}
+	}
+
+	/**
+	 * Removes all cooldowns that have expired.
+	 *
+	 * We cannot call the {@link #removeCooldown(String)} method here because it
+	 * would cause a ConcurrentModificationException. That's why we have to copy
+	 * most of the method here so the event is still called, but we remove from
+	 * the iterator instead of the map like we do in {@link #removeCooldown(String)}
+	 */
+	@Override
+	protected void removeOldCooldowns() {
+		Iterator<Entry<String, Cooldown>> iterator = this.cooldowns.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, Cooldown> entry = iterator.next();
+			if (System.currentTimeMillis() >= entry.getValue().getCooldown()) {
+				final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, entry.getKey(), 0, Result.REMOVED);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					iterator.remove();
+
+					final String abilityName = event.getAbility();
+
+					if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
+						GeneralMethods.displayMovePreview(player);
+					}
+
+					BendingBoardManager.updateBoard(player, event.getAbility(), false, 0);
+				}
+			}
 		}
 	}
 

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -655,6 +656,19 @@ public class OfflineBendingPlayer {
         }
 
         return -1;
+    }
+
+    /**
+     * Removes the cooldown of an ability.
+     *
+     * @param ability The ability's cooldown to remove
+     */
+    public void removeCooldown(final String ability) {
+        this.cooldowns.remove(ability);
+    }
+
+    protected void removeOldCooldowns() {
+        this.cooldowns.entrySet().removeIf(entry -> System.currentTimeMillis() >= entry.getValue().getCooldown());
     }
 
     /**

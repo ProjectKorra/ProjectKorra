@@ -1,6 +1,8 @@
 package com.projectkorra.projectkorra;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 import co.aikar.timings.lib.MCTiming;
@@ -50,13 +52,10 @@ public class BendingManager implements Runnable {
 	}
 
 	public void handleCooldowns() {
-		for (final UUID uuid : BendingPlayer.getPlayers().keySet()) {
-			final BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);
-			for (final String abil : bPlayer.getCooldowns().keySet()) {
-				if (System.currentTimeMillis() >= bPlayer.getCooldown(abil)) {
-					bPlayer.removeCooldown(abil);
-				}
-			}
+		for (Map.Entry<UUID, BendingPlayer> entry : BendingPlayer.getPlayers().entrySet()) {
+			BendingPlayer bPlayer = entry.getValue();
+
+			bPlayer.removeOldCooldowns();
 		}
 	}
 
