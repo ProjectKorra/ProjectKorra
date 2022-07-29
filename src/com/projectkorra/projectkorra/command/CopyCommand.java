@@ -3,9 +3,12 @@ package com.projectkorra.projectkorra.command;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -41,18 +44,19 @@ public class CopyCommand extends PKCommand {
 				return;
 			}
 
-			final Player orig = Bukkit.getPlayer(args.get(0));
+			final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(0));
 
-			if (orig == null || !orig.isOnline()) {
+			if (!player.hasPlayedBefore()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
 
-			final boolean boundAll = this.assignAbilities(sender, orig, (Player) sender, true);
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
-			if (!boundAll) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
-			}
+			this.assignAbilities(sender, player, (Player) sender, true).thenAccept(boundAll -> {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + player.getName() + ChatColor.GREEN));
+				if (!boundAll) {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+				}
+			});
 		} else if (args.size() == 2) {
 			if (!this.hasPermission(sender, "assign")) {
 				GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
@@ -67,41 +71,46 @@ public class CopyCommand extends PKCommand {
 				return;
 			}
 
-			final boolean boundAll = this.assignAbilities(sender, orig, target, false);
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
-			GeneralMethods.sendBrandingMessage(target, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
-			if (!boundAll) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
-			}
+			this.assignAbilities(sender, orig, target, false).thenAccept(boundAll -> {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+				GeneralMethods.sendBrandingMessage(target, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+				if (!boundAll) {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+				}
+			});
 		}
 	}
 
-	private boolean assignAbilities(final CommandSender sender, final Player player, final Player player2, final boolean self) {
+	private CompletableFuture<Boolean> assignAbilities(final CommandSender sender, final OfflinePlayer player, final Player player2, final boolean self) {
 
-		BendingPlayer orig = BendingPlayer.getBendingPlayer(player);
 		BendingPlayer target = BendingPlayer.getBendingPlayer(player2);
-
-		if (orig.isPermaRemoved()) {
-			if (self) {
-				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
-			} else {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
+		BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(orig -> {
+			if (orig.isPermaRemoved()) {
+				if (self) {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
+				} else {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+				}
+				future.complete(false);
 			}
-			return false;
-		}
 
-		final HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
-		boolean boundAll = true;
-		for (int i = 1; i <= 9; i++) {
-			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
-			if (coreAbil != null && !target.canBind(coreAbil)) {
-				abilities.remove(i);
-				boundAll = false;
+			final HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
+			boolean boundAll = true;
+			for (int i = 1; i <= 9; i++) {
+				final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+				if (coreAbil != null && !target.canBind(coreAbil)) {
+					abilities.remove(i);
+					boundAll = false;
+				}
 			}
-		}
-		target.setAbilities(abilities);
-		BendingBoardManager.updateAllSlots(player2);
-		return boundAll;
+			target.setAbilities(abilities);
+			BendingBoardManager.updateAllSlots(player2);
+			future.complete(boundAll);
+		});
+
+
+		return future;
 	}
 
 	@Override

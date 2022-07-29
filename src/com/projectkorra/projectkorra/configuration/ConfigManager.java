@@ -112,7 +112,8 @@ public class ConfigManager {
 			config.addDefault("Commands.Who.Description", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.");
 			config.addDefault("Commands.Who.NoPlayersOnline", "There is no one online.");
 			config.addDefault("Commands.Who.DatabaseOverload", "The database appears to be overloaded. Please try again later.");
-			config.addDefault("Commands.Who.PlayerOffline", "{target} is currently offline. A lookup is currently being done (this might take a few seconds).");
+			config.addDefault("Commands.Who.PlayerOffline", "{target} is currently offline. Please wait a moment...");
+			config.addDefault("Commands.Who.PlayerUnknown", "{target} has not played on this server before");
 
 			config.addDefault("Commands.Version.Description", "Displays the installed version of ProjectKorra.");
 
@@ -261,6 +262,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.NoElementAE", "You are not an {element}!");
 			config.addDefault("Commands.Bind.NoSubElement", "You don't have access to {subelement}!");
 			config.addDefault("Commands.Bind.Unbindable", "{ability} cannot be bound!");
+			config.addDefault("Commands.Bind.CantEditBinds", "You can't edit your binds right now!");
 
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");

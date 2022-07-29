@@ -9,7 +9,6 @@ import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -95,12 +94,7 @@ public class ProjectKorra extends JavaPlugin {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
 
 			OfflineBendingPlayer.loadAsync(player.getUniqueId(), true);
-			GeneralMethods.removeUnusableAbilities(player);
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-				PassiveManager.registerPassives(player);
-				GeneralMethods.removeUnusableAbilities(player);
-			}, 30);
 		}
 
 		final Metrics metrics = new Metrics(this);

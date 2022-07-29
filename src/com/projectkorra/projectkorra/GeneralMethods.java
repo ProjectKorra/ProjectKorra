@@ -21,11 +21,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -55,7 +53,6 @@ import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -91,7 +88,6 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
@@ -111,9 +107,7 @@ import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.event.AbilityVelocityAffectEntityEvent;
-import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
-import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
@@ -168,49 +162,26 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Binds a Ability to the hotbar slot that the player is on.
-	 *
-	 * @param player The player to bind to
-	 * @param ability The ability name to Bind
-	 * @see #bindAbility(Player, String, int)
+	 * Deprecated. Use {@link BendingPlayer#bindAbility(String)} instead
+	 * @param sender The player
+	 * @param name The ability name
 	 */
-	public static void bindAbility(final Player player, final String ability) {
-		final int slot = player.getInventory().getHeldItemSlot() + 1;
-		bindAbility(player, ability, slot);
+	@Deprecated
+	public static void bindAbility(Player sender, String name) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender);
+		if (bPlayer != null) bPlayer.bindAbility(name);
 	}
 
 	/**
-	 * Binds a Ability to a specific hotbar slot.
-	 *
-	 * @param player The player to bind to
-	 * @param ability
-	 * @param slot
-	 * @see #bindAbility(Player, String)
+	 * Deprecated. Use {@link BendingPlayer#bindAbility(String, int)} instead
+	 * @param sender The player
+	 * @param name The ability name
+	 * @param slot The slot
 	 */
-	public static void bindAbility(final Player player, final String ability, final int slot) {
-		if (MultiAbilityManager.playerAbilities.containsKey(player)) {
-			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + "You can't edit your binds right now!");
-			return;
-		}
-		
-		PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, ability, slot, ability != null, false);
-		ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return;
-		}
-
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		if (bPlayer == null) {
-			return;
-		}
-		
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-		bPlayer.getAbilities().put(slot, ability);
-
-		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
-		}
-		saveAbility(bPlayer, slot, ability);
+	@Deprecated
+	public static void bindAbility(Player sender, String name, int slot) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender);
+		if (bPlayer != null) bPlayer.bindAbility(name, slot);
 	}
 
 	/**
@@ -1618,57 +1589,6 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void loadBendingPlayer(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-
-		final Player player = bPlayer.getPlayer();
-
-		if (PKListener.getToggledOut().contains(bPlayer.getUUID())) {
-			bPlayer.toggleBending();
-			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
-		}
-
-		Preset.loadPresets(bPlayer.getPlayer());
-		Element element = null;
-		String prefix = "";
-
-		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-
-		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
-		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
-			prefix = Element.AVATAR.getPrefix();
-		} else if (bPlayer.getElements().size() > 0) {
-			element = bPlayer.getElements().get(0);
-			prefix = element.getPrefix();
-		}
-
-		if (chatEnabled) {
-			player.setDisplayName(player.getName());
-			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
-		}
-
-		// Handle the AirSpout/WaterSpout login glitches.
-		if (player.getGameMode() != GameMode.CREATIVE) {
-			final HashMap<Integer, String> bound = bPlayer.getAbilities();
-			for (final String str : bound.values()) {
-				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
-					final Player fplayer = player;
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							fplayer.setFlying(false);
-							fplayer.setAllowFlight(false);
-						}
-					}.runTaskLater(ProjectKorra.plugin, 2);
-					break;
-				}
-			}
-		}
-		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(bPlayer));
-	}
-
 	public static void reloadPlugin(final CommandSender sender) {
 		ProjectKorra.log.info("Reloading ProjectKorra and configuration");
 		final BendingReloadEvent event = new BendingReloadEvent(sender);
@@ -1745,45 +1665,24 @@ public class GeneralMethods {
 		}
 	}
 
+	/**
+	 * Deprecated. Use {@link BendingPlayer#removeUnusableAbilities()} instead.
+	 * @param player The name of the player
+	 */
 	@Deprecated
 	public static void removeUnusableAbilities(final String player) {
-		removeUnusableAbilities(Bukkit.getPlayer(player));
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		bendingPlayer.removeUnusableAbilities();
 	}
 
+	/**
+	 * Deprecated. Use {@link BendingPlayer#removeUnusableAbilities()} instead.
+	 * @param player The player
+	 */
+	@Deprecated
 	public static void removeUnusableAbilities(final Player player) {
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			return;
-		}
-
-		// Remove all active instances of abilities that will become unusable.
-		// We need to do this prior to filtering binds in case the player has a MultiAbility running.
-		for (final CoreAbility coreAbility : CoreAbility.getAbilities()) {
-			final CoreAbility playerAbility = CoreAbility.getAbility(bPlayer.getPlayer(), coreAbility.getClass());
-			if (playerAbility != null) {
-				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(bPlayer.getPlayer(), playerAbility)) {
-					// The player will be able to keep using the given PassiveAbility.
-					continue;
-				} else if (bPlayer.canBend(playerAbility)) {
-					// The player will still be able to use this given Ability, do not end it.
-					continue;
-				}
-
-				playerAbility.remove();
-			}
-		}
-
-		// Remove all bound abilities that will become unusable.
-		final HashMap<Integer, String> slots = bPlayer.getAbilities();
-		final HashMap<Integer, String> finalAbilities = new HashMap<Integer, String>();
-		for (final int i : slots.keySet()) {
-			if (bPlayer.canBind(CoreAbility.getAbility(slots.get(i)))) {
-				// The player will still be able to use this given Ability, do not remove it from their binds.
-				finalAbilities.put(i, slots.get(i));
-			}
-		}
-
-		bPlayer.setAbilities(finalAbilities);
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		bendingPlayer.removeUnusableAbilities();
 	}
 
 	public static Vector rotateVectorAroundVector(final Vector axis, final Vector rotator, final double degrees) {
@@ -1984,18 +1883,15 @@ public class GeneralMethods {
 
 	}
 
+	/**
+	 * Deprecated. Use {@link OfflineBendingPlayer#saveAbility(String, int)} instead.
+	 * @param bPlayer The bending player
+	 * @param slot The slot to save the ability to
+	 * @param ability The ability to save
+	 */
+	@Deprecated
 	public static void saveAbility(final BendingPlayer bPlayer, final int slot, final String ability) {
-		if (bPlayer == null) {
-			return;
-		}
-
-		// Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if (MultiAbilityManager.playerAbilities.containsKey(bPlayer.getPlayer())) {
-			return;
-		}
-		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + bPlayer.getUUIDString() + "'");
+		bPlayer.saveAbility(ability, slot);
 	}
 
 	/**

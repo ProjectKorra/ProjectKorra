@@ -1198,20 +1198,20 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 
-		//GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-		OfflineBendingPlayer.loadAsync(player.getUniqueId(), false);
+		//Load the player's bending data from the database
+		BendingPlayer.getOrLoadOfflineAsync(player);
+
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
 			PassiveManager.registerPassives(player);
-			GeneralMethods.removeUnusableAbilities(player);
-			BendingBoardManager.changeWorld(player);
+			BendingBoardManager.changeWorld(player); //Hide the bending board if they spawn in a world where bending is disabld
 		}, 5);
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-				ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+				ChatColor color = ChatColor.of(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
 				color = color == null ? ChatColor.GOLD : color;
 				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
 				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
@@ -1386,6 +1386,9 @@ public class PKListener implements Listener {
 				CoreAbility.getAbility(event.getPlayer(), ca.getClass()).remove();
 			}
 		}
+
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
+				() -> OfflineBendingPlayer.convertToOffline(bPlayer).uncacheAfter(5 * 60 * 1000), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

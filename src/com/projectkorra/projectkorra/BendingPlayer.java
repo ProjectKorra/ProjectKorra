@@ -8,10 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.command.CooldownCommand;
+import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
+import com.projectkorra.projectkorra.object.Preset;
+import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -40,6 +45,7 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -349,8 +355,29 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * @param oPlayer The player
 	 * @return The OfflineBendingPlayer instance
 	 */
-	public static OfflineBendingPlayer getOfflineBendingPlayer(@NotNull final OfflinePlayer oPlayer) {
+	public static OfflineBendingPlayer getCachedOffline(@NotNull final OfflinePlayer oPlayer) {
 		return OfflineBendingPlayer.PLAYERS.get(oPlayer.getUniqueId());
+	}
+
+	/**
+	 * Gets an offline BendingPlayer instance for the provided player. If the instance is
+	 * not already cached, it will load it from the database.
+	 * @param oPlayer The offline player
+	 * @return A CompletedFuture of the OfflineBendingPlayer instance
+	 */
+	public static CompletableFuture<OfflineBendingPlayer> getOrLoadOfflineAsync(@NotNull final OfflinePlayer oPlayer) {
+		return OfflineBendingPlayer.loadAsync(oPlayer.getUniqueId(), false);
+	}
+
+	/**
+	 * Gets an offline BendingPlayer instance for the provided player. If the instance is
+	 * not already cached, it will load it from the database. Note: This will do it on the
+	 * main thread!
+	 * @param oPlayer The offline player
+	 * @return The OfflineBendingPlayer instance
+	 */
+	public static OfflineBendingPlayer getOrLoadOffline(@NotNull final OfflinePlayer oPlayer) {
+		return getOrLoadOfflineAsync(oPlayer).join();
 	}
 
 	/**
@@ -415,16 +442,14 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		throw new IllegalStateException("Cannot uncache an online BendingPlayer!");
 	}
 
-	/**
-	 * Gets the Ability bound to the slot that the player is in.
-	 *
-	 * @return The Ability name bounded to the slot
-	 */
-	public String getBoundAbilityName() {
-		final int slot = this.player.getInventory().getHeldItemSlot() + 1;
-		final String name = this.getAbilities().get(slot);
+	@Override
+	public void uncacheAfter(long time) throws IllegalStateException {
+		throw new IllegalStateException("Cannot uncache an online BendingPlayer!");
+	}
 
-		return name != null ? name : "";
+	@Override
+	public int getCurrentSlot() {
+		return player.getInventory().getHeldItemSlot();
 	}
 
 	/**
@@ -611,6 +636,87 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	public void toggleElement(final Element element) {
 		super.toggleElement(element);
 		PassiveManager.registerPassives(this.player);
+	}
+
+	public void removeUnusableAbilities() {
+		// Remove all active instances of abilities that will become unusable.
+		// We need to do this prior to filtering binds in case the player has a MultiAbility running.
+		for (final CoreAbility coreAbility : CoreAbility.getAbilities()) {
+			final CoreAbility playerAbility = CoreAbility.getAbility(player, coreAbility.getClass());
+			if (playerAbility != null) {
+				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(player, playerAbility)) {
+					// The player will be able to keep using the given PassiveAbility.
+					continue;
+				} else if (this.canBend(playerAbility)) {
+					// The player will still be able to use this given Ability, do not end it.
+					continue;
+				}
+
+				playerAbility.remove();
+			}
+		}
+
+		// Remove all bound abilities that will become unusable.
+		final HashMap<Integer, String> slots = this.getAbilities();
+		final HashMap<Integer, String> finalAbilities = new HashMap<>();
+		for (final int i : slots.keySet()) {
+			if (this.canBind(CoreAbility.getAbility(slots.get(i)))) {
+				// The player will still be able to use this given Ability, do not remove it from their binds.
+				finalAbilities.put(i, slots.get(i));
+			}
+		}
+
+		this.setAbilities(finalAbilities);
+	}
+
+	/**
+	 * Do all the stuff we need to after the BendingPlayer instance is loaded
+	 */
+	protected void postLoad() {
+		if (PKListener.getToggledOut().contains(this.uuid)) {
+			this.toggleBending();
+			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
+		}
+
+		Preset.loadPresets(player);
+
+		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
+
+		String prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender", "")) + " ";
+		if (player.hasPermission("bending.avatar") || (this.hasElement(Element.AIR) && this.hasElement(Element.EARTH) && this.hasElement(Element.FIRE) && this.hasElement(Element.WATER))) {
+			prefix = Element.AVATAR.getPrefix();
+		} else if (this.getElements().size() > 0) {
+			Element element = this.getElements().get(0);
+			prefix = element.getPrefix();
+		}
+
+		if (chatEnabled) {
+			player.setDisplayName(player.getName());
+			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
+		}
+
+		// Handle the AirSpout/WaterSpout login glitches.
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			final HashMap<Integer, String> bound = this.getAbilities();
+			for (final String str : bound.values()) {
+				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
+					final Player fplayer = player;
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							fplayer.setFlying(false);
+							fplayer.setAllowFlight(false);
+						}
+					}.runTaskLater(ProjectKorra.plugin, 2);
+					break;
+				}
+			}
+		}
+
+		this.removeUnusableAbilities();
+		PassiveManager.registerPassives(player);
+
+		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(this));
 	}
 
 

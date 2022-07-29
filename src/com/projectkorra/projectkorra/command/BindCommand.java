@@ -108,8 +108,7 @@ public class BindCommand extends PKCommand {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
 		}
 
-		final String name = coreAbil != null ? coreAbil.getName() : null;
-		GeneralMethods.bindAbility((Player) sender, name, slot);
+		bPlayer.saveAbility(ability, slot);
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class ClearCommand extends PKCommand {
 				}
 
 				bPlayer.getAbilities().remove(i);
-				GeneralMethods.saveAbility(bPlayer, i, null);
+				bPlayer.saveAbility(null, i);
 			}
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
 		} else if (args.size() == 1) {
@@ -79,7 +79,7 @@ public class ClearCommand extends PKCommand {
 					}
 
 					bPlayer.getAbilities().remove(slot);
-					GeneralMethods.saveAbility(bPlayer, slot, null);
+					bPlayer.saveAbility(null, slot);
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);

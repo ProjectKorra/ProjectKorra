@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -168,7 +167,7 @@ public class ChooseCommand extends PKCommand {
 				GeneralMethods.sendBrandingMessage(target, color + this.chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
 			bPlayer.saveSubElements();
-			GeneralMethods.removeUnusableAbilities(target);
+			bPlayer.removeUnusableAbilities();
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
 			bPlayer.setElement(element);
@@ -195,7 +194,7 @@ public class ChooseCommand extends PKCommand {
 			}
 			bPlayer.saveElements();
 			bPlayer.saveSubElements();
-			GeneralMethods.removeUnusableAbilities(target);
+			bPlayer.removeUnusableAbilities();
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
 	}

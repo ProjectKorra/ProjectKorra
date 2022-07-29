@@ -2,12 +2,16 @@ package com.projectkorra.projectkorra;
 
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import java.sql.ResultSet;
@@ -28,7 +32,8 @@ import java.util.function.Predicate;
 import com.projectkorra.projectkorra.Element.SubElement;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.units.qual.C;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 public class OfflineBendingPlayer {
 
@@ -58,25 +63,43 @@ public class OfflineBendingPlayer {
     protected final DBCooldownManager cooldownManager;
 
     private int currentSlot;
+    private long lastAccessed;
+    private long uncacheTime = 30_000;
+    private BukkitTask uncache;
 
-
-    public OfflineBendingPlayer(OfflinePlayer player) {
+    public OfflineBendingPlayer(@NotNull OfflinePlayer player) {
         this.player = player;
         this.uuid = player.getUniqueId();
         this.toggled = true;
         this.loading = true;
 
         this.cooldownManager = Manager.getManager(DBCooldownManager.class);
+        this.lastAccessed = System.currentTimeMillis();
     }
 
-    public OfflineBendingPlayer(UUID playerUUID) {
+    public OfflineBendingPlayer(@NotNull UUID playerUUID) {
         this(Bukkit.getOfflinePlayer(playerUUID));
     }
 
-    public static CompletableFuture<OfflineBendingPlayer> loadAsync(final UUID uuid, boolean onStartup) {
+    protected static CompletableFuture<OfflineBendingPlayer> loadAsync(@NotNull final UUID uuid, boolean onStartup) {
         CompletableFuture<OfflineBendingPlayer> future = new CompletableFuture<>();
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+
+        //If we already have the players data cached from an OfflineBendingPlayer instance
+        if (PLAYERS.get(uuid) != null) {
+            OfflineBendingPlayer oBendingPlayer = PLAYERS.get(uuid); //Get cached instance
+            if (offlinePlayer.isOnline() && !(oBendingPlayer instanceof BendingPlayer)) {
+                oBendingPlayer = convertToOnline(oBendingPlayer); //Convert to online instance
+                ((BendingPlayer)oBendingPlayer).postLoad();
+            }
+            if (!(oBendingPlayer instanceof BendingPlayer)) {
+                oBendingPlayer.lastAccessed = System.currentTimeMillis();
+            }
+            future.complete(oBendingPlayer);
+            return future;
+        }
+
         Runnable runnable = () -> {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
             OfflineBendingPlayer bPlayer = new OfflineBendingPlayer(offlinePlayer);
             if (offlinePlayer.isOnline()) {
                 bPlayer = new BendingPlayer(((Player)offlinePlayer));
@@ -334,9 +357,8 @@ public class OfflineBendingPlayer {
                     }
 
                     bPlayer.loading = false;
-                    if (bPlayer instanceof BendingPlayer) {
-                        GeneralMethods.loadBendingPlayer((BendingPlayer) bPlayer);
-                    }
+                    if (bPlayer instanceof BendingPlayer) ((BendingPlayer) bPlayer).postLoad();
+
                     future.complete(bPlayer);
                 }
             } catch (final SQLException ex) {
@@ -450,6 +472,62 @@ public class OfflineBendingPlayer {
     }
 
     /**
+     * Binds an ability to the hotbar slot that the player is on.
+     *
+     * @param ability The ability name to bind
+     * @see #bindAbility(String, int)
+     */
+    public void bindAbility(final String ability) {
+        bindAbility(ability, getCurrentSlot() + 1);
+    }
+
+    /**
+     * Binds a Ability to a specific hotbar slot.
+     *
+     * @param ability The ability name to bind
+     * @param slot The slot to bind on
+     * @see #bindAbility(String)
+     */
+    public void bindAbility(final String ability, final int slot) {
+        boolean realPlayer = this instanceof BendingPlayer;
+        if (realPlayer && MultiAbilityManager.playerAbilities.containsKey((Player)this.getPlayer())) {
+            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Bind.CantEditBinds"));
+            return;
+        }
+
+        if (realPlayer) {
+            PlayerBindChangeEvent event = new PlayerBindChangeEvent((Player)this.getPlayer(), ability, slot, ability != null, false);
+            ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+        }
+
+        final CoreAbility coreAbil = CoreAbility.getAbility(ability);
+        this.getAbilities().put(slot, ability);
+
+        if (coreAbil != null && realPlayer) {
+            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+        }
+
+        this.saveAbility(ability, slot);
+    }
+
+    /**
+     * Save the bound ability in the slot to the database
+     * @param ability The ability to save
+     * @param slot The slot we are saving
+     */
+    public void saveAbility(final String ability, final int slot) {
+        // Temp code to block modifications of binds, Should be replaced when bind event is added.
+        if (this instanceof BendingPlayer && MultiAbilityManager.playerAbilities.containsKey((Player)this.getPlayer())) {
+            return;
+        }
+
+        DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+    }
+
+    /**
      * Gets the list of elements the {@link BendingPlayer} knows.
      *
      * @return a list of elements
@@ -494,11 +572,20 @@ public class OfflineBendingPlayer {
         return this.player.getName();
     }
 
+    /**
+     * Gets the Ability bound to the slot that the player is in.
+     *
+     * @return The Ability name bounded to the slot
+     */
     public String getBoundAbilityName() {
-        final int slot = this.currentSlot + 1;
+        final int slot = getCurrentSlot();
         final String name = this.getAbilities().get(slot);
 
         return name != null ? name : "";
+    }
+
+    public int getCurrentSlot() {
+        return this.currentSlot;
     }
 
     /**
@@ -579,7 +666,7 @@ public class OfflineBendingPlayer {
         return this.cooldowns;
     }
 
-    public boolean isOnCooldown(final Ability ability) {
+    public boolean isOnCooldown(@NotNull final Ability ability) {
         return this.isOnCooldown(ability.getName());
     }
 
@@ -610,10 +697,8 @@ public class OfflineBendingPlayer {
      * @param element The element to check
      * @return true If the player knows the element
      */
-    public boolean hasElement(final Element element) {
-        if (element == null) {
-            return false;
-        } else if (element == Element.AVATAR) {
+    public boolean hasElement(@NotNull final Element element) {
+        if (element == Element.AVATAR) {
             // At the moment we'll allow for both permissions to return true.
             // Later on we can consider deleting the bending.ability.avatarstate option.
             return this.player instanceof Player && ((Player)this.player).hasPermission("bending.avatar");
@@ -624,10 +709,7 @@ public class OfflineBendingPlayer {
         }
     }
 
-    public boolean hasSubElement(final SubElement sub) {
-        if (sub == null) {
-            return false;
-        }
+    public boolean hasSubElement(@NotNull final SubElement sub) {
         return this.subelements.contains(sub);
     }
 
@@ -668,7 +750,9 @@ public class OfflineBendingPlayer {
      *
      * @param abilities The abilities to set/save
      */
-    public void setAbilities(final HashMap<Integer, String> abilities) {
+    public void setAbilities(@NotNull final HashMap<Integer, String> abilities) {
+        if (this.abilities.equals(abilities)) return;
+
         this.abilities = abilities;
 
         for (int i = 1; i <= 9; i++) {
@@ -682,7 +766,7 @@ public class OfflineBendingPlayer {
      *
      * @param element The element to set
      */
-    public void setElement(final Element element) {
+    public void setElement(@NotNull final Element element) {
         this.elements.clear();
         this.elements.add(element);
     }
@@ -701,11 +785,7 @@ public class OfflineBendingPlayer {
         this.toggled = !this.toggled;
     }
 
-    public void toggleElement(final Element element) {
-        if (element == null) {
-            return;
-        }
-
+    public void toggleElement(@NotNull final Element element) {
         if (this.toggledElements.contains(element)) {
             this.toggledElements.remove(element);
         } else {
@@ -811,7 +891,7 @@ public class OfflineBendingPlayer {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
-    protected static BendingPlayer convertToOnline(OfflineBendingPlayer offlineBendingPlayer) {
+    protected static BendingPlayer convertToOnline(@NotNull OfflineBendingPlayer offlineBendingPlayer) {
         Player player = Bukkit.getPlayer(offlineBendingPlayer.getUUID());
         if (player == null) {
             return null;
@@ -826,13 +906,20 @@ public class OfflineBendingPlayer {
         bendingPlayer.cooldowns.putAll(offlineBendingPlayer.cooldowns);
         bendingPlayer.loading = false;
 
+        if (offlineBendingPlayer.uncache != null) {
+            offlineBendingPlayer.uncache.cancel();
+        }
+
         PLAYERS.put(player.getUniqueId(), bendingPlayer);
+        ONLINE_PLAYERS.put(player.getUniqueId(), bendingPlayer);
 
         return bendingPlayer;
     }
 
-    protected static OfflineBendingPlayer convertToOnline(BendingPlayer bendingPlayer) {
-        OfflineBendingPlayer offlineBendingPlayer = new BendingPlayer(bendingPlayer.getPlayer());
+    protected static OfflineBendingPlayer convertToOffline(@NotNull BendingPlayer bendingPlayer) {
+        if (bendingPlayer.getPlayer() != null && bendingPlayer.getPlayer().isOnline()) return bendingPlayer;
+
+        OfflineBendingPlayer offlineBendingPlayer = new OfflineBendingPlayer(bendingPlayer.getPlayer());
         offlineBendingPlayer.abilities = bendingPlayer.abilities;
         offlineBendingPlayer.elements.addAll(bendingPlayer.elements);
         offlineBendingPlayer.subelements.addAll(bendingPlayer.subelements);
@@ -841,24 +928,12 @@ public class OfflineBendingPlayer {
         offlineBendingPlayer.permaRemoved = bendingPlayer.permaRemoved;
         offlineBendingPlayer.cooldowns.putAll(bendingPlayer.cooldowns);
         offlineBendingPlayer.loading = false;
+        offlineBendingPlayer.lastAccessed = System.currentTimeMillis();
 
-        ONLINE_PLAYERS.remove(bendingPlayer.getUUID());
+        if (bendingPlayer.getPlayer() == null || !bendingPlayer.getPlayer().isOnline()) ONLINE_PLAYERS.remove(bendingPlayer.getUUID());
         PLAYERS.put(bendingPlayer.getUUID(), offlineBendingPlayer);
 
         return offlineBendingPlayer;
-    }
-
-    /**
-     * Uncaches this OfflineBendingPlayer after the provided amount of milliseconds
-     * have passed.
-     * @param offlineBendingPlayer The player to uncache
-     * @param time The amount of milliseconds to wait before uncaching
-     */
-    public static void uncacheAfter(OfflineBendingPlayer offlineBendingPlayer, long time) {
-        if (offlineBendingPlayer.getPlayer().isOnline()) return;
-
-        int ticks = (int) (time / 50) + 1;
-        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, offlineBendingPlayer::uncache, ticks);
     }
 
     /**
@@ -867,7 +942,24 @@ public class OfflineBendingPlayer {
     public void uncache() {
         if (this.player.isOnline() || this instanceof BendingPlayer) return;
 
+        long remaining = (this.lastAccessed + this.uncacheTime) - System.currentTimeMillis();
+
+        if (remaining >= 500) { //If there is at least half a second to go, delay the uncache
+            this.uncache = Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, this::uncache, remaining / 50);
+            return;
+        }
+
         PLAYERS.remove(this.player.getUniqueId());
         ONLINE_PLAYERS.remove(this.player.getUniqueId());
+    }
+
+    /**
+     * Uncaches this instance of an offline BendingPlayer
+     * @param time The amount of milliseconds to wait before uncaching
+     */
+    public void uncacheAfter(long time) {
+        this.uncacheTime = time;
+        this.lastAccessed = System.currentTimeMillis();
+        uncache();
     }
 }
