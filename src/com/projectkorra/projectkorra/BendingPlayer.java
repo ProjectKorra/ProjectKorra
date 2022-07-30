@@ -465,10 +465,19 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	/**
 	 * Gets the map of {@link BendingPlayer}s.
 	 *
-	 * @return {@link #PLAYERS}
+	 * @return {@link #ONLINE_PLAYERS}
 	 */
 	public static Map<UUID, BendingPlayer> getPlayers() {
 		return OfflineBendingPlayer.ONLINE_PLAYERS;
+	}
+
+	/**
+	 * Gets the map of {@link OfflineBendingPlayer}s.
+	 *
+	 * @return {@link #PLAYERS}
+	 */
+	public static Map<UUID, OfflineBendingPlayer> getOfflinePlayers() {
+		return OfflineBendingPlayer.PLAYERS;
 	}
 
 	/**
@@ -706,8 +715,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * Do all the stuff we need to after the BendingPlayer instance is loaded
 	 */
 	protected void postLoad() {
-		if (PKListener.getToggledOut().contains(this.uuid)) {
-			this.toggleBending();
+		if (!this.toggled) {
 			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
 		}
 

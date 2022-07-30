@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
@@ -209,6 +210,7 @@ public class PKListener implements Listener {
 	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
 	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
 	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
+	@Deprecated
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final List<Player> PLAYER_DROPPED_ITEM = new ArrayList<>(); // Player dropped an item.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
@@ -1362,14 +1364,6 @@ public class PKListener implements Listener {
 			if (ProjectKorra.isDatabaseCooldownsEnabled()) {
 				bPlayer.saveCooldowns();
 			}
-
-			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
-				TOGGLED_OUT.remove(player.getUniqueId());
-			}
-
-			if (!bPlayer.isToggled()) {
-				TOGGLED_OUT.add(player.getUniqueId());
-			}
 		}
 
 		if (Commands.invincible.contains(player.getName())) {
@@ -2063,8 +2057,13 @@ public class PKListener implements Listener {
 		return RIGHT_CLICK_INTERACT;
 	}
 
+	/**
+	 * Deprecated. Use {@link OfflineBendingPlayer#isToggled()} instead.
+	 * @return list of players with bending toggled off
+	 */
+	@Deprecated
 	public static ArrayList<UUID> getToggledOut() {
-		return TOGGLED_OUT;
+		return BendingPlayer.getOfflinePlayers().values().stream().filter(player -> !player.isToggled()).map(OfflineBendingPlayer::getUUID).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	public static Map<Player, Integer> getJumpStatistics() {
