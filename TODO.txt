@@ -29,3 +29,4 @@ PK Changes
 - Change BendingPlayer#setAbilities to use one SQL command and not 9
 - Allow toggled bending to remain when you logout
 - Make melted snow (tempblocks) update the block bellow if it is grass (so it doesn't show the gray surface)
+- Convert all permissions to not use bending.admin.<admincommand> and instead be bending.command.<command>

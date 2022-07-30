@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.command.CooldownCommand;
@@ -72,26 +74,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		this.chiBlocked = false;
 	}
 
-	public void addCooldown(final Ability ability, final long cooldown, final boolean database) {
-		this.addCooldown(ability.getName(), cooldown, database);
-	}
-
-	public void addCooldown(final Ability ability, final boolean database) {
-		this.addCooldown(ability.getName(), ability.getCooldown(), database);
-	}
-
-	public void addCooldown(final Ability ability, final long cooldown) {
-		this.addCooldown(ability, cooldown, false);
-	}
-
-	public void addCooldown(final Ability ability) {
-		this.addCooldown(ability, false);
-	}
-
-	public void addCooldown(final String ability, final long cooldown) {
-		this.addCooldown(ability, cooldown, false);
-	}
-
 	/**
 	 * Adds an ability to the cooldowns map while firing a
 	 * {@link PlayerCooldownChangeEvent}.
@@ -100,6 +82,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * @param cooldown The cooldown time
 	 * @param database If the value should be saved to the database
 	 */
+	@Override
 	public void addCooldown(final String ability, final long cooldown, final boolean database) {
 		if (cooldown <= 0) {
 			return;
@@ -110,16 +93,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
 
-			final Player player = event.getPlayer();
-
-			if (player == null) {
-				return;
-			}
-
-			final String abilityName = event.getAbility();
-			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-			if (bPlayer != null && bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+			if (this.getBoundAbilityName() != null && this.getBoundAbilityName().equalsIgnoreCase(ability)) {
 				GeneralMethods.displayMovePreview(player);
 			}
 			
@@ -132,35 +106,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		final Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
 
 		return cooldowns;
-	}
-
-	//TODO Rewrite cooldowns with the ID system
-	private void saveCooldownsForce() {
-		DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'", false);
-		for (final Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
-			final String name = entry.getKey();
-			final Cooldown cooldown = entry.getValue();
-			if (!cooldown.isDatabase()) continue;
-			final int cooldownId = this.cooldownManager.getCooldownId(name, false);
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
-				if (rs.next()) {
-					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
-				} else {
-					DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
-				}
-			} catch (final SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void saveCooldowns(boolean async) {
-		if (async) Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, this::saveCooldownsForce);
-		else this.saveCooldownsForce();
-	}
-
-	public void saveCooldowns() {
-		this.saveCooldowns(true);
 	}
 
 	/**
@@ -581,12 +526,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		return this.illumination;
 	}
 
-	public void removeCooldown(final CoreAbility ability) {
-		if (ability != null) {
-			this.removeCooldown(ability.getName());
-		}
-	}
-
 	/**
 	 * Removes the cooldown of an ability.
 	 *
@@ -755,7 +694,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		}
 
 		this.removeUnusableAbilities();
+		this.fixSubelements();
+		this.removeOldCooldowns();
 		PassiveManager.registerPassives(player);
+		BendingBoardManager.changeWorld(player); //Hide the board if they spawn in a world with bending disabled
 
 		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(this));
 	}
@@ -783,5 +725,26 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	public void toggleIllumination() {
 		this.illumination = !this.illumination;
+	}
+
+	/**
+	 * Gives all subelements a player doesn't have when they log in. Deprecated
+	 * because subelements being a list will be phased out eventually
+	 */
+	@Deprecated
+	public void fixSubelements() {
+		boolean save = false;
+		for (Element element : elements) {
+			List<SubElement> currentSubs = subelements.stream().filter(sub -> sub.getParentElement() == element).collect(Collectors.toList());
+			if (currentSubs.size() > 0) continue;
+			for (SubElement sub : Element.getSubElements(element)) {
+				if (this.hasSubElementPermission(sub)) {
+					this.addSubElement(sub);
+					save = true;
+				}
+			}
+		}
+
+		if (save) this.saveSubElements();
 	}
 }

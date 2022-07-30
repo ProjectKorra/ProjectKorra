@@ -478,6 +478,7 @@ public class PKListener implements Listener {
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
+		BendingBoardManager.updateAllSlots(player);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1216,10 +1217,10 @@ public class PKListener implements Listener {
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
+		/*Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
 			PassiveManager.registerPassives(player);
 			BendingBoardManager.changeWorld(player); //Hide the bending board if they spawn in a world where bending is disabld
-		}, 5);
+		}, 5);*/
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
 			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
@@ -1986,14 +1987,6 @@ public class PKListener implements Listener {
 				break;
 			}
 		}
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onBendingElementChange(final PlayerChangeElementEvent event) {
-		final Player player = event.getTarget();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) return;
-		BendingBoardManager.updateAllSlots(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

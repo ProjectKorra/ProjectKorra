@@ -143,7 +143,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Remove.RemovedElement", "You've removed your {element}.");
 			config.addDefault("Commands.Remove.InvalidElement", "That element is invalid!");
 			config.addDefault("Commands.Remove.WrongElement", "You do not have that element.");
-			config.addDefault("Commands.Remove.PlayerOffline", "That player is offline!");
+			config.addDefault("Commands.Remove.PlayerNotFound", "That player has not played before!");
 
 			config.addDefault("Commands.Reload.Description", "This command will reload the bending config files.");
 			config.addDefault("Commands.Reload.SuccessfullyReloaded", "Bending Config reloaded!");
@@ -170,7 +170,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
 
 			config.addDefault("Commands.Cooldown.Description", "Set, reset or view a cooldown for a player");
-			config.addDefault("Commands.Cooldown.PlayerOffline", "That player is not online!");
+			config.addDefault("Commands.Cooldown.InvalidPlayer", "That player has not played before!");
 			config.addDefault("Commands.Cooldown.InvalidCooldown", "Could not find an existing cooldown with the name '{cooldown}'!");
 			config.addDefault("Commands.Cooldown.InvalidTime", "Could not parse {value} as a valid time! ");
 			config.addDefault("Commands.Cooldown.View", "Listing {number} cooldowns for {player}");
@@ -190,7 +190,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Stats.Description", "This command manages statistics. View your own, another player's statistics along with the server leaderboard.");
 
 			config.addDefault("Commands.PermaRemove.Description", "This command will permanently remove the bending of the targeted <Player>. Once removed, a player may only receive bending again if this command is run on them again. This command is typically reserved for administrators.");
-			config.addDefault("Commands.PermaRemove.PlayerOffline", "That player is not online.");
+			config.addDefault("Commands.PermaRemove.InvalidPlayer", "That player could not be found.");
 			config.addDefault("Commands.PermaRemove.Restored", "Your bending has been restored.");
 			config.addDefault("Commands.PermaRemove.RestoredConfirm", "You have restored the bending of {target}.");
 			config.addDefault("Commands.PermaRemove.Removed", "Your bending has been permanently removed.");

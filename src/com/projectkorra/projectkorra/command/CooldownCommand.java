@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.google.common.collect.Lists;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
@@ -62,109 +63,115 @@ public class CooldownCommand extends PKCommand {
         }
 
         OfflinePlayer oPlayer = list.size() == 1 ? (Player)sender : Bukkit.getOfflinePlayer(list.get(1));
-        if (!oPlayer.hasPlayedBefore() || !oPlayer.isOnline()) {
-            GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.PlayerOffline"));
+        if (!oPlayer.isOnline() && !oPlayer.hasPlayedBefore()) {
+            GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidPlayer"));
             return;
         }
 
-        Player player = (Player) oPlayer;
-        BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+        BendingPlayer.getOrLoadOfflineAsync(oPlayer).thenAccept(bPlayer -> {
+            if (Arrays.asList(new String[] {"view", "v"}).contains(list.get(0).toLowerCase())) {
+                List<String> cooldowns = bPlayer.getCooldowns().entrySet().stream()
+                        .sorted(Comparator.comparingLong(entry -> entry.getValue().getCooldown()))
+                        .filter(entry -> entry.getValue().getCooldown() > 0)
+                        .map(entry -> ChatColor.YELLOW + entry.getKey() + ": " + ChatColor.RED +
+                                TimeUtil.formatTime(entry.getValue().getCooldown() - System.currentTimeMillis()))
+                        .collect(Collectors.toList());
 
-        if (Arrays.asList(new String[] {"view", "v"}).contains(list.get(0).toLowerCase())) {
-            List<String> cooldowns = bPlayer.getCooldowns().entrySet().stream()
-                    .sorted(Comparator.comparingLong(entry -> entry.getValue().getCooldown()))
-                    .filter(entry -> entry.getValue().getCooldown() > 0)
-                    .map(entry -> ChatColor.YELLOW + entry.getKey() + ": " + ChatColor.RED +
-                            TimeUtil.formatTime(entry.getValue().getCooldown() - System.currentTimeMillis()))
-                    .collect(Collectors.toList());
-
-            if (cooldowns.isEmpty()) {
-                String titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ViewNone").replace("{player}", player.getName());
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + titleMessage);
-                return;
-            }
-
-            String titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.View");
-            if (cooldowns.size() > 10) {
-                titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ViewMax");
-            }
-            titleMessage = titleMessage.replace("{player}", player.getName()).replace("{number}", Math.min(cooldowns.size(), 10) + "");
-            GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + titleMessage);
-            for (int i = 0; i < 10 && i < cooldowns.size(); i++) {
-                String message = cooldowns.get(i);
-                String cooldownName = ChatColor.stripColor(message).split(":")[0];
-                String showText = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetPreview").replace("{cooldown}", cooldownName);
-                HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(ChatColor.YELLOW + showText));
-                ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/b cooldown reset " + player.getName() + " " + cooldownName);
-                TextComponent textComponent = new TextComponent(message);
-                textComponent.setClickEvent(clickEvent);
-                textComponent.setHoverEvent(hoverEvent);
-                sender.spigot().sendMessage(textComponent);
-            }
-            return;
-        }
-
-        boolean set = Arrays.asList(new String[] {"set", "s"}).contains(list.get(0).toLowerCase());
-
-        String cooldown = list.get(2);
-        if (list.size() > 3 && set) {
-            long time;
-            try {
-                time = TimeUtil.unformatTime(list.get(3));
-            } catch (NumberFormatException e) {
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidTime").replace("{value}", list.get(3)));
-                return;
-            }
-            if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
-                if (time == 0) {
-                    bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
-                    bPlayer.saveCooldowns();
-                    GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", player.getName()));
+                if (cooldowns.isEmpty()) {
+                    String titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ViewNone").replace("{player}", oPlayer.getName());
+                    GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + titleMessage);
                     return;
                 }
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetAll").replace("{player}", player.getName()));
+
+                String titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.View");
+                if (cooldowns.size() > 10) {
+                    titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ViewMax");
+                }
+                titleMessage = titleMessage.replace("{player}", oPlayer.getName()).replace("{number}", Math.min(cooldowns.size(), 10) + "");
+                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + titleMessage);
+                for (int i = 0; i < 10 && i < cooldowns.size(); i++) {
+                    String message = cooldowns.get(i);
+                    String cooldownName = ChatColor.stripColor(message).split(":")[0];
+                    String showText = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetPreview").replace("{cooldown}", cooldownName);
+                    HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(ChatColor.YELLOW + showText));
+                    ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/b cooldown reset " + oPlayer.getName() + " " + cooldownName);
+                    TextComponent textComponent = new TextComponent(message);
+                    textComponent.setClickEvent(clickEvent);
+                    textComponent.setHoverEvent(hoverEvent);
+                    sender.spigot().sendMessage(textComponent);
+                }
                 return;
             }
 
-            String fixedCooldown = setCooldown(sender, bPlayer, cooldown, time);
-            if (fixedCooldown == null) {
-                return;
-            }
+            boolean set = Arrays.asList(new String[] {"set", "s"}).contains(list.get(0).toLowerCase());
 
-            String message = ConfigManager.languageConfig.get().getString("Commands.Cooldown.Set").replace("{player}",
-                    player.getName()).replace("{cooldown}", fixedCooldown).replace("{value}", TimeUtil.formatTime(time));
-            GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + message);
-        } else if (set) {
-            GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetNoValue"));
-        } else {
-            if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
-                bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
-                bPlayer.saveCooldowns(true);
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", player.getName()));
-                return;
-            }
+            String cooldown = list.get(2);
+            if (list.size() > 3 && set) {
+                long time;
+                try {
+                    time = TimeUtil.unformatTime(list.get(3));
+                } catch (NumberFormatException e) {
+                    GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidTime").replace("{value}", list.get(3)));
+                    return;
+                }
+                if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
+                    if (time == 0) {
+                        bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
+                        bPlayer.saveCooldowns();
+                        GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
+                        return;
+                    }
+                    GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetAll").replace("{player}", oPlayer.getName()));
+                    return;
+                }
 
-            String fixedCooldown = setCooldown(sender, bPlayer, cooldown, 0);
-            if (fixedCooldown == null) {
-                return;
-            }
+                String fixedCooldown = setCooldown(sender, bPlayer, cooldown, time);
+                if (fixedCooldown == null) {
+                    return;
+                }
 
-            String message = ConfigManager.languageConfig.get().getString("Commands.Cooldown.Reset").replace("{player}",
-                    player.getName()).replace("{cooldown}", fixedCooldown);
-            GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + message);
-        }
+                String message = ConfigManager.languageConfig.get().getString("Commands.Cooldown.Set").replace("{player}",
+                        oPlayer.getName()).replace("{cooldown}", fixedCooldown).replace("{value}", TimeUtil.formatTime(time));
+                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + message);
+            } else if (set) {
+                GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetNoValue"));
+            } else {
+                if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
+                    bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
+                    bPlayer.saveCooldowns();
+                    GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
+                    return;
+                }
+
+                String fixedCooldown = setCooldown(sender, bPlayer, cooldown, 0);
+                if (fixedCooldown == null) {
+                    return;
+                }
+
+                String message = ConfigManager.languageConfig.get().getString("Commands.Cooldown.Reset").replace("{player}",
+                        oPlayer.getName()).replace("{cooldown}", fixedCooldown);
+                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + message);
+            }
+        });
+
+
     }
 
-    private String setCooldown(CommandSender sender, BendingPlayer bPlayer, String cooldown, long time) {
+    private String setCooldown(CommandSender sender, OfflineBendingPlayer bPlayer, String cooldown, long time) {
         String fixedCooldown = COOLDOWNS.stream().filter(s -> s.equalsIgnoreCase(cooldown)).findFirst().orElse(null);
         if (fixedCooldown == null) {
             GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidCooldown"));
             return null;
         }
 
-        final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(bPlayer.getPlayer(), cooldown, time, time <= 0 ? PlayerCooldownChangeEvent.Result.REMOVED : PlayerCooldownChangeEvent.Result.SET);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
+        boolean cancelled = false;
+        if (bPlayer.getPlayer().isOnline()) {
+            final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(((BendingPlayer)bPlayer).getPlayer(), cooldown, time, time <= 0 ? PlayerCooldownChangeEvent.Result.REMOVED : PlayerCooldownChangeEvent.Result.SET);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            cancelled = event.isCancelled();
+        }
+
+        if (!cancelled) {
             if (time <= 0) {
                 bPlayer.getCooldowns().remove(fixedCooldown);
                 return fixedCooldown;
@@ -182,7 +189,7 @@ public class CooldownCommand extends PKCommand {
     @Override
     protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
         if (args.size() < 1) return Arrays.asList("view", "set", "reset");
-        if (args.size() < 2) return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+        if (args.size() < 2) return getOnlinePlayerNames(sender);
         else if (args.size() < 3 && !Arrays.asList(new String[] {"view", "v"}).contains(args.get(0).toLowerCase())) {
             List<String> list = new ArrayList<>(COOLDOWNS);
             list.add("*");

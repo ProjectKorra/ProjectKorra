@@ -8,7 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -268,5 +270,13 @@ public abstract class PKCommand implements SubCommand {
 	public static void reloadCommands() {
 		instances.clear();
 		Commands.initializeCommands();
+	}
+
+	public List<Player> getOnlinePlayers(final CommandSender sender) {
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).collect(Collectors.toList());
+	}
+
+	public List<String> getOnlinePlayerNames(final CommandSender sender) {
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).map(Player::getName).collect(Collectors.toList());
 	}
 }

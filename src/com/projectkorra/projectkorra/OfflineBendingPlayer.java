@@ -3,8 +3,11 @@ package com.projectkorra.projectkorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
+import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
@@ -114,6 +117,15 @@ public class OfflineBendingPlayer {
                 if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
                     DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + offlinePlayer.getName() + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
                     Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> ProjectKorra.log.info("Created new BendingPlayer for " + offlinePlayer.getName()));
+                    OfflineBendingPlayer newPlayer;
+                    if (offlinePlayer.isOnline()) {
+                        newPlayer = new BendingPlayer((Player)offlinePlayer);
+                        ONLINE_PLAYERS.put(uuid, (BendingPlayer) newPlayer);
+                    } else {
+                        newPlayer = new OfflineBendingPlayer(offlinePlayer);
+                    }
+                    PLAYERS.put(uuid, newPlayer);
+                    future.complete(newPlayer);
                 } else {
                     // The player has at least played before.
                     final String player2 = rs2.getString("player");
@@ -667,6 +679,17 @@ public class OfflineBendingPlayer {
         this.cooldowns.remove(ability);
     }
 
+    /**
+     * Removes the cooldown of an ability
+     * @param ability The ability whose cooldown to remove
+     */
+    public void removeCooldown(@NotNull final CoreAbility ability) {
+        this.removeCooldown(ability.getName());
+    }
+
+    /**
+     * Remove all cooldowns that have expired
+     */
     protected void removeOldCooldowns() {
         this.cooldowns.entrySet().removeIf(entry -> System.currentTimeMillis() >= entry.getValue().getCooldown());
     }
@@ -696,6 +719,71 @@ public class OfflineBendingPlayer {
         }
 
         return false;
+    }
+
+    public void addCooldown(final Ability ability, final long cooldown, final boolean database) {
+        this.addCooldown(ability.getName(), cooldown, database);
+    }
+
+    public void addCooldown(final Ability ability, final boolean database) {
+        this.addCooldown(ability.getName(), ability.getCooldown(), database);
+    }
+
+    public void addCooldown(final Ability ability, final long cooldown) {
+        this.addCooldown(ability, cooldown, false);
+    }
+
+    public void addCooldown(final Ability ability) {
+        this.addCooldown(ability, false);
+    }
+
+    public void addCooldown(final String ability, final long cooldown) {
+        this.addCooldown(ability, cooldown, false);
+    }
+
+    /**
+     * Applies a cooldown for an ability to the current BendingPlayer.
+     * @param ability The ability to apply the cooldown to
+     * @param cooldown The cooldown time
+     * @param database Whether or not to save the cooldown to the database
+     */
+    public void addCooldown(final String ability, final long cooldown, final boolean database) {
+        if (cooldown <= 0) {
+            return;
+        }
+
+        this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
+
+        CooldownCommand.addCooldownType(ability);
+    }
+
+    //TODO Rewrite cooldowns with the ID system
+    private void saveCooldownsForce() {
+        DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'", false);
+        for (final Map.Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
+            final String name = entry.getKey();
+            final Cooldown cooldown = entry.getValue();
+            if (!cooldown.isDatabase()) continue;
+            final int cooldownId = this.cooldownManager.getCooldownId(name, false);
+            try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
+                if (rs.next()) {
+                    DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
+                } else {
+                    DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
+                }
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveCooldowns(boolean async) {
+        if (async) Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, this::saveCooldownsForce);
+        else this.saveCooldownsForce();
+    }
+
+    public void saveCooldowns() {
+        this.saveCooldowns(true);
     }
 
     /**

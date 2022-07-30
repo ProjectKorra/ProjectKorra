@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import org.bukkit.Bukkit;
@@ -148,7 +149,7 @@ public class WhoCommand extends PKCommand {
 	 */
 	private void whoPlayer(final CommandSender sender, final String playerName) {
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-		if (!player.hasPlayedBefore()) {
+		if (!player.isOnline() && !player.hasPlayedBefore()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerUnknown.replace("{target}", playerName));
 			return;
 		}
@@ -308,10 +309,7 @@ public class WhoCommand extends PKCommand {
 		if (args.size() >= 1 || !sender.hasPermission("bending.command.who")) {
 			return new ArrayList<String>();
 		}
-		final List<String> l = new ArrayList<String>();
-		for (final Player p : Bukkit.getOnlinePlayers()) {
-			l.add(p.getName());
-		}
-		return l;
+
+		return getOnlinePlayerNames(sender);
 	}
 }

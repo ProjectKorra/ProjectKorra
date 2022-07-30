@@ -46,7 +46,7 @@ public class CopyCommand extends PKCommand {
 
 			final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(0));
 
-			if (!player.hasPlayedBefore()) {
+			if (!player.isOnline() && !player.hasPlayedBefore()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
@@ -118,11 +118,7 @@ public class CopyCommand extends PKCommand {
 		if (!sender.hasPermission("bending.command.copy") || args.size() >= 2 || (args.size() >= 1 && !sender.hasPermission("bending.command.copy.assign"))) {
 			return new ArrayList<String>(); // Return nothing.
 		}
-		final List<String> l = new ArrayList<String>();
-		for (final Player p : Bukkit.getOnlinePlayers()) {
-			l.add(p.getName());
-		}
-		return l;
+		return getOnlinePlayerNames(sender);
 	}
 
 }
