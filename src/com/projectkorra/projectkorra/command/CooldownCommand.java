@@ -105,7 +105,13 @@ public class CooldownCommand extends PKCommand {
 
             boolean set = Arrays.asList(new String[] {"set", "s"}).contains(list.get(0).toLowerCase());
 
-            String cooldown = list.get(2);
+            String cooldown;
+
+            if (list.size() < 3) { //They didn't provide a cooldown name
+                cooldown = "ALL";
+            } else
+                cooldown = list.get(2);
+
             if (list.size() > 3 && set) {
                 long time;
                 try {
@@ -153,8 +159,6 @@ public class CooldownCommand extends PKCommand {
                 GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + message);
             }
         });
-
-
     }
 
     private String setCooldown(CommandSender sender, OfflineBendingPlayer bPlayer, String cooldown, long time) {

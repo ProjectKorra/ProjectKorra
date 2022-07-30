@@ -508,22 +508,26 @@ public class OfflineBendingPlayer {
             return;
         }
 
+        final CoreAbility coreAbil = CoreAbility.getAbility(ability);
+        if (coreAbil == null) return;
+        final String fixedName = coreAbil.getName();
+
         if (realPlayer) {
-            PlayerBindChangeEvent event = new PlayerBindChangeEvent((Player)this.getPlayer(), ability, slot, ability != null, false);
+            PlayerBindChangeEvent event = new PlayerBindChangeEvent((Player)this.getPlayer(), fixedName, slot, ability != null, false);
             ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return;
             }
         }
 
-        final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-        this.getAbilities().put(slot, ability);
 
-        if (coreAbil != null && realPlayer) {
-            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+        this.getAbilities().put(slot, fixedName);
+
+        if (realPlayer) {
+            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", fixedName).replace("{slot}", String.valueOf(slot)));
         }
 
-        this.saveAbility(ability, slot);
+        this.saveAbility(fixedName, slot);
     }
 
     /**

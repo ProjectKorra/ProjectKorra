@@ -108,7 +108,7 @@ public class BindCommand extends PKCommand {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
 		}
 
-		bPlayer.saveAbility(ability, slot);
+		bPlayer.bindAbility(ability, slot);
 	}
 
 	@Override

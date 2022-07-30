@@ -41,6 +41,7 @@ import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.projectkorra.projectkorra.command.PKCommand;
 import com.projectkorra.projectkorra.hooks.BendingRegionProtection;
+import com.projectkorra.projectkorra.util.TempFallingBlock;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -1631,13 +1632,15 @@ public class GeneralMethods {
 			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
 			stopPlugin();
 		}
+		BendingPlayer.getOfflinePlayers().clear();
+		BendingPlayer.getPlayers().clear();
+		BendingBoardManager.reload();
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
-			//GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			OfflineBendingPlayer.loadAsync(player.getUniqueId(), false);
 			PassiveManager.registerPassives(player);
 		}
-		BendingBoardManager.reload();
+
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
 	}
@@ -2053,6 +2056,7 @@ public class GeneralMethods {
 		TempArmorStand.removeAll();
 		MovementHandler.resetAll();
 		MultiAbilityManager.removeAll();
+		TempFallingBlock.removeAllFallingBlocks();
 		if (!INVINCIBLE.isEmpty()) {
 			INVINCIBLE.clear();
 		}

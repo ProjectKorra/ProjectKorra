@@ -27,6 +27,8 @@ PK Changes
     - The cooldowns load on the main thread from the database. BAD BAD BAD.
     - I already fixed cooldowns saving on the main thread
 - Change BendingPlayer#setAbilities to use one SQL command and not 9
-- Allow toggled bending to remain when you logout
+- Allow toggled bending to remain when you logout (done but does not store to the database)
 - Make melted snow (tempblocks) update the block bellow if it is grass (so it doesn't show the gray surface)
 - Convert all permissions to not use bending.admin.<admincommand> and instead be bending.command.<command>
+- You cannot use OctopusForm from a source. Only dynamic sourcing works
+- Show players with permanently removed bending in /b who
