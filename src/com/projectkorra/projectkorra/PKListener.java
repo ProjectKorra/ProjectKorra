@@ -2031,12 +2031,6 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onBendingPlayerCreation(final BendingPlayerCreationEvent event) {
-		final Player player = event.getBendingPlayer().getPlayer();
-		BendingBoardManager.getBoard(player).ifPresent(BendingBoard::show);
-	}
-
 	@EventHandler
 	public void onPluginUnload(PluginDisableEvent event) {
 		BendingRegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());

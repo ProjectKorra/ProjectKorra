@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
@@ -694,9 +695,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		}
 
 		this.removeUnusableAbilities();
-		this.fixSubelements();
+		this.fixSubelements(); //Grant all subelements for an element if they have 0 subs for that element (that they are allowed)
 		this.removeOldCooldowns();
 		PassiveManager.registerPassives(player);
+		BendingBoardManager.getBoard(player).ifPresent(BendingBoard::show); //Show the bending board
 		BendingBoardManager.changeWorld(player); //Hide the board if they spawn in a world with bending disabled
 
 		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(this));
