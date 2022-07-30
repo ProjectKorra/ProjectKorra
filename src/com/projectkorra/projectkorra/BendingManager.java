@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import co.aikar.timings.lib.MCTiming;
 
+import com.projectkorra.projectkorra.util.TempFallingBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -32,7 +33,7 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
 
-	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING;
+	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCKS;
 
 	public BendingManager() {
 		instance = this;
@@ -45,6 +46,7 @@ public class BendingManager implements Runnable {
 		this.COOLDOWN_TIMING = ProjectKorra.timing("HandleCooldowns");
 		this.TEMP_ARMOR_TIMING = ProjectKorra.timing("TempArmor#Cleanup");
 		this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
+		this.TEMP_FALLING_BLOCKS = ProjectKorra.timing("TempFallingBlock#manage");
 	}
 
 	public static BendingManager getInstance() {
@@ -146,6 +148,10 @@ public class BendingManager implements Runnable {
 					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
 				}
 			}
+		}
+
+		try (MCTiming timing = this.TEMP_FALLING_BLOCKS.startTiming()) {
+			TempFallingBlock.manage();
 		}
 	}
 

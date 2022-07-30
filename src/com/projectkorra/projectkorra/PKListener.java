@@ -109,6 +109,7 @@ import com.projectkorra.projectkorra.util.StatisticsManager;
 import com.projectkorra.projectkorra.util.StatisticsMethods;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempFallingBlock;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -138,6 +139,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -486,6 +488,14 @@ public class PKListener implements Listener {
 		if (event.getEntityType() == EntityType.FALLING_BLOCK) {
 			if (LavaSurge.getAllFallingBlocks().contains(entity)) {
 				LavaSurge.getAllFallingBlocks().remove(entity);
+				event.setCancelled(true);
+			}
+
+			FallingBlock fb = (FallingBlock) event.getEntity();
+			if (TempFallingBlock.isTempFallingBlock(fb)) {
+				TempFallingBlock tfb = TempFallingBlock.get(fb);
+				tfb.tryPlace();
+				tfb.remove();
 				event.setCancelled(true);
 			}
 		}
