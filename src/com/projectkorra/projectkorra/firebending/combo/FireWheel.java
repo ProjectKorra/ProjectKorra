@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.firebending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -92,12 +94,13 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
+		/*final ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
 		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
 		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
 		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
 		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		return fireWheel;
+		return fireWheel;*/
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.FireSpin.Combination"));
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.configuration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Material;
@@ -1026,6 +1027,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Twister.Cooldown", 10000);
 			config.addDefault("Abilities.Air.Twister.DegreesPerParticle", 7);
 			config.addDefault("Abilities.Air.Twister.HeightPerParticle", 1.25);
+			config.addDefault("Abilities.Air.Twister.Combination", Arrays.asList("AirShield:SNEAK_DOWN", "AirShield:SNEAK_UP", "Tornado:SNEAK_DOWN", "AirBlast:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Air.AirStream.Enabled", true);
 			config.addDefault("Abilities.Air.AirStream.Speed", 0.5);
@@ -1033,6 +1035,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirStream.EntityCarry.Duration", 4000);
 			config.addDefault("Abilities.Air.AirStream.EntityCarry.Height", 14);
 			config.addDefault("Abilities.Air.AirStream.Cooldown", 7000);
+			config.addDefault("Abilities.Air.AirStream.Combination", Arrays.asList("AirShield:SNEAK_DOWN", "AirSuction:LEFT_CLICK", "AirBlast:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Air.AirSweep.Enabled", true);
 			config.addDefault("Abilities.Air.AirSweep.Speed", 1.4);
@@ -1041,6 +1044,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSweep.Knockback", 3.5);
 			config.addDefault("Abilities.Air.AirSweep.Cooldown", 6000);
 			config.addDefault("Abilities.Air.AirSweep.Radius", 1);
+			config.addDefault("Abilities.Air.AirSweep.Combination", Arrays.asList("AirSwipe:LEFT_CLICK", "AirSwipe:LEFT_CLICK", "AirBurst:SNEAK_DOWN", "AirBurst:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Water.Passive.FastSwim.Enabled", true);
 			config.addDefault("Abilities.Water.Passive.FastSwim.Cooldown", 0);
@@ -1269,6 +1273,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceWave.ThawRadius", 10);
 			config.addDefault("Abilities.Water.IceWave.RevertSphere", true);
 			config.addDefault("Abilities.Water.IceWave.RevertSphereTime", 30000L);
+			config.addDefault("Abilities.Water.IceWave.Combination", Arrays.asList("WaterSpout:SHIFT_UP", "PhaseChange:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Water.IceBullet.Enabled", true);
 			config.addDefault("Abilities.Water.IceBullet.Damage", 2);
@@ -1279,6 +1284,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBullet.ShootTime", 10000);
 			config.addDefault("Abilities.Water.IceBullet.Cooldown", 10000);
 			config.addDefault("Abilities.Water.IceBullet.ShotCooldown", 500);
+			config.addDefault("Abilities.Water.IceBullet.Combination", Arrays.asList("WaterBubble:SNEAK_DOWN", "WaterBubble:SNEAK_UP", "IceBlast:SNEAK_DOWN"));
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Enabled", true);
@@ -1322,6 +1328,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthDome.Radius", 2);
 			config.addDefault("Abilities.Earth.EarthDome.Range", 14);
 			config.addDefault("Abilities.Earth.EarthDome.Height", 3);
+			config.addDefault("Abilities.Earth.EarthDome.Combination.Self", Arrays.asList("RaiseEarth:RIGHT_CLICK_BLOCK", "Shockwave:RIGHT_CLICK_BLOCK"));
+			config.addDefault("Abilities.Earth.EarthDome.Combination.Others", Arrays.asList("RaiseEarth:RIGHT_CLICK_BLOCK", "Shockwave:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthGrab.SelectRange", 7);
@@ -1465,6 +1473,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthPillars.Damage.Value", 2);
 			config.addDefault("Abilities.Earth.EarthPillars.FallThreshold", 12);
+			config.addDefault("Abilities.Earth.EarthPillars.Combination", Arrays.asList("Shockwave:SNEAK_DOWN", "Shockwave:SNEAK_UP", "Shockwave:SNEAK_DOWN", "Catapult:SNEAK_UP"));
 
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);
 			config.addDefault("Abilities.Fire.Blaze.Arc", 14);
@@ -1599,6 +1608,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireKick.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireKick.Speed", 1);
+			config.addDefault("Abilities.Fire.FireKick.Combination", Arrays.asList("FireBlast:LEFT_CLICK", "FireBlast:LEFT_CLICK", "FireBlast:SNEAK_DOWN", "FireBlast:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Fire.FireSpin.Enabled", true);
 			config.addDefault("Abilities.Fire.FireSpin.Range", 7);
@@ -1606,6 +1616,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireSpin.Knockback", 3.0);
 			config.addDefault("Abilities.Fire.FireSpin.Cooldown", 5000);
 			config.addDefault("Abilities.Fire.FireSpin.Speed", 0.3);
+			config.addDefault("Abilities.Fire.FireSpin.Combination", Arrays.asList("FireBlast:LEFT_CLICK", "FireBlast:LEFT_CLICK", "FireShield:LEFT_CLICK", "FireShield:SNEAK_DOWN", "FireShield:SNEAK_UP"));
 
 			config.addDefault("Abilities.Fire.FireWheel.Enabled", true);
 			config.addDefault("Abilities.Fire.FireWheel.Range", 20.0);
@@ -1614,11 +1625,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireWheel.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireWheel.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.FireWheel.Height", 2);
+			config.addDefault("Abilities.Fire.FireWheel.Combination", Arrays.asList("FireShield:SNEAK_DOWN", "FireShield:RIGHT_CLICK_BLOCK", "FireShield:RIGHT_CLICK_BLOCK", "FireShield:SNEAK_DOWN", "FireShield:SNEAK_UP", "FireJet:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Fire.JetBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.JetBlast.Speed", 1.2);
 			config.addDefault("Abilities.Fire.JetBlast.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.JetBlast.Duration", 5000);
+			config.addDefault("Abilities.Fire.JetBlast.Combination", Arrays.asList("FireJet:SNEAK_DOWN", "FireJet:SNEAK_UP", "FireJet:SNEAK_DOWN", "FireJet:SNEAK_UP", "FireShield:SNEAK_DOWN", "FireShield:SNEAK_UP", "FireJet:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Fire.JetBlaze.Enabled", true);
 			config.addDefault("Abilities.Fire.JetBlaze.Speed", 1.1);
@@ -1626,6 +1639,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.JetBlaze.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.JetBlaze.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.JetBlaze.Duration", 5000);
+			config.addDefault("Abilities.Fire.JetBlaze.Combination", Arrays.asList("FireJet:SNEAK_DOWN", "FireJet:SNEAK_UP", "FireJet:SNEAK_DOWN", "FireJet:SNEAK_UP", "Blaze:SNEAK_DOWN", "Blaze:SNEAK_UP", "FireJet:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.Enabled", true);
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.FallReductionFactor", 0.5);

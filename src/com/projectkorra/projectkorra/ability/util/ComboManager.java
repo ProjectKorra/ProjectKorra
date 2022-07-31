@@ -33,12 +33,12 @@ public class ComboManager {
 		DESCRIPTIONS.clear();
 		INSTRUCTIONS.clear();
 
-		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthDome.Enabled")) {
+		/*if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthDome.Enabled")) {
 			final ArrayList<AbilityInformation> earthDomeOthers = new ArrayList<>();
 			earthDomeOthers.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
 			earthDomeOthers.add(new AbilityInformation("Shockwave", ClickType.LEFT_CLICK));
 			COMBO_ABILITIES.put("EarthDomeOthers", new ComboAbilityInfo("EarthDomeOthers", earthDomeOthers, EarthDomeOthers.class));
-		}
+		}*/
 
 		startCleanupTask();
 	}
