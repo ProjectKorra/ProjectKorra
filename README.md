@@ -15,6 +15,7 @@ The development team are going in the wrong direction with ProjectKorra. This wi
 - Made the config generate blocks based on the current server version
 - Better supports 1.16
 - The [ProjectKorra] prefix in front of commands is completely configurable
+- Commands can affect offline players
 - Removed autoannouncer
 
 ### Fixes
