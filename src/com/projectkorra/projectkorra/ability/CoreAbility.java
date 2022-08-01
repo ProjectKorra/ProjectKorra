@@ -551,15 +551,6 @@ public abstract class CoreAbility implements Ability {
 				ABILITIES_BY_NAME.put(name.toLowerCase(), coreAbil);
 				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
 
-				if (coreAbil instanceof ComboAbility) {
-					final ComboAbility combo = (ComboAbility) coreAbil;
-					if (combo.getCombination() != null) {
-						ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
-						ComboManager.getDescriptions().put(name, coreAbil.getDescription());
-						ComboManager.getInstructions().put(name, coreAbil.getInstructions());
-					}
-				}
-
 				if (coreAbil instanceof MultiAbility) {
 					final MultiAbility multiAbil = (MultiAbility) coreAbil;
 					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
@@ -578,6 +569,8 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil.isEnabled() && !coreAbil.isHiddenAbility() && !(coreAbil instanceof PassiveAbility)) {
 					CooldownCommand.addCooldownType(coreAbil.getName());
 				}
+
+				//Combos are no longer registered here. Since their combination is configurable, we need to do this after every single ability loads
 			} catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
 				e.printStackTrace();

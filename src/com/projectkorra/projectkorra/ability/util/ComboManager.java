@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -40,6 +41,7 @@ public class ComboManager {
 			COMBO_ABILITIES.put("EarthDomeOthers", new ComboAbilityInfo("EarthDomeOthers", earthDomeOthers, EarthDomeOthers.class));
 		}*/
 
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, ComboManager::registerCombos, 1L);
 		startCleanupTask();
 	}
 
@@ -233,6 +235,20 @@ public class ComboManager {
 
 	public static HashMap<String, String> getInstructions() {
 		return INSTRUCTIONS;
+	}
+
+	public static void registerCombos() {
+		for (CoreAbility ability : CoreAbility.getAbilities()) {
+			if (ability instanceof ComboAbility && ability.isEnabled()) {
+				final ComboAbility combo = (ComboAbility) ability;
+				if (combo.getCombination() != null) {
+					ArrayList<AbilityInformation> combination = combo.getCombination();
+					if (combination != null) ComboManager.getComboAbilities().put(ability.getName(), new ComboManager.ComboAbilityInfo(ability.getName(), combination, combo));
+					ComboManager.getDescriptions().put(ability.getName(), ability.getDescription());
+					ComboManager.getInstructions().put(ability.getName(), ability.getInstructions());
+				}
+			}
+		}
 	}
 
 	/**

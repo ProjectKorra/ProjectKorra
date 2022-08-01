@@ -1463,7 +1463,7 @@ public class GeneralMethods {
 				final KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
 				final Land land = Land.getLand(location);
 				final boolean protectDuringInvasions = ConfigManager.getConfig().getBoolean("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions");
-				if (land != null) {
+				if (land != null && land.isClaimed()) {
 					final Kingdom kingdom = land.getKingdom();
 					if (kPlayer.isAdmin()
 							|| (!protectDuringInvasions && !land.getInvasions().isEmpty() && land.getInvasions().values().stream().anyMatch(i -> i.getInvader().equals(kPlayer))) // Protection during invasions is off, and player is currently invading; allow

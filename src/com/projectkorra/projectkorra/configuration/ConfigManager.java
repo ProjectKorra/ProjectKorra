@@ -1655,6 +1655,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Immobilize.Enabled", true);
 			config.addDefault("Abilities.Chi.Immobilize.ParalyzeDuration", 3500);
 			config.addDefault("Abilities.Chi.Immobilize.Cooldown", 15000);
+			config.addDefault("Abilities.Chi.Immobilize.Combination", Arrays.asList("QuickStrike:LEFT_CLICK", "SwiftKick:LEFT_CLICK", "QuickStrike:LEFT_CLICK", "QuickStrike:LEFT_CLICK_ENTITY"));
 
 			config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
 			config.addDefault("Abilities.Chi.AcrobatStance.Cooldown", 0);
