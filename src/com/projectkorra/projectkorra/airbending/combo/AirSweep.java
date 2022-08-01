@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra.airbending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -251,12 +253,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> airSweep = new ArrayList<>();
-		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
-		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
-		airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFT_DOWN));
-		airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFT_CLICK));
-		return airSweep;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Air.AirSweep.Combination"));
 	}
 
 	public Location getOrigin() {

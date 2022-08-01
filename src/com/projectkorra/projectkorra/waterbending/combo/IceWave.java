@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -124,9 +126,6 @@ public class IceWave extends IceAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> iceWave = new ArrayList<>();
-		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
-		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
-		return iceWave;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Water.IceWave.Combination"));
 	}
 }

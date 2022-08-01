@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -349,11 +351,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> iceBullet = new ArrayList<>();
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
-		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
-		return iceBullet;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Water.IceBullet.Combination"));
 	}
 
 	@Override

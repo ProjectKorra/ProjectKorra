@@ -94,12 +94,6 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		/*final ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		return fireWheel;*/
 		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.FireSpin.Combination"));
 	}
 

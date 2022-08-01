@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -153,11 +155,6 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> earthPillars = new ArrayList<>();
-		earthPillars.add(new AbilityInformation("Shockwave", ClickType.SHIFT_DOWN));
-		earthPillars.add(new AbilityInformation("Shockwave", ClickType.SHIFT_UP));
-		earthPillars.add(new AbilityInformation("Shockwave", ClickType.SHIFT_DOWN));
-		earthPillars.add(new AbilityInformation("Catapult", ClickType.SHIFT_UP));
-		return earthPillars;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Earth.EarthPillars.Combination"));
 	}
 }

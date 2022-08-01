@@ -192,12 +192,6 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		/*final ArrayList<AbilityInformation> fireKick = new ArrayList<>();
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		return fireKick;*/
 		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.FireKick.Combination"));
 	}
 

@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.firebending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -56,15 +58,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> jetBlast = new ArrayList<>();
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
-		return jetBlast;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.JetBlast.Combination"));
 	}
 
 	@Override

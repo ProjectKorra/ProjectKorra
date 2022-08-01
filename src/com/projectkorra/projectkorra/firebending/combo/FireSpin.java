@@ -169,13 +169,6 @@ public class FireSpin extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		/*final ArrayList<AbilityInformation> fireSpin = new ArrayList<>();
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
-		return fireSpin;*/
 		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.FireSpin.Combination"));
 	}
 

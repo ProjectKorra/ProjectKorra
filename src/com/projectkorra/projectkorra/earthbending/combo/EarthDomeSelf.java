@@ -56,10 +56,6 @@ public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		/*final ArrayList<AbilityInformation> combo = new ArrayList<>();
-		combo.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
-		combo.add(new AbilityInformation("Shockwave", ClickType.RIGHT_CLICK_BLOCK));
-		return combo;*/
 		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Earth.EarthDome.Combination.Self"));
 	}
 }
