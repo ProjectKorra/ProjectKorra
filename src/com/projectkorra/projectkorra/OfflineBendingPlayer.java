@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -120,6 +121,11 @@ public class OfflineBendingPlayer {
                     OfflineBendingPlayer newPlayer;
                     if (offlinePlayer.isOnline()) {
                         newPlayer = new BendingPlayer((Player)offlinePlayer);
+                        //Call postLoad() on the main thread and wait for it to complete
+                        Bukkit.getScheduler().callSyncMethod(ProjectKorra.plugin, () -> {
+                            ((BendingPlayer)newPlayer).postLoad();
+                            return true;
+                        }).get();
                         ONLINE_PLAYERS.put(uuid, (BendingPlayer) newPlayer);
                     } else {
                         newPlayer = new OfflineBendingPlayer(offlinePlayer);
@@ -370,17 +376,25 @@ public class OfflineBendingPlayer {
                     }
 
                     bPlayer.loading = false;
-                    if (bPlayer instanceof BendingPlayer) ((BendingPlayer) bPlayer).postLoad();
+                    //Call postLoad() on the main thread and wait for it to complete
+                    if (bPlayer instanceof BendingPlayer) {
+                        BendingPlayer finalBPlayer3 = (BendingPlayer) bPlayer;
+                        Bukkit.getScheduler().callSyncMethod(ProjectKorra.plugin, () -> {
+                            finalBPlayer3.postLoad();
+                            return true;
+                        }).get();
+                    }
 
                     future.complete(bPlayer);
                 }
-            } catch (final SQLException ex) {
+            } catch (final SQLException | ExecutionException | InterruptedException ex) {
                 ex.printStackTrace();
+                future.cancel(true);
             }
         };
 
         if (!Bukkit.isPrimaryThread()) runnable.run();
-        else Bukkit.getScheduler().runTask(ProjectKorra.plugin, runnable);
+        else Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, runnable);
 
         return future;
     }
