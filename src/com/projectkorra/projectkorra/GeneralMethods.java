@@ -2022,6 +2022,38 @@ public class GeneralMethods {
 		return String.join("\n", l);
 	}
 
+	/**
+	 * Apply multiple modifiers to a value, using mod multipliers.
+	 * E.g. applyModifiers(10, 1.5, 1.5) = 20 and not 10 * 1.5 * 1.5 (22.5)
+	 * @param value The value to modify
+	 * @param modifiers The modifiers to apply
+	 */
+	public static double applyModifiers(double value, double... modifiers) {
+		double totalDiff = 0;
+
+		for (double mod : modifiers) {
+			double diff = (value * mod) - value;
+			totalDiff += diff;
+		}
+		return (value + totalDiff);
+	}
+
+	/**
+	 * Apply multiple modifiers to a value, using negative mod multipliers.
+	 * This should be used instead for values that are better the smaller they are
+	 * E.g. applyModifiers(10, 1.5) = 0.667
+	 * @param value The value to modify
+	 * @param modifiers The modifiers to apply
+	 */
+	public static double applyInverseModifiers(double value, double... modifiers) {
+		double totalMod = 1;
+		for (double mod : modifiers) {
+			totalMod *= mod;
+		}
+
+		return (value / (totalMod == 0 ? 0.0001 : totalMod));
+	}
+
 	public static void startCacheCleaner(final double period) {
 		new BukkitRunnable() {
 			@Override
