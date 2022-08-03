@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.jafama.FastMath;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -234,18 +235,18 @@ public class AirScooter extends AirAbility {
 		this.phi += Math.PI / 10 * 4;
 		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
 			final double r = 0.6;
-			final double x = r * Math.cos(theta) * Math.sin(this.phi);
-			final double y = r * Math.cos(this.phi);
-			final double z = r * Math.sin(theta) * Math.sin(this.phi);
+			final double x = r * FastMath.cos(theta) * FastMath.sin(this.phi);
+			final double y = r * FastMath.cos(this.phi);
+			final double z = r * FastMath.sin(theta) * FastMath.sin(this.phi);
 			origin.add(x, y, z);
 			playAirbendingParticles(origin, 1, 0F, 0F, 0F);
 			origin.subtract(x, y, z);
 		}
 		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
 			final double r = 0.6;
-			final double x = r * Math.cos(theta) * Math.sin(this.phi);
-			final double y = r * Math.cos(this.phi);
-			final double z = r * Math.sin(theta) * Math.sin(this.phi);
+			final double x = r * FastMath.cos(theta) * FastMath.sin(this.phi);
+			final double y = r * FastMath.cos(this.phi);
+			final double z = r * FastMath.sin(theta) * FastMath.sin(this.phi);
 			origin2.subtract(x, y, z);
 			playAirbendingParticles(origin2, 1, 0F, 0F, 0F);
 			origin2.add(x, y, z);

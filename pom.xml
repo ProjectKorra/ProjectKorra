@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>ROKU-1.14</version>
+  <version>ROKU-1.15</version>
   <name>ProjectKorra</name>
   <repositories>
     <!-- local jar files, add more using: mvn install:install-file -Dfile=aaa.jar -DgroupId=aaa -DartifactId=aaa -Dversion=aaa -Dpackaging=jar -DlocalRepositoryPath=path/to/ProjectKorra/localrepo/ -->
@@ -78,6 +78,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.8.1</version>
+    </dependency>
+    <!-- FastMath -->
+    <dependency>
+      <groupId>net.jafama</groupId>
+      <artifactId>jafama</artifactId>
+      <version>2.3.2</version>
     </dependency>
     <!-- Factions -->
     <dependency>

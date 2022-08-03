@@ -6,6 +6,7 @@ import java.util.List;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -92,7 +93,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	public void handleCollision(final Collision collision) {
 		if (collision.isRemovingFirst()) {
 			final ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
-			final double collisionDistanceSquared = Math.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
+			final double collisionDistanceSquared = FastMath.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
 			// Remove all of the streams that are by this specific ourLocation.
 			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with Collision's detection algorithm.
 			for (final BukkitRunnable task : this.getTasks()) {

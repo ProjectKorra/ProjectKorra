@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -190,7 +191,7 @@ public class OctopusForm extends WaterAbility {
 
 		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += this.angleIncrement) {
 			final double phi = Math.toRadians(tangle);
-			this.affect(this.player.getLocation().clone().add(new Vector(this.radius * Math.cos(phi), 1, this.radius * Math.sin(phi))));
+			this.affect(this.player.getLocation().clone().add(new Vector(this.radius * FastMath.cos(phi), 1, this.radius * FastMath.sin(phi))));
 		}
 	}
 
@@ -341,7 +342,7 @@ public class OctopusForm extends WaterAbility {
 
 		for (double theta = this.startAngle; theta < this.startAngle + this.angle; theta += 10) {
 			final double rtheta = Math.toRadians(theta);
-			final Block block = location.clone().add(new Vector(this.radius * Math.cos(rtheta), 0, this.radius * Math.sin(rtheta))).getBlock();
+			final Block block = location.clone().add(new Vector(this.radius * FastMath.cos(rtheta), 0, this.radius * FastMath.sin(rtheta))).getBlock();
 			if (!doneBlocks.contains(block)) {
 				this.addBaseWater(block);
 				doneBlocks.add(block);
@@ -359,7 +360,7 @@ public class OctopusForm extends WaterAbility {
 		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += this.angleIncrement) {
 			astep += 1;
 			final double phi = Math.toRadians(tangle);
-			this.tentacle(location.clone().add(new Vector(this.radius * Math.cos(phi), 0, this.radius * Math.sin(phi))), astep);
+			this.tentacle(location.clone().add(new Vector(this.radius * FastMath.cos(phi), 0, this.radius * FastMath.sin(phi))), astep);
 		}
 
 		for (final TempBlock block : this.blocks) {
@@ -494,7 +495,7 @@ public class OctopusForm extends WaterAbility {
 		} else {
 			final Location location = this.player.getLocation();
 			final double rtheta = Math.toRadians(this.startAngle);
-			final Block block = location.clone().add(new Vector(this.radius * Math.cos(rtheta), 0, this.radius * Math.sin(rtheta))).getBlock();
+			final Block block = location.clone().add(new Vector(this.radius * FastMath.cos(rtheta), 0, this.radius * FastMath.sin(rtheta))).getBlock();
 			new WaterReturn(this.player, block);
 		}
 	}

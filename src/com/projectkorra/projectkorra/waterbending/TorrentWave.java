@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -128,9 +129,9 @@ public class TorrentWave extends WaterAbility {
 			for (final int index : angles.keySet()) {
 				final double angle = angles.get(index);
 				final double theta = Math.toRadians(angle);
-				final double dx = Math.cos(theta) * this.radius;
+				final double dx = FastMath.cos(theta) * this.radius;
 				final double dy = id;
-				final double dz = Math.sin(theta) * this.radius;
+				final double dz = FastMath.sin(theta) * this.radius;
 
 				final Location location = this.origin.clone().add(dx, dy, dz);
 				final Block block = location.getBlock();

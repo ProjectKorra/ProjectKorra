@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.firebending.FireJet;
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -234,9 +235,9 @@ public class Lightning extends LightningAbility {
 				final double d4 = 1.0D;
 				final double d5 = d1 * this.particleRotation;
 				final double d6 = d2 * this.particleRotation;
-				final double d7 = localLocation1.getX() + d4 * Math.cos(d5);
-				final double d8 = localLocation1.getZ() + d4 * Math.sin(d5);
-				final double newY = (localLocation1.getY() + 1.0D + d4 * Math.cos(d6));
+				final double d7 = localLocation1.getX() + d4 * FastMath.cos(d5);
+				final double d8 = localLocation1.getZ() + d4 * FastMath.sin(d5);
+				final double newY = (localLocation1.getY() + 1.0D + d4 * FastMath.cos(d6));
 				final Location localLocation2 = new Location(this.player.getWorld(), d7, newY, d8);
 				playLightningbendingParticle(localLocation2);
 				this.particleRotation += 1.0D / d3;
@@ -418,7 +419,7 @@ public class Lightning extends LightningAbility {
 					angle += angle >= 0 ? 10 : -10;
 
 					final double radians = Math.toRadians(angle);
-					final double hypot = adjac / Math.cos(radians);
+					final double hypot = adjac / FastMath.cos(radians);
 					final Vector dir = GeneralMethods.rotateXZ(this.direction.clone(), angle);
 					final Location newLoc = loc1.clone().add(dir.normalize().multiply(hypot));
 

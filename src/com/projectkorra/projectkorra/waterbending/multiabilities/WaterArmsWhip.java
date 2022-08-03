@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.multiabilities;
 
 import java.util.HashMap;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -261,7 +262,7 @@ public class WaterArmsWhip extends WaterAbility {
 					break;
 				}
 
-				final int j = (int) Math.ceil(8 / (Math.pow(i, 1 / 3)));
+				final int j = (int) Math.ceil(8 / (FastMath.pow(i, 1 / 3)));
 				this.waterArms.addToArm(l2.getBlock(), this.arm);
 				this.waterArms.addBlock(l2.getBlock(), GeneralMethods.getWaterData(j), 40);
 

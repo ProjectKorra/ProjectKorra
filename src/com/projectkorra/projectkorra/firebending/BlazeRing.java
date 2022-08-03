@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -39,8 +40,8 @@ public class BlazeRing extends FireAbility {
 			x = direction.getX();
 			z = direction.getZ();
 
-			vx = x * Math.cos(angle) - z * Math.sin(angle);
-			vz = x * Math.sin(angle) + z * Math.cos(angle);
+			vx = x * FastMath.cos(angle) - z * FastMath.sin(angle);
+			vz = x * FastMath.sin(angle) + z * FastMath.cos(angle);
 
 			direction.setX(vx);
 			direction.setZ(vz);

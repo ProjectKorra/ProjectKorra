@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -87,14 +88,14 @@ public class FireBurst extends FireAbility {
 			final double r = 1;
 
 			for (double theta = 0; theta <= 180; theta += this.angleTheta) {
-				final double dphi = this.anglePhi / Math.sin(Math.toRadians(theta));
+				final double dphi = this.anglePhi / FastMath.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
+					x = r * FastMath.cos(rphi) * FastMath.sin(rtheta);
+					y = r * FastMath.sin(rphi) * FastMath.sin(rtheta);
+					z = r * FastMath.cos(rtheta);
 					final Vector direction = new Vector(x, z, y);
 
 					if (direction.angle(vector) <= angle) {
@@ -159,14 +160,14 @@ public class FireBurst extends FireAbility {
 			final double r = 1;
 
 			for (double theta = 0; theta <= 180; theta += this.angleTheta) {
-				final double dphi = this.anglePhi / Math.sin(Math.toRadians(theta));
+				final double dphi = this.anglePhi / FastMath.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
+					x = r * FastMath.cos(rphi) * FastMath.sin(rtheta);
+					y = r * FastMath.sin(rphi) * FastMath.sin(rtheta);
+					z = r * FastMath.cos(rtheta);
 
 					final Vector direction = new Vector(x, z, y);
 					final FireBlast fblast = new FireBlast(location, direction.normalize(), this.player, this.damage, safeblocks);
