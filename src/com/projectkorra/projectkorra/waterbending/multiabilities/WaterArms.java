@@ -86,8 +86,8 @@ public class WaterArms extends WaterAbility {
 		this.sourceGrabRange = getConfig().getInt("Abilities.Water.WaterArms.Arms.SourceGrabRange");
 		this.maxPunches = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAttacks");
 		this.maxIceBlasts = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxIceShots");
-		this.maxUses = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldown");
+		this.maxUses = (int) applyModifiers(getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage"));
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldown"));
 		this.lightningDamage = getConfig().getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
 		this.sneakMsg = ConfigManager.languageConfig.get().getString("Abilities.Water.WaterArms.SneakMessage");
 		this.lengthReduction = 0;

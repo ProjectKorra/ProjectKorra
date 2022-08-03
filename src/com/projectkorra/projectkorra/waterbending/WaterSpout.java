@@ -56,8 +56,8 @@ public class WaterSpout extends WaterAbility {
 		this.canBendOnPackedIce = getConfig().getStringList("Properties.Water.IceBlocks").contains(Material.PACKED_ICE.toString());
 		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Cooldown");
-		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterSpout.Cooldown"));
+		this.height = applyModifiers(getConfig().getDouble("Abilities.Water.WaterSpout.Height"));
 		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
 		this.duration = getConfig().getLong("Abilities.Water.WaterSpout.Duration");
 		this.startTime = System.currentTimeMillis();

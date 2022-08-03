@@ -65,7 +65,6 @@ public class WaterManipulation extends WaterAbility {
 	private Location targetDestination;
 	private Vector firstDirection;
 	private Vector targetDirection;
-	private final HashSet<Byte> waterTypes;
 
 	public WaterManipulation(final Player player) {
 		this(player, prepare(player, getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange")));
@@ -79,19 +78,15 @@ public class WaterManipulation extends WaterAbility {
 		this.settingUp = false;
 		this.displacing = false;
 		this.collisionRadius = getConfig().getDouble("Abilities.Water.WaterManipulation.CollisionRadius");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
-		this.selectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
-		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
-		this.knockback = getConfig().getDouble("Abilities.Water.WaterManipulation.Knockback");
-		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown"));
+		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.Range"));
+		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.Knockback"));
+		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.Damage"));
 		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
-		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
-		this.waterTypes = new HashSet<Byte>();
+		this.deflectRange = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange"));
 
 		this.interval = (long) (1000. / this.speed);
-		this.waterTypes.add((byte) 0);
-		this.waterTypes.add((byte) 8);
-		this.waterTypes.add((byte) 9);
 
 		if (source != null) {
 			this.sourceBlock = source;
@@ -779,10 +774,6 @@ public class WaterManipulation extends WaterAbility {
 
 	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
-	}
-
-	public HashSet<Byte> getWaterTypes() {
-		return this.waterTypes;
 	}
 
 	public void setCooldown(final long cooldown) {

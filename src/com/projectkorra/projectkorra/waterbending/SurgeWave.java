@@ -80,15 +80,15 @@ public class SurgeWave extends WaterAbility {
 
 		this.canHitSelf = true;
 		this.currentRadius = 1;
-		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown"));
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
-		this.maxRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
-		this.knockback = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback");
-		this.knockup = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup");
-		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
+		this.maxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Radius"));
+		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback"));
+		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup"));
+		this.maxFreezeRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius"));
 		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
-		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
-		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Range"));
+		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange"));
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wave.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wave.SolidifyLava.Duration");
 		this.waveBlocks = new ConcurrentHashMap<>();
@@ -97,7 +97,6 @@ public class SurgeWave extends WaterAbility {
 		if (this.bPlayer.isAvatarState()) {
 			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
 		}
-		this.maxRadius = this.getNightFactor(this.maxRadius);
 
 		if (this.prepare()) {
 			wave = getAbility(player, SurgeWave.class);

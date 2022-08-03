@@ -375,6 +375,43 @@ public abstract class WaterAbility extends ElementalAbility {
 		removeWaterSpouts(loc, 1.5, source);
 	}
 
+	/**
+	 * Apply modifiers to this value. Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	@Override
+	public double applyModifiers(double value) {
+		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public long applyModifiers(long value) {
+		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value inversely (makes it smaller). Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public double applyInverseModifiers(double value) {
+		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value inversely (makes it smaller). Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public long applyInverseModifiers(long value) {
+		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
+	}
+
 	public static void stopBending() {
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();

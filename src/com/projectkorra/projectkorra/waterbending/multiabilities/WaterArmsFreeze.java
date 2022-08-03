@@ -26,7 +26,7 @@ public class WaterArmsFreeze extends IceAbility {
 	private boolean cancelled;
 	private boolean usageCooldownEnabled;
 	@Attribute(Attribute.RANGE)
-	private int iceRange;
+	private double iceRange;
 	private int distanceTravelled;
 	@Attribute(Attribute.DAMAGE)
 	private double iceDamage;
@@ -41,9 +41,9 @@ public class WaterArmsFreeze extends IceAbility {
 		super(player);
 
 		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
-		this.iceRange = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Range");
-		this.iceDamage = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Freeze");
+		this.iceRange = applyModifiers(getConfig().getDouble("Abilities.Water.WaterArms.Freeze.Range"));
+		this.iceDamage = applyModifiers(getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage"));
+		this.usageCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Freeze"));
 		this.direction = player.getEyeLocation().getDirection();
 
 		this.createInstance();
@@ -212,7 +212,7 @@ public class WaterArmsFreeze extends IceAbility {
 		this.usageCooldownEnabled = usageCooldownEnabled;
 	}
 
-	public int getIceRange() {
+	public double getIceRange() {
 		return this.iceRange;
 	}
 
