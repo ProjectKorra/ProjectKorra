@@ -61,17 +61,17 @@ public class FireManipulation extends FireAbility {
 
 	public void setFields() {
 		if (this.fireManipulationType == FireManipulationType.SHIFT) {
-			this.streamCooldown = getConfig().getLong("Abilities.Fire.FireManipulation.Stream.Cooldown");
-			this.streamRange = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Range");
-			this.streamDamage = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Damage");
+			this.streamCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireManipulation.Stream.Cooldown"));
+			this.streamRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Range"));
+			this.streamDamage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Damage"));
 			this.streamSpeed = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Speed");
 			this.streamParticles = getConfig().getInt("Abilities.Fire.FireManipulation.Stream.Particles");
 
-			this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireManipulation.Shield.Cooldown");
-			this.shieldRange = getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Range");
-			this.shieldDamage = getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Damage");
+			this.shieldCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireManipulation.Shield.Cooldown"));
+			this.shieldRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Range"));
+			this.shieldDamage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Damage"));
 			this.shieldParticles = getConfig().getInt("Abilities.Fire.FireManipulation.Shield.Particles");
-			this.maxDuration = getConfig().getLong("Abilities.Fire.FireManipulation.Shield.MaxDuration");
+			this.maxDuration = (long) applyModifiers(getConfig().getLong("Abilities.Fire.FireManipulation.Shield.MaxDuration"));
 			this.points = new ConcurrentHashMap<>();
 		} else if (this.fireManipulationType == FireManipulationType.CLICK) {
 

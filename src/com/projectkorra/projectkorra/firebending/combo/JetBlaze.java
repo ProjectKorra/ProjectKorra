@@ -50,10 +50,10 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.JetBlaze.Damage");
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.JetBlaze.Damage"));
 		this.duration = getConfig().getLong("Abilities.Fire.JetBlaze.Duration");
 		this.speed = getConfig().getDouble("Abilities.Fire.JetBlaze.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown");
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown"));
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.JetBlaze.FireTicks");
 
 		if (this.bPlayer.isAvatarState()) {
