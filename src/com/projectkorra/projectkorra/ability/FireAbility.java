@@ -87,7 +87,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public double getDayFactor(final double value) {
-		return (this.player != null && isDay(player.getWorld())) ? value * getDayFactor() : value;
+		return (this.player != null ? value * getDayFactor(player.getWorld()) : value);
 	}
 
 	public static double getDayFactor() {
@@ -110,6 +110,10 @@ public abstract class FireAbility extends ElementalAbility {
 			return value * getDayFactor();
 		}
 		return value;
+	}
+
+	public static double getDayFactor(final World world) {
+		return getDayFactor(1, world);
 	}
 
 	public static ChatColor getSubChatColor() {

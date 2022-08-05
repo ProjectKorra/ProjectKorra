@@ -80,7 +80,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public double getNightFactor(final double value) {
-		return this.player != null ? value * getNightFactor() : 1;
+		return this.player != null ? value * getNightFactor(player.getWorld()) : 1;
 	}
 
 	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.

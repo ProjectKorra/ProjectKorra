@@ -3,8 +3,10 @@ package com.projectkorra.projectkorra;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -209,10 +211,10 @@ public class PKListener implements Listener {
 
 	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
 	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
-	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
+	private static final Set<UUID> RIGHT_CLICK_INTERACT = new HashSet<>(); // Player right click block.
 	@Deprecated
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
-	private static final List<Player> PLAYER_DROPPED_ITEM = new ArrayList<>(); // Player dropped an item.
+	private static final Set<Player> PLAYER_DROPPED_ITEM = new HashSet<>(); // Player dropped an item.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
 	private static MCTiming TimingPhysicsWaterManipulationCheck, TimingPhysicsEarthPassiveCheck, TimingPhysicsIlluminationTorchCheck, TimingPhysicsEarthAbilityCheck, TimingPhysicsAirTempBlockBelowFallingBlockCheck;
@@ -443,12 +445,25 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPlace(final BlockPlaceEvent event) {
 		final Player player = event.getPlayer();
+
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (TempBlock.isTempBlock(event.getBlock()) && event.getItemInHand().getType() != Material.FLINT_AND_STEEL) {
+		//Stop combos from triggering from placing blocks.
+		//The block place method triggers AFTER interactions, so we have to remove
+		//triggers that have already been added.
+		ComboManager.removeRecentType(event.getPlayer(), ClickType.RIGHT_CLICK_BLOCK);
+
+		//If the event is cancelled, don't bother checking the stuff bellow
+		if (event.isCancelled()) {
+			return;
+		}
+
+		//When a player places fire, remove the TempBlock that was there
+		if (TempBlock.isTempBlock(event.getBlock()) && (event.getItemInHand().getType() != Material.FLINT_AND_STEEL
+				|| event.getItemInHand().getType() == Material.FIRE_CHARGE)) {
 			TempBlock.removeBlock(event.getBlock());
 		}
 	}
@@ -1096,16 +1111,10 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
-				final UUID uuid = player.getUniqueId();
-				RIGHT_CLICK_INTERACT.add(uuid);
+			final UUID uuid = player.getUniqueId();
 
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						RIGHT_CLICK_INTERACT.remove(uuid);
-					}
-				}.runTaskLater(this.plugin, 5);
+			if (RIGHT_CLICK_INTERACT.add(uuid)) { //Add if it isn't already in there. And if it isn't in there...
+				Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
 			}
 
 			if (event.getHand() == EquipmentSlot.HAND) {
@@ -1178,14 +1187,9 @@ public class PKListener implements Listener {
 					final FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
 					fma.requestCarry(target);
 					final UUID uuid = player.getUniqueId();
-					RIGHT_CLICK_INTERACT.add(uuid);
-
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							RIGHT_CLICK_INTERACT.remove(uuid);
-						}
-					}.runTaskLater(this.plugin, 5);
+					if (RIGHT_CLICK_INTERACT.add(uuid)) { //Add if it isn't already in there. And if it isn't in there...
+						Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
+					}
 				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
 					FlightMultiAbility.acceptCarryRequest(player, target);
 				}
@@ -1415,7 +1419,8 @@ public class PKListener implements Listener {
 
 		final String abilName = bPlayer.getBoundAbilityName();
 		if (Suffocate.isBreathbent(player)) {
-			if (!abilName.equalsIgnoreCase("AirSwipe") || !abilName.equalsIgnoreCase("FireBlast") || !abilName.equalsIgnoreCase("EarthBlast") || !abilName.equalsIgnoreCase("WaterManipulation")) {
+			if (!(abilName.equalsIgnoreCase("AirSwipe") || abilName.equalsIgnoreCase("FireBlast")
+					|| abilName.equalsIgnoreCase("EarthBlast") || abilName.equalsIgnoreCase("WaterManipulation"))) {
 				if (!player.isSneaking()) {
 					event.setCancelled(true);
 				}
@@ -1624,6 +1629,8 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerSwing(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
+
+		plugin.getLogger().info("Interact event");
 
 		if (PLAYER_DROPPED_ITEM.contains(player)) {
 			PLAYER_DROPPED_ITEM.remove(player);
@@ -2040,8 +2047,16 @@ public class PKListener implements Listener {
 		return BENDING_PLAYER_DEATH;
 	}
 
-	public static List<UUID> getRightClickInteract() {
+	public static Set<UUID> getRightClickPlayers() {
 		return RIGHT_CLICK_INTERACT;
+	}
+
+	/**
+	 * Use {@link #getRightClickPlayers()} instead.
+	 */
+	@Deprecated
+	public static List<UUID> getRightClickInteract() {
+		return new ArrayList<>(RIGHT_CLICK_INTERACT);
 	}
 
 	/**

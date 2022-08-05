@@ -108,6 +108,24 @@ public class ComboManager {
 	}
 
 	/**
+	 * Removes a recent combo combination
+	 * @param player The player to remove
+	 * @param type The type of combo to remove
+	 */
+	public static void removeRecentType(final Player player, ClickType type) {
+		if (RECENTLY_USED.containsKey(player.getName())) {
+			ArrayList<AbilityInformation> list = RECENTLY_USED.get(player.getName());
+
+			if (list.size() > 0) {
+				AbilityInformation last = list.get(list.size() - 1);
+				if (last.getTime() > System.currentTimeMillis() - 50 && last.getClickType() == type) { //If the ability was within the last tick
+					list.remove(last);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Checks if a Player's {@link ComboManager#RECENTLY_USED
 	 * recentlyUsedAbilities} contains a valid set of moves to perform any
 	 * combos. If it does, it returns the valid combo.
@@ -237,15 +255,19 @@ public class ComboManager {
 		return INSTRUCTIONS;
 	}
 
-	public static void registerCombos() {
+	private static void registerCombos() {
 		for (CoreAbility ability : CoreAbility.getAbilities()) {
 			if (ability instanceof ComboAbility && ability.isEnabled()) {
 				final ComboAbility combo = (ComboAbility) ability;
-				if (combo.getCombination() != null) {
+				try { //Using a try catch here because we can run addon code. And that may crash/stop the loop
 					ArrayList<AbilityInformation> combination = combo.getCombination();
-					if (combination != null) ComboManager.getComboAbilities().put(ability.getName(), new ComboManager.ComboAbilityInfo(ability.getName(), combination, combo));
-					ComboManager.getDescriptions().put(ability.getName(), ability.getDescription());
-					ComboManager.getInstructions().put(ability.getName(), ability.getInstructions());
+					if (combination != null) {
+						ComboManager.getComboAbilities().put(ability.getName(), new ComboManager.ComboAbilityInfo(ability.getName(), combination, combo));
+						ComboManager.getDescriptions().put(ability.getName(), ability.getDescription());
+						ComboManager.getInstructions().put(ability.getName(), ability.getInstructions());
+					}
+				} catch (Error | Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
