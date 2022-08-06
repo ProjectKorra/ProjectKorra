@@ -198,7 +198,7 @@ public class EarthSmash extends EarthAbility {
 				this.remove();
 				return;
 			}
-		} else if (this.state == State.START || this.state == State.FLYING || this.state == State.GRABBED) {
+		} else if (this.state == State.FLYING || this.state == State.GRABBED) {
 			if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 				this.remove();
 				return;
@@ -219,6 +219,8 @@ public class EarthSmash extends EarthAbility {
 					this.bPlayer.addCooldown(this);
 					this.location = this.origin.getLocation();
 					this.state = State.LIFTING;
+					this.minDamage = applyMetalPowerFactor(this.minDamage, this.origin);
+					this.maxDamage = applyMetalPowerFactor(this.maxDamage, this.origin);
 				} else {
 					this.remove();
 					return;

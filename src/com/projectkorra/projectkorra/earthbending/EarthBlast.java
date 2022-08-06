@@ -121,6 +121,8 @@ public class EarthBlast extends EarthAbility {
 			this.sourceBlock.setType(Material.STONE);
 		}
 
+		this.damage = applyMetalPowerFactor(this.damage, this.sourceBlock);
+
 		this.location = this.sourceBlock.getLocation();
 	}
 

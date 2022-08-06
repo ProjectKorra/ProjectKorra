@@ -689,7 +689,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
 			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
-			config.addDefault("Properties.Water.NightFactor", 1.5);
+			config.addDefault("Properties.Water.NightFactor", 1.25);
 			config.addDefault("Properties.Water.PlaySound", true);
 			config.addDefault("Properties.Water.WaterSound.Sound", "BLOCK_WATER_AMBIENT");
 			config.addDefault("Properties.Water.WaterSound.Volume", 1);

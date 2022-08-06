@@ -105,7 +105,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 					GeneralMethods.setVelocity(this, lent, new Vector(0, this.knockup, 0));
 				}
 				if (this.damaging) {
-					DamageHandler.damageEntity(lent, this.damage, this);
+					DamageHandler.damageEntity(lent, applyMetalPowerFactor(this.damage, lent.getLocation().getBlock().getRelative(BlockFace.DOWN)), this);
 				}
 
 				removal.add(abil);

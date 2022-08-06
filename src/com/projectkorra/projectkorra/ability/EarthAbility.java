@@ -655,6 +655,11 @@ public abstract class EarthAbility extends ElementalAbility {
 		return true;
 	}
 
+	public double applyMetalPowerFactor(double value, Block source) {
+		if (isMetalbendable(source)) return value * getConfig().getDouble("Properties.Earth.MetalPowerFactor", 1.5D);
+		return value;
+	}
+
 	public static void stopBending() {
 		DensityShift.removeAll();
 
