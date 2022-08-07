@@ -31,3 +31,4 @@ PK Changes
 - You cannot use OctopusForm from a source. Only dynamic sourcing works
 - Show players with permanently removed bending in /b who
 - Change AvatarState to have a multiplier again but with configurable limits
+- Fix clicking a surge tempblock will toggle the shield twice (once for the swing, once for the block hit)

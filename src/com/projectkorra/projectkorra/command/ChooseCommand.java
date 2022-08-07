@@ -111,7 +111,7 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			final OfflinePlayer target = Bukkit.getOfflinePlayer(args.get(1));
-			if (!target.hasPlayedBefore()) {
+			if (!target.hasPlayedBefore() && !target.isOnline()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
