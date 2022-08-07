@@ -1630,8 +1630,6 @@ public class PKListener implements Listener {
 	public void onPlayerSwing(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 
-		plugin.getLogger().info("Interact event");
-
 		if (PLAYER_DROPPED_ITEM.contains(player)) {
 			PLAYER_DROPPED_ITEM.remove(player);
 			return;
