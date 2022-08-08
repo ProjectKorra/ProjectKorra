@@ -172,7 +172,7 @@ public class ChooseCommand extends PKCommand {
 					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, (Player) target, sub, PlayerChangeSubElementEvent.Result.CHOOSE));
 				}
 			} else {
-				if (element != Element.AVATAR) {
+				if (element == Element.AVATAR) {
 					bPlayer.getElements().clear();
 					for (Element e : new Element[] {Element.AIR, Element.EARTH, Element.FIRE, Element.WATER}) {
 						bPlayer.addElement(e);
