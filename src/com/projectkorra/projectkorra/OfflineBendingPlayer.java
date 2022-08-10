@@ -383,6 +383,8 @@ public class OfflineBendingPlayer {
                             finalBPlayer3.postLoad();
                             return true;
                         }).get();
+                    } else {
+                        bPlayer.uncacheAfter(30_000);
                     }
 
                     future.complete(bPlayer);
@@ -1065,6 +1067,7 @@ public class OfflineBendingPlayer {
         long remaining = (this.lastAccessed + this.uncacheTime) - System.currentTimeMillis();
 
         if (remaining >= 500) { //If there is at least half a second to go, delay the uncache
+            if (this.uncache != null) this.uncache.cancel(); //Cancel existing task
             this.uncache = Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, this::uncache, remaining / 50);
             return;
         }
