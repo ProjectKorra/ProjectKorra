@@ -77,8 +77,8 @@ public class ConfigManager {
 			config.addDefault("Chat.Branding.Borders.BottomBorder", "");
 			config.addDefault("Chat.Branding.ChatPrefix.Prefix", "");
 			config.addDefault("Chat.Branding.ChatPrefix.Suffix", " \u00BB ");
-			config.addDefault("Chat.Branding.ChatPrefix.Main", "ProjectRoku");
-			config.addDefault("Chat.Branding.ChatPrefix.Hover", "Bending brought to you by ProjectKorra | Fork Roku!\\nClick for more info.");
+			config.addDefault("Chat.Branding.ChatPrefix.Main", "ProjectKorra");
+			config.addDefault("Chat.Branding.ChatPrefix.Hover", "Bending brought to you by ProjectKorra!\\nClick for more info.");
 			config.addDefault("Chat.Branding.ChatPrefix.Click", "https://projectkorra.com");
 
 			config.addDefault("Chat.Prefixes.Air", "[Air]");
