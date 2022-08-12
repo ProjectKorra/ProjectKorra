@@ -87,7 +87,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public double getDayFactor(final double value) {
-		return (this.player != null && isDay(player.getWorld())) ? value * getDayFactor() : value;
+		return (this.player != null ? value * getDayFactor(player.getWorld()) : value);
 	}
 
 	public static double getDayFactor() {
@@ -110,6 +110,10 @@ public abstract class FireAbility extends ElementalAbility {
 			return value * getDayFactor();
 		}
 		return value;
+	}
+
+	public static double getDayFactor(final World world) {
+		return getDayFactor(1, world);
 	}
 
 	public static ChatColor getSubChatColor() {
@@ -235,7 +239,53 @@ public abstract class FireAbility extends ElementalAbility {
 			}
 		}
 	}
-	
+
+	/**
+	 * Apply modifiers to this value. Applies the day factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	@Override
+	public double applyModifiers(double value) {
+		return GeneralMethods.applyModifiers(value, getDayFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the day factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public double applyInverseModifiers(double value) {
+		return GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the day factor and the blue fire factor (for damage)
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public double applyModifiersDamage(double value) {
+		return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.DamageFactor", 1.1) : 1);
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the day factor and the blue fire factor (for range)
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public double applyModifiersRange(double value) {
+		return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.RangeFactor", 1.2) : 1);
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the day factor and the blue fire factor (for cooldowns)
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public long applyModifiersCooldown(long value) {
+		return (long) GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? 1 / getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor", 0.9) : 1);
+	}
+
 	public static void stopBending() {
 		SOURCE_PLAYERS.clear();
 	}

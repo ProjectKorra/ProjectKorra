@@ -34,11 +34,15 @@ public class BendingBoard {
 		private String entry;
 		private Optional<BoardSlot> next = Optional.empty();
 		
-		@SuppressWarnings("deprecation")
 		public BoardSlot(Scoreboard board, Objective obj, int slot) {
 			this.board = board;
 			this.obj = obj;
 			this.slot = slot + 1;
+			this.formTeam();
+		}
+
+		@SuppressWarnings("deprecation")
+		private void formTeam() {
 			this.team = board.registerNewTeam("slot" + this.slot);
 			this.entry = ChatColor.values()[slot % 10] + "" + ChatColor.values()[slot % 16];
 			
@@ -59,15 +63,20 @@ public class BendingBoard {
 			this.slot = slot + 1;
 			set();
 		}
-		
+
 		public void decreaseSlot() {
-			setSlot(--slot);
-			next.ifPresent(BoardSlot::decreaseSlot);
+			--this.slot;
+			clear(true);
 		}
-		
-		public void clear() {
+
+		public void clear(boolean formNewTeam) {
+			String prefix = team.getPrefix(), suffix = team.getSuffix();
 			board.resetScores(entry);
 			team.unregister();
+			if (formNewTeam) {
+				formTeam();
+				update(prefix, suffix);
+			}
 			next.ifPresent(BoardSlot::decreaseSlot);
 		}
 		
@@ -119,9 +128,9 @@ public class BendingBoard {
 	
 	private ChatColor getElementColor() {
 		if (bendingPlayer.getElements().size() > 1) {
-			return Element.AVATAR.getColor().asBungee();
+			return Element.AVATAR.getColor();
 		} else if (bendingPlayer.getElements().size() == 1) {
-			return bendingPlayer.getElements().get(0).getColor().asBungee();
+			return bendingPlayer.getElements().get(0).getColor();
 		} else {
 			return ChatColor.WHITE;
 		}
@@ -226,7 +235,7 @@ public class BendingBoard {
 					miscTail = null;
 				}
 				
-				slot.clear();
+				slot.clear(false);
 				return null;
 			});
 				

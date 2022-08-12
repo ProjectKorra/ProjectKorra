@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import net.jafama.FastMath;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -93,7 +94,7 @@ public class CollisionManager {
 				continue;
 			}
 			final HashSet<CoreAbility> alreadyCollided = new HashSet<CoreAbility>();
-			final double certainNoCollisionDistSquared = Math.pow(this.certainNoCollisionDistance, 2);
+			final double certainNoCollisionDistSquared = FastMath.pow(this.certainNoCollisionDistance, 2);
 
 			for (final CoreAbility abilityFirst : instancesFirst) {
 				if (abilityFirst.getPlayer() == null || alreadyCollided.contains(abilityFirst) || !abilityFirst.isCollidable()) {
@@ -128,7 +129,7 @@ public class CollisionManager {
 					Location locationFirst = null;
 					Location locationSecond = null;
 					final double requiredDist = abilityFirst.getCollisionRadius() + abilitySecond.getCollisionRadius();
-					final double requiredDistSquared = Math.pow(requiredDist, 2);
+					final double requiredDistSquared = FastMath.pow(requiredDist, 2);
 
 					for (int i = 0; i < locationsFirst.size(); i++) {
 						locationFirst = locationsFirst.get(i);

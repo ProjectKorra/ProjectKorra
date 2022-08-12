@@ -3,9 +3,12 @@ package com.projectkorra.projectkorra;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
@@ -77,6 +80,7 @@ import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerSwingEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -94,6 +98,7 @@ import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.hooks.BendingRegionProtection;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -107,6 +112,7 @@ import com.projectkorra.projectkorra.util.StatisticsManager;
 import com.projectkorra.projectkorra.util.StatisticsMethods;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempFallingBlock;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -126,8 +132,8 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -136,6 +142,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -190,8 +197,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -202,9 +211,10 @@ public class PKListener implements Listener {
 
 	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
 	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
-	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
+	private static final Set<UUID> RIGHT_CLICK_INTERACT = new HashSet<>(); // Player right click block.
+	@Deprecated
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
-	private static final List<Player> PLAYER_DROPPED_ITEM = new ArrayList<>(); // Player dropped an item.
+	private static final Set<Player> PLAYER_DROPPED_ITEM = new HashSet<>(); // Player dropped an item.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
 	private static MCTiming TimingPhysicsWaterManipulationCheck, TimingPhysicsEarthPassiveCheck, TimingPhysicsIlluminationTorchCheck, TimingPhysicsEarthAbilityCheck, TimingPhysicsAirTempBlockBelowFallingBlockCheck;
@@ -435,12 +445,25 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPlace(final BlockPlaceEvent event) {
 		final Player player = event.getPlayer();
+
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (TempBlock.isTempBlock(event.getBlock()) && event.getItemInHand().getType() != Material.FLINT_AND_STEEL) {
+		//Stop combos from triggering from placing blocks.
+		//The block place method triggers AFTER interactions, so we have to remove
+		//triggers that have already been added.
+		ComboManager.removeRecentType(event.getPlayer(), ClickType.RIGHT_CLICK_BLOCK);
+
+		//If the event is cancelled, don't bother checking the stuff bellow
+		if (event.isCancelled()) {
+			return;
+		}
+
+		//When a player places fire, remove the TempBlock that was there
+		if (TempBlock.isTempBlock(event.getBlock()) && (event.getItemInHand().getType() != Material.FLINT_AND_STEEL
+				|| event.getItemInHand().getType() == Material.FIRE_CHARGE)) {
 			TempBlock.removeBlock(event.getBlock());
 		}
 	}
@@ -470,6 +493,7 @@ public class PKListener implements Listener {
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
+		BendingBoardManager.updateAllSlots(player);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -484,6 +508,14 @@ public class PKListener implements Listener {
 				LavaSurge.getAllFallingBlocks().remove(entity);
 				event.setCancelled(true);
 			}
+
+			FallingBlock fb = (FallingBlock) event.getEntity();
+			if (TempFallingBlock.isTempFallingBlock(fb)) {
+				TempFallingBlock tfb = TempFallingBlock.get(fb);
+				tfb.tryPlace();
+				tfb.remove();
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -495,9 +527,6 @@ public class PKListener implements Listener {
 			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(block));
 		}
 	}
-
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onEntityDamageBlock(final EntityDamageByBlockEvent event) {}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
@@ -882,19 +911,10 @@ public class PKListener implements Listener {
 			CoreAbility hs = CoreAbility.getAbility(HydroSink.class);
 			CoreAbility ab = CoreAbility.getAbility(Acrobatics.class);
 
-			if (gd != null && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(gd) && bPlayer.canUsePassive(gd) && gd.isEnabled() && PassiveManager.hasPassive(player, gd)) {
-				event.setDamage(0D);
-				event.setCancelled(true);
-			} else if (ds != null && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ds) && bPlayer.canUsePassive(ds) && ds.isEnabled() && PassiveManager.hasPassive(player, ds)) {
-				if (DensityShift.softenLanding(player)) {
-					event.setDamage(0D);
-					event.setCancelled(true);
-				}
-			} else if (hs != null && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(hs) && bPlayer.canUsePassive(hs) && hs.isEnabled() && PassiveManager.hasPassive(player, hs)) {
-				if (HydroSink.applyNoFall(player)) {
-					event.setDamage(0D);
-					event.setCancelled(true);
-				}
+			if (event.getCause() == DamageCause.FALL) {
+				event.setCancelled((gd != null && bPlayer.hasElement(Element.AIR) && bPlayer.canBendPassive(gd) && bPlayer.canUsePassive(gd) && gd.isEnabled() && PassiveManager.hasPassive(player, gd))
+						|| (ds != null && bPlayer.hasElement(Element.EARTH) && bPlayer.canBendPassive(ds) && bPlayer.canUsePassive(ds) && ds.isEnabled() && PassiveManager.hasPassive(player, ds) && DensityShift.softenLanding(player))
+						|| (hs != null && bPlayer.hasElement(Element.WATER) && bPlayer.canBendPassive(hs) && bPlayer.canUsePassive(hs) && hs.isEnabled() && PassiveManager.hasPassive(player, hs) && HydroSink.applyNoFall(player)));
 			}
 
 			if (ab != null && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(ab) && bPlayer.canUsePassive(ab) && ab.isEnabled() && PassiveManager.hasPassive(player, ab)) {
@@ -1091,16 +1111,10 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (!RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
-				final UUID uuid = player.getUniqueId();
-				RIGHT_CLICK_INTERACT.add(uuid);
+			final UUID uuid = player.getUniqueId();
 
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						RIGHT_CLICK_INTERACT.remove(uuid);
-					}
-				}.runTaskLater(this.plugin, 5);
+			if (RIGHT_CLICK_INTERACT.add(uuid)) { //Add if it isn't already in there. And if it isn't in there...
+				Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
 			}
 
 			if (event.getHand() == EquipmentSlot.HAND) {
@@ -1173,14 +1187,9 @@ public class PKListener implements Listener {
 					final FlightMultiAbility fma = CoreAbility.getAbility(player, FlightMultiAbility.class);
 					fma.requestCarry(target);
 					final UUID uuid = player.getUniqueId();
-					RIGHT_CLICK_INTERACT.add(uuid);
-
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							RIGHT_CLICK_INTERACT.remove(uuid);
-						}
-					}.runTaskLater(this.plugin, 5);
+					if (RIGHT_CLICK_INTERACT.add(uuid)) { //Add if it isn't already in there. And if it isn't in there...
+						Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
+					}
 				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
 					FlightMultiAbility.acceptCarryRequest(player, target);
 				}
@@ -1206,18 +1215,20 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 
-		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+		//Load the player's bending data from the database
+		BendingPlayer.getOrLoadOfflineAsync(player);
+
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
+		/*Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
 			PassiveManager.registerPassives(player);
-			GeneralMethods.removeUnusableAbilities(player.getName());
-		}, 5);
+			BendingBoardManager.changeWorld(player); //Hide the bending board if they spawn in a world where bending is disabld
+		}, 5);*/
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-				ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+				ChatColor color = ChatColor.of(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
 				color = color == null ? ChatColor.GOLD : color;
 				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
 				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
@@ -1358,14 +1369,6 @@ public class PKListener implements Listener {
 			if (ProjectKorra.isDatabaseCooldownsEnabled()) {
 				bPlayer.saveCooldowns();
 			}
-
-			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
-				TOGGLED_OUT.remove(player.getUniqueId());
-			}
-
-			if (!bPlayer.isToggled()) {
-				TOGGLED_OUT.add(player.getUniqueId());
-			}
 		}
 
 		if (Commands.invincible.contains(player.getName())) {
@@ -1392,6 +1395,9 @@ public class PKListener implements Listener {
 				CoreAbility.getAbility(event.getPlayer(), ca.getClass()).remove();
 			}
 		}
+
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
+				() -> OfflineBendingPlayer.convertToOffline(bPlayer).uncacheAfter(5 * 60 * 1000), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1413,7 +1419,8 @@ public class PKListener implements Listener {
 
 		final String abilName = bPlayer.getBoundAbilityName();
 		if (Suffocate.isBreathbent(player)) {
-			if (!abilName.equalsIgnoreCase("AirSwipe") || !abilName.equalsIgnoreCase("FireBlast") || !abilName.equalsIgnoreCase("EarthBlast") || !abilName.equalsIgnoreCase("WaterManipulation")) {
+			if (!(abilName.equalsIgnoreCase("AirSwipe") || abilName.equalsIgnoreCase("FireBlast")
+					|| abilName.equalsIgnoreCase("EarthBlast") || abilName.equalsIgnoreCase("WaterManipulation"))) {
 				if (!player.isSneaking()) {
 					event.setCancelled(true);
 				}
@@ -1672,6 +1679,13 @@ public class PKListener implements Listener {
 			return;
 		}
 
+		PlayerSwingEvent swingEvent = new PlayerSwingEvent(event.getPlayer()); //Allow addons to handle a swing without
+		Bukkit.getPluginManager().callEvent(swingEvent);                       //needing to repeat the checks above themselves
+		if (swingEvent.isCancelled()) {
+			event.setCancelled(true);
+			return;
+		}
+
 		BlockSource.update(player, ClickType.LEFT_CLICK);
 		AirScooter.check(player);
 
@@ -1706,7 +1720,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
+			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER)) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
 					if (abil.equalsIgnoreCase("Bloodbending")) {
 						Bloodbending.launch(player);
@@ -1741,7 +1755,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
+			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH)) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
 					if (abil.equalsIgnoreCase("Catapult")) {
 						new Catapult(player, false);
@@ -1981,14 +1995,6 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onBendingElementChange(final PlayerChangeElementEvent event) {
-		final Player player = event.getTarget();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) return;
-		BendingBoardManager.updateAllSlots(player);
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBendingSubElementChange(final PlayerChangeSubElementEvent event) {
 		final Player player = event.getTarget();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -2030,22 +2036,34 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onBendingPlayerCreation(final BendingPlayerCreationEvent event) {
-		final Player player = event.getBendingPlayer().getPlayer();
-		BendingBoardManager.getBoard(player).ifPresent(BendingBoard::show);
+	@EventHandler
+	public void onPluginUnload(PluginDisableEvent event) {
+		BendingRegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
 	}
 
 	public static HashMap<Player, String> getBendingPlayerDeath() {
 		return BENDING_PLAYER_DEATH;
 	}
 
-	public static List<UUID> getRightClickInteract() {
+	public static Set<UUID> getRightClickPlayers() {
 		return RIGHT_CLICK_INTERACT;
 	}
 
+	/**
+	 * Use {@link #getRightClickPlayers()} instead.
+	 */
+	@Deprecated
+	public static List<UUID> getRightClickInteract() {
+		return new ArrayList<>(RIGHT_CLICK_INTERACT);
+	}
+
+	/**
+	 * Deprecated. Use {@link OfflineBendingPlayer#isToggled()} instead.
+	 * @return list of players with bending toggled off
+	 */
+	@Deprecated
 	public static ArrayList<UUID> getToggledOut() {
-		return TOGGLED_OUT;
+		return BendingPlayer.getOfflinePlayers().values().stream().filter(player -> !player.isToggled()).map(OfflineBendingPlayer::getUUID).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	public static Map<Player, Integer> getJumpStatistics() {

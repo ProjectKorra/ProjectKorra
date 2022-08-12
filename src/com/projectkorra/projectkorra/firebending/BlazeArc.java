@@ -29,13 +29,13 @@ public class BlazeArc extends FireAbility {
 
 	public BlazeArc(final Player player, final Location location, final Vector direction, final double range) {
 		super(player);
-		this.range = this.getDayFactor(range);
+		this.range = applyModifiersRange(range);
 		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
 		this.interval = (long) (1000.0 / this.speed);
 
-		if(bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
+		/*if(bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
 			this.range += BlueFireAbility.getRangeFactor() * range - range;
-		}
+		}*/
 
 		this.origin = location.clone();
 		this.location = this.origin.clone();

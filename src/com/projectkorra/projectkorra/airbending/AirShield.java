@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
+import net.jafama.FastMath;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -141,10 +142,10 @@ public class AirShield extends AirAbility {
 				x = entity.getLocation().getX() - origin.getX();
 				z = entity.getLocation().getZ() - origin.getZ();
 
-				mag = Math.sqrt(x * x + z * z);
+				mag = FastMath.sqrt(x * x + z * z);
 
-				vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
-				vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+				vx = (x * FastMath.cos(angle) - z * FastMath.sin(angle)) / mag;
+				vz = (x * FastMath.sin(angle) + z * FastMath.cos(angle)) / mag;
 
 				final Vector velocity = entity.getVelocity().clone();
 				if (this.bPlayer.isAvatarState()) {
@@ -181,10 +182,10 @@ public class AirShield extends AirAbility {
 			double angle = this.angles.get(i);
 			angle = Math.toRadians(angle);
 			y = origin.getY() + factor * i;
-			final double f = Math.sqrt(1 - factor * factor * (i / this.radius) * (i / this.radius));
+			final double f = FastMath.sqrt(1 - factor * factor * (i / this.radius) * (i / this.radius));
 
-			x = origin.getX() + this.radius * Math.cos(angle) * f;
-			z = origin.getZ() + this.radius * Math.sin(angle) * f;
+			x = origin.getX() + this.radius * FastMath.cos(angle) * f;
+			z = origin.getZ() + this.radius * FastMath.sin(angle) * f;
 
 			final Location effect = new Location(origin.getWorld(), x, y, z);
 			if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {

@@ -64,7 +64,7 @@ public class FireBlast extends FireAbility {
 	private Vector direction;
 	private List<Block> safeBlocks;
 
-	public FireBlast(final Location location, final Vector direction, final Player player, final int damage, final List<Block> safeBlocks) {
+	public FireBlast(final Location location, final Vector direction, final Player player, final double damage, final List<Block> safeBlocks) {
 		super(player);
 
 		if (location.getBlock().isLiquid()) {
@@ -79,7 +79,7 @@ public class FireBlast extends FireAbility {
 		this.direction = direction.clone().normalize();
 
 		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers(this.damage, this.range);
+		//this.applyModifiers(this.damage, this.range);
 
 		this.start();
 	}
@@ -95,32 +95,14 @@ public class FireBlast extends FireAbility {
 
 		this.setFields();
 		this.isFireBurst = false;
-		this.damage = getConfig().getDouble("Abilities.Fire.FireBlast.Damage");
 		this.safeBlocks = new ArrayList<>();
 		this.location = player.getEyeLocation();
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.location.add(this.direction.clone());
-		
-		// The following code determines the total additive modifier between Blue Fire & Day Modifiers
-		this.applyModifiers(this.damage, this.range);
 
 		this.start();
 		this.bPlayer.addCooldown("FireBlast", this.cooldown);
-	}
-
-	private void applyModifiers(double damage, double range) {
-		double damageMod = 0;
-		double rangeMod = 0;
-
-		damageMod = this.getDayFactor(damage) - damage;
-		rangeMod = this.getDayFactor(range) - range;
-
-		damageMod = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod;
-		rangeMod = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod;
-
-		this.range += rangeMod;
-		this.damage += damageMod;
 	}
 
 	private void setFields() {
@@ -129,13 +111,14 @@ public class FireBlast extends FireAbility {
 		this.showParticles = true;
 		this.fireBurstIgnite = getConfig().getBoolean("Abilities.Fire.FireBurst.Ignite");
 		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
-		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireBlast.Cooldown"));
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireBlast.Range"));
+		this.speed = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.Speed"));
+		this.collisionRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius"));
+		this.fireTicks = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks"));
 		this.knockback = getConfig().getDouble("Abilities.Fire.FireBlast.Knockback");
-		this.flameRadius = getConfig().getDouble("Abilities.Fire.FireBlast.FlameParticleRadius");
+		this.flameRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.FlameParticleRadius"));
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireBlast.Damage"));
 		this.random = new Random();
 	}
 
@@ -191,7 +174,7 @@ public class FireBlast extends FireAbility {
 					}
 				}
 			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
-				if ((this.isFireBurst && this.fireBurstIgnite) || !this.isFireBurst) {
+				if (!this.isFireBurst || this.fireBurstIgnite) {
 					this.ignite(this.location);
 				}
 			}

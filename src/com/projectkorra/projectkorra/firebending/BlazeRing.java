@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -10,7 +11,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 public class BlazeRing extends FireAbility {
 
 	@Attribute(Attribute.RANGE)
-	private int range;
+	private double range;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angleIncrement;
@@ -19,9 +20,9 @@ public class BlazeRing extends FireAbility {
 	public BlazeRing(final Player player) {
 		super(player);
 
-		this.range = getConfig().getInt("Abilities.Fire.Blaze.Ring.Range");
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Blaze.Ring.Range"));
 		this.angleIncrement = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Angle");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown"));
 		this.location = player.getLocation();
 
 		if (this.bPlayer.isAvatarState()) {
@@ -39,8 +40,8 @@ public class BlazeRing extends FireAbility {
 			x = direction.getX();
 			z = direction.getZ();
 
-			vx = x * Math.cos(angle) - z * Math.sin(angle);
-			vz = x * Math.sin(angle) + z * Math.cos(angle);
+			vx = x * FastMath.cos(angle) - z * FastMath.sin(angle);
+			vz = x * FastMath.sin(angle) + z * FastMath.cos(angle);
 
 			direction.setX(vx);
 			direction.setZ(vz);
@@ -81,7 +82,7 @@ public class BlazeRing extends FireAbility {
 		return false;
 	}
 
-	public int getRange() {
+	public double getRange() {
 		return this.range;
 	}
 

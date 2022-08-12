@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,14 +38,13 @@ public class OctopusForm extends WaterAbility {
 	private boolean forming;
 	private boolean formed;
 	@Attribute(Attribute.RANGE)
-	private int range;
+	private double range;
 	@Attribute(Attribute.DAMAGE)
-	private int damage;
+	private double damage;
 	private int currentAnimationStep;
 	private int stepCounter;
 	private int totalStepCount;
 	private long time;
-	private long startTime;
 	private long interval;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -96,15 +96,15 @@ public class OctopusForm extends WaterAbility {
 		this.currentAnimationStep = 1;
 		this.stepCounter = 1;
 		this.totalStepCount = 3;
-		this.range = getConfig().getInt("Abilities.Water.OctopusForm.Range");
-		this.damage = getConfig().getInt("Abilities.Water.OctopusForm.Damage");
-		this.interval = getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
-		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
-		this.usageCooldown = getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown");
-		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
-		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Water.OctopusForm.Duration");
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Range"));
+		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Damage"));
+		this.interval = applyInverseModifiers(getConfig().getLong("Abilities.Water.OctopusForm.FormDelay"));
+		this.attackRange = applyModifiers(getConfig().getInt("Abilities.Water.OctopusForm.AttackRange")); // ------------->    //Although this benefits from being smaller, it's better
+		this.usageCooldown = applyInverseModifiers(getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown")); 	//to scale it up with the radius as well
+		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Knockback"));
+		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Radius"));
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.OctopusForm.Cooldown"));
+		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.OctopusForm.Duration"));
 		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
@@ -122,7 +122,6 @@ public class OctopusForm extends WaterAbility {
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius");
 		}
 		this.time = System.currentTimeMillis();
-		this.startTime = System.currentTimeMillis();
 		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 		}
@@ -192,7 +191,7 @@ public class OctopusForm extends WaterAbility {
 
 		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += this.angleIncrement) {
 			final double phi = Math.toRadians(tangle);
-			this.affect(this.player.getLocation().clone().add(new Vector(this.radius * Math.cos(phi), 1, this.radius * Math.sin(phi))));
+			this.affect(this.player.getLocation().clone().add(new Vector(this.radius * FastMath.cos(phi), 1, this.radius * FastMath.sin(phi))));
 		}
 	}
 
@@ -232,7 +231,7 @@ public class OctopusForm extends WaterAbility {
 		} else if (this.sourceBlock.getLocation().distanceSquared(this.player.getLocation()) > this.range * this.range && this.sourceSelected) {
 			this.remove();
 			return;
-		} else if (this.duration != 0 && System.currentTimeMillis() > this.startTime + this.duration) {
+		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
@@ -343,7 +342,7 @@ public class OctopusForm extends WaterAbility {
 
 		for (double theta = this.startAngle; theta < this.startAngle + this.angle; theta += 10) {
 			final double rtheta = Math.toRadians(theta);
-			final Block block = location.clone().add(new Vector(this.radius * Math.cos(rtheta), 0, this.radius * Math.sin(rtheta))).getBlock();
+			final Block block = location.clone().add(new Vector(this.radius * FastMath.cos(rtheta), 0, this.radius * FastMath.sin(rtheta))).getBlock();
 			if (!doneBlocks.contains(block)) {
 				this.addBaseWater(block);
 				doneBlocks.add(block);
@@ -361,7 +360,7 @@ public class OctopusForm extends WaterAbility {
 		for (double tangle = tentacleAngle; tangle < tentacleAngle + 360; tangle += this.angleIncrement) {
 			astep += 1;
 			final double phi = Math.toRadians(tangle);
-			this.tentacle(location.clone().add(new Vector(this.radius * Math.cos(phi), 0, this.radius * Math.sin(phi))), astep);
+			this.tentacle(location.clone().add(new Vector(this.radius * FastMath.cos(phi), 0, this.radius * FastMath.sin(phi))), astep);
 		}
 
 		for (final TempBlock block : this.blocks) {
@@ -496,7 +495,7 @@ public class OctopusForm extends WaterAbility {
 		} else {
 			final Location location = this.player.getLocation();
 			final double rtheta = Math.toRadians(this.startAngle);
-			final Block block = location.clone().add(new Vector(this.radius * Math.cos(rtheta), 0, this.radius * Math.sin(rtheta))).getBlock();
+			final Block block = location.clone().add(new Vector(this.radius * FastMath.cos(rtheta), 0, this.radius * FastMath.sin(rtheta))).getBlock();
 			new WaterReturn(this.player, block);
 		}
 	}
@@ -568,19 +567,19 @@ public class OctopusForm extends WaterAbility {
 		this.formed = formed;
 	}
 
-	public int getRange() {
+	public double getRange() {
 		return this.range;
 	}
 
-	public void setRange(final int range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return this.damage;
 	}
 
-	public void setDamage(final int damage) {
+	public void setDamage(final double damage) {
 		this.damage = damage;
 	}
 

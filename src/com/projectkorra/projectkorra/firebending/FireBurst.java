@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -21,11 +22,11 @@ public class FireBurst extends FireAbility {
 	@Attribute("Charged")
 	private boolean charged;
 	@Attribute(Attribute.DAMAGE)
-	private int damage;
+	private double damage;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
 	@Attribute(Attribute.RANGE)
-	private long range;
+	private double range;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angleTheta;
@@ -37,9 +38,9 @@ public class FireBurst extends FireAbility {
 		super(player);
 
 		this.charged = false;
-		this.damage = getConfig().getInt("Abilities.Fire.FireBurst.Damage");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
-		this.range = getConfig().getLong("Abilities.Fire.FireBurst.Range");
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireBurst.Damage"));
+		this.chargeTime = (long) applyInverseModifiers(getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime"));
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireBurst.Range"));
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireBurst.Cooldown");
 		this.angleTheta = getConfig().getDouble("Abilities.Fire.FireBurst.AngleTheta");
 		this.anglePhi = getConfig().getDouble("Abilities.Fire.FireBurst.AnglePhi");
@@ -87,14 +88,14 @@ public class FireBurst extends FireAbility {
 			final double r = 1;
 
 			for (double theta = 0; theta <= 180; theta += this.angleTheta) {
-				final double dphi = this.anglePhi / Math.sin(Math.toRadians(theta));
+				final double dphi = this.anglePhi / FastMath.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
+					x = r * FastMath.cos(rphi) * FastMath.sin(rtheta);
+					y = r * FastMath.sin(rphi) * FastMath.sin(rtheta);
+					z = r * FastMath.cos(rtheta);
 					final Vector direction = new Vector(x, z, y);
 
 					if (direction.angle(vector) <= angle) {
@@ -159,14 +160,14 @@ public class FireBurst extends FireAbility {
 			final double r = 1;
 
 			for (double theta = 0; theta <= 180; theta += this.angleTheta) {
-				final double dphi = this.anglePhi / Math.sin(Math.toRadians(theta));
+				final double dphi = this.anglePhi / FastMath.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
+					x = r * FastMath.cos(rphi) * FastMath.sin(rtheta);
+					y = r * FastMath.sin(rphi) * FastMath.sin(rtheta);
+					z = r * FastMath.cos(rtheta);
 
 					final Vector direction = new Vector(x, z, y);
 					final FireBlast fblast = new FireBlast(location, direction.normalize(), this.player, this.damage, safeblocks);
@@ -216,7 +217,7 @@ public class FireBurst extends FireAbility {
 		this.charged = charged;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return this.damage;
 	}
 
@@ -232,7 +233,7 @@ public class FireBurst extends FireAbility {
 		this.chargeTime = chargeTime;
 	}
 
-	public long getRange() {
+	public double getRange() {
 		return this.range;
 	}
 

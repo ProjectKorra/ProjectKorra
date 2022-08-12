@@ -52,12 +52,12 @@ public class Combustion extends CombustionAbility {
 
 		this.ticks = 0;
 		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-		this.explosivePower = (float) getConfig().getDouble("Abilities.Fire.Combustion.ExplosivePower");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
-		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
-		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
+		this.explosivePower = (float) applyModifiers(getConfig().getDouble("Abilities.Fire.Combustion.ExplosivePower"));
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Combustion.Cooldown"));
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.Combustion.Damage"));
+		this.radius = applyModifiers(getConfig().getDouble("Abilities.Fire.Combustion.Radius"));
 		this.speed = getConfig().getDouble("Abilities.Fire.Combustion.Speed");
-		this.range = getConfig().getDouble("Abilities.Fire.Combustion.Range");
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Combustion.Range"));
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.origin.clone();
@@ -66,10 +66,10 @@ public class Combustion extends CombustionAbility {
 		if (this.bPlayer.isAvatarState()) {
 			this.range = AvatarState.getValue(this.range);
 			this.damage = AvatarState.getValue(this.damage);
-		} else if (isDay(player.getWorld())) {
+		} /*else if (isDay(player.getWorld())) {
 			this.range = this.getDayFactor(this.range);
 			this.damage = this.getDayFactor(this.damage);
-		}
+		}*/
 
 		if (GeneralMethods.isRegionProtectedFromBuild(this, GeneralMethods.getTargetedLocation(player, this.range))) {
 			return;

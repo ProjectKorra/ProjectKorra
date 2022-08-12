@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -57,10 +57,7 @@ public class ToggleCommand extends PKCommand {
 				return;
 			}
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			if (bPlayer == null) {
-				GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			}
+
 			if (bPlayer.isToggled()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggleOffSelf);
 				bPlayer.toggleBending();

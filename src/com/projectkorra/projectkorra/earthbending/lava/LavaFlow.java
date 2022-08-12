@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -228,8 +229,8 @@ public class LavaFlow extends LavaAbility {
 					}
 
 					final double dSquared = distanceSquaredXZ(block.getLocation(), this.origin);
-					if (dSquared > Math.pow(this.shiftPlatformRadius, 2)) {
-						if (dSquared < Math.pow(this.currentRadius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					if (dSquared > FastMath.pow(this.shiftPlatformRadius, 2)) {
+						if (dSquared < FastMath.pow(this.currentRadius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 							if (dSquared < this.shiftPlatformRadius * 4 || this.getAdjacentLavaBlocks(block.getLocation()).size() > 0) {
 								if (!isLava(block)) {
 									if (isPlant(block) || isSnow(block)) {
@@ -255,7 +256,7 @@ public class LavaFlow extends LavaAbility {
 								}
 
 							}
-						} else if (Math.random() < this.particleDensity && dSquared < Math.pow(this.currentRadius + this.particleDensity, 2) && this.currentRadius + this.particleDensity < this.shiftMaxRadius && random.nextInt(3) == 0) {
+						} else if (Math.random() < this.particleDensity && dSquared < FastMath.pow(this.currentRadius + this.particleDensity, 2) && this.currentRadius + this.particleDensity < this.shiftMaxRadius && random.nextInt(3) == 0) {
 							ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random());
 						}
 					}
@@ -301,7 +302,7 @@ public class LavaFlow extends LavaAbility {
 						final Location loc = this.origin.clone().add(x, 0, z);
 						final Block tempBlock = GeneralMethods.getTopBlock(loc, this.upwardFlow, this.downwardFlow);
 						if (!isWater(tempBlock)) {
-							if (tempBlock != null && !isLava(tempBlock) && Math.random() < this.particleDensity && tempBlock.getLocation().distanceSquared(this.origin) <= Math.pow(this.clickLavaRadius, 2)) {
+							if (tempBlock != null && !isLava(tempBlock) && Math.random() < this.particleDensity && tempBlock.getLocation().distanceSquared(this.origin) <= FastMath.pow(this.clickLavaRadius, 2)) {
 								if (random.nextInt(5) == 0) {
 									ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random());
 								}
@@ -327,7 +328,7 @@ public class LavaFlow extends LavaAbility {
 						final Block tempBlock = GeneralMethods.getTopBlock(loc, this.upwardFlow, this.downwardFlow);
 
 						final double dSquared = distanceSquaredXZ(tempBlock.getLocation(), this.origin);
-						if (dSquared < Math.pow(radius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
+						if (dSquared < FastMath.pow(radius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
 							if (this.makeLava && !isLava(tempBlock)) {
 								this.clickIsFinished = false;
 								if (Math.random() < this.lavaCreateSpeed) {

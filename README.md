@@ -1,91 +1,36 @@
-# ProjectKorra [![travis](https://travis-ci.org/ProjectKorra/ProjectKorra.svg?branch=master)](https://travis-ci.org/ProjectKorra/ProjectKorra)
+# ProjectKorra | Fork Roku
 
-![Core Icon](http://i.imgur.com/8XB8XHF.png)
+![Core Icon](https://i.imgur.com/0mWZWFT.png)
 
+## About Fork Roku
 
+Fork Roku is a fork of the popular plugin [ProjectKorra](https://www.spigotmc.org/resources/projectkorra.12071/). It contains a number of features and changes that are not available in the original plugin.
 
-## About ProjectKorra
+The development team are going in the wrong direction with ProjectKorra. This will continue the plugin with the original code, to support all existing addons, while making changes that will benefit the plugin and its community.
 
-ProjectKorra is a place for members across the Minecraft and Bending Communities to come together and interact. ProjectKorra is one of the biggest Minecraft and Avatar/Korra related communities around and is still growing rapidly. Our goal is to bridge the two communities, providing users with a way to implement aspects of the hit television shows "Avatar: The Last Airbender" and "The Legend of Korra" into Minecraft.
+## Changes from ProjectKorra
 
-## Contributing
+- Added hex colors for each subelement
+- Added a cooldown command to view/set/reset cooldowns for a player
+- Made the config generate blocks based on the current server version
+- Better supports 1.16
+- The [ProjectKorra] prefix in front of commands is completely configurable
+- Commands can affect offline players
+- Removed autoannouncer
 
-We are always eager to see active developers in the community making pull requests to ProjectKorra and invite you to do so. We just ask that all incoming pull requests be made to the `wip` branch and that you try your best to adhere to our pull request template. If you find yourself contributing a lot and want to get more involved with the plugins community you may want to consider joining our development team [here](http://projectkorra.com/join-the-team/). 
+### Fixes
+- Fixed the server crashing when an ability's range is 0
+- Fixed addons registering their listeners twice on /b reload
+- Fixed addon ability jars being locked so they couldn't be deleted while the server was on (excluding Linux, which doesn't care if it SHOULD delete it or not)
+- Fixed presets halting main thread when being created (caused a lot of lag)
+- Fixed presets halting main thread when being deleted
+- Fixed preset tabbing not working for binding and deleting
+- Fixes BendingBoard IllegalStateException thrown when team is unregistered twice
+- Fixed Extraction not working on 1.16 servers
+- Fixed cooldowns halting the main thread when saving (and causing a lot of lag)
+- Fixed ALL cooldowns being saved to the database
+- Fixed bending boards showing up in disabled worlds when you log in
+- Fixed bending toggle reminder not being translatable
+- Fixed "Proper Usage: xxx" in commands being untranslatable
+- Fixes addon abilities that do not define their own permissions being unusable until the permission is set by the server owner
 
-## Downloads
-
-You can find the latest recommended build on the official [Projectkorra Downloads Page](http://projectkorra.com/downloads/).
-
-Additionally, you can find the latest BETA builds in the resources section of the ProjectKorra forum, or you can use the Downloads page to download the latest. Stability of BETA builds are never promised, but usually anything pushed to the BETA Build section of the forum is at least runnable.
-
-You can view the changelogs for the plugin you're running in the thread created for the build, or by viewing the master changelog for the version on the wiki. The changelog for that version will be up to date for all features up to the latest dev build on the forum. [Changelogs](http://projectkorra.com/wiki/index.php?title=Changelogs)
-
-## Key Features
-
-- Pick an element to play as, choose how you want to play.
-  - Subelements are also made available. For example: Bloodbending and Icebending for Waterbenders, Metal and Lavabending for Earth, and so on.
-- Battle others with your Bending
-  - Chain abilities together to perform unique Combo abilities.
-- Extensive permissions support. Allows every server owner to customize the server to their liking and create advanced setups.
-- Highly Configurable so you can control every aspect of your Avatar Universe.
-- Modular Abilities
-  - The plugin comes with over 40 abilities pre-installed and passive abilities. Each of them can be enabled or disabled in the config file. Additionally, the ProjectKorra API allows developers to hook into the API to create new abilities and place them in the Abilities folder, making for easy installation of new abilities.
-- Custom Chat Formatting / Colors based on your element.
-
-## API
-
-There are several ways Developers can hook into the ProjectKorra API. Developers looking to learn how to use our API, a tutorial on creating your own abilities can be found [here](https://github.com/ProjectKorra/ProjectKorra/wiki/Creating-an-Addon-Ability). Additionally, You can view the [Javadocs](http://projectkorra.com/docs) for more detailed information.
-
-## Configuration
-
-The ProjectKorra (Core) configuration will have its own wiki page explaining all that you need to know. (Link Coming Soon)
-
-## Commands / Permissions
-
-An extensive list of the available commands and permissions can be found on the wiki by clicking [here](https://github.com/ProjectKorra/ProjectKorra/wiki/Commands)
-
-## Bending
-
-Players may choose any of the disciplines below and play. Each discipline has its own page dedicated to it, below is just a brief summary of what each element is capable of doing.
-
-### [Airbending](https://github.com/ProjectKorra/ProjectKorra/wiki/Airbending)
-
-- Specializes in mobility and defense.
-- The land is an ideal spot for an airbender, despite being able to bend in water as well.
-- Techniques range from AirScooter, AirShield, creating Tornadoes, Blasting opponents with Air, Suffocation, and more.
-- Natural pacifists, lack much raw damage output by default, but make up for it in their mobility, utility, and speed.
-- Increases speed, decreasing rate of hunger, and takes no fall damage.
-- Comes with the Flight and SpiritualProjection subelements.
-
-### [Waterbending](https://github.com/ProjectKorra/ProjectKorra/wiki/Waterbending)
-
-- Specializes in maneuverability in and on the water.
-- Oceans are perfect for Waterbenders.
-- By default, techniques range from freezing over lakes, manipulating water to do damage, creating waves and torrents, and much more.
-- Mixture of defensive and offensive abilities.
-- Opens up possibilities in bodies of water that are otherwise closed to the other disciplines.
-- Comes with Bloodbending, Healing, Icebending and Plantbending subelements.
-
-### [Earthbending](https://github.com/ProjectKorra/ProjectKorra/wiki/Earthbending)
-
-- Specializes in manipulating the earth around them.
-- Any area containing land is perfect for an earthbender.
-- Techniques range from using Earth to guard yourself (Armor and Walls), using Earth to launch yourself, digging, blasting earth at other places, and much more.
-- Fundamentally the same as Waterbenders, with a mix of offensive and defensive playstyles.
-- Comes with the Sand, Metal and Lavabending subelements.
-
-### [Firebending](https://github.com/ProjectKorra/ProjectKorra/wiki/Firebending)
-
-- Very offensive playstyle.
-- Any environment other than water is suitable for Firebenders.
-- By default, abilities range from extinguishing fires, creating rings of fire on the gruond, creating walls of fire, lightning, shooting fire blasts, and much more.
-- Very little mobility and defense.
-- Comes with the Lightning and Combustion subelements.
-
-### [Chiblocking](https://github.com/ProjectKorra/ProjectKorra/wiki/Chiblocking)
-
-- Specializes in bare handed combat.
-- Can block a user's chi, temporarily disabling their bending.
-- Takes less fall damage, jump higher, and run faster.
-- Strikes deal more damage than normal.
-- Not very good when it comes to defense.

@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -114,14 +115,14 @@ public class AirBurst extends AirAbility {
 		final double r = 1;
 
 		for (double theta = 75; theta < 105; theta += this.blastAngleTheta) {
-			final double dphi = this.blastAnglePhi / Math.sin(Math.toRadians(theta));
+			final double dphi = this.blastAnglePhi / FastMath.sin(Math.toRadians(theta));
 			for (double phi = 0; phi < 360; phi += dphi) {
 				final double rphi = Math.toRadians(phi);
 				final double rtheta = Math.toRadians(theta);
 
-				x = r * Math.cos(rphi) * Math.sin(rtheta);
-				y = r * Math.sin(rphi) * Math.sin(rtheta);
-				z = r * Math.cos(rtheta);
+				x = r * FastMath.cos(rphi) * FastMath.sin(rtheta);
+				y = r * FastMath.sin(rphi) * FastMath.sin(rtheta);
+				z = r * FastMath.cos(rtheta);
 
 				final Vector direction = new Vector(x, z, y);
 				final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
@@ -147,14 +148,14 @@ public class AirBurst extends AirAbility {
 			final double r = 1;
 
 			for (double theta = 0; theta <= 180; theta += this.blastAngleTheta) {
-				final double dphi = this.blastAnglePhi / Math.sin(Math.toRadians(theta));
+				final double dphi = this.blastAnglePhi / FastMath.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
+					x = r * FastMath.cos(rphi) * FastMath.sin(rtheta);
+					y = r * FastMath.sin(rphi) * FastMath.sin(rtheta);
+					z = r * FastMath.cos(rtheta);
 
 					final Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
@@ -190,15 +191,15 @@ public class AirBurst extends AirAbility {
 			final double r = 1;
 
 			for (double theta = 0; theta <= 180; theta += this.blastAngleTheta) {
-				final double dphi = this.blastAnglePhi / Math.sin(Math.toRadians(theta));
+				final double dphi = this.blastAnglePhi / FastMath.sin(Math.toRadians(theta));
 
 				for (double phi = 0; phi < 360; phi += dphi) {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
+					x = r * FastMath.cos(rphi) * FastMath.sin(rtheta);
+					y = r * FastMath.sin(rphi) * FastMath.sin(rtheta);
+					z = r * FastMath.cos(rtheta);
 
 					final Vector direction = new Vector(x, z, y);
 					final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);

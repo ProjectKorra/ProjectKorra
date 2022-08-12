@@ -248,6 +248,10 @@ public abstract class ElementalAbility extends CoreAbility {
 		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
 	}
 
+	public double applyModifiers(double value) {
+	    return value;
+	}
+
 	public static void setupBendableMaterials() {
 		addTags(EARTH_BLOCKS, getConfig().getStringList( "Properties.Earth.EarthBlocks"));
 		addTags(ICE_BLOCKS, getConfig().getStringList("Properties.Water.IceBlocks"));

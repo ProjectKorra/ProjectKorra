@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 public final class PlayerCooldownChangeEvent extends Event implements Cancellable {
 
 	public static enum Result {
-		REMOVED, ADDED;
+		REMOVED, ADDED, SET;
 	}
 
 	private static final HandlerList HANDLERS = new HandlerList();

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.multiabilities;
 
 import java.util.HashMap;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -89,7 +90,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.whipSpeed = 1;
 		this.grabDuration = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.Duration");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
-		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage");
+		this.punchDamage = applyModifiers(getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage"));
 
 		switch (ability) {
 			case PULL:
@@ -108,6 +109,7 @@ public class WaterArmsWhip extends WaterAbility {
 				this.usageCooldown = 200;
 
 		}
+		this.usageCooldown = applyInverseModifiers(this.usageCooldown);
 		final WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
 		if (waw != null) {
 			if (waw.grabbed) {
@@ -260,7 +262,7 @@ public class WaterArmsWhip extends WaterAbility {
 					break;
 				}
 
-				final int j = (int) Math.ceil(8 / (Math.pow(i, 1 / 3)));
+				final int j = (int) Math.ceil(8 / (FastMath.pow(i, 1 / 3)));
 				this.waterArms.addToArm(l2.getBlock(), this.arm);
 				this.waterArms.addBlock(l2.getBlock(), GeneralMethods.getWaterData(j), 40);
 

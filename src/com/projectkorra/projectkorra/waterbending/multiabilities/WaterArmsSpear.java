@@ -35,7 +35,7 @@ public class WaterArmsSpear extends WaterAbility {
 	@Attribute("Length")
 	private int spearLength;
 	@Attribute(Attribute.RANGE)
-	private int spearRange;
+	private double spearRange;
 	private int spearRangeNight;
 	private int spearRangeFullMoon;
 	@Attribute("SphereRadius")
@@ -63,8 +63,8 @@ public class WaterArmsSpear extends WaterAbility {
 
 		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
 		this.spearDamageEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
-		this.spearLength = getConfig().getInt("Abilities.Water.WaterArms.Spear.Length");
-		this.spearRange = getConfig().getInt("Abilities.Water.WaterArms.Spear.Range");
+		this.spearLength = (int) applyModifiers(getConfig().getInt("Abilities.Water.WaterArms.Spear.Length"));
+		this.spearRange = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Range");
 		this.spearRangeNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
 		this.spearRangeFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
 		this.spearSphereRadius = getConfig().getInt("Abilities.Water.WaterArms.Spear.SphereRadius");
@@ -73,8 +73,8 @@ public class WaterArmsSpear extends WaterAbility {
 		this.spearDuration = getConfig().getLong("Abilities.Water.WaterArms.Spear.Duration");
 		this.spearDurationNight = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
 		this.spearDurationFullMoon = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Spear");
-		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
+		this.usageCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Spear"));
+		this.spearDamage = applyModifiers(getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage"));
 		this.spearLocations = new ArrayList<>();
 
 		this.getNightAugments();
@@ -351,7 +351,7 @@ public class WaterArmsSpear extends WaterAbility {
 		this.spearLength = spearLength;
 	}
 
-	public int getSpearRange() {
+	public double getSpearRange() {
 		return this.spearRange;
 	}
 

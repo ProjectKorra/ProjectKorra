@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.jafama.FastMath;
 import org.apache.commons.lang3.tuple.Pair;
 
 import org.bukkit.Location;
@@ -85,18 +86,18 @@ public class Torrent extends WaterAbility {
 		this.layer = 0;
 		this.startAngle = 0;
 		this.maxLayer = getConfig().getInt("Abilities.Water.Torrent.MaxLayer");
-		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Knockback");
+		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Knockback"));
 		this.angle = getConfig().getDouble("Abilities.Water.Torrent.Angle");
-		this.radius = getConfig().getDouble("Abilities.Water.Torrent.Radius");
-		this.knockup = getConfig().getDouble("Abilities.Water.Torrent.Knockup");
+		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Radius"));
+		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Knockup"));
 		this.interval = getConfig().getLong("Abilities.Water.Torrent.Interval");
-		this.damage = getConfig().getDouble("Abilities.Water.Torrent.InitialDamage");
-		this.successiveDamage = getConfig().getDouble("Abilities.Water.Torrent.SuccessiveDamage");
+		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.InitialDamage"));
+		this.successiveDamage = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.SuccessiveDamage"));
 		this.maxHits = getConfig().getInt("Abilities.Water.Torrent.MaxHits");
-		this.deflectDamage = getConfig().getDouble("Abilities.Water.Torrent.DeflectDamage");
-		this.range = getConfig().getDouble("Abilities.Water.Torrent.Range");
-		this.selectRange = getConfig().getDouble("Abilities.Water.Torrent.SelectRange");
-		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Cooldown");
+		this.deflectDamage = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.DeflectDamage"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Range"));
+		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.SelectRange"));
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.Cooldown"));
 		this.revert = getConfig().getBoolean("Abilities.Water.Torrent.Revert");
 		this.revertTime = getConfig().getLong("Abilities.Water.Torrent.RevertTime");
 		this.blocks = new ArrayList<>();
@@ -224,9 +225,9 @@ public class Torrent extends WaterAbility {
 
 				final Location eyeLoc = this.player.getEyeLocation();
 				final double startAngle = this.player.getEyeLocation().getDirection().angle(new Vector(1, 0, 0));
-				final double dx = this.radius * Math.cos(startAngle);
+				final double dx = this.radius * FastMath.cos(startAngle);
 				final double dy = 0;
-				final double dz = this.radius * Math.sin(startAngle);
+				final double dz = this.radius * FastMath.sin(startAngle);
 				final Location setup = eyeLoc.clone().add(dx, dy, dz);
 
 				if (!this.location.getWorld().equals(this.player.getWorld())) {
@@ -277,9 +278,9 @@ public class Torrent extends WaterAbility {
 				for (double theta = this.startAngle; theta < this.angle + this.startAngle; theta += 20) {
 					final Location loc = this.player.getEyeLocation();
 					final double phi = Math.toRadians(theta);
-					final double dx = Math.cos(phi) * this.radius;
+					final double dx = FastMath.cos(phi) * this.radius;
 					final double dy = 0;
-					final double dz = Math.sin(phi) * this.radius;
+					final double dz = FastMath.sin(phi) * this.radius;
 					loc.add(dx, dy, dz);
 					if (isWater(loc.getBlock()) && GeneralMethods.isAdjacentToThreeOrMoreSources(loc.getBlock())) {
 						ParticleEffect.WATER_BUBBLE.display(loc.getBlock().getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
@@ -342,9 +343,9 @@ public class Torrent extends WaterAbility {
 			final ArrayList<Block> doneBlocks = new ArrayList<Block>();
 			for (double theta = this.startAngle; theta < this.angle + this.startAngle; theta += 20) {
 				final double phi = Math.toRadians(theta);
-				final double dx = Math.cos(phi) * this.radius;
+				final double dx = FastMath.cos(phi) * this.radius;
 				final double dy = 0;
-				final double dz = Math.sin(phi) * this.radius;
+				final double dz = FastMath.sin(phi) * this.radius;
 				final Location blockloc = loc.clone().add(dx, dy, dz);
 
 				if (Math.abs(theta - this.startAngle) < 10) {
@@ -480,9 +481,9 @@ public class Torrent extends WaterAbility {
 
 		for (double theta = this.startAngle; theta < this.angle + this.startAngle; theta += 20) {
 			final double phi = Math.toRadians(theta);
-			final double dx = Math.cos(phi) * this.radius;
+			final double dx = FastMath.cos(phi) * this.radius;
 			final double dy = 0;
-			final double dz = Math.sin(phi) * this.radius;
+			final double dz = FastMath.sin(phi) * this.radius;
 			final Location blockLoc = loc.clone().add(dx, dy, dz);
 			final Block block = blockLoc.getBlock();
 			if (!doneBlocks.contains(block)) {
@@ -575,10 +576,10 @@ public class Torrent extends WaterAbility {
 		x = entity.getLocation().getX() - this.player.getLocation().getX();
 		z = entity.getLocation().getZ() - this.player.getLocation().getZ();
 
-		mag = Math.sqrt(x * x + z * z);
+		mag = FastMath.sqrt(x * x + z * z);
 
-		vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
-		vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+		vx = (x * FastMath.cos(angle) - z * FastMath.sin(angle)) / mag;
+		vz = (x * FastMath.sin(angle) + z * FastMath.cos(angle)) / mag;
 
 		final Vector vec = new Vector(vx, 0, vz).normalize().multiply(this.knockback);
 		final Vector velocity = entity.getVelocity();

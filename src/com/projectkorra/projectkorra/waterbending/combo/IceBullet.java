@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -58,7 +61,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private long cooldown;
 	private long shotcooldown;
 	private long time;
-	private String name;
 	private AbilityState state;
 	private Location origin;
 	private Location location;
@@ -78,27 +80,15 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			return;
 		}
 
-		this.damage = getConfig().getDouble("Abilities.Water.IceBullet.Damage");
-		this.range = getConfig().getDouble("Abilities.Water.IceBullet.Range");
-		this.radius = getConfig().getDouble("Abilities.Water.IceBullet.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Water.IceBullet.Cooldown");
-		this.shotcooldown = getConfig().getLong("Abilities.Water.IceBullet.ShotCooldown");
-		this.shootTime = getConfig().getLong("Abilities.Water.IceBullet.ShootTime");
-		this.maxShots = getConfig().getInt("Abilities.Water.IceBullet.MaxShots");
+		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.IceBullet.Damage"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.IceBullet.Range"));
+		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.IceBullet.Radius"));
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceBullet.Cooldown"));
+		this.shotcooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceBullet.ShotCooldown"));
+		this.shootTime = applyModifiers(getConfig().getLong("Abilities.Water.IceBullet.ShootTime"));
+		this.maxShots = applyModifiers(getConfig().getInt("Abilities.Water.IceBullet.MaxShots"));
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.IceBullet.AnimationSpeed");
 		this.speed = 1;
-		this.name = this.getName();
-
-		double aug = getNightFactor(player.getWorld());
-		if (aug > 1) {
-			aug = 1 + (aug - 1) / 3;
-		}
-
-		this.damage *= aug;
-		this.range *= aug;
-		this.shootTime *= aug;
-		this.maxShots *= aug;
-		this.radius *= aug;
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Water.IceBullet.Cooldown");
@@ -125,7 +115,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	public void handleCollision(final Collision collision) {
 		if (collision.isRemovingFirst()) {
 			final ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
-			final double collisionDistanceSquared = Math.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
+			final double collisionDistanceSquared = FastMath.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
 			// Remove all of the streams that are by this specific ourLocation.
 			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with Collision's detection algorithm.
 			for (final BukkitRunnable task : this.getTasks()) {
@@ -349,11 +339,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> iceBullet = new ArrayList<>();
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
-		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
-		return iceBullet;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Water.IceBullet.Combination"));
 	}
 
 	@Override
@@ -518,9 +504,5 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
 	}
 }

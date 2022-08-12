@@ -2,6 +2,9 @@ package com.projectkorra.projectkorra.firebending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -32,8 +35,8 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	@Attribute(Attribute.RANGE)
 	private double range;
 	@Attribute(Attribute.HEIGHT)
-	private int height;
-	private int radius;
+	private double height;
+	private double radius;
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	@Attribute(Attribute.FIRE_TICK)
@@ -50,12 +53,12 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireWheel.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireWheel.Range");
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireWheel.Damage"));
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireWheel.Range"));
 		this.speed = getConfig().getDouble("Abilities.Fire.FireWheel.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireWheel.Cooldown"));
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
-		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
+		this.height = applyModifiers(getConfig().getInt("Abilities.Fire.FireWheel.Height"));
 
 		this.bPlayer.addCooldown(this);
 		this.affectedEntities = new ArrayList<LivingEntity>();
@@ -79,7 +82,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
 		}
 
-		this.radius = this.height - 1;
+		this.radius = this.height / 2;
 		this.origin = player.getLocation().clone().add(0, this.radius, 0);
 
 		this.start();
@@ -92,12 +95,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		return fireWheel;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.FireSpin.Combination"));
 	}
 
 	@Override
@@ -111,12 +109,12 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(this.location, this.radius, this.radius + 2);
+		Block topBlock = GeneralMethods.getTopBlock(this.location, (int) this.radius, (int)this.radius + 2);
 		if (topBlock.getType().equals(Material.SNOW)) {
 			topBlock.breakNaturally();
 			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		}
-		if (topBlock == null || isWater(topBlock)) {
+		if (isWater(topBlock)) {
 			this.remove();
 			return;
 		} else if (topBlock.getType() == Material.FIRE) {
@@ -135,9 +133,9 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 		for (double i = -180; i <= 180; i += 3) {
 			final Location tempLoc = this.location.clone();
-			final Vector newDir = this.direction.clone().multiply(this.radius * Math.cos(Math.toRadians(i)));
+			final Vector newDir = this.direction.clone().multiply(this.radius * FastMath.cos(Math.toRadians(i)));
 			tempLoc.add(newDir);
-			tempLoc.setY(tempLoc.getY() + (this.radius * Math.sin(Math.toRadians(i))));
+			tempLoc.setY(tempLoc.getY() + (this.radius * FastMath.sin(Math.toRadians(i))));
 			playFirebendingParticles(tempLoc, 0, 0, 0, 0);
 		}
 

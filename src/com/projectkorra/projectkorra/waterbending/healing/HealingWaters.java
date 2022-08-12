@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.healing;
 
 import java.util.HashMap;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -77,10 +78,10 @@ public class HealingWaters extends HealingAbility {
 
 	public void setFields() {
 
-		this.cooldown = getConfig().getLong("Abilities.Water.HealingWaters.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Water.HealingWaters.Range");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.HealingWaters.Cooldown"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.HealingWaters.Range"));
 		this.interval = getConfig().getLong("Abilities.Water.HealingWaters.Interval");
-		this.chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
+		this.chargeTime = applyInverseModifiers(getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime"));
 		this.potionPotency = getConfig().getInt("Abilities.Water.HealingWaters.PotionPotency");
 		this.duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
 		this.enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
@@ -240,8 +241,8 @@ public class HealingWaters extends HealingAbility {
 			final Location centre = this.player.getLocation().clone().add(0, 1, 0);
 			final double increment = (2 * Math.PI) / 36;
 			final double angle = this.pstage * increment;
-			final double x = centre.getX() + (0.75 * Math.cos(angle));
-			final double z = centre.getZ() + (0.75 * Math.sin(angle));
+			final double x = centre.getX() + (0.75 * FastMath.cos(angle));
+			final double z = centre.getZ() + (0.75 * FastMath.sin(angle));
 			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
 
 			if (this.pstage >= 36) {
@@ -258,13 +259,13 @@ public class HealingWaters extends HealingAbility {
 				final double increment = (2 * Math.PI) / 36;
 				final double angle1 = this.tstage1 * increment;
 				final double angle2 = this.tstage2 * increment;
-				final double x1 = centre.getX() + (0.75 * Math.cos(angle1));
-				final double z1 = centre.getZ() + (0.75 * Math.sin(angle1));
-				final double x2 = centre.getX() + (0.75 * Math.cos(angle2));
-				final double z2 = centre.getZ() + (0.75 * Math.sin(angle2));
+				final double x1 = centre.getX() + (0.75 * FastMath.cos(angle1));
+				final double z1 = centre.getZ() + (0.75 * FastMath.sin(angle1));
+				final double x2 = centre.getX() + (0.75 * FastMath.cos(angle2));
+				final double z2 = centre.getZ() + (0.75 * FastMath.sin(angle2));
 
-				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1));
-				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2));
+				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * FastMath.cos(angle1)), z1));
+				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -FastMath.cos(angle2)), z2));
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;

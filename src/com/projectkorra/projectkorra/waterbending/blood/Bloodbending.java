@@ -37,7 +37,7 @@ public class Bloodbending extends BloodAbility {
 	@Attribute("CanBloodbendOtherBloodbenders")
 	private boolean canBloodbendOtherBloodbenders;
 	@Attribute(Attribute.RANGE)
-	private int range;
+	private double range;
 	private long time;
 	@Attribute(Attribute.DURATION)
 	private long duration;
@@ -61,10 +61,10 @@ public class Bloodbending extends BloodAbility {
 		this.canBeUsedOnUndeadMobs = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
 		this.onlyUsableDuringMoon = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
 		this.canBloodbendOtherBloodbenders = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
-		this.range = getConfig().getInt("Abilities.Water.Bloodbending.Range");
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Bloodbending.Range"));
 		this.duration = getConfig().getInt("Abilities.Water.Bloodbending.Duration");
-		this.cooldown = getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
-		this.knockback = getConfig().getDouble("Abilities.Water.Bloodbending.Knockback");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Bloodbending.Cooldown"));
+		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Bloodbending.Knockback"));
 		this.vector = new Vector(0, 0, 0);
 
 		if (this.canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !this.bPlayer.canBloodbendAtAnytime()) {
@@ -75,7 +75,6 @@ public class Bloodbending extends BloodAbility {
 			return;
 		}
 
-		this.range = (int) getNightFactor(this.range, player.getWorld());
 		if (this.bPlayer.isAvatarState()) {
 			this.range += AvatarState.getValue(1.5);
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.range)) {
@@ -135,6 +134,16 @@ public class Bloodbending extends BloodAbility {
 
 		this.time = System.currentTimeMillis();
 		this.start();
+	}
+
+	@Override
+	public double applyModifiers(double value) {
+		return canOnlyBeUsedAtNight ? value : super.applyModifiers(value);
+	}
+
+	@Override
+	public long applyInverseModifiers(long value) {
+		return canOnlyBeUsedAtNight ? value : super.applyInverseModifiers(value);
 	}
 
 	public static void launch(final Player player) {
@@ -405,11 +414,11 @@ public class Bloodbending extends BloodAbility {
 		this.canBloodbendOtherBloodbenders = canBloodbendOtherBloodbenders;
 	}
 
-	public int getRange() {
+	public double getRange() {
 		return this.range;
 	}
 
-	public void setRange(final int range) {
+	public void setRange(final double range) {
 		this.range = range;
 	}
 

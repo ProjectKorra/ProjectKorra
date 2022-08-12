@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -23,17 +24,17 @@ public class Blaze extends FireAbility {
 		super(player);
 
 		this.speed = 2;
-		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Cooldown");
-		this.arc = getConfig().getInt("Abilities.Fire.Blaze.Arc");
-		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Range");
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Blaze.Cooldown"));
+		this.arc = (int) applyModifiers(getConfig().getInt("Abilities.Fire.Blaze.Arc"));
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Blaze.Range"));
 
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("BlazeArc")) {
 			return;
 		}
 
-		this.range = this.getDayFactor(this.range);
-		this.range = AvatarState.getValue(this.range, player);
-		this.arc = (int) this.getDayFactor(this.arc);
+		//this.range = this.getDayFactor(this.range);
+		//this.range = AvatarState.getValue(this.range, player);
+		//this.arc = (int) this.getDayFactor(this.arc);
 		final Location location = player.getLocation();
 
 		for (int i = -this.arc; i <= this.arc; i += this.speed) {
@@ -44,8 +45,8 @@ public class Blaze extends FireAbility {
 			x = direction.getX();
 			z = direction.getZ();
 
-			vx = x * Math.cos(angle) - z * Math.sin(angle);
-			vz = x * Math.sin(angle) + z * Math.cos(angle);
+			vx = x * FastMath.cos(angle) - z * FastMath.sin(angle);
+			vz = x * FastMath.sin(angle) + z * FastMath.cos(angle);
 
 			direction.setX(vx);
 			direction.setZ(vz);

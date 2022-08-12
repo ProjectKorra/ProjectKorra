@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import java.util.Random;
 
+import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -49,13 +50,13 @@ public class FireShield extends FireAbility {
 
 		this.shield = shield;
 		this.ignite = true;
-		this.discCooldown = getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown");
+		this.discCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown"));
 		this.discDuration = getConfig().getLong("Abilities.Fire.FireShield.Disc.Duration");
-		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius");
+		this.discRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius"));
 		this.discFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Disc.FireTicks");
-		this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown");
+		this.shieldCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown"));
 		this.shieldDuration = getConfig().getLong("Abilities.Fire.FireShield.Shield.Duration");
-		this.shieldRadius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
+		this.shieldRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius"));
 		this.shieldFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Shield.FireTicks");
 		this.random = new Random();
 
@@ -120,7 +121,7 @@ public class FireShield extends FireAbility {
 					final double rphi = Math.toRadians(phi);
 					final double rtheta = Math.toRadians(theta);
 
-					final Location display = this.location.clone().add(this.shieldRadius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.shieldRadius / 1.5 * Math.cos(rtheta), this.shieldRadius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
+					final Location display = this.location.clone().add(this.shieldRadius / 1.5 * FastMath.cos(rphi) * FastMath.sin(rtheta), this.shieldRadius / 1.5 * FastMath.cos(rtheta), this.shieldRadius / 1.5 * FastMath.sin(rphi) * FastMath.sin(rtheta));
 					if (this.random.nextInt(4) == 0) {
 						playFirebendingParticles(display, 1, 0.1, 0.1, 0.1);
 					}
