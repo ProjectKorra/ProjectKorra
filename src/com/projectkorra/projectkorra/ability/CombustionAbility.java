@@ -21,7 +21,7 @@ public abstract class CombustionAbility extends FireAbility implements SubAbilit
 		return Element.COMBUSTION;
 	}
 
-	//Overriding these methods to make sure Lightning abilities don't get buffed by blue fire
+	//Overriding these methods to make sure Combustion abilities don't get buffed by blue fire
 	@Override
 	public double applyModifiersDamage(double value) {
 		return GeneralMethods.applyModifiers(value, getDayFactor(1.0));

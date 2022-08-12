@@ -108,7 +108,7 @@ public class Commands {
 	static void initializeCommands() {
 		new AddCommand();
 		new BindCommand();
-		//new CheckCommand();
+		new CheckCommand();
 		new BoardCommand();
 		new ChooseCommand();
 		new ClearCommand();
