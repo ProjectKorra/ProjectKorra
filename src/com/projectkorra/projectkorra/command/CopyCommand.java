@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -25,6 +26,8 @@ public class CopyCommand extends PKCommand {
 	private final String copied;
 	private final String failedToBindAll;
 	private final String copiedOther;
+	private final String cantEditBinds;
+	private final String cantEditBindsOther;
 
 	public CopyCommand() {
 		super("copy", "/bending copy <Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Copy.Description"), new String[] { "copy", "co" });
@@ -33,6 +36,8 @@ public class CopyCommand extends PKCommand {
 		this.copied = ConfigManager.languageConfig.get().getString("Commands.Copy.SuccessfullyCopied");
 		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Copy.FailedToBindAll");
 		this.copiedOther = ConfigManager.languageConfig.get().getString("Commands.Copy.Other.SuccessfullyCopied");
+		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Copy.CantEditBinds");
+		this.cantEditBindsOther = ConfigManager.languageConfig.get().getString("Commands.Copy.Other.CantEditBinds");
 	}
 
 	@Override
@@ -51,6 +56,11 @@ public class CopyCommand extends PKCommand {
 				return;
 			}
 
+			if (player instanceof Player && MultiAbilityManager.hasMultiAbilityBound((Player) player)) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
+				return;
+			}
+
 			this.assignAbilities(sender, player, (Player) sender, true).thenAccept(boundAll -> {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + player.getName() + ChatColor.GREEN));
 				if (!boundAll) {
@@ -65,6 +75,11 @@ public class CopyCommand extends PKCommand {
 
 			final Player orig = ProjectKorra.plugin.getServer().getPlayer(args.get(0));
 			final Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
+
+			if (MultiAbilityManager.hasMultiAbilityBound(target)) {
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBindsOther.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.RED));
+				return;
+			}
 
 			if ((orig == null || !orig.isOnline()) || (target == null || !target.isOnline())) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);

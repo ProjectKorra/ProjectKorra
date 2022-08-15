@@ -2029,13 +2029,13 @@ public class GeneralMethods {
 	 * @param modifiers The modifiers to apply
 	 */
 	public static double applyModifiers(double value, double... modifiers) {
-		double totalDiff = 0;
+		double totalModifier = 0;
 
-		for (double mod : modifiers) {
-			double diff = (value * mod) - value;
-			totalDiff += diff;
+		for(double mod : modifiers) {
+			totalModifier += mod - 1;
 		}
-		return (value + totalDiff);
+
+		return value * (1 + totalModifier);
 	}
 
 	/**
@@ -2061,13 +2061,7 @@ public class GeneralMethods {
 	 * @param modifiers The modifiers to apply
 	 */
 	public static long applyModifiers(long value, double... modifiers) {
-		double totalDiff = 0;
-
-		for (double mod : modifiers) {
-			double diff = (value * mod) - value;
-			totalDiff += diff;
-		}
-		return (long) (value + totalDiff);
+		return (long) applyModifiers((double)value, modifiers);
 	}
 
 	/**
@@ -2078,12 +2072,7 @@ public class GeneralMethods {
 	 * @param modifiers The modifiers to apply
 	 */
 	public static long applyInverseModifiers(long value, double... modifiers) {
-		double totalMod = 1;
-		for (double mod : modifiers) {
-			totalMod *= mod;
-		}
-
-		return (long) (value / (totalMod == 0 ? 0.0001 : totalMod));
+		return (long) applyInverseModifiers((double)value, modifiers);
 	}
 
 	public static void startCacheCleaner(final double period) {
