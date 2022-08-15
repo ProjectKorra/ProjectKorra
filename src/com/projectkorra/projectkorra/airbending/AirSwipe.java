@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -272,8 +271,8 @@ public class AirSwipe extends AirAbility {
 			x = direction.getX();
 			z = direction.getZ();
 
-			vx = x * FastMath.cos(angle) - z * FastMath.sin(angle);
-			vz = x * FastMath.sin(angle) + z * FastMath.cos(angle);
+			vx = x * Math.cos(angle) - z * Math.sin(angle);
+			vz = x * Math.sin(angle) + z * Math.cos(angle);
 
 			direction.setX(vx);
 			direction.setZ(vz);

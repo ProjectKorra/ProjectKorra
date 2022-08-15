@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -96,7 +95,7 @@ public class Shockwave extends EarthAbility {
 		final double dtheta = 360.0 / (2 * Math.PI * this.range) - 1;
 		for (double theta = 0; theta < 360; theta += dtheta) {
 			final double rtheta = Math.toRadians(theta);
-			final Vector vector = new Vector(FastMath.cos(rtheta), 0, FastMath.sin(rtheta));
+			final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
 			new Ripple(this.player, vector.normalize());
 		}
 		this.bPlayer.addCooldown(this);
@@ -110,7 +109,7 @@ public class Shockwave extends EarthAbility {
 
 				for (double theta = 0; theta < 360; theta += dtheta) {
 					final double rtheta = Math.toRadians(theta);
-					final Vector vector = new Vector(FastMath.cos(rtheta), 0, FastMath.sin(rtheta));
+					final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
 					if (vector.angle(player.getEyeLocation().getDirection()) < shockWave.angle) {
 						new Ripple(player, vector.normalize());
 					}

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -104,8 +103,8 @@ public class WaterSpout extends WaterAbility {
 			i += 20;
 			height += .4;
 			final double angle = (i * Math.PI / 180);
-			final double x = 1 * FastMath.cos(angle + this.rotation);
-			final double z = 1 * FastMath.sin(angle + this.rotation);
+			final double x = 1 * Math.cos(angle + this.rotation);
+			final double z = 1 * Math.sin(angle + this.rotation);
 
 			final Location loc = location.clone().getBlock().getLocation().add(.5, .5, .5);
 			loc.add(x, height, z);

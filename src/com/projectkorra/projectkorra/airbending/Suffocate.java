@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -421,29 +420,29 @@ public class Suffocate extends AirAbility {
 			}
 
 			if (this.type == SpiralType.HORIZONTAL1) {
-				this.loc.setX(tempLoc.getX() + this.radius * FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setX(tempLoc.getX() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 				this.loc.setY(tempLoc.getY() + this.dy * this.i);
-				this.loc.setZ(tempLoc.getZ() + this.radius * FastMath.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			} else if (this.type == SpiralType.HORIZONTAL2) {
-				this.loc.setX(tempLoc.getX() + this.radius * -FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setX(tempLoc.getX() + this.radius * -Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 				this.loc.setY(tempLoc.getY() + this.dy * this.i);
-				this.loc.setZ(tempLoc.getZ() + this.radius * -FastMath.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * -Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			} else if (this.type == SpiralType.VERTICAL1) {
-				this.loc.setX(tempLoc.getX() + this.radius * FastMath.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
-				this.loc.setY(tempLoc.getY() + this.radius * FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setX(tempLoc.getX() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 				this.loc.setZ(tempLoc.getZ() + this.dz * this.i);
 			} else if (this.type == SpiralType.VERTICAL2) {
 				this.loc.setX(tempLoc.getX() + this.dx * this.i);
-				this.loc.setY(tempLoc.getY() + this.radius * FastMath.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
-				this.loc.setZ(tempLoc.getZ() + this.radius * FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			} else if (this.type == SpiralType.DIAGONAL1) {
-				this.loc.setX(tempLoc.getX() + this.radius * FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
-				this.loc.setY(tempLoc.getY() + this.radius * FastMath.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
-				this.loc.setZ(tempLoc.getZ() + this.radius * -FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setX(tempLoc.getX() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * -Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			} else if (this.type == SpiralType.DIAGONAL2) {
-				this.loc.setX(tempLoc.getX() + this.radius * FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
-				this.loc.setY(tempLoc.getY() + this.radius * FastMath.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
-				this.loc.setZ(tempLoc.getZ() + this.radius * FastMath.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setX(tempLoc.getX() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setY(tempLoc.getY() + this.radius * Math.sin(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
+				this.loc.setZ(tempLoc.getZ() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			}
 
 			getAirbendingParticles().display(this.loc, 0, 0, 0, 0, 1);

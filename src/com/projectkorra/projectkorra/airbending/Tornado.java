@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -127,14 +126,14 @@ public class Tornado extends AirAbility {
 						x = entity.getLocation().getX() - this.origin.getX();
 						z = entity.getLocation().getZ() - this.origin.getZ();
 
-						mag = FastMath.sqrt(x * x + z * z);
+						mag = Math.sqrt(x * x + z * z);
 
 						if (mag == 0.0) {
 							vx = 0.0;
 							vz = 0.0;
 						} else {
-							vx = (x * FastMath.cos(angle) - z * FastMath.sin(angle)) / mag;
-							vz = (x * FastMath.sin(angle) + z * FastMath.cos(angle)) / mag;
+							vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
+							vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 						}
 
 						if (entity instanceof Player) {
@@ -186,8 +185,8 @@ public class Tornado extends AirAbility {
 				y = this.origin.getY() + timefactor * i;
 				factor = i / this.currentHeight;
 
-				x = this.origin.getX() + timefactor * factor * this.currentRadius * FastMath.cos(angle);
-				z = this.origin.getZ() + timefactor * factor * this.currentRadius * FastMath.sin(angle);
+				x = this.origin.getX() + timefactor * factor * this.currentRadius * Math.cos(angle);
+				z = this.origin.getZ() + timefactor * factor * this.currentRadius * Math.sin(angle);
 
 				final Location effect = new Location(this.origin.getWorld(), x, y, z);
 				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {

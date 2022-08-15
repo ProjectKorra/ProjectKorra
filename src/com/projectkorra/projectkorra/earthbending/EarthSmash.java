@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.jafama.FastMath;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -565,7 +564,7 @@ public class EarthSmash extends EarthAbility {
 					if (block == null || smash.getLocation() == null) {
 						continue;
 					}
-					if (block.getLocation().getWorld() == smash.location.getWorld() && block.getLocation().distanceSquared(smash.location) <= FastMath.pow(this.grabDetectionRadius, 2)) {
+					if (block.getLocation().getWorld() == smash.location.getWorld() && block.getLocation().distanceSquared(smash.location) <= Math.pow(this.grabDetectionRadius, 2)) {
 						return smash;
 					}
 				}
@@ -607,7 +606,7 @@ public class EarthSmash extends EarthAbility {
 	 */
 	public void smashToSmashCollisionDetection() {
 		for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
-			if (smash.location != null && smash != this && smash.location.getWorld() == this.location.getWorld() && smash.location.distanceSquared(this.location) < FastMath.pow(this.flightDetectionRadius, 2)) {
+			if (smash.location != null && smash != this && smash.location.getWorld() == this.location.getWorld() && smash.location.distanceSquared(this.location) < Math.pow(this.flightDetectionRadius, 2)) {
 				smash.remove();
 				this.remove();
 				return;
@@ -627,7 +626,7 @@ public class EarthSmash extends EarthAbility {
 			}
 			// Check to see if the player is standing on top of the smash.
 			if (smash.state == State.LIFTED) {
-				if (smash.location.getWorld().equals(player.getWorld()) && smash.location.clone().add(0, 2, 0).distanceSquared(player.getLocation()) <= FastMath.pow(smash.flightDetectionRadius, 2)) {
+				if (smash.location.getWorld().equals(player.getWorld()) && smash.location.clone().add(0, 2, 0).distanceSquared(player.getLocation()) <= Math.pow(smash.flightDetectionRadius, 2)) {
 					return smash;
 				}
 			}

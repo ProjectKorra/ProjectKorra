@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -79,7 +78,7 @@ public class AirSpout extends AirAbility {
 				final double dy = loc1.getY() - loc0.getY();
 				final double dz = loc1.getZ() - loc0.getZ();
 
-				final double distance = FastMath.sqrt(dx * dx + dz * dz);
+				final double distance = Math.sqrt(dx * dx + dz * dz);
 
 				if (distance <= radius && dy > 0 && dy < spout.height) {
 					spout.remove();

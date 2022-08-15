@@ -48,7 +48,6 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 
-import net.jafama.FastMath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -840,7 +839,7 @@ public class GeneralMethods {
 	public static double getHorizontalDistance(final Location one, final Location two) {
 		final double x = one.getX() - two.getX();
 		final double z = one.getZ() - two.getZ();
-		return FastMath.sqrt((x * x) + (z * z));
+		return Math.sqrt((x * x) + (z * z));
 	}
 
 	public static int getIntCardinalDirection(final Vector vector) {
@@ -904,7 +903,7 @@ public class GeneralMethods {
 	 */
 	public static Location getLeftSide(final Location location, final double distance) {
 		final float angle = location.getYaw() / 60;
-		return location.clone().add(new Vector(FastMath.cos(angle), 0, FastMath.sin(angle)).normalize().multiply(distance));
+		return location.clone().add(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 
 	public static int getMaxPresets(final Player player) {
@@ -954,7 +953,7 @@ public class GeneralMethods {
 	 */
 	public static Location getRightSide(final Location location, final double distance) {
 		final float angle = location.getYaw() / 60;
-		return location.clone().subtract(new Vector(FastMath.cos(angle), 0, FastMath.sin(angle)).normalize().multiply(distance));
+		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 
 	public static Location getMainHandLocation(final Player player) {
@@ -1697,7 +1696,7 @@ public class GeneralMethods {
 
 		final Vector thirdaxis = rotation.crossProduct(rotate).normalize().multiply(rotate.length());
 
-		return rotate.multiply(FastMath.cos(angle)).add(thirdaxis.multiply(FastMath.sin(angle)));
+		return rotate.multiply(Math.cos(angle)).add(thirdaxis.multiply(Math.sin(angle)));
 	}
 
 	/**
@@ -1707,8 +1706,8 @@ public class GeneralMethods {
 		final Vector vec2 = vec.clone();
 		final double x = vec2.getX();
 		final double z = vec2.getZ();
-		vec2.setX(x * FastMath.cos(Math.toRadians(theta)) - z * FastMath.sin(Math.toRadians(theta)));
-		vec2.setZ(x * FastMath.sin(Math.toRadians(theta)) + z * FastMath.cos(Math.toRadians(theta)));
+		vec2.setX(x * Math.cos(Math.toRadians(theta)) - z * Math.sin(Math.toRadians(theta)));
+		vec2.setZ(x * Math.sin(Math.toRadians(theta)) + z * Math.cos(Math.toRadians(theta)));
 		return vec2;
 	}
 

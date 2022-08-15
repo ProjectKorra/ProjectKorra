@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import net.jafama.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -133,9 +132,9 @@ public class FireWheel extends FireAbility implements ComboAbility {
 
 		for (double i = -180; i <= 180; i += 3) {
 			final Location tempLoc = this.location.clone();
-			final Vector newDir = this.direction.clone().multiply(this.radius * FastMath.cos(Math.toRadians(i)));
+			final Vector newDir = this.direction.clone().multiply(this.radius * Math.cos(Math.toRadians(i)));
 			tempLoc.add(newDir);
-			tempLoc.setY(tempLoc.getY() + (this.radius * FastMath.sin(Math.toRadians(i))));
+			tempLoc.setY(tempLoc.getY() + (this.radius * Math.sin(Math.toRadians(i))));
 			playFirebendingParticles(tempLoc, 0, 0, 0, 0);
 		}
 
