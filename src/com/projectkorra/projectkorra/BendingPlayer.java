@@ -16,7 +16,9 @@ import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
+import com.projectkorra.projectkorra.hooks.CanBendHook;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.util.OptionalBoolean;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -43,6 +45,7 @@ import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +54,8 @@ import org.jetbrains.annotations.NotNull;
  * player.
  */
 public class BendingPlayer extends OfflineBendingPlayer {
+
+	protected static Map<JavaPlugin, CanBendHook> HOOKS = new HashMap<>();
 
 	private long slowTime;
 	private final Player player;
@@ -130,13 +135,22 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		return this.canBend(ability, false, false);
 	}
 
-	private boolean canBend(final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
-		if (ability == null) {
-			return false;
-		}
+	private boolean canBend(@NotNull final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
 
 		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		final Location playerLoc = this.player.getLocation();
+
+		//Loop through all hooks and test them
+		for (JavaPlugin plugin : HOOKS.keySet()) {
+			CanBendHook hook = HOOKS.get(plugin);
+			try {
+				OptionalBoolean bool = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
+				if (bool.isPresent()) return bool.getValue(); //If the hook didn't return OptionalBoolean.DEFAULT
+			} catch (Exception e) {
+				ProjectKorra.log.severe("An error occurred while running CanBendHook registered by " + plugin.getName() + ".");
+				e.printStackTrace();
+			}
+		}
 
 		if (!this.player.isOnline() || this.player.isDead()) {
 			return false;
@@ -423,6 +437,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	public static Map<UUID, OfflineBendingPlayer> getOfflinePlayers() {
 		return OfflineBendingPlayer.PLAYERS;
+	}
+
+	public static void registerCanBendHook(@NotNull JavaPlugin plugin, @NotNull CanBendHook hook) {
+		HOOKS.put(plugin, hook);
 	}
 
 	/**

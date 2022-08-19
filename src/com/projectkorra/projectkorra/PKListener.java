@@ -2039,6 +2039,7 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPluginUnload(PluginDisableEvent event) {
 		BendingRegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
+		BendingPlayer.HOOKS.remove((JavaPlugin) event.getPlugin());
 	}
 
 	public static HashMap<Player, String> getBendingPlayerDeath() {
