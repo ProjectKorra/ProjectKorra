@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -119,7 +119,7 @@ public class MultiAbilityManager {
 
 	/**
 	 * MultiAbility equivalent of
-	 * {@link GeneralMethods#getBoundAbility(Player)}. Returns a boolean based
+	 * {@link BendingPlayer#getBoundAbility()}. Returns a boolean based
 	 * on whether a player has a specific MultiAbility active.
 	 *
 	 * @param player The player to check

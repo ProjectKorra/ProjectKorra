@@ -80,7 +80,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public double getNightFactor(final double value) {
-		return this.player != null ? value * getNightFactor() : 1;
+		return this.player != null ? value * getNightFactor(player.getWorld()) : 1;
 	}
 
 	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
@@ -212,7 +212,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			trans.removeAll(remove);
 		}
 
-		final Block testBlock = player.getTargetBlock(trans, range > 3 ? 3 : (int) range);
+		final Block testBlock = player.getTargetBlock(trans, Math.max(1, Math.min(3, (int)range)));
 		if (bPlayer == null) {
 			return null;
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
@@ -373,6 +373,43 @@ public abstract class WaterAbility extends ElementalAbility {
 	@Deprecated
 	public static void removeWaterSpouts(final Location loc, final Player source) {
 		removeWaterSpouts(loc, 1.5, source);
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	@Override
+	public double applyModifiers(double value) {
+		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public long applyModifiers(long value) {
+		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value inversely (makes it smaller). Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public double applyInverseModifiers(double value) {
+		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value inversely (makes it smaller). Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public long applyInverseModifiers(long value) {
+		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
 	}
 
 	public static void stopBending() {

@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra.firebending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -44,9 +46,9 @@ public class FireKick extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireKick.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireKick.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireKick.Cooldown");
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireKick.Damage"));
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireKick.Range"));
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireKick.Cooldown"));
 		this.speed = getConfig().getLong("Abilities.Fire.FireKick.Speed");
 
 		if (this.bPlayer.isAvatarState()) {
@@ -190,12 +192,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> fireKick = new ArrayList<>();
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		return fireKick;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.FireKick.Combination"));
 	}
 
 	public ArrayList<LivingEntity> getAffectedEntities() {

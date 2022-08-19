@@ -9,7 +9,6 @@ import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -88,33 +87,14 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
-		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
-				ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding" + ".Color").toUpperCase());
-				color = color == null ? ChatColor.GOLD : color;
-				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
-				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders" + ".BottomBorder");
-				if (!topBorder.isEmpty()) {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
-				}
-				Bukkit.broadcastMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www" + ".projectkorra.com!");
-				if (!bottomBorder.isEmpty()) {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
-				}
-			}, (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20), (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20));
-		}
+
 		TempBlock.startReversion();
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
 
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			GeneralMethods.removeUnusableAbilities(player.getName());
+			OfflineBendingPlayer.loadAsync(player.getUniqueId(), true);
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-				PassiveManager.registerPassives(player);
-				GeneralMethods.removeUnusableAbilities(player.getName());
-			}, 30);
 		}
 
 		final Metrics metrics = new Metrics(this);
@@ -165,7 +145,7 @@ public class ProjectKorra extends JavaPlugin {
 			}
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer != null && isDatabaseCooldownsEnabled()) {
-				bPlayer.saveCooldowns();
+				bPlayer.saveCooldowns(false);
 			}
 		}
 		Manager.shutdown();

@@ -63,7 +63,6 @@ public class Lightning extends LightningAbility {
 	@Attribute("MaxArcAngle")
 	private double maxArcAngle;
 	private double particleRotation;
-	private long time;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private State state;
@@ -89,7 +88,6 @@ public class Lightning extends LightningAbility {
 		this.charged = false;
 		this.hitWater = false;
 		this.hitIce = false;
-		this.time = System.currentTimeMillis();
 		this.state = State.START;
 		this.affectedEntities = new ArrayList<>();
 		this.arcs = new ArrayList<>();
@@ -99,22 +97,22 @@ public class Lightning extends LightningAbility {
 		this.selfHitWater = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
 		this.selfHitClose = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
 		this.arcOnIce = getConfig().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
-		this.range = getConfig().getDouble("Abilities.Fire.Lightning.Range");
-		this.damage = getConfig().getDouble("Abilities.Fire.Lightning.Damage");
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Lightning.Range"));
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.Lightning.Damage"));
 		this.maxArcAngle = getConfig().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
 		this.subArcChance = getConfig().getDouble("Abilities.Fire.Lightning.SubArcChance");
-		this.chainRange = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcRange");
-		this.chainArcChance = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcChance");
-		this.waterArcRange = getConfig().getDouble("Abilities.Fire.Lightning.WaterArcRange");
-		this.stunChance = getConfig().getDouble("Abilities.Fire.Lightning.StunChance");
-		this.stunDuration = getConfig().getDouble("Abilities.Fire.Lightning.StunDuration");
-		this.maxChainArcs = getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs");
-		this.waterArcs = getConfig().getInt("Abilities.Fire.Lightning.WaterArcs");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.Lightning.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Lightning.Cooldown");
+		this.chainRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Lightning.ChainArcRange"));
+		this.chainArcChance = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.ChainArcChance"));
+		this.waterArcRange = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.WaterArcRange"));
+		this.stunChance = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.StunChance"));
+		this.stunDuration = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.StunDuration"));
+		this.maxChainArcs = applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs"));
+		this.waterArcs = (int) applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.WaterArcs"));
+		this.chargeTime = applyInverseModifiers(getConfig().getLong("Abilities.Fire.Lightning.ChargeTime"));
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Lightning.Cooldown"));
 		this.allowOnFireJet = getConfig().getBoolean("Abilities.Fire.Lightning.AllowOnFireJet");
 
-		this.range = this.getDayFactor(this.range);
+		/*this.range = this.getDayFactor(this.range);
 		this.subArcChance = this.getDayFactor(this.subArcChance);
 		this.damage = this.getDayFactor(this.damage);
 		this.maxChainArcs = this.getDayFactor(this.maxChainArcs);
@@ -122,7 +120,7 @@ public class Lightning extends LightningAbility {
 		this.chainRange = this.getDayFactor(this.chainRange);
 		this.waterArcRange = this.getDayFactor(this.waterArcRange);
 		this.stunChance = this.getDayFactor(this.stunChance);
-		this.stunDuration = this.getDayFactor(this.stunDuration);
+		this.stunDuration = this.getDayFactor(this.stunDuration);*/
 
 		if (this.bPlayer.isAvatarState()) {
 			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.ChargeTime");
@@ -198,7 +196,7 @@ public class Lightning extends LightningAbility {
 			if (this.bPlayer.isOnCooldown(this)) {
 				this.remove();
 				return;
-			} else if (System.currentTimeMillis() - this.time > this.chargeTime) {
+			} else if (System.currentTimeMillis() - this.getStartTime() > this.chargeTime) {
 				this.charged = true;
 			}
 
@@ -809,14 +807,6 @@ public class Lightning extends LightningAbility {
 
 	public void setParticleRotation(final double particleRotation) {
 		this.particleRotation = particleRotation;
-	}
-
-	public long getTime() {
-		return this.time;
-	}
-
-	public void setTime(final long time) {
-		this.time = time;
 	}
 
 	public State getState() {

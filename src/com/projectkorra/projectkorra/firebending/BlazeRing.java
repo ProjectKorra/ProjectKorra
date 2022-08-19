@@ -10,7 +10,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 public class BlazeRing extends FireAbility {
 
 	@Attribute(Attribute.RANGE)
-	private int range;
+	private double range;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angleIncrement;
@@ -19,9 +19,9 @@ public class BlazeRing extends FireAbility {
 	public BlazeRing(final Player player) {
 		super(player);
 
-		this.range = getConfig().getInt("Abilities.Fire.Blaze.Ring.Range");
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Blaze.Ring.Range"));
 		this.angleIncrement = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Angle");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown"));
 		this.location = player.getLocation();
 
 		if (this.bPlayer.isAvatarState()) {
@@ -81,7 +81,7 @@ public class BlazeRing extends FireAbility {
 		return false;
 	}
 
-	public int getRange() {
+	public double getRange() {
 		return this.range;
 	}
 

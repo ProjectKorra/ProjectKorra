@@ -10,7 +10,7 @@ ProjectKorra is a place for members across the Minecraft and Bending Communities
 
 ## Contributing
 
-We are always eager to see active developers in the community making pull requests to ProjectKorra and invite you to do so. We just ask that all incoming pull requests be made to the `wip` branch and that you try your best to adhere to our pull request template. If you find yourself contributing a lot and want to get more involved with the plugins community you may want to consider joining our development team [here](http://projectkorra.com/join-the-team/). 
+We are always eager to see active developers in the community making pull requests to ProjectKorra and invite you to do so. We just ask that all incoming pull requests be made to the `wip` branch and that you try your best to adhere to our pull request template. If you find yourself contributing a lot and want to get more involved with the plugins community you may want to consider joining our development team [here](http://projectkorra.com/join-the-team/).
 
 ## Downloads
 
@@ -23,13 +23,13 @@ You can view the changelogs for the plugin you're running in the thread created 
 ## Key Features
 
 - Pick an element to play as, choose how you want to play.
-  - Subelements are also made available. For example: Bloodbending and Icebending for Waterbenders, Metal and Lavabending for Earth, and so on.
+    - Subelements are also made available. For example: Bloodbending and Icebending for Waterbenders, Metal and Lavabending for Earth, and so on.
 - Battle others with your Bending
-  - Chain abilities together to perform unique Combo abilities.
+    - Chain abilities together to perform unique Combo abilities.
 - Extensive permissions support. Allows every server owner to customize the server to their liking and create advanced setups.
 - Highly Configurable so you can control every aspect of your Avatar Universe.
 - Modular Abilities
-  - The plugin comes with over 40 abilities pre-installed and passive abilities. Each of them can be enabled or disabled in the config file. Additionally, the ProjectKorra API allows developers to hook into the API to create new abilities and place them in the Abilities folder, making for easy installation of new abilities.
+    - The plugin comes with over 40 abilities pre-installed and passive abilities. Each of them can be enabled or disabled in the config file. Additionally, the ProjectKorra API allows developers to hook into the API to create new abilities and place them in the Abilities folder, making for easy installation of new abilities.
 - Custom Chat Formatting / Colors based on your element.
 
 ## API

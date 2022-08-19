@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -70,8 +72,8 @@ public class AddCommand extends PKCommand {
 			if (!this.hasPermission(sender, "others")) {
 				return;
 			}
-			final Player player = Bukkit.getPlayer(args.get(1));
-			if (player == null) {
+			final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(1));
+			if (!player.isOnline() && !player.hasPlayedBefore()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
@@ -86,154 +88,160 @@ public class AddCommand extends PKCommand {
 	 * @param target The player to add the element to
 	 * @param element The element to add
 	 */
-	private void add(final CommandSender sender, final Player target, final String element) {
+	private void add(final CommandSender sender, final OfflinePlayer target, final String element) {
 
 		// if they aren't a BendingPlayer, create them.
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(target);
-		} else if (bPlayer.isPermaRemoved()) { // ignore permabanned users.
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
-			return;
-		}
+		BendingPlayer.getOrLoadOfflineAsync(target).thenAccept(bPlayer -> {
+			boolean online = bPlayer instanceof BendingPlayer;
 
-		if (element.toLowerCase().equals("all")) {
-			final StringBuilder elements = new StringBuilder("");
-			boolean elementFound = false;
-			for (final Element e : Element.getAllElements()) {
-				if (!bPlayer.hasElement(e) && e != Element.AVATAR) {
-					elementFound = true;
-					bPlayer.addElement(e);
+			if (bPlayer.isPermaRemoved()) { // ignore permabanned users.
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+				return;
+			}
 
-					if (elements.length() > 1) {
-						elements.append(ChatColor.YELLOW + ", ");
+			if (element.equalsIgnoreCase("all")) {
+				final StringBuilder elements = new StringBuilder("");
+				boolean elementFound = false;
+				for (final Element e : Element.getAllElements()) {
+					if (!bPlayer.hasElement(e) && e != Element.AVATAR) {
+						elementFound = true;
+						bPlayer.addElement(e);
+
+						if (elements.length() > 1) {
+							elements.append(ChatColor.YELLOW + ", ");
+						}
+						elements.append(e.toString());
+
+						bPlayer.getSubElements().clear();
+						if (online) {
+							for (final SubElement sub : Element.getAllSubElements()) {
+								if (bPlayer.hasElement(sub.getParentElement()) && ((BendingPlayer)bPlayer).hasSubElementPermission(sub)) {
+									bPlayer.addSubElement(sub);
+								}
+							}
+							bPlayer.saveSubElements();
+						}
+
+						bPlayer.saveElements();
+
+						if (online) Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) target, e, Result.ADD));
 					}
-					elements.append(e.toString());
+				}
+				if (elementFound) {
+					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.addedOtherAll.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.YELLOW) + elements);
+						if (online) GeneralMethods.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
+					} else {
+						if (online) GeneralMethods.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
+					}
+				} else {
+					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElementsOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+					} else {
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElements);
+					}
+				}
+				return;
+			} else {
 
+				// get the [sub]element.
+				Element e = Element.fromString(element);
+				if (e == null) {
+					e = Element.fromString(element);
+				}
+
+				if (e == Element.AVATAR) {
+					this.add(sender, target, Element.AIR.getName());
+					this.add(sender, target, Element.EARTH.getName());
+					this.add(sender, target, Element.FIRE.getName());
+					this.add(sender, target, Element.WATER.getName());
+					return;
+				}
+
+				// if it's an element:
+				if (Arrays.asList(Element.getAllElements()).contains(e)) {
+					if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to.
+						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElement);
+						}
+						return;
+					}
+
+					// add all allowed subelements.
+					bPlayer.addElement(e);
 					bPlayer.getSubElements().clear();
-					for (final SubElement sub : Element.getAllSubElements()) {
-						if (bPlayer.hasElement(sub.getParentElement()) && bPlayer.hasSubElementPermission(sub)) {
-							bPlayer.addSubElement(sub);
+					if (online) {
+						for (final SubElement sub : Element.getAllSubElements()) {
+							if (bPlayer.hasElement(sub.getParentElement()) && ((BendingPlayer)bPlayer).hasSubElementPermission(sub)) {
+								bPlayer.addSubElement(sub);
+							}
 						}
 					}
 
-					GeneralMethods.saveElements(bPlayer);
-					GeneralMethods.saveSubElements(bPlayer);
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
-				}
-			}
-			if (elementFound) {
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.addedOtherAll.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.YELLOW) + elements);
-					GeneralMethods.sendBrandingMessage(target, ChatColor.YELLOW + this.addedAll + elements);
-				} else {
-					GeneralMethods.sendBrandingMessage(target, ChatColor.YELLOW + this.addedAll + elements);
-				}
-			} else {
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElementsOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
-				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElements);
-				}
-			}
-			return;
-		} else {
 
-			// get the [sub]element.
-			Element e = Element.fromString(element);
-			if (e == null) {
-				e = Element.fromString(element);
-			}
-
-			if (e == Element.AVATAR) {
-				this.add(sender, target, Element.AIR.getName());
-				this.add(sender, target, Element.EARTH.getName());
-				this.add(sender, target, Element.FIRE.getName());
-				this.add(sender, target, Element.WATER.getName());
-				return;
-			}
-
-			// if it's an element:
-			if (Arrays.asList(Element.getAllElements()).contains(e)) {
-				if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to.
+					// send the message.
+					final ChatColor color = e.getColor();
 					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+						if (e != Element.AIR && e != Element.EARTH && e != Element.BLUE_FIRE) {
+							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
+							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
+							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
+						}
 					} else {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElement);
+						if (e != Element.AIR && e != Element.EARTH) {
+							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
+						} else {
+							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
+						}
+
 					}
+					bPlayer.saveElements();
+					bPlayer.saveSubElements();
+					if (online) Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) target, e, Result.ADD));
 					return;
-				}
 
-				// add all allowed subelements.
-				bPlayer.addElement(e);
-				bPlayer.getSubElements().clear();
-				for (final SubElement sub : Element.getAllSubElements()) {
-					if (bPlayer.hasElement(sub.getParentElement()) && bPlayer.hasSubElementPermission(sub)) {
-						bPlayer.addSubElement(sub);
+					// if it's a sub element:
+				} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
+					final SubElement sub = (SubElement) e;
+					if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
+						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElement);
+						}
+						return;
 					}
-				}
+					bPlayer.addSubElement(sub);
+					final ChatColor color = e.getColor();
 
-				// send the message.
-				final ChatColor color = e.getColor();
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					if (e != Element.AIR && e != Element.EARTH && e != Element.BLUE_FIRE) {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
-					} else {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
-						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
-					}
-				} else {
-					if (e != Element.AIR && e != Element.EARTH) {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
-					} else {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
-					}
-
-				}
-				GeneralMethods.saveElements(bPlayer);
-				GeneralMethods.saveSubElements(bPlayer);
-				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
-				return;
-
-				// if it's a sub element:
-			} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
-				final SubElement sub = (SubElement) e;
-				if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
 					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+						if (e != Element.AIR && e != Element.EARTH) {
+							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
+						} else {
+							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
+						}
+
 					} else {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElement);
+						if (e != Element.AIR && e != Element.EARTH) {
+							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", sub.toString() + sub.getType().getBender()));
+						} else {
+							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", sub.toString() + sub.getType().getBender()));
+						}
 					}
+					bPlayer.saveSubElements();
+					if (online) Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, (Player) target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
 					return;
+
+				} else { // bad element.
+					sender.sendMessage(ChatColor.RED + this.invalidElement);
 				}
-				bPlayer.addSubElement(sub);
-				final ChatColor color = e.getColor();
-
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					if (e != Element.AIR && e != Element.EARTH) {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
-					} else {
-						GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
-					}
-
-				} else {
-					if (e != Element.AIR && e != Element.EARTH) {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedCFW.replace("{element}", sub.toString() + sub.getType().getBender()));
-					} else {
-						GeneralMethods.sendBrandingMessage(target, color + this.addedAE.replace("{element}", sub.toString() + sub.getType().getBender()));
-					}
-				}
-				GeneralMethods.saveSubElements(bPlayer);
-				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
-				return;
-
-			} else { // bad element.
-				sender.sendMessage(ChatColor.RED + this.invalidElement);
 			}
+		});
 
-		}
 	}
 
 	public static boolean isVowel(final char c) {

@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.airbending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -185,11 +187,6 @@ public class Twister extends AirAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> twister = new ArrayList<>();
-		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
-		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_UP));
-		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
-		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
-		return twister;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Air.Twister.Combination"));
 	}
 }

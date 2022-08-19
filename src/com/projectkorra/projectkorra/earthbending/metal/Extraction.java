@@ -16,22 +16,27 @@ import com.projectkorra.projectkorra.util.TempBlock;
 public class Extraction extends MetalAbility {
 
 	@Attribute("DoubleChance")
-	private int doubleChance;
+	private double doubleChance;
 	@Attribute("TripleChance")
-	private int tripleChance;
+	private double tripleChance;
 	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Block originBlock;
 
+	//Whether the server is on at least 1.17 or not. Used to change between raw iron and iron ingots
+	private final boolean is117;
+
 	public Extraction(final Player player) {
 		super(player);
 
-		this.doubleChance = getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
-		this.tripleChance = getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
+		this.doubleChance = getConfig().getDouble("Abilities.Earth.Extraction.DoubleLootChance");
+		this.tripleChance = getConfig().getDouble("Abilities.Earth.Extraction.TripleLootChance");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
 		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
+
+		this.is117 = GeneralMethods.getMCVersion() >= 1170;
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
@@ -45,8 +50,13 @@ public class Extraction extends MetalAbility {
 	}
 
 	private int getAmount() {
+		return getAmount(1);
+	}
+
+	private int getAmount(int max) {
 		final Random rand = new Random();
-		return rand.nextInt(99) + 1 <= this.tripleChance ? 3 : rand.nextInt(99) + 1 <= this.doubleChance ? 2 : 1;
+		int randMax = max * (rand.nextDouble() * 100 <= this.tripleChance ? 3 : rand.nextDouble() * 100 <= this.doubleChance ? 2 : 1);
+		return rand.nextInt(randMax) + 1;
 	}
 
 	@Override
@@ -59,42 +69,33 @@ public class Extraction extends MetalAbility {
 		Material type;
 		ItemStack item;
 
-		switch (this.originBlock.getType()) {
-		case IRON_ORE:
+		switch (this.originBlock.getType().name()) {
+		case "IRON_ORE":
+		case "DEEPSLATE_IRON_ORE":
 			type = Material.STONE;
-			item = new ItemStack(Material.RAW_IRON, this.getAmount() * 2);
+			item = new ItemStack(is117 ? Material.getMaterial("RAW_IRON") : Material.IRON_INGOT, this.getAmount( is117 ? 2 : 1 ));
 			break;
-		case GOLD_ORE:
+		case "GOLD_ORE":
+		case "DEEPSLATE_GOLD_ORE":
 			type = Material.STONE;
-			item = new ItemStack(Material.RAW_GOLD, this.getAmount() * 2);
+			item = new ItemStack(is117 ? Material.getMaterial("RAW_GOLD") : Material.GOLD_INGOT, this.getAmount( is117 ? 2 : 1 ));
 			break;
-		case NETHER_QUARTZ_ORE:
+		case "NETHER_QUARTZ_ORE":
 			type = Material.NETHERRACK;
 			item = new ItemStack(Material.QUARTZ, this.getAmount());
 			break;
-		case NETHER_GOLD_ORE:
+		case "NETHER_GOLD_ORE":
 			type = Material.NETHERRACK;
-			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount() * 6);
+			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount(6));
 			break;
-		case GILDED_BLACKSTONE:
+		case "GILDED_BLACKSTONE":
 			type = Material.BLACKSTONE;
-			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount() * 5);
+			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount(5));
 			break;
-		case COPPER_ORE:
+		case "COPPER_ORE":
+		case "DEEPSLATE_COPPER_ORE":
 			type = Material.STONE;
-			item = new ItemStack(Material.RAW_COPPER, this.getAmount() * 2);
-			break;
-		case DEEPSLATE_COPPER_ORE:
-			type = Material.DEEPSLATE;
-			item = new ItemStack(Material.RAW_COPPER, this.getAmount() * 2);
-			break;
-		case DEEPSLATE_GOLD_ORE:
-			type = Material.DEEPSLATE;
-			item = new ItemStack(Material.RAW_GOLD, this.getAmount() * 2);
-			break;
-		case DEEPSLATE_IRON_ORE:
-			type = Material.DEEPSLATE;
-			item = new ItemStack(Material.RAW_IRON, this.getAmount() * 2);
+			item = new ItemStack(Material.getMaterial("RAW_COPPER"), this.getAmount(2));
 			break;
 		default:
 			return;
@@ -140,7 +141,7 @@ public class Extraction extends MetalAbility {
 		return false;
 	}
 
-	public int getDoubleChance() {
+	public double getDoubleChance() {
 		return this.doubleChance;
 	}
 
@@ -148,7 +149,7 @@ public class Extraction extends MetalAbility {
 		this.doubleChance = doubleChance;
 	}
 
-	public int getTripleChance() {
+	public double getTripleChance() {
 		return this.tripleChance;
 	}
 

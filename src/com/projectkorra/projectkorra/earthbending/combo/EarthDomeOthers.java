@@ -1,5 +1,9 @@
 package com.projectkorra.projectkorra.earthbending.combo;
 
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -14,7 +18,9 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class EarthDomeOthers extends EarthAbility {
+import java.util.ArrayList;
+
+public class EarthDomeOthers extends EarthAbility implements ComboAbility {
 
 	private Vector direction;
 	private double range;
@@ -115,7 +121,7 @@ public class EarthDomeOthers extends EarthAbility {
 
 	@Override
 	public String getName() {
-		return "EarthDome";
+		return "EarthDomeOthers";
 	}
 
 	@Override
@@ -126,5 +132,26 @@ public class EarthDomeOthers extends EarthAbility {
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
+	}
+
+	/**
+	 * Accessor Method to get the instructions for using this combo.
+	 *
+	 * @param player
+	 * @return The steps for the combo.
+	 */
+	@Override
+	public Object createNewComboInstance(Player player) {
+		return new EarthDomeOthers(player);
+	}
+
+	/**
+	 * Returns the list of abilities which constitute the combo.
+	 *
+	 * @return An ArrayList containing the combo's steps.
+	 */
+	@Override
+	public ArrayList<ComboManager.AbilityInformation> getCombination() {
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Earth.EarthDome.Combination.Others"));
 	}
 }

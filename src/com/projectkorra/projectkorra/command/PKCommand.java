@@ -8,7 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -82,7 +84,8 @@ public abstract class PKCommand implements SubCommand {
 
 	@Override
 	public void help(final CommandSender sender, final boolean description) {
-		sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + this.properUse);
+		String message = ConfigManager.languageConfig.get().getString("Commands.ProperUsage").replace("{command}", ChatColor.DARK_AQUA + this.properUse);
+		sender.sendMessage(ChatColor.GOLD + message);
 		if (description) {
 			sender.sendMessage(ChatColor.YELLOW + this.description);
 		}
@@ -260,4 +263,20 @@ public abstract class PKCommand implements SubCommand {
 		return new ArrayList<String>();
 	}
 
+	/**
+	 * Create all command instances again. We do this so all commands pull their stuff from
+	 * configs again
+	 */
+	public static void reloadCommands() {
+		instances.clear();
+		Commands.initializeCommands();
+	}
+
+	public List<Player> getOnlinePlayers(final CommandSender sender) {
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).collect(Collectors.toList());
+	}
+
+	public List<String> getOnlinePlayerNames(final CommandSender sender) {
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).map(Player::getName).collect(Collectors.toList());
+	}
 }

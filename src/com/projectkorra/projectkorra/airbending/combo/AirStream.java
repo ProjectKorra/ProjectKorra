@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.airbending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -205,11 +207,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> airStream = new ArrayList<>();
-		airStream.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
-		airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
-		airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
-		return airStream;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Air.AirStream.Combination"));
 	}
 
 	public Location getOrigin() {

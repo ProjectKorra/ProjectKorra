@@ -25,4 +25,12 @@ public interface AddonAbility {
 	 * @return The version of the ability as a String.
 	 */
 	public String getVersion();
+
+	/**
+	 * @return If the ability can be used by players by default. If true, a
+	 * permission node will be created and granted to default players
+	 */
+	default boolean isDefault() {
+		return true;
+	}
 }

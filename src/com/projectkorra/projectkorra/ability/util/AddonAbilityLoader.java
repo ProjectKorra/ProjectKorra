@@ -94,8 +94,8 @@ public class AddonAbilityLoader<T> {
 					loadables.add(loadable);
 					final AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(this.plugin, loadable, jarFile);
 					this.plugin.getServer().getPluginManager().callEvent(event);
-				}
 
+				}
 			} catch (Exception | Error e) {
 				e.printStackTrace();
 				this.plugin.getLogger().log(Level.WARNING, "Unknown cause");
@@ -109,6 +109,11 @@ public class AddonAbilityLoader<T> {
 					}
 				}
 			}
+		}
+		try {
+			((URLClassLoader)loader).close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return loadables;
 	}

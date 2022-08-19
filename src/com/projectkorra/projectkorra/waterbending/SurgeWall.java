@@ -33,7 +33,6 @@ import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class SurgeWall extends WaterAbility {
 
-	private static final String RANGE_CONFIG = "Abilities.Water.Surge.Wall.Range";
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();
 	public static final List<TempBlock> SOURCE_BLOCKS = new ArrayList<>();
@@ -67,10 +66,10 @@ public class SurgeWall extends WaterAbility {
 		super(player);
 
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
-		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Water.Surge.Wall.Duration");
-		this.range = getConfig().getDouble(RANGE_CONFIG);
-		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown"));
+		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Duration"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Range"));
+		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Radius"));
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
 		this.locations = new ArrayList<>();
@@ -447,7 +446,7 @@ public class SurgeWall extends WaterAbility {
 			return;
 		}
 
-		final int range = getConfig().getInt(RANGE_CONFIG);
+		final double range = WaterAbility.getNightFactor(player.getWorld()) * getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 
@@ -499,7 +498,7 @@ public class SurgeWall extends WaterAbility {
 			}
 			return;
 		} else {
-			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, range))) {
+			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, Math.min(1, (int)range)))) {
 				wave = new SurgeWave(player);
 				return;
 			}
