@@ -70,4 +70,13 @@ public class FireDamageTimer {
 		}
 	}
 
+	/**
+	 * Util so that players can find benders who were hurt/killed by bending
+	 * fire as opened to regular firetick.
+	 * @return Map from Entity to Player, entity on fire to player who set them
+	 * alight with firebending.
+	 */
+	public static Map<Entity, Player> getInstances() {
+		return INSTANCES;
+	}
 }

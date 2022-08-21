@@ -5,31 +5,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
 
 /**
  * Called when an entity is killed by
- * {@link GeneralMethods#damageEntity(Player player, Entity entity, double damage, String ability)
- * GeneralMethods.damageEntity}
+ * DamageHandler#damageEntity(final Entity entity, Player source, double damage, final Ability ability, boolean ignoreArmor)
  */
 
 public class EntityBendingDeathEvent extends Event {
 
 	public static final HandlerList handlers = new HandlerList();
+	private final Player source;
 	private final Entity entity;
 	private final Ability ability;
 	private final double damage;
 
 	/**
 	 * Creates a new EntityBendingDeathEvent
-	 *
+	 * @param source the player who used the killing move
 	 * @param entity the entity who died
 	 * @param damage the amount of damage done in the attack that killed the
 	 *            victim
 	 * @param ability the ability used to kill the entity
 	 */
-	public EntityBendingDeathEvent(final Entity entity, final double damage, final Ability ability) {
+	public EntityBendingDeathEvent(final Player source, final Entity entity, final double damage, final Ability ability) {
+		this.source = source;
 		this.entity = entity;
 		this.ability = ability;
 		this.damage = damage;
@@ -48,7 +48,7 @@ public class EntityBendingDeathEvent extends Event {
 	 * @return the player who killed the entity
 	 */
 	public Player getAttacker() {
-		return this.ability.getPlayer();
+		return this.source;
 	}
 
 	/**
