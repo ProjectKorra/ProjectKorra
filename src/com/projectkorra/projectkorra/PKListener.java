@@ -132,6 +132,7 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 
+import com.projectkorra.projectkorra.waterbending.plant.PlantTether;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -1514,10 +1515,17 @@ public class PKListener implements Listener {
 						Torrent.create(player);
 					} else if (abil.equalsIgnoreCase("WaterArms")) {
 						new WaterArms(player);
-					}
-
-					if (abil.equalsIgnoreCase("HealingWaters")) {
+					} else if (abil.equalsIgnoreCase("HealingWaters")) {
 						new HealingWaters(player);
+					} else if (abil.equalsIgnoreCase("PlantTether")) {
+						if (CoreAbility.hasAbility(player, PlantTether.class)) {
+							final PlantTether pt = CoreAbility.getAbility(player, PlantTether.class);
+							if (pt.isInitial()) {
+								pt.searchForEntity();
+							}
+						} else {
+							new PlantTether(player);
+						}
 					}
 				}
 			}
@@ -1563,7 +1571,6 @@ public class PKListener implements Listener {
 						new EarthGrab(player, GrabMode.DRAG);
 					}
 				}
-
 			}
 
 			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
