@@ -87,25 +87,23 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		if (cooldown <= 0) {
 			return;
 		}
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, cooldown, Result.ADDED);
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
 
 			if (this.getBoundAbilityName() != null && this.getBoundAbilityName().equalsIgnoreCase(ability)) {
-				GeneralMethods.displayMovePreview(player);
+				GeneralMethods.displayMovePreview(this.player);
 			}
 			
-			BendingBoardManager.updateBoard(player, event.getAbility(), true, 0);
+			BendingBoardManager.updateBoard(this.player, event.getAbility(), true, 0);
 			CooldownCommand.addCooldownType(ability);
 		}
 	}
 
 	public Map<String, Cooldown> loadCooldowns() {
-		final Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
-
-		return cooldowns;
+		return new ConcurrentHashMap<>();
 	}
 
 	/**
@@ -117,18 +115,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	public boolean canBeBloodbent() {
 		if (this.isAvatarState()) {
-			if (this.isChiBlocked()) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.isChiBlocked();
 		}
 
-		if (this.canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) && this.isToggled()) {
-			return false;
-		}
-
-		return true;
+		return !this.canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) || !this.isToggled();
 	}
 
 	public boolean canBend(final CoreAbility ability) {
@@ -180,11 +170,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, ability.getName(), playerLoc)) {
-			return false;
-		}
-
-		return true;
+		} else return !GeneralMethods.isRegionProtectedFromBuild(this.player, ability.getName(), playerLoc);
 	}
 
 	public boolean canBendIgnoreBinds(final CoreAbility ability) {
@@ -220,11 +206,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
 			return false;
-		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
-			return false;
-		}
-
-		return true;
+		} else return this.player.getGameMode() != GameMode.SPECTATOR;
 	}
 
 	public boolean canUsePassive(final CoreAbility ability) {
@@ -235,11 +217,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.player.getLocation())) {
 			return false;
-		} else if (this.isOnCooldown(ability)) {
-			return false;
-		}
-
-		return true;
+		} else return !this.isOnCooldown(ability);
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
@@ -248,16 +226,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
 
 			if (hasWeapon) {
-				if (noWeaponElement) {
-					return false;
-				} else {
-					return true;
-				}
+				return !noWeaponElement;
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 
@@ -282,12 +254,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			if (!this.hasElement(subElement.getParentElement())) {
 				return false;
 			}
-
-			if (!this.hasSubElement(subElement)) {
-				return false;
-			}
+			return this.hasSubElement(subElement);
 		}
-
 		return true;
 	}
 
@@ -409,7 +377,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 	@Override
 	public int getCurrentSlot() {
-		return player.getInventory().getHeldItemSlot();
+		return this.player.getInventory().getHeldItemSlot();
 	}
 
 	/**
@@ -551,7 +519,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	@Override
 	public void removeCooldown(final String ability) {
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, 0, Result.REMOVED);
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
@@ -560,10 +528,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			final String abilityName = event.getAbility();
 
 			if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
-				GeneralMethods.displayMovePreview(player);
+				GeneralMethods.displayMovePreview(this.player);
 			}
 
-			BendingBoardManager.updateBoard(player, event.getAbility(), false, 0);
+			BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
 		}
 	}
 
@@ -581,7 +549,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		while (iterator.hasNext()) {
 			Map.Entry<String, Cooldown> entry = iterator.next();
 			if (System.currentTimeMillis() >= entry.getValue().getCooldown()) {
-				final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, entry.getKey(), 0, Result.REMOVED);
+				final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, entry.getKey(), 0, Result.REMOVED);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
 					iterator.remove();
@@ -589,10 +557,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 					final String abilityName = event.getAbility();
 
 					if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
-						GeneralMethods.displayMovePreview(player);
+						GeneralMethods.displayMovePreview(this.player);
 					}
 
-					BendingBoardManager.updateBoard(player, event.getAbility(), false, 0);
+					BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
 				}
 			}
 		}
@@ -608,7 +576,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
 		final String newStance = (stance == null) ? "" : stance.getName();
 		this.stance = stance;
-		GeneralMethods.displayMovePreview(player);
+		GeneralMethods.displayMovePreview(this.player);
 		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(Bukkit.getPlayer(this.uuid), oldStance, newStance);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
@@ -641,16 +609,15 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		// Remove all active instances of abilities that will become unusable.
 		// We need to do this prior to filtering binds in case the player has a MultiAbility running.
 		for (final CoreAbility coreAbility : CoreAbility.getAbilities()) {
-			final CoreAbility playerAbility = CoreAbility.getAbility(player, coreAbility.getClass());
+			final CoreAbility playerAbility = CoreAbility.getAbility(this.player, coreAbility.getClass());
 			if (playerAbility != null) {
-				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(player, playerAbility)) {
+				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(this.player, playerAbility)) {
 					// The player will be able to keep using the given PassiveAbility.
 					continue;
 				} else if (this.canBend(playerAbility)) {
 					// The player will still be able to use this given Ability, do not end it.
 					continue;
 				}
-
 				playerAbility.remove();
 			}
 		}
@@ -664,7 +631,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 				finalAbilities.put(i, slots.get(i));
 			}
 		}
-
 		this.setAbilities(finalAbilities);
 	}
 
@@ -673,15 +639,15 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	protected void postLoad() {
 		if (!this.toggled) {
-			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
+			GeneralMethods.sendBrandingMessage(this.player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
 		}
 
-		Preset.loadPresets(player);
+		Preset.loadPresets(this.player);
 
 		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
 
 		String prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender", "")) + " ";
-		if (player.hasPermission("bending.avatar") || (this.hasElement(Element.AIR) && this.hasElement(Element.EARTH) && this.hasElement(Element.FIRE) && this.hasElement(Element.WATER))) {
+		if (this.player.hasPermission("bending.avatar") || (this.hasElement(Element.AIR) && this.hasElement(Element.EARTH) && this.hasElement(Element.FIRE) && this.hasElement(Element.WATER))) {
 			prefix = Element.AVATAR.getPrefix();
 		} else if (this.getElements().size() > 0) {
 			Element element = this.getElements().get(0);
@@ -689,16 +655,16 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		}
 
 		if (chatEnabled) {
-			player.setDisplayName(player.getName());
-			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
+			this.player.setDisplayName(this.player.getName());
+			this.player.setDisplayName(prefix + ChatColor.RESET + this.player.getDisplayName());
 		}
 
 		// Handle the AirSpout/WaterSpout login glitches.
-		if (player.getGameMode() != GameMode.CREATIVE) {
+		if (this.player.getGameMode() != GameMode.CREATIVE) {
 			final HashMap<Integer, String> bound = this.getAbilities();
 			for (final String str : bound.values()) {
 				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
-					final Player fplayer = player;
+					final Player fplayer = this.player;
 					new BukkitRunnable() {
 						@Override
 						public void run() {
@@ -714,9 +680,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		this.removeUnusableAbilities();
 		this.fixSubelements(); //Grant all subelements for an element if they have 0 subs for that element (that they are allowed)
 		this.removeOldCooldowns();
-		PassiveManager.registerPassives(player);
-		BendingBoardManager.getBoard(player).ifPresent(BendingBoard::show); //Show the bending board
-		BendingBoardManager.changeWorld(player); //Hide the board if they spawn in a world with bending disabled
+		PassiveManager.registerPassives(this.player);
+		BendingBoardManager.getBoard(this.player).ifPresent(BendingBoard::show); //Show the bending board
+		BendingBoardManager.changeWorld(this.player); //Hide the board if they spawn in a world with bending disabled
 
 		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(this));
 	}
@@ -753,8 +719,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	@Deprecated
 	public void fixSubelements() {
 		boolean save = false;
-		for (Element element : elements) {
-			List<SubElement> currentSubs = subelements.stream().filter(sub -> sub.getParentElement() == element).collect(Collectors.toList());
+		for (Element element : this.elements) {
+			List<SubElement> currentSubs = this.subelements.stream().filter(sub -> sub.getParentElement() == element).collect(Collectors.toList());
 			if (currentSubs.size() > 0) continue;
 			for (SubElement sub : Element.getSubElements(element)) {
 				if (this.hasSubElementPermission(sub)) {
@@ -763,7 +729,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 				}
 			}
 		}
-
 		if (save) this.saveSubElements();
 	}
 }

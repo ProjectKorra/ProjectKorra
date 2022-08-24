@@ -3,11 +3,9 @@ package com.projectkorra.projectkorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
-import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -557,7 +554,7 @@ public class OfflineBendingPlayer {
             return;
         }
 
-        DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+        DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (this.abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
     }
 
     /**
@@ -810,7 +807,7 @@ public class OfflineBendingPlayer {
      * @return Returns true if this BendingPlayer is fully loaded
      */
     public boolean isLoaded() {
-        return !loading;
+        return !this.loading;
     }
 
     /**
@@ -1005,7 +1002,7 @@ public class OfflineBendingPlayer {
     }
 
     public OfflinePlayer getPlayer() {
-        return player;
+        return this.player;
     }
 
     @Override
