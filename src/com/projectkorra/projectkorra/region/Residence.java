@@ -8,9 +8,9 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class Residence extends RegionProtectionBase {
+class Residence extends RegionProtectionBase {
 
-    public Residence() {
+    protected Residence() {
         super("Residence", "Residence.Respect");
     }
 

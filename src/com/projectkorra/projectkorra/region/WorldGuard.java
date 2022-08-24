@@ -9,9 +9,9 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public class WorldGuard extends RegionProtectionBase {
+class WorldGuard extends RegionProtectionBase {
 
-    public WorldGuard() {
+    protected WorldGuard() {
         super("WorldGuard");
     }
 

@@ -5,9 +5,9 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class LWC extends RegionProtectionBase {
+class LWC extends RegionProtectionBase {
 
-    public LWC() {
+    protected LWC() {
         super("LWC");
     }
 

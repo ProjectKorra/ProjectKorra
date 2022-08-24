@@ -5,9 +5,9 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class GriefPrevention extends RegionProtectionBase {
+class GriefPrevention extends RegionProtectionBase {
 
-    public GriefPrevention() {
+    protected GriefPrevention() {
         super("GriefPrevention");
     }
 

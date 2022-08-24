@@ -7,9 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class Towny extends RegionProtectionBase {
+class Towny extends RegionProtectionBase {
 
-    public Towny() {
+    protected Towny() {
         super("Towny");
     }
 
