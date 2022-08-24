@@ -26,29 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.api.ResidenceInterface;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import com.google.common.reflect.ClassPath;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.griefdefender.api.GriefDefender;
-import com.griefdefender.api.User;
-import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.projectkorra.projectkorra.command.PKCommand;
-import com.projectkorra.projectkorra.hooks.RegionProtectionHook;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -76,13 +57,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.kingdom.model.KingdomRelation;
-import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.structures.managers.Regulator;
-import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
-import org.kingdoms.constants.player.DefaultKingdomPermission;
-import org.kingdoms.constants.player.KingdomPlayer;
 
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -125,17 +99,6 @@ import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
-import me.markeh.factionsframework.entities.FPlayer;
-import me.markeh.factionsframework.entities.FPlayers;
-import me.markeh.factionsframework.entities.Faction;
-import me.markeh.factionsframework.entities.Factions;
-import me.markeh.factionsframework.enums.Rel;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -143,9 +106,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class GeneralMethods {
 
-	// Represents PlayerName, previously checked blocks, and whether they were true or false
-	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
-	private static final ArrayList<Ability> INVINCIBLE = new ArrayList<>();
 	private static ProjectKorra plugin;
 
 	public GeneralMethods(final ProjectKorra plugin) {
@@ -1883,23 +1843,6 @@ public class GeneralMethods {
 		return (long) applyInverseModifiers((double)value, modifiers);
 	}
 
-	public static void startCacheCleaner(final double period) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (final Map<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
-					for (final Block key : map.keySet()) {
-						final BlockCacheElement value = map.get(key);
-
-						if (System.currentTimeMillis() - value.getTime() > period) {
-							map.remove(key);
-						}
-					}
-				}
-			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
-	}
-
 	public static void stopBending() {
 		for (final CoreAbility ability : CoreAbility.getAbilities()) {
 			if (ability instanceof AddonAbility) {
@@ -1918,9 +1861,6 @@ public class GeneralMethods {
 		MovementHandler.resetAll();
 		MultiAbilityManager.removeAll();
 		TempFallingBlock.removeAllFallingBlocks();
-		if (!INVINCIBLE.isEmpty()) {
-			INVINCIBLE.clear();
-		}
 	}
 
 	public static void stopPlugin() {
