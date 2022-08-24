@@ -4,10 +4,10 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.kingdom.model.KingdomRelation;
+import org.kingdoms.constants.group.Kingdom;
+import org.kingdoms.constants.group.model.KingdomRelation;
 import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.structures.managers.Regulator;
+import org.kingdoms.constants.land.structures.objects.Regulator;
 import org.kingdoms.constants.player.DefaultKingdomPermission;
 import org.kingdoms.constants.player.KingdomPlayer;
 
@@ -26,7 +26,7 @@ public class Kingdoms extends RegionProtectionBase {
             final Kingdom kingdom = land.getKingdom();
             if (kPlayer.isAdmin()
                     || (!protectDuringInvasions && !land.getInvasions().isEmpty() && land.getInvasions().values().stream().anyMatch(i -> i.getInvader().equals(kPlayer))) // Protection during invasions is off, and player is currently invading; allow
-                    || (land.getStructure() != null && land.getStructure() instanceof Regulator && ((Regulator) land.getStructure()).hasAttribute(player, Regulator.Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow
+                    || (land.getStructure(Regulator.class) != null && (land.getStructure(Regulator.class)).hasAttribute(player, Regulator.Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow
                 return false;
             }
             if (!kPlayer.hasKingdom() // Player has no kingdom; deny

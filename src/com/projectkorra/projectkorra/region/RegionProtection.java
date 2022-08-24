@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.region;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.hooks.RegionProtectionHook;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -87,7 +89,7 @@ public class RegionProtection {
         }
 
         final boolean value = isRegionProtectedCached(player, location, ability);
-        blockMap.put(block, new BlockCacheElement(player, block, ability.getName(), value, System.currentTimeMillis()));
+        blockMap.put(block, new BlockCacheElement(player, block, ability, value, System.currentTimeMillis()));
         return value;
     }
 
@@ -142,5 +144,19 @@ public class RegionProtection {
             }
         }
         return false;
+    }
+
+    public static void startCleanCacheTask(double period) {
+        Bukkit.getScheduler().runTaskTimer(ProjectKorra.plugin, () -> {
+            for (final Map<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
+                for (final Block key : map.keySet()) {
+                    final BlockCacheElement value = map.get(key);
+
+                    if (System.currentTimeMillis() - value.getTime() > period) {
+                        map.remove(key);
+                    }
+                }
+            }
+        }, 0, (long) (period / 20));
     }
 }
