@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.hooks.CanBendHook;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.OptionalBoolean;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -170,7 +171,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
-		} else return !GeneralMethods.isRegionProtectedFromBuild(this.player, ability.getName(), playerLoc);
+		} else if (RegionProtection.isRegionProtected(this.player, playerLoc, ability)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public boolean canBendIgnoreBinds(final CoreAbility ability) {

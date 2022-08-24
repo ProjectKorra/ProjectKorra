@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -319,7 +320,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
+			if (RegionProtection.isRegionProtected(player, location, CoreAbility.getAbility(abilityName))) {
 				continue;
 			} else if (isEarthbendable(player, block)) {
 				return block;
@@ -347,7 +348,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
+			if (RegionProtection.isRegionProtected(player, location, CoreAbility.getAbility(abilityName))) {
 				continue;
 			}
 			if (isLavabendable(player, block)) {
@@ -417,7 +418,8 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static boolean isEarthbendable(final Player player, final String abilityName, final Block block) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isEarthbendable(block.getType(), true, true, true) || PREVENT_EARTHBENDING.contains(block) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
+		if (bPlayer == null || !isEarthbendable(block.getType(), true, true, true) || PREVENT_EARTHBENDING.contains(block)
+				|| RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName))) {
 			return false;
 		} else if (isMetal(block) && !bPlayer.canMetalbend()) {
 			return false;

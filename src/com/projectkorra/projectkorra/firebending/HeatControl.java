@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -309,7 +310,7 @@ public class HeatControl extends FireAbility {
 	}
 
 	public static void melt(final Player player, final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "HeatControl", block.getLocation())) {
+		if (RegionProtection.isRegionProtected(player, block.getLocation(), "HeatControl")) {
 			return;
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);

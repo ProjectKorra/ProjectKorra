@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -172,7 +173,7 @@ public class LavaSurgeWall extends LavaAbility {
 						vec = GeneralMethods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
 
-						if (GeneralMethods.isRegionProtectedFromBuild(this.player, "LavaSurge", block.getLocation())) {
+						if (RegionProtection.isRegionProtected(this.player, block.getLocation(), "LavaSurge")) {
 							continue;
 						}
 						if (WALL_BLOCKS.containsKey(block)) {
@@ -269,7 +270,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	private void addLava(final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, "LavaSurge", block.getLocation())) {
+		if (RegionProtection.isRegionProtected(this.player, block.getLocation(), "LavaSurge")) {
 			return;
 		}
 		if (!TempBlock.isTempBlock(block)) {

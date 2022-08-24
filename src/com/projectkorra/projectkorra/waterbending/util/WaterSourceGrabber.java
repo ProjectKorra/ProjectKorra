@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -58,7 +59,7 @@ public class WaterSourceGrabber {
 			this.currentLoc.add(0, this.animimationSpeed * Math.signum(locDiff), 0);
 			final Block block = this.currentLoc.getBlock();
 
-			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterSpout", block.getLocation())) {
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterSpout")) {
 				this.remove();
 				return;
 			}
@@ -75,7 +76,7 @@ public class WaterSourceGrabber {
 			this.currentLoc.add(vec.normalize().multiply(this.animimationSpeed));
 
 			final Block block = this.currentLoc.getBlock();
-			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", block.getLocation())) {
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterManipulation")) {
 				this.remove();
 				return;
 			}
