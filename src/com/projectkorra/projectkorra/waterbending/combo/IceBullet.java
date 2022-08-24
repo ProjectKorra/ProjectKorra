@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -163,7 +164,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			}
 			if (i % 2 == 0) {
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 1.5)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", entity.getLocation())) {
+					if (RegionProtection.isRegionProtected(this.player, entity.getLocation(), "WaterManipulation")) {
 						this.remove();
 						return;
 					}
@@ -202,7 +203,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			final Block block = loc.clone().add(dir).getBlock();
 			this.location = block.getLocation();
 
-			if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this.player, "WaterManipulation", block.getLocation())) {
+			if (ElementalAbility.isAir(block.getType()) && !RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterManipulation")) {
 				this.createBlock(block, mat, data);
 			}
 		}

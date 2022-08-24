@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class BlockCacheElement {
+
 	private Player player;
 	private Block block;
 	private String ability;

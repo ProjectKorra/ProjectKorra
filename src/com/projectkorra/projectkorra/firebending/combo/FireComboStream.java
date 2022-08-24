@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -120,7 +121,7 @@ public class FireComboStream extends BukkitRunnable {
 	}
 
 	public void collision(final LivingEntity entity, final Vector direction, final CoreAbility coreAbility) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, "Blaze", entity.getLocation())) {
+		if (RegionProtection.isRegionProtected(this.player, entity.getLocation(), "Blaze")) {
 			return;
 		}
 		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, 0.3f, 0.3f);

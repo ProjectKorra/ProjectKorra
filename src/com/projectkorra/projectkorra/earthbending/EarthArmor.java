@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -509,7 +510,7 @@ public class EarthArmor extends EarthAbility {
 			return false;
 		}
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.getName(), playerLoc)) {
+		if (RegionProtection.isRegionProtected(this.player, playerLoc, this.getName())) {
 			return false;
 		}
 
