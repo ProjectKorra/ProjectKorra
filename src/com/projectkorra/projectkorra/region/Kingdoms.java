@@ -11,9 +11,9 @@ import org.kingdoms.constants.land.structures.objects.Regulator;
 import org.kingdoms.constants.player.DefaultKingdomPermission;
 import org.kingdoms.constants.player.KingdomPlayer;
 
-public class Kingdoms extends RegionProtectionBase {
+class Kingdoms extends RegionProtectionBase {
 
-    public Kingdoms() {
+    protected Kingdoms() {
         super("Kingdoms", "Kingdoms.Respect");
     }
 

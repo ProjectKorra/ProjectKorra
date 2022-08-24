@@ -5,9 +5,9 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class GriefDefender extends RegionProtectionBase {
+class GriefDefender extends RegionProtectionBase {
 
-    public GriefDefender() {
+    protected GriefDefender() {
         super("GriefDefender");
     }
 

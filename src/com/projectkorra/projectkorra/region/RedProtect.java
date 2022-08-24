@@ -6,9 +6,9 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class RedProtect extends RegionProtectionBase {
+class RedProtect extends RegionProtectionBase {
 
-    public RedProtect() {
+    protected RedProtect() {
         super("RedProtect");
     }
 

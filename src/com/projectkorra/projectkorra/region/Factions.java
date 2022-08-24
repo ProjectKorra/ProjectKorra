@@ -8,9 +8,9 @@ import me.markeh.factionsframework.enums.Rel;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class Factions extends RegionProtectionBase {
+class Factions extends RegionProtectionBase {
 
-    public Factions() {
+    protected Factions() {
         super("Factions");
     }
 
