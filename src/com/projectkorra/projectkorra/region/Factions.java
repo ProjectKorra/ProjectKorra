@@ -1,10 +1,12 @@
 package com.projectkorra.projectkorra.region;
 
+import com.massivecraft.factions.FLocation;
+import com.massivecraft.factions.FPlayer;
+import com.massivecraft.factions.FPlayers;
+import com.massivecraft.factions.Faction;
+import com.massivecraft.factions.struct.Relation;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import me.markeh.factionsframework.entities.FPlayer;
-import me.markeh.factionsframework.entities.FPlayers;
-import me.markeh.factionsframework.entities.Faction;
-import me.markeh.factionsframework.enums.Rel;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -16,11 +18,12 @@ class Factions extends RegionProtectionBase {
 
     @Override
     public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
-        final FPlayer fPlayer = FPlayers.getBySender(player);
-        final Faction faction = me.markeh.factionsframework.entities.Factions.getFactionAt(location);
-        final Rel relation = fPlayer.getRelationTo(faction);
+        final FPlayer fPlayer = FPlayers.getInstance().getByPlayer(player);
+        FLocation fLoc = new FLocation(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        final Faction faction = com.massivecraft.factions.Board.getInstance().getFactionAt(fLoc);
+        final Relation relation = fPlayer.getRelationTo(faction);
 
-        if (!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)) {
+        if (!(faction.isWilderness() || fPlayer.getFaction().equals(faction) || relation == Relation.ALLY)) {
             return true;
         }
 

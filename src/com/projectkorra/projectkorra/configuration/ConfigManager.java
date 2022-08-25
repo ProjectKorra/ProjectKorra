@@ -667,8 +667,8 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
 			config.addDefault("Properties.RegionProtection.RespectFactions", true);
 			config.addDefault("Properties.RegionProtection.RespectTowny", true);
-			config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
 			config.addDefault("Properties.RegionProtection.RespectLWC", true);
+			config.addDefault("Properties.RegionProtection.RespectLands", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
 			config.addDefault("Properties.RegionProtection.Kingdoms.Respect", true);

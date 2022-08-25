@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +29,7 @@ public class RegionProtection {
         new GriefDefender();
         new GriefPrevention();
         new Residence();
+        new Lands();
     }
 
     /**
@@ -42,6 +42,11 @@ public class RegionProtection {
      */
     private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * Register a new type of region protection to respect with bending.
+     * @param plugin The plugin the region protection belongs to
+     * @param hook The region protection hook
+     */
     public static void registerRegionProtection(@NotNull JavaPlugin plugin, @NotNull RegionProtectionHook hook) {
         PROTECTIONS.put(plugin, hook);
     }
@@ -146,6 +151,10 @@ public class RegionProtection {
         return false;
     }
 
+    /**
+     * Internal use only!
+     * @param period The time, in milliseconds, to clean the cache
+     */
     public static void startCleanCacheTask(double period) {
         Bukkit.getScheduler().runTaskTimer(ProjectKorra.plugin, () -> {
             for (final Map<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
@@ -157,6 +166,6 @@ public class RegionProtection {
                     }
                 }
             }
-        }, 0, (long) (period / 20));
+        }, 0, (long) (period / 50));
     }
 }
