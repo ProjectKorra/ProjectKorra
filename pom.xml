@@ -17,12 +17,12 @@
       <id>sk89q-repo</id>
       <url>https://maven.enginehub.org/repo/</url>
     </repository>
-    <!-- GriefPrevention and Towny Repo -->
+    <!-- GriefPrevention, Towny and SaberFactions Repo -->
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
-    <!-- NoCheat Repo -->
+    <!-- Bungee Repo -->
     <repository>
       <id>md_5-snapshots</id>
       <url>https://repo.md-5.net/content/repositories/snapshots/</url>
@@ -81,9 +81,9 @@
     </dependency>
     <!-- Factions -->
     <dependency>
-      <groupId>me.markeh</groupId>
-      <artifactId>factionsframework</artifactId>
-      <version>1.2.0</version>
+      <groupId>com.github.SaberLLC</groupId>
+      <artifactId>Saber-Factions</artifactId>
+      <version>2.4.0-RC</version>
       <scope>provided</scope>
     </dependency>
     <!-- GriefPrevention -->
@@ -116,7 +116,13 @@
   <scope>system</scope>
   <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
 </dependency>
--->
+    <!-- Lands -->
+    <dependency>
+      <groupId>com.github.angeschossen</groupId>
+      <artifactId>LandsAPI</artifactId>
+      <version>6.0.2</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- Residence -->
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>
@@ -167,14 +173,8 @@
     <dependency>
       <groupId>com.github.cryptomorin</groupId>
       <artifactId>kingdoms</artifactId>
-      <version>1.12.3</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>1.13.9</version>
+      <scope>provided</scope>
     </dependency>
     <!-- PlaceholderAPI -->
     <dependency>
@@ -229,12 +229,7 @@
         <configuration>
           <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
           <filters>
-            <filter>
-              <artifact>com.github.cryptomorin:kingdoms</artifact>
-              <includes>
-                <include>org/kingdoms/constants/player/KingdomPermission.class</include>
-              </includes>
-            </filter>
+
           </filters>
           <relocations>
             <relocation>
