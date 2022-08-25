@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.Ability;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,17 +16,35 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 public class FireDamageTimer {
 
 	private static final int MAX_TICKS = 90;
+	private static Ability ability = null;
 	private static final int DAMAGE = 1;
 	private static final long BUFFER = 30;
 	private static final Map<Entity, Player> INSTANCES = new ConcurrentHashMap<>();
 	private static final Map<Entity, Long> TIMES = new ConcurrentHashMap<>();
 
+	/**
+	 * Deprecated. Use FireDamageTimer#FireDamageTimer(final Entity entity, Final Player source, Ability abil)
+	 * instead.
+	 * @param entity affected entity.
+	 * @param source player who used the fire move.
+	 */
+	@Deprecated
 	public FireDamageTimer(final Entity entity, final Player source) {
 		if (entity.getEntityId() == source.getEntityId()) {
 			return;
 		}
 
 		INSTANCES.put(entity, source);
+		ability = null;
+	}
+
+	public FireDamageTimer(final Entity entity, final Player source, Ability abil) {
+		if (entity.getEntityId() == source.getEntityId()) {
+			return;
+		}
+
+		INSTANCES.put(entity, source);
+		ability = abil;
 	}
 
 	public static boolean isEnflamed(final Entity entity) {
@@ -54,7 +73,11 @@ public class FireDamageTimer {
 			final Player source = INSTANCES.get(entity);
 
 			// damages the entity.
-			DamageHandler.damageEntity(Lentity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
+			if (ability == null) {
+				DamageHandler.damageEntity(Lentity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
+			} else {
+				DamageHandler.damageEntity(Lentity, source, DAMAGE, ability);
+			}
 
 			if (entity.getFireTicks() > MAX_TICKS) {
 				entity.setFireTicks(MAX_TICKS);

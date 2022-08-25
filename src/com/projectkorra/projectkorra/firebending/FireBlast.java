@@ -194,7 +194,7 @@ public class FireBlast extends FireAbility {
 				entity.setFireTicks((int) (this.fireTicks * 20));
 				DamageHandler.damageEntity(entity, this.damage, this);
 				AirAbility.breakBreathbendingHold(entity);
-				new FireDamageTimer(entity, this.player);
+				new FireDamageTimer(entity, this.player, this);
 				this.remove();
 			}
 		}

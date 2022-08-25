@@ -141,7 +141,7 @@ public class FireShield extends FireAbility {
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
 						entity.setFireTicks((int) (this.shieldFireTicks * 20));
-						new FireDamageTimer(entity, this.player);
+						new FireDamageTimer(entity, this.player, this);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();
@@ -169,7 +169,7 @@ public class FireShield extends FireAbility {
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
 						entity.setFireTicks((int) (this.discFireTicks * 20));
-						new FireDamageTimer(entity, this.player);
+						new FireDamageTimer(entity, this.player, this);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();
