@@ -123,6 +123,8 @@ public class ConfigManager {
 			config.addDefault("Commands.Toggle.ToggledOff", "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
 			config.addDefault("Commands.Toggle.ToggleOnSingleElement", "You have toggled on your {element}.");
 			config.addDefault("Commands.Toggle.ToggleOffSingleElement", "You have toggled off your {element}.");
+			config.addDefault("Commands.Toggle.ToggleOnSingleElementPassive", "You have toggled on your {element} Passives.");
+			config.addDefault("Commands.Toggle.ToggleOffSingleElementPassive", "You have toggled off your {element} Passives.");
 			config.addDefault("Commands.Toggle.WrongElement", "You do not have that element.");
 			config.addDefault("Commands.Toggle.All.ToggledOffForAll", "Bending is currently toggled off for all players.");
 			config.addDefault("Commands.Toggle.All.ToggleOn", "Bending has been toggled back on for all players.");

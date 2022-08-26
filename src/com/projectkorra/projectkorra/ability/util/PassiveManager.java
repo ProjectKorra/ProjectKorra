@@ -78,6 +78,8 @@ public class PassiveManager {
 			return false;
 		} else if (!bPlayer.isElementToggled(element)) {
 			return false;
+		} else if (!bPlayer.isPassiveToggled(element)) {
+			return false;
 		}
 		return true;
 	}

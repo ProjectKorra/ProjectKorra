@@ -21,7 +21,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
  */
 public class ToggleCommand extends PKCommand {
 
-	private final String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, toggledOffSingleElement, toggledOnSingleElement, wrongElementOther, toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound;
+	private final String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, toggledOffSingleElement, toggledOnSingleElement, toggledOnSingleElementPassive, toggledOffSingleElementPassive, wrongElementOther, toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound;
 
 	public ToggleCommand() {
 		super("toggle", "/bending toggle <All/Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
@@ -35,6 +35,8 @@ public class ToggleCommand extends PKCommand {
 		this.toggleOnAll = c.getString("Commands.Toggle.All.ToggleOn");
 		this.toggledOffSingleElement = c.getString("Commands.Toggle.ToggleOffSingleElement");
 		this.toggledOnSingleElement = c.getString("Commands.Toggle.ToggleOnSingleElement");
+		this.toggledOffSingleElementPassive = c.getString("Commands.Toggle.ToggleOffSingleElementPassive");
+		this.toggledOnSingleElementPassive = c.getString("Commands.Toggle.ToggleOnSingleElementPassive");
 		this.wrongElementOther = c.getString("Commands.Toggle.Other.WrongElement");
 		this.toggledOnOtherElementConfirm = c.getString("Commands.Toggle.Other.ToggledOnElementConfirm");
 		this.toggledOffOtherElementConfirm = c.getString("Commands.Toggle.Other.ToggledOffElementConfirm");
@@ -66,7 +68,7 @@ public class ToggleCommand extends PKCommand {
 				bPlayer.toggleBending();
 			}
 		} else if (args.size() == 1) {
-			if (args.size() == 1 && args.get(0).equalsIgnoreCase("all") && this.hasPermission(sender, "all")) { // bending toggle all.
+			if (args.get(0).equalsIgnoreCase("all") && this.hasPermission(sender, "all")) { // bending toggle all.
 				if (Commands.isToggledForAll) { // Bending is toggled off for all players.
 					Commands.isToggledForAll = false;
 					for (final Player player : Bukkit.getOnlinePlayers()) {
@@ -99,6 +101,21 @@ public class ToggleCommand extends PKCommand {
 					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOnSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+				}
+			}  else if (sender instanceof Player && args.size() == 1 && Element.fromString(args.get(0).split("Passives")[0]) != null && !(Element.fromString(args.get(0).split("Passives")[0]) instanceof SubElement)) {
+				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.fromString(args.get(0).split("Passives")[0]))) {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElement);
+					return;
+				}
+				final Element e = Element.fromString(args.get(0).split("Passives")[0]);
+				final ChatColor color = e != null ? e.getColor() : null;
+				final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+				bPlayer.togglePassive(e);
+
+				if (bPlayer.isPassiveToggled(e)) {
+					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOnSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+				} else {
+					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				}
 			} else {
 				this.help(sender, false);
@@ -152,6 +169,7 @@ public class ToggleCommand extends PKCommand {
 			final List<String> elements = new ArrayList<String>();
 			for (final Element e : Element.getAllElements()) {
 				elements.add(e.getName());
+				elements.add(e.getName() + "Passives");
 			}
 			Collections.sort(elements);
 			l.add("All");

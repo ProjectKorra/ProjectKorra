@@ -62,6 +62,7 @@ public class OfflineBendingPlayer {
     protected HashMap<Integer, String> abilities = new HashMap<>();
     protected final Map<String, Cooldown> cooldowns = new HashMap<>();
     protected final Set<Element> toggledElements = new HashSet<>();
+    protected final Set<Element> toggledPassives = new HashSet<>();
     protected final DBCooldownManager cooldownManager;
 
     private int currentSlot;
@@ -845,6 +846,10 @@ public class OfflineBendingPlayer {
         return !this.toggledElements.contains(element);
     }
 
+    public boolean isPassiveToggled(final Element element) {
+        return !this.toggledPassives.contains(element);
+    }
+
     /**
      * Checks if the {@link BendingPlayer} is permaremoved.
      *
@@ -909,6 +914,14 @@ public class OfflineBendingPlayer {
             this.toggledElements.remove(element);
         } else {
             this.toggledElements.add(element);
+        }
+    }
+
+    public void togglePassive(@NotNull final Element element) {
+        if (this.toggledPassives.contains(element)) {
+            this.toggledPassives.remove(element);
+        } else {
+            this.toggledPassives.add(element);
         }
     }
 
@@ -1020,6 +1033,7 @@ public class OfflineBendingPlayer {
         bendingPlayer.elements.addAll(offlineBendingPlayer.elements);
         bendingPlayer.subelements.addAll(offlineBendingPlayer.subelements);
         bendingPlayer.toggledElements.addAll(offlineBendingPlayer.toggledElements);
+        bendingPlayer.toggledPassives.addAll(offlineBendingPlayer.toggledPassives);
         bendingPlayer.toggled = offlineBendingPlayer.toggled;
         bendingPlayer.permaRemoved = offlineBendingPlayer.permaRemoved;
         bendingPlayer.cooldowns.putAll(offlineBendingPlayer.cooldowns);
@@ -1043,6 +1057,7 @@ public class OfflineBendingPlayer {
         offlineBendingPlayer.elements.addAll(bendingPlayer.elements);
         offlineBendingPlayer.subelements.addAll(bendingPlayer.subelements);
         offlineBendingPlayer.toggledElements.addAll(bendingPlayer.toggledElements);
+        offlineBendingPlayer.toggledPassives.addAll(bendingPlayer.toggledPassives);
         offlineBendingPlayer.toggled = bendingPlayer.toggled;
         offlineBendingPlayer.permaRemoved = bendingPlayer.permaRemoved;
         offlineBendingPlayer.cooldowns.putAll(bendingPlayer.cooldowns);
