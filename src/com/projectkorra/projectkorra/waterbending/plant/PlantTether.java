@@ -126,4 +126,9 @@ public class PlantTether extends PlantAbility {
     public Location getLocation() {
         return this.originLoc;
     }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }
