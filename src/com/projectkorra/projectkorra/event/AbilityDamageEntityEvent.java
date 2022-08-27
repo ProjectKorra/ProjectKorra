@@ -19,7 +19,6 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancelled = false;
-	private final Player source;
 	private final Entity entity;
 	private final Ability ability;
 	private double damage;
@@ -28,13 +27,11 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	/**
 	 * Create a new AbilityDamageEntityEvent
 	 *
-	 * @param source The player who used the damaging move
 	 * @param entity The entity that was damaged
 	 * @param ability The damaging ability
 	 * @param damage The amount of damage done
 	 */
-	public AbilityDamageEntityEvent(final Player source, final Entity entity, final Ability ability, final double damage, final boolean ignoreArmor) {
-		this.source = source;
+	public AbilityDamageEntityEvent(final Entity entity, final Ability ability, final double damage, final boolean ignoreArmor) {
 		this.entity = entity;
 		this.ability = ability;
 		this.damage = damage;
@@ -87,7 +84,7 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	 * @return player that used ability
 	 */
 	public Player getSource() {
-		return this.source;
+		return this.ability.getPlayer();
 	}
 
 	@Override

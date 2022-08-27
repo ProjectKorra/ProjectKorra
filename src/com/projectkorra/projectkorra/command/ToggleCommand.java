@@ -21,7 +21,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
  */
 public class ToggleCommand extends PKCommand {
 
-	private final String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, toggledOffSingleElement, toggledOnSingleElement, toggledOnSingleElementPassive, toggledOffSingleElementPassive, wrongElementOther, toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound;
+	private final String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, toggledOffSingleElement, toggledOnSingleElement, toggledOnSingleElementPassive, toggledOffSingleElementPassive, wrongElementOther, toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound, toggleAllPassivesOffSelf, toggleAllPassivesOnSelf;
 
 	public ToggleCommand() {
 		super("toggle", "/bending toggle <All/Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
@@ -44,6 +44,8 @@ public class ToggleCommand extends PKCommand {
 		this.toggledOffOtherElement = c.getString("Commands.Toggle.Other.ToggledOffElementByOther");
 		this.wrongElement = c.getString("Commands.Toggle.WrongElement");
 		this.notFound = c.getString("Commands.Toggle.Other.PlayerNotFound");
+		this.toggleAllPassivesOffSelf = c.getString("Commands.Toggle.ToggledPassivesOff");
+		this.toggleAllPassivesOnSelf =  c.getString("Commands.Toggle.ToggledPassivesOn");
 	}
 
 	@Override
@@ -102,7 +104,7 @@ public class ToggleCommand extends PKCommand {
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				}
-			}  else if (sender instanceof Player && args.size() == 1 && Element.fromString(args.get(0).split("Passives")[0]) != null && !(Element.fromString(args.get(0).split("Passives")[0]) instanceof SubElement)) {
+			}  else if (sender instanceof Player && args.size() == 1 && !args.get(0).equals("Passives") && Element.fromString(args.get(0).split("Passives")[0]) != null && !(Element.fromString(args.get(0).split("Passives")[0]) instanceof SubElement)) {
 				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.fromString(args.get(0).split("Passives")[0]))) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElement);
 					return;
@@ -116,6 +118,16 @@ public class ToggleCommand extends PKCommand {
 					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOnSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+				}
+			} else if (sender instanceof Player && args.size() == 1 && args.get(0).equals("Passives")) {
+				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+
+				if (bPlayer.isToggledPassives()) {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggleAllPassivesOffSelf);
+					bPlayer.toggleAllPassives();
+				} else {
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.toggleAllPassivesOnSelf);
+					bPlayer.toggleAllPassives();
 				}
 			} else {
 				this.help(sender, false);
@@ -173,6 +185,7 @@ public class ToggleCommand extends PKCommand {
 			}
 			Collections.sort(elements);
 			l.add("All");
+			l.add("Passives");
 			l.addAll(elements);
 		} else {
 			for (final Player p : Bukkit.getOnlinePlayers()) {

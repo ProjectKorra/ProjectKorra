@@ -1019,10 +1019,6 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDeath(final PlayerDeathEvent event) {
-		if (!(event.getEntity().getType() == EntityType.PLAYER)) {
-			return;
-		}
-
 		if (event.getKeepInventory()) {
 			if (TempArmor.hasTempArmor(event.getEntity())) {
 				for (final TempArmor armor : TempArmor.getTempArmorList(event.getEntity())) {
@@ -1030,7 +1026,6 @@ public class PKListener implements Listener {
 				}
 			}
 		}
-
 
 		if (event.getEntity().getKiller() != null) {
 			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
@@ -1498,15 +1493,15 @@ public class PKListener implements Listener {
 						new WaterArms(player);
 					} else if (abil.equalsIgnoreCase("HealingWaters")) {
 						new HealingWaters(player);
-					} else if (abil.equalsIgnoreCase("PlantTether")) {
-						if (CoreAbility.hasAbility(player, PlantTether.class)) {
-							final PlantTether pt = CoreAbility.getAbility(player, PlantTether.class);
-							if (pt.isInitial()) {
-								pt.searchForEntity();
-							}
-						} else {
-							new PlantTether(player);
-						}
+//					} else if (abil.equalsIgnoreCase("PlantTether")) {
+//						if (CoreAbility.hasAbility(player, PlantTether.class)) {
+//							final PlantTether pt = CoreAbility.getAbility(player, PlantTether.class);
+//							if (pt.isInitial()) {
+//								pt.searchForEntity();
+//							}
+//						} else {
+//							new PlantTether(player);
+//						}
 					}
 				}
 			}

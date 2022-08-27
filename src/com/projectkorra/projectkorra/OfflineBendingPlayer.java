@@ -55,6 +55,7 @@ public class OfflineBendingPlayer {
     protected final UUID uuid;
     protected boolean permaRemoved;
     protected boolean toggled;
+    protected boolean allPassivesToggled;
     protected boolean loading;
 
     protected final List<Element> elements = new ArrayList<>();
@@ -74,6 +75,7 @@ public class OfflineBendingPlayer {
         this.player = player;
         this.uuid = player.getUniqueId();
         this.toggled = true;
+        this.allPassivesToggled = true;
         this.loading = true;
 
         this.cooldownManager = Manager.getManager(DBCooldownManager.class);
@@ -868,6 +870,10 @@ public class OfflineBendingPlayer {
         return this.toggled;
     }
 
+    public boolean isToggledPassives() {
+        return this.allPassivesToggled;
+    }
+
     /**
      * Sets the {@link BendingPlayer}'s abilities. This method also saves the
      * abilities to the database.
@@ -907,6 +913,10 @@ public class OfflineBendingPlayer {
 
     public void toggleBending() {
         this.toggled = !this.toggled;
+    }
+
+    public void toggleAllPassives() {
+        this.allPassivesToggled = !this.allPassivesToggled;
     }
 
     public void toggleElement(@NotNull final Element element) {
@@ -1035,6 +1045,7 @@ public class OfflineBendingPlayer {
         bendingPlayer.toggledElements.addAll(offlineBendingPlayer.toggledElements);
         bendingPlayer.toggledPassives.addAll(offlineBendingPlayer.toggledPassives);
         bendingPlayer.toggled = offlineBendingPlayer.toggled;
+        bendingPlayer.allPassivesToggled = offlineBendingPlayer.allPassivesToggled;
         bendingPlayer.permaRemoved = offlineBendingPlayer.permaRemoved;
         bendingPlayer.cooldowns.putAll(offlineBendingPlayer.cooldowns);
         bendingPlayer.loading = false;
@@ -1059,6 +1070,7 @@ public class OfflineBendingPlayer {
         offlineBendingPlayer.toggledElements.addAll(bendingPlayer.toggledElements);
         offlineBendingPlayer.toggledPassives.addAll(bendingPlayer.toggledPassives);
         offlineBendingPlayer.toggled = bendingPlayer.toggled;
+        offlineBendingPlayer.allPassivesToggled = bendingPlayer.allPassivesToggled;
         offlineBendingPlayer.permaRemoved = bendingPlayer.permaRemoved;
         offlineBendingPlayer.cooldowns.putAll(bendingPlayer.cooldowns);
         offlineBendingPlayer.loading = false;

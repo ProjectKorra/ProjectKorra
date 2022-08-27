@@ -186,7 +186,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	public boolean canBendPassive(final CoreAbility ability) {
-		if (ability == null || !this.isPassiveToggled(ability.getElement())) {
+		if (ability == null || !this.isPassiveToggled(ability.getElement()) || !this.isToggledPassives()) {
 			return false; // If the passive is disabled.
 		}
 		final Element element = ability.getElement();
@@ -211,7 +211,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 	public boolean canUsePassive(final CoreAbility ability) {
 		final Element element = ability.getElement();
-		if (!this.isToggled() || !this.isElementToggled(element) || !this.isPassiveToggled(element)) {
+		if (!this.isToggled() || !this.isElementToggled(element) || !this.isPassiveToggled(element) || !this.isToggledPassives()) {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
@@ -596,6 +596,12 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	@Override
 	public void toggleBending() {
 		this.toggled = !this.toggled;
+		PassiveManager.registerPassives(this.player);
+	}
+
+	@Override
+	public void toggleAllPassives() {
+		this.allPassivesToggled = !this.allPassivesToggled;
 		PassiveManager.registerPassives(this.player);
 	}
 

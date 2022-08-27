@@ -30,12 +30,7 @@ public class FireDamageTimer {
 	 */
 	@Deprecated
 	public FireDamageTimer(final Entity entity, final Player source) {
-		if (entity.getEntityId() == source.getEntityId()) {
-			return;
-		}
-
-		INSTANCES.put(entity, source);
-		ability = null;
+		this(entity, source, null);
 	}
 
 	public FireDamageTimer(final Entity entity, final Player source, Ability abil) {

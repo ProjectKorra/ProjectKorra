@@ -121,6 +121,9 @@ public class ConfigManager {
 			config.addDefault("Commands.Toggle.Description", "This command will toggle a player's own bending on or off. If toggled off, all abilities should stop working until it is toggled back on. Logging off will automatically toggle your Bending back on. If you run the command /bending toggle all, Bending will be turned off for all players and cannot be turned back on until the command is run again.");
 			config.addDefault("Commands.Toggle.ToggledOn", "You have turned your bending back on.");
 			config.addDefault("Commands.Toggle.ToggledOff", "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
+			config.addDefault("Commands.Toggle.ToggledPassivesOn", "You have turned your passives back on.");
+			config.addDefault("Commands.Toggle.ToggledPassivesOff", "Your passives has been toggled off.");
+
 			config.addDefault("Commands.Toggle.ToggleOnSingleElement", "You have toggled on your {element}.");
 			config.addDefault("Commands.Toggle.ToggleOffSingleElement", "You have toggled off your {element}.");
 			config.addDefault("Commands.Toggle.ToggleOnSingleElementPassive", "You have toggled on your {element} Passives.");
@@ -342,9 +345,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceSpike.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an ice blast or raise an ice spike. If the ice blast or ice spike comes into contact with another entity, it will give them slowness and deal some damage to them..");
 			config.addDefault("Abilities.Water.IceSpike.Instructions", "\n" + "(Blast) Tap sneak on a water source and then left click in a direction to fire an ice blast in a direction. Additionally, you can left click to manipulate the ice blast while it's in the air to change the direction of the blast." + "\n" + "(Spike) While in range of ice, tap sneak to raise ice pillars from the ice. If a player is caught in these ice pillars they will be propelled into the air. You cannot be looking at ice or water or this feature will not activate. Alternatively, you can left click an ice block to raise a single pilar of ice.");
 			config.addDefault("Abilities.Water.IceSpike.DeathMessage", "{victim} was impaled by {attacker}'s {ability}");
-			config.addDefault("Abilities.Water.PlantTether.Description", "PlantTether is unique ability that creates a vine from some plant source to either constrict and draw in an enemy, or pull the user.");
-			config.addDefault("Abilities.Water.PlantTether.Instructions", "Tap sneak while looking at a plant source. Then tap sneak again at the source to pull yourself towards it. Or, tap sneak at a target entity to have them pulled towards the plant source.");
-			config.addDefault("Abilities.Water.PlantTether.DeathMessage", "{victim} was constricted by {attacker}'s {ability}");
+//			config.addDefault("Abilities.Water.PlantTether.Description", "PlantTether is unique ability that creates a vine from some plant source to either constrict and draw in an enemy, or pull the user.");
+//			config.addDefault("Abilities.Water.PlantTether.Instructions", "Tap sneak while looking at a plant source. Then tap sneak again at the source to pull yourself towards it. Or, tap sneak at a target entity to have them pulled towards the plant source.");
+//			config.addDefault("Abilities.Water.PlantTether.DeathMessage", "{victim} was constricted by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.OctopusForm.Description", "OctopusForm is one of the most advanced abilities in a waterbender's aresenal. It has the possibility of doing high damage to anyone it comes into contact with.");
 			config.addDefault("Abilities.Water.OctopusForm.Instructions", "Left click a water source and then hold sneak to form a set of water tentacles. This ability will channel as long as you are holding sneak. Additionally, if you left click this ability will whip targets you're facing dealing damage and knockback, if they're in range.");
 			config.addDefault("Abilities.Water.OctopusForm.DeathMessage", "{victim} was slapped to death by {attacker}'s {ability}");
@@ -1292,10 +1295,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBullet.ShotCooldown", 500);
 			config.addDefault("Abilities.Water.IceBullet.Combination", Arrays.asList("WaterBubble:SNEAK_DOWN", "WaterBubble:SNEAK_UP", "IceBlast:SNEAK_DOWN"));
 
-			config.addDefault("Abilities.Water.PlantTether.Enabled", true);
-			config.addDefault("Abilities.Water.PlantTether.Cooldown", 15000);
-			config.addDefault("Abilities.Water.PlantTether.Damage", 2);
-			config.addDefault("Abilities.Water.PlantTether.SelectRange", 10);
+//			config.addDefault("Abilities.Water.PlantTether.Enabled", true);
+//			config.addDefault("Abilities.Water.PlantTether.Cooldown", 15000);
+//			config.addDefault("Abilities.Water.PlantTether.Damage", 2);
+//			config.addDefault("Abilities.Water.PlantTether.SelectRange", 10);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Enabled", true);
