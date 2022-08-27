@@ -20,16 +20,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RegionProtection {
 
     public RegionProtection() {
-        new WorldGuard();
-        new Factions();
-        new LWC();
-        new Towny();
-        new Kingdoms();
-        new RedProtect();
-        new GriefDefender();
-        new GriefPrevention();
-        new Residence();
-        new Lands();
+        if (enabled("WorldGuard")) new WorldGuard();
+        if (enabled("Factions")) new Factions();
+        if (enabled("LWC")) new LWC();
+        if (enabled("Towny")) new Towny();
+        if (enabled("Kingdoms")) new Kingdoms();
+        if (enabled("RedProtect")) new RedProtect();
+        if (enabled("GriefDefender")) new GriefDefender();
+        if (enabled("GriefPrevention")) new GriefPrevention();
+        if (enabled("Residence")) new Residence();
+        if (enabled("Lands")) new Lands();
     }
 
     /**
@@ -167,5 +167,9 @@ public class RegionProtection {
                 }
             }
         }, 0, (long) (period / 50));
+    }
+
+    private static boolean enabled(String plugin) {
+        return Bukkit.getPluginManager().isPluginEnabled(plugin);
     }
 }

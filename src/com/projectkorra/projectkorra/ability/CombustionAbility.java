@@ -21,6 +21,11 @@ public abstract class CombustionAbility extends FireAbility implements SubAbilit
 		return Element.COMBUSTION;
 	}
 
+	@Override
+	public boolean isExplosiveAbility() {
+		return true;
+	}
+
 	//Overriding these methods to make sure Combustion abilities don't get buffed by blue fire
 	@Override
 	public double applyModifiersDamage(double value) {

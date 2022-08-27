@@ -21,6 +21,11 @@ public abstract class LightningAbility extends FireAbility implements SubAbility
 		return Element.LIGHTNING;
 	}
 
+	@Override
+	public boolean isIgniteAbility() {
+		return false;
+	}
+
 	//Overriding these methods to make sure Lightning abilities don't get buffed by blue fire
 	@Override
 	public double applyModifiersDamage(double value) {
