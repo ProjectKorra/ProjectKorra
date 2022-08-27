@@ -5,7 +5,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.hooks.RegionProtectionHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;

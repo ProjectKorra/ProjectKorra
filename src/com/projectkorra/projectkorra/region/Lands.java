@@ -2,9 +2,7 @@ package com.projectkorra.projectkorra.region;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import me.angeschossen.lands.api.flags.Flag;
 import me.angeschossen.lands.api.flags.Flags;
-import me.angeschossen.lands.api.flags.types.LandFlag;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Area;
 import org.bukkit.Location;
