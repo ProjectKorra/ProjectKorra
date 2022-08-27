@@ -1024,7 +1024,8 @@ public class PKListener implements Listener {
 				for (final TempArmor armor : TempArmor.getTempArmorList(event.getEntity())) {
 					armor.revert(event.getDrops());
 				}
-			}
+			} // Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath.
+
 		}
 
 		if (event.getEntity().getKiller() != null) {
