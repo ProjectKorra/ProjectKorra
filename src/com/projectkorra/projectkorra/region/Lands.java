@@ -25,7 +25,6 @@ class Lands extends RegionProtectionBase {
         final Area area = landsIntegration.getAreaByLoc(location);
         final boolean isClaimed = landsIntegration.isClaimed(location);
 
-
         if (isClaimed) {
             if (igniteAbility && !area.hasFlag(player.getUniqueId(), Flags.BLOCK_IGNITE)) return true;
             if (explosiveAbility && !area.hasFlag(Flags.TNT_GRIEFING)) return true;

@@ -107,15 +107,6 @@
       <version>3.16.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    <!-- PreciousStones -->
-    <!-- outdated
-<dependency>
-  <groupId>net.sacredlabyrinth.Phaed</groupId>
-  <artifactId>PreciousStones</artifactId>
-  <version>LATEST</version>
-  <scope>system</scope>
-  <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
-</dependency>
     <!-- Lands -->
     <dependency>
       <groupId>com.github.angeschossen</groupId>
