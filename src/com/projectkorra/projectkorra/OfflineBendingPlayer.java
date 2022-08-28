@@ -3,11 +3,9 @@ package com.projectkorra.projectkorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
-import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +55,7 @@ public class OfflineBendingPlayer {
     protected final UUID uuid;
     protected boolean permaRemoved;
     protected boolean toggled;
+    protected boolean allPassivesToggled;
     protected boolean loading;
 
     protected final List<Element> elements = new ArrayList<>();
@@ -65,6 +63,7 @@ public class OfflineBendingPlayer {
     protected HashMap<Integer, String> abilities = new HashMap<>();
     protected final Map<String, Cooldown> cooldowns = new HashMap<>();
     protected final Set<Element> toggledElements = new HashSet<>();
+    protected final Set<Element> toggledPassives = new HashSet<>();
     protected final DBCooldownManager cooldownManager;
 
     private int currentSlot;
@@ -76,6 +75,7 @@ public class OfflineBendingPlayer {
         this.player = player;
         this.uuid = player.getUniqueId();
         this.toggled = true;
+        this.allPassivesToggled = true;
         this.loading = true;
 
         this.cooldownManager = Manager.getManager(DBCooldownManager.class);
@@ -557,7 +557,7 @@ public class OfflineBendingPlayer {
             return;
         }
 
-        DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+        DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (this.abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
     }
 
     /**
@@ -810,7 +810,7 @@ public class OfflineBendingPlayer {
      * @return Returns true if this BendingPlayer is fully loaded
      */
     public boolean isLoaded() {
-        return !loading;
+        return !this.loading;
     }
 
     /**
@@ -848,6 +848,10 @@ public class OfflineBendingPlayer {
         return !this.toggledElements.contains(element);
     }
 
+    public boolean isPassiveToggled(final Element element) {
+        return !this.toggledPassives.contains(element);
+    }
+
     /**
      * Checks if the {@link BendingPlayer} is permaremoved.
      *
@@ -864,6 +868,10 @@ public class OfflineBendingPlayer {
      */
     public boolean isToggled() {
         return this.toggled;
+    }
+
+    public boolean isToggledPassives() {
+        return this.allPassivesToggled;
     }
 
     /**
@@ -907,11 +915,23 @@ public class OfflineBendingPlayer {
         this.toggled = !this.toggled;
     }
 
+    public void toggleAllPassives() {
+        this.allPassivesToggled = !this.allPassivesToggled;
+    }
+
     public void toggleElement(@NotNull final Element element) {
         if (this.toggledElements.contains(element)) {
             this.toggledElements.remove(element);
         } else {
             this.toggledElements.add(element);
+        }
+    }
+
+    public void togglePassive(@NotNull final Element element) {
+        if (this.toggledPassives.contains(element)) {
+            this.toggledPassives.remove(element);
+        } else {
+            this.toggledPassives.add(element);
         }
     }
 
@@ -1005,7 +1025,7 @@ public class OfflineBendingPlayer {
     }
 
     public OfflinePlayer getPlayer() {
-        return player;
+        return this.player;
     }
 
     @Override
@@ -1023,7 +1043,9 @@ public class OfflineBendingPlayer {
         bendingPlayer.elements.addAll(offlineBendingPlayer.elements);
         bendingPlayer.subelements.addAll(offlineBendingPlayer.subelements);
         bendingPlayer.toggledElements.addAll(offlineBendingPlayer.toggledElements);
+        bendingPlayer.toggledPassives.addAll(offlineBendingPlayer.toggledPassives);
         bendingPlayer.toggled = offlineBendingPlayer.toggled;
+        bendingPlayer.allPassivesToggled = offlineBendingPlayer.allPassivesToggled;
         bendingPlayer.permaRemoved = offlineBendingPlayer.permaRemoved;
         bendingPlayer.cooldowns.putAll(offlineBendingPlayer.cooldowns);
         bendingPlayer.loading = false;
@@ -1046,7 +1068,9 @@ public class OfflineBendingPlayer {
         offlineBendingPlayer.elements.addAll(bendingPlayer.elements);
         offlineBendingPlayer.subelements.addAll(bendingPlayer.subelements);
         offlineBendingPlayer.toggledElements.addAll(bendingPlayer.toggledElements);
+        offlineBendingPlayer.toggledPassives.addAll(bendingPlayer.toggledPassives);
         offlineBendingPlayer.toggled = bendingPlayer.toggled;
+        offlineBendingPlayer.allPassivesToggled = bendingPlayer.allPassivesToggled;
         offlineBendingPlayer.permaRemoved = bendingPlayer.permaRemoved;
         offlineBendingPlayer.cooldowns.putAll(bendingPlayer.cooldowns);
         offlineBendingPlayer.loading = false;

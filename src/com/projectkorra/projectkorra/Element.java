@@ -131,14 +131,13 @@ public class Element {
 			}
 
 			try {
-				ChatColor chatColor = ChatColor.of(value);
-				this.color = chatColor;
+				this.color = ChatColor.of(value);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
 		}
 
-		return color != null ? color : ChatColor.WHITE;
+		return this.color != null ? this.color : ChatColor.WHITE;
 	}
 
 	public ChatColor getSubColor() {
@@ -152,13 +151,12 @@ public class Element {
 				return this.color;
 			}
 			try {
-				ChatColor chatColor = ChatColor.of(value);
-				this.subColor = chatColor;
+				this.subColor = ChatColor.of(value);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
 		}
-		return subColor != null ? subColor : ChatColor.WHITE;
+		return this.subColor != null ? this.subColor : ChatColor.WHITE;
 	}
 
 	void setColor(ChatColor color) {
@@ -434,11 +432,11 @@ public class Element {
 		}
 
 		public Element[] getParentElements() {
-			return parentElements;
+			return this.parentElements;
 		}
 
 		public boolean isParentElement(Element element) {
-			return parentElementsSet.contains(element);
+			return this.parentElementsSet.contains(element);
 		}
 	}
 }

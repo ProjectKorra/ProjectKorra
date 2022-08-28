@@ -129,7 +129,7 @@ public class WallOfFire extends FireAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (this.fireTicks * 20));
-		new FireDamageTimer(entity, this.player);
+		new FireDamageTimer(entity, this.player, this);
 	}
 
 	private void damage() {

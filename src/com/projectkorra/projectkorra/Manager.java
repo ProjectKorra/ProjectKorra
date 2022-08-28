@@ -120,5 +120,4 @@ public abstract class Manager implements Listener {
 		MANAGERS.values().forEach(Manager::deactivate);
 		MANAGERS.clear();
 	}
-
 }

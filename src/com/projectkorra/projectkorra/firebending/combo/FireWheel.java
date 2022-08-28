@@ -144,7 +144,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 					this.affectedEntities.add((LivingEntity) entity);
 					DamageHandler.damageEntity(entity, this.damage, this);
 					entity.setFireTicks((int) (this.fireTicks * 20));
-					new FireDamageTimer(entity, this.player);
+					new FireDamageTimer(entity, this.player, this);
 				}
 			}
 		}

@@ -1038,9 +1038,7 @@ public class GeneralMethods {
 		trans.add(Material.VOID_AIR);
 
 		if (nonOpaque2 != null) {
-			for (final Material material : nonOpaque2) {
-				trans.add(material);
-			}
+			Collections.addAll(trans, nonOpaque2);
 		}
 
 		final Location location = origin.clone();
@@ -1863,8 +1861,7 @@ public class GeneralMethods {
 								} else if (obj instanceof Map) {
 									writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?, ?>) obj).size());
 								}
-							} catch (final Exception e) {
-
+							} catch (final Exception ignored) {
 							}
 						}
 					}  catch (Exception e) {
@@ -1883,7 +1880,6 @@ public class GeneralMethods {
 		for (final String line : CoreAbility.getDebugString().split("\\n")) {
 			writeToDebug(line);
 		}
-
 	}
 
 	/**
@@ -1968,7 +1964,7 @@ public class GeneralMethods {
 		}
 
 		final String start = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix", ""));
-		final String main = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Main", "ProjectRoku"));
+		final String main = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Main", "ProjectKorra"));
 		final String end = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix", " \u00BB "));
 		final String prefix = color + start + main + end;
 		if (!(sender instanceof Player)) {
@@ -1986,7 +1982,6 @@ public class GeneralMethods {
 				}
 				prefixComponent.setClickEvent(new ClickEvent(action, click));
 			}
-
 			final TextComponent messageComponent = new TextComponent(TextComponent.fromLegacyText(message, ChatColor.YELLOW.asBungee()));
 			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
 		}
@@ -2034,7 +2029,6 @@ public class GeneralMethods {
 		for(double mod : modifiers) {
 			totalModifier += mod - 1;
 		}
-
 		return value * (1 + totalModifier);
 	}
 
@@ -2050,7 +2044,6 @@ public class GeneralMethods {
 		for (double mod : modifiers) {
 			totalMod *= mod;
 		}
-
 		return (value / (totalMod == 0 ? 0.0001 : totalMod));
 	}
 
@@ -2221,7 +2214,6 @@ public class GeneralMethods {
 		} else if (velocity.getZ() < -4) {
 			velocity.setZ(-4);
 		}
-
 		event.getAffected().setVelocity(velocity);
 	}
 
@@ -2245,7 +2237,6 @@ public class GeneralMethods {
 				fix = Integer.parseInt(split[2]);
 			}
 		}
-
 		return major * 1000 + minor * 10 + fix; //1.16.4 -> 1164; 1.18 -> 1180
 	}
 }
