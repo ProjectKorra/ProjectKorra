@@ -71,6 +71,7 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.Combustion", "#690213");
 			config.addDefault("Chat.Colors.Lightning", "#820d0d");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
+			config.addDefault("Chat.Colors.ChiSub", "YELLOW");
 			config.addDefault("Chat.Branding.JoinMessage.Enabled", true);
 			config.addDefault("Chat.Branding.Color", "GOLD");
 			config.addDefault("Chat.Branding.Borders.TopBorder", "");

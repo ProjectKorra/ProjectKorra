@@ -284,16 +284,12 @@ public class DisplayCommand extends PKCommand {
 			}
 		}
 
-		if (element.equals(Element.CHI)) {
-			if (cachedComboElements.contains(Element.CHI)) sender.sendMessage(ChatColor.YELLOW + "Combos: " + ChatColor.GOLD + "/bending display ChiCombos");
-			if (cachedPassiveElements.contains(Element.CHI))sender.sendMessage(ChatColor.YELLOW + "Passives: " + ChatColor.GOLD + "/bending display ChiPassives");
-		} else {
-			if (cachedComboElements.contains(element)) sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.toString() + "Combos");
-			if (cachedPassiveElements.contains(element)) sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.toString() + "Passives");
-			for (final SubElement sub : Element.getSubElements(element)) {
-				if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
-					sender.sendMessage(sub.toString() + " abilities: " + element.getColor() + "/bending display " + sub.toString());
-				}
+
+		if (cachedComboElements.contains(element)) sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.toString() + "Combos");
+		if (cachedPassiveElements.contains(element)) sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.toString() + "Passives");
+		for (final SubElement sub : Element.getSubElements(element)) {
+			if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
+				sender.sendMessage(sub.toString() + " abilities: " + element.getColor() + "/bending display " + sub.toString());
 			}
 		}
 	}
