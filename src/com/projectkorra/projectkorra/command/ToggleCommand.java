@@ -2,8 +2,15 @@ package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -22,6 +29,8 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 public class ToggleCommand extends PKCommand {
 
 	private final String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, toggledOffSingleElement, toggledOnSingleElement, toggledOnSingleElementPassive, toggledOffSingleElementPassive, wrongElementOther, toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound, toggleAllPassivesOffSelf, toggleAllPassivesOnSelf;
+
+	private Set<Element> cachedPassiveElements = new HashSet<>();
 
 	public ToggleCommand() {
 		super("toggle", "/bending toggle <All/Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
@@ -46,6 +55,12 @@ public class ToggleCommand extends PKCommand {
 		this.notFound = c.getString("Commands.Toggle.Other.PlayerNotFound");
 		this.toggleAllPassivesOffSelf = c.getString("Commands.Toggle.ToggledPassivesOff");
 		this.toggleAllPassivesOnSelf =  c.getString("Commands.Toggle.ToggledPassivesOn");
+
+		//1 tick later because commands are created before abilities are
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () ->
+				cachedPassiveElements = CoreAbility.getAbilities().stream().filter(ab -> ab instanceof PassiveAbility)
+						.map(Ability::getElement).collect(Collectors.toSet())
+		, 1L);
 	}
 
 	@Override
@@ -106,7 +121,7 @@ public class ToggleCommand extends PKCommand {
 				} else {
 					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				}
-			}  else if (sender instanceof Player && args.size() == 1 && !toggleableParam.equals("passives") && Element.fromString(toggleableParam.split("passives")[0]) != null && !(Element.fromString(toggleableParam.split("passives")[0]) instanceof SubElement)) {
+			}  else if (sender instanceof Player && args.size() == 1 && !toggleableParam.equals("passives") && Element.fromString(toggleableParam.split("passives")[0]) != null) {
 				final Element e = Element.fromString(toggleableParam.split("passives")[0]);
 				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(e)) {
 					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElement);
@@ -182,8 +197,8 @@ public class ToggleCommand extends PKCommand {
 			final List<String> elements = new ArrayList<String>();
 			for (final Element e : Element.getAllElements()) {
 				elements.add(e.getName());
-				elements.add(e.getName() + "Passives");
 			}
+			cachedPassiveElements.forEach(e -> elements.add(e.getName() + "Passives"));
 			Collections.sort(elements);
 			l.add("All");
 			l.add("Passives");
