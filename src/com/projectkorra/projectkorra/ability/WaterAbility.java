@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -136,7 +137,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		final Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceBlast", location)) {
+			if (RegionProtection.isRegionProtected(player, location,"IceBlast")) {
 				continue;
 			}
 			if (isIcebendable(player, block.getType(), false)) {
@@ -171,7 +172,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
+			if (RegionProtection.isRegionProtected(player, location, "PlantDisc")) {
 				continue;
 			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
@@ -221,7 +222,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {

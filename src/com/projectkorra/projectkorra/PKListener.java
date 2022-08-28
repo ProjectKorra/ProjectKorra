@@ -36,7 +36,6 @@ import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.HighJump;
@@ -97,7 +96,7 @@ import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.hooks.BendingRegionProtection;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -2021,7 +2020,7 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onPluginUnload(PluginDisableEvent event) {
-		BendingRegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
+		RegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
 		BendingPlayer.HOOKS.remove((JavaPlugin) event.getPlugin());
 	}
 

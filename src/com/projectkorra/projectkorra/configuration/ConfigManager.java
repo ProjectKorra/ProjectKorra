@@ -71,6 +71,7 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.Combustion", "#690213");
 			config.addDefault("Chat.Colors.Lightning", "#820d0d");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
+			config.addDefault("Chat.Colors.ChiSub", "YELLOW");
 			config.addDefault("Chat.Branding.JoinMessage.Enabled", true);
 			config.addDefault("Chat.Branding.Color", "GOLD");
 			config.addDefault("Chat.Branding.Borders.TopBorder", "");
@@ -675,8 +676,8 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
 			config.addDefault("Properties.RegionProtection.RespectFactions", true);
 			config.addDefault("Properties.RegionProtection.RespectTowny", true);
-			config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
 			config.addDefault("Properties.RegionProtection.RespectLWC", true);
+			config.addDefault("Properties.RegionProtection.RespectLands", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
 			config.addDefault("Properties.RegionProtection.Residence.Respect", true);
 			config.addDefault("Properties.RegionProtection.Kingdoms.Respect", true);

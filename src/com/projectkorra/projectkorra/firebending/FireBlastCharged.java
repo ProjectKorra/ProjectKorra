@@ -240,6 +240,11 @@ public class FireBlastCharged extends FireAbility {
 		this.remove();
 	}
 
+	@Override
+	public boolean isExplosiveAbility() {
+		return isCanDamageBlocks();
+	}
+
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
 			playFirebendingParticles(block.getLocation(), 5, 0.5, 0.5, 0.5);

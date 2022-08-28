@@ -8,6 +8,7 @@ import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -62,6 +63,7 @@ public class ProjectKorra extends JavaPlugin {
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
+		new RegionProtection();
 		collisionManager = new CollisionManager();
 		collisionInitializer = new CollisionInitializer(collisionManager);
 		CoreAbility.registerAbilities();
@@ -127,7 +129,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		GeneralMethods.deserializeFile();
-		GeneralMethods.startCacheCleaner(cacheTime);
+		RegionProtection.startCleanCacheTask(cacheTime);
 
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			new PlaceholderAPIHook(this).register();

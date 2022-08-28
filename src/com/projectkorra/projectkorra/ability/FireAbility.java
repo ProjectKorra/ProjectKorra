@@ -40,7 +40,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	@Override
 	public boolean isExplosiveAbility() {
-		return true;
+		return false;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -66,7 +67,7 @@ public class AirSuction extends AirAbility {
 			if (!suc.isProgressing()) {
 				final Location loc = this.getTargetLocation();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(player, this.getName(), loc)) {
+				if (!RegionProtection.isRegionProtected(player, loc, this.getName())) {
 					suc.setOrigin(loc);
 				}
 			}
@@ -85,7 +86,7 @@ public class AirSuction extends AirAbility {
 		this.origin = this.getTargetLocation();
 		this.canAffectSelf = true;
 
-		if (GeneralMethods.isRegionProtectedFromBuild(player, this.getName(), this.origin)) {
+		if (RegionProtection.isRegionProtected(player, this.origin, this.getName())) {
 			return;
 		}
 
@@ -189,7 +190,7 @@ public class AirSuction extends AirAbility {
 		}
 
 		if (this.progressing) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this.player, "AirSuction", this.location)) {
+			if (RegionProtection.isRegionProtected(this.player, this.location, "AirSuction")) {
 				this.remove();
 				return;
 			} else if (!this.location.getWorld().equals(this.origin.getWorld()) || this.location.distanceSquared(this.origin) > this.range * this.range || this.location.distanceSquared(this.origin) <= 1) {

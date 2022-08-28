@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.hooks.CanBendHook;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.OptionalBoolean;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -170,7 +171,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
-		} else return !GeneralMethods.isRegionProtectedFromBuild(this.player, ability.getName(), playerLoc);
+		} else if (RegionProtection.isRegionProtected(this.player, playerLoc, ability)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public boolean canBendIgnoreBinds(final CoreAbility ability) {
@@ -204,7 +209,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
 			return false;
 		} else return this.player.getGameMode() != GameMode.SPECTATOR;
 	}
@@ -693,8 +698,14 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		this.fixSubelements(); //Grant all subelements for an element if they have 0 subs for that element (that they are allowed)
 		this.removeOldCooldowns();
 		PassiveManager.registerPassives(this.player);
-		BendingBoardManager.getBoard(this.player).ifPresent(BendingBoard::show); //Show the bending board
-		BendingBoardManager.changeWorld(this.player); //Hide the board if they spawn in a world with bending disabled
+
+		//Show the bending board 1 tick later. We do it 1 tick later because postLoad() is called BEFORE the player is loaded into the map,
+		//and the board needs to see the player in the map to initialize
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			BendingBoardManager.getBoard(this.player).ifPresent(BendingBoard::show);
+			//Hide the board if they spawn in a world with bending disabled
+			BendingBoardManager.changeWorld(this.player);
+		}, 1L);
 
 		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(this));
 	}
