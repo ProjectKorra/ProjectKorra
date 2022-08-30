@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -23,6 +24,7 @@ public class ComboUtil {
         ArrayList<AbilityInformation> comboList = new ArrayList<>();
 
         String comboName = ((CoreAbility)combo).getName();
+        Optional<Boolean> sneak = Optional.empty();
         for (String line : configList) {
             String[] split = line.split(":");
             if (split.length != 2) {
@@ -50,11 +52,23 @@ public class ComboUtil {
                 ProjectKorra.log.warning("Invalid combination for ability \"" + comboName + "\": ClickType \"" + ability + "\" not found! Using LEFT_CLICK instead!");
                 clickType = ClickType.LEFT_CLICK;
             }
+
+            //Checks to make sure the sneak order isn't invalid
+            if (clickType == ClickType.SHIFT_DOWN || clickType == ClickType.SHIFT_UP) {
+                Optional<Boolean> newBool = Optional.of(clickType == ClickType.SHIFT_DOWN);
+                if (newBool.equals(sneak)) {
+                    ProjectKorra.log.severe("Invalid combination for ability \"" + comboName + "\": You have a sneak order that is impossible to pull off!");
+                }
+                sneak = newBool;
+            }
+
             comboList.add(new AbilityInformation(ability, clickType));
         }
 
-        if (comboList.size() < 2) {
-            ProjectKorra.log.warning("Invalid combination for ability \"" + comboName + "\": Doesn't contain at least 2 combinations!");
+        if (comboList.size() == 1) {
+            ProjectKorra.log.warning("Warning: Combination for ability \"" + comboName + "\" only contains one ability! Are you sure about this?");
+        } else if (comboList.size() == 0) {
+            ProjectKorra.log.severe("No combination for combo ability \"" + comboName + "\" found!");
             return null;
         }
 

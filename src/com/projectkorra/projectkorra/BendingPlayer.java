@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,6 @@ import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.hooks.CanBendHook;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.OptionalBoolean;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -135,8 +135,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		for (JavaPlugin plugin : HOOKS.keySet()) {
 			CanBendHook hook = HOOKS.get(plugin);
 			try {
-				OptionalBoolean bool = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
-				if (bool.isPresent()) return bool.getValue(); //If the hook didn't return OptionalBoolean.DEFAULT
+				Optional<Boolean> bool = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
+				if (bool.isPresent()) return bool.get(); //If the hook didn't return
 			} catch (Exception e) {
 				ProjectKorra.log.severe("An error occurred while running CanBendHook registered by " + plugin.getName() + ".");
 				e.printStackTrace();

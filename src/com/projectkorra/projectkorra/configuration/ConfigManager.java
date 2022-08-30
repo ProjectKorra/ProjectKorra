@@ -1640,7 +1640,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireWheel.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireWheel.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.FireWheel.Height", 2);
-			config.addDefault("Abilities.Fire.FireWheel.Combination", Arrays.asList("FireShield:SNEAK_DOWN", "FireShield:RIGHT_CLICK_BLOCK", "FireShield:RIGHT_CLICK_BLOCK", "FireShield:SNEAK_DOWN", "FireShield:SNEAK_UP", "FireJet:LEFT_CLICK"));
+			config.addDefault("Abilities.Fire.FireWheel.Combination", Arrays.asList("FireShield:SNEAK_DOWN", "FireShield:RIGHT_CLICK_BLOCK", "FireShield:RIGHT_CLICK_BLOCK", "Blaze:SNEAK_UP"));
 
 			config.addDefault("Abilities.Fire.JetBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.JetBlast.Speed", 1.2);
