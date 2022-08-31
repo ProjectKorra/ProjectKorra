@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra.firebending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -50,10 +52,10 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireSpin.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireSpin.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireSpin.Cooldown");
-		this.knockback = getConfig().getDouble("Abilities.Fire.FireSpin.Knockback");
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireSpin.Damage"));
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireSpin.Range"));
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireSpin.Cooldown"));
+		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Fire.FireSpin.Knockback"));
 		this.speed = getConfig().getDouble("Abilities.Fire.FireSpin.Speed");
 
 		if (this.bPlayer.isAvatarState()) {
@@ -167,13 +169,7 @@ public class FireSpin extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> fireSpin = new ArrayList<>();
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
-		return fireSpin;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.FireSpin.Combination"));
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -33,13 +34,14 @@ public class ComboManager {
 		DESCRIPTIONS.clear();
 		INSTRUCTIONS.clear();
 
-		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthDome.Enabled")) {
+		/*if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthDome.Enabled")) {
 			final ArrayList<AbilityInformation> earthDomeOthers = new ArrayList<>();
 			earthDomeOthers.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
 			earthDomeOthers.add(new AbilityInformation("Shockwave", ClickType.LEFT_CLICK));
 			COMBO_ABILITIES.put("EarthDomeOthers", new ComboAbilityInfo("EarthDomeOthers", earthDomeOthers, EarthDomeOthers.class));
-		}
+		}*/
 
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, ComboManager::registerCombos, 1L);
 		startCleanupTask();
 	}
 
@@ -103,6 +105,24 @@ public class ComboManager {
 
 		list.add(info);
 		RECENTLY_USED.put(name, list);
+	}
+
+	/**
+	 * Removes a recent combo combination
+	 * @param player The player to remove
+	 * @param type The type of combo to remove
+	 */
+	public static void removeRecentType(final Player player, ClickType type) {
+		if (RECENTLY_USED.containsKey(player.getName())) {
+			ArrayList<AbilityInformation> list = RECENTLY_USED.get(player.getName());
+
+			if (list.size() > 0) {
+				AbilityInformation last = list.get(list.size() - 1);
+				if (last.getTime() > System.currentTimeMillis() - 50 && last.getClickType() == type) { //If the ability was within the last tick
+					list.remove(last);
+				}
+			}
+		}
 	}
 
 	/**
@@ -233,6 +253,24 @@ public class ComboManager {
 
 	public static HashMap<String, String> getInstructions() {
 		return INSTRUCTIONS;
+	}
+
+	private static void registerCombos() {
+		for (CoreAbility ability : CoreAbility.getAbilities()) {
+			if (ability instanceof ComboAbility && ability.isEnabled()) {
+				final ComboAbility combo = (ComboAbility) ability;
+				try { //Using a try catch here because we can run addon code. And that may crash/stop the loop
+					ArrayList<AbilityInformation> combination = combo.getCombination();
+					if (combination != null) {
+						ComboManager.getComboAbilities().put(ability.getName(), new ComboManager.ComboAbilityInfo(ability.getName(), combination, combo));
+						ComboManager.getDescriptions().put(ability.getName(), ability.getDescription());
+						ComboManager.getInstructions().put(ability.getName(), ability.getInstructions());
+					}
+				} catch (Error | Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**

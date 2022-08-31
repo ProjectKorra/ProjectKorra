@@ -20,7 +20,6 @@ public class Illumination extends FireAbility {
 
 	private static final Map<TempBlock, Player> BLOCKS = new ConcurrentHashMap<>();
 
-	private byte normalData;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.RANGE)
@@ -33,7 +32,9 @@ public class Illumination extends FireAbility {
 	public Illumination(final Player player) {
 		super(player);
 
-		this.range = this.getDayFactor(getConfig().getDouble("Abilities.Fire.Illumination.Range"));
+		//Don't apply modifiers here, as this is active at all times and therefore needs
+		//to have the fields updated
+		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
 		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
 		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
 
@@ -149,14 +150,6 @@ public class Illumination extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return true;
-	}
-
-	public byte getNormalData() {
-		return this.normalData;
-	}
-
-	public void setNormalData(final byte normalData) {
-		this.normalData = normalData;
 	}
 
 	public double getRange() {

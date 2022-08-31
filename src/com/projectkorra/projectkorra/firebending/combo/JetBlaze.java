@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.firebending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -48,10 +50,10 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.JetBlaze.Damage");
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.JetBlaze.Damage"));
 		this.duration = getConfig().getLong("Abilities.Fire.JetBlaze.Duration");
 		this.speed = getConfig().getDouble("Abilities.Fire.JetBlaze.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown");
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown"));
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.JetBlaze.FireTicks");
 
 		if (this.bPlayer.isAvatarState()) {
@@ -70,15 +72,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> jetBlaze = new ArrayList<>();
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
-		return jetBlaze;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Fire.JetBlaze.Combination"));
 	}
 
 	@Override

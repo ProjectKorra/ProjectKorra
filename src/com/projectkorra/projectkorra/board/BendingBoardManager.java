@@ -169,8 +169,8 @@ public final class BendingBoardManager {
 			}
 			
 			CoreAbility coreAbility = CoreAbility.getAbility(name);
-			if (coreAbility != null && coreAbility instanceof ComboAbility) {
-				scoreboardPlayers.get(player).updateMisc(name, coreAbility.getElement().getColor().asBungee(), forceCooldown);
+			if (coreAbility instanceof ComboAbility) {
+				scoreboardPlayers.get(player).updateMisc(name, coreAbility.getElement().getColor(), forceCooldown);
 			} else if (coreAbility == null && trackedCooldowns.containsKey(name)) {
 				scoreboardPlayers.get(player).updateMisc(name, trackedCooldowns.get(name), forceCooldown);
 			} else if (coreAbility != null && slot > 0) {

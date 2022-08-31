@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -80,7 +81,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public double getNightFactor(final double value) {
-		return this.player != null ? value * getNightFactor() : 1;
+		return this.player != null ? value * getNightFactor(player.getWorld()) : 1;
 	}
 
 	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
@@ -136,7 +137,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		final Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceBlast", location)) {
+			if (RegionProtection.isRegionProtected(player, location,"IceBlast")) {
 				continue;
 			}
 			if (isIcebendable(player, block.getType(), false)) {
@@ -171,7 +172,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
+			if (RegionProtection.isRegionProtected(player, location, "PlantDisc")) {
 				continue;
 			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
@@ -212,7 +213,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			trans.removeAll(remove);
 		}
 
-		final Block testBlock = player.getTargetBlock(trans, range > 3 ? 3 : (int) range);
+		final Block testBlock = player.getTargetBlock(trans, Math.max(1, Math.min(3, (int)range)));
 		if (bPlayer == null) {
 			return null;
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
@@ -221,7 +222,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
@@ -373,6 +374,43 @@ public abstract class WaterAbility extends ElementalAbility {
 	@Deprecated
 	public static void removeWaterSpouts(final Location loc, final Player source) {
 		removeWaterSpouts(loc, 1.5, source);
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	@Override
+	public double applyModifiers(double value) {
+		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value. Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public long applyModifiers(long value) {
+		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value inversely (makes it smaller). Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public double applyInverseModifiers(double value) {
+		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
+	}
+
+	/**
+	 * Apply modifiers to this value inversely (makes it smaller). Applies the night factor to it
+	 * @param value The value to modify
+	 * @return The modified value
+	 */
+	public long applyInverseModifiers(long value) {
+		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
 	}
 
 	public static void stopBending() {

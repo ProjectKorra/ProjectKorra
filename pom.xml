@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>1.9.3</version>
+  <version>1.10.0</version>
   <name>ProjectKorra</name>
   <repositories>
     <!-- local jar files, add more using: mvn install:install-file -Dfile=aaa.jar -DgroupId=aaa -DartifactId=aaa -Dversion=aaa -Dpackaging=jar -DlocalRepositoryPath=path/to/ProjectKorra/localrepo/ -->
@@ -15,14 +15,14 @@
     <!-- WorldGuard and WorldEdit Repo -->
     <repository>
       <id>sk89q-repo</id>
-      <url>https://maven.sk89q.com/repo/</url>
+      <url>https://maven.enginehub.org/repo/</url>
     </repository>
-    <!-- GriefPrevention and Towny Repo -->
+    <!-- GriefPrevention, Towny and SaberFactions Repo -->
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
-    <!-- NoCheat Repo -->
+    <!-- Bungee Repo -->
     <repository>
       <id>md_5-snapshots</id>
       <url>https://repo.md-5.net/content/repositories/snapshots/</url>
@@ -47,6 +47,11 @@
       <id>placeholderapi</id>
       <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
+    <!-- GriefDefender API Repo -->
+    <repository>
+      <id>glaremasters</id>
+      <url>https://repo.glaremasters.me/repository/bloodshot</url>
+    </repository>
   </repositories>
   <dependencies>
     <!-- PaperLib -->
@@ -65,7 +70,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.16.1-R0.1-SNAPSHOT</version>
+      <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- lang3 -->
@@ -76,16 +81,16 @@
     </dependency>
     <!-- Factions -->
     <dependency>
-      <groupId>me.markeh</groupId>
-      <artifactId>factionsframework</artifactId>
-      <version>1.2.0</version>
+      <groupId>com.github.SaberLLC</groupId>
+      <artifactId>Saber-Factions</artifactId>
+      <version>2.4.0-RC</version>
       <scope>provided</scope>
     </dependency>
     <!-- GriefPrevention -->
     <dependency>
       <groupId>com.github.TechFortress</groupId>
       <artifactId>GriefPrevention</artifactId>
-      <version>16.7.1</version>
+      <version>16.18</version>
       <scope>provided</scope>
     </dependency>
     <!-- LWC -->
@@ -102,16 +107,13 @@
       <version>3.16.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    <!-- PreciousStones -->
-    <!-- outdated
-<dependency>
-  <groupId>net.sacredlabyrinth.Phaed</groupId>
-  <artifactId>PreciousStones</artifactId>
-  <version>LATEST</version>
-  <scope>system</scope>
-  <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
-</dependency>
--->
+    <!-- Lands -->
+    <dependency>
+      <groupId>com.github.angeschossen</groupId>
+      <artifactId>LandsAPI</artifactId>
+      <version>6.0.2</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- Residence -->
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>
@@ -123,7 +125,7 @@
     <dependency>
       <groupId>com.github.TownyAdvanced</groupId>
       <artifactId>Towny</artifactId>
-      <version>0.96.2.0</version>
+      <version>0.98.3.0</version>
       <scope>provided</scope>
     </dependency>
     <!-- WorldEdit / WorldGuard -->
@@ -162,20 +164,20 @@
     <dependency>
       <groupId>com.github.cryptomorin</groupId>
       <artifactId>kingdoms</artifactId>
-      <version>1.10.19.1</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>1.13.9</version>
+      <scope>provided</scope>
     </dependency>
     <!-- PlaceholderAPI -->
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
       <version>2.9.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.griefdefender</groupId>
+      <artifactId>api</artifactId>
+      <version>2.1.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -218,12 +220,7 @@
         <configuration>
           <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
           <filters>
-            <filter>
-              <artifact>com.github.cryptomorin:kingdoms</artifact>
-              <includes>
-                <include>org/kingdoms/constants/player/KingdomPermission.class</include>
-              </includes>
-            </filter>
+
           </filters>
           <relocations>
             <relocation>

@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.earthbending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -54,9 +56,6 @@ public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		final ArrayList<AbilityInformation> combo = new ArrayList<>();
-		combo.add(new AbilityInformation("RaiseEarth", ClickType.RIGHT_CLICK_BLOCK));
-		combo.add(new AbilityInformation("Shockwave", ClickType.RIGHT_CLICK_BLOCK));
-		return combo;
+		return ComboUtil.generateCombinationFromList(this, ConfigManager.defaultConfig.get().getStringList("Abilities.Earth.EarthDome.Combination.Self"));
 	}
 }

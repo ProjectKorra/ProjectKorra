@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.healing;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -77,10 +78,10 @@ public class HealingWaters extends HealingAbility {
 
 	public void setFields() {
 
-		this.cooldown = getConfig().getLong("Abilities.Water.HealingWaters.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Water.HealingWaters.Range");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.HealingWaters.Cooldown"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.HealingWaters.Range"));
 		this.interval = getConfig().getLong("Abilities.Water.HealingWaters.Interval");
-		this.chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
+		this.chargeTime = applyInverseModifiers(getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime"));
 		this.potionPotency = getConfig().getInt("Abilities.Water.HealingWaters.PotionPotency");
 		this.duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
 		this.enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
@@ -213,7 +214,7 @@ public class HealingWaters extends HealingAbility {
 	}
 
 	private void applyHealing(final Player player) {
-		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation())) {
+		if (!RegionProtection.isRegionProtected(player, player.getLocation(), "HealingWaters")) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
 			AirAbility.breakBreathbendingHold(player);
 			this.healing = true;

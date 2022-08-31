@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,30 +21,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.api.ResidenceInterface;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
+import java.util.function.Predicate;
 import com.google.common.reflect.ClassPath;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-
+import com.projectkorra.projectkorra.command.PKCommand;
+import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.TempFallingBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -59,11 +43,13 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
@@ -71,22 +57,13 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.kingdom.model.KingdomRelation;
-import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.structures.managers.Regulator;
-import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
-import org.kingdoms.constants.player.DefaultKingdomPermission;
-import org.kingdoms.constants.player.KingdomPlayer;
 
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
@@ -106,9 +83,7 @@ import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.event.AbilityVelocityAffectEntityEvent;
-import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
-import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
@@ -124,17 +99,6 @@ import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
-import me.markeh.factionsframework.entities.FPlayer;
-import me.markeh.factionsframework.entities.FPlayers;
-import me.markeh.factionsframework.entities.Faction;
-import me.markeh.factionsframework.entities.Factions;
-import me.markeh.factionsframework.enums.Rel;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -142,9 +106,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class GeneralMethods {
 
-	// Represents PlayerName, previously checked blocks, and whether they were true or false
-	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
-	private static final ArrayList<Ability> INVINCIBLE = new ArrayList<>();
 	private static ProjectKorra plugin;
 
 	public GeneralMethods(final ProjectKorra plugin) {
@@ -163,49 +124,26 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Binds a Ability to the hotbar slot that the player is on.
-	 *
-	 * @param player The player to bind to
-	 * @param ability The ability name to Bind
-	 * @see #bindAbility(Player, String, int)
+	 * Deprecated. Use {@link BendingPlayer#bindAbility(String)} instead
+	 * @param sender The player
+	 * @param name The ability name
 	 */
-	public static void bindAbility(final Player player, final String ability) {
-		final int slot = player.getInventory().getHeldItemSlot() + 1;
-		bindAbility(player, ability, slot);
+	@Deprecated
+	public static void bindAbility(Player sender, String name) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender);
+		if (bPlayer != null) bPlayer.bindAbility(name);
 	}
 
 	/**
-	 * Binds a Ability to a specific hotbar slot.
-	 *
-	 * @param player The player to bind to
-	 * @param ability
-	 * @param slot
-	 * @see #bindAbility(Player, String)
+	 * Deprecated. Use {@link BendingPlayer#bindAbility(String, int)} instead
+	 * @param sender The player
+	 * @param name The ability name
+	 * @param slot The slot
 	 */
-	public static void bindAbility(final Player player, final String ability, final int slot) {
-		if (MultiAbilityManager.playerAbilities.containsKey(player)) {
-			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + "You can't edit your binds right now!");
-			return;
-		}
-		
-		PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, ability, slot, ability != null, false);
-		ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return;
-		}
-
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		if (bPlayer == null) {
-			return;
-		}
-		
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-		bPlayer.getAbilities().put(slot, ability);
-
-		if (coreAbil != null) {
-			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
-		}
-		saveAbility(bPlayer, slot, ability);
+	@Deprecated
+	public static void bindAbility(Player sender, String name, int slot) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender);
+		if (bPlayer != null) bPlayer.bindAbility(name, slot);
 	}
 
 	/**
@@ -316,229 +254,16 @@ public class GeneralMethods {
 	 * @param player The player name
 	 * @throws SQLException
 	 */
-	public static void createBendingPlayer(final UUID uuid, final String player) {
+	/*public static void createBendingPlayer(final UUID uuid, final String player) {
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				createBendingPlayerAsynchronously(uuid, player);
+				OfflineBendingPlayer.createBendingPlayerAsynchronously(uuid, player);
 			}
 
 		}.runTaskAsynchronously(ProjectKorra.plugin);
-	}
-
-	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-		final ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
-						ProjectKorra.log.info("Created new BendingPlayer for " + player);
-					}
-				}.runTask(ProjectKorra.plugin);
-			} else {
-				// The player has at least played before.
-				final String player2 = rs2.getString("player");
-				if (!player.equalsIgnoreCase(player2)) {
-					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
-					// They have changed names.
-					ProjectKorra.log.info("Updating Player Name for " + player);
-				}
-				final String subelement = rs2.getString("subelement");
-				final String element = rs2.getString("element");
-				final String permaremoved = rs2.getString("permaremoved");
-				boolean p = false;
-				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null && !element.equals("NULL")) {
-					final boolean hasAddon = element.contains(";");
-					final String[] split = element.split(";");
-					if (split[0] != null) { // Player has an element.
-						if (split[0].contains("a")) {
-							elements.add(Element.AIR);
-						}
-						if (split[0].contains("w")) {
-							elements.add(Element.WATER);
-						}
-						if (split[0].contains("e")) {
-							elements.add(Element.EARTH);
-						}
-						if (split[0].contains("f")) {
-							elements.add(Element.FIRE);
-						}
-						if (split[0].contains("c")) {
-							elements.add(Element.CHI);
-						}
-						if (hasAddon) {
-							/*
-							 * Because plugins which depend on ProjectKorra
-							 * would be loaded after ProjectKorra, addon
-							 * elements would = null. To work around this, we
-							 * keep trying to load in the elements from the
-							 * database until it successfully loads everything
-							 * in, or it times out.
-							 */
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon elements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
-										ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon elements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null) {
-												elements.add(Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
-					}
-				}
-				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
-				boolean shouldSave = false;
-				if (subelement != null && !subelement.equals("NULL")) {
-					final boolean hasAddon = subelement.contains(";");
-					final String[] split = subelement.split(";");
-					if (subelement.equals("-")) {
-						final Player playero = Bukkit.getPlayer(uuid);
-						for (final SubElement sub : Element.getAllSubElements()) {
-							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
-								subelements.add(sub);
-								shouldSave = true && playero != null;
-							}
-						}
-					} else if (split[0] != null) {
-						if (split[0].contains("m")) {
-							subelements.add(Element.METAL);
-						}
-						if (split[0].contains("v")) {
-							subelements.add(Element.LAVA);
-						}
-						if (split[0].contains("s")) {
-							subelements.add(Element.SAND);
-						}
-						if (split[0].contains("c")) {
-							subelements.add(Element.COMBUSTION);
-						}
-						if (split[0].contains("l")) {
-							subelements.add(Element.LIGHTNING);
-						}
-						if (split[0].contains("t")) {
-							subelements.add(Element.SPIRITUAL);
-						}
-						if (split[0].contains("f")) {
-							subelements.add(Element.FLIGHT);
-						}
-						if (split[0].contains("i")) {
-							subelements.add(Element.ICE);
-						}
-						if (split[0].contains("h")) {
-							subelements.add(Element.HEALING);
-						}
-						if (split[0].contains("b")) {
-							subelements.add(Element.BLOOD);
-						}
-						if (split[0].contains("p")) {
-							subelements.add(Element.PLANT);
-						}
-						if (split[0].contains("r")) {
-							subelements.add(Element.BLUE_FIRE);
-						}
-
-						if (hasAddon) {
-							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-							final long startTime = System.currentTimeMillis();
-							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									if (addonClone.isEmpty()) {
-										ProjectKorra.log.info("Successfully loaded in all addon subelements!");
-										this.cancel();
-									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
-										ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
-										this.cancel();
-									} else {
-										ProjectKorra.log.info("Attempting to load in the following addon subelements... " + addonClone.toString());
-										for (final String addon : addonClone) {
-											if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
-												subelements.add((SubElement) Element.getElement(addon));
-												addonClone.remove(addon);
-											}
-										}
-									}
-								}
-							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-						}
-					}
-				}
-
-				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-				final ConcurrentHashMap<Integer, String> abilitiesClone = new ConcurrentHashMap<Integer, String>(abilities);
-				for (int i = 1; i <= 9; i++) {
-					final String ability = rs2.getString("slot" + i);
-					abilitiesClone.put(i, ability);
-				}
-				final long startTime = System.currentTimeMillis();
-				final long timeoutLength = 30000; // How long until it should time out attempting to load addons in.
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if (abilitiesClone.isEmpty()) {
-							// All abilities loaded.
-							this.cancel();
-						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
-							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
-							ProjectKorra.log.severe("These abilities have taken too long to load in, resulting in users having lost them if bound.");
-							this.cancel();
-						} else {
-							for (final int slot : abilitiesClone.keySet()) {
-								final String ability = abilitiesClone.get(slot);
-								if (ability.equalsIgnoreCase("null")) {
-									abilitiesClone.remove(slot);
-									continue;
-								} else if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
-									abilities.put(slot, ability);
-									abilitiesClone.remove(slot);
-									continue;
-								}
-							}
-						}
-					}
-				}.runTaskTimer(ProjectKorra.plugin, 0, 20);
-
-				p = (permaremoved != null && (permaremoved.equals("true")));
-
-				final boolean boolean_p = p;
-				final boolean shouldSave_ = shouldSave;
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
-						if (shouldSave_) {
-							saveSubElements(BendingPlayer.getBendingPlayer(player));
-						}
-					}
-				}.runTask(ProjectKorra.plugin);
-			}
-		} catch (final SQLException ex) {
-			ex.printStackTrace();
-		}
-	}
+	}*/
 
 	/**
 	 * Deserializes the configuration file "bendingPlayers.yml" of the old
@@ -1043,10 +768,23 @@ public class GeneralMethods {
 	 *
 	 * @param location The base location
 	 * @param radius The radius of blocks to look for entities from the location
+	 * @param acceptable A function that determines if an entity is acceptable or not to be a part of this list
+	 * @return A list of entities around a point
+	 */
+	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius, Predicate<Entity> acceptable) {
+		return new ArrayList<>(location.getWorld().getNearbyEntities(location, radius, radius, radius, acceptable));
+	}
+
+	/**
+	 * Gets a {@code List<Entity>} of entities around a specified radius from
+	 * the specified area. Excludes dead entities, marker armorstands and spectators
+	 *
+	 * @param location The base location
+	 * @param radius The radius of blocks to look for entities from the location
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius) {
-		return new ArrayList<>(location.getWorld().getNearbyEntities(location, radius, radius, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)))));
+		return getEntitiesAroundPoint(location, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker());
 	}
 
 	public static long getGlobalCooldown() {
@@ -1261,9 +999,7 @@ public class GeneralMethods {
 		trans.add(Material.VOID_AIR);
 
 		if (nonOpaque2 != null) {
-			for (final Material material : nonOpaque2) {
-				trans.add(material);
-			}
+			Collections.addAll(trans, nonOpaque2);
 		}
 
 		final Location location = origin.clone();
@@ -1503,203 +1239,27 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * isRegionProtectedFromBuild is one of the most server intensive methods in
-	 * the plugin. It uses a blockCache that keeps track of recent blocks that
-	 * may have already been checked. Abilities like TremorSense call this
-	 * ability 5 times per tick even though it only needs to check a single
-	 * block, instead of doing all 5 of those checks this method will now look
-	 * in the map first.
+	 * Deprecated. Use {@link RegionProtection#isRegionProtected(Player, Location, CoreAbility)} instead
 	 */
+	@Deprecated
 	public static boolean isRegionProtectedFromBuild(final Player player, final String ability, final Location loc) {
-		if (!BLOCK_CACHE.containsKey(player.getName())) {
-			BLOCK_CACHE.put(player.getName(), new ConcurrentHashMap<Block, BlockCacheElement>());
-		}
-
-		final Map<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(player.getName());
-		final Block block = loc.getBlock();
-		if (blockMap.containsKey(block)) {
-			final BlockCacheElement elem = blockMap.get(block);
-
-			// both abilities must be equal to each other to use the cache
-			if ((ability == null && elem.getAbility() == null) || (ability != null && elem.getAbility() != null && elem.getAbility().equals(ability))) {
-				return elem.isAllowed();
-			}
-		}
-
-		final boolean value = isRegionProtectedFromBuildPostCache(player, ability, loc);
-		blockMap.put(block, new BlockCacheElement(player, block, ability, value, System.currentTimeMillis()));
-		return value;
+		return RegionProtection.isRegionProtected(player, loc, CoreAbility.getAbility(ability));
 	}
 
+	/**
+	 * Deprecated. Use {@link RegionProtection#isRegionProtected(Player, Location, CoreAbility)} instead
+	 */
+	@Deprecated
 	public static boolean isRegionProtectedFromBuild(final Ability ability, final Location loc) {
-		return isRegionProtectedFromBuild(ability.getPlayer(), ability.getName(), loc);
+		return RegionProtection.isRegionProtected(ability.getPlayer(), loc, (CoreAbility) ability);
 	}
 
+	/**
+	 * Deprecated. Use {@link RegionProtection#isRegionProtected(Player, Location, CoreAbility)} instead
+	 */
+	@Deprecated
 	public static boolean isRegionProtectedFromBuild(final Player player, final Location loc) {
-		return isRegionProtectedFromBuild(player, null, loc);
-	}
-
-	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
-		final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
-		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		//final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
-		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
-
-		boolean isIgnite = false;
-		boolean isExplosive = false;
-		boolean isHarmless = false;
-		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-		if (coreAbil != null) {
-			isIgnite = coreAbil.isIgniteAbility();
-			isExplosive = coreAbil.isExplosiveAbility();
-			isHarmless = coreAbil.isHarmlessAbility();
-		}
-
-		if (ability == null && allowHarmless) {
-			return false;
-		}
-		if (isHarmless && allowHarmless) {
-			return false;
-		}
-
-		final PluginManager pm = Bukkit.getPluginManager();
-
-		final Plugin wgp = pm.getPlugin("WorldGuard");
-		//final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin facsfw = pm.getPlugin("FactionsFramework");
-		final Plugin twnp = pm.getPlugin("Towny");
-		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin lwc = pm.getPlugin("LWC");
-		final Plugin residence = pm.getPlugin("Residence");
-		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin redprotect = pm.getPlugin("RedProtect");
-
-		for (final Location location : new Location[] { loc, player.getLocation() }) {
-			final World world = location.getWorld();
-
-			if (lwc != null && respectLWC) {
-				final LWCPlugin lwcp = (LWCPlugin) lwc;
-				final LWC lwc2 = lwcp.getLWC();
-				final Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
-				if (protection != null) {
-					if (!lwc2.canAccessProtection(player, protection)) {
-						return true;
-					}
-				}
-			}
-			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
-				final WorldGuard wg = WorldGuard.getInstance();
-				if (!player.isOnline()) {
-					return true;
-				}
-				if (isIgnite) {
-					if (!player.hasPermission("worldguard.override.lighter")) {
-						if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(world)).blockLighter) {
-							return true;
-						}
-					}
-				}
-
-				if (isExplosive) {
-					if (wg.getPlatform().getGlobalStateManager().get(BukkitAdapter.adapt(location.getWorld())).blockTNTExplosions) {
-						return true;
-					}
-					final StateFlag.State tntflag = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.TNT);
-					if (tntflag != null && tntflag.equals(StateFlag.State.DENY)) {
-						return true;
-					}
-				}
-				final StateFlag bendingflag = (StateFlag) WorldGuard.getInstance().getFlagRegistry().get("bending");
-				if (bendingflag != null) {
-					final StateFlag.State bendingflagstate = wg.getPlatform().getRegionContainer().createQuery().queryState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), bendingflag);
-					if (bendingflagstate == null && !wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
-						return true;
-					}
-					if (bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY)) {
-						return true;
-					}
-				} else {
-					if (!wg.getPlatform().getRegionContainer().createQuery().testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
-						return true;
-					}
-				}
-			}
-
-			if (facsfw != null && respectFactions) {
-				final FPlayer fPlayer = FPlayers.getBySender(player);
-				final Faction faction = Factions.getFactionAt(location);
-				final Rel relation = fPlayer.getRelationTo(faction);
-
-				if (!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)) {
-					return true;
-				}
-			}
-
-			if (twnp != null && respectTowny) {
-				if (!PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, ActionType.BUILD)) {
-					return true;
-				}
-			}
-
-			if (gpp != null && respectGriefPrevention) {
-				Material type = player.getWorld().getBlockAt(location).getType();
-				if (type == null) {
-					type = Material.AIR;
-				}
-				final String reason = GriefPrevention.instance.allowBuild(player, location); // WORKING with WorldGuard 6.0 BETA 4.
-
-				final Claim claim = GriefPrevention.instance.dataStore.getClaimAt(loc, true, null);
-
-				if (reason != null && claim != null) {
-					return true;
-				}
-			}
-
-			if (residence != null && respectResidence) {
-				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
-				final ClaimedResidence claim = res.getByLoc(location);
-				if (claim != null) {
-					final ResidencePermissions perms = claim.getPermissions();
-					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
-						return true;
-					}
-				}
-			}
-
-			if (kingdoms != null && respectKingdoms) {
-				final KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
-				final Land land = Land.getLand(location);
-				final boolean protectDuringInvasions = ConfigManager.getConfig().getBoolean("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions");
-				if (land != null) {
-					final Kingdom kingdom = land.getKingdom();
-					if (kPlayer.isAdmin()
-							|| (!protectDuringInvasions && !land.getInvasions().isEmpty() && land.getInvasions().values().stream().anyMatch(i -> i.getInvader().equals(kPlayer))) // Protection during invasions is off, and player is currently invading; allow
-							|| (land.getStructure() != null && land.getStructure() instanceof Regulator && ((Regulator) land.getStructure()).hasAttribute(player, Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow
-						return false;
-					}
-					if (!kPlayer.hasKingdom() // Player has no kingdom; deny
-							|| (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(DefaultKingdomPermission.BUILD)) // Player is a member of this kingdom but cannot build here; deny
-							|| (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD))) { // Player is not a member of this kingdom and cannot build here; deny
-						return true;
-					}
-				}
-			}
-
-			if (redprotect != null && respectRedProtect) {
-				final RedProtectAPI api = RedProtect.get().getAPI();
-				final Region region = api.getRegion(location);
-				if (!(region != null && region.canBuild(player))) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return RegionProtection.isRegionProtected(player, loc);
 	}
 
 	public static boolean isSameArmor(Material a, Material b) {
@@ -1796,58 +1356,6 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void loadBendingPlayer(final BendingPlayer pl) {
-		final Player player = Bukkit.getPlayer(pl.getUUID());
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (bPlayer == null) {
-			return;
-		}
-
-		if (PKListener.getToggledOut().contains(player.getUniqueId())) {
-			bPlayer.toggleBending();
-			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
-		}
-
-		Preset.loadPresets(player);
-		Element element = null;
-		String prefix = "";
-
-		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-
-		prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
-		if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
-			prefix = Element.AVATAR.getPrefix();
-		} else if (bPlayer.getElements().size() > 0) {
-			element = bPlayer.getElements().get(0);
-			prefix = element.getPrefix();
-		}
-
-		if (chatEnabled) {
-			player.setDisplayName(player.getName());
-			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
-		}
-
-		// Handle the AirSpout/WaterSpout login glitches.
-		if (player.getGameMode() != GameMode.CREATIVE) {
-			final HashMap<Integer, String> bound = bPlayer.getAbilities();
-			for (final String str : bound.values()) {
-				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
-					final Player fplayer = player;
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							fplayer.setFlying(false);
-							fplayer.setAllowFlight(false);
-						}
-					}.runTaskLater(ProjectKorra.plugin, 2);
-					break;
-				}
-			}
-		}
-		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(bPlayer));
-	}
-
 	public static void reloadPlugin(final CommandSender sender) {
 		ProjectKorra.log.info("Reloading ProjectKorra and configuration");
 		final BendingReloadEvent event = new BendingReloadEvent(sender);
@@ -1863,6 +1371,8 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
+		Arrays.stream(Element.getElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Load colors from config again
+		Arrays.stream(Element.getSubElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Same for subs
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
 		EarthTunnel.clearBendableMaterials();
@@ -1870,12 +1380,15 @@ public class GeneralMethods {
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
+		PKCommand.reloadCommands();
 		// Stop the previous collision detection task before creating new manager.
 		ProjectKorra.collisionManager.stopCollisionDetection();
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
-		CoreAbility.registerAbilities();
-		reloadAddonPlugins();
+		HandlerList.unregisterAll(ProjectKorra.plugin); //Unregister all listeners registered by addons AND ProjectKorra
+		Bukkit.getPluginManager().registerEvents(new PKListener(ProjectKorra.plugin), ProjectKorra.plugin); //Re-register our listener
+		CoreAbility.registerAbilities(); //Register all abilities again
+		reloadAddonPlugins();  //Register all addons and addon listeners again
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered.
 		ProjectKorra.collisionManager.startCollisionDetection();
 
@@ -1885,12 +1398,15 @@ public class GeneralMethods {
 			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
 			stopPlugin();
 		}
+		BendingPlayer.getOfflinePlayers().clear();
+		BendingPlayer.getPlayers().clear();
+		BendingBoardManager.reload();
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			OfflineBendingPlayer.loadAsync(player.getUniqueId(), false);
 			PassiveManager.registerPassives(player);
 		}
-		BendingBoardManager.reload();
+
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
 	}
@@ -1918,40 +1434,24 @@ public class GeneralMethods {
 		}
 	}
 
+	/**
+	 * Deprecated. Use {@link BendingPlayer#removeUnusableAbilities()} instead.
+	 * @param player The name of the player
+	 */
+	@Deprecated
 	public static void removeUnusableAbilities(final String player) {
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			return;
-		}
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		bendingPlayer.removeUnusableAbilities();
+	}
 
-		// Remove all active instances of abilities that will become unusable.
-		// We need to do this prior to filtering binds in case the player has a MultiAbility running.
-		for (final CoreAbility coreAbility : CoreAbility.getAbilities()) {
-			final CoreAbility playerAbility = CoreAbility.getAbility(bPlayer.getPlayer(), coreAbility.getClass());
-			if (playerAbility != null) {
-				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(bPlayer.getPlayer(), playerAbility)) {
-					// The player will be able to keep using the given PassiveAbility.
-					continue;
-				} else if (bPlayer.canBend(playerAbility)) {
-					// The player will still be able to use this given Ability, do not end it.
-					continue;
-				}
-
-				playerAbility.remove();
-			}
-		}
-
-		// Remove all bound abilities that will become unusable.
-		final HashMap<Integer, String> slots = bPlayer.getAbilities();
-		final HashMap<Integer, String> finalAbilities = new HashMap<Integer, String>();
-		for (final int i : slots.keySet()) {
-			if (bPlayer.canBind(CoreAbility.getAbility(slots.get(i)))) {
-				// The player will still be able to use this given Ability, do not remove it from their binds.
-				finalAbilities.put(i, slots.get(i));
-			}
-		}
-
-		bPlayer.setAbilities(finalAbilities);
+	/**
+	 * Deprecated. Use {@link BendingPlayer#removeUnusableAbilities()} instead.
+	 * @param player The player
+	 */
+	@Deprecated
+	public static void removeUnusableAbilities(final Player player) {
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		bendingPlayer.removeUnusableAbilities();
 	}
 
 	public static Vector rotateVectorAroundVector(final Vector axis, final Vector rotator, final double degrees) {
@@ -2029,6 +1529,7 @@ public class GeneralMethods {
 		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
 		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
+		final boolean respectGriefDefender = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.GriefDefender");
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
@@ -2040,6 +1541,7 @@ public class GeneralMethods {
 		final Plugin residence = pm.getPlugin("Residence");
 		final Plugin kingdoms = pm.getPlugin("Kingdoms");
 		final Plugin redprotect = pm.getPlugin("RedProtect");
+		final Plugin griefdefender = pm.getPlugin("GriefDefender");
 
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
@@ -2067,6 +1569,9 @@ public class GeneralMethods {
 		}
 		if (redprotect != null && respectRedProtect) {
 			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
+		}
+		if (griefdefender != null && respectGriefDefender) {
+			writeToDebug("GriefDefender v" + griefdefender.getDescription().getVersion());
 		}
 
 		writeToDebug("");
@@ -2124,8 +1629,7 @@ public class GeneralMethods {
 								} else if (obj instanceof Map) {
 									writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?, ?>) obj).size());
 								}
-							} catch (final Exception e) {
-
+							} catch (final Exception ignored) {
 							}
 						}
 					}  catch (Exception e) {
@@ -2144,132 +1648,44 @@ public class GeneralMethods {
 		for (final String line : CoreAbility.getDebugString().split("\\n")) {
 			writeToDebug(line);
 		}
-
 	}
 
+	/**
+	 * Deprecated. Use {@link OfflineBendingPlayer#saveAbility(String, int)} instead.
+	 * @param bPlayer The bending player
+	 * @param slot The slot to save the ability to
+	 * @param ability The ability to save
+	 */
+	@Deprecated
 	public static void saveAbility(final BendingPlayer bPlayer, final int slot, final String ability) {
-		if (bPlayer == null) {
-			return;
-		}
-
-		// Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if (MultiAbilityManager.playerAbilities.containsKey(bPlayer.getPlayer())) {
-			return;
-		}
-		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + bPlayer.getUUIDString() + "'");
+		bPlayer.saveAbility(ability, slot);
 	}
 
+	/**
+	 * Deprecated. Please use {@link BendingPlayer#saveElements()} instead
+	 * @param bPlayer The bending player
+	 */
+	@Deprecated
 	public static void saveElements(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-
-		final StringBuilder elements = new StringBuilder();
-		if (bPlayer.hasElement(Element.AIR)) {
-			elements.append("a");
-		}
-		if (bPlayer.hasElement(Element.WATER)) {
-			elements.append("w");
-		}
-		if (bPlayer.hasElement(Element.EARTH)) {
-			elements.append("e");
-		}
-		if (bPlayer.hasElement(Element.FIRE)) {
-			elements.append("f");
-		}
-		if (bPlayer.hasElement(Element.CHI)) {
-			elements.append("c");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getElements()) {
-			if (Arrays.asList(Element.getAddonElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					elements.append(";");
-				}
-				elements.append(element.getName() + ",");
-			}
-		}
-
-		if (elements.length() == 0) {
-			elements.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
+		bPlayer.saveElements();
 	}
 
+	/**
+	 * Deprecated. Please use {@link BendingPlayer#saveSubElements()} instead
+	 * @param bPlayer The bending player
+	 */
+	@Deprecated
 	public static void saveSubElements(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-
-		final StringBuilder subs = new StringBuilder();
-		if (bPlayer.hasSubElement(Element.METAL)) {
-			subs.append("m");
-		}
-		if (bPlayer.hasSubElement(Element.LAVA)) {
-			subs.append("v");
-		}
-		if (bPlayer.hasSubElement(Element.SAND)) {
-			subs.append("s");
-		}
-		if (bPlayer.hasSubElement(Element.COMBUSTION)) {
-			subs.append("c");
-		}
-		if (bPlayer.hasSubElement(Element.LIGHTNING)) {
-			subs.append("l");
-		}
-		if (bPlayer.hasSubElement(Element.SPIRITUAL)) {
-			subs.append("t");
-		}
-		if (bPlayer.hasSubElement(Element.FLIGHT)) {
-			subs.append("f");
-		}
-		if (bPlayer.hasSubElement(Element.ICE)) {
-			subs.append("i");
-		}
-		if (bPlayer.hasSubElement(Element.HEALING)) {
-			subs.append("h");
-		}
-		if (bPlayer.hasSubElement(Element.BLOOD)) {
-			subs.append("b");
-		}
-		if (bPlayer.hasSubElement(Element.PLANT)) {
-			subs.append("p");
-		}
-		if (bPlayer.hasSubElement(Element.BLUE_FIRE)) {
-			subs.append("r");
-		}
-		boolean hasAddon = false;
-		for (final Element element : bPlayer.getSubElements()) {
-			if (Arrays.asList(Element.getAddonSubElements()).contains(element)) {
-				if (!hasAddon) {
-					hasAddon = true;
-					subs.append(";");
-				}
-				subs.append(element.getName() + ",");
-			}
-		}
-
-		if (subs.length() == 0) {
-			subs.append("NULL");
-		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
+		bPlayer.saveSubElements();
 	}
 
-	public static void savePermaRemoved(final BendingPlayer bPlayer) {
-		if (bPlayer == null) {
-			return;
-		}
-		final String uuid = bPlayer.getUUIDString();
-		final boolean permaRemoved = bPlayer.isPermaRemoved();
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
-	}
+	/**
+	 * <strong>Literally</strong> does nothing anymore. Instead, just set the permaremove state
+	 * inside the bPlayer and it will update
+	 * @param bPlayer Stop, this is useless
+	 */
+	@Deprecated
+	public static void savePermaRemoved(final BendingPlayer bPlayer) {}
 
 	public static FallingBlock spawnFallingBlock(final Location loc, final Material type) {
 		return spawnFallingBlock(loc, type, type.createBlockData());
@@ -2315,62 +1731,109 @@ public class GeneralMethods {
 			color = ChatColor.GOLD;
 		}
 
-		final String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		final String start = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix", ""));
+		final String main = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Main", "ProjectKorra"));
+		final String end = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix", " \u00BB "));
+		final String prefix = color + start + main + end;
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);
 		} else {
 			final TextComponent prefixComponent = new TextComponent(prefix);
-			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
-			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra!\n" + color + "Click for more info.").create()));
-
-			/*
-			 * The commented code below does not work due to an issue with
-			 * Spigot. In the mean time, we'll have to use this incredibly
-			 * 'hacky' method to force the color on the new line.
-			 */
-			String lastColor = "";
-			String newMessage = "";
-			for (int i = 0; i < message.split("").length; i++) {
-				final String c = message.split("")[i];
-				if (c.equalsIgnoreCase("§")) {
-					lastColor = "§" + message.split("")[i + 1];
-					newMessage = newMessage + c;
-				} else if (c.equalsIgnoreCase(" ")) { // Add color every word
-					newMessage = newMessage + " " + lastColor;
-				} else {
-					newMessage = newMessage + c;
+			final String hover = multiline(color + ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Hover", color + "Bending brought to you by ProjectKorra | Fork Roku!\n" + color + "Click for more info."));
+			final String click = ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Click", "https://www.projectkorra.com");
+			if (!hover.equals(""))
+				prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create()));
+			if (!click.equals("")) {
+				ClickEvent.Action action = ClickEvent.Action.RUN_COMMAND;
+				if (click.toLowerCase().startsWith("http://") || click.toLowerCase().startsWith("https://") || click.toLowerCase().startsWith("www.")) {
+					action = ClickEvent.Action.OPEN_URL;
 				}
+				prefixComponent.setClickEvent(new ClickEvent(action, click));
 			}
-
-			final TextComponent messageComponent = new TextComponent(newMessage);
+			final TextComponent messageComponent = new TextComponent(TextComponent.fromLegacyText(message, ChatColor.YELLOW.asBungee()));
 			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
-			/*
-			 * boolean prefixSent = false; for (String msg :
-			 * message.split("\n")) { if (!prefixSent) { TextComponent
-			 * messageComponent = new TextComponent(msg); ((Player)
-			 * sender).spigot().sendMessage(new TextComponent(prefixComponent,
-			 * messageComponent)); prefixSent = true; } else {
-			 * sender.sendMessage(msg); } }
-			 */
-
 		}
 	}
 
-	public static void startCacheCleaner(final double period) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (final Map<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
-					for (final Block key : map.keySet()) {
-						final BlockCacheElement value = map.get(key);
+	/**
+	 * Ensures a multiline string is properly formatted with color codes
+	 * @param string The string to format
+	 * @return The formatted string
+	 */
+	public static String multiline(String string) {
+		string = ChatColor.translateAlternateColorCodes('&', string.replaceAll("\\\\n", "\n")
+				.replaceAll("[\u00A7&]#([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})",
+						"\u00A7x\u00A7$1\u00A7$2\u00A7$3\u00A7$4\u00A7$5\u00A7$6")); //Replaces &#RRGGBB to &x&R&R&B&B&G&G (how hex actually works)
+		char lastColor = 'f';
+		String hex = null;
+		List<String> l = new ArrayList<String>();
+		for (String line : string.split("\n")) {
+			String prefix = "\u00A7" + lastColor; //Make the prefix the current color
+			if (hex != null) prefix += hex; //If the current color is a hex code, add on the RGB as well
 
-						if (System.currentTimeMillis() - value.getTime() > period) {
-							map.remove(key);
-						}
-					}
-				}
+			if (l.size() == 0 && string.charAt(0) == '\u00A7') prefix = ""; //Don't bother adding a pointless color code
+
+			l.add(prefix + line);
+			if (line.contains("\u00A7")) {
+				int index = line.lastIndexOf('\u00A7');
+				lastColor = line.charAt(index + 1);
+				if (lastColor == 'x') {
+					hex = line.substring(index + 2, index + 14);
+				} else hex = null;
 			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
+		}
+		return String.join("\n", l);
+	}
+
+	/**
+	 * Apply multiple modifiers to a value, using mod multipliers.
+	 * E.g. applyModifiers(10, 1.5, 1.5) = 20 and not 10 * 1.5 * 1.5 (22.5)
+	 * @param value The value to modify
+	 * @param modifiers The modifiers to apply
+	 */
+	public static double applyModifiers(double value, double... modifiers) {
+		double totalModifier = 0;
+
+		for(double mod : modifiers) {
+			totalModifier += mod - 1;
+		}
+		return value * (1 + totalModifier);
+	}
+
+	/**
+	 * Apply multiple modifiers to a value, using negative mod multipliers.
+	 * This should be used instead for values that are better the smaller they are
+	 * E.g. applyModifiers(10, 1.5) = 0.667
+	 * @param value The value to modify
+	 * @param modifiers The modifiers to apply
+	 */
+	public static double applyInverseModifiers(double value, double... modifiers) {
+		double totalMod = 1;
+		for (double mod : modifiers) {
+			totalMod *= mod;
+		}
+		return (value / (totalMod == 0 ? 0.0001 : totalMod));
+	}
+
+	/**
+	 * Apply multiple modifiers to a value, using mod multipliers.
+	 * E.g. applyModifiers(10, 1.5, 1.5) = 20 and not 10 * 1.5 * 1.5 (22.5)
+	 * @param value The value to modify
+	 * @param modifiers The modifiers to apply
+	 */
+	public static long applyModifiers(long value, double... modifiers) {
+		return (long) applyModifiers((double)value, modifiers);
+	}
+
+	/**
+	 * Apply multiple modifiers to a value, using negative mod multipliers.
+	 * This should be used instead for values that are better the smaller they are
+	 * E.g. applyModifiers(10, 1.5) = 0.667
+	 * @param value The value to modify
+	 * @param modifiers The modifiers to apply
+	 */
+	public static long applyInverseModifiers(long value, double... modifiers) {
+		return (long) applyInverseModifiers((double)value, modifiers);
 	}
 
 	public static void stopBending() {
@@ -2390,9 +1853,7 @@ public class GeneralMethods {
 		TempArmorStand.removeAll();
 		MovementHandler.resetAll();
 		MultiAbilityManager.removeAll();
-		if (!INVINCIBLE.isEmpty()) {
-			INVINCIBLE.clear();
-		}
+		TempFallingBlock.removeAllFallingBlocks();
 	}
 
 	public static void stopPlugin() {
@@ -2501,7 +1962,29 @@ public class GeneralMethods {
 		} else if (velocity.getZ() < -4) {
 			velocity.setZ(-4);
 		}
-
 		event.getAffected().setVelocity(velocity);
+	}
+
+	public static int getMCVersion() {
+		String version = Bukkit.getBukkitVersion().split("-", 2)[0];
+		if (!version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
+			ProjectKorra.log.warning("Version not valid! Cannot parse version \"" + version + "\"");
+			return 1164; //1.16.4
+		}
+
+		String[] split = version.split("\\.", 3);
+
+		int major = Integer.parseInt(split[0]);
+		int minor = 0;
+		int fix = 0;
+
+		if (split.length > 1) {
+			minor = Integer.parseInt(split[1]);
+
+			if (split.length > 2) {
+				fix = Integer.parseInt(split[2]);
+			}
+		}
+		return major * 1000 + minor * 10 + fix; //1.16.4 -> 1164; 1.18 -> 1180
 	}
 }

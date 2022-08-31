@@ -53,19 +53,19 @@ public class TorrentWave extends WaterAbility {
 
 		this.radius = radius;
 		this.interval = getConfig().getLong("Abilities.Water.Torrent.Wave.Interval");
-		this.maxHeight = getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
-		this.maxRadius = getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius");
-		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback");
-		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Wave.Cooldown");
-		this.growSpeed = getConfig().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed");
+		this.maxHeight = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Height"));
+		this.maxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius"));
+		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback"));
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.Wave.Cooldown"));
+		this.growSpeed = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed"));
 		this.origin = location.clone();
 		this.time = System.currentTimeMillis();
 		this.heights = new ConcurrentHashMap<>();
 		this.blocks = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 
-		this.knockback = this.getNightFactor(this.knockback);
-		this.maxRadius = this.getNightFactor(this.maxRadius);
+		//this.knockback = this.getNightFactor(this.knockback);
+		//this.maxRadius = this.getNightFactor(this.maxRadius);
 
 		this.initializeHeightsMap();
 		this.start();

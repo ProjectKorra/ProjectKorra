@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.earthbending.metal;
 
-import java.util.HashSet;
 import java.util.Random;
 
 import org.bukkit.Location;
@@ -17,88 +16,47 @@ import com.projectkorra.projectkorra.util.TempBlock;
 public class Extraction extends MetalAbility {
 
 	@Attribute("DoubleChance")
-	private int doubleChance;
+	private double doubleChance;
 	@Attribute("TripleChance")
-	private int tripleChance;
+	private double tripleChance;
 	@Attribute(Attribute.SELECT_RANGE)
 	private int selectRange;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Block originBlock;
 
+	//Whether the server is on at least 1.17 or not. Used to change between raw iron and iron ingots
+	private final boolean is117;
+
 	public Extraction(final Player player) {
 		super(player);
 
-		this.doubleChance = getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
-		this.tripleChance = getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
+		this.doubleChance = getConfig().getDouble("Abilities.Earth.Extraction.DoubleLootChance");
+		this.tripleChance = getConfig().getDouble("Abilities.Earth.Extraction.TripleLootChance");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
 		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
+
+		this.is117 = GeneralMethods.getMCVersion() >= 1170;
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 
-		this.originBlock = player.getTargetBlock((HashSet<Material>) null, this.selectRange);
-		if (this.originBlock == null) {
-			return;
-		}
+		this.originBlock = player.getTargetBlock(null, this.selectRange);
 
 		if (!GeneralMethods.isRegionProtectedFromBuild(this, this.originBlock.getLocation()) && !TempBlock.isTempBlock(this.originBlock)) {
-			final Material material = this.originBlock.getType();
-			Material type = null;
-
-			switch (material) {
-				case IRON_ORE:
-					this.originBlock.setType(Material.STONE);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, this.getAmount()));
-					type = Material.STONE;
-					break;
-				case GOLD_ORE:
-					this.originBlock.setType(Material.STONE);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, this.getAmount()));
-					type = Material.STONE;
-					break;
-				case NETHER_QUARTZ_ORE:
-					this.originBlock.setType(Material.NETHERRACK);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, this.getAmount()));
-					type = Material.NETHERRACK;
-					break;
-				case NETHER_GOLD_ORE:
-					this.originBlock.setType(Material.NETHERRACK);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_NUGGET, this.getAmount() * 6));
-					type = Material.NETHERRACK;
-					break;
-				case GILDED_BLACKSTONE:
-					this.originBlock.setType(Material.BLACKSTONE);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_NUGGET, this.getAmount() * 5));
-					type = Material.BLACKSTONE;
-					break;
-				default:
-					return;
-			}
-
-			if (type != null) {
-				/*
-				 * Update the block from Methods.movedearth to Stone otherwise
-				 * players can use RaiseEarth > Extraction > Collapse to dupe
-				 * the material from the block.
-				 */
-				if (getMovedEarth().containsKey(this.originBlock)) {
-					getMovedEarth().remove(this.originBlock);
-				}
-			}
-
-			playMetalbendingSound(this.originBlock.getLocation());
 			this.start();
-			this.bPlayer.addCooldown(this);
-			this.remove();
 		}
-
 	}
 
 	private int getAmount() {
+		return getAmount(1);
+	}
+
+	private int getAmount(int max) {
 		final Random rand = new Random();
-		return rand.nextInt(99) + 1 <= this.tripleChance ? 3 : rand.nextInt(99) + 1 <= this.doubleChance ? 2 : 1;
+		int randMax = max * (rand.nextDouble() * 100 <= this.tripleChance ? 3 : rand.nextDouble() * 100 <= this.doubleChance ? 2 : 1);
+		return rand.nextInt(randMax) + 1;
 	}
 
 	@Override
@@ -107,7 +65,56 @@ public class Extraction extends MetalAbility {
 	}
 
 	@Override
-	public void progress() {}
+	public void progress() {
+		Material type;
+		ItemStack item;
+
+		switch (this.originBlock.getType().name()) {
+		case "IRON_ORE":
+		case "DEEPSLATE_IRON_ORE":
+			type = Material.STONE;
+			item = new ItemStack(is117 ? Material.getMaterial("RAW_IRON") : Material.IRON_INGOT, this.getAmount( is117 ? 2 : 1 ));
+			break;
+		case "GOLD_ORE":
+		case "DEEPSLATE_GOLD_ORE":
+			type = Material.STONE;
+			item = new ItemStack(is117 ? Material.getMaterial("RAW_GOLD") : Material.GOLD_INGOT, this.getAmount( is117 ? 2 : 1 ));
+			break;
+		case "NETHER_QUARTZ_ORE":
+			type = Material.NETHERRACK;
+			item = new ItemStack(Material.QUARTZ, this.getAmount());
+			break;
+		case "NETHER_GOLD_ORE":
+			type = Material.NETHERRACK;
+			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount(6));
+			break;
+		case "GILDED_BLACKSTONE":
+			type = Material.BLACKSTONE;
+			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount(5));
+			break;
+		case "COPPER_ORE":
+		case "DEEPSLATE_COPPER_ORE":
+			type = Material.STONE;
+			item = new ItemStack(Material.getMaterial("RAW_COPPER"), this.getAmount(2));
+			break;
+		default:
+			return;
+		}
+
+		this.originBlock.setType(type);
+		player.getWorld().dropItem(player.getLocation(), item);
+
+		/*
+		 * Update the block from EarthAbility.getMovedEarth() to Stone otherwise
+		 * players can use RaiseEarth > Extraction > Collapse to dupe
+		 * the material from the block.
+		 */
+		getMovedEarth().remove(this.originBlock);
+
+		playMetalbendingSound(this.originBlock.getLocation());
+		this.bPlayer.addCooldown(this);
+		this.remove();
+	}
 
 	@Override
 	public Location getLocation() {
@@ -134,7 +141,7 @@ public class Extraction extends MetalAbility {
 		return false;
 	}
 
-	public int getDoubleChance() {
+	public double getDoubleChance() {
 		return this.doubleChance;
 	}
 
@@ -142,7 +149,7 @@ public class Extraction extends MetalAbility {
 		this.doubleChance = doubleChance;
 	}
 
-	public int getTripleChance() {
+	public double getTripleChance() {
 		return this.tripleChance;
 	}
 

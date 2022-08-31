@@ -1,16 +1,26 @@
 package com.projectkorra.projectkorra;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
+import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.board.BendingBoard;
+import com.projectkorra.projectkorra.command.CooldownCommand;
+import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
+import com.projectkorra.projectkorra.hooks.CanBendHook;
+import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.region.RegionProtection;
+import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -22,7 +32,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.Element.MultiSubElement;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -34,92 +44,35 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
-import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
-import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that presents a player and stores all bending information about the
  * player.
  */
-public class BendingPlayer {
+public class BendingPlayer extends OfflineBendingPlayer {
 
-	/**
-	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID
-	 * key.
-	 */
-	private static final Map<UUID, BendingPlayer> PLAYERS = new ConcurrentHashMap<>();
+	protected static Map<JavaPlugin, CanBendHook> HOOKS = new HashMap<>();
 
-	private boolean permaRemoved;
-	private boolean toggled;
-	private boolean tremorSense;
-	private boolean illumination;
-	private boolean chiBlocked;
 	private long slowTime;
 	private final Player player;
-	private final UUID uuid;
-	private final String name;
 	private ChiAbility stance;
-	private final DBCooldownManager cooldownManager;
-	private final ArrayList<Element> elements;
-	private final ArrayList<SubElement> subelements;
-	private HashMap<Integer, String> abilities;
-	private final Map<String, Cooldown> cooldowns;
-	private final Map<Element, Boolean> toggledElements;
 
-	/**
-	 * Creates a new {@link BendingPlayer}.
-	 *
-	 * @param uuid The unique identifier
-	 * @param playerName The playername
-	 * @param elements The known elements
-	 * @param abilities The known abilities
-	 * @param permaRemoved The permanent removed status
-	 */
-	public BendingPlayer(final UUID uuid, final String playerName, final ArrayList<Element> elements, final ArrayList<SubElement> subelements, final HashMap<Integer, String> abilities, final boolean permaRemoved) {
-		this.uuid = uuid;
-		this.name = playerName;
-		this.cooldownManager = Manager.getManager(DBCooldownManager.class);
-		this.elements = elements;
-		this.subelements = subelements;
-		this.setAbilities(abilities);
-		this.permaRemoved = permaRemoved;
-		this.player = Bukkit.getPlayer(uuid);
-		this.toggled = true;
+	protected boolean tremorSense;
+	protected boolean illumination;
+	protected boolean chiBlocked;
+
+	public BendingPlayer(Player player) {
+		super(player);
+
+		this.player = player;
 		this.tremorSense = true;
 		this.illumination = true;
 		this.chiBlocked = false;
-		this.cooldowns = this.loadCooldowns();
-		this.toggledElements = new ConcurrentHashMap<Element, Boolean>();
-		for (final Element e : Element.getAllElements()) {
-			if (!e.equals(Element.AVATAR)) {
-				this.toggledElements.put(e, true);
-			}
-		}
-
-		PLAYERS.put(uuid, this);
-		GeneralMethods.loadBendingPlayer(this);
-	}
-
-	public void addCooldown(final Ability ability, final long cooldown, final boolean database) {
-		this.addCooldown(ability.getName(), cooldown, database);
-	}
-
-	public void addCooldown(final Ability ability, final boolean database) {
-		this.addCooldown(ability.getName(), ability.getCooldown(), database);
-	}
-
-	public void addCooldown(final Ability ability, final long cooldown) {
-		this.addCooldown(ability, cooldown, false);
-	}
-
-	public void addCooldown(final Ability ability) {
-		this.addCooldown(ability, false);
-	}
-
-	public void addCooldown(final String ability, final long cooldown) {
-		this.addCooldown(ability, cooldown, false);
 	}
 
 	/**
@@ -130,127 +83,65 @@ public class BendingPlayer {
 	 * @param cooldown The cooldown time
 	 * @param database If the value should be saved to the database
 	 */
+	@Override
 	public void addCooldown(final String ability, final long cooldown, final boolean database) {
 		if (cooldown <= 0) {
 			return;
 		}
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, cooldown, Result.ADDED);
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
 
-			final Player player = event.getPlayer();
-
-			if (player == null) {
-				return;
-			}
-
-			final String abilityName = event.getAbility();
-			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-			if (bPlayer != null && bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
-				GeneralMethods.displayMovePreview(player);
+			if (this.getBoundAbilityName() != null && this.getBoundAbilityName().equalsIgnoreCase(ability)) {
+				GeneralMethods.displayMovePreview(this.player);
 			}
 			
-			BendingBoardManager.updateBoard(player, event.getAbility(), true, 0);
+			BendingBoardManager.updateBoard(this.player, event.getAbility(), true, 0);
+			CooldownCommand.addCooldownType(ability);
 		}
 	}
 
 	public Map<String, Cooldown> loadCooldowns() {
-		final Map<String, Cooldown> cooldowns = new ConcurrentHashMap<>();
-		if (ProjectKorra.isDatabaseCooldownsEnabled()) {
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'")) {
-				while (rs.next()) {
-					final int cooldownId = rs.getInt("cooldown_id");
-					final long value = rs.getLong("value");
-					final String name = this.cooldownManager.getCooldownName(cooldownId);
-					cooldowns.put(name, new Cooldown(value, true));
-				}
-			} catch (final SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return cooldowns;
-	}
-
-	public void saveCooldowns() {
-		DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'", false);
-		for (final Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
-			final String name = entry.getKey();
-			final Cooldown cooldown = entry.getValue();
-			final int cooldownId = this.cooldownManager.getCooldownId(name, false);
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
-				if (rs.next()) {
-					DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
-				} else {
-					DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
-				}
-			} catch (final SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Adds an element to the {@link BendingPlayer}'s known list.
-	 *
-	 * @param element The element to add.
-	 */
-	public void addElement(final Element element) {
-		this.elements.add(element);
-	}
-
-	/**
-	 * Adds a subelement to the {@link BendingPlayer}'s known list.
-	 *
-	 * @param subelement The subelement to add.
-	 */
-	public void addSubElement(final SubElement subelement) {
-		this.subelements.add(subelement);
-	}
-
-	/**
-	 * Sets chiBlocked to true.
-	 */
-	public void blockChi() {
-		this.chiBlocked = true;
+		return new ConcurrentHashMap<>();
 	}
 
 	/**
 	 * Checks to see if a Player is effected by BloodBending.
 	 *
-	 * @return true If {@link ChiMethods#isChiBlocked(String)} is true <br />
+	 * @return true If {@link #isChiBlocked()} is true <br />
 	 *         false If player is BloodBender and Bending is toggled on, or if
 	 *         player is in AvatarState
 	 */
 	public boolean canBeBloodbent() {
 		if (this.isAvatarState()) {
-			if (this.isChiBlocked()) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.isChiBlocked();
 		}
 
-		if (this.canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) && this.isToggled()) {
-			return false;
-		}
-
-		return true;
+		return !this.canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) || !this.isToggled();
 	}
 
 	public boolean canBend(final CoreAbility ability) {
 		return this.canBend(ability, false, false);
 	}
 
-	private boolean canBend(final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
-		if (ability == null) {
-			return false;
-		}
+	private boolean canBend(@NotNull final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
 
 		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		final Location playerLoc = this.player.getLocation();
+
+		//Loop through all hooks and test them
+		for (JavaPlugin plugin : HOOKS.keySet()) {
+			CanBendHook hook = HOOKS.get(plugin);
+			try {
+				Optional<Boolean> bool = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
+				if (bool.isPresent()) return bool.get(); //If the hook didn't return
+			} catch (Exception e) {
+				ProjectKorra.log.severe("An error occurred while running CanBendHook registered by " + plugin.getName() + ".");
+				e.printStackTrace();
+			}
+		}
 
 		if (!this.player.isOnline() || this.player.isDead()) {
 			return false;
@@ -262,7 +153,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
 			return false;
 		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;
@@ -280,7 +171,7 @@ public class BendingPlayer {
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, ability.getName(), playerLoc)) {
+		} else if (RegionProtection.isRegionProtected(this.player, playerLoc, ability)) {
 			return false;
 		}
 
@@ -300,7 +191,7 @@ public class BendingPlayer {
 	}
 
 	public boolean canBendPassive(final CoreAbility ability) {
-		if (ability == null) {
+		if (ability == null || !this.isPassiveToggled(ability.getElement()) || !this.isToggledPassives()) {
 			return false; // If the passive is disabled.
 		}
 		final Element element = ability.getElement();
@@ -318,28 +209,20 @@ public class BendingPlayer {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
 			return false;
-		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
-			return false;
-		}
-
-		return true;
+		} else return this.player.getGameMode() != GameMode.SPECTATOR;
 	}
 
 	public boolean canUsePassive(final CoreAbility ability) {
 		final Element element = ability.getElement();
-		if (!this.isToggled() || !this.isElementToggled(element)) {
+		if (!this.isToggled() || !this.isElementToggled(element) || !this.isPassiveToggled(element) || !this.isToggledPassives()) {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.player.getLocation())) {
 			return false;
-		} else if (this.isOnCooldown(ability)) {
-			return false;
-		}
-
-		return true;
+		} else return !this.isOnCooldown(ability);
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
@@ -348,16 +231,10 @@ public class BendingPlayer {
 			final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
 
 			if (hasWeapon) {
-				if (noWeaponElement) {
-					return false;
-				} else {
-					return true;
-				}
+				return !noWeaponElement;
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 
@@ -382,154 +259,80 @@ public class BendingPlayer {
 			if (!this.hasElement(subElement.getParentElement())) {
 				return false;
 			}
-
-			if (!this.hasSubElement(subElement)) {
-				return false;
-			}
+			return this.hasSubElement(subElement);
 		}
-
 		return true;
 	}
 
-	/**
-	 * Checks to see if a player can BloodBend.
-	 *
-	 * @return true If player has permission node "bending.earth.bloodbending"
-	 */
-	public boolean canBloodbend() {
-		return this.subelements.contains(Element.BLOOD);
-	}
-
+	@Override
 	public boolean canBloodbendAtAnytime() {
 		return this.canBloodbend() && this.player.hasPermission("bending.water.bloodbending.anytime");
 	}
 
-	public boolean canCombustionbend() {
-		return this.subelements.contains(Element.COMBUSTION);
-	}
-
-	public boolean canIcebend() {
-		return this.subelements.contains(Element.ICE);
+	/**
+	 * Gets a BendingPlayer instance for the provided player
+	 * @param oPlayer The player
+	 * @return The BendingPlayer instance
+	 */
+	public static BendingPlayer getBendingPlayer(@NotNull final OfflinePlayer oPlayer) {
+		return OfflineBendingPlayer.ONLINE_PLAYERS.get(oPlayer.getUniqueId());
 	}
 
 	/**
-	 * Checks to see if a player can LavaBend.
-	 *
-	 * @return true If player has permission node "bending.earth.lavabending"
+	 * Gets a OfflineBendingPlayer instance for the provided player
+	 * @param oPlayer The player
+	 * @return The OfflineBendingPlayer instance
 	 */
-	public boolean canLavabend() {
-		return this.subelements.contains(Element.LAVA);
-	}
-
-	public boolean canLightningbend() {
-		return this.subelements.contains(Element.LIGHTNING);
+	public static OfflineBendingPlayer getCachedOffline(@NotNull final OfflinePlayer oPlayer) {
+		return OfflineBendingPlayer.PLAYERS.get(oPlayer.getUniqueId());
 	}
 
 	/**
-	 * Checks to see if a player can MetalBend.
-	 *
-	 * @param player The player to check
-	 * @return true If player has permission node "bending.earth.metalbending"
+	 * Gets an offline BendingPlayer instance for the provided player. If the instance is
+	 * not already cached, it will load it from the database.
+	 * @param oPlayer The offline player
+	 * @return A CompletedFuture of the OfflineBendingPlayer instance
 	 */
-	public boolean canMetalbend() {
-		return this.subelements.contains(Element.METAL);
+	public static CompletableFuture<OfflineBendingPlayer> getOrLoadOfflineAsync(@NotNull final OfflinePlayer oPlayer) {
+		return OfflineBendingPlayer.loadAsync(oPlayer.getUniqueId(), false);
 	}
 
 	/**
-	 * Checks to see if a player can PlantBend.
-	 *
-	 * @param player The player to check
-	 * @return true If player has permission node "bending.ability.plantbending"
+	 * Gets an offline BendingPlayer instance for the provided player. If the instance is
+	 * not already cached, it will load it from the database. Note: This will do it on the
+	 * main thread!
+	 * @param oPlayer The offline player
+	 * @return The OfflineBendingPlayer instance
 	 */
-	public boolean canPlantbend() {
-		return this.subelements.contains(Element.PLANT);
-	}
-
-	/**
-	 * Checks to see if a player can SandBend.
-	 *
-	 * @param player The player to check
-	 * @return true If player has permission node "bending.earth.sandbending"
-	 */
-	public boolean canSandbend() {
-		return this.subelements.contains(Element.SAND);
-	}
-
-	/**
-	 * Checks to see if a player can use Flight.
-	 *
-	 * @return true If player has permission node "bending.air.flight"
-	 */
-	public boolean canUseFlight() {
-		return this.subelements.contains(Element.FLIGHT);
-	}
-
-	/**
-	 * Checks to see if a player can use SpiritualProjection.
-	 *
-	 * @param player The player to check
-	 * @return true If player has permission node
-	 *         "bending.air.spiritualprojection"
-	 */
-	public boolean canUseSpiritualProjection() {
-		return this.subelements.contains(Element.SPIRITUAL);
-	}
-
-	/**
-	 * Checks to see if a player can use Water Healing.
-	 *
-	 * @return true If player has permission node "bending.water.healing"
-	 */
-	public boolean canWaterHeal() {
-		return this.subelements.contains(Element.HEALING);
-	}
-
-	/**
-	 * Checks to see if a player can bend a specific sub element. Used when
-	 * checking addon sub elements.
-	 *
-	 * @param sub SubElement to check for.
-	 * @return true If the player has permission to bend that subelement.
-	 */
-	public boolean canUseSubElement(final SubElement sub) {
-		return this.subelements.contains(sub);
-	}
-
-	/**
-	 * Gets the map of abilities that the {@link BendingPlayer} knows.
-	 *
-	 * @return map of abilities
-	 */
-	public HashMap<Integer, String> getAbilities() {
-		return this.abilities;
-	}
-
-	public static BendingPlayer getBendingPlayer(final OfflinePlayer oPlayer) {
-		if (oPlayer == null) {
+	public static OfflineBendingPlayer getOrLoadOffline(@NotNull final OfflinePlayer oPlayer) {
+		try {
+			return getOrLoadOfflineAsync(oPlayer).get();
+		} catch (ExecutionException | InterruptedException e) {
+			e.printStackTrace();
 			return null;
 		}
-
-		return BendingPlayer.getPlayers().get(oPlayer.getUniqueId());
 	}
 
-	public static BendingPlayer getBendingPlayer(final Player player) {
-		if (player == null) {
-			return null;
-		}
-
+	/**
+	 * Gets a BendingPlayer instance for the provided player
+	 * @param player The player
+	 * @return The BendingPlayer instance
+	 */
+	public static BendingPlayer getBendingPlayer(@NotNull final Player player) {
 		return getBendingPlayer((OfflinePlayer)player);
 	}
+
 
 	/**
 	 * Attempts to get a {@link BendingPlayer} from specified player name. this
 	 * method tries to get a {@link Player} object and gets the uuid and then
-	 * calls {@link #getBendingPlayer(UUID)}
+	 * calls {@link #getBendingPlayer(OfflinePlayer)}
 	 *
 	 * @param playerName The name of the Player
 	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS}
 	 *         contains the player name
 	 *
-	 * @see #getBendingPlayer(UUID)
+	 * @see #getBendingPlayer(OfflinePlayer)
 	 */
 	public static BendingPlayer getBendingPlayer(final String playerName) {
 		if (playerName == null) {
@@ -542,68 +345,44 @@ public class BendingPlayer {
 		return getBendingPlayer(oPlayer);
 	}
 
+	/**
+	 * Attempts to get a {@link OfflineBendingPlayer} from specified player name. this
+	 * method tries to get a {@link Player} object and gets the uuid and then
+	 * calls {@link #getBendingPlayer(OfflinePlayer)}
+	 *
+	 * @param playerName The name of the Player
+	 * @return The OfflineBendingPlayer object if {@link BendingPlayer#PLAYERS}
+	 *         contains the player name
+	 *
+	 * @see #getBendingPlayer(OfflinePlayer)
+	 */
+	public static OfflineBendingPlayer getOfflineBendingPlayer(final String playerName) {
+		if (playerName == null) {
+			return null;
+		}
+
+		final OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(playerName);
+
+		return getBendingPlayer(oPlayer);
+	}
+
 	private static FileConfiguration getConfig() {
 		return ConfigManager.getConfig();
 	}
 
-	public CoreAbility getBoundAbility() {
-		return CoreAbility.getAbility(this.getBoundAbilityName());
+	@Override
+	public void uncache() throws IllegalStateException {
+		throw new IllegalStateException("Cannot uncache an online BendingPlayer!");
 	}
 
-	/**
-	 * Gets the Ability bound to the slot that the player is in.
-	 *
-	 * @return The Ability name bounded to the slot
-	 */
-	public String getBoundAbilityName() {
-		final int slot = this.player.getInventory().getHeldItemSlot() + 1;
-		final String name = this.getAbilities().get(slot);
-
-		return name != null ? name : "";
+	@Override
+	public void uncacheAfter(long time) throws IllegalStateException {
+		throw new IllegalStateException("Cannot uncache an online BendingPlayer!");
 	}
 
-	/**
-	 * Gets the cooldown time of the ability.
-	 *
-	 * @param ability The ability to check
-	 * @return the cooldown time
-	 *         <p>
-	 *         or -1 if cooldown doesn't exist
-	 *         </p>
-	 */
-	public long getCooldown(final String ability) {
-		if (this.cooldowns.containsKey(ability)) {
-			return this.cooldowns.get(ability).getCooldown();
-		}
-
-		return -1;
-	}
-
-	/**
-	 * Gets the map of cooldowns of the {@link BendingPlayer}.
-	 *
-	 * @return map of cooldowns
-	 */
-	public Map<String, Cooldown> getCooldowns() {
-		return this.cooldowns;
-	}
-
-	/**
-	 * Gets the list of elements the {@link BendingPlayer} knows.
-	 *
-	 * @return a list of elements
-	 */
-	public List<Element> getElements() {
-		return this.elements;
-	}
-
-	/**
-	 * Gets the name of the {@link BendingPlayer}.
-	 *
-	 * @return the player name
-	 */
-	public String getName() {
-		return this.name;
+	@Override
+	public int getCurrentSlot() {
+		return this.player.getInventory().getHeldItemSlot();
 	}
 
 	/**
@@ -618,10 +397,23 @@ public class BendingPlayer {
 	/**
 	 * Gets the map of {@link BendingPlayer}s.
 	 *
-	 * @return {@link #PLAYERS}
+	 * @return {@link #ONLINE_PLAYERS}
 	 */
 	public static Map<UUID, BendingPlayer> getPlayers() {
-		return PLAYERS;
+		return OfflineBendingPlayer.ONLINE_PLAYERS;
+	}
+
+	/**
+	 * Gets the map of {@link OfflineBendingPlayer}s.
+	 *
+	 * @return {@link #PLAYERS}
+	 */
+	public static Map<UUID, OfflineBendingPlayer> getOfflinePlayers() {
+		return OfflineBendingPlayer.PLAYERS;
+	}
+
+	public static void registerCanBendHook(@NotNull JavaPlugin plugin, @NotNull CanBendHook hook) {
+		HOOKS.put(plugin, hook);
 	}
 
 	/**
@@ -634,67 +426,19 @@ public class BendingPlayer {
 	}
 
 	/**
-	 * Gets the list of subelements the {@link BendingPlayer} knows.
-	 *
-	 * @return a list of subelements
-	 */
-	public List<SubElement> getSubElements() {
-		return this.subelements;
-	}
-
-	/**
-	 * Gets the unique identifier of the {@link BendingPlayer}.
-	 *
-	 * @return the uuid
-	 */
-	public UUID getUUID() {
-		return this.uuid;
-	}
-
-	/**
-	 * Convenience method to {@link #getUUID()} as a string.
-	 *
-	 * @return string version of uuid
-	 */
-	public String getUUIDString() {
-		return this.uuid.toString();
-	}
-
-	/**
-	 * Checks to see if the {@link BendingPlayer} knows a specific element.
-	 *
-	 * @param element The element to check
-	 * @return true If the player knows the element
-	 */
-	public boolean hasElement(final Element element) {
-		if (element == null) {
-			return false;
-		} else if (element == Element.AVATAR) {
-			// At the moment we'll allow for both permissions to return true.
-			// Later on we can consider deleting the bending.ability.avatarstate option.
-			return this.player.hasPermission("bending.avatar") || this.player.hasPermission("bending.ability.AvatarState");
-		} else if (!(element instanceof SubElement)) {
-			return this.elements.contains(element);
-		} else {
-			return this.hasSubElement((SubElement) element);
-		}
-	}
-
-	public boolean hasSubElement(final SubElement sub) {
-		if (sub == null) {
-			return false;
-		} else {
-			return this.subelements.contains(sub);
-		}
-	}
-
-	/**
 	 * Returns whether the player has permission to bend the subelement
 	 *
 	 * @param sub The SubElement
 	 */
 	public boolean hasSubElementPermission(final SubElement sub) {
 		if (sub == null) {
+			return false;
+		}
+
+		if (sub instanceof MultiSubElement) {
+			for (Element parent : ((MultiSubElement) sub).getParentElements()) {
+				if (this.player.hasPermission("bending." + parent.getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) return true;
+			}
 			return false;
 		}
 
@@ -709,38 +453,8 @@ public class BendingPlayer {
 		return Bloodbending.isBloodbent(this.player);
 	}
 
-	/**
-	 * Checks to see if the {@link BendingPlayer} is a bender.
-	 *
-	 * @return true If the player is a bender.
-	 */
-	public boolean isBender() {
-		return !this.elements.isEmpty();
-	}
-
-	/**
-	 * Checks to see if the {@link BendingPlayer} is chi blocked.
-	 *
-	 * @return true If the player is chi blocked
-	 */
-	public boolean isChiBlocked() {
-		return this.chiBlocked;
-	}
-
 	public boolean isControlledByMetalClips() {
 		return MetalClips.isControlled(this.player);
-	}
-
-	public boolean isElementToggled(final Element element) {
-		if (element != null && this.toggledElements.containsKey(element)) {
-			return this.toggledElements.get(element);
-		}
-
-		return true;
-	}
-
-	public boolean isOnCooldown(final Ability ability) {
-		return this.isOnCooldown(ability.getName());
 	}
 
 	/**
@@ -749,6 +463,7 @@ public class BendingPlayer {
 	 * @param ability The ability name to check
 	 * @return true if the cooldown map contains the ability
 	 */
+	@Override
 	public boolean isOnCooldown(final String ability) {
 		if (this.cooldowns.containsKey(ability)) {
 			return System.currentTimeMillis() < this.cooldowns.get(ability).getCooldown();
@@ -762,21 +477,26 @@ public class BendingPlayer {
 	}
 
 	/**
-	 * Checks if the {@link BendingPlayer} is permaremoved.
+	 * Checks to see if the {@link BendingPlayer} is chi blocked.
 	 *
-	 * @return true If the player is permaremoved
+	 * @return true If the player is chi blocked
 	 */
-	public boolean isPermaRemoved() {
-		return this.permaRemoved;
+	public boolean isChiBlocked() {
+		return this.chiBlocked;
 	}
 
 	/**
-	 * Checks if the {@link BendingPlayer} has bending toggled on.
-	 *
-	 * @return true If bending is toggled on
+	 * Sets the {@link BendingPlayer}'s chi blocked to false.
 	 */
-	public boolean isToggled() {
-		return this.toggled;
+	public void unblockChi() {
+		this.chiBlocked = false;
+	}
+
+	/**
+	 * Sets chiBlocked to true.
+	 */
+	public void blockChi() {
+		this.chiBlocked = true;
 	}
 
 	/**
@@ -797,72 +517,58 @@ public class BendingPlayer {
 		return this.illumination;
 	}
 
-	public void removeCooldown(final CoreAbility ability) {
-		if (ability != null) {
-			this.removeCooldown(ability.getName());
-		}
-	}
-
 	/**
 	 * Removes the cooldown of an ability.
 	 *
 	 * @param ability The ability's cooldown to remove
 	 */
+	@Override
 	public void removeCooldown(final String ability) {
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, 0, Result.REMOVED);
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
 
-			final Player player = event.getPlayer();
-			
-			if (player == null) {
-				return;
-			}
 			
 			final String abilityName = event.getAbility();
-			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-			if (bPlayer != null && bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
-				GeneralMethods.displayMovePreview(player);
+			if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
+				GeneralMethods.displayMovePreview(this.player);
 			}
 
-			BendingBoardManager.updateBoard(player, event.getAbility(), false, 0);
+			BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
 		}
 	}
 
 	/**
-	 * Sets the {@link BendingPlayer}'s abilities. This method also saves the
-	 * abilities to the database.
+	 * Removes all cooldowns that have expired.
 	 *
-	 * @param abilities The abilities to set/save
+	 * We cannot call the {@link #removeCooldown(String)} method here because it
+	 * would cause a ConcurrentModificationException. That's why we have to copy
+	 * most of the method here so the event is still called, but we remove from
+	 * the iterator instead of the map like we do in {@link #removeCooldown(String)}
 	 */
-	public void setAbilities(final HashMap<Integer, String> abilities) {
-		this.abilities = abilities;
+	@Override
+	protected void removeOldCooldowns() {
+		Iterator<Entry<String, Cooldown>> iterator = this.cooldowns.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, Cooldown> entry = iterator.next();
+			if (System.currentTimeMillis() >= entry.getValue().getCooldown()) {
+				final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, entry.getKey(), 0, Result.REMOVED);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					iterator.remove();
 
-		for (int i = 1; i <= 9; i++) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + this.uuid + "'");
+					final String abilityName = event.getAbility();
+
+					if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
+						GeneralMethods.displayMovePreview(this.player);
+					}
+
+					BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
+				}
+			}
 		}
-	}
-
-	/**
-	 * Sets the {@link BendingPlayer}'s element. If the player had elements
-	 * before they will be overwritten.
-	 *
-	 * @param e The element to set
-	 */
-	public void setElement(final Element element) {
-		this.elements.clear();
-		this.elements.add(element);
-	}
-
-	/**
-	 * Sets the permanent removed state of the {@link BendingPlayer}.
-	 *
-	 * @param permaRemoved
-	 */
-	public void setPermaRemoved(final boolean permaRemoved) {
-		this.permaRemoved = permaRemoved;
 	}
 
 	/**
@@ -875,7 +581,7 @@ public class BendingPlayer {
 		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
 		final String newStance = (stance == null) ? "" : stance.getName();
 		this.stance = stance;
-		GeneralMethods.displayMovePreview(player);
+		GeneralMethods.displayMovePreview(this.player);
 		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(Bukkit.getPlayer(this.uuid), oldStance, newStance);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
@@ -892,18 +598,127 @@ public class BendingPlayer {
 	/**
 	 * Toggles the {@link BendingPlayer}'s bending.
 	 */
+	@Override
 	public void toggleBending() {
 		this.toggled = !this.toggled;
 		PassiveManager.registerPassives(this.player);
 	}
 
+	@Override
+	public void toggleAllPassives() {
+		this.allPassivesToggled = !this.allPassivesToggled;
+		PassiveManager.registerPassives(this.player);
+	}
+
+	@Override
 	public void toggleElement(final Element element) {
-		if (element == null) {
-			return;
+		super.toggleElement(element);
+		PassiveManager.registerPassives(this.player);
+	}
+
+	@Override
+	public void togglePassive(final Element element) {
+		super.togglePassive(element);
+		PassiveManager.registerPassives(this.player);
+	}
+
+	public void removeUnusableAbilities() {
+		// Remove all active instances of abilities that will become unusable.
+		// We need to do this prior to filtering binds in case the player has a MultiAbility running.
+		for (final CoreAbility coreAbility : CoreAbility.getAbilities()) {
+			final CoreAbility playerAbility = CoreAbility.getAbility(this.player, coreAbility.getClass());
+			if (playerAbility != null) {
+				if (playerAbility instanceof PassiveAbility && PassiveManager.hasPassive(this.player, playerAbility)) {
+					// The player will be able to keep using the given PassiveAbility.
+					continue;
+				} else if (this.canBend(playerAbility)) {
+					// The player will still be able to use this given Ability, do not end it.
+					continue;
+				}
+				playerAbility.remove();
+			}
 		}
 
-		this.toggledElements.put(element, !this.toggledElements.get(element));
+		// Remove all bound abilities that will become unusable.
+		final HashMap<Integer, String> slots = this.getAbilities();
+		final HashMap<Integer, String> finalAbilities = new HashMap<>();
+		for (final int i : slots.keySet()) {
+			if (this.canBind(CoreAbility.getAbility(slots.get(i)))) {
+				// The player will still be able to use this given Ability, do not remove it from their binds.
+				finalAbilities.put(i, slots.get(i));
+			}
+		}
+		this.setAbilities(finalAbilities);
+	}
+
+	/**
+	 * Do all the stuff we need to after the BendingPlayer instance is loaded
+	 */
+	protected void postLoad() {
+		if (!this.toggled) {
+			GeneralMethods.sendBrandingMessage(this.player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
+		}
+
+		Preset.loadPresets(this.player);
+
+		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
+
+		String prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender", "")) + " ";
+		if (this.player.hasPermission("bending.avatar") || (this.hasElement(Element.AIR) && this.hasElement(Element.EARTH) && this.hasElement(Element.FIRE) && this.hasElement(Element.WATER))) {
+			prefix = Element.AVATAR.getPrefix();
+		} else if (this.getElements().size() > 0) {
+			Element element = this.getElements().get(0);
+			prefix = element.getPrefix();
+		}
+
+		if (chatEnabled) {
+			this.player.setDisplayName(this.player.getName());
+			this.player.setDisplayName(prefix + ChatColor.RESET + this.player.getDisplayName());
+		}
+
+		// Handle the AirSpout/WaterSpout login glitches.
+		if (this.player.getGameMode() != GameMode.CREATIVE) {
+			final HashMap<Integer, String> bound = this.getAbilities();
+			for (final String str : bound.values()) {
+				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
+					final Player fplayer = this.player;
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							fplayer.setFlying(false);
+							fplayer.setAllowFlight(false);
+						}
+					}.runTaskLater(ProjectKorra.plugin, 2);
+					break;
+				}
+			}
+		}
+
+		this.removeUnusableAbilities();
+		this.fixSubelements(); //Grant all subelements for an element if they have 0 subs for that element (that they are allowed)
+		this.removeOldCooldowns();
 		PassiveManager.registerPassives(this.player);
+
+		//Show the bending board 1 tick later. We do it 1 tick later because postLoad() is called BEFORE the player is loaded into the map,
+		//and the board needs to see the player in the map to initialize
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			BendingBoardManager.getBoard(this.player).ifPresent(BendingBoard::show);
+			//Hide the board if they spawn in a world with bending disabled
+			BendingBoardManager.changeWorld(this.player);
+		}, 1L);
+
+		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(this));
+	}
+
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+
+	@Override
+	public void setCurrentSlot(int slot) {
+		this.player.getInventory().setHeldItemSlot(slot % 9);
 	}
 
 	/**
@@ -921,14 +736,22 @@ public class BendingPlayer {
 	}
 
 	/**
-	 * Sets the {@link BendingPlayer}'s chi blocked to false.
+	 * Gives all subelements a player doesn't have when they log in. Deprecated
+	 * because subelements being a list will be phased out eventually
 	 */
-	public void unblockChi() {
-		this.chiBlocked = false;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	@Deprecated
+	public void fixSubelements() {
+		boolean save = false;
+		for (Element element : this.elements) {
+			List<SubElement> currentSubs = this.subelements.stream().filter(sub -> sub.getParentElement() == element).collect(Collectors.toList());
+			if (currentSubs.size() > 0) continue;
+			for (SubElement sub : Element.getSubElements(element)) {
+				if (this.hasSubElementPermission(sub)) {
+					this.addSubElement(sub);
+					save = true;
+				}
+			}
+		}
+		if (save) this.saveSubElements();
 	}
 }

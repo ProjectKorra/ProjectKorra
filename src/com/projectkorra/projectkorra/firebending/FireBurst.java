@@ -21,11 +21,11 @@ public class FireBurst extends FireAbility {
 	@Attribute("Charged")
 	private boolean charged;
 	@Attribute(Attribute.DAMAGE)
-	private int damage;
+	private double damage;
 	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
 	@Attribute(Attribute.RANGE)
-	private long range;
+	private double range;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double angleTheta;
@@ -37,9 +37,9 @@ public class FireBurst extends FireAbility {
 		super(player);
 
 		this.charged = false;
-		this.damage = getConfig().getInt("Abilities.Fire.FireBurst.Damage");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
-		this.range = getConfig().getLong("Abilities.Fire.FireBurst.Range");
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireBurst.Damage"));
+		this.chargeTime = (long) applyInverseModifiers(getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime"));
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireBurst.Range"));
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireBurst.Cooldown");
 		this.angleTheta = getConfig().getDouble("Abilities.Fire.FireBurst.AngleTheta");
 		this.anglePhi = getConfig().getDouble("Abilities.Fire.FireBurst.AnglePhi");
@@ -216,7 +216,7 @@ public class FireBurst extends FireAbility {
 		this.charged = charged;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return this.damage;
 	}
 
@@ -232,7 +232,7 @@ public class FireBurst extends FireAbility {
 		this.chargeTime = chargeTime;
 	}
 
-	public long getRange() {
+	public double getRange() {
 		return this.range;
 	}
 

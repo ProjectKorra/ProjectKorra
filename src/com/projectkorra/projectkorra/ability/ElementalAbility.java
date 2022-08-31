@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -227,7 +228,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isTransparent(final Player player, final String abilityName, final Block block) {
-		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation());
+		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName));
 	}
 
 	public static boolean isWater(final Block block) {
@@ -246,6 +247,10 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isWater(final Material material) {
 		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
+	}
+
+	public double applyModifiers(double value) {
+	    return value;
 	}
 
 	public static void setupBendableMaterials() {

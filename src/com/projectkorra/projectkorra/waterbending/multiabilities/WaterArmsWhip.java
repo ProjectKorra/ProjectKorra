@@ -89,7 +89,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.whipSpeed = 1;
 		this.grabDuration = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.Duration");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
-		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage");
+		this.punchDamage = applyModifiers(getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage"));
 
 		switch (ability) {
 			case PULL:
@@ -108,6 +108,7 @@ public class WaterArmsWhip extends WaterAbility {
 				this.usageCooldown = 200;
 
 		}
+		this.usageCooldown = applyInverseModifiers(this.usageCooldown);
 		final WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
 		if (waw != null) {
 			if (waw.grabbed) {

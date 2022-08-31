@@ -23,15 +23,14 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WallOfFire extends FireAbility {
 
-	private boolean active;
 	private int damageTick;
 	private int intervalTick;
 	@Attribute(Attribute.RANGE)
-	private int range;
+	private double range;
 	@Attribute(Attribute.HEIGHT)
-	private int height;
+	private double height;
 	@Attribute(Attribute.WIDTH)
-	private int width;
+	private double width;
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	@Attribute(Attribute.COOLDOWN)
@@ -51,14 +50,13 @@ public class WallOfFire extends FireAbility {
 	public WallOfFire(final Player player) {
 		super(player);
 
-		this.active = true;
 		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
 		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
-		this.range = getConfig().getInt("Abilities.Fire.WallOfFire.Range");
-		this.height = getConfig().getInt("Abilities.Fire.WallOfFire.Height");
-		this.width = getConfig().getInt("Abilities.Fire.WallOfFire.Width");
-		this.damage = getConfig().getDouble("Abilities.Fire.WallOfFire.Damage");
-		this.cooldown = getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown");
+		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.WallOfFire.Range"));
+		this.height = applyModifiers(getConfig().getDouble("Abilities.Fire.WallOfFire.Height"));
+		this.width = applyModifiers(getConfig().getDouble("Abilities.Fire.WallOfFire.Width"));
+		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.WallOfFire.Damage"));
+		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown"));
 		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
 		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.WallOfFire.FireTicks");
@@ -131,7 +129,7 @@ public class WallOfFire extends FireAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (this.fireTicks * 20));
-		new FireDamageTimer(entity, this.player);
+		new FireDamageTimer(entity, this.player, this);
 	}
 
 	private void damage() {
@@ -202,21 +200,14 @@ public class WallOfFire extends FireAbility {
 	public void progress() {
 		this.time = System.currentTimeMillis();
 
-		if (this.time - this.getStartTime() > this.cooldown) {
+		if (this.time > this.getStartTime() + this.duration) {
 			this.remove();
 			return;
-		} else if (!this.active) {
-			return;
-		} else if (this.time - this.getStartTime() > this.duration) {
-			this.active = false;
-			return;
 		}
-
 		if (this.time - this.getStartTime() > this.intervalTick * this.interval) {
 			this.intervalTick++;
 			this.display();
 		}
-
 		if (this.time - this.getStartTime() > this.damageTick * this.damageInterval) {
 			this.damageTick++;
 			this.damage();
@@ -263,14 +254,6 @@ public class WallOfFire extends FireAbility {
 		return locations;
 	}
 
-	public boolean isActive() {
-		return this.active;
-	}
-
-	public void setActive(final boolean active) {
-		this.active = active;
-	}
-
 	public int getDamageTick() {
 		return this.damageTick;
 	}
@@ -287,7 +270,7 @@ public class WallOfFire extends FireAbility {
 		this.intervalTick = intervalTick;
 	}
 
-	public int getRange() {
+	public double getRange() {
 		return this.range;
 	}
 
@@ -295,7 +278,7 @@ public class WallOfFire extends FireAbility {
 		this.range = range;
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return this.height;
 	}
 
@@ -303,7 +286,7 @@ public class WallOfFire extends FireAbility {
 		this.height = height;
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return this.width;
 	}
 

@@ -8,8 +8,8 @@ import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,7 +20,6 @@ import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
 import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
@@ -64,6 +63,7 @@ public class ProjectKorra extends JavaPlugin {
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
+		new RegionProtection();
 		collisionManager = new CollisionManager();
 		collisionInitializer = new CollisionInitializer(collisionManager);
 		CoreAbility.registerAbilities();
@@ -88,33 +88,14 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
-		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
-				ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding" + ".Color").toUpperCase());
-				color = color == null ? ChatColor.GOLD : color;
-				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
-				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders" + ".BottomBorder");
-				if (!topBorder.isEmpty()) {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
-				}
-				Bukkit.broadcastMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www" + ".projectkorra.com!");
-				if (!bottomBorder.isEmpty()) {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
-				}
-			}, (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20), (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20));
-		}
+
 		TempBlock.startReversion();
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
 
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			GeneralMethods.removeUnusableAbilities(player.getName());
+			OfflineBendingPlayer.loadAsync(player.getUniqueId(), true);
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-				PassiveManager.registerPassives(player);
-				GeneralMethods.removeUnusableAbilities(player.getName());
-			}, 30);
 		}
 
 		final Metrics metrics = new Metrics(this);
@@ -148,7 +129,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		GeneralMethods.deserializeFile();
-		GeneralMethods.startCacheCleaner(cacheTime);
+		RegionProtection.startCleanCacheTask(cacheTime);
 
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			new PlaceholderAPIHook(this).register();
@@ -165,7 +146,7 @@ public class ProjectKorra extends JavaPlugin {
 			}
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer != null && isDatabaseCooldownsEnabled()) {
-				bPlayer.saveCooldowns();
+				bPlayer.saveCooldowns(false);
 			}
 		}
 		Manager.shutdown();

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -130,22 +131,19 @@ public class HeatControl extends FireAbility {
 	public void setFields() {
 		if (this.heatControlType == HeatControlType.COOK) {
 			this.cookTime = System.currentTimeMillis();
-			this.cookInterval = getConfig().getLong("Abilities.Fire.HeatControl.Cook.Interval");
+			this.cookInterval = (long) applyInverseModifiers(getConfig().getLong("Abilities.Fire.HeatControl.Cook.Interval"));
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
-			this.extinguishCooldown = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
-			this.extinguishRadius = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius");
-			this.extinguishRadius = this.getDayFactor(this.extinguishRadius);
+			this.extinguishCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown"));
+			this.extinguishRadius = applyModifiers(getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius"));
 		} else if (this.heatControlType == HeatControlType.MELT) {
-			this.meltRange = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Range");
-			this.meltRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Radius");
-			this.meltRange = this.getDayFactor(this.meltRange);
-			this.meltRadius = this.getDayFactor(this.meltRadius);
+			this.meltRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Range"));
+			this.meltRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Radius"));
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			this.solidifyRadius = 1;
 			this.solidifyDelay = 50;
 			this.solidifyLastBlockTime = 0;
-			this.solidifyMaxRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
-			this.solidifyRange = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
+			this.solidifyMaxRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius"));
+			this.solidifyRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range"));
 			this.solidifyRevert = getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert");
 			this.solidifyRevertTime = getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
 			this.randy = new Random();
@@ -312,7 +310,7 @@ public class HeatControl extends FireAbility {
 	}
 
 	public static void melt(final Player player, final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "HeatControl", block.getLocation())) {
+		if (RegionProtection.isRegionProtected(player, block.getLocation(), "HeatControl")) {
 			return;
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);

@@ -9,7 +9,7 @@ public class ActionBar {
 
 	public static void sendActionBar(final String message, final Player... player) {
 		for (Player e : player) {
-			e.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+			e.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(TextComponent.fromLegacyText(message)));
 		}
 	}
 }

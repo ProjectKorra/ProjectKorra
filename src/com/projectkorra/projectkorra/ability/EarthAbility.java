@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -305,7 +306,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	 */
 	public static Block getEarthSourceBlock(final Player player, final String abilityName, final double range) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
+		final Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), Math.max((int) range, 1));
 		if (bPlayer == null) {
 			return null;
 		} else if (isEarthbendable(testBlock.getType(), true, true, true)) {
@@ -319,7 +320,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
+			if (RegionProtection.isRegionProtected(player, location, CoreAbility.getAbility(abilityName))) {
 				continue;
 			} else if (isEarthbendable(player, block)) {
 				return block;
@@ -347,7 +348,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
+			if (RegionProtection.isRegionProtected(player, location, CoreAbility.getAbility(abilityName))) {
 				continue;
 			}
 			if (isLavabendable(player, block)) {
@@ -408,7 +409,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static Block getTargetEarthBlock(final Player player, final int range) {
-		return player.getTargetBlock(getTransparentMaterialSet(), range);
+		return player.getTargetBlock(getTransparentMaterialSet(), Math.max(range, 1));
 	}
 
 	public static Map<Integer, Information> getTempAirLocations() {
@@ -417,7 +418,8 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static boolean isEarthbendable(final Player player, final String abilityName, final Block block) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isEarthbendable(block.getType(), true, true, true) || PREVENT_EARTHBENDING.contains(block) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
+		if (bPlayer == null || !isEarthbendable(block.getType(), true, true, true) || PREVENT_EARTHBENDING.contains(block)
+				|| RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName))) {
 			return false;
 		} else if (isMetal(block) && !bPlayer.canMetalbend()) {
 			return false;
@@ -653,6 +655,11 @@ public abstract class EarthAbility extends ElementalAbility {
 			MOVED_EARTH.remove(block);
 		}
 		return true;
+	}
+
+	public double applyMetalPowerFactor(double value, Block source) {
+		if (isMetalbendable(source)) return value * getConfig().getDouble("Properties.Earth.MetalPowerFactor", 1.5D);
+		return value;
 	}
 
 	public static void stopBending() {

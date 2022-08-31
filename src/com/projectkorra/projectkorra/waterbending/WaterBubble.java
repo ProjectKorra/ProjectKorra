@@ -78,7 +78,7 @@ public class WaterBubble extends WaterAbility {
 
 	public void setFields() {
 		this.clickDuration = ConfigManager.defaultConfig.get().getLong("Abilities.Water.WaterBubble.ClickDuration");
-		this.maxRadius = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius");
+		this.maxRadius = applyModifiers(ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius"));
 		this.speed = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Speed");
 		this.requireAir = ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterBubble.MustStartAboveWater");
 	}

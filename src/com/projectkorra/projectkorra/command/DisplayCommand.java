@@ -5,8 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.bukkit.ChatColor;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,6 +39,9 @@ public class DisplayCommand extends PKCommand {
 	private final String noAbilitiesAvailable;
 	private final String noBinds;
 
+	private Set<Element> cachedPassiveElements;
+	private Set<Element> cachedComboElements;
+
 	public DisplayCommand() {
 		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
 
@@ -43,6 +51,14 @@ public class DisplayCommand extends PKCommand {
 		this.invalidArgument = ConfigManager.languageConfig.get().getString("Commands.Display.InvalidArgument");
 		this.playersOnly = ConfigManager.languageConfig.get().getString("Commands.Display.PlayersOnly");
 		this.noBinds = ConfigManager.languageConfig.get().getString("Commands.Display.NoBinds");
+
+		//1 tick later because commands are created before abilities are
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			cachedPassiveElements = CoreAbility.getAbilities().stream().filter(ab -> ab instanceof PassiveAbility)
+					.filter(Ability::isEnabled).map(Ability::getElement).collect(Collectors.toSet());
+			cachedComboElements = CoreAbility.getAbilities().stream().filter(ab -> ab instanceof ComboAbility)
+					.filter(ab -> !ab.isHiddenAbility()).filter(Ability::isEnabled).map(Ability::getElement).collect(Collectors.toSet());
+		}, 1L);
 	}
 
 	@Override
@@ -268,16 +284,12 @@ public class DisplayCommand extends PKCommand {
 			}
 		}
 
-		if (element.equals(Element.CHI)) {
-			sender.sendMessage(ChatColor.YELLOW + "Combos: " + ChatColor.GOLD + "/bending display ChiCombos");
-			sender.sendMessage(ChatColor.YELLOW + "Passives: " + ChatColor.GOLD + "/bending display ChiPassives");
-		} else {
-			sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.toString() + "Combos");
-			sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.toString() + "Passives");
-			for (final SubElement sub : Element.getSubElements(element)) {
-				if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
-					sender.sendMessage(sub.toString() + " abilities: " + element.getColor() + "/bending display " + sub.toString());
-				}
+
+		if (cachedComboElements.contains(element)) sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.toString() + "Combos");
+		if (cachedPassiveElements.contains(element)) sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.toString() + "Passives");
+		for (final SubElement sub : Element.getSubElements(element)) {
+			if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
+				sender.sendMessage(sub.toString() + " abilities: " + element.getColor() + "/bending display " + sub.toString());
 			}
 		}
 	}
@@ -312,6 +324,7 @@ public class DisplayCommand extends PKCommand {
 				abilitiesSent.add(ability.getName());
 			}
 		}
+		if (cachedPassiveElements.contains(element))
 		sender.sendMessage(element.getParentElement().getColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
 	}
 
@@ -322,10 +335,6 @@ public class DisplayCommand extends PKCommand {
 	 */
 	private void displayBinds(final CommandSender sender) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-		}
 		final HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 		if (abilities.isEmpty()) {

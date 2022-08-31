@@ -3,7 +3,7 @@ author: ProjectKorra
 api-version: 1.16
 version: ${project.version}
 main: com.projectkorra.projectkorra.ProjectKorra
-softdepend: [PreciousStones, WorldGuard, WorldEdit, FactionsFramework, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms, RedProtect, PlaceholderAPI]
+softdepend: [GriefDefender, WorldGuard, WorldEdit, Factions, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms, RedProtect, PlaceholderAPI, Lands]
 commands:
   projectkorra:
     aliases: [b,bending,mtla,tla,korra,pk,bend]
@@ -20,7 +20,7 @@ permissions:
       bending.command.add: true
       bending.command.rechoose: true
       bending.admin.choose: true
-      bending.choose.ignorecooldown: true
+      bending.command.choose.ignorecooldown: true
       bending.ability.AvatarState: true
       bending.water.bloodbending.anytime: true
       bending.water.bloodbending: true
@@ -38,7 +38,7 @@ permissions:
       bending.command.preset.bind.external.other: true
       bending.command.copy.assign: true
       bending.admin.debug: true
-      bending.admin.remove: true
+      bending.command.remove: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.

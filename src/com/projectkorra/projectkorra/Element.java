@@ -3,9 +3,13 @@ package com.projectkorra.projectkorra;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.bukkit.ChatColor;
+import com.google.common.collect.Lists;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -63,9 +67,11 @@ public class Element {
 	private static final Element[] MAIN_ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI };
 	private static final SubElement[] SUB_ELEMENTS = { FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION, BLUE_FIRE };
 
-	private final String name;
-	private final ElementType type;
-	private final Plugin plugin;
+	protected final String name;
+	protected final ElementType type;
+	protected final Plugin plugin;
+	protected ChatColor color;
+	protected ChatColor subColor;
 
 	/**
 	 * To be used when creating a new Element. Do not use for comparing
@@ -114,13 +120,51 @@ public class Element {
 	}
 
 	public ChatColor getColor() {
-		final String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.name) : this.plugin.getConfig().getString("Chat.Colors." + this.name);
-		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
+		if (this.color == null) {
+			FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
+			String key = "Chat.Colors." + this.name;
+			String value = config.getString(key);
+
+			if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
+				this.color = ((SubElement) this).parentElement.getSubColor();
+				return this.color;
+			}
+
+			try {
+				this.color = ChatColor.of(value);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return this.color != null ? this.color : ChatColor.WHITE;
 	}
 
 	public ChatColor getSubColor() {
-		final String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.name + "Sub") : this.plugin.getConfig().getString("Chat.Colors." + this.name + "Sub");
-		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
+		if (this.subColor == null) {
+			FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
+			String key = "Chat.Colors." + this.name + "Sub";
+			String value = config.getString(key);
+
+			if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
+				this.color = ((SubElement) this).parentElement.getSubColor();
+				return this.color;
+			}
+			try {
+				this.subColor = ChatColor.of(value);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+		return this.subColor != null ? this.subColor : ChatColor.WHITE;
+	}
+
+	void setColor(ChatColor color) {
+		this.color = color;
+	}
+
+	void setSubColor(ChatColor color) {
+		this.subColor = color;
 	}
 
 	public String getName() {
@@ -235,7 +279,7 @@ public class Element {
 	public static SubElement[] getSubElements(final Element element) {
 		final List<SubElement> se = new ArrayList<SubElement>();
 		for (final SubElement sub : getAllSubElements()) {
-			if (sub.getParentElement().equals(element)) {
+			if (sub.getParentElement().equals(element) || (sub instanceof MultiSubElement && ((MultiSubElement) sub).isParentElement(element))) {
 				se.add(sub);
 			}
 		}
@@ -266,7 +310,7 @@ public class Element {
 	public static SubElement[] getAddonSubElements(final Element element) {
 		final List<SubElement> se = new ArrayList<SubElement>();
 		for (final SubElement sub : getAllSubElements()) {
-			if (sub.getParentElement().equals(element) && !Arrays.asList(getSubElements()).contains(sub)) {
+			if ((sub.getParentElement().equals(element) || (sub instanceof MultiSubElement && ((MultiSubElement) sub).isParentElement(element))) && !Arrays.asList(getSubElements()).contains(sub)) {
 				se.add(sub);
 			}
 		}
@@ -295,7 +339,7 @@ public class Element {
 
 	public static class SubElement extends Element {
 
-		private final Element parentElement;
+		protected Element parentElement;
 
 		/**
 		 * To be used when creating a new SubElement. Do not use for comparing
@@ -336,14 +380,63 @@ public class Element {
 			this.parentElement = parentElement;
 		}
 
-		@Override
-		public ChatColor getColor() {
-			final String color = this.getPlugin().getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + this.parentElement.name + "Sub") : this.getPlugin().getConfig().getString("Chat.Colors." + this.parentElement.name + "Sub");
-			return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
-		}
-
 		public Element getParentElement() {
 			return this.parentElement;
+		}
+	}
+
+	public static class MultiSubElement extends SubElement {
+
+		private Element[] parentElements;
+		private final Set<Element> parentElementsSet;
+
+		/**
+		 * To be used when creating a new Element. Do not use for comparing
+		 * Elements.
+		 *
+		 * @param name Name of the new Element.
+		 */
+		public MultiSubElement(String name, Element... parentElements) {
+			this(name, ElementType.NO_SUFFIX, parentElements);
+		}
+
+		/**
+		 * To be used when creating a new Element. Do not use for comparing
+		 * Elements.
+		 *
+		 * @param name Name of the new Element.
+		 * @param type ElementType specifies if its a regular element or chi style
+		 */
+		public MultiSubElement(String name, ElementType type, Element... parentElements) {
+			this(name, type, ProjectKorra.plugin, parentElements);
+		}
+
+		/**
+		 * To be used when creating a new Element. Do not use for comparing
+		 * Elements.
+		 *
+		 * @param name   Name of the new Element.
+		 * @param type   ElementType specifies if its a regular element or chi style
+		 *               element.
+		 * @param plugin The plugin that is adding the element.
+		 */
+		public MultiSubElement(String name, ElementType type, Plugin plugin, Element... parentElements) {
+			super(name, null, type, plugin);
+
+			if (parentElements.length == 0) throw new IllegalArgumentException("MultiSubElement must have at least one parent element.");
+
+			this.parentElements = parentElements;
+			this.parentElementsSet = new HashSet<>(Lists.newArrayList(parentElements));
+
+			this.parentElement = parentElements[0];
+		}
+
+		public Element[] getParentElements() {
+			return this.parentElements;
+		}
+
+		public boolean isParentElement(Element element) {
+			return this.parentElementsSet.contains(element);
 		}
 	}
 }

@@ -49,13 +49,13 @@ public class FireShield extends FireAbility {
 
 		this.shield = shield;
 		this.ignite = true;
-		this.discCooldown = getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown");
+		this.discCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown"));
 		this.discDuration = getConfig().getLong("Abilities.Fire.FireShield.Disc.Duration");
-		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius");
+		this.discRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius"));
 		this.discFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Disc.FireTicks");
-		this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown");
+		this.shieldCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown"));
 		this.shieldDuration = getConfig().getLong("Abilities.Fire.FireShield.Shield.Duration");
-		this.shieldRadius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
+		this.shieldRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius"));
 		this.shieldFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Shield.FireTicks");
 		this.random = new Random();
 
@@ -141,7 +141,7 @@ public class FireShield extends FireAbility {
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
 						entity.setFireTicks((int) (this.shieldFireTicks * 20));
-						new FireDamageTimer(entity, this.player);
+						new FireDamageTimer(entity, this.player, this);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();
@@ -169,7 +169,7 @@ public class FireShield extends FireAbility {
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
 						entity.setFireTicks((int) (this.discFireTicks * 20));
-						new FireDamageTimer(entity, this.player);
+						new FireDamageTimer(entity, this.player, this);
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();

@@ -58,13 +58,11 @@ public class IceBlast extends IceAbility {
 		this.data = 0;
 		this.interval = getConfig().getLong("Abilities.Water.IceBlast.Interval");
 		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceBlast.CollisionRadius");
-		this.deflectRange = getConfig().getDouble("Abilities.Water.IceBlast.DeflectRange");
-		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
-		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
-		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
+		this.deflectRange = applyModifiers(getConfig().getDouble("Abilities.Water.IceBlast.DeflectRange"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.IceBlast.Range"));
+		this.damage = applyModifiers(getConfig().getInt("Abilities.Water.IceBlast.Damage"));
+		this.cooldown = applyInverseModifiers(getConfig().getInt("Abilities.Water.IceBlast.Cooldown"));
 		this.allowSnow = getConfig().getBoolean("Abilities.Water.IceBlast.AllowSnow");
-
-		this.damage = getNightFactor(this.damage, player.getWorld());
 
 		if (!this.bPlayer.canBend(this) || !this.bPlayer.canIcebend()) {
 			return;
@@ -77,7 +75,6 @@ public class IceBlast extends IceAbility {
 		}
 
 		block(player);
-		this.range = getNightFactor(this.range, player.getWorld());
 		final Block sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.SHIFT_DOWN, false, true, false, this.allowSnow, false);
 		final IceBlast oldAbil = getAbility(player, IceBlast.class);
 		if (oldAbil != null) {

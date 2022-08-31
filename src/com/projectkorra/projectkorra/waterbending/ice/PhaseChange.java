@@ -52,13 +52,13 @@ public class PhaseChange extends IceAbility {
 	private final Random r = new Random();
 
 	@Attribute(Attribute.SELECT_RANGE)
-	private int sourceRange = 8;
+	private double sourceRange = 8;
 
 	// Freeze Variables.
 	@Attribute("Freeze" + Attribute.COOLDOWN)
 	private long freezeCooldown = 500;
 	@Attribute("Freeze" + Attribute.RADIUS)
-	private int freezeRadius = 3;
+	private double freezeRadius = 3;
 	@Attribute("FreezeDepth")
 	private int depth = 1;
 	@Attribute("Control" + Attribute.RADIUS)
@@ -70,7 +70,7 @@ public class PhaseChange extends IceAbility {
 	private long meltCooldown = 7000;
 	private int meltRadius;
 	@Attribute("Melt" + Attribute.RADIUS)
-	private int meltMaxRadius = 7;
+	private double meltMaxRadius = 7;
 	@Attribute("Melt" + Attribute.SPEED)
 	private double meltSpeed = 8;
 	private double meltTicks = 0;
@@ -160,36 +160,35 @@ public class PhaseChange extends IceAbility {
 	}
 
 	public void setFields(final PhaseChangeType type) {
-		int night = 1;
-		if (isNight(this.player.getWorld())) {
-			night = (int) Math.round(getNightFactor());
-		}
-		this.sourceRange = night * getConfig().getInt("Abilities.Water.PhaseChange.SourceRange");
+
+		this.sourceRange = applyModifiers(getConfig().getInt("Abilities.Water.PhaseChange.SourceRange"));
 
 		switch (type) {
 			case FREEZE:
-				this.depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
-				this.controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
-				this.freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
-				this.freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
+				this.depth = (int) applyModifiers(getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth"));
+				this.controlRadius = applyModifiers(getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius"));
+				this.freezeCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown"));
+				this.freezeRadius = applyModifiers(getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius"));
 
 				this.freezeArea(GeneralMethods.getTargetedLocation(this.player, this.sourceRange));
+				return;
 			case MELT:
 				this.meltRadius = 1;
-				this.meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-				this.meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
-				this.meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+				this.meltCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown"));
+				this.meltSpeed = applyModifiers(getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed"));
+				this.meltMaxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Radius"));
 				this.allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+				return;
 			case CUSTOM:
-				this.depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
-				this.controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
-				this.freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
-				this.freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
+				this.depth = (int) applyModifiers(getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth"));
+				this.controlRadius = applyModifiers(getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius"));
+				this.freezeCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown"));
+				this.freezeRadius = applyModifiers(getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.Radius"));
 
 				this.meltRadius = 1;
-				this.meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-				this.meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
-				this.meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+				this.meltCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown"));
+				this.meltSpeed = applyModifiers(getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed"));
+				this.meltMaxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Radius"));
 				this.allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
 		}
 	}
@@ -224,9 +223,9 @@ public class PhaseChange extends IceAbility {
 		return faces;
 	}
 
-	public ArrayList<Block> getBlocksToFreeze(final Location center, final int radius) {
+	public ArrayList<Block> getBlocksToFreeze(final Location center, final double radius) {
 		final ArrayList<Block> blocks = new ArrayList<>();
-		for (final Location l : GeneralMethods.getCircle(center, radius, this.depth, false, true, 0)) {
+		for (final Location l : GeneralMethods.getCircle(center, (int)radius, this.depth, false, true, 0)) {
 			final Block b = l.getBlock();
 			loop: for (int i = 1; i <= this.depth; i++) {
 				for (final BlockFace face : this.getBlockFacesTowardsPlayer(center)) {
@@ -240,7 +239,7 @@ public class PhaseChange extends IceAbility {
 		return blocks;
 	}
 
-	public void freezeArea(final Location center, final int radius, final PhaseChangeType type) {
+	public void freezeArea(final Location center, final double radius, final PhaseChangeType type) {
 		if (type == PhaseChangeType.FREEZE) {
 			if (this.bPlayer.isOnCooldown("PhaseChangeFreeze")) {
 				return;
@@ -263,7 +262,7 @@ public class PhaseChange extends IceAbility {
 		}
 	}
 
-	public void freezeArea(final Location center, final int radius) {
+	public void freezeArea(final Location center, final double radius) {
 		this.freezeArea(center, radius, PhaseChangeType.FREEZE);
 	}
 
@@ -545,11 +544,11 @@ public class PhaseChange extends IceAbility {
 		this.depth = value;
 	}
 
-	public int getSourceRange() {
+	public double getSourceRange() {
 		return this.sourceRange;
 	}
 
-	public void setSourceRange(final int value) {
+	public void setSourceRange(final double value) {
 		this.sourceRange = value;
 	}
 
@@ -557,11 +556,11 @@ public class PhaseChange extends IceAbility {
 		return this.controlRadius;
 	}
 
-	public int getMeltRadius() {
+	public double getMeltRadius() {
 		return this.meltRadius;
 	}
 
-	public void setFreezeControlRadius(final int value) {
+	public void setFreezeControlRadius(final double value) {
 		this.controlRadius = value;
 	}
 

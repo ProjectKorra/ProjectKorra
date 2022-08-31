@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -130,7 +131,7 @@ public class AirShield extends AirAbility {
 	private void rotateShield() {
 		final Location origin = this.player.getLocation();
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, this.radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this.player, "AirShield", entity.getLocation())) {
+			if (RegionProtection.isRegionProtected(this.player, entity.getLocation(), "AirShield")) {
 				continue;
 			}
 			if (origin.distanceSquared(entity.getLocation()) > 4) {
