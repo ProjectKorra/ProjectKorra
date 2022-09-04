@@ -863,7 +863,7 @@ public class GeneralMethods {
 	 * @return the location of the distance to the left
 	 */
 	public static Location getLeftSide(final Location location, final double distance) {
-		final float angle = location.getYaw() / 60;
+		final float angle = Math.toRadians(location.getYaw());
 		return location.clone().add(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 
@@ -913,7 +913,7 @@ public class GeneralMethods {
 	 * @return the location of the distance to the right
 	 */
 	public static Location getRightSide(final Location location, final double distance) {
-		final float angle = location.getYaw() / 60;
+		final float angle = Math.toRadians(location.getYaw());
 		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 
