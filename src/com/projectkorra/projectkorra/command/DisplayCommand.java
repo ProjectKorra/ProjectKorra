@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -132,7 +133,7 @@ public class DisplayCommand extends PKCommand {
 					final ArrayList<String> combos = ComboManager.getCombosForElement(element);
 
 					if (combos.isEmpty()) {
-						GeneralMethods.sendBrandingMessage(sender, color + this.noCombosAvailable.replace("{element}", element.getName()));
+						ChatUtil.sendBrandingMessage(sender, color + this.noCombosAvailable.replace("{element}", element.getName()));
 						return;
 					}
 
@@ -196,7 +197,7 @@ public class DisplayCommand extends PKCommand {
 				final Set<String> passives = PassiveManager.getPassivesForElement(element);
 
 				if (passives.isEmpty()) {
-					GeneralMethods.sendBrandingMessage(sender, color + this.noPassivesAvailable.replace("{element}", element.getName()));
+					ChatUtil.sendBrandingMessage(sender, color + this.noPassivesAvailable.replace("{element}", element.getName()));
 					return;
 				}
 
@@ -244,7 +245,7 @@ public class DisplayCommand extends PKCommand {
 		if (args.size() == 0) {
 			// bending display.
 			if (!(sender instanceof Player)) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playersOnly);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playersOnly);
 				return;
 			}
 			this.displayBinds(sender);

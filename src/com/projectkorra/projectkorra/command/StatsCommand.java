@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -17,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -62,13 +62,13 @@ public class StatsCommand extends PKCommand {
 		final boolean containsGet = this.contains(args.get(0), Arrays.asList(getaliases));
 		final boolean containsLeaderboard = this.contains(args.get(0), Arrays.asList(leaderboardaliases));
 		if (!containsGet && !containsLeaderboard) {
-			GeneralMethods.sendBrandingMessage(sender, this.invalidLookup);
+			ChatUtil.sendBrandingMessage(sender, this.invalidLookup);
 			return;
 		} else if (object == null && !args.get(1).equalsIgnoreCase("all")) {
-			GeneralMethods.sendBrandingMessage(sender, this.invalidSearchType);
+			ChatUtil.sendBrandingMessage(sender, this.invalidSearchType);
 			return;
 		} else if (statistic == null) {
-			GeneralMethods.sendBrandingMessage(sender, this.invalidStatistic);
+			ChatUtil.sendBrandingMessage(sender, this.invalidStatistic);
 			return;
 		}
 		if (containsGet) {
@@ -76,7 +76,7 @@ public class StatsCommand extends PKCommand {
 			if (args.size() == 4) {
 				target = ProjectKorra.plugin.getServer().getPlayer(args.get(3));
 				if (target == null) {
-					GeneralMethods.sendBrandingMessage(sender, this.invalidPlayer.replace("%player%", args.get(3)));
+					ChatUtil.sendBrandingMessage(sender, this.invalidPlayer.replace("%player%", args.get(3)));
 					return;
 				}
 			} else {
@@ -87,7 +87,7 @@ public class StatsCommand extends PKCommand {
 				}
 			}
 			final String message = this.getTarget(object, statistic, target);
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', message));
+			ChatUtil.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', message));
 		} else if (containsLeaderboard) {
 			int page = 1;
 			try {
@@ -152,7 +152,7 @@ public class StatsCommand extends PKCommand {
 		} else {
 			title = title.replace("%object%", "Total");
 		}
-		GeneralMethods.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', "&8- &f" + title + " &8- [&7" + p + "/" + maxPage + "&8]"));
+		ChatUtil.sendBrandingMessage(sender, ChatColor.translateAlternateColorCodes('&', "&8- &f" + title + " &8- [&7" + p + "/" + maxPage + "&8]"));
 		final int maxIndex = (10 * p) - 1;
 		final int minIndex = maxIndex - 9;
 		try {

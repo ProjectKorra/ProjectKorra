@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.hooks.CanBendHook;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -95,7 +96,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
 
 			if (this.getBoundAbilityName() != null && this.getBoundAbilityName().equalsIgnoreCase(ability)) {
-				GeneralMethods.displayMovePreview(this.player);
+				ChatUtil.displayMovePreview(this.player);
 			}
 			
 			BendingBoardManager.updateBoard(this.player, event.getAbility(), true, 0);
@@ -533,7 +534,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			final String abilityName = event.getAbility();
 
 			if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
-				GeneralMethods.displayMovePreview(this.player);
+				ChatUtil.displayMovePreview(this.player);
 			}
 
 			BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
@@ -562,7 +563,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 					final String abilityName = event.getAbility();
 
 					if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
-						GeneralMethods.displayMovePreview(this.player);
+						ChatUtil.displayMovePreview(this.player);
 					}
 
 					BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
@@ -581,7 +582,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
 		final String newStance = (stance == null) ? "" : stance.getName();
 		this.stance = stance;
-		GeneralMethods.displayMovePreview(this.player);
+		ChatUtil.displayMovePreview(this.player);
 		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(Bukkit.getPlayer(this.uuid), oldStance, newStance);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
@@ -656,7 +657,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	protected void postLoad() {
 		if (!this.toggled) {
-			GeneralMethods.sendBrandingMessage(this.player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
+			ChatUtil.sendBrandingMessage(this.player, ChatColor.YELLOW + ConfigManager.languageConfig.get().getString("Command.Toggle.Reminder"));
 		}
 
 		Preset.loadPresets(this.player);

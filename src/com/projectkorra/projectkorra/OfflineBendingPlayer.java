@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -520,7 +521,7 @@ public class OfflineBendingPlayer {
     public void bindAbility(final String ability, final int slot) {
         boolean realPlayer = this instanceof BendingPlayer;
         if (realPlayer && MultiAbilityManager.playerAbilities.containsKey((Player)this.getPlayer())) {
-            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Bind.CantEditBinds"));
+            ChatUtil.sendBrandingMessage((Player)this.getPlayer(), ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Bind.CantEditBinds"));
             return;
         }
 
@@ -540,7 +541,7 @@ public class OfflineBendingPlayer {
         this.getAbilities().put(slot, fixedName);
 
         if (realPlayer) {
-            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", fixedName).replace("{slot}", String.valueOf(slot)));
+            ChatUtil.sendBrandingMessage((Player)this.getPlayer(), coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", fixedName).replace("{slot}", String.valueOf(slot)));
         }
 
         this.saveAbility(fixedName, slot);

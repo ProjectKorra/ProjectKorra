@@ -124,6 +124,18 @@ public class RegionProtection {
     /**
      * Checks if a location is protected by region protection plugins. Abilities that damage terrain
      * will not damage the terrain (or progress) if this method returns true
+     * @param ability The ability being checked
+     * @param location The location to check
+     * @return True if the region is protected by other plugins
+     */
+    public static boolean isRegionProtected(@NotNull CoreAbility ability, @Nullable Location location) {
+        return isRegionProtected(ability.getPlayer(), location, ability);
+    }
+
+
+    /**
+     * Checks if a location is protected by region protection plugins. Abilities that damage terrain
+     * will not damage the terrain (or progress) if this method returns true
      * @param player The player being checked
      * @param ability The ability to check
      * @return True if the region is protected by other plugins

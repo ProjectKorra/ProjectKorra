@@ -13,9 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -27,7 +26,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.ElementType;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -125,13 +123,13 @@ public class WhoCommand extends PKCommand {
 				players.add(result);
 			}
 			if (players.isEmpty()) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.noPlayersOnline);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPlayersOnline);
 			} else {
 				boolean firstMessage = true;
 
 				for (final String s : this.getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					if (firstMessage) {
-						GeneralMethods.sendBrandingMessage(sender, s);
+						ChatUtil.sendBrandingMessage(sender, s);
 						firstMessage = false;
 					} else {
 						sender.sendMessage(s);
@@ -150,14 +148,14 @@ public class WhoCommand extends PKCommand {
 	private void whoPlayer(final CommandSender sender, final String playerName) {
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 		if (!player.isOnline() && !player.hasPlayedBefore()) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerUnknown.replace("{target}", playerName));
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerUnknown.replace("{target}", playerName));
 			return;
 		}
 
 		//If they are actually offline OR they are vanished
 		boolean offline = !player.isOnline() || (sender instanceof Player && player instanceof Player && !((Player) sender).canSee((Player) player));
 		if (offline) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerOffline.replace("{target}", playerName));
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerOffline.replace("{target}", playerName));
 		}
 
 		BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {

@@ -100,6 +100,7 @@ import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.FlightHandler;
@@ -1202,10 +1203,6 @@ public class PKListener implements Listener {
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
-		/*Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-			PassiveManager.registerPassives(player);
-			BendingBoardManager.changeWorld(player); //Hide the bending board if they spawn in a world where bending is disabld
-		}, 5);*/
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
 			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
@@ -1214,11 +1211,11 @@ public class PKListener implements Listener {
 				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
 				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
 				if (!topBorder.isEmpty()) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
+					player.sendMessage(ChatUtil.color(topBorder));
 				}
-				player.sendMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+				player.sendMessage(ChatUtil.multiline(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!"));
 				if (!bottomBorder.isEmpty()) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
+					player.sendMessage(ChatUtil.color(bottomBorder));
 				}
 			}, 20 * 4);
 		}
@@ -1524,7 +1521,7 @@ public class PKListener implements Listener {
 						new EarthTunnel(player);
 					} else if (abil.equalsIgnoreCase("Tremorsense")) {
 						bPlayer.toggleTremorSense();
-						GeneralMethods.displayMovePreview(player);
+						ChatUtil.displayMovePreview(player);
 						BendingBoardManager.updateAllSlots(player);
 					} else if (abil.equalsIgnoreCase("Extraction")) {
 						new Extraction(player);
@@ -1582,7 +1579,7 @@ public class PKListener implements Listener {
 		}
 
 		final int slot = event.getNewSlot() + 1;
-		GeneralMethods.displayMovePreview(player, slot);
+		ChatUtil.displayMovePreview(player, slot);
 		BendingBoardManager.changeActiveSlot(player, slot);
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
@@ -1794,7 +1791,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("Illumination")) {
 						if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 							bPlayer.toggleIllumination();
-							GeneralMethods.displayMovePreview(player);
+							ChatUtil.displayMovePreview(player);
 							BendingBoardManager.updateAllSlots(player);
 						} else {
 							new Illumination(player);
@@ -1837,7 +1834,7 @@ public class PKListener implements Listener {
 			if (coreAbil instanceof AvatarAbility) {
 				if (abil.equalsIgnoreCase("AvatarState")) {
 					new AvatarState(player);
-					GeneralMethods.displayMovePreview(player);
+					ChatUtil.displayMovePreview(player);
 					BendingBoardManager.updateAllSlots(player);
 				}
 			}

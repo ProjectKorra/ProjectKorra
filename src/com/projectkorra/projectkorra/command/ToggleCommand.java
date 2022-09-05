@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -20,7 +21,6 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
@@ -72,16 +72,16 @@ public class ToggleCommand extends PKCommand {
 				return;
 			}
 			if (Commands.isToggledForAll) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggledOffForAll);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.toggledOffForAll);
 				return;
 			}
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 
 			if (bPlayer.isToggled()) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggleOffSelf);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.toggleOffSelf);
 				bPlayer.toggleBending();
 			} else {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.toggleOnSelf);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.toggleOnSelf);
 				bPlayer.toggleBending();
 			}
 		} else if (args.size() == 1) {
@@ -90,25 +90,25 @@ public class ToggleCommand extends PKCommand {
 				if (Commands.isToggledForAll) { // Bending is toggled off for all players.
 					Commands.isToggledForAll = false;
 					for (final Player player : Bukkit.getOnlinePlayers()) {
-						GeneralMethods.sendBrandingMessage(player, ChatColor.GREEN + this.toggleOnAll);
+						ChatUtil.sendBrandingMessage(player, ChatColor.GREEN + this.toggleOnAll);
 					}
 					if (!(sender instanceof Player)) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.toggleOnAll);
+						ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.toggleOnAll);
 					}
 
 				} else {
 					Commands.isToggledForAll = true;
 					for (final Player player : Bukkit.getOnlinePlayers()) {
-						GeneralMethods.sendBrandingMessage(player, ChatColor.RED + this.toggleOffAll);
+						ChatUtil.sendBrandingMessage(player, ChatColor.RED + this.toggleOffAll);
 					}
 					if (!(sender instanceof Player)) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggleOffAll);
+						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.toggleOffAll);
 					}
 				}
 			} else if (sender instanceof Player && args.size() == 1 && Element.fromString(toggleableParam) != null && !(Element.fromString(toggleableParam) instanceof SubElement)) {
 				final Element e = Element.fromString(toggleableParam);
 				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(e)) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElement);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.wrongElement);
 					return;
 				}
 
@@ -117,14 +117,14 @@ public class ToggleCommand extends PKCommand {
 				bPlayer.toggleElement(e);
 
 				if (bPlayer.isElementToggled(e)) {
-					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOnSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+					ChatUtil.sendBrandingMessage(sender, color + this.toggledOnSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+					ChatUtil.sendBrandingMessage(sender, color + this.toggledOffSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				}
 			}  else if (sender instanceof Player && args.size() == 1 && !toggleableParam.equals("passives") && Element.fromString(toggleableParam.split("passives")[0]) != null) {
 				final Element e = Element.fromString(toggleableParam.split("passives")[0]);
 				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(e)) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElement);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.wrongElement);
 					return;
 				}
 				final ChatColor color = e.getColor();
@@ -132,17 +132,17 @@ public class ToggleCommand extends PKCommand {
 				bPlayer.togglePassive(e);
 
 				if (bPlayer.isPassiveToggled(e)) {
-					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOnSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+					ChatUtil.sendBrandingMessage(sender, color + this.toggledOnSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+					ChatUtil.sendBrandingMessage(sender, color + this.toggledOffSingleElementPassive.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				}
 			} else if (sender instanceof Player && args.size() == 1 && toggleableParam.equals("passives")) {
 				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 
 				if (bPlayer.isToggledPassives()) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.toggleAllPassivesOffSelf);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.toggleAllPassivesOffSelf);
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.toggleAllPassivesOnSelf);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.toggleAllPassivesOnSelf);
 				}
 				bPlayer.toggleAllPassives();
 			} else {
@@ -156,22 +156,22 @@ public class ToggleCommand extends PKCommand {
 				return;
 			}
 			if (target == null) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.notFound);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.notFound);
 				return;
 			}
 			if (!BendingPlayer.getBendingPlayer(target.getName()).hasElement(e)) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.wrongElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 				return;
 			}
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target.getName());
 			final ChatColor color = e.getColor();
 
 			if (bPlayer.isElementToggled(e)) {
-				GeneralMethods.sendBrandingMessage(sender, color + this.toggledOffOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
-				GeneralMethods.sendBrandingMessage(target, color + this.toggledOffOtherElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
+				ChatUtil.sendBrandingMessage(sender, color + this.toggledOffOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+				ChatUtil.sendBrandingMessage(target, color + this.toggledOffOtherElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
 			} else {
-				GeneralMethods.sendBrandingMessage(sender, color + this.toggledOnOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
-				GeneralMethods.sendBrandingMessage(target, color + this.toggledOnOtherElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
+				ChatUtil.sendBrandingMessage(sender, color + this.toggledOnOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+				ChatUtil.sendBrandingMessage(target, color + this.toggledOnOtherElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
 			}
 			bPlayer.toggleElement(e);
 		} else {
@@ -181,7 +181,7 @@ public class ToggleCommand extends PKCommand {
 
 	public boolean hasAdminPermission(final CommandSender sender) {
 		if (!sender.hasPermission("bending.admin.toggle")) {
-			GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
+			ChatUtil.sendBrandingMessage(sender, super.noPermissionMessage);
 			return false;
 		}
 		return true;
