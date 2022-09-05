@@ -457,9 +457,9 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		//When a player places fire, remove the TempBlock that was there
+		//When a player places a block that isn't fire, remove the temp block that was there
 		if (TempBlock.isTempBlock(event.getBlock()) && (event.getItemInHand().getType() != Material.FLINT_AND_STEEL
-				|| event.getItemInHand().getType() == Material.FIRE_CHARGE)) {
+				&& event.getItemInHand().getType() != Material.FIRE_CHARGE)) {
 			TempBlock.removeBlock(event.getBlock());
 		}
 	}
