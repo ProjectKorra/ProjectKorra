@@ -124,9 +124,6 @@ public class ProjectKorra extends JavaPlugin {
 		});
 
 		final double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
-		if (Bukkit.getPluginManager().getPlugin("Residence") != null) {
-			FlagPermissions.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
-		}
 
 		GeneralMethods.deserializeFile();
 		RegionProtection.startCleanCacheTask(cacheTime);

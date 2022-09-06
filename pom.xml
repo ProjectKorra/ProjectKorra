@@ -52,11 +52,11 @@
       <id>glaremasters</id>
       <url>https://repo.glaremasters.me/repository/bloodshot</url>
     </repository>
-    <!-- LWC -->
-    <repository>
+    <!-- LWC. Disabled for now because the repo is extremely unreliable and times out a lot -->
+    <!--<repository>
       <id>ender-zone-repo</id>
       <url>https://ci.ender.zone/plugin/repository/everything/</url>
-    </repository>
+    </repository>-->
     <!-- RedProtect -->
     <repository>
       <id>redprotect-repo</id>
@@ -108,7 +108,7 @@
     <dependency>
       <groupId>com.griefcraft</groupId>
       <artifactId>lwc</artifactId>
-      <version>2.1.2</version>
+      <version>2.2.5</version>
       <scope>provided</scope>
     </dependency>
     <!-- NoCheatPlus -->
@@ -129,7 +129,7 @@
     <dependency>
       <groupId>com.bekvon.bukkit</groupId>
       <artifactId>residence</artifactId>
-      <version>4.8.3.1</version>
+      <version>5.0.1.0</version>
       <scope>provided</scope>
     </dependency>
     <!-- Towny -->
