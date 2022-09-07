@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending.plant;
 
-import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,14 +24,49 @@ public class PlantRegrowth extends PlantAbility {
 
 		this.regrowTime = getConfig().getLong("Abilities.Water.Plantbending.RegrowTime");
 		if (this.regrowTime != 0) {
-			this.time = System.currentTimeMillis() + this.regrowTime / 2 + (long) (Math.random() * this.regrowTime) / 2;
+			this.block = block;
+			this.type = block.getType();
+			this.data = block.getBlockData();
 
-			new TempBlock(block, Material.AIR.createBlockData(), this.time);
+			if (block.getType() == Material.TALL_GRASS) {
+				if (block.getRelative(BlockFace.DOWN).getType() == Material.TALL_GRASS) {
+					this.block = block.getRelative(BlockFace.DOWN);
+					this.data = block.getRelative(BlockFace.DOWN).getBlockData();
+
+					block.getRelative(BlockFace.DOWN).setType(Material.AIR);
+					block.setType(Material.AIR);
+				} else {
+					block.setType(Material.AIR);
+					block.getRelative(BlockFace.UP).setType(Material.AIR);
+				}
+			}
+
+			this.time = System.currentTimeMillis() + this.regrowTime / 2 + (long) (Math.random() * this.regrowTime) / 2;
+			this.start();
 		}
 	}
 
 	@Override
-	public void progress() {}
+	public void remove() {
+		super.remove();
+		if (ElementalAbility.isAir(this.block.getType())) {
+			this.block.setType(this.type);
+			this.block.setBlockData(this.data);
+			if (this.type == Material.TALL_GRASS) {
+				this.block.getRelative(BlockFace.UP).setType(Material.TALL_GRASS);
+			}
+
+		} else {
+			GeneralMethods.dropItems(this.block, GeneralMethods.getDrops(this.block, this.type, this.data));
+		}
+	}
+
+	@Override
+	public void progress() {
+		if (this.time < System.currentTimeMillis()) {
+			this.remove();
+		}
+	}
 
 	@Override
 	public String getName() {
