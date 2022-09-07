@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlastFurnace;
@@ -131,12 +132,6 @@ public class FireBlast extends FireAbility {
 			playFirebendingParticles(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
 		}
 
-		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
-			this.remove();
-			return;
-		}
-
-		
 		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
 
 		while (blocks.hasNext() && checkLocation(blocks.next()));
@@ -173,7 +168,7 @@ public class FireBlast extends FireAbility {
 						campfire.setLit(true);
 					}
 				}
-			} else if (isIgnitable(block.getRelative(BlockFace.UP))) {
+			} else if (isIgnitable(this.location.getBlock())) {
 				if (!this.isFireBurst || this.fireBurstIgnite) {
 					this.ignite(this.location);
 				}
@@ -184,7 +179,7 @@ public class FireBlast extends FireAbility {
 		return true;
 	}
 	private void affect(final Entity entity) {
-		if (entity.getUniqueId() != this.player.getUniqueId() && !GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) && !((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+		if (entity.getUniqueId() != this.player.getUniqueId() && !RegionProtection.isRegionProtected(this, entity.getLocation()) && !((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			if (this.bPlayer.isAvatarState()) {
 				GeneralMethods.setVelocity(this, entity, this.direction.clone().multiply(AvatarState.getValue(this.knockback)));
 			} else {
@@ -202,9 +197,10 @@ public class FireBlast extends FireAbility {
 
 	private void ignite(final Location location) {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(location, this.collisionRadius)) {
-			if (isIgnitable(block) && !this.safeBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-				if (canFireGrief()) {
+			if (isIgnitable(block) && !this.safeBlocks.contains(block) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
+				if (canFireGrief()) { //Regrow the plant or snow LATER since the fire destroys the block
 					if (isPlant(block) || isSnow(block)) {
+						block.setType(Material.AIR);
 						new PlantRegrowth(this.player, block);
 					}
 				}
@@ -215,7 +211,7 @@ public class FireBlast extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this) || GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this) || RegionProtection.isRegionProtected(this, this.location)) {
 			this.remove();
 			return;
 		}

@@ -2,9 +2,11 @@ package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
@@ -14,6 +16,8 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Fire;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
@@ -28,6 +32,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 public abstract class FireAbility extends ElementalAbility {
 
 	private static final Map<Block, Player> SOURCE_PLAYERS = new ConcurrentHashMap<>();
+	private static final Set<BlockFace> IGNITE_FACES = new HashSet<>(Arrays.asList(BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.UP));
 
 	public FireAbility(final Player player) {
 		super(player);
@@ -120,12 +125,36 @@ public abstract class FireAbility extends ElementalAbility {
 		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.FireSub"));
 	}
 
+	/**
+	 * Can fire be placed in the provided block
+	 * @param block The block to check
+	 * @return True if fire can be placed here
+	 */
 	public static boolean isIgnitable(final Block block) {
-		return (isIgnitable(block.getType()) && Arrays.asList(getTransparentMaterials()).contains(block.getType())) || (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN)) && isAir(block.getType()));
+		return (block.getRelative(BlockFace.DOWN).getType().isSolid() && !block.getType().isSolid())
+				|| (GeneralMethods.isTransparent(block) && IGNITE_FACES.stream().map(face -> block.getRelative(face).getType()).anyMatch(FireAbility::isIgnitable));
 	}
 
 	public static boolean isIgnitable(final Material material) {
 		return material.isFlammable() || material.isBurnable();
+	}
+
+	/**
+	 * Create a fire block with the correct blockstate at the given position
+	 * @param position The position to test
+	 * @param blue If its soul fire or not
+	 * @return The fire blockstate
+	 */
+	public static Fire createFireState(Block position, boolean blue) {
+		Fire fire = (Fire) (blue ? Material.SOUL_FIRE.createBlockData() : Material.FIRE.createBlockData());
+		if (position.getRelative(BlockFace.DOWN).getType().isSolid())
+			return fire; //Default fire for when there is a solid block bellow
+		for (BlockFace face : IGNITE_FACES) {
+			if (isIgnitable(position.getRelative(face).getType())) {
+				fire.setFace(face, true);
+			}
+		}
+		return fire;
 	}
 
 	/**
