@@ -90,11 +90,18 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.8.1</version>
     </dependency>
-    <!-- Factions -->
+    <!-- SaberFactions -->
     <dependency>
       <groupId>com.github.SaberLLC</groupId>
       <artifactId>Saber-Factions</artifactId>
       <version>2.4.0-RC</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- FactionsUUID -->
+    <dependency>
+      <groupId>com.github.drtshock</groupId>
+      <artifactId>Factions</artifactId>
+      <version>0.6.11</version>
       <scope>provided</scope>
     </dependency>
     <!-- GriefPrevention -->
@@ -191,6 +198,7 @@
       <version>2.9.2</version>
       <scope>provided</scope>
     </dependency>
+    <!-- GriefDefender -->
     <dependency>
       <groupId>com.griefdefender</groupId>
       <artifactId>api</artifactId>
