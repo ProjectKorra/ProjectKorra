@@ -10,9 +10,9 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class FactionsUUID extends RegionProtectionBase {
+class FactionsUUID extends RegionProtectionBase {
 
-    public FactionsUUID() {
+    protected FactionsUUID() {
         super("Factions");
     }
 

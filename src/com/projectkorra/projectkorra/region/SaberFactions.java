@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 
 class SaberFactions extends RegionProtectionBase {
 
-
     protected SaberFactions() {
         super("Factions");
     }
