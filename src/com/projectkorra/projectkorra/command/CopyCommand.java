@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -14,7 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.board.BendingBoardManager;
@@ -52,24 +51,24 @@ public class CopyCommand extends PKCommand {
 			final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(0));
 
 			if (!player.isOnline() && !player.hasPlayedBefore()) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
 
 			if (player instanceof Player && MultiAbilityManager.hasMultiAbilityBound((Player) player)) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
 				return;
 			}
 
 			this.assignAbilities(sender, player, (Player) sender, true).thenAccept(boundAll -> {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + player.getName() + ChatColor.GREEN));
+				ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + player.getName() + ChatColor.GREEN));
 				if (!boundAll) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
 				}
 			});
 		} else if (args.size() == 2) {
 			if (!this.hasPermission(sender, "assign")) {
-				GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
+				ChatUtil.sendBrandingMessage(sender, super.noPermissionMessage);
 				return;
 			}
 
@@ -77,20 +76,20 @@ public class CopyCommand extends PKCommand {
 			final Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
 
 			if (MultiAbilityManager.hasMultiAbilityBound(target)) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBindsOther.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.RED));
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBindsOther.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.RED));
 				return;
 			}
 
 			if ((orig == null || !orig.isOnline()) || (target == null || !target.isOnline())) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
 
 			this.assignAbilities(sender, orig, target, false).thenAccept(boundAll -> {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + this.copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
-				GeneralMethods.sendBrandingMessage(target, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+				ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+				ChatUtil.sendBrandingMessage(target, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
 				if (!boundAll) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
 				}
 			});
 		}
@@ -103,9 +102,9 @@ public class CopyCommand extends PKCommand {
 		BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(orig -> {
 			if (orig.isPermaRemoved()) {
 				if (self) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 				}
 				future.complete(false);
 			}

@@ -24,14 +24,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import com.google.common.reflect.ClassPath;
 import com.projectkorra.projectkorra.command.PKCommand;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -55,7 +56,6 @@ import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.Ability;
@@ -89,8 +89,6 @@ import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.ActionBar;
-import com.projectkorra.projectkorra.util.BlockCacheElement;
 import com.projectkorra.projectkorra.util.ColoredParticle;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -99,10 +97,6 @@ import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class GeneralMethods {
 
@@ -367,29 +361,20 @@ public class GeneralMethods {
 		}
 	}
 
+
+	@Deprecated
 	public static void displayMovePreview(final Player player) {
-		displayMovePreview(player, player.getInventory().getHeldItemSlot() + 1);
+		ChatUtil.displayMovePreview(player);
 	}
 
+	/**
+	 * Deprecated. Use {@link ChatUtil#displayMovePreview(Player, int)} instead
+	 * @param player The player
+	 * @param slot The slot
+	 */
+	@Deprecated
 	public static void displayMovePreview(final Player player, final int slot) {
-		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview")) {
-			return;
-		}
-
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			return;
-		}
-		String displayedMessage = bPlayer.getAbilities().get(slot);
-		final CoreAbility ability = CoreAbility.getAbility(displayedMessage);
-
-		if (ability != null && bPlayer != null) {
-			displayedMessage = ability.getMovePreview(player);
-		} else if (displayedMessage == null || displayedMessage.isEmpty() || displayedMessage.equals("")) {
-			displayedMessage = "";
-		}
-
-		ActionBar.sendActionBar(displayedMessage, player);
+		ChatUtil.displayMovePreview(player, slot);
 	}
 
 	/**
@@ -1723,66 +1708,12 @@ public class GeneralMethods {
 		return (player.getLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getLocation().getX() - block.getLocation().add(0.5, 0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getLocation().getZ() - block.getLocation().add(0.5, 0.0, 0.5).getZ()) < checkDistance));
 	}
 
-	public static void sendBrandingMessage(final CommandSender sender, final String message) {
-		ChatColor color;
-		try {
-			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		} catch (final IllegalArgumentException exception) {
-			color = ChatColor.GOLD;
-		}
-
-		final String start = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix", ""));
-		final String main = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Main", "ProjectKorra"));
-		final String end = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix", " \u00BB "));
-		final String prefix = color + start + main + end;
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(prefix + message);
-		} else {
-			final TextComponent prefixComponent = new TextComponent(prefix);
-			final String hover = multiline(color + ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Hover", color + "Bending brought to you by ProjectKorra | Fork Roku!\n" + color + "Click for more info."));
-			final String click = ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Click", "https://www.projectkorra.com");
-			if (!hover.equals(""))
-				prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create()));
-			if (!click.equals("")) {
-				ClickEvent.Action action = ClickEvent.Action.RUN_COMMAND;
-				if (click.toLowerCase().startsWith("http://") || click.toLowerCase().startsWith("https://") || click.toLowerCase().startsWith("www.")) {
-					action = ClickEvent.Action.OPEN_URL;
-				}
-				prefixComponent.setClickEvent(new ClickEvent(action, click));
-			}
-			final TextComponent messageComponent = new TextComponent(TextComponent.fromLegacyText(message, ChatColor.YELLOW.asBungee()));
-			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
-		}
-	}
-
 	/**
-	 * Ensures a multiline string is properly formatted with color codes
-	 * @param string The string to format
-	 * @return The formatted string
+	 * Deprecated. Use {@link com.projectkorra.projectkorra.util.ChatUtil#sendBrandingMessage(CommandSender, String)}
 	 */
-	public static String multiline(String string) {
-		string = ChatColor.translateAlternateColorCodes('&', string.replaceAll("\\\\n", "\n")
-				.replaceAll("[\u00A7&]#([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})",
-						"\u00A7x\u00A7$1\u00A7$2\u00A7$3\u00A7$4\u00A7$5\u00A7$6")); //Replaces &#RRGGBB to &x&R&R&B&B&G&G (how hex actually works)
-		char lastColor = 'f';
-		String hex = null;
-		List<String> l = new ArrayList<String>();
-		for (String line : string.split("\n")) {
-			String prefix = "\u00A7" + lastColor; //Make the prefix the current color
-			if (hex != null) prefix += hex; //If the current color is a hex code, add on the RGB as well
-
-			if (l.size() == 0 && string.charAt(0) == '\u00A7') prefix = ""; //Don't bother adding a pointless color code
-
-			l.add(prefix + line);
-			if (line.contains("\u00A7")) {
-				int index = line.lastIndexOf('\u00A7');
-				lastColor = line.charAt(index + 1);
-				if (lastColor == 'x') {
-					hex = line.substring(index + 2, index + 14);
-				} else hex = null;
-			}
-		}
-		return String.join("\n", l);
+	@Deprecated
+	public static void sendBrandingMessage(final CommandSender sender, final String message) {
+		ChatUtil.sendBrandingMessage(sender, message);
 	}
 
 	/**

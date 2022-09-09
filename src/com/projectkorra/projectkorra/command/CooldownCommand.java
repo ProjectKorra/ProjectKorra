@@ -2,35 +2,29 @@ package com.projectkorra.projectkorra.command;
 
 import com.google.common.collect.Lists;
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Content;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.util.NumberConversions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,7 +58,7 @@ public class CooldownCommand extends PKCommand {
 
         OfflinePlayer oPlayer = list.size() == 1 ? (Player)sender : Bukkit.getOfflinePlayer(list.get(1));
         if (!oPlayer.isOnline() && !oPlayer.hasPlayedBefore()) {
-            GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidPlayer"));
+            ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidPlayer"));
             return;
         }
 
@@ -79,7 +73,7 @@ public class CooldownCommand extends PKCommand {
 
                 if (cooldowns.isEmpty()) {
                     String titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ViewNone").replace("{player}", oPlayer.getName());
-                    GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + titleMessage);
+                    ChatUtil.sendBrandingMessage(sender, ChatColor.RED + titleMessage);
                     return;
                 }
 
@@ -88,7 +82,7 @@ public class CooldownCommand extends PKCommand {
                     titleMessage = ConfigManager.languageConfig.get().getString("Commands.Cooldown.ViewMax");
                 }
                 titleMessage = titleMessage.replace("{player}", oPlayer.getName()).replace("{number}", Math.min(cooldowns.size(), 10) + "");
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + titleMessage);
+                ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + titleMessage);
                 for (int i = 0; i < 10 && i < cooldowns.size(); i++) {
                     String message = cooldowns.get(i);
                     String cooldownName = ChatColor.stripColor(message).split(":")[0];
@@ -117,17 +111,17 @@ public class CooldownCommand extends PKCommand {
                 try {
                     time = TimeUtil.unformatTime(list.get(3));
                 } catch (NumberFormatException e) {
-                    GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidTime").replace("{value}", list.get(3)));
+                    ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidTime").replace("{value}", list.get(3)));
                     return;
                 }
                 if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
                     if (time == 0) {
                         bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
                         bPlayer.saveCooldowns();
-                        GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
+                        ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
                         return;
                     }
-                    GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetAll").replace("{player}", oPlayer.getName()));
+                    ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetAll").replace("{player}", oPlayer.getName()));
                     return;
                 }
 
@@ -138,14 +132,14 @@ public class CooldownCommand extends PKCommand {
 
                 String message = ConfigManager.languageConfig.get().getString("Commands.Cooldown.Set").replace("{player}",
                         oPlayer.getName()).replace("{cooldown}", fixedCooldown).replace("{value}", TimeUtil.formatTime(time));
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + message);
+                ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + message);
             } else if (set) {
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetNoValue"));
+                ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetNoValue"));
             } else {
                 if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
                     bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
                     bPlayer.saveCooldowns();
-                    GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
+                    ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
                     return;
                 }
 
@@ -156,7 +150,7 @@ public class CooldownCommand extends PKCommand {
 
                 String message = ConfigManager.languageConfig.get().getString("Commands.Cooldown.Reset").replace("{player}",
                         oPlayer.getName()).replace("{cooldown}", fixedCooldown);
-                GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + message);
+                ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + message);
             }
         });
     }
@@ -164,7 +158,7 @@ public class CooldownCommand extends PKCommand {
     private String setCooldown(CommandSender sender, OfflineBendingPlayer bPlayer, String cooldown, long time) {
         String fixedCooldown = COOLDOWNS.stream().filter(s -> s.equalsIgnoreCase(cooldown)).findFirst().orElse(null);
         if (fixedCooldown == null) {
-            GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidCooldown"));
+            ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidCooldown"));
             return null;
         }
 

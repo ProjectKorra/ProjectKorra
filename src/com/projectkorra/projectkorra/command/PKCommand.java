@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
@@ -121,7 +121,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender.hasPermission("bending.command." + this.name + "." + extra)) {
 			return true;
 		} else {
-			GeneralMethods.sendBrandingMessage(sender, this.noPermissionMessage);
+			ChatUtil.sendBrandingMessage(sender, this.noPermissionMessage);
 			return false;
 		}
 	}
@@ -156,7 +156,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender instanceof Player) {
 			return true;
 		} else {
-			GeneralMethods.sendBrandingMessage(sender, this.mustBePlayerMessage);
+			ChatUtil.sendBrandingMessage(sender, this.mustBePlayerMessage);
 			return false;
 		}
 	}

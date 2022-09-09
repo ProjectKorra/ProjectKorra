@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.projectkorra.projectkorra.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -74,7 +74,7 @@ public class HelpCommand extends PKCommand {
 
 			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", 1, false)) {
 				if (firstMessage) {
-					GeneralMethods.sendBrandingMessage(sender, s);
+					ChatUtil.sendBrandingMessage(sender, s);
 					firstMessage = false;
 				} else {
 					sender.sendMessage(ChatColor.YELLOW + s);
@@ -93,7 +93,7 @@ public class HelpCommand extends PKCommand {
 			
 			for (final String s : this.getPage(strings, ChatColor.GOLD + "Commands: <" + this.required + "> [" + this.optional + "]", Integer.valueOf(arg), true)) {
 				if (firstMessage) {
-					GeneralMethods.sendBrandingMessage(sender, s);
+					ChatUtil.sendBrandingMessage(sender, s);
 					firstMessage = false;
 				} else {
 					sender.sendMessage(ChatColor.YELLOW + s);

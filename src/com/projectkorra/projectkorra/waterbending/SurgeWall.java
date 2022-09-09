@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -160,7 +161,7 @@ public class SurgeWall extends WaterAbility {
 		this.cancelPrevious();
 		final Block block = BlockSource.getWaterSourceBlock(this.player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 
-		if (block != null && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (block != null && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			this.sourceBlock = block;
 			this.focusBlock();
 			return true;
@@ -276,7 +277,7 @@ public class SurgeWall extends WaterAbility {
 						vector = GeneralMethods.getOrthogonalVector(eyeDir.clone(), angle, i);
 						block = targetLoc.clone().add(vector).getBlock();
 
-						if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+						if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 							continue;
 						} else if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
@@ -427,7 +428,7 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private void addWater(final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.WATER);

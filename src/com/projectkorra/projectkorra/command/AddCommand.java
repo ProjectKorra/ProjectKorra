@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
@@ -74,7 +73,7 @@ public class AddCommand extends PKCommand {
 			}
 			final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(1));
 			if (!player.isOnline() && !player.hasPlayedBefore()) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
 			this.add(sender, player, args.get(0).toLowerCase());
@@ -95,7 +94,7 @@ public class AddCommand extends PKCommand {
 			boolean online = bPlayer instanceof BendingPlayer;
 
 			if (bPlayer.isPermaRemoved()) { // ignore permabanned users.
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 				return;
 			}
 
@@ -129,16 +128,16 @@ public class AddCommand extends PKCommand {
 				}
 				if (elementFound) {
 					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.addedOtherAll.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.YELLOW) + elements);
-						if (online) GeneralMethods.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
+						ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.addedOtherAll.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.YELLOW) + elements);
+						if (online) ChatUtil.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
 					} else {
-						if (online) GeneralMethods.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
+						if (online) ChatUtil.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
 					}
 				} else {
 					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElementsOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElementsOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 					} else {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElements);
+						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElements);
 					}
 				}
 				return;
@@ -162,9 +161,9 @@ public class AddCommand extends PKCommand {
 				if (Arrays.asList(Element.getAllElements()).contains(e)) {
 					if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to.
 						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 						} else {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElement);
+							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElement);
 						}
 						return;
 					}
@@ -185,17 +184,17 @@ public class AddCommand extends PKCommand {
 					final ChatColor color = e.getColor();
 					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 						if (e != Element.AIR && e != Element.EARTH && e != Element.BLUE_FIRE) {
-							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
-							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
+							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
+							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
 						} else {
-							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
-							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
+							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
+							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
 						}
 					} else {
 						if (e != Element.AIR && e != Element.EARTH) {
-							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
+							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
 						} else {
-							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
+							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
 						}
 
 					}
@@ -209,9 +208,9 @@ public class AddCommand extends PKCommand {
 					final SubElement sub = (SubElement) e;
 					if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
 						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 						} else {
-							GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElement);
+							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElement);
 						}
 						return;
 					}
@@ -220,16 +219,16 @@ public class AddCommand extends PKCommand {
 
 					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 						if (e != Element.AIR && e != Element.EARTH) {
-							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
+							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
 						} else {
-							GeneralMethods.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
+							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
 						}
 
 					} else {
 						if (e != Element.AIR && e != Element.EARTH) {
-							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", sub.toString() + sub.getType().getBender()));
+							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", sub.toString() + sub.getType().getBender()));
 						} else {
-							if (online) GeneralMethods.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", sub.toString() + sub.getType().getBender()));
+							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", sub.toString() + sub.getType().getBender()));
 						}
 					}
 					bPlayer.saveSubElements();

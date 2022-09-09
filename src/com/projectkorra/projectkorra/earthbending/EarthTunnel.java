@@ -288,4 +288,8 @@ public class EarthTunnel extends EarthAbility {
 	public static void setupBendableMaterials() {
 		addTags(IGNORED_BLOCKS, getConfig().getStringList("Abilities.Earth.EarthTunnel.IgnoredBlocks"));
 	}
+
+	static {
+		setupBendableMaterials();
+	}
 }

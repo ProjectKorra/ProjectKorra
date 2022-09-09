@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.bekvon.bukkit</groupId>
+  <artifactId>residence</artifactId>
+  <versioning>
+    <release>5.0.1.0</release>
+    <versions>
+      <version>5.0.1.0</version>
+    </versions>
+    <lastUpdated>20220906004922</lastUpdated>
+  </versioning>
+</metadata>
