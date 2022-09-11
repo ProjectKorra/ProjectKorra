@@ -1,10 +1,13 @@
 package com.projectkorra.projectkorra.util;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.FireAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,6 +17,8 @@ import org.bukkit.block.Container;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.type.Stairs;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -33,8 +38,10 @@ public class TempBlock {
 	private final Block block;
 	private BlockData newData;
 	private BlockState state;
+	private Set<TempBlock> attachedTempBlocks; //Temp Block states that should be reverted as well when the temp block expires (e.g. double blocks)
 	private long revertTime;
 	private boolean inRevertQueue;
+	private boolean reverted;
 	private RevertTask revertTask = null;
 
 	public TempBlock(final Block block, final Material newtype) {
@@ -42,6 +49,9 @@ public class TempBlock {
 	}
 
 	@Deprecated
+	/**
+	 * Deprecated. Using the newType here is pointless.
+	 */
 	public TempBlock(final Block block, final Material newtype, final BlockData newData) {
 		this(block, newData, 0);
 	}
@@ -50,17 +60,23 @@ public class TempBlock {
 		this(block, newData, 0);
 	}
 
-	public TempBlock(final Block block, final BlockData newData, final long revertTime) {
+	public TempBlock(final Block block, BlockData newData, final long revertTime) {
 		this.block = block;
 		this.newData = newData;
+		this.attachedTempBlocks = new HashSet<>();
+
+		//Fire griefing will make the state update on its own, so we don't need to update it ourselves
+		if (!FireAbility.canFireGrief() && (newData.getMaterial() == Material.FIRE || newData.getMaterial() == Material.SOUL_FIRE)) {
+			newData = FireAbility.createFireState(block, newData.getMaterial() == Material.SOUL_FIRE); //Fix the blockstate looking incorrect
+		}
 
 		if (instances.containsKey(block)) {
 			final TempBlock temp = instances.get(block);
 			if (!newData.equals(temp.block.getBlockData())) {
-				temp.block.setBlockData(newData, GeneralMethods.isLightEmitting(newData.getMaterial()));
+				temp.block.setBlockData(newData, applyPhysics(newData.getMaterial()));
 				temp.newData = newData;
 			}
-			this.state = temp.state;
+			this.state = temp.state; //Set the original blockstate of the tempblock
 			instances.put(block, temp);
 		} else {
 			this.state = block.getState();
@@ -68,8 +84,10 @@ public class TempBlock {
 			if (this.state instanceof Container || this.state.getType() == Material.JUKEBOX) {
 				return;
 			}
+
 			instances.put(block, this);
-			block.setBlockData(newData, GeneralMethods.isLightEmitting(newData.getMaterial()));
+
+			block.setBlockData(newData, applyPhysics(newData.getMaterial()));
 		}
 		
 		this.setRevertTime(revertTime);
@@ -101,7 +119,7 @@ public class TempBlock {
 			revertBlock(block, Material.AIR);
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
-			tempblock.state.update(true, GeneralMethods.isLightEmitting(tempblock.state.getType()));
+			tempblock.state.update(true, applyPhysics(tempblock.state.getType()));
 			if (tempblock.revertTask != null) {
 				tempblock.revertTask.run();
 			}
@@ -125,7 +143,7 @@ public class TempBlock {
 					((Levelled) data).setLevel(0);
 				}
 
-				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
+				block.setBlockData(data, applyPhysics(data.getMaterial()));
 			} else if ((defaulttype == Material.WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				final BlockData data = Material.WATER.createBlockData();
 
@@ -133,9 +151,9 @@ public class TempBlock {
 					((Levelled) data).setLevel(0);
 				}
 
-				block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
+				block.setBlockData(data, applyPhysics(data.getMaterial()));
 			} else {
-				block.setType(defaulttype, GeneralMethods.isLightEmitting(defaulttype));
+				block.setType(defaulttype, applyPhysics(defaulttype));
 			}
 		}
 	}
@@ -182,12 +200,49 @@ public class TempBlock {
 	}
 
 	public void revertBlock() {
-		PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> this.state.update(true, GeneralMethods.isLightEmitting(this.state.getType()) || !(state.getBlockData() instanceof Bisected)));
-		instances.remove(this.block);
-		REVERT_QUEUE.remove(this);
-		if (this.revertTask != null) {
-			this.revertTask.run();
+		if (!this.reverted) {
+			instances.remove(this.block);
+			this.reverted = true;
+			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> revertState(this.state));
+
+			REVERT_QUEUE.remove(this);
+			if (this.revertTask != null) {
+				this.revertTask.run();
+			}
+
+			for (TempBlock attached : attachedTempBlocks) {
+				attached.revertBlock();
+			}
 		}
+	}
+
+	private void revertState(BlockState state) {
+		Block block = state.getBlock();
+		//If the block has been changed by the time we revert (e.g. block place). Also, we ignore fire since it isn't worth the time
+		if (block.getType() != this.newData.getMaterial() && block.getType() != Material.FIRE && block.getType() != Material.SOUL_FIRE) {
+			//Get the drops of the original block and drop them in the world
+			GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, this.state.getType(), this.state.getBlockData()));
+		} else {
+			//Revert the original blockstate
+			state.update(true, applyPhysics(state.getType())
+					&& !(state.getBlockData() instanceof Bisected));
+		}
+	}
+
+	/**
+	 * Make the provided tempblock revert at the same time as the current tempblock
+	 * @param tempBlock The tempblock to attach to the current tempblock
+	 */
+	public void addAttachedBlock(TempBlock tempBlock) {
+		this.attachedTempBlocks.add(tempBlock);
+		tempBlock.attachedTempBlocks.add(this);
+	}
+
+	/**
+	 * @return The list of attached tempblocks
+	 */
+	public Set<TempBlock> getAttachedTempBlocks() {
+		return attachedTempBlocks;
 	}
 
 	public void setState(final BlockState newstate) {
@@ -205,7 +260,7 @@ public class TempBlock {
 
 	public void setType(final BlockData data) {
 		this.newData = data;
-		this.block.setBlockData(data, GeneralMethods.isLightEmitting(data.getMaterial()));
+		this.block.setBlockData(data, applyPhysics(data.getMaterial()));
 	}
 
 	public static void startReversion() {
@@ -226,7 +281,22 @@ public class TempBlock {
 		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 	}
 
+	public boolean isReverted() {
+		return reverted;
+	}
+
 	public interface RevertTask {
 		public void run();
 	}
+
+	/**
+	 * Whether the physics should be updated or not. Fire should be updated so it can burn and spread IF
+	 * FireGrief is on
+	 * @param material The material to check
+	 * @return True if physics should be applied
+	 */
+	public static boolean applyPhysics(Material material) {
+		return GeneralMethods.isLightEmitting(material) || (material == Material.FIRE && FireAbility.canFireGrief());
+	}
+
 }

@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,15 @@ public class RegionProtection {
 
     public RegionProtection() {
         if (enabled("WorldGuard")) new WorldGuard();
-        if (enabled("Factions")) new Factions();
+        if (enabled("Factions")) {
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("Factions");
+            String website = plugin.getDescription().getWebsite();
+            if (website != null && website.toLowerCase().contains("factionsuuid")) {
+                new FactionsUUID();
+            } else {
+                new SaberFactions();
+            }
+        }
         if (enabled("LWC")) new LWC();
         if (enabled("Towny")) new Towny();
         if (enabled("Kingdoms")) new Kingdoms();
@@ -120,6 +129,18 @@ public class RegionProtection {
     public static boolean isRegionProtected(@NotNull Player player, @Nullable Location location) {
         return isRegionProtected(player, location, (CoreAbility) null);
     }
+
+    /**
+     * Checks if a location is protected by region protection plugins. Abilities that damage terrain
+     * will not damage the terrain (or progress) if this method returns true
+     * @param ability The ability being checked
+     * @param location The location to check
+     * @return True if the region is protected by other plugins
+     */
+    public static boolean isRegionProtected(@NotNull CoreAbility ability, @Nullable Location location) {
+        return isRegionProtected(ability.getPlayer(), location, ability);
+    }
+
 
     /**
      * Checks if a location is protected by region protection plugins. Abilities that damage terrain

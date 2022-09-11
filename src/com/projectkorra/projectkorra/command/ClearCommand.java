@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -41,7 +41,7 @@ public class ClearCommand extends PKCommand {
 		if (!this.hasPermission(sender) || !this.correctLength(sender, args.size(), 0, 1) || !this.isPlayer(sender)) {
 			return;
 		} else if (MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
 			return;
 		}
 
@@ -62,12 +62,12 @@ public class ClearCommand extends PKCommand {
 				bPlayer.getAbilities().remove(i);
 				bPlayer.saveAbility(null, i);
 			}
-			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
+			ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
 		} else if (args.size() == 1) {
 			try {
 				final int slot = Integer.parseInt(args.get(0));
 				if (slot < 1 || slot > 9) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 				}
 
 				if (bPlayer.getAbilities().get(slot) != null) {
@@ -80,12 +80,12 @@ public class ClearCommand extends PKCommand {
 
 					bPlayer.getAbilities().remove(slot);
 					bPlayer.saveAbility(null, slot);
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
+					ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);
+					ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.alreadyEmpty);
 				}
 			} catch (final NumberFormatException e) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 			}
 		}
 	}

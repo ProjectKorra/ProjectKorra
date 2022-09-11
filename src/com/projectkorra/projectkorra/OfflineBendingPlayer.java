@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -164,51 +165,51 @@ public class OfflineBendingPlayer {
                             if (split[0].contains("c")) {
                                 bPlayer.elements.add(Element.CHI);
                             }
-                            if (hasAddon) {
-                                /*
-                                 * Because plugins which depend on ProjectKorra
-                                 * would be loaded after ProjectKorra, addon
-                                 * elements would = null. To work around this, we
-                                 * keep trying to load in the elements from the
-                                 * database until it successfully loads everything
-                                 * in, or it times out.
-                                 */
-                                final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<>(Arrays.asList(split[split.length - 1].split(",")));
-                                final long startTime = System.currentTimeMillis();
-                                final long timeoutLength = 5_000; // How long until it should time out attempting to load addons in.
-                                OfflineBendingPlayer finalBPlayer = bPlayer;
-                                Predicate<List<String>> func = (elements) -> {
-                                    if (System.currentTimeMillis() - startTime > timeoutLength) {
-                                        ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
-                                        ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
-                                        return true;
-                                    } else {
-                                        ProjectKorra.log.info("Attempting to load in the following addon elements... " + elements.toString());
-                                        for (final String addon : elements) {
-                                            if (Element.getElement(addon) != null) {
-                                                finalBPlayer.elements.add(Element.getElement(addon));
-                                                elements.remove(addon);
-                                            }
-                                        }
-                                        if (elements.isEmpty()) {
-                                            ProjectKorra.log.info("Successfully loaded in all addon elements!");
-                                            return true;
+                        }
+                        if (hasAddon) {
+                            /*
+                             * Because plugins which depend on ProjectKorra
+                             * would be loaded after ProjectKorra, addon
+                             * elements would = null. To work around this, we
+                             * keep trying to load in the elements from the
+                             * database until it successfully loads everything
+                             * in, or it times out.
+                             */
+                            final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<>(Arrays.asList(split[split.length - 1].split(",")));
+                            final long startTime = System.currentTimeMillis();
+                            final long timeoutLength = 5_000; // How long until it should time out attempting to load addons in.
+                            OfflineBendingPlayer finalBPlayer = bPlayer;
+                            Predicate<List<String>> func = (elements) -> {
+                                if (System.currentTimeMillis() - startTime > timeoutLength) {
+                                    ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
+                                    ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
+                                    return true;
+                                } else {
+                                    ProjectKorra.log.info("Attempting to load in the following addon elements... " + elements.toString());
+                                    for (final String addon : elements) {
+                                        if (Element.getElement(addon) != null) {
+                                            finalBPlayer.elements.add(Element.getElement(addon));
+                                            elements.remove(addon);
                                         }
                                     }
-                                    return false;
-                                };
+                                    if (elements.isEmpty()) {
+                                        ProjectKorra.log.info("Successfully loaded in all addon elements!");
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            };
 
-                                if (onStartup) { //If we are doing this on startup, addon elements aren't loaded yet. So do this async
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            if (func.test(addonClone)) {
-                                                this.cancel();
-                                            }
+                            if (onStartup) { //If we are doing this on startup, addon elements aren't loaded yet. So do this async
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (func.test(addonClone)) {
+                                            this.cancel();
                                         }
-                                    }.runTaskTimer(ProjectKorra.plugin, 0, 5);
-                                } else func.test(addonClone); //Addon elements should be loaded so
-                            }
+                                    }
+                                }.runTaskTimer(ProjectKorra.plugin, 0, 5);
+                            } else func.test(addonClone); //Addon elements should be loaded so
                         }
                     }
 
@@ -275,44 +276,43 @@ public class OfflineBendingPlayer {
                             if (split[0].contains("r")) {
                                 bPlayer.subelements.add(Element.BLUE_FIRE);
                             }
-
-                            if (hasAddon) {
-                                final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
-                                final long startTime = System.currentTimeMillis();
-                                final long timeoutLength = 5_000; // How long until it should time out attempting to load addons in.
-                                OfflineBendingPlayer finalBPlayer1 = bPlayer;
-                                Predicate<List<String>> func = (elements) -> {
-                                    if (System.currentTimeMillis() - startTime > timeoutLength) {
-                                        ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
-                                        ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
-                                        return true;
-                                    } else {
-                                        ProjectKorra.log.info("Attempting to load in the following addon subelements... " + elements.toString());
-                                        for (final String addon : elements) {
-                                            if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
-                                                finalBPlayer1.subelements.add((SubElement) Element.getElement(addon));
-                                                elements.remove(addon);
-                                            }
+                        }
+                        if (hasAddon) {
+                            final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
+                            final long startTime = System.currentTimeMillis();
+                            final long timeoutLength = 5_000; // How long until it should time out attempting to load addons in.
+                            OfflineBendingPlayer finalBPlayer1 = bPlayer;
+                            Predicate<List<String>> func = (elements) -> {
+                                if (System.currentTimeMillis() - startTime > timeoutLength) {
+                                    ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
+                                    ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
+                                    return true;
+                                } else {
+                                    ProjectKorra.log.info("Attempting to load in the following addon subelements... " + elements.toString());
+                                    for (final String addon : elements) {
+                                        if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
+                                            finalBPlayer1.subelements.add((SubElement) Element.getElement(addon));
+                                            elements.remove(addon);
                                         }
-
-                                        if (elements.isEmpty()) {
-                                            ProjectKorra.log.info("Successfully loaded in all addon subelements!");
-                                            return true;
-                                        }
-                                        return false;
                                     }
-                                };
-                                if (onStartup) { //If we are doing this on startup, addon elements aren't loaded yet. So do this async
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            if (func.test(addonClone)) {
-                                                this.cancel();
-                                            }
+
+                                    if (elements.isEmpty()) {
+                                        ProjectKorra.log.info("Successfully loaded in all addon subelements!");
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                            };
+                            if (onStartup) { //If we are doing this on startup, addon elements aren't loaded yet. So do this async
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (func.test(addonClone)) {
+                                            this.cancel();
                                         }
-                                    }.runTaskTimer(ProjectKorra.plugin, 0, 5);
-                                } else func.test(addonClone); //Addon elements should be loaded by now
-                            }
+                                    }
+                                }.runTaskTimer(ProjectKorra.plugin, 0, 5);
+                            } else func.test(addonClone); //Addon elements should be loaded by now
                         }
                     }
 
@@ -520,7 +520,7 @@ public class OfflineBendingPlayer {
     public void bindAbility(final String ability, final int slot) {
         boolean realPlayer = this instanceof BendingPlayer;
         if (realPlayer && MultiAbilityManager.playerAbilities.containsKey((Player)this.getPlayer())) {
-            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Bind.CantEditBinds"));
+            ChatUtil.sendBrandingMessage((Player)this.getPlayer(), ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Bind.CantEditBinds"));
             return;
         }
 
@@ -540,7 +540,7 @@ public class OfflineBendingPlayer {
         this.getAbilities().put(slot, fixedName);
 
         if (realPlayer) {
-            GeneralMethods.sendBrandingMessage((Player)this.getPlayer(), coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", fixedName).replace("{slot}", String.valueOf(slot)));
+            ChatUtil.sendBrandingMessage((Player)this.getPlayer(), coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", fixedName).replace("{slot}", String.valueOf(slot)));
         }
 
         this.saveAbility(fixedName, slot);

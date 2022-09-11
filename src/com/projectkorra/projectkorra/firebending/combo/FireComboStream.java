@@ -77,6 +77,12 @@ public class FireComboStream extends BukkitRunnable {
 	@Override
 	public void run() {
 		final Block block = this.location.getBlock();
+
+		if (RegionProtection.isRegionProtected(this.player, this.location, coreAbility)) {
+			this.remove();
+			return;
+		}
+
 		if (!ElementalAbility.isAir(block.getRelative(BlockFace.UP).getType()) && !ElementalAbility.isPlant(block)) {
 			this.remove();
 			return;
@@ -121,9 +127,6 @@ public class FireComboStream extends BukkitRunnable {
 	}
 
 	public void collision(final LivingEntity entity, final Vector direction, final CoreAbility coreAbility) {
-		if (RegionProtection.isRegionProtected(this.player, entity.getLocation(), "Blaze")) {
-			return;
-		}
 		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, 0.3f, 0.3f);
 
 		if (coreAbility.getName().equalsIgnoreCase("FireKick")) {

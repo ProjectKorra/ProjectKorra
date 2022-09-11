@@ -100,6 +100,7 @@ import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.FlightHandler;
@@ -130,7 +131,6 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 
-import com.projectkorra.projectkorra.waterbending.plant.PlantTether;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -456,9 +456,9 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		//When a player places fire, remove the TempBlock that was there
+		//When a player places a block that isn't fire, remove the temp block that was there
 		if (TempBlock.isTempBlock(event.getBlock()) && (event.getItemInHand().getType() != Material.FLINT_AND_STEEL
-				|| event.getItemInHand().getType() == Material.FIRE_CHARGE)) {
+				&& event.getItemInHand().getType() != Material.FIRE_CHARGE)) {
 			TempBlock.removeBlock(event.getBlock());
 		}
 	}
@@ -1114,10 +1114,8 @@ public class PKListener implements Listener {
 		}
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("IceBlast")) {
-				if (CoreAbility.hasAbility(player, IceBullet.class)) {
-					CoreAbility.getAbility(player, IceBullet.class).doRightClick();
-				}
+			if (CoreAbility.hasAbility(player, IceBullet.class)) {
+				CoreAbility.getAbility(player, IceBullet.class).doRightClick();
 			}
 		}
 
@@ -1202,10 +1200,6 @@ public class PKListener implements Listener {
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
-		/*Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> {
-			PassiveManager.registerPassives(player);
-			BendingBoardManager.changeWorld(player); //Hide the bending board if they spawn in a world where bending is disabld
-		}, 5);*/
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
 			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
@@ -1214,11 +1208,11 @@ public class PKListener implements Listener {
 				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
 				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
 				if (!topBorder.isEmpty()) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
+					player.sendMessage(ChatUtil.color(topBorder));
 				}
-				player.sendMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+				player.sendMessage(ChatUtil.multiline(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!"));
 				if (!bottomBorder.isEmpty()) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
+					player.sendMessage(ChatUtil.color(bottomBorder));
 				}
 			}, 20 * 4);
 		}
@@ -1524,7 +1518,7 @@ public class PKListener implements Listener {
 						new EarthTunnel(player);
 					} else if (abil.equalsIgnoreCase("Tremorsense")) {
 						bPlayer.toggleTremorSense();
-						GeneralMethods.displayMovePreview(player);
+						ChatUtil.displayMovePreview(player);
 						BendingBoardManager.updateAllSlots(player);
 					} else if (abil.equalsIgnoreCase("Extraction")) {
 						new Extraction(player);
@@ -1582,7 +1576,7 @@ public class PKListener implements Listener {
 		}
 
 		final int slot = event.getNewSlot() + 1;
-		GeneralMethods.displayMovePreview(player, slot);
+		ChatUtil.displayMovePreview(player, slot);
 		BendingBoardManager.changeActiveSlot(player, slot);
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterArms.DisplayBoundMsg")) {
@@ -1705,14 +1699,14 @@ public class PKListener implements Listener {
 
 			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER)) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
+					if (CoreAbility.hasAbility(player, IceBullet.class)) {
+						CoreAbility.getAbility(player, IceBullet.class).doLeftClick();
+					}
+
 					if (abil.equalsIgnoreCase("Bloodbending")) {
 						Bloodbending.launch(player);
 					} else if (abil.equalsIgnoreCase("IceBlast")) {
-						if (CoreAbility.hasAbility(player, IceBullet.class)) {
-							CoreAbility.getAbility(player, IceBullet.class).doLeftClick();
-						} else {
-							IceBlast.activate(player);
-						}
+						IceBlast.activate(player);
 					} else if (abil.equalsIgnoreCase("IceSpike")) {
 						IceSpikeBlast.activate(player);
 					} else if (abil.equalsIgnoreCase("OctopusForm")) {
@@ -1794,7 +1788,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("Illumination")) {
 						if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 							bPlayer.toggleIllumination();
-							GeneralMethods.displayMovePreview(player);
+							ChatUtil.displayMovePreview(player);
 							BendingBoardManager.updateAllSlots(player);
 						} else {
 							new Illumination(player);
@@ -1837,7 +1831,7 @@ public class PKListener implements Listener {
 			if (coreAbil instanceof AvatarAbility) {
 				if (abil.equalsIgnoreCase("AvatarState")) {
 					new AvatarState(player);
-					GeneralMethods.displayMovePreview(player);
+					ChatUtil.displayMovePreview(player);
 					BendingBoardManager.updateAllSlots(player);
 				}
 			}
