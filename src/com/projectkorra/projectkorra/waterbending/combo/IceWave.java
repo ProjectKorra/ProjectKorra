@@ -88,6 +88,7 @@ public class IceWave extends IceAbility implements ComboAbility {
 
 	@Override
 	public void remove() {
+		super.remove();
 		this.bPlayer.addCooldown("WaterWave", this.cooldown);
 	}
 
