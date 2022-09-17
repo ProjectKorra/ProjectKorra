@@ -145,8 +145,10 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @param blue If its soul fire or not
 	 * @return The fire blockstate
 	 */
-	public static Fire createFireState(Block position, boolean blue) {
-		Fire fire = (Fire) (blue ? Material.SOUL_FIRE.createBlockData() : Material.FIRE.createBlockData());
+	public static BlockData createFireState(Block position, boolean blue) {
+		if (blue) return Material.SOUL_FIRE.createBlockData();
+
+		Fire fire = (Fire) Material.FIRE.createBlockData();
 		if (position.getRelative(BlockFace.DOWN).getType().isSolid())
 			return fire; //Default fire for when there is a solid block bellow
 		for (BlockFace face : IGNITE_FACES) {

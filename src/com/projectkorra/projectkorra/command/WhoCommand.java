@@ -266,6 +266,12 @@ public class WhoCommand extends PKCommand {
 				} else {
 					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
 				}
+
+				for (final SubElement se : Element.getAddonSubElements(Element.CHI)) {
+					if (bPlayer.canUseSubElement(se)) {
+						sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
+					}
+				}
 			}
 
 			for (final Element element : Element.getAddonElements()) {

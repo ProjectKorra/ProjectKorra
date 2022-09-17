@@ -831,6 +831,12 @@ public class OfflineBendingPlayer {
         }
     }
 
+    /**
+     * Checks to see if the {@link BendingPlayer} has a specific subelement.
+     *
+     * @param sub The subelement to check
+     * @return true If the player knows the element
+     */
     public boolean hasSubElement(@NotNull final SubElement sub) {
         return this.subelements.contains(sub);
     }
@@ -844,10 +850,22 @@ public class OfflineBendingPlayer {
         return !this.elements.isEmpty();
     }
 
+    /**
+     * Checks if the {@link BendingPlayer} has the specified element toggled on
+     *
+     * @param element The element to check
+     * @return true if the element is toggled on
+     */
     public boolean isElementToggled(final Element element) {
         return !this.toggledElements.contains(element);
     }
 
+    /**
+     * Checks if the {@link BendingPlayer} has the specified element's passives toggled on
+     *
+     * @param element The element to check
+     * @return true if the element's passives are toggled on
+     */
     public boolean isPassiveToggled(final Element element) {
         return !this.toggledPassives.contains(element);
     }
@@ -870,6 +888,11 @@ public class OfflineBendingPlayer {
         return this.toggled;
     }
 
+    /**
+     * Checks if the {@link BendingPlayer} has bending passives toggled on.
+     *
+     * @return true If passives are toggled on
+     */
     public boolean isToggledPassives() {
         return this.allPassivesToggled;
     }

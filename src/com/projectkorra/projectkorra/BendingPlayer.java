@@ -257,7 +257,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (ability.getElement() instanceof SubElement) {
 			final SubElement subElement = (SubElement) ability.getElement();
-			if (!this.hasElement(subElement.getParentElement())) {
+			if (subElement instanceof MultiSubElement) {
+				for (Element parent : ((MultiSubElement) subElement).getParentElements()) {
+					if (!this.hasElement(parent)) return false;
+				}
+			} else if (!this.hasElement(subElement.getParentElement())) {
 				return false;
 			}
 			return this.hasSubElement(subElement);
