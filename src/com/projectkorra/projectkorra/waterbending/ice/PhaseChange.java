@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Snowable;
 import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -329,17 +328,8 @@ public class PhaseChange extends IceAbility {
 			}
 
 			final Block b = ice.get(this.r.nextInt(ice.size()));
-			final Block below = b.getRelative(BlockFace.DOWN);
 			this.melt(b);
 			ice.remove(b);
-			//Includes current and future Snowable blocks.
-			if (below.getBlockData() instanceof Snowable){
-				final Snowable data = (Snowable) below.getBlockData();
-				if (data.isSnowy()) {
-					data.setSnowy(false);
-					below.setBlockData(data);
-				}
-			}
 		}
 	}
 

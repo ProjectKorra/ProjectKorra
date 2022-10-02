@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,9 +18,6 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Snowable;
-import org.bukkit.block.data.type.Snow;
-import org.bukkit.block.data.type.Stairs;
-import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -71,6 +67,11 @@ public class TempBlock {
 		//Fire griefing will make the state update on its own, so we don't need to update it ourselves
 		if (!FireAbility.canFireGrief() && (newData.getMaterial() == Material.FIRE || newData.getMaterial() == Material.SOUL_FIRE)) {
 			newData = FireAbility.createFireState(block, newData.getMaterial() == Material.SOUL_FIRE); //Fix the blockstate looking incorrect
+		}
+		if (block.getType() == Material.SNOW){
+			if (newData.getMaterial() == Material.AIR){
+				updateSnowableBlock(block.getRelative(BlockFace.DOWN),false);
+			}
 		}
 
 		if (instances.containsKey(block)) {
@@ -228,12 +229,7 @@ public class TempBlock {
 		} else {
 			//Previous Material was SNOW
 			if (state.getType() == Material.SNOW){
-				final Block below = block.getRelative(BlockFace.DOWN);
-				if (below.getBlockData() instanceof Snowable){
-					final Snowable snowData = (Snowable) below.getBlockData();
-					snowData.setSnowy(true);
-					below.setBlockData(snowData);
-				}
+				updateSnowableBlock(block.getRelative(BlockFace.DOWN),true);
 			}
 
 			//Revert the original blockstate
@@ -310,6 +306,14 @@ public class TempBlock {
 	 */
 	public static boolean applyPhysics(Material material) {
 		return GeneralMethods.isLightEmitting(material) || (material == Material.FIRE && FireAbility.canFireGrief());
+	}
+
+	public void updateSnowableBlock(Block b, boolean snowy){
+		if (b.getBlockData() instanceof Snowable){
+			final Snowable snowable = (Snowable) b.getBlockData();
+			snowable.setSnowy(snowy);
+			b.setBlockData(snowable);
+		}
 	}
 
 }
