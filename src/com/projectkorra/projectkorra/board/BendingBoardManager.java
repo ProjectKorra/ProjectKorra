@@ -114,7 +114,7 @@ public final class BendingBoardManager {
 	 * @return empty if the board is disabled
 	 */
 	public static Optional<BendingBoard> getBoard(Player player) {
-		if (!enabled || disabledPlayers.contains(player.getUniqueId())) {
+		if (!enabled || disabledPlayers.contains(player.getUniqueId()) || !player.hasPermission("bending.command.board")) {
 			return Optional.empty();
 		}
 
