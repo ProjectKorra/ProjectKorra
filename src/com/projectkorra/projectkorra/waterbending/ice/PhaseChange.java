@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Snowable;
 import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
