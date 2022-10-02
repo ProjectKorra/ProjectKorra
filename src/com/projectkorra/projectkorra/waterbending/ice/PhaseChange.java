@@ -328,8 +328,17 @@ public class PhaseChange extends IceAbility {
 			}
 
 			final Block b = ice.get(this.r.nextInt(ice.size()));
+			final Block below = b.getRelative(BlockFace.DOWN);
 			this.melt(b);
 			ice.remove(b);
+			//Includes current and future Snowable blocks.
+			if (below.getBlockData() instanceof Snowable){
+				final Snowable data = (Snowable) below.getBlockData();
+				if (data.isSnowy()) {
+					data.setSnowy(false);
+					below.setBlockData(data);
+				}
+			}
 		}
 	}
 
