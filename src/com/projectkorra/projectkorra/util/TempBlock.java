@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,6 +18,8 @@ import org.bukkit.block.Container;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Snowable;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -223,6 +226,16 @@ public class TempBlock {
 			//Get the drops of the original block and drop them in the world
 			GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, this.state.getType(), this.state.getBlockData()));
 		} else {
+			//Previous Material was SNOW
+			if (state.getType() == Material.SNOW){
+				final Block below = block.getRelative(BlockFace.DOWN);
+				if (below.getBlockData() instanceof Snowable){
+					final Snowable snowData = (Snowable) below.getBlockData();
+					snowData.setSnowy(true);
+					below.setBlockData(snowData);
+				}
+			}
+
 			//Revert the original blockstate
 			state.update(true, applyPhysics(state.getType())
 					&& !(state.getBlockData() instanceof Bisected));
