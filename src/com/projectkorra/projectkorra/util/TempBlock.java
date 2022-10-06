@@ -17,8 +17,7 @@ import org.bukkit.block.Container;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
-import org.bukkit.block.data.type.Stairs;
-import org.bukkit.block.data.type.TrapDoor;
+import org.bukkit.block.data.Snowable;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -68,6 +67,11 @@ public class TempBlock {
 		//Fire griefing will make the state update on its own, so we don't need to update it ourselves
 		if (!FireAbility.canFireGrief() && (newData.getMaterial() == Material.FIRE || newData.getMaterial() == Material.SOUL_FIRE)) {
 			newData = FireAbility.createFireState(block, newData.getMaterial() == Material.SOUL_FIRE); //Fix the blockstate looking incorrect
+		}
+		if (block.getType() == Material.SNOW){
+			if (newData.getMaterial() == Material.AIR){
+				updateSnowableBlock(block.getRelative(BlockFace.DOWN),false);
+			}
 		}
 
 		if (instances.containsKey(block)) {
@@ -223,6 +227,11 @@ public class TempBlock {
 			//Get the drops of the original block and drop them in the world
 			GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, this.state.getType(), this.state.getBlockData()));
 		} else {
+			//Previous Material was SNOW
+			if (state.getType() == Material.SNOW){
+				updateSnowableBlock(block.getRelative(BlockFace.DOWN),true);
+			}
+
 			//Revert the original blockstate
 			state.update(true, applyPhysics(state.getType())
 					&& !(state.getBlockData() instanceof Bisected));
@@ -297,6 +306,14 @@ public class TempBlock {
 	 */
 	public static boolean applyPhysics(Material material) {
 		return GeneralMethods.isLightEmitting(material) || (material == Material.FIRE && FireAbility.canFireGrief());
+	}
+
+	public void updateSnowableBlock(Block b, boolean snowy){
+		if (b.getBlockData() instanceof Snowable){
+			final Snowable snowable = (Snowable) b.getBlockData();
+			snowable.setSnowy(snowy);
+			b.setBlockData(snowable);
+		}
 	}
 
 }
