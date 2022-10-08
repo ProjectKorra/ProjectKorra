@@ -1,6 +1,9 @@
 package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
@@ -9,6 +12,22 @@ public abstract class CombustionAbility extends FireAbility implements SubAbilit
 
 	public CombustionAbility(final Player player) {
 		super(player);
+	}
+
+	public static void playCombustionSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
+
+			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
 	}
 
 	@Override

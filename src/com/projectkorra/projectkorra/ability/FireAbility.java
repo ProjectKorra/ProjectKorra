@@ -161,22 +161,6 @@ public abstract class FireAbility extends ElementalAbility {
         return fire;
     }
 
-    public static void playCombustionSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
-
-            Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
-    }
-
     /**
      * Plays firebending particles in a location with given offsets.<br>
      *
@@ -384,6 +368,26 @@ public abstract class FireAbility extends ElementalAbility {
                 sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
             } catch (final IllegalArgumentException exception) {
                 ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
+            } finally {
+                loc.getWorld().playSound(loc, sound, volume, pitch);
+            }
+        }
+    }
+
+    /**
+     * @deprecated <b>Use {@link CombustionAbility#playCombustionSound(Location)} instead.
+     */
+    @Deprecated
+    public static void playCombustionSound(final Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
+            final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
+
+            Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+            try {
+                sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
+            } catch (final IllegalArgumentException exception) {
+                ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
             } finally {
                 loc.getWorld().playSound(loc, sound, volume, pitch);
             }
