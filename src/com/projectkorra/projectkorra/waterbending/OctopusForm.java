@@ -239,95 +239,91 @@ public class OctopusForm extends WaterAbility {
 			return;
 		}
 
-		final Random random = new Random();
+		if (System.currentTimeMillis() <= this.time + this.interval) return;
+		this.time = System.currentTimeMillis();
+		final Location location = this.player.getLocation();
 
-		if (System.currentTimeMillis() > this.time + this.interval) {
-			this.time = System.currentTimeMillis();
-			final Location location = this.player.getLocation();
+		if (this.sourceSelected) {
+			playFocusWaterEffect(this.sourceBlock);
+		} else if (this.settingUp) {
+			if (this.sourceBlock.getY() < location.getBlockY()) {
+				this.source.revertBlock();
+				this.source = null;
+				final Block newBlock = this.sourceBlock.getRelative(BlockFace.UP);
+				this.sourceLocation = newBlock.getLocation();
 
-			if (this.sourceSelected) {
-				playFocusWaterEffect(this.sourceBlock);
-			} else if (this.settingUp) {
-				if (this.sourceBlock.getY() < location.getBlockY()) {
-					this.source.revertBlock();
-					this.source = null;
-					final Block newBlock = this.sourceBlock.getRelative(BlockFace.UP);
-					this.sourceLocation = newBlock.getLocation();
-
-					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
-						this.sourceBlock = newBlock;
-					} else {
-						this.remove();
-					}
-				} else if (this.sourceBlock.getY() > location.getBlockY()) {
-					this.source.revertBlock();
-					this.source = null;
-					final Block newBlock = this.sourceBlock.getRelative(BlockFace.DOWN);
-					this.sourceLocation = newBlock.getLocation();
-
-					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
-						this.sourceBlock = newBlock;
-					} else {
-						this.remove();
-					}
-				} else if (this.sourceLocation.distanceSquared(location) > this.radius * this.radius) {
-					final Vector vector = GeneralMethods.getDirection(this.sourceLocation, location.getBlock().getLocation()).normalize();
-					this.sourceLocation.add(vector);
-					final Block newBlock = this.sourceLocation.getBlock();
-
-					if (!newBlock.equals(this.sourceBlock)) {
-						if (this.source != null) {
-							this.source.revertBlock();
-						}
-						if (!GeneralMethods.isSolid(newBlock)) {
-							this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
-							this.sourceBlock = newBlock;
-						}
-					}
+				if (!GeneralMethods.isSolid(newBlock)) {
+					this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
+					this.sourceBlock = newBlock;
 				} else {
-					this.incrementStep();
+					this.remove();
+				}
+			} else if (this.sourceBlock.getY() > location.getBlockY()) {
+				this.source.revertBlock();
+				this.source = null;
+				final Block newBlock = this.sourceBlock.getRelative(BlockFace.DOWN);
+				this.sourceLocation = newBlock.getLocation();
+
+				if (!GeneralMethods.isSolid(newBlock)) {
+					this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
+					this.sourceBlock = newBlock;
+				} else {
+					this.remove();
+				}
+			} else if (this.sourceLocation.distanceSquared(location) > this.radius * this.radius) {
+				final Vector vector = GeneralMethods.getDirection(this.sourceLocation, location.getBlock().getLocation()).normalize();
+				this.sourceLocation.add(vector);
+				final Block newBlock = this.sourceLocation.getBlock();
+
+				if (!newBlock.equals(this.sourceBlock)) {
 					if (this.source != null) {
 						this.source.revertBlock();
 					}
-
-					this.source = null;
-					final Vector vector = new Vector(1, 0, 0);
-					this.startAngle = vector.angle(GeneralMethods.getDirection(this.sourceBlock.getLocation(), location));
-					this.angle = this.startAngle;
+					if (!GeneralMethods.isSolid(newBlock)) {
+						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
+						this.sourceBlock = newBlock;
+					}
 				}
-			} else if (this.forming) {
-				if (this.angle - this.startAngle >= 360) {
-					this.currentFormHeight += 1;
-				} else {
-					this.angle += 20;
-				}
-
-				if (random.nextInt(4) == 0) {
-					playWaterbendingSound(this.player.getLocation());
-				}
-
-				this.formOctopus();
-				if (this.currentFormHeight == 2) {
-					this.incrementStep();
-				}
-			} else if (this.formed) {
-				if (random.nextInt(7) == 0) {
-					playWaterbendingSound(this.player.getLocation());
-				}
-
-				this.stepCounter += 1;
-				if (this.stepCounter % this.totalStepCount == 0) {
-					this.currentAnimationStep += 1;
-				}
-				if (this.currentAnimationStep > 8) {
-					this.currentAnimationStep = 1;
-				}
-				this.formOctopus();
 			} else {
-				this.remove();
+				this.incrementStep();
+				if (this.source != null) {
+					this.source.revertBlock();
+				}
+
+				this.source = null;
+				final Vector vector = new Vector(1, 0, 0);
+				this.startAngle = vector.angle(GeneralMethods.getDirection(this.sourceBlock.getLocation(), location));
+				this.angle = this.startAngle;
 			}
+		} else if (this.forming) {
+			if (this.angle - this.startAngle >= 360) {
+				this.currentFormHeight += 1;
+			} else {
+				this.angle += 20;
+			}
+			if (new Random().nextInt(4) == 0) {
+				playWaterbendingSound(this.player.getLocation());
+			}
+
+			this.formOctopus();
+			if (this.currentFormHeight == 2) {
+				this.incrementStep();
+			}
+		} else if (this.formed) {
+			if (new Random().nextInt(7) == 0) {
+				playWaterbendingSound(this.player.getLocation());
+			}
+
+			this.stepCounter += 1;
+			if (this.stepCounter % this.totalStepCount == 0) {
+				this.currentAnimationStep += 1;
+			}
+			if (this.currentAnimationStep > 8) {
+				this.currentAnimationStep = 1;
+			}
+			this.formOctopus();
+		} else {
+			this.remove();
 		}
 	}
 
