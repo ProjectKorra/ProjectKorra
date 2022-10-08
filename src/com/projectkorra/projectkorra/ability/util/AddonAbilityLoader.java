@@ -33,11 +33,9 @@ public class AddonAbilityLoader<T> {
 		this.plugin = plugin;
 		this.directory = directory;
 		this.files = new ArrayList<>();
-
 		if (plugin == null || directory == null) {
 			return;
 		}
-
 		this.files.addAll(Arrays.asList(directory.listFiles(new FileExtensionFilter(".jar"))));
 
 		final List<URL> urls = new ArrayList<>();
