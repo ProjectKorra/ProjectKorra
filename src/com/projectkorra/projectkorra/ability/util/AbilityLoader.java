@@ -1,11 +1,5 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import sun.reflect.ReflectionFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -17,6 +11,14 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import sun.reflect.ReflectionFactory;
+
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.event.AbilityLoadEvent;
 
 public class AbilityLoader<T> {
 

@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.event;
 
+import java.util.jar.JarFile;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
-
-import java.util.jar.JarFile;
 
 /**
  * Called when an ability is successfully loaded.

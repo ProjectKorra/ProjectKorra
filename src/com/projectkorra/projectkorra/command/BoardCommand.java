@@ -1,11 +1,12 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.board.BendingBoardManager;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Executor for /bending board. Extends {@link PKCommand}.

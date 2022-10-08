@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.util;
 
+import org.bukkit.entity.Player;
+
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.entity.Player;
 
 public class ActionBar {
 

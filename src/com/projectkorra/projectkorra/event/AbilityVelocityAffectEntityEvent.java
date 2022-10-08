@@ -1,11 +1,12 @@
 package com.projectkorra.projectkorra.event;
 
-import com.projectkorra.projectkorra.ability.Ability;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.ability.Ability;
 
 /**
  * Cancellable event called when an ability would push or alter the velocity of

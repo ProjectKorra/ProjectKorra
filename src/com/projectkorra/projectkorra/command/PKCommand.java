@@ -1,16 +1,22 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Abstract representation of a command executor. Implements {@link SubCommand}.

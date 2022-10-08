@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.util;
 
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionEffect;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
 
 public class TempPotionEffect {
 

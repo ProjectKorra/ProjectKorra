@@ -1,14 +1,21 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 
 public class TempArmor {
 

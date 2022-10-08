@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
 
 public abstract class LightningAbility extends FireAbility implements SubAbility {
 

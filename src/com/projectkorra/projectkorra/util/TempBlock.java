@@ -1,9 +1,13 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.projectkorra.projectkorra.ability.FireAbility;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,8 +20,10 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Snowable;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+
+import io.papermc.lib.PaperLib;
 
 public class TempBlock {
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();

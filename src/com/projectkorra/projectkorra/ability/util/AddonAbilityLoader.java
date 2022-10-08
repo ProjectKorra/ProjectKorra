@@ -1,10 +1,5 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-import com.projectkorra.projectkorra.util.FileExtensionFilter;
-import org.bukkit.plugin.Plugin;
-import sun.reflect.ReflectionFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -18,6 +13,13 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
+
+import sun.reflect.ReflectionFactory;
+
+import org.bukkit.plugin.Plugin;
+
+import com.projectkorra.projectkorra.event.AbilityLoadEvent;
+import com.projectkorra.projectkorra.util.FileExtensionFilter;
 
 public class AddonAbilityLoader<T> {
 

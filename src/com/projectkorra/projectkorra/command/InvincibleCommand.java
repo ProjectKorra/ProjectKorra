@@ -1,11 +1,12 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.List;
+
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Executor for /bending invincible. Extends {@link PKCommand}.

@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
 
 /**
  * The information for a bending source block.

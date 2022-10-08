@@ -1,10 +1,15 @@
 package com.projectkorra.projectkorra.storage;
 
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Logger;
+
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.*;
-import java.util.logging.Logger;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public abstract class Database {
 

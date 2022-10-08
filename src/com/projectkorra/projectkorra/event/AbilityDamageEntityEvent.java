@@ -1,11 +1,12 @@
 package com.projectkorra.projectkorra.event;
 
-import com.projectkorra.projectkorra.ability.Ability;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import com.projectkorra.projectkorra.ability.Ability;
 
 /**
  * Called when an ability damages an {@link Entity}

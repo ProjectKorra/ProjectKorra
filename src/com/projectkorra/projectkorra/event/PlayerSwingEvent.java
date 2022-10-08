@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.event;
 
+import com.projectkorra.projectkorra.ability.util.Collision;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

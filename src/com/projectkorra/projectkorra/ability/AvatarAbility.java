@@ -1,10 +1,11 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public abstract class AvatarAbility extends ElementalAbility {
 
