@@ -31,7 +31,7 @@ public class AddonAbilityLoader<T> {
 	public AddonAbilityLoader(final Plugin plugin, final File directory) {
 		this.plugin = plugin;
 		this.directory = directory;
-		this.files = new ArrayList<File>();
+		this.files = new ArrayList<>();
 
 		if (plugin == null || directory == null) {
 			return;
