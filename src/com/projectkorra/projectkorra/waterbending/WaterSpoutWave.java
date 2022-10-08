@@ -421,7 +421,7 @@ public class WaterSpoutWave extends WaterAbility {
 						continue;
 					}
 					if (entity instanceof Player) {
-						if (Commands.invincible.contains(((Player) entity).getName())) {
+						if (Commands.invincible.contains(entity.getName())) {
 							return;
 						}
 						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
@@ -491,7 +491,6 @@ public class WaterSpoutWave extends WaterAbility {
 			}
 			if (tb == null || !TempBlock.isTempBlock(block)) {
 				FROZEN_BLOCKS.remove(block);
-				continue;
 			}
 		}
 	}
@@ -533,7 +532,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		return this.isIceWave() ? true : false;
+		return this.isIceWave();
 	}
 
 	@Override
