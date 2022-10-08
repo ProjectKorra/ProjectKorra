@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -190,6 +191,8 @@ public class TorrentWave extends WaterAbility {
 
 	private void returnWater() {
 		final Location location = new Location(this.origin.getWorld(), this.origin.getX() + this.radius, this.origin.getY(), this.origin.getZ());
+		final World world = location.getWorld();
+		if (world == null) return;
 		if (!location.getWorld().equals(this.player.getWorld())) {
 			return;
 		}
