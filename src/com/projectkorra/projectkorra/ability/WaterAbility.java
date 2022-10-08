@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.ability.functional.Functional;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -292,8 +293,13 @@ public abstract class WaterAbility extends ElementalAbility {
 		return true;
 	}
 
-	public static void playFocusWaterEffect(final Block block) {
+	public static Functional.Particle waterEffect = args -> {
+		Block block = (Block) args[0];
 		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
+	};
+
+	public static void playFocusWaterEffect(final Block block) {
+		waterEffect.play(block);
 	}
 
 	public static void playIcebendingSound(final Location loc) {
