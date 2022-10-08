@@ -119,9 +119,7 @@ public class TorrentWave extends WaterAbility {
 		indexList.addAll(GeneralMethods.getEntitiesAroundPoint(this.origin, this.radius + 2));
 		final ArrayList<Block> torrentBlocks = new ArrayList<Block>();
 
-		if (indexList.contains(this.player)) {
-			indexList.remove(this.player);
-		}
+		indexList.remove(this.player);
 
 		for (final int id : this.heights.keySet()) {
 			final ConcurrentHashMap<Integer, Double> angles = this.heights.get(id);
