@@ -106,17 +106,33 @@ public abstract class AirAbility extends ElementalAbility {
 
 	/**
 	 * Plays an integer amount of air particles in a location.
+	 * Deprecated. Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int)} instead
 	 *
 	 * @param loc The location to use
 	 * @param amount The amount of particles
 	 */
+	@Deprecated
 	public static void playAirbendingParticles(final Location loc, final int amount) {
 		playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());
 	}
 
+
+	/**
+	 * Plays an integer amount of air particles in a location.
+	 *
+	 * @param ability The ability this particle is spawned for
+	 * @param loc The location to use
+	 * @param amount The amount of particles
+	 */
+	public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
+		playAirbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
+	}
+
+
 	/**
 	 * Plays an integer amount of air particles in a location with a given
 	 * xOffset, yOffset, and zOffset.
+	 * Deprecated. Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)} instead
 	 *
 	 * @param loc The location to use
 	 * @param amount The amount of particles
@@ -124,9 +140,26 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param yOffset The yOffset to use
 	 * @param zOffset The zOffset to use
 	 */
+	@Deprecated
 	public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
 	}
+
+	/**
+	 * Plays an integer amount of air particles in a location with a given
+	 * xOffset, yOffset, and zOffset.
+	 *
+	 * @param ability The ability this particle is spawned for
+	 * @param loc The location to use
+	 * @param amount The amount of particles
+	 * @param xOffset The xOffset to use
+	 * @param yOffset The yOffset to use
+	 * @param zOffset The zOffset to use
+	 */
+	public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+		getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
+	}
+
 
 	/**
 	 * Plays the Airbending Sound at a location if enabled in the config.
