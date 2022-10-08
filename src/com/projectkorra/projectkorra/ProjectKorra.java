@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
-
 import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
