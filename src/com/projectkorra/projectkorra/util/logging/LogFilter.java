@@ -1,14 +1,15 @@
 package com.projectkorra.projectkorra.util.logging;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import org.bukkit.Bukkit;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
+
+import org.bukkit.Bukkit;
+
+import com.projectkorra.projectkorra.ProjectKorra;
 
 /**
  * This class should only be used to set {@link PKLogHandler}'s filter.

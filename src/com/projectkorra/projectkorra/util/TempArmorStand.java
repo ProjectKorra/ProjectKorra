@@ -1,12 +1,13 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 /**
  * Object to represent an ArmorStand that is not used for normal functionality

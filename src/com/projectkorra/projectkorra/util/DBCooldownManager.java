@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.util;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.storage.MySQL;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DBCooldownManager extends Manager {
 

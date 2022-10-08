@@ -1,18 +1,20 @@
 package com.projectkorra.projectkorra;
 
-import com.projectkorra.projectkorra.util.DBCooldownManager;
-import com.projectkorra.projectkorra.util.FlightHandler;
-import com.projectkorra.projectkorra.util.StatisticsManager;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.Validate;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+import com.projectkorra.projectkorra.util.DBCooldownManager;
+import com.projectkorra.projectkorra.util.FlightHandler;
+import com.projectkorra.projectkorra.util.StatisticsManager;
 
 public abstract class Manager implements Listener {
 

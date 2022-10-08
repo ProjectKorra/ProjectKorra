@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.event;
 
-import com.projectkorra.projectkorra.ability.Ability;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import com.projectkorra.projectkorra.ability.Ability;
 
 public class AbilityEndEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();
