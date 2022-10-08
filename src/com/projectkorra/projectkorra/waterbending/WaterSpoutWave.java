@@ -252,7 +252,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 			} else if (this.animation == AnimateState.TOWARD_PLAYER) {
 				this.revertBlocks();
-				final Location eyeLoc = this.player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
+				final Location eyeLoc = this.player.getTargetBlock(null, 2).getLocation();
 				eyeLoc.setY(this.player.getEyeLocation().getY());
 				final Vector vec = GeneralMethods.getDirection(this.location, eyeLoc);
 				this.location.add(vec.normalize().multiply(this.animationSpeed));
@@ -463,7 +463,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public static ArrayList<WaterSpoutWave> getType(final Player player, final AbilityType type) {
-		final ArrayList<WaterSpoutWave> list = new ArrayList<WaterSpoutWave>();
+		final ArrayList<WaterSpoutWave> list = new ArrayList<>();
 		for (final WaterSpoutWave wave : getAbilities(player, WaterSpoutWave.class)) {
 			if (wave.type.equals(type)) {
 				list.add(wave);
