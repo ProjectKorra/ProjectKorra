@@ -217,7 +217,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	/**
 	 * Plays a single lightning particle in a location.
-	 * Deprecated. Use {@link FireAbility#playLightningbendingParticle(CoreAbility, Location, int)} instead
+	 * Deprecated. Use {@link FireAbility#playLightningbendingParticles(CoreAbility, Location, int)} instead
 	 *
 	 * @param loc The location to use
 	 */
@@ -229,7 +229,7 @@ public abstract class FireAbility extends ElementalAbility {
 	/**
 	 * Plays a single lightning particle in a location with a given
 	 * xOffset, yOffset, and zOffset.
-	 * Deprecated. Use {@link FireAbility#playLightningbendingParticle(CoreAbility, Location, int, double, double, double)} instead
+	 * Deprecated. Use {@link FireAbility#playLightningbendingParticles(CoreAbility, Location, int, double, double, double)} instead
 	 *
 	 * @param loc The location to use
 	 * @param xOffset The xOffset to use
@@ -248,8 +248,8 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @param loc The location to use
 	 * @param amount The amount of particles
 	 */
-	public static void playLightningbendingParticle(final CoreAbility ability, final Location loc, final int amount) {
-		playLightningbendingParticle(ability, loc, amount, Math.random(), Math.random(), Math.random());
+	public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
+		playLightningbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
 	}
 
 	/**
@@ -263,7 +263,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @param yOffset The yOffset to use
 	 * @param zOffset The zOffset to use
 	 */
-	public static void playLightningbendingParticle(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+	public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		GeneralMethods.displayColoredParticle("#01E1FF", loc, amount, xOffset, yOffset, zOffset);
 	}
 
