@@ -108,7 +108,7 @@ public abstract class AirAbility extends ElementalAbility {
      * @param zOffset The zOffset to use
      */
     public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-        airParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, xOffset, null);
+        airParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, 0, null);
     }
 
     /**
