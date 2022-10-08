@@ -178,9 +178,6 @@ public class HeatControl extends FireAbility {
 				return;
 			}
 
-			final Set<Material> blocks = new HashSet<>();
-			Collections.addAll(blocks, getTransparentMaterials());
-
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {
 				final Material material = block.getType();
 				if (isFire(material) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
