@@ -396,7 +396,7 @@ public class WaterArms extends WaterAbility {
 					for (final Location loc : arc.getPoints()) {
 						if (arm.getLocation().getWorld().equals(loc.getWorld()) && loc.distance(arm.getLocation()) <= 2.5) {
 							for (final Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
-								FireAbility.playLightningbendingParticle(l1);
+								FireAbility.playLightningbendingParticle(this, l1, 1);
 							}
 							if (this.lightningKill) {
 								DamageHandler.damageEntity(this.player, 60D, lightning);
