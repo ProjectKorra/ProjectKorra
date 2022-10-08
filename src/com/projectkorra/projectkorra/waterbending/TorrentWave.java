@@ -193,7 +193,7 @@ public class TorrentWave extends WaterAbility {
 		final Location location = new Location(this.origin.getWorld(), this.origin.getX() + this.radius, this.origin.getY(), this.origin.getZ());
 		final World world = location.getWorld();
 		if (world == null) return;
-		if (!location.getWorld().equals(this.player.getWorld())) {
+		if (!world.equals(this.player.getWorld())) {
 			return;
 		}
 		final double radiusOffsetSquared = (this.maxRadius + 5) * (this.maxRadius + 5);
