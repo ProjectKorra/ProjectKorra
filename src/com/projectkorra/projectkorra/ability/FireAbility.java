@@ -330,34 +330,9 @@ public abstract class FireAbility extends ElementalAbility {
         GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
     }
 
-    @Deprecated
     /**
-     * Plays an integer amount of lightning particles in a location.
-     *
-     * @param ability The ability this particle is spawned for
-     * @param loc     The location to use
-     * @param amount  The amount of particles
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingSound(Location)} instead.
      */
-    public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
-        LightningAbility.playLightningbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
-    }
-
-    /**
-     * Plays an integer amount of lightning particles in a location with a given
-     * xOffset, yOffset, and zOffset.
-     *
-     * @param ability The ability this particle is spawned for
-     * @param loc     The location to use
-     * @param amount  The amount of particles
-     * @param xOffset The xOffset to use
-     * @param yOffset The yOffset to use
-     * @param zOffset The zOffset to use
-     */
-    @Deprecated
-    public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-        GeneralMethods.displayColoredParticle("#01E1FF", loc, amount, xOffset, yOffset, zOffset);
-    }
-
     @Deprecated
     public static void playLightningbendingSound(final Location loc) {
         if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
@@ -375,6 +350,9 @@ public abstract class FireAbility extends ElementalAbility {
         }
     }
 
+    /**
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingChargingSound(Location)} instead.
+     */
     @Deprecated
     public static void playLightningbendingChargingSound(final Location loc) {
         if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
@@ -392,6 +370,9 @@ public abstract class FireAbility extends ElementalAbility {
         }
     }
 
+    /**
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingHitSound(Location)} instead.
+     */
     @Deprecated
     public static void playLightningbendingHitSound(final Location loc) {
         if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
