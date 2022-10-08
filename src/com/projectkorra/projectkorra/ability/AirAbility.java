@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.ability.functional.Functional;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,197 +20,198 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public abstract class AirAbility extends ElementalAbility {
 
-	public AirAbility(final Player player) {
-		super(player);
-	}
+    public AirAbility(final Player player) {
+        super(player);
+    }
 
-	@Override
-	public boolean isIgniteAbility() {
-		return false;
-	}
+    @Override
+    public boolean isIgniteAbility() {
+        return false;
+    }
 
-	@Override
-	public boolean isExplosiveAbility() {
-		return false;
-	}
+    @Override
+    public boolean isExplosiveAbility() {
+        return false;
+    }
 
-	@Override
-	public Element getElement() {
-		return Element.AIR;
-	}
+    @Override
+    public Element getElement() {
+        return Element.AIR;
+    }
 
-	@Override
-	public void handleCollision(final Collision collision) {
-		super.handleCollision(collision);
-		if (collision.isRemovingFirst()) {
-			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.WHITE_WOOL.createBlockData());
-		}
-	}
+    @Override
+    public void handleCollision(final Collision collision) {
+        super.handleCollision(collision);
+        if (collision.isRemovingFirst()) {
+            ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, Material.WHITE_WOOL.createBlockData());
+        }
+    }
 
-	/**
-	 * Breaks a breathbendng hold on an entity or one a player is inflicting on
-	 * an entity.
-	 *
-	 * @param entity The entity to be acted upon
-	 */
-	public static void breakBreathbendingHold(final Entity entity) {
-		if (Suffocate.isBreathbent(entity)) {
-			Suffocate.breakSuffocate(entity);
-			return;
-		}
+    /**
+     * Breaks a breathbendng hold on an entity or one a player is inflicting on
+     * an entity.
+     *
+     * @param entity The entity to be acted upon
+     */
+    public static void breakBreathbendingHold(final Entity entity) {
+        if (Suffocate.isBreathbent(entity)) {
+            Suffocate.breakSuffocate(entity);
+            return;
+        }
 
-		if (entity instanceof Player) {
-			final Player player = (Player) entity;
-			if (Suffocate.isChannelingSphere(player)) {
-				Suffocate.remove(player);
-			}
-		}
-	}
+        if (entity instanceof Player) {
+            final Player player = (Player) entity;
+            if (Suffocate.isChannelingSphere(player)) {
+                Suffocate.remove(player);
+            }
+        }
+    }
 
-	/**
-	 * Gets the Air Particles from the config.
-	 *
-	 * @return Config specified ParticleEffect
-	 */
-	public static ParticleEffect getAirbendingParticles() {
-		final String particle = getConfig().getString("Properties.Air.Particles");
-		if (particle == null) {
-			return ParticleEffect.CLOUD;
-		} else if (particle.equalsIgnoreCase("spell")) {
-			return ParticleEffect.SPELL;
-		} else if (particle.equalsIgnoreCase("blacksmoke")) {
-			return ParticleEffect.SMOKE_NORMAL;
-		} else if (particle.equalsIgnoreCase("smoke")) {
-			return ParticleEffect.CLOUD;
-		} else if (particle.equalsIgnoreCase("smallsmoke")) {
-			return ParticleEffect.SNOW_SHOVEL;
-		} else {
-			return ParticleEffect.CLOUD;
-		}
-	}
+    /**
+     * Gets the Air Particles from the config.
+     *
+     * @return Config specified ParticleEffect
+     */
+    public static ParticleEffect getAirbendingParticles() {
+        final String particle = getConfig().getString("Properties.Air.Particles");
+        if (particle == null) {
+            return ParticleEffect.CLOUD;
+        } else if (particle.equalsIgnoreCase("spell")) {
+            return ParticleEffect.SPELL;
+        } else if (particle.equalsIgnoreCase("blacksmoke")) {
+            return ParticleEffect.SMOKE_NORMAL;
+        } else if (particle.equalsIgnoreCase("smoke")) {
+            return ParticleEffect.CLOUD;
+        } else if (particle.equalsIgnoreCase("smallsmoke")) {
+            return ParticleEffect.SNOW_SHOVEL;
+        } else {
+            return ParticleEffect.CLOUD;
+        }
+    }
 
-	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
-	 * <p>
-	 * Checks whether a location is within an AirShield.
-	 *
-	 * @param loc The location to check
-	 * @return true If the location is inside an AirShield.
-	 */
-	@Deprecated
-	public static boolean isWithinAirShield(final Location loc) {
-		final List<String> list = new ArrayList<String>();
-		list.add("AirShield");
-		return GeneralMethods.blockAbilities(null, list, loc, 0);
-	}
+    /**
+     * Plays an integer amount of air particles in a location with random offsets.
+     *
+     * @param ability The ability this particle is spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     */
+    public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
+        playAirbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
+    }
 
-	/**
-	 * Plays an integer amount of air particles in a location.
-	 * Deprecated. Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int)} instead
-	 *
-	 * @param loc The location to use
-	 * @param amount The amount of particles
-	 */
-	@Deprecated
-	public static void playAirbendingParticles(final Location loc, final int amount) {
-		playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());
-	}
+    /**
+     * Default function used in {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)}
+     * */
+    public static Functional.Particle airParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
+        getAirbendingParticles().display(location, amount, xOffset, yOffset, zOffset);
+    };
 
+    /**
+     * Plays an integer amount of air particles in a location with a given
+     * xOffset, yOffset, and zOffset.
+     *
+     * @param ability The ability this particle is spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     */
+    public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        airParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, xOffset, null);
+    }
 
-	/**
-	 * Plays an integer amount of air particles in a location.
-	 *
-	 * @param ability The ability this particle is spawned for
-	 * @param loc The location to use
-	 * @param amount The amount of particles
-	 */
-	public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
-		playAirbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
-	}
+    /**
+     * Plays the Airbending Sound at a location if enabled in the config.
+     *
+     * @param loc The location to play the sound at
+     */
+    public static void playAirbendingSound(final Location loc) {
+        if (getConfig().getBoolean("Properties.Air.PlaySound")) {
+            final float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
+            final float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
 
+            Sound sound = Sound.ENTITY_CREEPER_HURT;
 
-	/**
-	 * Plays an integer amount of air particles in a location with a given
-	 * xOffset, yOffset, and zOffset.
-	 * Deprecated. Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)} instead
-	 *
-	 * @param loc The location to use
-	 * @param amount The amount of particles
-	 * @param xOffset The xOffset to use
-	 * @param yOffset The yOffset to use
-	 * @param zOffset The zOffset to use
-	 */
-	@Deprecated
-	public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
-	}
+            try {
+                sound = Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound"));
+            } catch (final IllegalArgumentException exception) {
+                ProjectKorra.log.warning("Your current value for 'Properties.Air.Sound.Sound' is not valid.");
+            } finally {
+                loc.getWorld().playSound(loc, sound, volume, pitch);
+            }
+        }
+    }
 
-	/**
-	 * Plays an integer amount of air particles in a location with a given
-	 * xOffset, yOffset, and zOffset.
-	 *
-	 * @param ability The ability this particle is spawned for
-	 * @param loc The location to use
-	 * @param amount The amount of particles
-	 * @param xOffset The xOffset to use
-	 * @param yOffset The yOffset to use
-	 * @param zOffset The zOffset to use
-	 */
-	public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
-	}
+    /**
+     * Removes all air spouts in a location within a certain radius.
+     *
+     * @param loc    The location to use
+     * @param radius The radius around the location to remove spouts in
+     * @param source The player causing the removal
+     * @deprecated <b>This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
+     */
+    @Deprecated
+    public static void removeAirSpouts(final Location loc, final double radius, final Player source) {
+        AirSpout.removeSpouts(loc, radius, source);
+    }
 
+    /**
+     * Removes all air spouts in a location with a radius of 1.5.
+     *
+     * @param loc    The location to use
+     * @param source The player causing the removal
+     * @deprecated <b>This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
+     */
+    @Deprecated
+    public static void removeAirSpouts(final Location loc, final Player source) {
+        removeAirSpouts(loc, 1.5, source);
+    }
 
-	/**
-	 * Plays the Airbending Sound at a location if enabled in the config.
-	 *
-	 * @param loc The location to play the sound at
-	 */
-	public static void playAirbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Air.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
+    /**
+     * Checks whether a location is within an AirShield.
+     *
+     * @param loc The location to check
+     * @return true If the location is inside an AirShield.
+     * @deprecated <b>This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
+     */
+    @Deprecated
+    public static boolean isWithinAirShield(final Location loc) {
+        final List<String> list = new ArrayList<String>();
+        list.add("AirShield");
+        return GeneralMethods.blockAbilities(null, list, loc, 0);
+    }
 
-			Sound sound = Sound.ENTITY_CREEPER_HURT;
+    /**
+     * Plays an integer amount of air particles in a location.
+     *
+     * @param loc    The location to use
+     * @param amount The amount of particles
+     * @deprecated <b>Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int)} instead.
+     */
+    @Deprecated
+    public static void playAirbendingParticles(final Location loc, final int amount) {
+        playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());
+    }
 
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Air.Sound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
-
-	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
-	 * <p>
-	 * Removes all air spouts in a location within a certain radius.
-	 *
-	 * @param loc The location to use
-	 * @param radius The radius around the location to remove spouts in
-	 * @param source The player causing the removal
-	 */
-	@Deprecated
-	public static void removeAirSpouts(final Location loc, final double radius, final Player source) {
-		AirSpout.removeSpouts(loc, radius, source);
-	}
-
-	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
-	 * <p>
-	 * Removes all air spouts in a location with a radius of 1.5.
-	 *
-	 * @param loc The location to use
-	 * @param source The player causing the removal
-	 */
-	@Deprecated
-	public static void removeAirSpouts(final Location loc, final Player source) {
-		removeAirSpouts(loc, 1.5, source);
-	}
+    /**
+     * Plays an integer amount of air particles in a location with a given
+     * xOffset, yOffset, and zOffset.
+     *
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     * @deprecated <b>Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)} instead.
+     */
+    @Deprecated
+    public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
+    }
 
 }
