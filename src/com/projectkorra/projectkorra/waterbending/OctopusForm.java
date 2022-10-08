@@ -259,7 +259,6 @@ public class OctopusForm extends WaterAbility {
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
-						return;
 					}
 				} else if (this.sourceBlock.getY() > location.getBlockY()) {
 					this.source.revertBlock();
@@ -328,7 +327,6 @@ public class OctopusForm extends WaterAbility {
 				this.formOctopus();
 			} else {
 				this.remove();
-				return;
 			}
 		}
 	}
