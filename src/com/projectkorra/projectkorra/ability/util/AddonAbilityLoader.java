@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -37,11 +38,9 @@ public class AddonAbilityLoader<T> {
 			return;
 		}
 
-		for (final File f : directory.listFiles(new FileExtensionFilter(".jar"))) {
-			this.files.add(f);
-		}
+		this.files.addAll(Arrays.asList(directory.listFiles(new FileExtensionFilter(".jar"))));
 
-		final List<URL> urls = new ArrayList<URL>();
+		final List<URL> urls = new ArrayList<>();
 		for (final File file : this.files) {
 			try {
 				urls.add(file.toURI().toURL());
