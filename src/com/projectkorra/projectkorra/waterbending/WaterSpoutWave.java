@@ -32,11 +32,11 @@ import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class WaterSpoutWave extends WaterAbility {
 
-	public static enum AbilityType {
+	public enum AbilityType {
 		CLICK, SHIFT, RELEASE
 	}
 
-	public static enum AnimateState {
+	public enum AnimateState {
 		RISE, TOWARD_PLAYER, CIRCLE, SHRINK
 	}
 
