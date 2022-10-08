@@ -1,14 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
@@ -187,9 +179,7 @@ public class HeatControl extends FireAbility {
 			}
 
 			final Set<Material> blocks = new HashSet<>();
-			for (final Material material : getTransparentMaterials()) {
-				blocks.add(material);
-			}
+			Collections.addAll(blocks, getTransparentMaterials());
 
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {
 				final Material material = block.getType();
