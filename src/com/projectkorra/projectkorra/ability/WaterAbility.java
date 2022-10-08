@@ -292,9 +292,27 @@ public abstract class WaterAbility extends ElementalAbility {
 		return true;
 	}
 
+
+	/**
+	 * Plays the focus water effect on a block.
+	 * Deprecated. Use {@link WaterAbility#playFocusWaterEffect(CoreAbility, Block)} instead
+	 *
+	 * @param block The block to play it on
+	 */
 	public static void playFocusWaterEffect(final Block block) {
 		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
 	}
+
+	/**
+	 * Plays the focus water effect on a block.
+	 *
+	 * @param ability The ability this effect is spawned for
+	 * @param block The block to play it on
+	 */
+	public static void playFocusWaterEffect(final CoreAbility ability, final Block block) {
+		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
+	}
+
 
 	public static void playIcebendingSound(final Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
