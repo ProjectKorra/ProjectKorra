@@ -31,342 +31,382 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class FireAbility extends ElementalAbility {
 
-	private static final Map<Block, Player> SOURCE_PLAYERS = new ConcurrentHashMap<>();
-	private static final Set<BlockFace> IGNITE_FACES = new HashSet<>(Arrays.asList(BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.UP));
+    private static final Map<Block, Player> SOURCE_PLAYERS = new ConcurrentHashMap<>();
+    private static final Set<BlockFace> IGNITE_FACES = new HashSet<>(Arrays.asList(BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.UP));
 
-	public FireAbility(final Player player) {
-		super(player);
-	}
+    public FireAbility(final Player player) {
+        super(player);
+    }
 
-	@Override
-	public boolean isIgniteAbility() {
-		return true;
-	}
+    @Override
+    public boolean isIgniteAbility() {
+        return true;
+    }
 
-	@Override
-	public boolean isExplosiveAbility() {
-		return false;
-	}
+    @Override
+    public boolean isExplosiveAbility() {
+        return false;
+    }
 
-	@Override
-	public Element getElement() {
-		return Element.FIRE;
-	}
+    @Override
+    public Element getElement() {
+        return Element.FIRE;
+    }
 
-	@Override
-	public void handleCollision(final Collision collision) {
-		super.handleCollision(collision);
-		if (collision.isRemovingFirst()) {
-			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, getFireType().createBlockData());
-		}
-	}
-	/**
-	 * 
-	 * @return Material based on whether the player is a Blue Firebender, SOUL_FIRE if true, FIRE if false.
-	 */
-	public Material getFireType() {
-		return getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
-	}
-	
-	/**
-	 * Returns if fire is allowed to completely replace blocks or if it should
-	 * place a temp fire block.
-	 */
-	public static boolean canFireGrief() {
-		return getConfig().getBoolean("Properties.Fire.FireGriefing");
-	}
+    @Override
+    public void handleCollision(final Collision collision) {
+        super.handleCollision(collision);
+        if (collision.isRemovingFirst()) {
+            ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, getFireType().createBlockData());
+        }
+    }
 
-	/**
-	 * Creates a fire block meant to replace other blocks but reverts when the
-	 * fire dissipates or is destroyed.
-	 */
-	public void createTempFire(final Location loc) {
-		createTempFire(loc, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
-	}
+    /**
+     * @return Material based on whether the player is a Blue Firebender, SOUL_FIRE if true, FIRE if false.
+     */
+    public Material getFireType() {
+        return getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_FIRE : Material.FIRE;
+    }
 
-	public void createTempFire(final Location loc, final long time) {
-		if(isIgnitable(loc.getBlock())) {
-			new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
-			SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
-		}
-	}
+    /**
+     * Returns if fire is allowed to completely replace blocks or if it should
+     * place a temp fire block.
+     */
+    public static boolean canFireGrief() {
+        return getConfig().getBoolean("Properties.Fire.FireGriefing");
+    }
 
-	public double getDayFactor(final double value) {
-		return (this.player != null ? value * getDayFactor(player.getWorld()) : value);
-	}
+    /**
+     * Creates a fire block meant to replace other blocks but reverts when the
+     * fire dissipates or is destroyed.
+     */
+    public void createTempFire(final Location loc) {
+        createTempFire(loc, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
+    }
 
-	public static double getDayFactor() {
-		return getConfig().getDouble("Properties.Fire.DayFactor");
-	}
+    public void createTempFire(final Location loc, final long time) {
+        if (isIgnitable(loc.getBlock())) {
+            new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
+            SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
+        }
+    }
 
-	/**
-	 * Gets the firebending dayfactor from the config multiplied by a specific
-	 * value if it is day.
-	 *
-	 * @param value The value
-	 * @param world The world to pass into {@link #isDay(World)}
-	 * @return value DayFactor multiplied by specified value when
-	 *         {@link #isDay(World)} is true <br />
-	 *         else <br />
-	 *         value The specified value in the parameters
-	 */
-	public static double getDayFactor(final double value, final World world) {
-		if (isDay(world)) {
-			return value * getDayFactor();
-		}
-		return value;
-	}
+    public double getDayFactor(final double value) {
+        return (this.player != null ? value * getDayFactor(player.getWorld()) : value);
+    }
 
-	public static double getDayFactor(final World world) {
-		return getDayFactor(1, world);
-	}
+    public static double getDayFactor() {
+        return getConfig().getDouble("Properties.Fire.DayFactor");
+    }
 
-	public static ChatColor getSubChatColor() {
-		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.FireSub"));
-	}
+    /**
+     * Gets the firebending dayfactor from the config multiplied by a specific
+     * value if it is day.
+     *
+     * @param value The value
+     * @param world The world to pass into {@link #isDay(World)}
+     * @return value DayFactor multiplied by specified value when
+     * {@link #isDay(World)} is true <br />
+     * else <br />
+     * value The specified value in the parameters
+     */
+    public static double getDayFactor(final double value, final World world) {
+        if (isDay(world)) {
+            return value * getDayFactor();
+        }
+        return value;
+    }
 
-	/**
-	 * Can fire be placed in the provided block
-	 * @param block The block to check
-	 * @return True if fire can be placed here
-	 */
-	public static boolean isIgnitable(final Block block) {
-		return (block.getRelative(BlockFace.DOWN).getType().isSolid() && !block.getType().isSolid())
-				|| (GeneralMethods.isTransparent(block) && IGNITE_FACES.stream().map(face -> block.getRelative(face).getType()).anyMatch(FireAbility::isIgnitable));
-	}
+    public static double getDayFactor(final World world) {
+        return getDayFactor(1, world);
+    }
 
-	public static boolean isIgnitable(final Material material) {
-		return material.isFlammable() || material.isBurnable();
-	}
+    public static ChatColor getSubChatColor() {
+        return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.FireSub"));
+    }
 
-	/**
-	 * Create a fire block with the correct blockstate at the given position
-	 * @param position The position to test
-	 * @param blue If its soul fire or not
-	 * @return The fire blockstate
-	 */
-	public static BlockData createFireState(Block position, boolean blue) {
-		if (blue) return Material.SOUL_FIRE.createBlockData();
+    /**
+     * Can fire be placed in the provided block
+     *
+     * @param block The block to check
+     * @return True if fire can be placed here
+     */
+    public static boolean isIgnitable(final Block block) {
+        return (block.getRelative(BlockFace.DOWN).getType().isSolid() && !block.getType().isSolid())
+                || (GeneralMethods.isTransparent(block) && IGNITE_FACES.stream().map(face -> block.getRelative(face).getType()).anyMatch(FireAbility::isIgnitable));
+    }
 
-		Fire fire = (Fire) Material.FIRE.createBlockData();
-		if (position.getRelative(BlockFace.DOWN).getType().isSolid())
-			return fire; //Default fire for when there is a solid block bellow
-		for (BlockFace face : IGNITE_FACES) {
-			if (isIgnitable(position.getRelative(face).getType())) {
-				fire.setFace(face, true);
-			}
-		}
-		return fire;
-	}
+    public static boolean isIgnitable(final Material material) {
+        return material.isFlammable() || material.isBurnable();
+    }
 
-	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
-	 * <p>
-	 * Checks whether a location is within a FireShield.
-	 *
-	 * @param loc The location to check
-	 * @return true If the location is inside a FireShield.
-	 */
-	@Deprecated
-	public static boolean isWithinFireShield(final Location loc) {
-		final List<String> list = new ArrayList<String>();
-		list.add("FireShield");
-		return GeneralMethods.blockAbilities(null, list, loc, 0);
-	}
+    /**
+     * Create a fire block with the correct blockstate at the given position
+     *
+     * @param position The position to test
+     * @param blue     If its soul fire or not
+     * @return The fire blockstate
+     */
+    public static BlockData createFireState(Block position, boolean blue) {
+        if (blue) return Material.SOUL_FIRE.createBlockData();
 
-	public static void playCombustionSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
+        Fire fire = (Fire) Material.FIRE.createBlockData();
+        if (position.getRelative(BlockFace.DOWN).getType().isSolid())
+            return fire; //Default fire for when there is a solid block bellow
+        for (BlockFace face : IGNITE_FACES) {
+            if (isIgnitable(position.getRelative(face).getType())) {
+                fire.setFace(face, true);
+            }
+        }
+        return fire;
+    }
 
-			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+    public static void playCombustionSound(final Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
+            final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
 
-	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
-			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
-		} else {
-			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
-		}
-	}
+            Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+            try {
+                sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
+            } catch (final IllegalArgumentException exception) {
+                ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
+            } finally {
+                loc.getWorld().playSound(loc, sound, volume, pitch);
+            }
+        }
+    }
 
-	public static void playFirebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
+    /**
+     * Plays firebending particles in a location with given offsets.<br>
+     *
+     * @param ability The ability these particles are spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles to use
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     */
+    public static void playFirebendingParticles(CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        if (ability.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
+            ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+        } else {
+            ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+        }
+    }
 
-			Sound sound = Sound.BLOCK_FIRE_AMBIENT;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+    public static void playFirebendingSound(final Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            final float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
+            final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
 
-	/**
-	 * Plays a single lightning particle in a location.
-	 * Deprecated. Use {@link FireAbility#playLightningbendingParticles(CoreAbility, Location, int)} instead
-	 *
-	 * @param loc The location to use
-	 */
-	@Deprecated
-	public static void playLightningbendingParticle(final Location loc) {
-		playLightningbendingParticle(loc, Math.random(), Math.random(), Math.random());
-	}
+            Sound sound = Sound.BLOCK_FIRE_AMBIENT;
+            try {
+                sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
+            } catch (final IllegalArgumentException exception) {
+                ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
+            } finally {
+                loc.getWorld().playSound(loc, sound, volume, pitch);
+            }
+        }
+    }
 
-	/**
-	 * Plays a single lightning particle in a location with a given
-	 * xOffset, yOffset, and zOffset.
-	 * Deprecated. Use {@link FireAbility#playLightningbendingParticles(CoreAbility, Location, int, double, double, double)} instead
-	 *
-	 * @param loc The location to use
-	 * @param xOffset The xOffset to use
-	 * @param yOffset The yOffset to use
-	 * @param zOffset The zOffset to use
-	 */
-	@Deprecated
-	public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
-		GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
-	}
+    /**
+     * Apply modifiers to this value. Applies the day factor to it
+     *
+     * @param value The value to modify
+     * @return The modified value
+     */
+    @Override
+    public double applyModifiers(double value) {
+        return GeneralMethods.applyModifiers(value, getDayFactor(1.0));
+    }
 
-	/**
-	 * Plays an integer amount of lightning particles in a location.
-	 *
-	 * @param ability The ability this particle is spawned for
-	 * @param loc The location to use
-	 * @param amount The amount of particles
-	 */
-	public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
-		playLightningbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
-	}
+    /**
+     * Apply modifiers to this value. Applies the day factor to it
+     *
+     * @param value The value to modify
+     * @return The modified value
+     */
+    public double applyInverseModifiers(double value) {
+        return GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0));
+    }
 
-	/**
-	 * Plays an integer amount of lightning particles in a location with a given
-	 * xOffset, yOffset, and zOffset.
-	 *
-	 * @param ability The ability this particle is spawned for
-	 * @param loc The location to use
-	 * @param amount The amount of particles
-	 * @param xOffset The xOffset to use
-	 * @param yOffset The yOffset to use
-	 * @param zOffset The zOffset to use
-	 */
-	public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		GeneralMethods.displayColoredParticle("#01E1FF", loc, amount, xOffset, yOffset, zOffset);
-	}
+    /**
+     * Apply modifiers to this value. Applies the day factor and the blue fire factor (for damage)
+     *
+     * @param value The value to modify
+     * @return The modified value
+     */
+    public double applyModifiersDamage(double value) {
+        return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.DamageFactor", 1.1) : 1);
+    }
 
-	public static void playLightningbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
+    /**
+     * Apply modifiers to this value. Applies the day factor and the blue fire factor (for range)
+     *
+     * @param value The value to modify
+     * @return The modified value
+     */
+    public double applyModifiersRange(double value) {
+        return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.RangeFactor", 1.2) : 1);
+    }
 
-			Sound sound = Sound.ENTITY_CREEPER_HURT;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+    /**
+     * Apply modifiers to this value. Applies the day factor and the blue fire factor (for cooldowns)
+     *
+     * @param value The value to modify
+     * @return The modified value
+     */
+    public long applyModifiersCooldown(long value) {
+        return (long) GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? 1 / getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor", 0.9) : 1);
+    }
 
-	public static void playLightningbendingChargingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
+    public static void stopBending() {
+        SOURCE_PLAYERS.clear();
+    }
 
-			Sound sound = Sound.BLOCK_BEEHIVE_WORK;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
-	
-	public static void playLightningbendingHitSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
+    public static Map<Block, Player> getSourcePlayers() {
+        return SOURCE_PLAYERS;
+    }
 
-			Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+    /**
+     * This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
+     * <p>
+     * Checks whether a location is within a FireShield.
+     *
+     * @param loc The location to check
+     * @return true If the location is inside a FireShield.
+     */
+    @Deprecated
+    public static boolean isWithinFireShield(final Location loc) {
+        final List<String> list = new ArrayList<String>();
+        list.add("FireShield");
+        return GeneralMethods.blockAbilities(null, list, loc, 0);
+    }
 
-	/**
-	 * Apply modifiers to this value. Applies the day factor to it
-	 * @param value The value to modify
-	 * @return The modified value
-	 */
-	@Override
-	public double applyModifiers(double value) {
-		return GeneralMethods.applyModifiers(value, getDayFactor(1.0));
-	}
+    /**
+     * Plays firebending particles in a location with given offsets.<br>
+     *
+     * @param loc     The location to use
+     * @param amount  The amount of particles to use
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     * @deprecated <b>Use {@link FireAbility#playFirebendingParticles(CoreAbility, Location, int, double, double, double)} instead.</b>
+     */
+    @Deprecated
+    public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
+            ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+        } else {
+            ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+        }
+    }
 
-	/**
-	 * Apply modifiers to this value. Applies the day factor to it
-	 * @param value The value to modify
-	 * @return The modified value
-	 */
-	public double applyInverseModifiers(double value) {
-		return GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0));
-	}
+    /**
+     * Plays a single lightning particle in a location.<br>
+     *
+     * @param loc The location to use
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingParticles(CoreAbility, Location, int)} instead.
+     */
+    @Deprecated
+    public static void playLightningbendingParticle(final Location loc) {
+        playLightningbendingParticle(loc, Math.random(), Math.random(), Math.random());
+    }
 
-	/**
-	 * Apply modifiers to this value. Applies the day factor and the blue fire factor (for damage)
-	 * @param value The value to modify
-	 * @return The modified value
-	 */
-	public double applyModifiersDamage(double value) {
-		return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.DamageFactor", 1.1) : 1);
-	}
+    /**
+     * Plays a single lightning particle in a location with given offsets.<br>
+     *
+     * @param loc     The location to use
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingParticles(CoreAbility, Location, int, double, double, double)} instead.
+     */
+    @Deprecated
+    public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
+        GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
+    }
 
-	/**
-	 * Apply modifiers to this value. Applies the day factor and the blue fire factor (for range)
-	 * @param value The value to modify
-	 * @return The modified value
-	 */
-	public double applyModifiersRange(double value) {
-		return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.RangeFactor", 1.2) : 1);
-	}
+    @Deprecated
+    /**
+     * Plays an integer amount of lightning particles in a location.
+     *
+     * @param ability The ability this particle is spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     */
+    public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
+        LightningAbility.playLightningbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
+    }
 
-	/**
-	 * Apply modifiers to this value. Applies the day factor and the blue fire factor (for cooldowns)
-	 * @param value The value to modify
-	 * @return The modified value
-	 */
-	public long applyModifiersCooldown(long value) {
-		return (long) GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? 1 / getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor", 0.9) : 1);
-	}
+    /**
+     * Plays an integer amount of lightning particles in a location with a given
+     * xOffset, yOffset, and zOffset.
+     *
+     * @param ability The ability this particle is spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     */
+    @Deprecated
+    public static void playLightningbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        GeneralMethods.displayColoredParticle("#01E1FF", loc, amount, xOffset, yOffset, zOffset);
+    }
 
-	public static void stopBending() {
-		SOURCE_PLAYERS.clear();
-	}
+    @Deprecated
+    public static void playLightningbendingSound(final Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
+            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
 
-	public static Map<Block, Player> getSourcePlayers() {
-		return SOURCE_PLAYERS;
-	}
+            Sound sound = Sound.ENTITY_CREEPER_HURT;
+            try {
+                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
+            } catch (final IllegalArgumentException exception) {
+                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
+            } finally {
+                loc.getWorld().playSound(loc, sound, volume, pitch);
+            }
+        }
+    }
+
+    @Deprecated
+    public static void playLightningbendingChargingSound(final Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
+            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
+
+            Sound sound = Sound.BLOCK_BEEHIVE_WORK;
+            try {
+                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
+            } catch (final IllegalArgumentException exception) {
+                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
+            } finally {
+                loc.getWorld().playSound(loc, sound, volume, pitch);
+            }
+        }
+    }
+
+    @Deprecated
+    public static void playLightningbendingHitSound(final Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
+            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
+
+            Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
+            try {
+                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
+            } catch (final IllegalArgumentException exception) {
+                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
+            } finally {
+                loc.getWorld().playSound(loc, sound, volume, pitch);
+            }
+        }
+    }
 
 }
