@@ -231,8 +231,8 @@ public class TorrentWave extends WaterAbility {
 	@Override
 	public List<Location> getLocations() {
 		final ArrayList<Location> locations = new ArrayList<>();
-		for (final TempBlock block : this.blocks) {
-			locations.add(block.getLocation());
+		for (final TempBlock tblock : this.blocks) {
+			locations.add(tblock.getLocation());
 		}
 		return locations;
 	}
