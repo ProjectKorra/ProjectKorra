@@ -448,14 +448,9 @@ public class OctopusForm extends WaterAbility {
 
 	public static boolean wasBrokenFor(final Player player, final Block block) {
 		final OctopusForm form = getAbility(player, OctopusForm.class);
-		if (form != null) {
-			if (form.sourceBlock == null) {
-				return false;
-			} else if (form.sourceBlock.equals(block)) {
-				return true;
-			}
-		}
-		return false;
+		if (form == null) return false;
+		if (form.sourceBlock == null) return false;
+		return form.sourceBlock.equals(block);
 	}
 
 	@Override
