@@ -356,11 +356,7 @@ public class AirSwipe extends AirAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		final ArrayList<Location> locations = new ArrayList<>();
-		for (final Location swipeLoc : this.streams.values()) {
-			locations.add(swipeLoc);
-		}
-		return locations;
+		return new ArrayList<>(this.streams.values());
 	}
 
 	public Location getOrigin() {
