@@ -1,16 +1,15 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.UUID;
-
+import com.projectkorra.projectkorra.Manager;
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.Manager;
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.UUID;
 
 public class FlightHandler extends Manager {
 

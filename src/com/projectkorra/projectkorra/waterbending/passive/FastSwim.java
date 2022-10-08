@@ -1,8 +1,5 @@
 package com.projectkorra.projectkorra.waterbending.passive;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
@@ -11,6 +8,8 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class FastSwim extends WaterAbility implements PassiveAbility {
 

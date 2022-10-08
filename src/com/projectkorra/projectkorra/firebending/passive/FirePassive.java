@@ -1,13 +1,12 @@
 package com.projectkorra.projectkorra.firebending.passive;
 
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.firebending.Illumination;
+import org.bukkit.entity.Player;
 
 public class FirePassive {
 

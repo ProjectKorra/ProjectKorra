@@ -1,10 +1,9 @@
 package com.projectkorra.projectkorra.earthbending.passive;
 
-import org.bukkit.block.Block;
-
 import com.projectkorra.projectkorra.earthbending.lava.LavaSurgeWall;
 import com.projectkorra.projectkorra.earthbending.lava.LavaSurgeWave;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.block.Block;
 
 public class EarthPassive {
 	public static boolean canPhysicsChange(final Block block) {

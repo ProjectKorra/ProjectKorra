@@ -1,10 +1,9 @@
 package com.projectkorra.projectkorra.event;
 
+import com.projectkorra.projectkorra.ability.util.Collision;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.projectkorra.projectkorra.ability.util.Collision;
 
 public class AbilityCollisionEvent extends Event implements Cancellable {
 

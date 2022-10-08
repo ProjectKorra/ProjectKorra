@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.util.ClickType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ComboUtil {
 

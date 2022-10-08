@@ -1,16 +1,15 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An object to control how an entity moves. <br>

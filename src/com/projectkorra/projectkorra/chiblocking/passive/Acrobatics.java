@@ -1,11 +1,10 @@
 package com.projectkorra.projectkorra.chiblocking.passive;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class Acrobatics extends ChiAbility implements PassiveAbility {
 	public Acrobatics(final Player player) {

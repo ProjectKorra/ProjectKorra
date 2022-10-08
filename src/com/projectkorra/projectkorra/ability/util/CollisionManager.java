@@ -1,19 +1,14 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.*;
 
 /**
  * A CollisionManager is used to monitor possible collisions between all

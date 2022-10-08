@@ -1,20 +1,19 @@
 package com.projectkorra.projectkorra.firebending;
 
-import static com.projectkorra.projectkorra.firebending.Illumination.isIlluminationTorch;
-
-import java.util.Random;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.Random;
+
+import static com.projectkorra.projectkorra.firebending.Illumination.isIlluminationTorch;
 
 public class FireJet extends FireAbility {
 

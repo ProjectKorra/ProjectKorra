@@ -1,10 +1,9 @@
 package com.projectkorra.projectkorra.chiblocking.util;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class ChiblockingManager implements Runnable {
 	public ProjectKorra plugin;

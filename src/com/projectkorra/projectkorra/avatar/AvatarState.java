@@ -1,14 +1,13 @@
 package com.projectkorra.projectkorra.avatar;
 
-import java.util.HashMap;
-
+import com.projectkorra.projectkorra.ability.AvatarAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.projectkorra.ability.AvatarAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
+import java.util.HashMap;
 
 public class AvatarState extends AvatarAbility {
 

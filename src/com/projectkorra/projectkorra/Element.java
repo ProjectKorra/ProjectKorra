@@ -1,18 +1,12 @@
 package com.projectkorra.projectkorra;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.*;
 
 public class Element {
 

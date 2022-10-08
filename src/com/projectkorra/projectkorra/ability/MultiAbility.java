@@ -1,8 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
-
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfoSub;
+
+import java.util.ArrayList;
 
 public interface MultiAbility {
 

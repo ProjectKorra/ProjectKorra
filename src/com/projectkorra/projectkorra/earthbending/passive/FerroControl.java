@@ -1,7 +1,8 @@
 package com.projectkorra.projectkorra.earthbending.passive;
 
-import java.util.HashSet;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.MetalAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -10,9 +11,7 @@ import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.MetalAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
+import java.util.HashSet;
 
 public class FerroControl extends MetalAbility implements PassiveAbility {
 

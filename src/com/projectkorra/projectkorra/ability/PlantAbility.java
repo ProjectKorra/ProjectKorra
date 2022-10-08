@@ -1,11 +1,10 @@
 package com.projectkorra.projectkorra.ability;
 
+import com.projectkorra.projectkorra.Element;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-
-import com.projectkorra.projectkorra.Element;
 
 public abstract class PlantAbility extends WaterAbility implements SubAbility {
 
