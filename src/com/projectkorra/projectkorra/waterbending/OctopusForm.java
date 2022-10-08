@@ -106,8 +106,8 @@ public class OctopusForm extends WaterAbility {
 		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.OctopusForm.Duration"));
 		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
 		this.currentFormHeight = 0;
-		this.blocks = new ArrayList<TempBlock>();
-		this.newBlocks = new ArrayList<TempBlock>();
+		this.blocks = new ArrayList<>();
+		this.newBlocks = new ArrayList<>();
 		if (hasAbility(player, PhaseChange.class)) {
 			this.pc = getAbility(player, PhaseChange.class);
 		} else {
@@ -272,7 +272,6 @@ public class OctopusForm extends WaterAbility {
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
-						return;
 					}
 				} else if (this.sourceLocation.distanceSquared(location) > this.radius * this.radius) {
 					final Vector vector = GeneralMethods.getDirection(this.sourceLocation, location.getBlock().getLocation()).normalize();
@@ -337,7 +336,7 @@ public class OctopusForm extends WaterAbility {
 	private void formOctopus() {
 		final Location location = this.player.getLocation();
 		this.newBlocks.clear();
-		final ArrayList<Block> doneBlocks = new ArrayList<Block>();
+		final ArrayList<Block> doneBlocks = new ArrayList<>();
 
 		for (double theta = this.startAngle; theta < this.startAngle + this.angle; theta += 10) {
 			final double rtheta = Math.toRadians(theta);
