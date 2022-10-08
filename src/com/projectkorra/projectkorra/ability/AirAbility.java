@@ -90,17 +90,6 @@ public abstract class AirAbility extends ElementalAbility {
     }
 
     /**
-     * Plays an integer amount of air particles in a location with random offsets.
-     *
-     * @param ability The ability this particle is spawned for
-     * @param loc     The location to use
-     * @param amount  The amount of particles
-     */
-    public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
-        playAirbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
-    }
-
-    /**
      * Default function used in {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)}
      * */
     public static Functional.Particle airParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
@@ -120,6 +109,17 @@ public abstract class AirAbility extends ElementalAbility {
      */
     public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
         airParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, xOffset, null);
+    }
+
+    /**
+     * Plays an integer amount of air particles in a location with random offsets.
+     *
+     * @param ability The ability this particle is spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     */
+    public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
+        playAirbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
     }
 
     /**
