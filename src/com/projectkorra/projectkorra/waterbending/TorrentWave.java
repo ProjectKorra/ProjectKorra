@@ -115,9 +115,8 @@ public class TorrentWave extends WaterAbility {
 		this.blocks.clear();
 		this.affectedEntities.clear();
 
-		final ArrayList<Entity> indexList = new ArrayList<Entity>();
-		indexList.addAll(GeneralMethods.getEntitiesAroundPoint(this.origin, this.radius + 2));
-		final ArrayList<Block> torrentBlocks = new ArrayList<Block>();
+		final ArrayList<Entity> indexList = new ArrayList<>(GeneralMethods.getEntitiesAroundPoint(this.origin, this.radius + 2));
+		final ArrayList<Block> torrentBlocks = new ArrayList<>();
 
 		indexList.remove(this.player);
 
