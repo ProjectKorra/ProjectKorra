@@ -505,9 +505,7 @@ public class SurgeWall extends WaterAbility {
 			}
 		}
 
-		if (wall != null) {
-			wall.moveWater();
-		}
+		wall.moveWater();
 	}
 
 	public static void removeAllCleanup() {
