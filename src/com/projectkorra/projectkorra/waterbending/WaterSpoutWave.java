@@ -474,15 +474,12 @@ public class WaterSpoutWave extends WaterAbility {
 
 	public static boolean wasBrokenFor(final Player player, final Block block) {
 		final ArrayList<WaterSpoutWave> waves = getType(player, AbilityType.CLICK);
-		if (!waves.isEmpty()) {
-			final WaterSpoutWave wave = waves.get(0);
-			if (wave.origin == null) {
-				return false;
-			} else if (wave.origin.getBlock().equals(block)) {
-				return true;
-			}
-		}
-		return false;
+		if (waves.isEmpty()) return false;
+
+		final WaterSpoutWave wave = waves.get(0);
+		if (wave.origin == null) return false;
+
+		return wave.origin.getBlock().equals(block);
 	}
 
 	public static void progressAllCleanup() {
