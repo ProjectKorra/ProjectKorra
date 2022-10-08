@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.Element;
+import org.bukkit.entity.Player;
 
 public abstract class ChiAbility extends ElementalAbility {
 

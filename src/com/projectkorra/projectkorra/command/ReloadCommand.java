@@ -1,12 +1,11 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.List;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.List;
 
 /**
  * Executor for /bending reload. Extends {@link PKCommand}.

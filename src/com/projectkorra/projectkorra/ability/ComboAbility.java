@@ -1,10 +1,9 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
-
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import java.util.ArrayList;
 
 public interface ComboAbility {
 

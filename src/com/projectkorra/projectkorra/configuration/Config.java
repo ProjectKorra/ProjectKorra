@@ -1,11 +1,10 @@
 package com.projectkorra.projectkorra.configuration;
 
-import java.io.File;
-
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.io.File;
 
 /**
  * A config utility class for Project Korra. To get the config itself use

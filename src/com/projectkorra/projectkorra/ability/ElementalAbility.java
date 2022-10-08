@@ -1,18 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Tag;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -21,7 +11,7 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import java.util.*;
 
 /**
  * ElementalAbility is used to hold methods that should be accessible by every

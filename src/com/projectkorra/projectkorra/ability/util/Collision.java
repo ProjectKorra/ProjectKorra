@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import org.bukkit.Location;
-
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import org.bukkit.Location;
 
 /**
  * A Collision is used to represent the collision between two CoreAbility

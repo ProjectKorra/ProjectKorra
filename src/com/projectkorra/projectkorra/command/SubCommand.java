@@ -1,8 +1,8 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 /**
  * Interface representation of a command executor.

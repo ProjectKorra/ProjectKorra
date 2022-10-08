@@ -1,15 +1,10 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.*;
 
 public class Commands {
 

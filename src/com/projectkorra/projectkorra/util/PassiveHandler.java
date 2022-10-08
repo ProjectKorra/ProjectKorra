@@ -1,10 +1,5 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
@@ -12,6 +7,10 @@ import com.projectkorra.projectkorra.airbending.passive.AirSaturation;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiSaturation;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PassiveHandler {
 	private static final Map<Player, Float> FOOD = new ConcurrentHashMap<>();
