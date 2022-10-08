@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.util;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -21,6 +23,39 @@ public class DamageHandler {
 
 	private static boolean checkTicks(LivingEntity entity, double damage) {
 		return entity.getNoDamageTicks() > entity.getMaximumNoDamageTicks() / 2.0f && damage <= entity.getLastDamage();
+	}
+
+	private static final String IGNORE_ARMOR_PREFIX = "Properties.IgnoreArmorPercentage.";
+	public static double getIgnoreArmorPercentage(final Ability ability) {
+		FileConfiguration config = ProjectKorra.plugin.getConfig();
+
+		double percentage = config.getDouble(IGNORE_ARMOR_PREFIX + "Default", 0.0);
+
+		if (config.isSet(IGNORE_ARMOR_PREFIX + "Ability." + ability.getName())) {
+
+			percentage = config.getDouble(IGNORE_ARMOR_PREFIX + "Ability." + ability.getName(), 0.0);
+
+		} else if (config.isSet(IGNORE_ARMOR_PREFIX + "Element." + ability.getElement().getName())) {
+
+			percentage = config.getDouble(IGNORE_ARMOR_PREFIX + "Element." + ability.getElement().getName(), 0.0);
+
+		}
+
+		return Math.max(Math.min(percentage, 1.0), 0.0);
+	}
+
+	private static double ignoreArmorDamage(LivingEntity lent, double damage) {
+		double defense = lent.getAttribute(Attribute.GENERIC_ARMOR).getValue();
+		double toughness = lent.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue();
+		return damage / (1 - (Math.min(20, Math.max(defense / 5, defense - 4 * damage / (toughness + 8)))) / 25);
+	}
+
+	private static double ignorePercentageArmorDamage(LivingEntity lent, double damage, double percentage) {
+		damage = ignoreArmorDamage(lent, damage);
+		percentage = 1 - percentage;
+		double defense = (lent.getAttribute(Attribute.GENERIC_ARMOR).getValue()) * percentage;
+		double toughness = (lent.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue()) * percentage;
+		return damage * (1 - (Math.min(20, Math.max(defense / 5, defense - 4 * damage / (toughness + 8)))) / 25);
 	}
 
 	/**
@@ -64,9 +99,19 @@ public class DamageHandler {
 			damage = Math.max(0, damageEvent.getDamage());
 			
 			if (damageEvent.doesIgnoreArmor() && damage > 0) {
-				double defense = lent.getAttribute(Attribute.GENERIC_ARMOR).getValue();
-				double toughness = lent.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue();
-				damage /= 1 - (Math.min(20, Math.max(defense / 5, defense - 4 * damage / (toughness + 8)))) / 25;
+
+				damage = ignoreArmorDamage(lent, damage);
+
+			} else if (damage > 0) {
+
+				double percentage = getIgnoreArmorPercentage(ability);
+
+				if (percentage == 1) {
+					damage = ignoreArmorDamage(lent, damage);
+				} else if (percentage != 0) {
+					damage = ignorePercentageArmorDamage(lent, damage, percentage);
+				}
+
 			}
 			
 			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
