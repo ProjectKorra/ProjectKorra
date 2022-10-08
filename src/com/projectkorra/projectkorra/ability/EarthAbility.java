@@ -296,6 +296,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	 * @param speed The particle animation speed
 	 * @param red Use red sand for the particle
 	 */
+	@Deprecated
 	public static void displaySandParticle(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset, final double speed, final boolean red) {
 		if (amount <= 0) {
 			return;

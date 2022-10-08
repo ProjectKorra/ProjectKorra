@@ -193,7 +193,7 @@ public class WaterSpoutWave extends WaterAbility {
 				this.setType(AbilityType.SHIFT);
 				return;
 			}
-			playFocusWaterEffect(this.origin.getBlock());
+			playFocusWaterEffect(this, this.origin.getBlock());
 		} else if (this.type == AbilityType.SHIFT) {
 			if (this.direction == null) {
 				this.direction = this.player.getEyeLocation().getDirection();

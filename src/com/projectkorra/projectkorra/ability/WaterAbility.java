@@ -299,6 +299,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 *
 	 * @param block The block to play it on
 	 */
+	@Deprecated
 	public static void playFocusWaterEffect(final Block block) {
 		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
 	}
