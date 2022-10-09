@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.functional.Functional;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -161,6 +162,14 @@ public abstract class FireAbility extends ElementalAbility {
         return fire;
     }
 
+    public static Functional.Particle fireParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
+        if (ability.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
+            ParticleEffect.SOUL_FIRE_FLAME.display(location, amount, xOffset, yOffset, zOffset);
+        } else {
+            ParticleEffect.FLAME.display(location, amount, xOffset, yOffset, zOffset);
+        }
+    };
+
     /**
      * Plays firebending particles in a location with given offsets.<br>
      *
@@ -172,11 +181,7 @@ public abstract class FireAbility extends ElementalAbility {
      * @param zOffset The zOffset to use
      */
     public static void playFirebendingParticles(CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-        if (ability.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
-            ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
-        } else {
-            ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
-        }
+        fireParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, 0, null);
     }
 
     public static void playFirebendingSound(final Location loc) {

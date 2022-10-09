@@ -86,7 +86,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 			fs.setDensity(1);
 			fs.setSpread(0.9F);
-			fs.setUseNewParticles(true);
+			//fs.setUseNewParticles(true);
 			fs.setCollides(false);
 			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 			this.tasks.add(fs);
