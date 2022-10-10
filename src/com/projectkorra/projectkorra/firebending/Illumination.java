@@ -92,13 +92,11 @@ public class Illumination extends FireAbility {
 		}
 
 		if (this.oldLevel > this.lightThreshold) {
-			player.sendMessage("Light level remove");
 			this.remove();
 			return;
 		}
 
 		if (this.block == null) {
-			player.sendMessage("Null return");
 			return;
 		}
 
@@ -108,7 +106,6 @@ public class Illumination extends FireAbility {
 		}
 
 		if (this.player.getLocation().distanceSquared(this.block.getLocation()) > this.range * this.range) {
-			player.sendMessage("Range remove: Range is " + this.range);
 			this.remove();
 			return;
 		}
@@ -117,7 +114,6 @@ public class Illumination extends FireAbility {
 		if (MODERN) {
 			ItemStack main = player.getInventory().getItemInMainHand();
 			if (!slotsFree(player)) {
-				player.sendMessage("Slots free remove");
 				this.remove();
 				return;
 			}
@@ -135,13 +131,11 @@ public class Illumination extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		player.sendMessage("Remove");
 		this.revert();
 	}
 
 	private void revert() {
 		if (this.block != null) {
-			player.sendMessage("Revert");
 			BLOCKS.remove(this.block);
 			this.block.revertBlock();
 		}
@@ -166,7 +160,6 @@ public class Illumination extends FireAbility {
 			BlockData clonedData = LIGHT.createBlockData();
 			((Levelled)clonedData).setLevel(level);
 			if (this.block == null || !eyeBlock.equals(this.block.getBlock())) {
-				player.sendMessage("Move diff");
 				this.revert();
 				this.block = new TempBlock(eyeBlock, clonedData);
 			}
