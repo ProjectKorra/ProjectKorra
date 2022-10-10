@@ -489,6 +489,7 @@ public class PKListener implements Listener {
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
 		BendingBoardManager.updateAllSlots(player);
+		FirePassive.handle(player);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
