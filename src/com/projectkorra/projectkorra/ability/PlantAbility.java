@@ -26,12 +26,12 @@ public abstract class PlantAbility extends WaterAbility implements SubAbility {
 		return Element.PLANT;
 	}
 
-	public Functional.Particle plantParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
+	public static Functional.Particle plantParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
 		location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location.clone().add(0.5, 0, 0.5), amount, xOffset, yOffset, zOffset, data);
 	};
 	
 	// Because Plantbending deserves particles too!
-	public void playPlantbendingParticles(CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+	public static void playPlantbendingParticles(CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		plantParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, 0, Material.OAK_LEAVES.createBlockData());
 	}
 
