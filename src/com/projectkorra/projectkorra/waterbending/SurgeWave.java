@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.IceAbility;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,7 +33,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
-public class SurgeWave extends WaterAbility {
+public class SurgeWave extends IceAbility {
 
 	private boolean freezing;
 	private boolean activateFreeze;
@@ -285,7 +286,7 @@ public class SurgeWave extends WaterAbility {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
-				ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
+				WaterAbility.playFocusWaterEffect(this, this.sourceBlock);
 				return;
 			}
 
