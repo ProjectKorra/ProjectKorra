@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.ability.functional.Functional;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -292,17 +293,9 @@ public abstract class WaterAbility extends ElementalAbility {
 		return true;
 	}
 
-
-	/**
-	 * Plays the focus water effect on a block.
-	 * Deprecated. Use {@link WaterAbility#playFocusWaterEffect(CoreAbility, Block)} instead
-	 *
-	 * @param block The block to play it on
-	 */
-	@Deprecated
-	public static void playFocusWaterEffect(final Block block) {
-		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
-	}
+	public static Functional.Particle focusEffect = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
+		ParticleEffect.SMOKE_NORMAL.display(location, amount);
+	};
 
 	/**
 	 * Plays the focus water effect on a block.
@@ -311,42 +304,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @param block The block to play it on
 	 */
 	public static void playFocusWaterEffect(final CoreAbility ability, final Block block) {
-		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
-	}
-
-
-	public static void playIcebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
-
-			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
-
-	public static void playPlantbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
-
-			Sound sound = Sound.BLOCK_GRASS_STEP;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
+		focusEffect.play(ability, block.getLocation().add(.5,.5,.5),4,0,0,0,0, null);
 	}
 
 	public static void playWaterbendingSound(final Location loc) {
@@ -436,5 +394,57 @@ public abstract class WaterAbility extends ElementalAbility {
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();
 		WaterArms.removeAllCleanup();
+	}
+
+	/**
+	 * @deprecated <b> Use {@link IceAbility#playIcebendingSound(Location)} instead.
+	 */
+	@Deprecated
+	public static void playIcebendingSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
+
+			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
+
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
+	}
+
+	/**
+	 * @deprecated <b> Use {@link PlantAbility#playPlantbendingSound(Location)} instead.
+	 */
+	@Deprecated
+	public static void playPlantbendingSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
+
+			Sound sound = Sound.BLOCK_GRASS_STEP;
+
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
+	}
+
+	/**
+	 * Plays the focus water effect on a block.
+	 * @deprecated <b>Use {@link WaterAbility#playFocusWaterEffect(CoreAbility, Block)} instead.
+	 * @param block The block to play it on
+	 */
+	@Deprecated
+	public static void playFocusWaterEffect(final Block block) {
+		playFocusWaterEffect(null, block);
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -143,7 +144,7 @@ public class SurgeWall extends WaterAbility {
 		for (final Block block : WALL_BLOCKS.keySet()) {
 			if (WALL_BLOCKS.get(block) == this.player) {
 				new TempBlock(block, Material.ICE);
-				playIcebendingSound(block.getLocation());
+				IceAbility.playIcebendingSound(block.getLocation());
 			}
 		}
 	}
