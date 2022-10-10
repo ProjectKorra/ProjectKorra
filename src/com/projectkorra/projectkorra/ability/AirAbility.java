@@ -91,7 +91,7 @@ public abstract class AirAbility extends ElementalAbility {
 
     /**
      * Default function used in {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)}
-     * */
+     */
     public static Functional.Particle airParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
         getAirbendingParticles().display(location, amount, xOffset, yOffset, zOffset);
     };
@@ -195,7 +195,8 @@ public abstract class AirAbility extends ElementalAbility {
      */
     @Deprecated
     public static void playAirbendingParticles(final Location loc, final int amount) {
-        playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());
+        playAirbendingParticles(null, loc, amount);
+        //playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());// old
     }
 
     /**
@@ -211,7 +212,8 @@ public abstract class AirAbility extends ElementalAbility {
      */
     @Deprecated
     public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-        getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
+        playAirbendingParticles(null, loc, amount, xOffset, yOffset, zOffset);
+        //getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);// old
     }
 
 }

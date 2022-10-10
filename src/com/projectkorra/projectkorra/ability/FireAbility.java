@@ -287,11 +287,7 @@ public abstract class FireAbility extends ElementalAbility {
      */
     @Deprecated
     public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-        if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
-            ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
-        } else {
-            ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
-        }
+        playFirebendingParticles(this, loc, amount, xOffset, yOffset, zOffset);
     }
 
     /**
@@ -316,7 +312,8 @@ public abstract class FireAbility extends ElementalAbility {
      */
     @Deprecated
     public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
-        GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
+        LightningAbility.playLightningbendingParticles(null, loc, 1, xOffset, yOffset, zOffset);
+        //GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
     }
 
     /**
