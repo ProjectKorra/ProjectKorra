@@ -321,19 +321,7 @@ public abstract class FireAbility extends ElementalAbility {
      */
     @Deprecated
     public static void playLightningbendingSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
-
-            Sound sound = Sound.ENTITY_CREEPER_HURT;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
+        LightningAbility.playLightningbendingSound(loc);
     }
 
     /**
@@ -341,19 +329,7 @@ public abstract class FireAbility extends ElementalAbility {
      */
     @Deprecated
     public static void playLightningbendingChargingSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
-
-            Sound sound = Sound.BLOCK_BEEHIVE_WORK;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
+        LightningAbility.playLightningbendingChargingSound(loc);
     }
 
     /**
@@ -361,19 +337,7 @@ public abstract class FireAbility extends ElementalAbility {
      */
     @Deprecated
     public static void playLightningbendingHitSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
-
-            Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
+        LightningAbility.playLightningbendingHitSound(loc);
     }
 
     /**
@@ -381,19 +345,7 @@ public abstract class FireAbility extends ElementalAbility {
      */
     @Deprecated
     public static void playCombustionSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
-
-            Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
+        CombustionAbility.playCombustionSound(loc);
     }
 
 }

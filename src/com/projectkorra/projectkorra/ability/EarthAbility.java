@@ -513,69 +513,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	/**
-	 * @deprecated <b>Use {@link MetalAbility#playMetalbendingSound(Location)} instead.
-	 */
-	@Deprecated
-	public static void playMetalbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
-
-			Sound sound = Sound.ENTITY_IRON_GOLEM_HURT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MetalSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
-
-	/**
-	 * @deprecated <b>Use {@link SandAbility#playSandbendingSound(Location)} instead.
-	 */
-	@Deprecated
-	public static void playSandbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
-
-			Sound sound = Sound.BLOCK_SAND_BREAK;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Earth.SandSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
-
-	/**
-	 * @deprecated <b>Used {@link LavaAbility#playLavabendingSound(Location)} instead.
-	 */
-	@Deprecated
-	public static void playLavabendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
-
-			Sound sound = Sound.BLOCK_LAVA_AMBIENT;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Earth.LavaSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
-
 	public static void removeAllEarthbendedBlocks() {
 		for (final Block block : MOVED_EARTH.keySet()) {
 			revertBlock(block);
@@ -694,5 +631,29 @@ public abstract class EarthAbility extends ElementalAbility {
 		if (isEarthRevertOn()) {
 			removeAllEarthbendedBlocks();
 		}
+	}
+
+	/**
+	 * @deprecated <b>Use {@link MetalAbility#playMetalbendingSound(Location)} instead.
+	 */
+	@Deprecated
+	public static void playMetalbendingSound(final Location loc) {
+		MetalAbility.playMetalbendingSound(loc);
+	}
+
+	/**
+	 * @deprecated <b>Use {@link SandAbility#playSandbendingSound(Location)} instead.
+	 */
+	@Deprecated
+	public static void playSandbendingSound(final Location loc) {
+		SandAbility.playSandbendingSound(loc);
+	}
+
+	/**
+	 * @deprecated <b>Used {@link LavaAbility#playLavabendingSound(Location)} instead.
+	 */
+	@Deprecated
+	public static void playLavabendingSound(final Location loc) {
+		LavaAbility.playLavabendingSound(loc);
 	}
 }

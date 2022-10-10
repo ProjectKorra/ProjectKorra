@@ -401,20 +401,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 */
 	@Deprecated
 	public static void playIcebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
-
-			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
+		IceAbility.playIcebendingSound(loc);
 	}
 
 	/**
@@ -422,20 +409,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 */
 	@Deprecated
 	public static void playPlantbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
-
-			Sound sound = Sound.BLOCK_GRASS_STEP;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
+		PlantAbility.playPlantbendingSound(loc);
 	}
 
 	/**
