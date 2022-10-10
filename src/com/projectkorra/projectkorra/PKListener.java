@@ -1586,6 +1586,8 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
+
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> Illumination.slotChange(player), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

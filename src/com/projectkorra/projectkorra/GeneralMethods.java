@@ -903,13 +903,25 @@ public class GeneralMethods {
 	}
 
 	public static Location getMainHandLocation(final Player player) {
-		Location loc;
+		double y = 1.2 - (player.isSneaking() ? 0.4 : 0);
 		if (player.getMainHand() == MainHand.LEFT) {
-			loc = GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, 1.2, 0);
+			return GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, y, 0)
+					.add(player.getLocation().getDirection().multiply(0.8));
 		} else {
-			loc = GeneralMethods.getRightSide(player.getLocation(), .55).add(0, 1.2, 0);
+			return GeneralMethods.getRightSide(player.getLocation(), .55).add(0, y, 0)
+					.add(player.getLocation().getDirection().multiply(0.8));
 		}
-		return loc;
+	}
+
+	public static Location getOffHandLocation(final Player player) {
+		double y = 1.2 - (player.isSneaking() ? 0.38 : 0);
+		if (player.getMainHand() == MainHand.RIGHT) {
+			return GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, y, 0)
+					.add(player.getLocation().getDirection().multiply(0.8));
+		} else {
+			return GeneralMethods.getRightSide(player.getLocation(), .55).add(0, y, 0)
+					.add(player.getLocation().getDirection().multiply(0.8));
+		}
 	}
 
 	public static Plugin getProbending() {
