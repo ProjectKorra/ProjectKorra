@@ -247,7 +247,7 @@ public class FireBlastCharged extends FireAbility {
 
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
-			playFirebendingParticles(block.getLocation(), 5, 0.5, 0.5, 0.5);
+			playFirebendingParticles(this, block.getLocation(), 5, 0.5, 0.5, 0.5);
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
 			}
@@ -314,7 +314,7 @@ public class FireBlastCharged extends FireAbility {
 			if (!this.launched && !this.charged) {
 				return;
 			} else if (!this.launched) {
-				playFirebendingParticles(this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().clone()), 3, .001, .001, .001);
+				playFirebendingParticles(this, this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().clone()), 3, .001, .001, .001);
 				return;
 			}
 

@@ -130,7 +130,7 @@ public class Twister extends AirAbility implements ComboAbility {
 				final Vector animDir = GeneralMethods.rotateXZ(new Vector(1, 0, 1), i);
 				final Location animLoc = this.currentLoc.clone().add(animDir.multiply(animRadius));
 				animLoc.add(0, y, 0);
-				playAirbendingParticles(animLoc, 1, 0, 0, 0);
+				playAirbendingParticles(this, animLoc, 1, 0, 0, 0);
 			}
 		}
 		playAirbendingSound(this.currentLoc);

@@ -293,47 +293,18 @@ public abstract class WaterAbility extends ElementalAbility {
 		return true;
 	}
 
-	public static Functional.Particle waterEffect = args -> {
-		Block block = (Block) args[0];
-		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
+	public static Functional.Particle focusEffect = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
+		ParticleEffect.SMOKE_NORMAL.display(location, amount);
 	};
 
-	public static void playFocusWaterEffect(final Block block) {
-		waterEffect.play(block);
-	}
-
-	public static void playIcebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
-
-			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
-
-	public static void playPlantbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
-
-			Sound sound = Sound.BLOCK_GRASS_STEP;
-
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
+	/**
+	 * Plays the focus water effect on a block.
+	 *
+	 * @param ability The ability this effect is spawned for
+	 * @param block The block to play it on
+	 */
+	public static void playFocusWaterEffect(final CoreAbility ability, final Block block) {
+		focusEffect.play(ability, block.getLocation().add(.5,.5,.5),4,0,0,0,0, null);
 	}
 
 	public static void playWaterbendingSound(final Location loc) {
@@ -423,5 +394,31 @@ public abstract class WaterAbility extends ElementalAbility {
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();
 		WaterArms.removeAllCleanup();
+	}
+
+	/**
+	 * @deprecated <b> Use {@link IceAbility#playIcebendingSound(Location)} instead.
+	 */
+	@Deprecated
+	public static void playIcebendingSound(final Location loc) {
+		IceAbility.playIcebendingSound(loc);
+	}
+
+	/**
+	 * @deprecated <b> Use {@link PlantAbility#playPlantbendingSound(Location)} instead.
+	 */
+	@Deprecated
+	public static void playPlantbendingSound(final Location loc) {
+		PlantAbility.playPlantbendingSound(loc);
+	}
+
+	/**
+	 * Plays the focus water effect on a block.
+	 * @deprecated <b>Use {@link WaterAbility#playFocusWaterEffect(CoreAbility, Block)} instead.
+	 * @param block The block to play it on
+	 */
+	@Deprecated
+	public static void playFocusWaterEffect(final Block block) {
+		playFocusWaterEffect(null, block);
 	}
 }

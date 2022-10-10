@@ -93,7 +93,7 @@ public class FireJet extends FireAbility {
 				playFirebendingSound(this.player.getLocation());
 			}
 
-			playFirebendingParticles(this.player.getLocation(), 10, 0.3, 0.3, 0.3);
+			playFirebendingParticles(this, this.player.getLocation(), 10, 0.3, 0.3, 0.3);
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

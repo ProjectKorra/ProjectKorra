@@ -9,7 +9,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.functional.Functional;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -163,50 +162,26 @@ public abstract class FireAbility extends ElementalAbility {
         return fire;
     }
 
-    /**
-     * This method was used for the old collision detection system. Please see
-     * {@link Collision} for the new system.
-     * <p>
-     * Checks whether a location is within a FireShield.
-     *
-     * @param loc The location to check
-     * @return true If the location is inside a FireShield.
-     */
-    @Deprecated
-    public static boolean isWithinFireShield(final Location loc) {
-        final List<String> list = new ArrayList<String>();
-        list.add("FireShield");
-        return GeneralMethods.blockAbilities(null, list, loc, 0);
-    }
-
-    public static void playCombustionSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
-
-            Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
+    public static Functional.Particle fireParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
+        if (ability.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
+            ParticleEffect.SOUL_FIRE_FLAME.display(location, amount, xOffset, yOffset, zOffset);
+        } else {
+            ParticleEffect.FLAME.display(location, amount, xOffset, yOffset, zOffset);
         }
-    }
-
-    public static Functional.Particle fireParticles = (args) -> {
-        BendingPlayer bPlayer = (BendingPlayer) args[0];
-        Location loc = (Location) args[1];
-        int amount = (int) args[2];
-        double xOffset = (double) args[3];
-        double yOffset = (double) args[4];
-        double zOffset = (double) args[5];
-        (bPlayer.hasSubElement(Element.BLUE_FIRE) ? ParticleEffect.SOUL_FIRE_FLAME : ParticleEffect.FLAME).display(loc, amount, xOffset, yOffset, zOffset);
     };
 
-    public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-        fireParticles.play(this.getBendingPlayer(), loc, amount, xOffset, yOffset, zOffset);
+    /**
+     * Plays firebending particles in a location with given offsets.<br>
+     *
+     * @param ability The ability these particles are spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles to use
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     */
+    public static void playFirebendingParticles(CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        fireParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, 0, null);
     }
 
     public static void playFirebendingSound(final Location loc) {
@@ -219,71 +194,6 @@ public abstract class FireAbility extends ElementalAbility {
                 sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
             } catch (final IllegalArgumentException exception) {
                 ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
-    }
-
-
-    public static Functional.Particle lightningParticles = (args) -> {
-        Location loc = (Location) args[0];
-        double xOffset = (double) args[1];
-        double yOffset = (double) args[2];
-        double zOffset = (double) args[3];
-        GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
-    };
-
-    public static void playLightningbendingParticle(final Location loc) {
-        playLightningbendingParticle(loc, Math.random(), Math.random(), Math.random());
-    }
-
-    public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
-        lightningParticles.play(loc, xOffset, yOffset, zOffset);
-    }
-
-    public static void playLightningbendingSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
-
-            Sound sound = Sound.ENTITY_CREEPER_HURT;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
-    }
-
-    public static void playLightningbendingChargingSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
-
-            Sound sound = Sound.BLOCK_BEEHIVE_WORK;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
-            } finally {
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-            }
-        }
-    }
-
-    public static void playLightningbendingHitSound(final Location loc) {
-        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-            final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
-            final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
-
-            Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
-            try {
-                sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
-            } catch (final IllegalArgumentException exception) {
-                ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
             } finally {
                 loc.getWorld().playSound(loc, sound, volume, pitch);
             }
@@ -347,6 +257,95 @@ public abstract class FireAbility extends ElementalAbility {
 
     public static Map<Block, Player> getSourcePlayers() {
         return SOURCE_PLAYERS;
+    }
+
+    /**
+     * This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
+     * <p>
+     * Checks whether a location is within a FireShield.
+     *
+     * @param loc The location to check
+     * @return true If the location is inside a FireShield.
+     */
+    @Deprecated
+    public static boolean isWithinFireShield(final Location loc) {
+        final List<String> list = new ArrayList<String>();
+        list.add("FireShield");
+        return GeneralMethods.blockAbilities(null, list, loc, 0);
+    }
+
+    /**
+     * Plays firebending particles in a location with given offsets.<br>
+     *
+     * @param loc     The location to use
+     * @param amount  The amount of particles to use
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     * @deprecated <b>Use {@link FireAbility#playFirebendingParticles(CoreAbility, Location, int, double, double, double)} instead.</b>
+     */
+    @Deprecated
+    public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        playFirebendingParticles(this, loc, amount, xOffset, yOffset, zOffset);
+    }
+
+    /**
+     * Plays a single lightning particle in a location.<br>
+     *
+     * @param loc The location to use
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingParticles(CoreAbility, Location, int)} instead.
+     */
+    @Deprecated
+    public static void playLightningbendingParticle(final Location loc) {
+        playLightningbendingParticle(loc, Math.random(), Math.random(), Math.random());
+    }
+
+    /**
+     * Plays a single lightning particle in a location with given offsets.<br>
+     *
+     * @param loc     The location to use
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingParticles(CoreAbility, Location, int, double, double, double)} instead.
+     */
+    @Deprecated
+    public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
+        LightningAbility.playLightningbendingParticles(null, loc, 1, xOffset, yOffset, zOffset);
+        //GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
+    }
+
+    /**
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingSound(Location)} instead.
+     */
+    @Deprecated
+    public static void playLightningbendingSound(final Location loc) {
+        LightningAbility.playLightningbendingSound(loc);
+    }
+
+    /**
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingChargingSound(Location)} instead.
+     */
+    @Deprecated
+    public static void playLightningbendingChargingSound(final Location loc) {
+        LightningAbility.playLightningbendingChargingSound(loc);
+    }
+
+    /**
+     * @deprecated <b>Use {@link LightningAbility#playLightningbendingHitSound(Location)} instead.
+     */
+    @Deprecated
+    public static void playLightningbendingHitSound(final Location loc) {
+        LightningAbility.playLightningbendingHitSound(loc);
+    }
+
+    /**
+     * @deprecated <b>Use {@link CombustionAbility#playCombustionSound(Location)} instead.
+     */
+    @Deprecated
+    public static void playCombustionSound(final Location loc) {
+        CombustionAbility.playCombustionSound(loc);
     }
 
 }

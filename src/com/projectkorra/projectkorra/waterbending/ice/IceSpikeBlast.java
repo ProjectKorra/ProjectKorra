@@ -222,7 +222,7 @@ public class IceSpikeBlast extends IceAbility {
 			this.source.setRevertTime(130);
 		} else if (this.prepared) {
 			if (this.sourceBlock != null) {
-				playFocusWaterEffect(this.sourceBlock);
+				playFocusWaterEffect(this, this.sourceBlock);
 			}
 		}
 	}

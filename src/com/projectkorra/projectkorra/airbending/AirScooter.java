@@ -238,7 +238,7 @@ public class AirScooter extends AirAbility {
 			final double y = r * Math.cos(this.phi);
 			final double z = r * Math.sin(theta) * Math.sin(this.phi);
 			origin.add(x, y, z);
-			playAirbendingParticles(origin, 1, 0F, 0F, 0F);
+			playAirbendingParticles(this, origin, 1, 0F, 0F, 0F);
 			origin.subtract(x, y, z);
 		}
 		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
@@ -247,7 +247,7 @@ public class AirScooter extends AirAbility {
 			final double y = r * Math.cos(this.phi);
 			final double z = r * Math.sin(theta) * Math.sin(this.phi);
 			origin2.subtract(x, y, z);
-			playAirbendingParticles(origin2, 1, 0F, 0F, 0F);
+			playAirbendingParticles(this, origin2, 1, 0F, 0F, 0F);
 			origin2.add(x, y, z);
 		}
 	}

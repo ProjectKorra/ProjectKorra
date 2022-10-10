@@ -155,8 +155,9 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				final FireComboStream fs = new FireComboStream(this.player, this, vec, hand, this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
-				fs.setUseNewParticles(true);
-				fs.setParticleEffect(getAirbendingParticles());
+				//fs.setUseNewParticles(true);
+				//fs.setParticleEffect(getAirbendingParticles());
+				fs.particleFunction = AirAbility.airParticles;
 				fs.setCollides(false);
 				fs.runTaskTimer(ProjectKorra.plugin, (long) (i / 2.5), 1L);
 				this.tasks.add(fs);

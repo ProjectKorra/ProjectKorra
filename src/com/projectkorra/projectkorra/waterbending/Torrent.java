@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.IceAbility;
 import org.apache.commons.lang3.tuple.Pair;
 
 import org.bukkit.Location;
@@ -161,7 +162,7 @@ public class Torrent extends WaterAbility {
 				if (this.revert) {
 					tblock.setRevertTime(this.revertTime + (new Random().nextInt((500 + 500) + 1) - 500));
 				}
-				playIcebendingSound(block.getLocation());
+				IceAbility.playIcebendingSound(block.getLocation());
 			}
 		}
 	}
@@ -210,7 +211,7 @@ public class Torrent extends WaterAbility {
 					this.source = new TempBlock(this.sourceBlock, Material.WATER);
 					this.location = this.sourceBlock.getLocation();
 				} else {
-					playFocusWaterEffect(this.sourceBlock);
+					playFocusWaterEffect(this, this.sourceBlock);
 					return;
 				}
 			}

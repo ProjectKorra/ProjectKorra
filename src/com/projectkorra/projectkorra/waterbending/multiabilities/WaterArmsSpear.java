@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.IceAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -194,7 +195,7 @@ public class WaterArmsSpear extends WaterAbility {
 			if (i >= 0) {
 				final Block block = this.spearLocations.get(i).getBlock();
 				if (this.canPlaceBlock(block)) {
-					playIcebendingSound(block.getLocation());
+					IceAbility.playIcebendingSound(block.getLocation());
 					if (getIceBlocks().containsKey(block)) {
 						getIceBlocks().remove(block);
 					}
@@ -246,7 +247,7 @@ public class WaterArmsSpear extends WaterAbility {
 						}
 					}
 				}
-				playIcebendingSound(block.getLocation());
+				IceAbility.playIcebendingSound(block.getLocation());
 				new TempBlock(block, Material.ICE);
 				getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 			}

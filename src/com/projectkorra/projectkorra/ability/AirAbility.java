@@ -90,52 +90,36 @@ public abstract class AirAbility extends ElementalAbility {
     }
 
     /**
-     * This method was used for the old collision detection system. Please see
-     * {@link Collision} for the new system.
-     * <p>
-     * Checks whether a location is within an AirShield.
-     *
-     * @param loc The location to check
-     * @return true If the location is inside an AirShield.
+     * Default function used in {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)}
      */
-    @Deprecated
-    public static boolean isWithinAirShield(final Location loc) {
-        final List<String> list = new ArrayList<String>();
-        list.add("AirShield");
-        return GeneralMethods.blockAbilities(null, list, loc, 0);
-    }
-
-    /**
-     * Plays an integer amount of air particles in a location.
-     *
-     * @param loc    The location to use
-     * @param amount The amount of particles
-     */
-    public static void playAirbendingParticles(final Location loc, final int amount) {
-        playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());
-    }
-
-    public static Functional.Particle airParticles = args -> {
-        Location loc = (Location) args[0];
-        int amount = (int) args[1];
-        double xOffset = (double) args[2];
-        double yOffset = (double) args[3];
-        double zOffset = (double) args[4];
-        getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
+    public static Functional.Particle airParticles = (ability, location, amount, xOffset, yOffset, zOffset, extra, data) -> {
+        getAirbendingParticles().display(location, amount, xOffset, yOffset, zOffset);
     };
 
     /**
      * Plays an integer amount of air particles in a location with a given
      * xOffset, yOffset, and zOffset.
      *
+     * @param ability The ability this particle is spawned for
      * @param loc     The location to use
      * @param amount  The amount of particles
      * @param xOffset The xOffset to use
      * @param yOffset The yOffset to use
      * @param zOffset The zOffset to use
      */
-    public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-        airParticles.play(loc, amount, xOffset, yOffset, zOffset);
+    public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        airParticles.play(ability, loc, amount, xOffset, yOffset, zOffset, 0, null);
+    }
+
+    /**
+     * Plays an integer amount of air particles in a location with random offsets.
+     *
+     * @param ability The ability this particle is spawned for
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     */
+    public static void playAirbendingParticles(final CoreAbility ability, final Location loc, final int amount) {
+        playAirbendingParticles(ability, loc, amount, Math.random(), Math.random(), Math.random());
     }
 
     /**
@@ -161,14 +145,13 @@ public abstract class AirAbility extends ElementalAbility {
     }
 
     /**
-     * This method was used for the old collision detection system. Please see
-     * {@link Collision} for the new system.
-     * <p>
      * Removes all air spouts in a location within a certain radius.
      *
      * @param loc    The location to use
      * @param radius The radius around the location to remove spouts in
      * @param source The player causing the removal
+     * @deprecated <b>This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
      */
     @Deprecated
     public static void removeAirSpouts(final Location loc, final double radius, final Player source) {
@@ -176,17 +159,61 @@ public abstract class AirAbility extends ElementalAbility {
     }
 
     /**
-     * This method was used for the old collision detection system. Please see
-     * {@link Collision} for the new system.
-     * <p>
      * Removes all air spouts in a location with a radius of 1.5.
      *
      * @param loc    The location to use
      * @param source The player causing the removal
+     * @deprecated <b>This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
      */
     @Deprecated
     public static void removeAirSpouts(final Location loc, final Player source) {
         removeAirSpouts(loc, 1.5, source);
+    }
+
+    /**
+     * Checks whether a location is within an AirShield.
+     *
+     * @param loc The location to check
+     * @return true If the location is inside an AirShield.
+     * @deprecated <b>This method was used for the old collision detection system. Please see
+     * {@link Collision} for the new system.
+     */
+    @Deprecated
+    public static boolean isWithinAirShield(final Location loc) {
+        final List<String> list = new ArrayList<String>();
+        list.add("AirShield");
+        return GeneralMethods.blockAbilities(null, list, loc, 0);
+    }
+
+    /**
+     * Plays an integer amount of air particles in a location.
+     *
+     * @param loc    The location to use
+     * @param amount The amount of particles
+     * @deprecated <b>Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int)} instead.
+     */
+    @Deprecated
+    public static void playAirbendingParticles(final Location loc, final int amount) {
+        playAirbendingParticles(null, loc, amount);
+        //playAirbendingParticles(loc, amount, Math.random(), Math.random(), Math.random());// old
+    }
+
+    /**
+     * Plays an integer amount of air particles in a location with a given
+     * xOffset, yOffset, and zOffset.
+     *
+     * @param loc     The location to use
+     * @param amount  The amount of particles
+     * @param xOffset The xOffset to use
+     * @param yOffset The yOffset to use
+     * @param zOffset The zOffset to use
+     * @deprecated <b>Use {@link AirAbility#playAirbendingParticles(CoreAbility, Location, int, double, double, double)} instead.
+     */
+    @Deprecated
+    public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
+        playAirbendingParticles(null, loc, amount, xOffset, yOffset, zOffset);
+        //getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);// old
     }
 
 }

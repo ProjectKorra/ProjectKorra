@@ -122,7 +122,7 @@ public class FireShield extends FireAbility {
 
 					final Location display = this.location.clone().add(this.shieldRadius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.shieldRadius / 1.5 * Math.cos(rtheta), this.shieldRadius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
 					if (this.random.nextInt(4) == 0) {
-						playFirebendingParticles(display, 1, 0.1, 0.1, 0.1);
+						playFirebendingParticles(this, display, 1, 0.1, 0.1, 0.1);
 					}
 					if (this.random.nextInt(7) == 0) {
 						playFirebendingSound(display);
@@ -151,12 +151,12 @@ public class FireShield extends FireAbility {
 			this.location = this.player.getEyeLocation().clone();
 			final Vector direction = this.location.getDirection();
 			this.location.add(direction.multiply(this.shieldRadius));
-			playFirebendingParticles(this.location, 3, 0.2, 0.2, 0.2);
+			playFirebendingParticles(this, this.location, 3, 0.2, 0.2, 0.2);
 
 			for (double theta = 0; theta < 360; theta += 20) {
 				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
 				final Location display = this.location.add(vector);
-				playFirebendingParticles(display, 2, 0.3, 0.2, 0.3);
+				playFirebendingParticles(this, display, 2, 0.3, 0.2, 0.3);
 				if (this.random.nextInt(4) == 0) {
 					playFirebendingSound(display);
 				}
