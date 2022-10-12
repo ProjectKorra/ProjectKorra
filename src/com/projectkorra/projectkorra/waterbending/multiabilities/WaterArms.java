@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
@@ -167,6 +168,8 @@ public class WaterArms extends WaterAbility {
 				new PlantRegrowth(this.player, sourceBlock);
 				sourceBlock.setType(Material.AIR);
 				this.fullSource = false;
+			} else if (isCauldron(sourceBlock)) {
+				GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
 			}
 
 			ParticleEffect.SMOKE_LARGE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);

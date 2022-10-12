@@ -940,6 +940,26 @@ public class GeneralMethods {
 	public static BlockData getWaterData(final int level) {
 		return Material.WATER.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
 	}
+	
+	public static BlockData getCauldronData(final Material material, final int level) {
+		if (!material.name().contains("_CAULDRON")) {
+			return null;
+		}
+		return material.createBlockData(d -> ((Levelled) d).setLevel((level > 3 || level > ((Levelled) d).getMaximumLevel()) ? 3 : level < 1 ? 1 : level));
+	}
+	
+	public static void setCauldronData(final Block block, final int level) {
+		if (block.getBlockData() instanceof Levelled) {
+			Levelled levelled = (Levelled) block.getBlockData();
+			if (level >= 1 && level < 3) {
+				levelled.setLevel(level);
+				block.setBlockData(levelled);
+			} else if (level < 1) {
+				block.setType(Material.CAULDRON);
+			}
+		}
+		return;
+	}
 
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
 		double longestr = range + 1;

@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -289,6 +290,8 @@ public class IceSpikeBlast extends IceAbility {
 			if (isBendableWaterTempBlock(tb)) {
 				tb.revertBlock();
 			}
+		} else if (isCauldron(this.sourceBlock)) {
+			GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
 		}
 	}
 
@@ -380,7 +383,6 @@ public class IceSpikeBlast extends IceAbility {
 				loc = GeneralMethods.getPointOnLine(iceSpike.location, loc, iceSpike.range * 2);
 				iceSpike.redirect(loc, player);
 			}
-
 		}
 	}
 

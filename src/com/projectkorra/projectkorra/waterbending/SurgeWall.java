@@ -202,6 +202,8 @@ public class SurgeWall extends WaterAbility {
 				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 					new PlantRegrowth(this.player, this.sourceBlock);
 					this.sourceBlock.setType(Material.AIR, false);
+				} else if (isCauldron(this.sourceBlock)) {
+					GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
 				}
 				this.addWater(this.sourceBlock);
 			}

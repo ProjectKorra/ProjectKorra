@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -203,11 +204,13 @@ public class Torrent extends WaterAbility {
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
-					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
+					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock) && !isCauldron(this.sourceBlock)) {
 						this.sourceBlock.setType(Material.AIR);
+					} else if (isCauldron(this.sourceBlock)) {
+						GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
 					}
-
-					this.source = new TempBlock(this.sourceBlock, Material.WATER);
+					
+					this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : Material.WATER.createBlockData());
 					this.location = this.sourceBlock.getLocation();
 				} else {
 					playFocusWaterEffect(this.sourceBlock);
@@ -261,7 +264,7 @@ public class Torrent extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.source = new TempBlock(this.location.getBlock(), Material.WATER);
+					this.source = new TempBlock(this.location.getBlock(), isCauldron(this.location.getBlock()) ? this.location.getBlock().getBlockData() : Material.WATER.createBlockData());
 				}
 			}
 			if (this.forming && !this.player.isSneaking()) {
