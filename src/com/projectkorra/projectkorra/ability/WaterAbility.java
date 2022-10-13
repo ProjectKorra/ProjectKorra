@@ -284,12 +284,10 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
+		if (bPlayer == null || !isWaterbendable(block.getType())) {
 			return false;
 		}
-		if (!isWaterbendable(block.getType())) {
-			return isCauldron(block);
-		} else if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
 		} else if (isWater(block) && block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
 			return true;
