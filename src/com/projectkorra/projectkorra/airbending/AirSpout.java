@@ -197,7 +197,7 @@ public class AirSpout extends AirAbility {
 			for (int i = 1; i <= dy; i++) {
 				index = index >= DIRECTIONS.length ? 0 : index + 1;
 				final Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
-				playAirbendingParticles(effectloc2, 3, 0.4F, 0.4F, 0.4F);
+				playAirbendingParticles(this, effectloc2, 3, 0.4F, 0.4F, 0.4F);
 			}
 		}
 	}

@@ -322,7 +322,7 @@ public class IceBlast extends IceAbility {
 			}
 			this.location = this.location.add(direction.clone());
 		} else if (this.prepared) {
-			playFocusWaterEffect(this.sourceBlock);
+			playFocusWaterEffect(this, this.sourceBlock);
 		}
 	}
 

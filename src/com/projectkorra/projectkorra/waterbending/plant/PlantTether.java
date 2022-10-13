@@ -72,7 +72,7 @@ public class PlantTether extends PlantAbility {
 				}
 				break;
 			case ENTITYPULL:
-				this.playPlantbendingParticles(this.target.getLocation().clone().add(-0.5, 0, -0.5), 4, 0.2, 0.5, 0.2);
+				playPlantbendingParticles(this, this.target.getLocation().clone().add(-0.5, 0, -0.5), 4, 0.2, 0.5, 0.2);
 
 				if ((this.timeOut > 15000) || (this.target.getLocation().distance(this.originLoc) < 0.5)) {
 					this.bPlayer.addCooldown("PlantTether", this.getCooldown());
@@ -89,7 +89,7 @@ public class PlantTether extends PlantAbility {
 		}
 
 
-		this.playPlantbendingParticles(this.originLoc, 3, 0.2, 0.5, 0.2);
+		playPlantbendingParticles(this, this.originLoc, 3, 0.2, 0.5, 0.2);
 		this.timeOut += 1;
 	}
 

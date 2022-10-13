@@ -205,7 +205,7 @@ public class WaterManipulation extends WaterAbility {
 						this.remove();
 						return;
 					}
-					ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
+					playFocusWaterEffect(this, this.sourceBlock);
 					return;
 				}
 

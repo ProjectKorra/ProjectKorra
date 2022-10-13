@@ -102,7 +102,7 @@ public class FireSpin extends FireAbility implements ComboAbility {
 				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation().clone().add(0, 1, 0), this.range, this.speed);
 				fs.setSpread(0.0F);
 				fs.setDensity(1);
-				fs.setUseNewParticles(true);
+				//fs.setUseNewParticles(true);
 				fs.setDamage(this.damage);
 				fs.setKnockback(this.knockback);
 				if (this.tasks.size() % 10 != 0) {

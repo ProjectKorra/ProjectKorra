@@ -285,7 +285,7 @@ public class SurgeWave extends WaterAbility {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
-				ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
+				WaterAbility.playFocusWaterEffect(this, this.sourceBlock);
 				return;
 			}
 

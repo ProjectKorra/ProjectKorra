@@ -246,7 +246,7 @@ public class OctopusForm extends WaterAbility {
 			final Location location = this.player.getLocation();
 
 			if (this.sourceSelected) {
-				playFocusWaterEffect(this.sourceBlock);
+				playFocusWaterEffect(this, this.sourceBlock);
 			} else if (this.settingUp) {
 				if (this.sourceBlock.getY() < location.getBlockY()) {
 					this.source.revertBlock();

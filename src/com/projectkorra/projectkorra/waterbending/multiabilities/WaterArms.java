@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.ability.LightningAbility;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +17,6 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -396,7 +396,7 @@ public class WaterArms extends WaterAbility {
 					for (final Location loc : arc.getPoints()) {
 						if (arm.getLocation().getWorld().equals(loc.getWorld()) && loc.distance(arm.getLocation()) <= 2.5) {
 							for (final Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
-								FireAbility.playLightningbendingParticle(l1);
+								LightningAbility.playLightningbendingParticles(this, l1, 1);
 							}
 							if (this.lightningKill) {
 								DamageHandler.damageEntity(this.player, 60D, lightning);

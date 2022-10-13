@@ -144,7 +144,7 @@ public class AirStream extends AirAbility implements ComboAbility {
 				public void run() {
 					for (int angle = -180; angle <= 180; angle += 45) {
 						final Vector orthog = GeneralMethods.getOrthogonalVector(this.dir.clone(), angle, 0.5);
-						playAirbendingParticles(this.loc.clone().add(orthog), 1, 0F, 0F, 0F);
+						playAirbendingParticles(AirStream.this, this.loc.clone().add(orthog), 1, 0F, 0F, 0F);
 					}
 				}
 			};

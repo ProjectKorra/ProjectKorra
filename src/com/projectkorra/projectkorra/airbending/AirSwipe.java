@@ -162,7 +162,7 @@ public class AirSwipe extends AirAbility {
 
 				location = location.clone().add(direction.clone().multiply(this.speed));
 				this.streams.put(direction, location);
-				playAirbendingParticles(location, this.particles, 0.2F, 0.2F, 0);
+				playAirbendingParticles(this, location, this.particles, 0.2F, 0.2F, 0);
 				if (this.random.nextInt(4) == 0) {
 					playAirbendingSound(location);
 				}
@@ -314,7 +314,7 @@ public class AirSwipe extends AirAbility {
 				this.damage *= factor;
 				this.pushFactor *= factor;
 			} else if (System.currentTimeMillis() >= this.getStartTime() + this.maxChargeTime) {
-				playAirbendingParticles(this.player.getEyeLocation(), this.particles);
+				playAirbendingParticles(this, this.player.getEyeLocation(), this.particles);
 			}
 		}
 	}
