@@ -275,19 +275,21 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 	
 	public static boolean isCauldron(final Block block) {
-		return block != null ? isCauldron(block.getType()) : false;
+		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
 	}
 	
 	public static boolean isCauldron(final Material material) {
-		return material == Material.WATER_CAULDRON || material == Material.POWDER_SNOW_CAULDRON;
+		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isWaterbendable(block.getType())) {
+		if (bPlayer == null) {
 			return false;
 		}
-		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+		if (!isWaterbendable(block.getType())) {
+			return isCauldron(block);
+		} else if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
 		} else if (isWater(block) && block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
 			return true;

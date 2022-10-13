@@ -1,7 +1,5 @@
 8621211e-283b-46f5-87bc-95a66d68880e/&eProjectKorra Founder/ Mist
-a197291a-cd78-43bb-aa38-52b7c82bc68c/&5ProjectKorra Lead Developer/ Omnicypher
-1553482a-5e86-4270-9262-b57c11151074/&6ProjectKorra Head Community Moderator/ Pickle
-be9dd246-dd2e-491b-93ee-0caf2786bf65/&5ProjectKorra Bug Tester/ TheWaterChief
+a197291a-cd78-43bb-aa38-52b7c82bc68c/&cProjectKorra Administrator/ Omnicypher
 d7757be8-86de-4898-ab4f-2b1b2fbc3dfa/&5ProjectKorra Developer/ StrangeOne101
 a47a4d04-9f51-44ba-9d35-8de6053e9289/&5ProjectKorra Developer/ AlexTheCoder
 5031c4e3-8103-49ea-b531-0d6ae71bad69/&5ProjectKorra Developer/ Simplicitee
@@ -24,4 +22,3 @@ c364ffe2-de9e-4117-9735-6d14bde038f6/&3ProjectKorra Contributor/ Carbogen
 3b5bdfab-8ae1-4794-b160-4f33f31fde99/&3ProjectKorra Contributor/ kingbirdy
 de68cc29-e4ee-4986-990c-ae3e4365a3bc/&3ProjectKorra Contributor/ Sammycocobear
 929b14fc-aaf1-4f0f-84c2-f20c55493f53/&3ProjectKorra Contributor/ Vidcom
-01535a73-ff8d-4d6c-851e-c71f89e936aa/&5ProjectKorra Forge Developer/ FavouriteDragon

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.util;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -68,7 +69,7 @@ public class BlockSource {
 				if (ElementalAbility.isIce(waterBlock)) {
 					putSource(player, waterBlock, BlockSourceType.ICE, clickType);
 				}
-				if (WaterAbility.isSnow(waterBlock)) {
+				if (WaterAbility.isSnow(waterBlock) || (WaterAbility.isCauldron(waterBlock.getType()) && waterBlock.getType() == Material.getMaterial("POWDER_SNOW_CAULDRON"))) {
 					putSource(player, waterBlock, BlockSourceType.SNOW, clickType);
 				}
 			}
