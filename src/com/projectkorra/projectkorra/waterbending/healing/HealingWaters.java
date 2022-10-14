@@ -233,7 +233,7 @@ public class HealingWaters extends HealingAbility {
 
 	private boolean inWater(final Player player) {
 		final Block block = player.getLocation().getBlock();
-		return (isWater(block) && !TempBlock.isTempBlock(block)) || (isCauldron(block) && !TempBlock.isTempBlock(block));
+		return (isWater(block) || isCauldron(block)) && !TempBlock.isTempBlock(block);
 	}
 
 	public void displayHealingParticlesSelf() {
