@@ -664,7 +664,7 @@ public class ConfigManager {
 			config.addDefault("Properties.SeaLevel", 62);
 			config.addDefault("Properties.ChooseCooldown", 0L);
 			config.addDefault("Properties.MaxPresets", 10);
-			config.addDefault("Properties.IgnoreArmorPercentage.Default", 0.0);
+			config.addDefault("Properties.IgnoreArmorPercentage.Default", 1.0);
 
 			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 			config.addDefault("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock", false);
