@@ -199,8 +199,7 @@ public class WaterArmsSpear extends WaterAbility {
 						getIceBlocks().remove(block);
 					}
 
-					final TempBlock tempBlock = new TempBlock(block, Material.AIR);
-					tempBlock.setType(Material.ICE);
+					new TempBlock(block, Material.ICE);
 
 					getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 				}
