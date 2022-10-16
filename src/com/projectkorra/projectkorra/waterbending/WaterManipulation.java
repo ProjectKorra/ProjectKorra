@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -160,12 +161,14 @@ public class WaterManipulation extends WaterAbility {
 					this.firstDirection = GeneralMethods.getDirection(this.sourceBlock.getLocation(), this.firstDestination).normalize();
 					this.targetDestination = GeneralMethods.getPointOnLine(this.firstDestination, this.targetDestination, this.range);
 					this.targetDirection = GeneralMethods.getDirection(this.firstDestination, this.targetDestination).normalize();
-
+					
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
-					} else if (!isIce(this.sourceBlock)) {
+					} else if (!isIce(this.sourceBlock) && !isCauldron(this.sourceBlock)) {
 						addWater(this.sourceBlock);
+					} else if (isCauldron(this.sourceBlock)) {
+						GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
 					}
 				}
 			}
@@ -201,7 +204,7 @@ public class WaterManipulation extends WaterAbility {
 				return;
 			} else {
 				if (!this.progressing) {
-					if (!(isWater(this.sourceBlock.getType()) || (isIce(this.sourceBlock) && this.bPlayer.canIcebend()) || (isSnow(this.sourceBlock) && this.bPlayer.canIcebend()) || (isPlant(this.sourceBlock) && this.bPlayer.canPlantbend()))) {
+					if (!(isWater(this.sourceBlock.getType()) || isCauldron(this.sourceBlock) || (isIce(this.sourceBlock) && this.bPlayer.canIcebend()) || (isSnow(this.sourceBlock) && this.bPlayer.canIcebend()) || (isPlant(this.sourceBlock) && this.bPlayer.canPlantbend()))) {
 						this.remove();
 						return;
 					}
@@ -336,7 +339,7 @@ public class WaterManipulation extends WaterAbility {
 			return;
 		}
 		if (AFFECTED_BLOCKS.containsKey(block)) {
-			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isCauldron(block)) {
 				block.setType(Material.AIR);
 			}
 			AFFECTED_BLOCKS.remove(block);
@@ -346,7 +349,7 @@ public class WaterManipulation extends WaterAbility {
 	private void removeWater(final Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isCauldron(block)) {
 					block.setType(Material.AIR);
 				}
 				AFFECTED_BLOCKS.remove(block);

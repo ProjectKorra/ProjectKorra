@@ -2,7 +2,9 @@ package com.projectkorra.projectkorra.util;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -67,7 +69,7 @@ public class BlockSource {
 				if (ElementalAbility.isIce(waterBlock)) {
 					putSource(player, waterBlock, BlockSourceType.ICE, clickType);
 				}
-				if (WaterAbility.isSnow(waterBlock)) {
+				if (WaterAbility.isSnow(waterBlock) || (WaterAbility.isCauldron(waterBlock.getType()) && waterBlock.getType() == Material.getMaterial("POWDER_SNOW_CAULDRON"))) {
 					putSource(player, waterBlock, BlockSourceType.SNOW, clickType);
 				}
 			}
@@ -268,7 +270,7 @@ public class BlockSource {
 		} else {
 			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
 		}
-		if (sourceBlock != null && !ElementalAbility.isAir(sourceBlock.getType()) && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock))) {
+		if (sourceBlock != null && !ElementalAbility.isAir(sourceBlock.getType()) && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock) || WaterAbility.isCauldron(sourceBlock))) {
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {
 				return null;
 			}

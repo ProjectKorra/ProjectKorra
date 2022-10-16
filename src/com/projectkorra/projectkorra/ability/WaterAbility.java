@@ -129,7 +129,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isWaterbendable(final Material material) {
-		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material);
+		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material) || isCauldron(material);
 	}
 
 	public static Block getIceSourceBlock(final Player player, final double range) {
@@ -209,7 +209,6 @@ public abstract class WaterAbility extends ElementalAbility {
 					remove.add(m);
 				}
 			}
-
 			trans.removeAll(remove);
 		}
 
@@ -222,7 +221,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
@@ -273,6 +272,14 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static boolean isSnow(final Material material) {
 		return material == Material.SNOW || material == Material.SNOW_BLOCK;
+	}
+	
+	public static boolean isCauldron(final Block block) {
+		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
+	}
+	
+	public static boolean isCauldron(final Material material) {
+		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
