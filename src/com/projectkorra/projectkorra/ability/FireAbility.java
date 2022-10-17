@@ -16,7 +16,9 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Fire;
 import org.bukkit.entity.Player;
 
@@ -131,7 +133,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @return True if fire can be placed here
 	 */
 	public static boolean isIgnitable(final Block block) {
-		return (!block.isLiquid() && GeneralMethods.isTransparent(block)) && ((block.getRelative(BlockFace.DOWN).getType().isSolid())
+		return (!isWater(block) && !block.isLiquid() && GeneralMethods.isTransparent(block)) && ((block.getRelative(BlockFace.DOWN).getType().isSolid())
 				|| (IGNITE_FACES.stream().map(face -> block.getRelative(face).getType()).anyMatch(FireAbility::isIgnitable)));
 	}
 
