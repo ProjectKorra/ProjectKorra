@@ -1,11 +1,9 @@
 package com.projectkorra.projectkorra.waterbending.blood;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.entity.*;
@@ -27,11 +25,7 @@ public class Bloodbending extends BloodAbility {
 
 	private static final Map<Entity, Player> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Player>();
 	
-	private static final Set<EntityType> BLOODLESS_ENTITIES = Set.of(
-			EntityType.SKELETON, EntityType.IRON_GOLEM, EntityType.SLIME, EntityType.BLAZE,
-			EntityType.MAGMA_CUBE, EntityType.SHULKER, EntityType.SKELETON_HORSE, EntityType.WITHER_SKELETON,
-			EntityType.STRAY
-	);
+	private static final Set<EntityType> BLOODLESS_ENTITIES = getConfig().getStringList("Abilities.Water.Bloodbending.Bloodless").stream().map(s -> EntityType.valueOf(s)).collect(Collectors.toUnmodifiableSet());
 
 	private boolean canOnlyBeUsedAtNight;
 	@Attribute("CanBeUsedOnUndeadMobs")

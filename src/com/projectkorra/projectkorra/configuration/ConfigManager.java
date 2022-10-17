@@ -3,12 +3,14 @@ package com.projectkorra.projectkorra.configuration;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.EntityType;
 
 public class ConfigManager {
 
@@ -1072,6 +1074,18 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.Cooldown", 3000);
 			config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", true);
 			config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
+			
+			List<String> bloodless = new ArrayList<>();
+			bloodless.add(EntityType.SKELETON.name());
+			bloodless.add(EntityType.IRON_GOLEM.name());
+			bloodless.add(EntityType.BLAZE.name());
+			bloodless.add(EntityType.MAGMA_CUBE.name());
+			bloodless.add(EntityType.SHULKER.name());
+			bloodless.add(EntityType.SKELETON_HORSE.name());
+			bloodless.add(EntityType.WITHER_SKELETON.name());
+			bloodless.add(EntityType.STRAY.name());
+			
+			config.addDefault("Abilities.Water.Bloodbending.Bloodless", bloodless);
 
 			config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
 			config.addDefault("Abilities.Water.HealingWaters.Cooldown", 0);
