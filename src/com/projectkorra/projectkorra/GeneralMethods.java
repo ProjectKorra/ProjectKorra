@@ -30,6 +30,7 @@ import com.projectkorra.projectkorra.command.PKCommand;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
@@ -1382,6 +1383,7 @@ public class GeneralMethods {
 		ElementalAbility.setupBendableMaterials();
 		EarthTunnel.clearBendableMaterials();
 		EarthTunnel.setupBendableMaterials();
+		Bloodbending.loadBloodlessFromConfig();
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
