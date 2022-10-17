@@ -90,7 +90,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public void createTempFire(final Location loc, final long time) {
 		if(isIgnitable(loc.getBlock())) {
-			new TempBlock(loc.getBlock(), createFireState(loc.getBlock(), getFireType().equals(Material.valueOf("SOUL_FIRE"))), time);
+			new TempBlock(loc.getBlock(), createFireState(loc.getBlock(), getFireType() == Material.SOUL_FIRE), time);
 			SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 		}
 	}
