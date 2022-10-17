@@ -21,6 +21,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Fire;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -88,7 +90,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public void createTempFire(final Location loc, final long time) {
 		if(isIgnitable(loc.getBlock())) {
-			new TempBlock(loc.getBlock(), getFireType().createBlockData(), time);
+			new TempBlock(loc.getBlock(), createFireState(loc.getBlock(), getFireType().equals(Material.valueOf("SOUL_FIRE"))), time);
 			SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
 		}
 	}
@@ -133,7 +135,10 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @return True if fire can be placed here
 	 */
 	public static boolean isIgnitable(final Block block) {
-		return (!isWater(block) && !block.isLiquid() && GeneralMethods.isTransparent(block)) && ((block.getRelative(BlockFace.DOWN).getType().isSolid())
+		Block support = block.getRelative(BlockFace.DOWN);
+		Location loc = support.getLocation();
+		boolean supported = support.getBoundingBox().overlaps(loc.add(0, 0.8, 0).toVector(), loc.add(1, 1, 1).toVector());
+		return (!isWater(block) && !block.isLiquid() && GeneralMethods.isTransparent(block)) && ((supported && support.getType().isSolid())
 				|| (IGNITE_FACES.stream().map(face -> block.getRelative(face).getType()).anyMatch(FireAbility::isIgnitable)));
 	}
 
@@ -150,13 +155,16 @@ public abstract class FireAbility extends ElementalAbility {
 	public static BlockData createFireState(Block position, boolean blue) {
 		Fire fire = (Fire) Material.FIRE.createBlockData();
 		
-		if (position.getRelative(BlockFace.DOWN).getType().isSolid())
+		if (isIgnitable(position) && position.getRelative(BlockFace.DOWN).getType().isSolid())
 			return (blue) ? Material.SOUL_FIRE.createBlockData() : fire; //Default fire for when there is a solid block bellow
+
 		for (BlockFace face : IGNITE_FACES) {
-			if (isIgnitable(position.getRelative(face).getType())) {
+			fire.setFace(face, false);
+			if (isIgnitable(position.getRelative(face))) {
 				fire.setFace(face, true);
 			}
 		}
+
 		return fire;
 	}
 
