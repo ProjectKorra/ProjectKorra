@@ -100,7 +100,7 @@ public class BlazeArc extends FireAbility {
 		Block[] blockArr = { block.getRelative(BlockFace.UP), block, block.getRelative(BlockFace.DOWN) };
 
 		for (int i = 0; i < 3; i++) {
-			if (isFire(blockArr[i].getType()) || isIgnitable(blockArr[i])) {
+			if (isFire(blockArr[i].getType()) || (isIgnitable(blockArr[i]) && blockArr[i].getRelative(BlockFace.DOWN).getType().isSolid())) {
 				return blockArr[i];
 			}
 		}

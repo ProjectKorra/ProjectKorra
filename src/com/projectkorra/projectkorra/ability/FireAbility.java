@@ -131,8 +131,8 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @return True if fire can be placed here
 	 */
 	public static boolean isIgnitable(final Block block) {
-		return (block.getRelative(BlockFace.DOWN).getType().isSolid() && !block.getType().isSolid())
-				|| (GeneralMethods.isTransparent(block) && IGNITE_FACES.stream().map(face -> block.getRelative(face).getType()).anyMatch(FireAbility::isIgnitable));
+		return (!block.isLiquid() && GeneralMethods.isTransparent(block)) && ((block.getRelative(BlockFace.DOWN).getType().isSolid())
+				|| (IGNITE_FACES.stream().map(face -> block.getRelative(face).getType()).anyMatch(FireAbility::isIgnitable)));
 	}
 
 	public static boolean isIgnitable(final Material material) {
@@ -146,11 +146,10 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @return The fire blockstate
 	 */
 	public static BlockData createFireState(Block position, boolean blue) {
-		if (blue) return Material.SOUL_FIRE.createBlockData();
-
 		Fire fire = (Fire) Material.FIRE.createBlockData();
+		
 		if (position.getRelative(BlockFace.DOWN).getType().isSolid())
-			return fire; //Default fire for when there is a solid block bellow
+			return (blue) ? Material.SOUL_FIRE.createBlockData() : fire; //Default fire for when there is a solid block bellow
 		for (BlockFace face : IGNITE_FACES) {
 			if (isIgnitable(position.getRelative(face).getType())) {
 				fire.setFace(face, true);
