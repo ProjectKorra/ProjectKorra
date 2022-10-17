@@ -1,13 +1,11 @@
 package com.projectkorra.projectkorra.waterbending.blood;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
@@ -27,8 +25,7 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 public class Bloodbending extends BloodAbility {
 
 	private static final Map<Entity, Player> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Player>();
-	
-	private static final Set<EntityType> BLOODLESS_ENTITIES = getConfig().getStringList("Abilities.Water.Bloodbending.Bloodless").stream().map(s -> EntityType.valueOf(s)).collect(Collectors.toUnmodifiableSet());
+	private static final Set<EntityType> BLOODLESS_ENTITIES = loadBloodlessFromConfig();
 
 	private boolean canOnlyBeUsedAtNight;
 	@Attribute("CanBeUsedOnUndeadMobs")
@@ -303,6 +300,27 @@ public class Bloodbending extends BloodAbility {
 			}
 			AirAbility.breakBreathbendingHold(this.target);
 		}
+	}
+	
+	public static Set<EntityType> loadBloodlessFromConfig() {
+		Set<EntityType> set = new HashSet<>();
+		if (BLOODLESS_ENTITIES != null) {
+			BLOODLESS_ENTITIES.clear();
+		}
+		for (String s : getConfig().getStringList("Abilities.Water.Bloodbending.Bloodless")) {
+			try {
+				EntityType type = EntityType.valueOf(s);
+				if (type != null) {
+					set.add(type);
+					if (BLOODLESS_ENTITIES != null) {
+						BLOODLESS_ENTITIES.add(type);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return set;
 	}
 
 	@Override
