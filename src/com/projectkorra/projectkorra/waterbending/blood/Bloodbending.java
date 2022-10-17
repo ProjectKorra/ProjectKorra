@@ -25,7 +25,7 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 public class Bloodbending extends BloodAbility {
 
 	private static final Map<Entity, Player> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Player>();
-	private static final Set<EntityType> BLOODLESS_ENTITIES = loadBloodlessFromConfig();
+	private static final Set<EntityType> BLOODLESS_ENTITIES = bloodless();
 
 	private boolean canOnlyBeUsedAtNight;
 	@Attribute("CanBeUsedOnUndeadMobs")
@@ -302,25 +302,28 @@ public class Bloodbending extends BloodAbility {
 		}
 	}
 	
-	public static Set<EntityType> loadBloodlessFromConfig() {
-		Set<EntityType> set = new HashSet<>();
-		if (BLOODLESS_ENTITIES != null) {
-			BLOODLESS_ENTITIES.clear();
-		}
+	private static void loadFromConfig(Set<EntityType> set) {
 		for (String s : getConfig().getStringList("Abilities.Water.Bloodbending.Bloodless")) {
 			try {
 				EntityType type = EntityType.valueOf(s);
 				if (type != null) {
 					set.add(type);
-					if (BLOODLESS_ENTITIES != null) {
-						BLOODLESS_ENTITIES.add(type);
-					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private static Set<EntityType> bloodless() {
+		Set<EntityType> set = new HashSet<>();
+		loadFromConfig(set);
 		return set;
+	}
+	
+	public static void loadBloodlessFromConfig() {
+		BLOODLESS_ENTITIES.clear();
+		loadFromConfig(BLOODLESS_ENTITIES);
 	}
 
 	@Override
