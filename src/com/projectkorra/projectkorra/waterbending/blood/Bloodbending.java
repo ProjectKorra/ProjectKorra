@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.waterbending.blood;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -10,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -29,6 +32,7 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 public class Bloodbending extends BloodAbility {
 
 	private static final Map<Entity, Player> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Player>();
+	private static final Set<EntityType> BLOODLESS_ENTITIES = bloodless();
 
 	private boolean canOnlyBeUsedAtNight;
 	@Attribute("CanBeUsedOnUndeadMobs")
@@ -79,6 +83,9 @@ public class Bloodbending extends BloodAbility {
 			this.range += AvatarState.getValue(1.5);
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.range)) {
 				if (entity instanceof LivingEntity) {
+					if (BLOODLESS_ENTITIES.contains(entity.getType())) {
+						continue;
+					}
 					if (entity instanceof Player) {
 						final Player enemyPlayer = (Player) entity;
 						final BendingPlayer enemyBPlayer = BendingPlayer.getBendingPlayer(enemyPlayer);
@@ -109,7 +116,7 @@ public class Bloodbending extends BloodAbility {
 			}
 			this.target = entities.get(0);
 
-			if (this.target == null || !(this.target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(this, this.target.getLocation()) || this.target.getEntityId() == player.getEntityId()) {
+			if (this.target == null || !(this.target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(this, this.target.getLocation()) || this.target.getEntityId() == player.getEntityId() || BLOODLESS_ENTITIES.contains(this.target.getType())) {
 				return;
 			} else if (this.target instanceof Player) {
 				final BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) this.target);
@@ -220,7 +227,7 @@ public class Bloodbending extends BloodAbility {
 				}
 
 				entities.add(entity);
-				if (!TARGETED_ENTITIES.containsKey(entity) && entity instanceof LivingEntity) {
+				if (!TARGETED_ENTITIES.containsKey(entity) && entity instanceof LivingEntity && !BLOODLESS_ENTITIES.contains(entity.getType())) {
 					DamageHandler.damageEntity(entity, 0, this);
 					TARGETED_ENTITIES.put(entity, this.player);
 				}
@@ -301,6 +308,30 @@ public class Bloodbending extends BloodAbility {
 			AirAbility.breakBreathbendingHold(this.target);
 		}
 	}
+	
+	private static void loadFromConfig(Set<EntityType> set) {
+		for (String s : getConfig().getStringList("Abilities.Water.Bloodbending.Bloodless")) {
+			try {
+				EntityType type = EntityType.valueOf(s);
+				if (type != null) {
+					set.add(type);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static Set<EntityType> bloodless() {
+		Set<EntityType> set = new HashSet<>();
+		loadFromConfig(set);
+		return set;
+	}
+	
+	public static void loadBloodlessFromConfig() {
+		BLOODLESS_ENTITIES.clear();
+		loadFromConfig(BLOODLESS_ENTITIES);
+	}
 
 	@Override
 	public void remove() {
@@ -342,6 +373,10 @@ public class Bloodbending extends BloodAbility {
 
 		final Bloodbending bb = getAbility(TARGETED_ENTITIES.get(entity), Bloodbending.class);
 		return bb.getBendingPlayer();
+	}
+	
+	public static Iterable<EntityType> getBloodlessEntities() {
+		return BLOODLESS_ENTITIES;
 	}
 
 	@Override
