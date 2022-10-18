@@ -24,6 +24,7 @@ public class TempArmorStand {
 	public TempArmorStand(final Location loc) {
 		this.stand = loc.getWorld().spawn(loc, ArmorStand.class);
 		this.stand.setMetadata("temparmorstand", new FixedMetadataValue(ProjectKorra.plugin, 0));
+		tempStands.add(this);
 	}
 
 	public ArmorStand getArmorStand() {
