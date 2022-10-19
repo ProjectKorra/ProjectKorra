@@ -17,13 +17,14 @@ import com.projectkorra.projectkorra.ProjectKorra;
  */
 public class TempArmorStand {
 
-	public static Set<TempArmorStand> tempStands = new HashSet<>();
+	private static Set<TempArmorStand> tempStands = new HashSet<>();
 
-	public ArmorStand stand;
+	private ArmorStand stand;
 
 	public TempArmorStand(final Location loc) {
 		this.stand = loc.getWorld().spawn(loc, ArmorStand.class);
 		this.stand.setMetadata("temparmorstand", new FixedMetadataValue(ProjectKorra.plugin, 0));
+		tempStands.add(this);
 	}
 
 	public ArmorStand getArmorStand() {
@@ -38,5 +39,9 @@ public class TempArmorStand {
 			temp.getArmorStand().remove();
 		}
 		tempStands.clear();
+	}
+	
+	public static Set<TempArmorStand> getTempStands() {
+		return tempStands;
 	}
 }
