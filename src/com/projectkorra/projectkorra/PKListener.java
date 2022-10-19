@@ -579,6 +579,13 @@ public class PKListener implements Listener {
 		}
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onEntityDamageEventArmorIgnore(final EntityDamageEvent event) {
+		if (DamageHandler.ignoreArmor(event.getEntity())) {
+			DamageHandler.entityDamageCallback(event);
+		}
+	}
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDeath(final EntityDeathEvent event) {
 		if (TempArmor.hasTempArmor(event.getEntity())) {
