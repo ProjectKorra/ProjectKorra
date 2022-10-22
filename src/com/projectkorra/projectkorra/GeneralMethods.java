@@ -914,7 +914,7 @@ public class GeneralMethods {
 	}
 
 	public static Location getOffHandLocation(final Player player) {
-		double y = 1.2 - (player.isSneaking() ? 0.38 : 0);
+		double y = 1.2 - (player.isSneaking() ? 0.4 : 0);
 		if (player.getMainHand() == MainHand.RIGHT) {
 			return GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, y, 0)
 					.add(player.getLocation().getDirection().multiply(0.8));
