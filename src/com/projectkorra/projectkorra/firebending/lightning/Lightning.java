@@ -828,6 +828,30 @@ public class Lightning extends LightningAbility {
 	public void setHitCopper(final boolean hitCopper) {
 		this.hitCopper = hitCopper;
 	}
+	
+	public boolean isTransformMobs() {
+		return this.transformMobs;
+	}
+	
+	public void setTransformMobs(final boolean transformMobs) {
+		this.transformMobs = transformMobs;
+	}
+	
+	public boolean isChargeCreeper() {
+		return this.chargeCreeper;
+	}
+	
+	public void setChargeCreeper(final boolean chargeCreeper) {
+		this.chargeCreeper = chargeCreeper;
+	}
+	
+	public boolean isChainLightningRods() {
+		return this.chainLightningRods;
+	}
+	
+	public void setChainLightningRods(final boolean chainLightningRods) {
+		this.chainLightningRods = chainLightningRods;
+	}
 
 	public boolean isSelfHitWater() {
 		return this.selfHitWater;
