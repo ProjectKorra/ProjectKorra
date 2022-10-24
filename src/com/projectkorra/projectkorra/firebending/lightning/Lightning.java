@@ -207,7 +207,9 @@ public class Lightning extends LightningAbility {
 		} else if (this.transformMobs && LIGHTNING_AFFECTED.contains(entity.getType())) {
 			switch (entity.getType()) {
 				case CREEPER:
-					((Creeper) entity).setPowered(true);
+					if (this.chargeCreeper) {
+						((Creeper) entity).setPowered(true);
+					}
 					break;
 				case VILLAGER:
 					entity.getWorld().spawnEntity(entity.getLocation(), EntityType.WITCH);
@@ -228,8 +230,8 @@ public class Lightning extends LightningAbility {
 				default:
 					break;
 			}
-			return;
 		}
+		return;
 	}
 	
 	/**
