@@ -122,7 +122,7 @@ public class Illumination extends FireAbility {
 			if (main.getType() != Material.AIR) hand = GeneralMethods.getOffHandLocation(player);
 
 			//Only display every 5 ticks
-			if (getRunningTicks() % 5 == 0) playFirebendingParticles(hand, 1, 0, 0, 0);
+			if (getRunningTicks() % 3 == 0) playFirebendingParticles(hand, 1, 0, 0, 0);
 		}
 
 		this.set();
@@ -159,7 +159,7 @@ public class Illumination extends FireAbility {
 
 			BlockData clonedData = LIGHT.createBlockData();
 			((Levelled)clonedData).setLevel(level);
-			if (this.block == null || !eyeBlock.equals(this.block.getBlock())) {
+			if (this.block == null || (!eyeBlock.equals(this.block.getBlock()))) {
 				this.revert();
 				this.block = new TempBlock(eyeBlock, clonedData);
 			}
