@@ -125,6 +125,19 @@ public class Tremorsense extends EarthAbility {
 		}
 	}
 
+	private boolean canBreak = false;
+	private Block breakBlock;
+
+	public boolean canBreak() {
+		return canBreak;
+	}
+
+	public void setUpBreaking() {
+		this.canBreak = true;
+		this.breakBlock = this.block;
+		revertGlowBlock();
+	}
+
 	public void revertGlowBlock() {
 		if (this.block != null) {
 			this.player.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
@@ -133,6 +146,10 @@ public class Tremorsense extends EarthAbility {
 
 	public void showGlowBlock() {
 		if (this.block != null) {
+			if (this.canBreak && this.block.getX() == this.breakBlock.getX() && this.block.getZ() == this.breakBlock.getZ()) {
+				return;
+			}
+			this.canBreak = false;
 			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE.createBlockData());
 		}
 	}

@@ -257,9 +257,10 @@ public class PKListener implements Listener {
 			Tremorsense tremorsense = CoreAbility.getAbility(player, Tremorsense.class);
 			if (tremorsense != null) {
 				if (block.equals(tremorsense.getBlock())) {
-					event.setCancelled(true);
-					// Has to be a scheduler to make the Glowstone block re-appear
-					Bukkit.getScheduler().runTask(plugin, tremorsense::showGlowBlock);
+					if (!tremorsense.canBreak()) {
+						tremorsense.setUpBreaking();
+						event.setCancelled(true);
+					}
 				}
 			}
 		}
