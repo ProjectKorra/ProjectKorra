@@ -25,7 +25,7 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
 
 public class WaterArmsSpear extends WaterAbility {
 
-	private static final Map<Block, Long> ICE_BLOCKS = new ConcurrentHashMap<Block, Long>();
+	private static final Map<Location, TempBlock> ICE_BLOCKS = new ConcurrentHashMap<>();
 
 	private boolean hitEntity;
 	private boolean canFreeze;
@@ -178,8 +178,7 @@ public class WaterArmsSpear extends WaterAbility {
 				return;
 			}
 
-			new TempBlock(this.location.getBlock(), Material.WATER);
-			getIceBlocks().put(this.location.getBlock(), System.currentTimeMillis() + 600L);
+			getIceBlocks().put(this.location.clone(), new TempBlock(this.location.getBlock(), Material.WATER.createBlockData(), spearDuration));
 			final Vector direction = GeneralMethods.getDirection(this.initLocation, GeneralMethods.getTargetedLocation(this.player, this.spearRange, getTransparentMaterials())).normalize();
 
 			this.location = this.location.add(direction.clone().multiply(1));
@@ -195,25 +194,25 @@ public class WaterArmsSpear extends WaterAbility {
 				final Block block = this.spearLocations.get(i).getBlock();
 				if (this.canPlaceBlock(block)) {
 					playIcebendingSound(block.getLocation());
-					if (getIceBlocks().containsKey(block)) {
-						getIceBlocks().remove(block);
+					if (getIceBlocks().containsKey(block.getLocation())) {
+						getIceBlocks().get(block.getLocation()).revertBlock();
+						getIceBlocks().remove(block.getLocation());
 					}
 
-					new TempBlock(block, Material.ICE);
-
-					getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
+					getIceBlocks().put(block.getLocation(), new TempBlock(block, Material.ICE.createBlockData(), this.spearDuration + (long) (Math.random() * 500)));
+					getIceBlocks().get(block.getLocation()).setRevertTask(() -> getIceBlocks().remove(block.getLocation()));
 				}
 			}
 		}
 	}
 
 	public static boolean canThaw(final Block block) {
-		return getIceBlocks().containsKey(block) && block.getType() == Material.ICE;
+		return getIceBlocks().containsKey(block.getLocation()) && block.getType() == Material.ICE;
 	}
 
 	public static void thaw(final Block block) {
 		if (canThaw(block)) {
-			getIceBlocks().remove(block);
+			getIceBlocks().remove(block.getLocation());
 			if (TempBlock.isTempBlock(block)) {
 				TempBlock.get(block).revertBlock();
 			} else {
@@ -246,8 +245,8 @@ public class WaterArmsSpear extends WaterAbility {
 					}
 				}
 				playIcebendingSound(block.getLocation());
-				new TempBlock(block, Material.ICE);
-				getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
+				getIceBlocks().put(block.getLocation(), new TempBlock(block, Material.ICE.createBlockData(), this.spearDuration + (long) (Math.random() * 500)));
+				getIceBlocks().get(block.getLocation()).setRevertTask(() -> getIceBlocks().remove(block.getLocation()));
 			}
 		}
 	}
@@ -478,7 +477,7 @@ public class WaterArmsSpear extends WaterAbility {
 		this.location = location;
 	}
 
-	public static Map<Block, Long> getIceBlocks() {
+	public static Map<Location, TempBlock> getIceBlocks() {
 		return ICE_BLOCKS;
 	}
 

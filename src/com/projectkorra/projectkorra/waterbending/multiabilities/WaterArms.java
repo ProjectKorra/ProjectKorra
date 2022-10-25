@@ -378,14 +378,12 @@ public class WaterArms extends WaterAbility {
 		return l1.clone().add(this.player.getLocation().getDirection().normalize().multiply(this.initLength));
 	}
 
+	@Deprecated
 	private static void progressRevert(final boolean ignoreTime) {
-		for (final Block block : WaterArmsSpear.getIceBlocks().keySet()) {
-			final long time = WaterArmsSpear.getIceBlocks().get(block);
-			if (System.currentTimeMillis() > time || ignoreTime) {
-				if (TempBlock.isTempBlock(block)) {
-					TempBlock.revertBlock(block, Material.AIR);
-				}
-				WaterArmsSpear.getIceBlocks().remove(block);
+		// No use for this, kept for compatibility reasons.
+		if (ignoreTime) {
+			for (TempBlock value : WaterArmsSpear.getIceBlocks().values()) {
+				value.revertBlock();
 			}
 		}
 	}
@@ -440,7 +438,6 @@ public class WaterArms extends WaterAbility {
 	}
 
 	public static void progressAllCleanup() {
-		progressRevert(false);
 		/*
 		 * There is currently a bug where waterArms will display the arms and
 		 * then progressRevert will revert the same blocks in the same tick
