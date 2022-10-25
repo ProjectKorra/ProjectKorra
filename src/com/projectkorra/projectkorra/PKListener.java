@@ -253,6 +253,17 @@ public class PKListener implements Listener {
 			}
 		}
 
+		if (bPlayer.isElementToggled(Element.EARTH) && bPlayer.isPassiveToggled(Element.EARTH)) {
+			Tremorsense tremorsense = CoreAbility.getAbility(player, Tremorsense.class);
+			if (tremorsense != null) {
+				if (block.equals(tremorsense.getBlock())) {
+					event.setCancelled(true);
+					// Has to be a scheduler to make the Glowstone block re-appear
+					Bukkit.getScheduler().runTask(plugin, tremorsense::showGlowBlock);
+				}
+			}
+		}
+
 		if (bPlayer.isElementToggled(Element.WATER) && bPlayer.isToggled()) {
 			if (abil != null && abil.equalsIgnoreCase("Surge")) {
 				ability = CoreAbility.getAbility(SurgeWall.class);
