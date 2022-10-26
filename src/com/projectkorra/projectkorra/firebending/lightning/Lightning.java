@@ -330,9 +330,6 @@ public class Lightning extends LightningAbility {
 				this.copperChainVertex++;
 				this.currentCopperChainArc = null;
 			}
-		} else if (this.copperChainVertex + 1 >= chargedCopperBlocks.length) {
-			this.arcs.clear();
-			this.removeWithTasks();
 		}
 	}
 	
@@ -742,10 +739,8 @@ public class Lightning extends LightningAbility {
 					} else if (isCopper(block) && !block.hasMetadata("chargedcopper")) {
 						Lightning.this.hitCopper = true;
 						
-						if (Lightning.this.chargedCopperBlocks[0] == null) {
-							setupCopperGraph(block);
-							Lightning.this.startChaining = true;
-						}
+						setupCopperGraph(block);
+						Lightning.this.startChaining = true;
 					}
 					powerLightningRods(block);
 				}
