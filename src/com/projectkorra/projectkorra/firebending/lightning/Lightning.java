@@ -1,6 +1,8 @@
 package com.projectkorra.projectkorra.firebending.lightning;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,6 +23,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -51,11 +54,16 @@ public class Lightning extends LightningAbility {
 	private boolean transformMobs;
 	private boolean chargeCreeper;
 	private boolean chainLightningRods;
+	private boolean startChaining;
 	@Attribute("ArcOnIce")
 	private boolean arcOnIce;
 	@Attribute("ArcOnCopper")
 	private boolean arcOnCopper;
 	private int waterArcs;
+	@Attribute("MaxCopperArcs")
+	private int maxCopperArcs;
+	private int copperArcs;
+	private int copperChainVertex;
 	@Attribute(Attribute.RANGE)
 	private double range;
 	@Attribute(Attribute.CHARGE_DURATION)
@@ -84,10 +92,13 @@ public class Lightning extends LightningAbility {
 	private State state;
 	private Location origin;
 	private Location destination;
+	private Location chainOrigin, chainDestination;
+	private Arc currentCopperChainArc;
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<Arc> arcs;
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<Location> locations;
+	private Block[] chargedCopperBlocks;
 	private static final Set<EntityType> LIGHTNING_AFFECTED = Set.of(EntityType.CREEPER, EntityType.VILLAGER,
 			EntityType.PIG, EntityType.MUSHROOM_COW, EntityType.TURTLE, EntityType.SKELETON_HORSE
 	);
@@ -129,12 +140,15 @@ public class Lightning extends LightningAbility {
 		this.stunDuration = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.StunDuration"));
 		this.maxChainArcs = applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs"));
 		this.waterArcs = (int) applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.WaterArcs"));
+		this.maxCopperArcs = (int) applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.MaxCopperArcs"));
 		this.chargeTime = applyInverseModifiers(getConfig().getLong("Abilities.Fire.Lightning.ChargeTime"));
 		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Lightning.Cooldown"));
 		this.allowOnFireJet = getConfig().getBoolean("Abilities.Fire.Lightning.AllowOnFireJet");
 		this.transformMobs = getConfig().getBoolean("Abilities.Fire.Lightning.TransformMobs");
 		this.chargeCreeper = getConfig().getBoolean("Abilities.Fire.Lightning.ChargeCreeper");
 		this.chainLightningRods = getConfig().getBoolean("Abilities.Fire.Lightning.ChainLightningRods");
+		
+		this.chargedCopperBlocks = new Block[this.maxCopperArcs];
 
 		/*this.range = this.getDayFactor(this.range);
 		this.subArcChance = this.getDayFactor(this.subArcChance);
@@ -279,6 +293,49 @@ public class Lightning extends LightningAbility {
 		block.setBlockData(powerable);
 	}
 	
+	private void setupCopperGraph(final Block hit) {
+		if (this.copperArcs < this.maxCopperArcs) {
+			this.chargedCopperBlocks[this.copperArcs] = hit;
+			hit.setMetadata("chargedcopper", new FixedMetadataValue(ProjectKorra.plugin, 0));
+			this.copperArcs++;
+			
+			for (Block block : GeneralMethods.getBlocksAroundPoint(hit.getLocation(), 5)) {
+				if (this.copperArcs >= this.maxCopperArcs) {
+					break;
+				}
+				if (isCopper(block) && !block.hasMetadata("chargedcopper")) {
+					setupCopperGraph(block);
+				}
+			}
+		}
+	}
+	
+	private void chainCopperLightning() {
+		if (this.currentCopperChainArc == null && this.copperChainVertex + 1 < this.copperArcs) {
+			Block originBlock = this.chargedCopperBlocks[this.copperChainVertex], destinationBlock = this.chargedCopperBlocks[this.copperChainVertex + 1];
+			
+			this.chainOrigin = originBlock.getLocation().clone().add(0.5, 1.5, 0.5);
+			this.chainDestination = destinationBlock.getLocation().clone().add(0.5, 0.5, 0.5);
+			
+			Arc arc = new Arc(this.chainOrigin, this.chainDestination);
+			arc.generatePoints(POINT_GENERATION);
+			
+			this.arcs.add(arc);
+			
+			this.currentCopperChainArc = arc;
+		} else if (this.currentCopperChainArc != null) {
+			Location location = this.currentCopperChainArc.getParticles().get(this.currentCopperChainArc.getParticles().size() - 1).getLocation().clone();
+			
+			if (location.getBlock().equals(this.chargedCopperBlocks[this.copperChainVertex + 1])) {
+				this.copperChainVertex++;
+				this.currentCopperChainArc = null;
+			}
+		} else if (this.copperChainVertex + 1 >= chargedCopperBlocks.length) {
+			this.arcs.clear();
+			this.removeWithTasks();
+		}
+	}
+	
 	private boolean isCopper(final Block block) {
 		return block.getType().name().contains("COPPER");
 	}
@@ -387,6 +444,9 @@ public class Lightning extends LightningAbility {
 			this.arcs.addAll(subArcs);
 			this.state = State.STRIKE;
 		} else if (this.state == State.STRIKE) {
+			if (this.startChaining) {
+				chainCopperLightning();
+			}
 			for (int i = 0; i < this.arcs.size(); i++) {
 				final Arc arc = this.arcs.get(i);
 				for (int j = 0; j < arc.getAnimationLocations().size() - 1; j++) {
@@ -424,6 +484,15 @@ public class Lightning extends LightningAbility {
 			i--;
 		}
 		this.remove();
+	}
+	
+	public void remove() {
+		for (Block block : chargedCopperBlocks) {
+			if (block != null) {
+				block.removeMetadata("chargedcopper", ProjectKorra.plugin);
+			}
+		}
+		super.remove();
 	}
 
 	/**
@@ -662,20 +731,23 @@ public class Lightning extends LightningAbility {
 						if (isIce(block)) {
 							Lightning.this.hitIce = true;
 						}
-					} else if (isCopper(block)) {
+						for (int i = 0; i < this.waterArcs; i++) {
+							final Location origin = this.location.clone();
+							origin.add(new Vector((ThreadLocalRandom.current().nextDouble() - 0.5) * 2, 0, (ThreadLocalRandom.current().nextDouble() - 0.5) * 2));
+							Lightning.this.destination = origin.clone().add(new Vector((ThreadLocalRandom.current().nextDouble() - 0.5) * Lightning.this.waterArcRange, ThreadLocalRandom.current().nextDouble() - 0.7, (ThreadLocalRandom.current().nextDouble() - 0.5) * Lightning.this.waterArcRange));
+							final Arc newArc = new Arc(origin, Lightning.this.destination);
+							newArc.generatePoints(POINT_GENERATION);
+							Lightning.this.arcs.add(newArc);
+						}
+					} else if (isCopper(block) && !block.hasMetadata("chargedcopper")) {
 						Lightning.this.hitCopper = true;
-						Lightning.this.waterArcRange = 2;
+						
+						if (Lightning.this.chargedCopperBlocks[0] == null) {
+							setupCopperGraph(block);
+							Lightning.this.startChaining = true;
+						}
 					}
 					powerLightningRods(block);
-
-					for (int i = 0; i < this.waterArcs; i++) {
-						final Location origin = this.location.clone();
-						origin.add(new Vector((ThreadLocalRandom.current().nextDouble() - 0.5) * 2, 0, (ThreadLocalRandom.current().nextDouble() - 0.5) * 2));
-						Lightning.this.destination = origin.clone().add(new Vector((ThreadLocalRandom.current().nextDouble() - 0.5) * Lightning.this.waterArcRange, ThreadLocalRandom.current().nextDouble() - 0.7, (ThreadLocalRandom.current().nextDouble() - 0.5) * Lightning.this.waterArcRange));
-						final Arc newArc = new Arc(origin, Lightning.this.destination);
-						newArc.generatePoints(POINT_GENERATION);
-						Lightning.this.arcs.add(newArc);
-					}
 				}
 
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2.5)) {

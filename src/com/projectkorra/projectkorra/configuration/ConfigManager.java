@@ -1616,6 +1616,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Lightning.MaxChainArcs", 2);
 			config.addDefault("Abilities.Fire.Lightning.WaterArcs", 4);
 			config.addDefault("Abilities.Fire.Lightning.WaterArcRange", 20.0);
+			config.addDefault("Abilities.Fire.Lightning.MaxCopperArcs", 8);
 			config.addDefault("Abilities.Fire.Lightning.SelfHitWater", true);
 			config.addDefault("Abilities.Fire.Lightning.SelfHitClose", false);
 			config.addDefault("Abilities.Fire.Lightning.ArcOnIce", false);
