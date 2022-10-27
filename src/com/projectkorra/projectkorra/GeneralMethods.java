@@ -1208,6 +1208,8 @@ public class GeneralMethods {
 	}
 
 	public static boolean isInteractable(final Material material) {
+		if (GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT")) return false;
+
 		return material.isInteractable();
 	}
 

@@ -96,7 +96,8 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isAir(final Material material) {
-		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR;
+		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR ||
+				(GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT"));
 	}
 
 	public static boolean isDay(final World world) {
