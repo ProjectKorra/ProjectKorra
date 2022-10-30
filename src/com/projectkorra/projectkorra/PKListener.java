@@ -253,6 +253,18 @@ public class PKListener implements Listener {
 			}
 		}
 
+		if (bPlayer.isElementToggled(Element.EARTH) && bPlayer.isPassiveToggled(Element.EARTH)) {
+			Tremorsense tremorsense = CoreAbility.getAbility(player, Tremorsense.class);
+			if (tremorsense != null) {
+				if (block.equals(tremorsense.getBlock())) {
+					if (!tremorsense.canBreak()) {
+						tremorsense.setUpBreaking();
+						event.setCancelled(true);
+					}
+				}
+			}
+		}
+
 		if (bPlayer.isElementToggled(Element.WATER) && bPlayer.isToggled()) {
 			if (abil != null && abil.equalsIgnoreCase("Surge")) {
 				ability = CoreAbility.getAbility(SurgeWall.class);
