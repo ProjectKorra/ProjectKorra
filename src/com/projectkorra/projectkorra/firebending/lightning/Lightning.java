@@ -116,9 +116,6 @@ public class Lightning extends LightningAbility {
 			if (!getAbility(player, Lightning.class).isCharged()) {
 				return;
 			}
-			if (getAbility(player, Lightning.class).state == State.CHAIN) {
-				getAbility(player, Lightning.class).remove();
-			}
 		}
 
 		this.charged = false;
