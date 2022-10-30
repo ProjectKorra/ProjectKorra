@@ -1601,6 +1601,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Illumination.Range", 5);
 			config.addDefault("Abilities.Fire.Illumination.Cooldown", 500);
 			config.addDefault("Abilities.Fire.Illumination.LightThreshold", 7);
+			if (mcVersion >= 1170) { //Only add this for 1.17 and above
+				config.addDefault("Abilities.Fire.Illumination.LightLevel", 13);
+			}
 
 			config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 			config.addDefault("Abilities.Fire.Lightning.Damage", 4.0);

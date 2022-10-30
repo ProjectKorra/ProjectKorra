@@ -489,6 +489,7 @@ public class PKListener implements Listener {
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
 		BendingBoardManager.updateAllSlots(player);
+		FirePassive.handle(player);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1593,6 +1594,8 @@ public class PKListener implements Listener {
 				return;
 			}
 		}
+
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> Illumination.slotChange(player), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

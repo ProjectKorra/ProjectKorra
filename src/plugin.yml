@@ -39,6 +39,7 @@ permissions:
       bending.command.copy.assign: true
       bending.admin.debug: true
       bending.command.remove: true
+      bending.avatar: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.
@@ -178,7 +179,7 @@ permissions:
       bending.ability.ChiCombo: true
       bending.chi.passive: true
   bending.avatar:
-    default: false
+    default: op
     description: Grants the Avatar Color.
   bending.ability.MetalClips.loot:
     default: false
@@ -231,35 +232,32 @@ permissions:
     children:
       bending.ability.Immobilize: true
   bending.air.passive:
-    default:  false
+    default: false
     description: Grants access to all air passives.
     children:
       bending.ability.AirAgility: true
       bending.ability.AirSaturation: true
       bending.ability.GracefulDescent: true
   bending.chi.passive:
-    default:  false
+    default: false
     description: Grants access to all chi passives.
     children:
       bending.ability.Acrobatics: true
       bending.ability.ChiAgility: true
       bending.ability.ChiSaturation: true
   bending.earth.passive:
-    default:  false
+    default: false
     description: Grants access to all earth passives.
     children:
       bending.ability.DensityShift: true
       bending.ability.SandAgility: true
   bending.fire.passive:
-    default:  false
+    default: false
     description: Grants access to all fire passives.
     children:
   bending.water.passive:
-    default:  false
+    default: false
     description: Grants access to all water passives.
     children:
       bending.ability.FastSwim: true
       bending.ability.HydroSink: true
-  bending.donor:
-    default: false
-    description: Grants the Donor tag.

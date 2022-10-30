@@ -301,10 +301,6 @@ public class WhoCommand extends PKCommand {
 			if (this.staff.containsKey(uuid.toString())) {
 				sender.sendMessage(this.staff.get(uuid.toString()));
 			}
-
-			if (player.getPlayer() != null && player.getPlayer().hasPermission("bending.donor")) {
-				sender.sendMessage(Element.AVATAR.getColor() + "Server Donor");
-			}
 		});
 	}
 

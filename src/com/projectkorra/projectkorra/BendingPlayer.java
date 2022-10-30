@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
+import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.hooks.CanBendHook;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -221,7 +222,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.player.getLocation())) {
+		} else if (RegionProtection.isRegionProtected(this.player, this.player.getLocation(), ability)) {
 			return false;
 		} else return !this.isOnCooldown(ability);
 	}
@@ -703,6 +704,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		this.fixSubelements(); //Grant all subelements for an element if they have 0 subs for that element (that they are allowed)
 		this.removeOldCooldowns();
 		PassiveManager.registerPassives(this.player);
+		FirePassive.handle(player);
 
 		//Show the bending board 1 tick later. We do it 1 tick later because postLoad() is called BEFORE the player is loaded into the map,
 		//and the board needs to see the player in the map to initialize
