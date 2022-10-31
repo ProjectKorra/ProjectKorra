@@ -132,6 +132,7 @@ import com.projectkorra.projectkorra.waterbending.passive.FastSwim;
 import com.projectkorra.projectkorra.waterbending.passive.HydroSink;
 
 import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -208,7 +209,7 @@ public class PKListener implements Listener {
 	ProjectKorra plugin;
 
 	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
-	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
+	private static final HashMap<Player, Pair<String, Player>> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending. Stores the victim (k), and a pair of the ability and killer (v)
 	private static final Set<UUID> RIGHT_CLICK_INTERACT = new HashSet<>(); // Player right click block.
 	@Deprecated
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
@@ -553,26 +554,24 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageEvent(final EntityDamageEvent event) {
 		final Entity entity = event.getEntity();
+		double damage = event.getDamage();
 
 		if (event.getCause() == DamageCause.FIRE && FireAbility.getSourcePlayers().containsKey(entity.getLocation().getBlock())) {
-			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(entity.getLocation().getBlock()));
+			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(entity.getLocation().getBlock()), null, true);
 		}
 		
 		if (event.getCause() == DamageCause.LAVA && entity instanceof Player) {
 			for (int i = 0; i < 3; i++) {
 				Block lava = entity.getLocation().clone().add(0, i, 0).getBlock();
-				if (EarthAbility.isLava(lava)) {
-					if (TempBlock.get(lava) != null) {
-						TempBlock.get(lava).getAbility().ifPresent(ability -> new FireDamageTimer(entity, ability.getPlayer(), ability));
-					}
+				if (EarthAbility.isLava(lava) && TempBlock.get(lava) != null) {
+					TempBlock.get(lava).getAbility().ifPresent(ability -> new FireDamageTimer(entity, ability.getPlayer(), ability, true));
 				}
 			}
 		}
 		
 		if ((FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) || (event.getCause() == DamageCause.LAVA && TempBlock.get(entity.getLocation().getBlock()) != null && EarthAbility.isLava(entity.getLocation().getBlock()))) {
 			event.setCancelled(true);
-			FireDamageTimer.dealFlameDamage(entity, event.getCause());
-			entity.setVelocity(new Vector(0, 0, 0));
+			FireDamageTimer.dealFlameDamage(entity, damage);
 		}
 
 		if (entity instanceof Player) {
@@ -823,9 +822,9 @@ public class PKListener implements Listener {
 				if (ability == null) {
 					return;
 				}
-
-				BENDING_PLAYER_DEATH.put((Player) event.getEntity(), ability.getElement().getColor() + ability.getName());
+				
 				final Player player = (Player) event.getEntity();
+				BENDING_PLAYER_DEATH.put(player, Pair.of(ability.getElement().getColor() + ability.getName(), event.getAttacker()));
 
 				new BukkitRunnable() {
 					@Override
@@ -1058,46 +1057,45 @@ public class PKListener implements Listener {
 			} // Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath.
 
 		}
-
-		if (event.getEntity().getKiller() != null) {
-			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
-				String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
-				final String ability = BENDING_PLAYER_DEATH.get(event.getEntity());
-				final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
-				final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
-				Element element = null;
-				final boolean isAvatarAbility = false;
-
-				if (coreAbil != null) {
-					element = coreAbil.getElement();
-				}
-
-				if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
-					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
-					}
-				} else if (element != null) {
-					if (element instanceof SubElement) {
-						element = ((SubElement) element).getParentElement();
-					}
-					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
-					} else if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
-					}
-				} else {
-					if (isAvatarAbility) {
-						if (ConfigManager.languageConfig.get().contains("Abilities.Avatar." + tempAbility + ".DeathMessage")) {
-							message = ConfigManager.languageConfig.get().getString("Abilities.Avatar." + tempAbility + ".DeathMessage");
-						}
-					} else if (ConfigManager.languageConfig.get().contains("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage")) {
-						message = ConfigManager.languageConfig.get().getString("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage");
-					}
-				}
-				message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);
-				event.setDeathMessage(message);
-				BENDING_PLAYER_DEATH.remove(event.getEntity());
+		
+		if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
+			String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
+			final String ability = BENDING_PLAYER_DEATH.get(event.getEntity()).getLeft();
+			final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
+			final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
+			Element element = null;
+			final boolean isAvatarAbility = false;
+			final Player killer = BENDING_PLAYER_DEATH.get(event.getEntity()).getRight();
+			
+			if (coreAbil != null) {
+				element = coreAbil.getElement();
 			}
+			
+			if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
+				if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
+					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
+				}
+			} else if (element != null) {
+				if (element instanceof SubElement) {
+					element = ((SubElement) element).getParentElement();
+				}
+				if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage")) {
+					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
+				} else if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage")) {
+					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
+				}
+			} else {
+				if (isAvatarAbility) {
+					if (ConfigManager.languageConfig.get().contains("Abilities.Avatar." + tempAbility + ".DeathMessage")) {
+						message = ConfigManager.languageConfig.get().getString("Abilities.Avatar." + tempAbility + ".DeathMessage");
+					}
+				} else if (ConfigManager.languageConfig.get().contains("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage")) {
+					message = ConfigManager.languageConfig.get().getString("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage");
+				}
+			}
+			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", killer.getName()).replace("{ability}", ability);
+			event.setDeathMessage(message);
+			BENDING_PLAYER_DEATH.remove(event.getEntity());
 		}
 	}
 
@@ -2052,7 +2050,7 @@ public class PKListener implements Listener {
 		BendingPlayer.HOOKS.remove((JavaPlugin) event.getPlugin());
 	}
 
-	public static HashMap<Player, String> getBendingPlayerDeath() {
+	public static HashMap<Player, Pair<String, Player>> getBendingPlayerDeath() {
 		return BENDING_PLAYER_DEATH;
 	}
 

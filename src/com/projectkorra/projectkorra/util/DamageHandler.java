@@ -131,7 +131,7 @@ public class DamageHandler {
 	 * @param entity The entity that is receiving the damage
 	 * @param damage The amount of damage to deal
 	 */
-	public static void damageEntity(final Entity entity, Player source, double damage, final Ability ability, boolean ignoreArmor) {
+	public static void damageEntity(final Entity entity, Player source, double damage, final Ability ability, boolean ignoreArmor, boolean sourcelessDamage) {
 		if (ability == null) {
 			return;
 		}
@@ -193,7 +193,11 @@ public class DamageHandler {
 
 			final EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, DamageCause.CUSTOM, damage);
 			final double prevHealth = lent.getHealth();
-			lent.damage(damage, source);
+			if (sourcelessDamage) {
+				lent.damage(damage);
+			} else {
+				lent.damage(damage, source);
+			}
 			final double nextHealth = lent.getHealth();
 			entity.setLastDamageCause(finalEvent);
 
@@ -217,7 +221,7 @@ public class DamageHandler {
 	}
 
 	public static void damageEntity(final Entity entity, final Player source, final double damage, final Ability ability) {
-		damageEntity(entity, source, damage, ability, false);
+		damageEntity(entity, source, damage, ability, false, false);
 	}
 
 	public static void damageEntity(final Entity entity, final double damage, final Ability ability) {

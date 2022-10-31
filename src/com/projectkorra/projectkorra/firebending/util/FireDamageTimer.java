@@ -12,7 +12,6 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 public class FireDamageTimer {
 
@@ -31,11 +30,15 @@ public class FireDamageTimer {
 	 */
 	@Deprecated
 	public FireDamageTimer(final Entity entity, final Player source) {
-		this(entity, source, null);
+		this(entity, source, null, false);
+	}
+	
+	public FireDamageTimer(final Entity entity, final Player source, Ability abil) {
+		this(entity, source, abil, false);
 	}
 
-	public FireDamageTimer(final Entity entity, final Player source, Ability abil) {
-		if (entity.getEntityId() == source.getEntityId()) {
+	public FireDamageTimer(final Entity entity, final Player source, Ability abil, final boolean affectSelf) {
+		if (entity.getEntityId() == source.getEntityId() && !affectSelf) {
 			return;
 		}
 
@@ -58,7 +61,7 @@ public class FireDamageTimer {
 		}
 	}
 	
-	public static void dealFlameDamage(final Entity entity, final DamageCause cause) {
+	public static void dealFlameDamage(final Entity entity, final double damage) {
 		if (INSTANCES.containsKey(entity) && entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
 				if (!HeatControl.canBurn((Player) entity)) {
@@ -68,15 +71,11 @@ public class FireDamageTimer {
 			final LivingEntity Lentity = (LivingEntity) entity;
 			final Player source = INSTANCES.get(entity);
 			
-			double damage = DAMAGE;
-			if (cause == DamageCause.LAVA) {
-				damage = 4;
-			}
 			// damages the entity.
 			if (ability == null) {
-				DamageHandler.damageEntity(Lentity, source, damage, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
+				DamageHandler.damageEntity(Lentity, source, damage, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0), false, true);
 			} else {
-				DamageHandler.damageEntity(Lentity, source, damage, ability);
+				DamageHandler.damageEntity(Lentity, source, damage, ability, false, true);
 			}
 			
 			if (entity.getFireTicks() > MAX_TICKS) {
@@ -86,7 +85,7 @@ public class FireDamageTimer {
 	}
 
 	public static void dealFlameDamage(final Entity entity) {
-		dealFlameDamage(entity, DamageCause.FIRE_TICK);
+		dealFlameDamage(entity, DAMAGE);
 	}
 
 	public static void handleFlames() {
