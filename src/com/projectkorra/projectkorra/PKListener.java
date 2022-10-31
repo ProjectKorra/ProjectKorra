@@ -557,10 +557,22 @@ public class PKListener implements Listener {
 		if (event.getCause() == DamageCause.FIRE && FireAbility.getSourcePlayers().containsKey(entity.getLocation().getBlock())) {
 			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(entity.getLocation().getBlock()));
 		}
-
-		if (FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
+		
+		if (event.getCause() == DamageCause.LAVA && entity instanceof Player) {
+			for (int i = 0; i < 3; i++) {
+				Block lava = entity.getLocation().clone().add(0, i, 0).getBlock();
+				if (EarthAbility.isLava(lava)) {
+					if (TempBlock.get(lava) != null) {
+						TempBlock.get(lava).getAbility().ifPresent(ability -> new FireDamageTimer(entity, ability.getPlayer(), ability));
+					}
+				}
+			}
+		}
+		
+		if ((FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) || (event.getCause() == DamageCause.LAVA && TempBlock.get(entity.getLocation().getBlock()) != null && EarthAbility.isLava(entity.getLocation().getBlock()))) {
 			event.setCancelled(true);
-			FireDamageTimer.dealFlameDamage(entity);
+			FireDamageTimer.dealFlameDamage(entity, event.getCause());
+			entity.setVelocity(new Vector(0, 0, 0));
 		}
 
 		if (entity instanceof Player) {

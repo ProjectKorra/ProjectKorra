@@ -12,12 +12,13 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 public class FireDamageTimer {
 
 	private static final int MAX_TICKS = 90;
 	private static Ability ability = null;
-	private static final int DAMAGE = 1;
+	private static final double DAMAGE = 1;
 	private static final long BUFFER = 30;
 	private static final Map<Entity, Player> INSTANCES = new ConcurrentHashMap<>();
 	private static final Map<Entity, Long> TIMES = new ConcurrentHashMap<>();
@@ -56,8 +57,8 @@ public class FireDamageTimer {
 			return false;
 		}
 	}
-
-	public static void dealFlameDamage(final Entity entity) {
+	
+	public static void dealFlameDamage(final Entity entity, final DamageCause cause) {
 		if (INSTANCES.containsKey(entity) && entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
 				if (!HeatControl.canBurn((Player) entity)) {
@@ -66,18 +67,26 @@ public class FireDamageTimer {
 			}
 			final LivingEntity Lentity = (LivingEntity) entity;
 			final Player source = INSTANCES.get(entity);
-
+			
+			double damage = DAMAGE;
+			if (cause == DamageCause.LAVA) {
+				damage = 4;
+			}
 			// damages the entity.
 			if (ability == null) {
-				DamageHandler.damageEntity(Lentity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
+				DamageHandler.damageEntity(Lentity, source, damage, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
 			} else {
-				DamageHandler.damageEntity(Lentity, source, DAMAGE, ability);
+				DamageHandler.damageEntity(Lentity, source, damage, ability);
 			}
-
+			
 			if (entity.getFireTicks() > MAX_TICKS) {
 				entity.setFireTicks(MAX_TICKS);
 			}
 		}
+	}
+
+	public static void dealFlameDamage(final Entity entity) {
+		dealFlameDamage(entity, DamageCause.FIRE_TICK);
 	}
 
 	public static void handleFlames() {
