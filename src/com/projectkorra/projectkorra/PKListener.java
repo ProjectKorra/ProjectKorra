@@ -547,6 +547,10 @@ public class PKListener implements Listener {
 		if (TempBlock.isTempBlock(block)) {
 			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
+			} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
+				TempBlock.get(block).getAbility().ifPresent(ability -> new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true));
+				event.setCancelled(true);
+				FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
 			}
 		}
 	}
@@ -560,15 +564,7 @@ public class PKListener implements Listener {
 			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(entity.getLocation().getBlock()), null, true);
 		}
 		
-		if (event.getCause() == DamageCause.LAVA && entity instanceof Player) {
-			for (Block lava : GeneralMethods.getBlocksAroundPoint(entity.getLocation().clone().add(0, 1, 0), 1.375)) {
-				if (EarthAbility.isLava(lava) && TempBlock.get(lava) != null) {
-					TempBlock.get(lava).getAbility().ifPresent(ability -> new FireDamageTimer(entity, ability.getPlayer(), ability, true));
-				}
-			}
-		}
-		
-		if ((FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) || (event.getCause() == DamageCause.LAVA && TempBlock.get(entity.getLocation().getBlock()) != null && EarthAbility.isLava(entity.getLocation().getBlock()))) {
+		if (FireDamageTimer.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
 			event.setCancelled(true);
 			FireDamageTimer.dealFlameDamage(entity, damage);
 		}
