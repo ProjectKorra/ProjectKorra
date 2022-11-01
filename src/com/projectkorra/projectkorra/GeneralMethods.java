@@ -16,6 +16,10 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
+import com.google.common.io.Files;
 import com.google.common.reflect.ClassPath;
 import com.projectkorra.projectkorra.command.PKCommand;
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -55,7 +61,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -1498,146 +1503,116 @@ public class GeneralMethods {
 		return vec2;
 	}
 
-	public static void runDebug() {
+	public static boolean runDebug() {
 		final File debugFile = new File(plugin.getDataFolder(), "debug.txt");
 		if (debugFile.exists()) {
-			debugFile.delete(); // We're starting brand new.
-		}
-		writeToDebug("ProjectKorra Debug: Paste this on http://pastie.org and put it in your bug report thread.");
-		writeToDebug("====================");
-		writeToDebug("");
-		writeToDebug("");
-		writeToDebug("Date Created: " + getCurrentDate());
-		writeToDebug("Java Version: " + Runtime.class.getPackage().getImplementationVersion());
-		writeToDebug("Bukkit Version: " + Bukkit.getServer().getVersion());
-		writeToDebug("");
-		writeToDebug("ProjectKorra (Core) Information");
-		writeToDebug("====================");
-		writeToDebug("Version: " + plugin.getDescription().getVersion());
-		writeToDebug("Author: " + plugin.getDescription().getAuthors());
-		final List<String> officialSidePlugins = new ArrayList<String>();
-		if (hasRPG()) {
-			officialSidePlugins.add("ProjectKorra RPG v" + getRPG().getDescription().getVersion());
-		}
-		if (hasItems()) {
-			officialSidePlugins.add("ProjectKorra Items v" + getItems().getDescription().getVersion());
-		}
-		if (hasSpirits()) {
-			officialSidePlugins.add("ProjectKorra Spirits v" + getSpirits().getDescription().getVersion());
-		}
-		if (hasProbending()) {
-			officialSidePlugins.add("Probending v" + getProbending().getDescription().getVersion());
-		}
-		if (!officialSidePlugins.isEmpty()) {
-			writeToDebug("");
-			writeToDebug("ProjectKorra (Side Plugin) Information");
-			writeToDebug("====================");
-			for (final String line : officialSidePlugins) {
-				writeToDebug(line);
+			String format = "yyyy-MM-dd-HH-mm-ss";
+			Instant instant = Instant.ofEpochMilli(debugFile.lastModified());
+			LocalDateTime datetime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+			String formatted = datetime.format(DateTimeFormatter.ofPattern(format));
+			try {
+				Files.move(debugFile, new File(debugFile.getParentFile(), "debug_" + formatted + ".txt"));
+			} catch (IOException e) {
+				e.printStackTrace();
+				debugFile.delete();
 			}
 		}
 
-		writeToDebug("");
-		writeToDebug("Supported Plugins");
-		writeToDebug("====================");
+		List<String> f = new ArrayList<>();
 
-		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
-		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
-		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RedProtect");
-		final boolean respectGriefDefender = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.GriefDefender");
-		final PluginManager pm = Bukkit.getPluginManager();
-
-		final Plugin wgp = pm.getPlugin("WorldGuard");
-		final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin fcp = pm.getPlugin("FactionsFramework");
-		final Plugin twnp = pm.getPlugin("Towny");
-		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin lwc = pm.getPlugin("LWC");
-		final Plugin residence = pm.getPlugin("Residence");
-		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin redprotect = pm.getPlugin("RedProtect");
-		final Plugin griefdefender = pm.getPlugin("GriefDefender");
-
-		if (wgp != null && respectWorldGuard) {
-			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
+		f.add("ProjectKorra Debug: Paste this on http://pastie.org and put it in your bug report thread.");
+		f.add("====================");
+		f.add("");
+		f.add("Date Created: " + getCurrentDate());
+		f.add("Java Version: " + System.getProperty("java.version"));
+		f.add("Bukkit Version: " + Bukkit.getServer().getVersion());
+		f.add("");
+		f.add("ProjectKorra (Core) Information");
+		f.add("====================");
+		f.add("Version: " + plugin.getDescription().getVersion());
+		f.add("Author: " + plugin.getDescription().getAuthors());
+		final List<String> officialSidePlugins = new ArrayList<>();
+		if (hasRPG()) {
+			officialSidePlugins.add("- ProjectKorra RPG v" + getRPG().getDescription().getVersion());
 		}
-		if (psp != null && respectPreciousStones) {
-			writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
+		if (hasItems()) {
+			officialSidePlugins.add("- ProjectKorra Items v" + getItems().getDescription().getVersion());
 		}
-		if (fcp != null && respectFactions) {
-			writeToDebug("FactionsFramework v" + fcp.getDescription().getVersion());
+		if (hasSpirits()) {
+			officialSidePlugins.add("- ProjectKorra Spirits v" + getSpirits().getDescription().getVersion());
 		}
-		if (twnp != null && respectTowny) {
-			writeToDebug("Towny v" + twnp.getDescription().getVersion());
+		if (hasProbending()) {
+			officialSidePlugins.add("- Probending v" + getProbending().getDescription().getVersion());
 		}
-		if (gpp != null && respectGriefPrevention) {
-			writeToDebug("GriefPrevention v" + gpp.getDescription().getVersion());
-		}
-		if (lwc != null && respectLWC) {
-			writeToDebug("LWC v" + lwc.getDescription().getVersion());
-		}
-		if (residence != null && respectResidence) {
-			writeToDebug("Residence v" + residence.getDescription().getVersion());
-		}
-		if (kingdoms != null && respectKingdoms) {
-			writeToDebug("Kingdoms v" + kingdoms.getDescription().getVersion());
-		}
-		if (redprotect != null && respectRedProtect) {
-			writeToDebug("RedProtect v" + redprotect.getDescription().getVersion());
-		}
-		if (griefdefender != null && respectGriefDefender) {
-			writeToDebug("GriefDefender v" + griefdefender.getDescription().getVersion());
+		if (!officialSidePlugins.isEmpty()) {
+			f.add("");
+			f.add("ProjectKorra (Side Plugin) Information");
+			f.add("====================");
+			f.addAll(officialSidePlugins);
 		}
 
-		writeToDebug("");
-		writeToDebug("Plugins Hooking Into ProjectKorra (Core)");
-		writeToDebug("====================");
+		f.add("");
+		f.add("Supported Plugins");
+		f.add("====================");
+
+		for (JavaPlugin plugin : RegionProtection.getActiveProtections().keySet()) {
+			if (plugin.isEnabled()) {
+				f.add("- " + plugin.getName() + " v" + plugin.getDescription().getVersion());
+			}
+		}
+
+		Plugin papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
+		if (papi != null && papi.isEnabled()) {
+			f.add("- " + papi.getName() + " v" + papi.getDescription().getVersion());
+		}
+
+		f.add("");
+		f.add("Plugins Hooking Into ProjectKorra (Core)");
+		f.add("====================");
 
 		final String[] pkPlugins = new String[] { "projectkorrarpg", "projectkorraitems", "projectkorraspirits", "probending" };
 		for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra") && !Arrays.asList(pkPlugins).contains(plugin.getName().toLowerCase())) {
-				writeToDebug(plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion());
+			if (plugin.getDescription().getDepend().contains("ProjectKorra") && !Arrays.asList(pkPlugins).contains(plugin.getName().toLowerCase())) {
+				f.add("- " + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion());
 			}
 		}
 
-		writeToDebug("");
-		writeToDebug("Ability Information");
-		writeToDebug("====================");
+		f.add("");
+		f.add("Ability Information");
+		f.add("====================");
 		final ArrayList<String> stockAbils = new ArrayList<String>();
 		final ArrayList<String> unofficialAbils = new ArrayList<String>();
 		for (final CoreAbility ability : CoreAbility.getAbilities()) {
 			if (ability.getClass().getPackage().getName().startsWith("com.projectkorra")) {
 				stockAbils.add(ability.getName());
 			} else {
-				unofficialAbils.add(ability.getName());
+				if (ability instanceof AddonAbility) {
+					unofficialAbils.add(ChatColor.stripColor(ability.getName() + " v" + ((AddonAbility) ability).getVersion() + " (" + ((AddonAbility) ability).getAuthor() + ")"));
+				} else {
+					unofficialAbils.add(ChatColor.stripColor(ability.getName() + " (" + ability.getClass().getName() + ")"));
+				}
 			}
 		}
 		if (!stockAbils.isEmpty()) {
 			Collections.sort(stockAbils);
 			for (final String ability : stockAbils) {
-				writeToDebug(ability + " - STOCK");
+				f.add("- " + ability + " (STOCK)");
 			}
 		}
 		if (!unofficialAbils.isEmpty()) {
 			Collections.sort(unofficialAbils);
 			for (final String ability : unofficialAbils) {
-				writeToDebug(ability + " - UNOFFICAL");
+				f.add("- " + ability);
 			}
 		}
 
-		writeToDebug("");
-		writeToDebug("Collection Sizes");
-		writeToDebug("====================");
+		f.add("");
+		f.add("Collection Sizes");
+		f.add("====================");
 		final ClassLoader loader = ProjectKorra.class.getClassLoader();
 		try {
 			for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
-				if (info.getName().startsWith("com.projectkorra.") && !info.getName().contains("hooks")) {
+				if (info.getName().startsWith("com.projectkorra.") && !info.getName().contains("hooks") && !info.getName().startsWith("com.projectkorra.projectkorra.region")) {
 					try {
 						final Class<?> clazz = info.load();
 						for (final Field field : clazz.getDeclaredFields()) {
@@ -1646,28 +1621,52 @@ public class GeneralMethods {
 							try {
 								final Object obj = field.get(null);
 								if (obj instanceof Collection) {
-									writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Collection<?>) obj).size());
+									Collection<?> coll = ((Collection<?>) obj);
+									if (coll.size() > 0)
+										f.add(simpleName + ": " + field.getName() + " size=" + coll.size());
 								} else if (obj instanceof Map) {
-									writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?, ?>) obj).size());
+									Map<?, ?> map = (Map<?, ?>) obj;
+									if (map.size() > 0)
+										f.add(simpleName + ": " + field.getName() + " size=" + map.size());
 								}
-							} catch (final Exception ignored) {
-							}
+							} catch (final Exception ignored) {}
 						}
-					}  catch (Exception e) {
-						continue;
-					}
-
+					}  catch (Exception ignored) {}
 				}
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 
-		writeToDebug("");
-		writeToDebug("CoreAbility Debugger");
-		writeToDebug("====================");
-		for (final String line : CoreAbility.getDebugString().split("\\n")) {
-			writeToDebug(line);
+		f.add("");
+		f.add("CoreAbility Debugger");
+		f.add("====================");
+		f.addAll(Arrays.asList(CoreAbility.getDebugString().split("\\n")));
+
+		try {
+			final File dataFolder = plugin.getDataFolder();
+			if (!dataFolder.exists()) {
+				dataFolder.mkdir();
+			}
+
+			final File saveTo = new File(plugin.getDataFolder(), "debug.txt");
+			if (saveTo.exists()) {
+				saveTo.delete();
+			}
+			saveTo.createNewFile();
+
+			final FileWriter fw = new FileWriter(saveTo, true);
+			final PrintWriter pw = new PrintWriter(fw);
+			for (String line : f) {
+				pw.println(line);
+			}
+			pw.flush();
+			pw.close();
+
+			return true;
+		} catch (final IOException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -1825,30 +1824,6 @@ public class GeneralMethods {
 
 	public static void stopPlugin() {
 		plugin.getServer().getPluginManager().disablePlugin(plugin);
-	}
-
-	public static void writeToDebug(final String message) {
-		try {
-			final File dataFolder = plugin.getDataFolder();
-			if (!dataFolder.exists()) {
-				dataFolder.mkdir();
-			}
-
-			final File saveTo = new File(plugin.getDataFolder(), "debug.txt");
-			if (saveTo.exists()) {
-				saveTo.delete();
-			}
-			saveTo.createNewFile();
-
-			final FileWriter fw = new FileWriter(saveTo, true);
-			final PrintWriter pw = new PrintWriter(fw);
-			pw.println(message);
-			pw.flush();
-			pw.close();
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public static boolean locationEqualsIgnoreDirection(final Location loc1, final Location loc2) {

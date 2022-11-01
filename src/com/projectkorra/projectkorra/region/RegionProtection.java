@@ -73,8 +73,8 @@ public class RegionProtection {
      * Get a list of currently active custom region protections
      * @return Enabled region protections
      */
-    public static Collection<RegionProtectionHook> getActiveProtections() {
-        return PROTECTIONS.values();
+    public static Map<JavaPlugin, RegionProtectionHook> getActiveProtections() {
+        return PROTECTIONS;
     }
 
     /**
@@ -160,7 +160,7 @@ public class RegionProtection {
     }
 
     private static boolean checkAll(Player player, Location location, CoreAbility ability) {
-        for (RegionProtectionHook protection : RegionProtection.getActiveProtections()) {
+        for (RegionProtectionHook protection : RegionProtection.getActiveProtections().values()) {
             try {
                 if (protection.isRegionProtected(player, location, ability)) {
                     return true;

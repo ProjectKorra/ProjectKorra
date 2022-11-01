@@ -238,7 +238,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Display.HoverAbility", "Click to view how to use {ability}.");
 
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
-			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
+			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report on the ProjectKorra forum if you need to.");
 
 			config.addDefault("Commands.Board.Description", "Toggle bending board visibility.");
 			config.addDefault("Commands.Board.Disabled", "Bending board is disabled.");
