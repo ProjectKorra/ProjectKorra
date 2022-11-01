@@ -3,10 +3,12 @@ package com.projectkorra.projectkorra.util;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,6 +44,7 @@ public class TempBlock {
 	private boolean inRevertQueue;
 	private boolean reverted;
 	private RevertTask revertTask = null;
+	private Optional<Ability> ability = Optional.empty(); // If we want this TempBlock to have an assigned ability created from it
 
 	public TempBlock(final Block block, final Material newtype) {
 		this(block, newtype.createBlockData(), 0);
@@ -57,6 +60,15 @@ public class TempBlock {
 	
 	public TempBlock(final Block block, final BlockData newData) {
 		this(block, newData, 0);
+	}
+	
+	public TempBlock(final Block block, final BlockData newData, final long revertTime, final Ability ability) {
+		this(block, newData, revertTime);
+		this.ability = Optional.of(ability);
+	}
+	
+	public TempBlock(final Block block, final BlockData newData, final Ability ability) {
+		this(block, newData, 0, ability);
 	}
 
 	public TempBlock(final Block block, BlockData newData, final long revertTime) {
@@ -176,6 +188,10 @@ public class TempBlock {
 
 	public BlockState getState() {
 		return this.state;
+	}
+	
+	public Optional<Ability> getAbility() {
+		return this.ability;
 	}
 
 	public RevertTask getRevertTask() {

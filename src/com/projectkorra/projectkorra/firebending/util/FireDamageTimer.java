@@ -17,7 +17,7 @@ public class FireDamageTimer {
 
 	private static final int MAX_TICKS = 90;
 	private static Ability ability = null;
-	private static final int DAMAGE = 1;
+	private static final double DAMAGE = 1;
 	private static final long BUFFER = 30;
 	private static final Map<Entity, Player> INSTANCES = new ConcurrentHashMap<>();
 	private static final Map<Entity, Long> TIMES = new ConcurrentHashMap<>();
@@ -30,11 +30,15 @@ public class FireDamageTimer {
 	 */
 	@Deprecated
 	public FireDamageTimer(final Entity entity, final Player source) {
-		this(entity, source, null);
+		this(entity, source, null, false);
+	}
+	
+	public FireDamageTimer(final Entity entity, final Player source, Ability abil) {
+		this(entity, source, abil, false);
 	}
 
-	public FireDamageTimer(final Entity entity, final Player source, Ability abil) {
-		if (entity.getEntityId() == source.getEntityId()) {
+	public FireDamageTimer(final Entity entity, final Player source, Ability abil, final boolean affectSelf) {
+		if (entity.getEntityId() == source.getEntityId() && !affectSelf) {
 			return;
 		}
 
@@ -56,8 +60,8 @@ public class FireDamageTimer {
 			return false;
 		}
 	}
-
-	public static void dealFlameDamage(final Entity entity) {
+	
+	public static void dealFlameDamage(final Entity entity, final double damage) {
 		if (INSTANCES.containsKey(entity) && entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
 				if (!HeatControl.canBurn((Player) entity)) {
@@ -66,18 +70,22 @@ public class FireDamageTimer {
 			}
 			final LivingEntity Lentity = (LivingEntity) entity;
 			final Player source = INSTANCES.get(entity);
-
+			
 			// damages the entity.
 			if (ability == null) {
-				DamageHandler.damageEntity(Lentity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
+				DamageHandler.damageEntity(Lentity, source, damage, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0), false, true);
 			} else {
-				DamageHandler.damageEntity(Lentity, source, DAMAGE, ability);
+				DamageHandler.damageEntity(Lentity, source, damage, ability, false, true);
 			}
-
+			
 			if (entity.getFireTicks() > MAX_TICKS) {
 				entity.setFireTicks(MAX_TICKS);
 			}
 		}
+	}
+
+	public static void dealFlameDamage(final Entity entity) {
+		dealFlameDamage(entity, DAMAGE);
 	}
 
 	public static void handleFlames() {
