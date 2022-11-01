@@ -561,8 +561,7 @@ public class PKListener implements Listener {
 		}
 		
 		if (event.getCause() == DamageCause.LAVA && entity instanceof Player) {
-			for (int i = 0; i < 3; i++) {
-				Block lava = entity.getLocation().clone().add(0, i, 0).getBlock();
+			for (Block lava : GeneralMethods.getBlocksAroundPoint(entity.getLocation().clone().add(0, 1, 0), 1.375)) {
 				if (EarthAbility.isLava(lava) && TempBlock.get(lava) != null) {
 					TempBlock.get(lava).getAbility().ifPresent(ability -> new FireDamageTimer(entity, ability.getPlayer(), ability, true));
 				}
