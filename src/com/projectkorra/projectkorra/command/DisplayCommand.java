@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -19,7 +17,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,7 +26,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Executor for /bending display. Extends {@link PKCommand}.
@@ -45,9 +41,6 @@ public class DisplayCommand extends PKCommand {
 	private final String hoverType;
 	private final String hoverAbility;
 
-	private Set<Element> cachedPassiveElements;
-	private Set<Element> cachedComboElements;
-
 	public DisplayCommand() {
 		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
 
@@ -59,14 +52,6 @@ public class DisplayCommand extends PKCommand {
 		this.noBinds = ConfigManager.languageConfig.get().getString("Commands.Display.NoBinds");
 		this.hoverType = ConfigManager.languageConfig.get().getString("Commands.Display.HoverType");
 		this.hoverAbility = ConfigManager.languageConfig.get().getString("Commands.Display.HoverAbility");
-
-		//1 tick later because commands are created before abilities are
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
-			cachedPassiveElements = CoreAbility.getAbilities().stream().filter(PassiveAbility.class::isInstance)
-					.filter(Ability::isEnabled).map(Ability::getElement).collect(Collectors.toSet());
-			cachedComboElements = CoreAbility.getAbilities().stream().filter(ComboAbility.class::isInstance)
-					.filter(ab -> !ab.isHiddenAbility()).filter(Ability::isEnabled).map(Ability::getElement).collect(Collectors.toSet());
-		}, 1L);
 	}
 
 	@Override
@@ -110,7 +95,7 @@ public class DisplayCommand extends PKCommand {
 					sender.sendMessage(ChatColor.BOLD + "Combos");
 
 					for (final Element e : Element.getAllElements()) {
-						final ArrayList<String> combos = correctCombos(element);
+						final ArrayList<String> combos = correctCombos(e);
 						iterateAbilities(sender, combos);
 					}
 				} else {
@@ -297,9 +282,9 @@ public class DisplayCommand extends PKCommand {
 		}
 	}
 
-	private List<String> filterNames(final CommandSender sender, Collection<String> abilites) {
+	private List<String> filterNames(final CommandSender sender, Collection<String> abilities) {
 		final List<String> filtered = new ArrayList<>();
-		for (String ability : abilites) {
+		for (String ability : abilities) {
 			final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 			if (filtered.contains(ability) || sender instanceof Player && !sender.hasPermission("bending.ability." + ability) || coreAbil == null || (! (coreAbil instanceof PassiveAbility) && coreAbil.isHiddenAbility())) {
 				continue;
@@ -309,10 +294,10 @@ public class DisplayCommand extends PKCommand {
 		return filtered;
 	}
 
-	private List<CoreAbility> filterAbilities(final CommandSender sender, Collection<CoreAbility> abilites) {
+	private List<CoreAbility> filterAbilities(final CommandSender sender, Collection<CoreAbility> abilities) {
 		final List<CoreAbility> filtered = new ArrayList<>();
 		final List<String> added = new ArrayList<>();
-		for (CoreAbility coreAbil : abilites) {
+		for (CoreAbility coreAbil : abilities) {
 			if (filtered.contains(coreAbil) || added.contains(coreAbil.getName()) || sender instanceof Player && ! sender.hasPermission("bending.ability." + coreAbil.getName()) || ! (coreAbil instanceof PassiveAbility) && coreAbil.isHiddenAbility()) {
 				continue;
 			}
