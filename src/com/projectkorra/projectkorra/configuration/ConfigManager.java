@@ -1,16 +1,15 @@
 package com.projectkorra.projectkorra.configuration;
 
+import com.projectkorra.projectkorra.GeneralMethods;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.projectkorra.projectkorra.GeneralMethods;
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.entity.EntityType;
 
 public class ConfigManager {
 
@@ -225,6 +224,8 @@ public class ConfigManager {
 			config.addDefault("Commands.Display.InvalidArgument", "Not a valid argument.");
 			config.addDefault("Commands.Display.PlayersOnly", "This command is only usable by players.");
 			config.addDefault("Commands.Display.NoBinds", "You do not have any abilities bound.\nIf you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
+			config.addDefault("Commands.Display.HoverType", "Click to display {type}.");
+			config.addDefault("Commands.Display.HoverAbility", "Click to view how to use {ability}.");
 
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
 			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
