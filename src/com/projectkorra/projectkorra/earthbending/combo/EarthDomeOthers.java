@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -31,17 +32,18 @@ public class EarthDomeOthers extends EarthAbility implements ComboAbility {
 	public EarthDomeOthers(final Player player) {
 		super(player);
 
-		if (this.bPlayer.isOnCooldown("EarthDome")) {
+		if (!this.bPlayer.canBendIgnoreBinds(this) ||
+			this.bPlayer.isOnCooldown("EarthDome")) {
 			return;
 		}
+
 		this.loc = player.getLocation().clone();
 
-		if (GeneralMethods.isRegionProtectedFromBuild(player, this.loc)) {
+		if (RegionProtection.isRegionProtected(player, this.loc) ||
+			!isEarthbendable(this.loc.getBlock().getRelative(BlockFace.DOWN).getType(), true, true, true)) {
 			return;
 		}
-		if (!isEarthbendable(this.loc.getBlock().getRelative(BlockFace.DOWN).getType(), true, true, true)) {
-			return;
-		}
+
 		this.range = 0;
 		this.direction = this.loc.getDirection().setY(0);
 		this.maxRange = getConfig().getDouble("Abilities.Earth.EarthDome.Range");
