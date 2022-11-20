@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.earthbending.combo;
 
 import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -32,8 +33,7 @@ public class EarthDomeOthers extends EarthAbility implements ComboAbility {
 	public EarthDomeOthers(final Player player) {
 		super(player);
 
-		if (!this.bPlayer.canBendIgnoreBinds(this) ||
-			this.bPlayer.isOnCooldown("EarthDome")) {
+		if (!bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("EarthDome"))) {
 			return;
 		}
 
