@@ -29,7 +29,8 @@ class Kingdoms extends RegionProtectionBase {
         }
         
         // Allow bending if regulator allows building on land
-        if (land.getStructure(Regulator.class) != null && land.getStructure(Regulator.class).hasAttribute(player, Regulator.Attribute.BUILD)) {
+        Regulator regulator = land.getStructure(Regulator.class);
+        if (regulator != null && Boolean.TRUE.equals(regulator.hasAttribute(player, Regulator.Attribute.BUILD))) {
             return false;
         }
         
