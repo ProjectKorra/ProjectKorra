@@ -189,15 +189,15 @@
       <groupId>com.github.cryptomorin</groupId>
       <artifactId>kingdoms</artifactId>
       <version>1.14.15.3-SNAPSHOT</version>
-	  <exclusions>
-		<exclusion>
-		  <groupId>org.snakeyaml</groupId>
-		  <artifactId>snakeyaml</artifactId>
-		</exclusion>
-		<exclusion>
-		  <groupId>org.kingdoms.dependencies</groupId>
-		  <artifactId>libmanager</artifactId>
-		</exclusion>
+      <exclusions>
+        <exclusion>
+          <groupId>org.snakeyaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.kingdoms.dependencies</groupId>
+          <artifactId>libmanager</artifactId>
+        </exclusion>
       </exclusions>
       <scope>provided</scope>
     </dependency>
