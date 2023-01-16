@@ -195,13 +195,13 @@ public class DisplayCommand extends PKCommand {
 			final ChatColor subColor = coreAbil.getElement() instanceof SubElement ? color : coreAbil.getElement().getSubColor();
 			
 			fullMessage.appendLegacy(this.format.replace("{ability}", color + abilityName).replace("{bind}", ""));
-			fullMessage.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder().appendLegacy(color + this.hoverAbility.replace("{ability}", subColor + abilityName)).create())));
-			fullMessage.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bending help " + coreAbil.getName()));
+			fullMessage.event(hoverEvent(color + this.hoverAbility.replace("{ability}", subColor + abilityName)));
+			fullMessage.event(clickRun("/bending help " + coreAbil.getName()));
 			
-			if (! this.bindButton.equals("")) {
+			if (! this.bindButton.equals("") && !(coreAbil instanceof PassiveAbility) && !(coreAbil instanceof ComboAbility)) {
 				fullMessage.appendLegacy(subColor + this.bindButton);
-				fullMessage.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder().appendLegacy(color + this.hoverBindButton.replace("{ability}", subColor + abilityName)).create())));
-				fullMessage.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/bending bind " + coreAbil.getName()));
+				fullMessage.event(hoverEvent(color + this.hoverBindButton.replace("{ability}", subColor + abilityName)));
+				fullMessage.event(clickSuggest("/bending bind " + coreAbil.getName()));
 			}
 		}
 		sender.spigot().sendMessage(fullMessage.create());
@@ -241,15 +241,15 @@ public class DisplayCommand extends PKCommand {
 		//Display the number of Passives and Combos
 		if (!correctCombos(element).isEmpty()) {
 			final ComponentBuilder combos = new ComponentBuilder().appendLegacy(subColor + "Combos (#)".replace("#", String.valueOf(correctCombos(element).size())));
-			combos.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder().appendLegacy(mainColor + this.hoverType.replace("{type}", subColor + elementName + "Combos")).create())));
-			combos.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bending display " + elementName + "Combos"));
+			combos.event(hoverEvent(mainColor + this.hoverType.replace("{type}", subColor + elementName + "Combos")));
+			combos.event(clickRun("/bending display " + elementName + "Combos"));
 			sender.spigot().sendMessage(combos.create());
 		}
 		
 		if (!filterNames(sender, PassiveManager.getPassivesForElement(element)).isEmpty()) {
 			final ComponentBuilder passives = new ComponentBuilder().appendLegacy(subColor + "Passives (#)".replace("#", String.valueOf(filterNames(sender, PassiveManager.getPassivesForElement(element)).size())));
-			passives.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder().appendLegacy(mainColor + this.hoverType.replace("{type}", subColor + elementName + "Passives")).create())));
-			passives.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bending display " + elementName + "Passives"));
+			passives.event(hoverEvent(mainColor + this.hoverType.replace("{type}", subColor + elementName + "Passives")));
+			passives.event(clickRun("/bending display " + elementName + "Passives"));
 			sender.spigot().sendMessage(passives.create());
 		}
 
@@ -259,14 +259,15 @@ public class DisplayCommand extends PKCommand {
 			for (final SubElement sub : Element.getSubElements(element)) {
 				if (sender.hasPermission("bending." + elementName.toLowerCase() + "." + sub.getName().toLowerCase())) {
 					final ChatColor color = sub.getColor();
+					final String name = sub.getName();
 					
 					if (!message.getParts().isEmpty()) {
 						message.appendLegacy(this.separator);
 					}
 					
-					message.appendLegacy(color + sub.getName() + " (#)".replace("#", String.valueOf(filterAbilities(sender, CoreAbility.getAbilitiesByElement(sub)).size())));
-					message.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder().appendLegacy(color + this.hoverType.replace("{type}", color + sub.getName())).create())));
-					message.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bending display " + sub.getName()));
+					message.appendLegacy(color + name + " (#)".replace("#", String.valueOf(filterAbilities(sender, CoreAbility.getAbilitiesByElement(sub)).size())));
+					message.event(hoverEvent(color + this.hoverType.replace("{type}", color + name)));
+					message.event(clickRun("/bending display " + name));
 				}
 			}
 			sender.spigot().sendMessage(message.create());
@@ -384,5 +385,21 @@ public class DisplayCommand extends PKCommand {
 		list.add("ChiPassives");
 
 		return list;
+	}
+	
+	private HoverEvent hoverEvent(String string) {
+		return new HoverEvent(HoverEvent.Action.SHOW_TEXT, text(string));
+	}
+	
+	private ClickEvent clickSuggest(String string) {
+		return new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, string);
+	}
+	
+	private ClickEvent clickRun(String string) {
+		return new ClickEvent(ClickEvent.Action.RUN_COMMAND, string);
+	}
+	
+	private Text text(String string) {
+		return new Text(new ComponentBuilder().appendLegacy(string).create());
 	}
 }
