@@ -217,15 +217,18 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Usage", "Usage: ");
 
 			config.addDefault("Commands.Display.Description", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.");
-
 			config.addDefault("Commands.Display.NoCombosAvailable", "There are no {element} combos available.");
 			config.addDefault("Commands.Display.NoPassivesAvailable", "There are no {element} passives available.");
 			config.addDefault("Commands.Display.NoAbilitiesAvailable", "There are no {element} abilities on this server.");
 			config.addDefault("Commands.Display.InvalidArgument", "Not a valid argument.");
 			config.addDefault("Commands.Display.PlayersOnly", "This command is only usable by players.");
 			config.addDefault("Commands.Display.NoBinds", "You do not have any abilities bound.\nIf you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
+			config.addDefault("Commands.Display.Format", "{ability} {bind}");
+			config.addDefault("Commands.Display.Separator", "\n");
 			config.addDefault("Commands.Display.HoverType", "Click to display {type}.");
 			config.addDefault("Commands.Display.HoverAbility", "Click to view how to use {ability}.");
+			config.addDefault("Commands.Display.HoverBindButton", "Click to bind {ability}.");
+			config.addDefault("Commands.Display.BindButton", "[+]");
 
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
 			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
