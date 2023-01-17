@@ -31,11 +31,11 @@ public class TimeUtil {
 		if (minutes > 0) {
 			formatted += String.valueOf(minutes) + "m ";
 		}
-		if (seconds >= 0) {
+		if (seconds > 0) {
 			formatted += String.valueOf(seconds) + "s";
 		}
 		if (ms > 0 && (formatted.equals("") || formatted.equals("-"))) {
-			formatted += String.valueOf(ms) + "ms";
+			formatted += "0." + String.valueOf(ms / 100) + "s";
 		}
 		if (formatted.length() == 0) return "0s";
 		return formatted;
