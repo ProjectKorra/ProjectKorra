@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,6 @@ public class RegionProtection {
         }
         if (enabled("LWC")) new LWC();
         if (enabled("Towny")) new Towny();
-        if (enabled("Kingdoms")) new Kingdoms();
         if (enabled("RedProtect")) new RedProtect();
         if (enabled("GriefDefender")) new GriefDefender();
         if (enabled("GriefPrevention")) new GriefPrevention();
