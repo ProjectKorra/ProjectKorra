@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,6 +33,7 @@ import java.util.Set;
  */
 public class DisplayCommand extends PKCommand {
 
+	private static final Map<String, String> abbreviations = new HashMap<>();
 	private final String noCombosAvailable;
 	private final String noPassivesAvailable;
 	private final String noAbilitiesAvailable;
@@ -39,8 +42,6 @@ public class DisplayCommand extends PKCommand {
 	private final String noBinds;
 	private final String format;
 	private final String separator;
-	private final String bindButton;
-	private final String hoverBindButton;
 	private final String hoverType;
 	private final String hoverAbility;
 
@@ -55,10 +56,10 @@ public class DisplayCommand extends PKCommand {
 		this.noBinds = ConfigManager.languageConfig.get().getString("Commands.Display.NoBinds");
 		this.format = ConfigManager.languageConfig.get().getString("Commands.Display.Format");
 		this.separator = ConfigManager.languageConfig.get().getString("Commands.Display.Separator");
-		this.bindButton = ConfigManager.languageConfig.get().getString("Commands.Display.BindButton");
-		this.hoverBindButton = ConfigManager.languageConfig.get().getString("Commands.Display.HoverBindButton");
 		this.hoverType = ConfigManager.languageConfig.get().getString("Commands.Display.HoverType");
 		this.hoverAbility = ConfigManager.languageConfig.get().getString("Commands.Display.HoverAbility");
+		
+		this.fillAbbreviations();
 	}
 
 	@Override
@@ -70,46 +71,23 @@ public class DisplayCommand extends PKCommand {
 		// bending display [Element].
 		if (args.size() == 1) {
 			String elementName = args.get(0).toLowerCase().replace("bending", "");
-			if (elementName.equalsIgnoreCase("wc")) {
-				elementName = "watercombo";
-			} else if (elementName.equalsIgnoreCase("ac")) {
-				elementName = "aircombo";
-			} else if (elementName.equalsIgnoreCase("ec")) {
-				elementName = "earthcombo";
-			} else if (elementName.equalsIgnoreCase("fc")) {
-				elementName = "firecombo";
-			} else if (elementName.equalsIgnoreCase("cc")) {
-				elementName = "chicombo";
-			} else if (elementName.equalsIgnoreCase("avc")) {
-				elementName = "avatarcombo";
-			} else if (elementName.equalsIgnoreCase("wp")) {
-				elementName = "waterpassive";
-			} else if (elementName.equalsIgnoreCase("ap")) {
-				elementName = "airpassive";
-			} else if (elementName.equalsIgnoreCase("ep")) {
-				elementName = "earthpassive";
-			} else if (elementName.equalsIgnoreCase("fp")) {
-				elementName = "firepassive";
-			} else if (elementName.equalsIgnoreCase("cp")) {
-				elementName = "chipassive";
-			} else if (elementName.equalsIgnoreCase("avp")) {
-				elementName = "avatarpassive";
-			}
+			elementName = abbreviations.getOrDefault(elementName, elementName);
+			
 			final Element element = Element.fromString(elementName.replace("combos", "").replace("combo", "").replace("passives", "").replace("passive", ""));
+			final ChatColor color = element == null ? null : element.getColor();
 			// Combos.
 			if (elementName.contains("combo")) {
 				if (element == null) {
 					sender.sendMessage(ChatColor.BOLD + "Combos");
 
 					for (final Element e : Element.getAllElements()) {
-						final ArrayList<String> combos = correctCombos(e);
-						iterateAbilities(sender, combos);
+						final ArrayList<String> combos = this.correctCombos(sender, e);
+						this.iterateAbilities(sender, combos);
 					}
 					return;
 				}
 				
-				final ChatColor color = element.getColor();
-				final ArrayList<String> combos = correctCombos(element);
+				final ArrayList<String> combos = this.correctCombos(sender, element);
 				
 				if (combos.isEmpty()) {
 					ChatUtil.sendBrandingMessage(sender, color + this.noCombosAvailable.replace("{element}", element.getName()));
@@ -117,7 +95,7 @@ public class DisplayCommand extends PKCommand {
 				}
 				
 				sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() +  " Combos");
-				iterateAbilities(sender, combos);
+				this.iterateAbilities(sender, combos);
 				return;
 				// Passives.
 			} else if (elementName.contains("passive")) {
@@ -126,12 +104,11 @@ public class DisplayCommand extends PKCommand {
 
 					for (final Element e : Element.getAllElements()) {
 						final Set<String> passives = PassiveManager.getPassivesForElement(e);
-						iterateAbilities(sender, passives);
+						this.iterateAbilities(sender, passives);
 					}
 					return;
 				}
 				
-				final ChatColor color = element.getColor();
 				final Set<String> passives = PassiveManager.getPassivesForElement(element);
 
 				if (passives.isEmpty()) {
@@ -140,7 +117,7 @@ public class DisplayCommand extends PKCommand {
 				}
 
 				sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + " Passives");
-				iterateAbilities(sender, passives);
+				this.iterateAbilities(sender, passives);
 				return;
 			} else if (element != null) {
 				this.displayElement(sender, element);
@@ -162,6 +139,7 @@ public class DisplayCommand extends PKCommand {
 				sender.sendMessage(subelements.toString());
 			}
 		}
+		
 		if (args.isEmpty()) {
 			// Bending Display.
 			if (!(sender instanceof Player)) {
@@ -194,15 +172,9 @@ public class DisplayCommand extends PKCommand {
 			final ChatColor color = coreAbil.getElement().getColor();
 			final ChatColor subColor = coreAbil.getElement() instanceof SubElement ? color : coreAbil.getElement().getSubColor();
 			
-			fullMessage.appendLegacy(this.format.replace("{ability}", color + abilityName).replace("{bind}", ""));
+			fullMessage.appendLegacy(this.format.replace("{ability}", color + abilityName));
 			fullMessage.event(hoverEvent(color + this.hoverAbility.replace("{ability}", subColor + abilityName)));
-			fullMessage.event(clickRun("/bending help " + coreAbil.getName()));
-			
-			if (! this.bindButton.equals("") && !(coreAbil instanceof PassiveAbility) && !(coreAbil instanceof ComboAbility)) {
-				fullMessage.appendLegacy(subColor + this.bindButton);
-				fullMessage.event(hoverEvent(color + this.hoverBindButton.replace("{ability}", subColor + abilityName)));
-				fullMessage.event(clickSuggest("/bending bind " + coreAbil.getName()));
-			}
+			fullMessage.event(clickEvent("/bending help " + coreAbil.getName()));
 		}
 		sender.spigot().sendMessage(fullMessage.create());
 	}
@@ -214,7 +186,7 @@ public class DisplayCommand extends PKCommand {
 	 * @param element The element to show the moves for
 	 */
 	private void displayElement(final CommandSender sender, final Element element) {
-		final List<CoreAbility> abilities = filterAbilities(sender, CoreAbility.getAbilitiesByElement(element));
+		final Collection<CoreAbility> abilities = filterAbilities(sender, CoreAbility.getAbilitiesByElement(element));
 		final String elementName = element.getName();
 		final String bending = element.getType().getBending();
 		final ChatColor mainColor = element.getColor();
@@ -236,25 +208,33 @@ public class DisplayCommand extends PKCommand {
 			abilitiesSent.add(ability.getName());
 		}
 		
-		iterateAbilities(sender, abilitiesSent);
+		this.iterateAbilities(sender, abilitiesSent);
 
 		//Display the number of Passives and Combos
-		if (!correctCombos(element).isEmpty()) {
-			final ComponentBuilder combos = new ComponentBuilder().appendLegacy(subColor + "Combos (#)".replace("#", String.valueOf(correctCombos(element).size())));
+		final List<String> comboList = this.correctCombos(sender, element);
+		if (!comboList.isEmpty()) {
+			sender.sendMessage("");
+			final ComponentBuilder combos = new ComponentBuilder().appendLegacy(subColor + "Combos (#)".replace("#", String.valueOf(comboList.size())));
 			combos.event(hoverEvent(mainColor + this.hoverType.replace("{type}", subColor + elementName + "Combos")));
-			combos.event(clickRun("/bending display " + elementName + "Combos"));
+			combos.event(clickEvent("/bending display " + elementName + "Combos"));
 			sender.spigot().sendMessage(combos.create());
 		}
 		
-		if (!filterNames(sender, PassiveManager.getPassivesForElement(element)).isEmpty()) {
-			final ComponentBuilder passives = new ComponentBuilder().appendLegacy(subColor + "Passives (#)".replace("#", String.valueOf(filterNames(sender, PassiveManager.getPassivesForElement(element)).size())));
+		final List<String> passiveList = this.filterNames(sender, PassiveManager.getPassivesForElement(element));
+		if (!passiveList.isEmpty()) {
+			if (comboList.isEmpty()) {
+				sender.sendMessage("");
+			}
+			
+			final ComponentBuilder passives = new ComponentBuilder().appendLegacy(subColor + "Passives (#)".replace("#", String.valueOf(passiveList.size())));
 			passives.event(hoverEvent(mainColor + this.hoverType.replace("{type}", subColor + elementName + "Passives")));
-			passives.event(clickRun("/bending display " + elementName + "Passives"));
+			passives.event(clickEvent("/bending display " + elementName + "Passives"));
 			sender.spigot().sendMessage(passives.create());
 		}
 
 		// Display the subelements and the number of their abilities
 		if (Element.getSubElements(element).length > 0) {
+			sender.sendMessage("");
 			final ComponentBuilder message = new ComponentBuilder();
 			for (final SubElement sub : Element.getSubElements(element)) {
 				if (sender.hasPermission("bending." + elementName.toLowerCase() + "." + sub.getName().toLowerCase())) {
@@ -267,7 +247,7 @@ public class DisplayCommand extends PKCommand {
 					
 					message.appendLegacy(color + name + " (#)".replace("#", String.valueOf(filterAbilities(sender, CoreAbility.getAbilitiesByElement(sub)).size())));
 					message.event(hoverEvent(color + this.hoverType.replace("{type}", color + name)));
-					message.event(clickRun("/bending display " + name));
+					message.event(clickEvent("/bending display " + name));
 				}
 			}
 			sender.spigot().sendMessage(message.create());
@@ -303,7 +283,7 @@ public class DisplayCommand extends PKCommand {
 		final List<String> filtered = new ArrayList<>();
 		for (String ability : abilities) {
 			final CoreAbility coreAbil = CoreAbility.getAbility(ability);
-			if (filtered.contains(ability) || sender instanceof Player && !sender.hasPermission("bending.ability." + ability) || coreAbil == null || (! (coreAbil instanceof PassiveAbility) && coreAbil.isHiddenAbility())) {
+			if (filtered.contains(ability) || (sender instanceof Player && !sender.hasPermission("bending.ability." + ability)) || coreAbil == null || (! (coreAbil instanceof PassiveAbility) && coreAbil.isHiddenAbility())) {
 				continue;
 			}
 			filtered.add(ability);
@@ -311,26 +291,25 @@ public class DisplayCommand extends PKCommand {
 		return filtered;
 	}
 
-	private List<CoreAbility> filterAbilities(final CommandSender sender, Collection<CoreAbility> abilities) {
-		final List<CoreAbility> filtered = new ArrayList<>();
-		final List<String> added = new ArrayList<>();
+	private Collection<CoreAbility> filterAbilities(final CommandSender sender, Collection<CoreAbility> abilities) {
+		final Map<String, CoreAbility> filtered = new LinkedHashMap<>();
 		for (CoreAbility coreAbil : abilities) {
-			if (filtered.contains(coreAbil) || added.contains(coreAbil.getName()) || sender instanceof Player && ! sender.hasPermission("bending.ability." + coreAbil.getName()) || ! (coreAbil instanceof PassiveAbility) && coreAbil.isHiddenAbility()) {
+			if (filtered.containsValue(coreAbil) || filtered.containsKey(coreAbil.getName()) || (sender instanceof Player && ! sender.hasPermission("bending.ability." + coreAbil.getName())) || ! (coreAbil instanceof PassiveAbility) && coreAbil.isHiddenAbility()) {
 				continue;
 			}
-			filtered.add(coreAbil);
-			added.add(coreAbil.getName());
+			filtered.put(coreAbil.getName(), coreAbil);
 		}
-		return filtered;
+		return filtered.values();
 	}
 
-	private ArrayList<String> correctCombos(final Element element) {
+	private ArrayList<String> correctCombos(final CommandSender sender, final Element element) {
 		final ArrayList<String> combos = new ArrayList<>();
 		if (element instanceof SubElement) {
-			for (CoreAbility ability : CoreAbility.getAbilitiesByElement(element)) {
-				if (ability instanceof ComboAbility) {
-					combos.add(ability.getName());
+			for (CoreAbility coreAbil : CoreAbility.getAbilitiesByElement(element)) {
+				if (combos.contains(coreAbil.getName()) || (sender instanceof Player && ! sender.hasPermission("bending.ability." + coreAbil.getName())) || coreAbil.isHiddenAbility() || !(coreAbil instanceof ComboAbility)) {
+					continue;
 				}
+				combos.add(coreAbil.getName());
 			}
 			return combos;
 		} else {
@@ -387,15 +366,26 @@ public class DisplayCommand extends PKCommand {
 		return list;
 	}
 	
+	private void fillAbbreviations() {
+		abbreviations.put("ac", "aircombo");
+		abbreviations.put("ap", "airpassive");
+		abbreviations.put("avc", "avatarcombo");
+		abbreviations.put("avp", "avatarpassive");
+		abbreviations.put("cc", "chicombo");
+		abbreviations.put("cp", "chipassive");
+		abbreviations.put("ec", "earthcombo");
+		abbreviations.put("ep", "earthpassive");
+		abbreviations.put("fc", "firecombo");
+		abbreviations.put("fp", "firepassive");
+		abbreviations.put("wc", "watercombo");
+		abbreviations.put("wp", "waterpassive");
+	}
+	
 	private HoverEvent hoverEvent(String string) {
 		return new HoverEvent(HoverEvent.Action.SHOW_TEXT, text(string));
 	}
 	
-	private ClickEvent clickSuggest(String string) {
-		return new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, string);
-	}
-	
-	private ClickEvent clickRun(String string) {
+	private ClickEvent clickEvent(String string) {
 		return new ClickEvent(ClickEvent.Action.RUN_COMMAND, string);
 	}
 	
