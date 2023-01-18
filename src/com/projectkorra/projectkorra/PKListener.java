@@ -622,6 +622,9 @@ public class PKListener implements Listener {
 		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
 			final CoreAbility coreAbility = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
 			for (final CoreAbility fireCombo : cookingFireCombos) {
+				if (fireCombo == null) {
+					continue;
+				}
 				if (coreAbility.getName().equalsIgnoreCase(fireCombo.getName())) {
 					final List<ItemStack> drops = event.getDrops();
 					final List<ItemStack> newDrops = new ArrayList<>();
