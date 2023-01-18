@@ -9,6 +9,10 @@ import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,6 +38,11 @@ public class HelpCommand extends PKCommand {
 	private final String avatar;
 	private final String invalidTopic;
 	private final String usage;
+	private final String slotFormat;
+	private final String bindStart;
+	private final String bindSeperator;
+	private final String bindEnd;
+	private final String hoverBind;
 
 	public HelpCommand() {
 		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
@@ -50,6 +59,11 @@ public class HelpCommand extends PKCommand {
 		this.avatar = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Avatar");
 		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
 		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
+		this.slotFormat = ConfigManager.languageConfig.get().getString("Commands.Help.SlotFormat");
+		this.bindStart = ConfigManager.languageConfig.get().getString("Commands.Help.BindStart");
+		this.bindSeperator = ConfigManager.languageConfig.get().getString("Commands.Help.BindSeparator");
+		this.bindEnd = ConfigManager.languageConfig.get().getString("Commands.Help.BindEnd");
+		this.hoverBind = ConfigManager.languageConfig.get().getString("Commands.Help.HoverBind");
 	}
 
 	@Override
@@ -107,35 +121,36 @@ public class HelpCommand extends PKCommand {
 		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility) && CoreAbility.getAbility(arg).isEnabled() && !CoreAbility.getAbility(arg).isHiddenAbility() || CoreAbility.getAbility(arg) instanceof PassiveAbility) { // bending help ability.
 			final CoreAbility ability = CoreAbility.getAbility(arg);
 			final ChatColor color = ability.getElement().getColor();
-
-			if (ability instanceof AddonAbility) {
-				if (ability instanceof PassiveAbility) {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon Passive)");
-				} else {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Addon)");
+			final boolean isAddonAbility = ability instanceof AddonAbility;
+			final boolean isPassiveAbility = ability instanceof PassiveAbility;
+			
+			
+			sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + (isAddonAbility ? (isPassiveAbility ? "(Addon Passive)" : " (Addon)") : (isPassiveAbility ? "(Passive)" : "")));
+			sender.sendMessage(color + ability.getDescription());
+			
+			if (!ability.getInstructions().isEmpty()) {
+				sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
+			}
+			
+			if (!isPassiveAbility) {
+				final ComponentBuilder bindShortcut = new ComponentBuilder();
+				for (int i = 1; i <= 9; i++) {
+					if (!bindShortcut.getParts().isEmpty()) {
+						bindShortcut.appendLegacy(color(this.bindSeperator));
+					}
+					
+					bindShortcut.appendLegacy(this.color(this.slotFormat.replace("{slot}", String.valueOf(i)).replace("{element_color}", color.toString())));
+					bindShortcut.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder().appendLegacy( ChatColor.WHITE + this.hoverBind.replace("{ability}", color + ability.getName() + ChatColor.WHITE).replace("{slot}", color + String.valueOf(i) + ChatColor.WHITE)).create())));
+					bindShortcut.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bending bind " + ability.getName() + " " + i));
 				}
-
-				sender.sendMessage(color + ability.getDescription());
-
-				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
-				}
-
-				final AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
-				sender.sendMessage(color + "- By: " + ChatColor.WHITE + abil.getAuthor());
-				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + abil.getVersion());
-			} else {
-				if (ability instanceof PassiveAbility) {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Passive)");
-				} else {
-					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()));
-				}
-
-				sender.sendMessage(color + ability.getDescription());
-
-				if (!ability.getInstructions().isEmpty()) {
-					sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
-				}
+				bindShortcut.appendLegacy(this.color(this.bindEnd));
+				sender.spigot().sendMessage(new ComponentBuilder().appendLegacy(this.color(this.bindStart)).append(bindShortcut.create()).create());
+			}
+			
+			if (isAddonAbility) {
+				final AddonAbility addonAbility = (AddonAbility) ability;
+				sender.sendMessage(color + "- By: " + ChatColor.WHITE + addonAbility.getAuthor());
+				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + addonAbility.getVersion());
 			}
 		} else if (Arrays.asList(Commands.airaliases).contains(arg)) {
 			sender.sendMessage(Element.AIR.getColor() + this.air.replace("/b display Air", Element.AIR.getSubColor() + "/b display Air" + Element.AIR.getColor()));
@@ -189,16 +204,16 @@ public class HelpCommand extends PKCommand {
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.help")) {
-			return new ArrayList<String>();
+		if (!args.isEmpty() || !sender.hasPermission("bending.command.help")) {
+			return new ArrayList<>();
 		}
 
-		final List<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<>();
 		for (final Element e : Element.getAllElements()) {
 			list.add(e.getName());
 		}
 
-		final List<String> abils = new ArrayList<String>();
+		final List<String> abils = new ArrayList<>();
 		for (final CoreAbility coreAbil : CoreAbility.getAbilities()) {
 			if (!(sender instanceof Player) && (!coreAbil.isHiddenAbility()) && coreAbil.isEnabled() && !abils.contains(coreAbil.getName())) {
 				abils.add(coreAbil.getName());
@@ -212,5 +227,9 @@ public class HelpCommand extends PKCommand {
 		Collections.sort(abils);
 		list.addAll(abils);
 		return list;
+	}
+	
+	private final String color(String toColor) {
+		return ChatColor.translateAlternateColorCodes('&', toColor);
 	}
 }
