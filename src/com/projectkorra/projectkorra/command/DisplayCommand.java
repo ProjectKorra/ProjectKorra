@@ -216,20 +216,20 @@ public class DisplayCommand extends PKCommand {
 		this.iterateAbilities(sender, abilities);
 
 		//Display the number of Passives and Combos
-		if (!allCombos.isEmpty()) {
+		if (!combos.isEmpty()) {
 			sender.sendMessage("");
-			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + "Combos (#)".replace("#", String.valueOf(allCombos.size())));
+			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + "Combos (#)".replace("#", String.valueOf(combos.size())));
 			messageBuilder.event(hoverEvent(mainColor + this.color(this.hoverType.replace("{type}", subColor + elementName + "Combos"))));
 			messageBuilder.event(clickEvent("/bending display " + elementName + "Combos"));
 			sender.spigot().sendMessage(messageBuilder.create());
 		}
 		
-		if (!allPassives.isEmpty()) {
-			if (allCombos.isEmpty()) {
+		if (!passives.isEmpty()) {
+			if (combos.isEmpty()) {
 				sender.sendMessage("");
 			}
 			
-			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + "Passives (#)".replace("#", String.valueOf(allPassives.size())));
+			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + "Passives (#)".replace("#", String.valueOf(passives.size())));
 			messageBuilder.event(hoverEvent(mainColor + this.color(this.hoverType.replace("{type}", subColor + elementName + "Passives"))));
 			messageBuilder.event(clickEvent("/bending display " + elementName + "Passives"));
 			sender.spigot().sendMessage(messageBuilder.create());
@@ -237,10 +237,10 @@ public class DisplayCommand extends PKCommand {
 
 		// Display the subelements and the number of their abilities
 		if (Element.getSubElements(element).length > 0) {
-			sender.sendMessage("");
 			final ComponentBuilder message = new ComponentBuilder();
 			for (final SubElement sub : Element.getSubElements(element)) {
-				if (sender.hasPermission("bending." + elementName.toLowerCase() + "." + sub.getName().toLowerCase())) {
+				final int count = this.filterAbilities(sender, this.getAbilities(sub)).size() + this.filterAbilities(sender, this.getCombos(sub)).size() + this.filterAbilities(sender, PassiveManager.getPassivesForElement(sub)).size();
+				if (sender.hasPermission("bending." + elementName.toLowerCase() + "." + sub.getName().toLowerCase()) && count > 0) {
 					final ChatColor color = sub.getColor();
 					final String name = sub.getName();
 					
@@ -248,12 +248,15 @@ public class DisplayCommand extends PKCommand {
 						message.appendLegacy(this.color(this.separator));
 					}
 					
-					message.appendLegacy(color + name + " (#)".replace("#", String.valueOf(this.getAbilities(sub).size() + this.getCombos(sub).size() + PassiveManager.getPassivesForElement(sub).size())));
+					message.appendLegacy(color + name + " (#)".replace("#", String.valueOf(count)));
 					message.event(hoverEvent(color + this.color(this.hoverType.replace("{type}", color + name))));
 					message.event(clickEvent("/bending display " + name));
 				}
 			}
-			sender.spigot().sendMessage(message.create());
+			if (!message.getParts().isEmpty()) {
+				sender.sendMessage("");
+				sender.spigot().sendMessage(message.create());
+			}
 		}
 	}
 
