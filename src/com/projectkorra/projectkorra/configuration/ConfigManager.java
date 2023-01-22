@@ -228,6 +228,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Display.NoCombosAccess", "You do not have access to any available {element} combos.");
 			config.addDefault("Commands.Display.NoPassivesAccess", "You do not have access to any available {element} passives.");
 			config.addDefault("Commands.Display.NoAbilitiesAccess", "You do not have access to any available {element} abilities.");
+			config.addDefault("Commands.Display.NoElementsAccess", "You do not have access to any available elements.");
 			config.addDefault("Commands.Display.InvalidArgument", "Not a valid argument.");
 			config.addDefault("Commands.Display.PlayersOnly", "This command is only usable by players.");
 			config.addDefault("Commands.Display.NoBinds", "You do not have any abilities bound.\nIf you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
