@@ -32,8 +32,8 @@ public class BendingBoard {
 		private int slot;
 		private Team team;
 		private String entry;
-		private Optional<BoardSlot> next = Optional.empty();
-		
+		private Optional<BoardSlot> next = Optional.empty(), prev = Optional.empty();
+
 		public BoardSlot(Scoreboard board, Objective obj, int slot) {
 			this.board = board;
 			this.obj = obj;
@@ -81,7 +81,11 @@ public class BendingBoard {
 		}
 		
 		private void setNext(BoardSlot slot) {
-			this.next = Optional.ofNullable(slot);
+			this.next = Optional.of(slot);
+		}
+
+		private void setPrev(BoardSlot slot) {
+			this.prev = Optional.of(slot);
 		}
 	}
 	
@@ -231,6 +235,8 @@ public class BendingBoard {
 	public void updateMisc(String name, ChatColor color, boolean cooldown) {
 		if (!cooldown) {
 			misc.computeIfPresent(name, (key, slot) -> {
+				slot.next.ifPresent(n -> n.prev = slot.prev);
+				slot.prev.ifPresent(p -> p.next = slot.next);
 				if (slot == miscTail) {
 					miscTail = null;
 				}
@@ -248,6 +254,7 @@ public class BendingBoard {
 			
 			if (miscTail != null) {
 				miscTail.setNext(slot);
+				slot.setPrev(miscTail);
 			}
 			
 			miscTail = slot;
