@@ -17,7 +17,9 @@ public class EarthDomeSelf extends EarthAbility implements ComboAbility {
 
 	public EarthDomeSelf(final Player player) {
 		super(player);
-
+		if (!this.bPlayer.canBendIgnoreBinds(this)) {
+			return;
+		}
 		new EarthDome(player);
 	}
 
