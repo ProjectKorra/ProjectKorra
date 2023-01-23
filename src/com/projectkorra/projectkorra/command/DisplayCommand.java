@@ -213,14 +213,14 @@ public class DisplayCommand extends PKCommand {
 			}
 			
 			if (!messageBuilder.getParts().isEmpty()) {
-				messageBuilder.appendLegacy(this.color(this.separator));
+				messageBuilder.appendLegacy(ChatUtil.color(this.separator));
 			}
 
 			final ChatColor color = coreAbil.getElement().getColor();
 			final ChatColor subColor = coreAbil.getElement() instanceof SubElement ? color : coreAbil.getElement().getSubColor();
 			
-			messageBuilder.appendLegacy(this.color(this.format.replace("{ability}", color + abilityName)));
-			messageBuilder.event(this.hoverEvent(color + this.color(this.hoverAbility.replace("{ability}", subColor + abilityName))));
+			messageBuilder.appendLegacy(ChatUtil.color(this.format.replace("{ability}", color + abilityName)));
+			messageBuilder.event(this.hoverEvent(color + ChatUtil.color(this.hoverAbility.replace("{ability}", subColor + abilityName))));
 			messageBuilder.event(this.clickEvent("/bending help " + coreAbil.getName()));
 		}
 		sender.spigot().sendMessage(messageBuilder.create());
@@ -257,7 +257,7 @@ public class DisplayCommand extends PKCommand {
 		if (!combos.isEmpty()) {
 			sender.sendMessage("");
 			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + "Combos (#)".replace("#", String.valueOf(combos.size())));
-			messageBuilder.event(this.hoverEvent(mainColor + this.color(this.hoverType.replace("{type}", subColor + elementName + "Combos"))));
+			messageBuilder.event(this.hoverEvent(mainColor + ChatUtil.color(this.hoverType.replace("{type}", subColor + elementName + "Combos"))));
 			messageBuilder.event(this.clickEvent("/bending display " + elementName + "Combos"));
 			sender.spigot().sendMessage(messageBuilder.create());
 		}
@@ -268,7 +268,7 @@ public class DisplayCommand extends PKCommand {
 			}
 			
 			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + "Passives (#)".replace("#", String.valueOf(passives.size())));
-			messageBuilder.event(this.hoverEvent(mainColor + this.color(this.hoverType.replace("{type}", subColor + elementName + "Passives"))));
+			messageBuilder.event(this.hoverEvent(mainColor + ChatUtil.color(this.hoverType.replace("{type}", subColor + elementName + "Passives"))));
 			messageBuilder.event(this.clickEvent("/bending display " + elementName + "Passives"));
 			sender.spigot().sendMessage(messageBuilder.create());
 		}
@@ -283,11 +283,11 @@ public class DisplayCommand extends PKCommand {
 					final String name = sub.getName();
 					
 					if (!message.getParts().isEmpty()) {
-						message.appendLegacy(this.color(this.separator));
+						message.appendLegacy(ChatUtil.color(this.separator));
 					}
 					
 					message.appendLegacy(color + name + " (#)".replace("#", String.valueOf(count)));
-					message.event(this.hoverEvent(color + this.color(this.hoverType.replace("{type}", color + name))));
+					message.event(this.hoverEvent(color + ChatUtil.color(this.hoverType.replace("{type}", color + name))));
 					message.event(this.clickEvent("/bending display " + name));
 				}
 			}
@@ -405,6 +405,10 @@ public class DisplayCommand extends PKCommand {
 		abbreviations.put("wp", "waterpassive");
 	}
 	
+	public void addAbbreviation(String abbreviated, String unAbbreviated) {
+		abbreviations.put(abbreviated, unAbbreviated);
+	}
+	
 	private HoverEvent hoverEvent(String string) {
 		return new HoverEvent(HoverEvent.Action.SHOW_TEXT, text(string));
 	}
@@ -414,10 +418,6 @@ public class DisplayCommand extends PKCommand {
 	}
 	
 	private Text text(String string) {
-		return new Text(new ComponentBuilder().appendLegacy(color(string)).create());
-	}
-	
-	private String color(String string) {
-		return ChatColor.translateAlternateColorCodes('&', string);
+		return new Text(new ComponentBuilder().appendLegacy(ChatUtil.color(string)).create());
 	}
 }
