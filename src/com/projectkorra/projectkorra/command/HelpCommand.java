@@ -132,7 +132,7 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
 			}
 			
-			if (!isPassiveAbility && (!(sender instanceof Player) || sender.hasPermission("bending.ability." + arg))) {
+			if (!isPassiveAbility && sender instanceof Player && sender.hasPermission("bending.ability." + arg)) {
 				final ComponentBuilder bindShortcut = new ComponentBuilder();
 				for (int i = 1; i <= 9; i++) {
 					if (!bindShortcut.getParts().isEmpty()) {
