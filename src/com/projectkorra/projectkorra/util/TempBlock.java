@@ -1,7 +1,11 @@
 package com.projectkorra.projectkorra.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
@@ -9,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +51,9 @@ public class TempBlock {
 	private boolean inRevertQueue;
 	private boolean reverted;
 	private Runnable revertTask = null;
-	private Optional<Ability> ability = Optional.empty(); // If we want this TempBlock to have an assigned ability created from it
+	private Optional<CoreAbility> ability = Optional.empty(); // If we want this TempBlock to have an assigned ability created from it
+	private boolean isBendableSource = false;
+	private boolean suffocate = true;
 
 	public TempBlock(final Block block, final Material newtype) {
 		this(block, newtype.createBlockData(), 0);
@@ -64,12 +71,12 @@ public class TempBlock {
 		this(block, newData, 0);
 	}
 	
-	public TempBlock(final Block block, final BlockData newData, final long revertTime, final Ability ability) {
+	public TempBlock(final Block block, final BlockData newData, final long revertTime, final CoreAbility ability) {
 		this(block, newData, revertTime);
 		this.ability = Optional.of(ability);
 	}
 	
-	public TempBlock(final Block block, final BlockData newData, final Ability ability) {
+	public TempBlock(final Block block, final BlockData newData, final CoreAbility ability) {
 		this(block, newData, 0, ability);
 	}
 
@@ -211,7 +218,10 @@ public class TempBlock {
 	 */
 	public static void revertBlock(final Block block, final Material defaulttype) {
 		if (instances_.containsKey(block)) {
-			instances_.get(block).forEach(TempBlock::revertBlock);
+			//We clone the list first, then revert, then remove them all. This is so we get no concurrent modification exceptions
+			List<TempBlock> tempBlocks = new ArrayList<>(instances_.get(block));
+			tempBlocks.forEach(TempBlock::remove);
+			tempBlocks.forEach(TempBlock::trueRevertBlock);
 		} else {
 			if ((defaulttype == Material.LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block, true)) {
 				final BlockData data = Material.LAVA.createBlockData();
@@ -251,7 +261,7 @@ public class TempBlock {
 		return this.state;
 	}
 	
-	public Optional<Ability> getAbility() {
+	public Optional<CoreAbility> getAbility() {
 		return this.ability;
 	}
 
@@ -286,24 +296,31 @@ public class TempBlock {
 	public void revertBlock() {
 		if (!this.reverted) {
 			remove(this);
-			this.reverted = true;
-			if (instances_.containsKey(this.block)) {
-				PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> {
-					TempBlock last = instances_.get(this.block).getLast();
-					this.block.setBlockData(last.newData); //Set the block to the next in line TempBlock
-				});
-			} else { //Set to the original blockstate
-				PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> revertState());
-			}
+			trueRevertBlock();
+		}
+	}
 
-			REVERT_QUEUE.remove(this);
-			if (this.revertTask != null) {
-				this.revertTask.run();
-			}
+	/**
+	 * This is used to revert the block without removing the instances from memory. Used when multiple tempblocks are to be reverted at once
+	 */
+	private void trueRevertBlock() {
+		this.reverted = true;
+		if (instances_.containsKey(this.block)) {
+			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> {
+				TempBlock last = instances_.get(this.block).getLast();
+				this.block.setBlockData(last.newData); //Set the block to the next in line TempBlock
+			});
+		} else { //Set to the original blockstate
+			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> revertState());
+		}
 
-			for (TempBlock attached : attachedTempBlocks) {
-				attached.revertBlock();
-			}
+		REVERT_QUEUE.remove(this);
+		if (this.revertTask != null) {
+			this.revertTask.run();
+		}
+
+		for (TempBlock attached : attachedTempBlocks) {
+			attached.revertBlock();
 		}
 	}
 
@@ -342,6 +359,38 @@ public class TempBlock {
 	 */
 	public Set<TempBlock> getAttachedTempBlocks() {
 		return attachedTempBlocks;
+	}
+
+	/**
+	 * @return Can this TempBlock be used as a source block
+	 */
+	public boolean isBendableSource() {
+		return isBendableSource;
+	}
+
+	/**
+	 * Set if the TempBlock can be used as a source block
+	 * @param bool If it can be used as a source block
+	 */
+	public TempBlock setBendableSource(boolean bool) {
+		this.isBendableSource = bool;
+		return this;
+	}
+
+	/**
+	 * @return True if the block will suffocate entities inside it
+	 */
+	public boolean canSuffocate() {
+		return suffocate;
+	}
+
+	/**
+	 * Set if the TempBlock will suffocate entities inside of it
+	 * @param suffocate True if they will suffocate, false if they won't
+	 */
+	public TempBlock setCanSuffocate(boolean suffocate) {
+		this.suffocate = suffocate;
+		return this;
 	}
 
 	public void setState(final BlockState newstate) {
@@ -385,6 +434,11 @@ public class TempBlock {
 	 */
 	public boolean isReverted() {
 		return reverted;
+	}
+
+	public TempBlock setAbility(CoreAbility ability) {
+		this.ability = Optional.of(ability);
+		return this;
 	}
 
 	@Deprecated

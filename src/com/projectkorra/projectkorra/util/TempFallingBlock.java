@@ -96,7 +96,11 @@ public class TempFallingBlock {
     }
 
     public Material getMaterial() {
-        return fallingblock.getMaterial();
+        return fallingblock.getBlockData().getMaterial();
+    }
+
+    public BlockData getMaterialData() {
+        return fallingblock.getBlockData();
     }
 
     public BlockData getData() {
