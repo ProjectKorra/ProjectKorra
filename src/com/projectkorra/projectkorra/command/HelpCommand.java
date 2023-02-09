@@ -19,7 +19,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
@@ -30,12 +32,13 @@ public class HelpCommand extends PKCommand {
 	private final String optional;
 	private final String properUsage;
 	private final String learnMore;
-	private final String air;
+	/*private final String air;
 	private final String water;
 	private final String earth;
 	private final String fire;
 	private final String chi;
-	private final String avatar;
+	private final String avatar;*/
+	private final Map<Element, String> elementHelp = new HashMap<>();
 	private final String invalidTopic;
 	private final String usage;
 	private final String slotFormat;
@@ -51,12 +54,6 @@ public class HelpCommand extends PKCommand {
 		this.optional = ConfigManager.languageConfig.get().getString("Commands.Help.Optional");
 		this.properUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ProperUsage");
 		this.learnMore = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.LearnMore");
-		this.air = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Air");
-		this.water = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Water");
-		this.earth = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Earth");
-		this.fire = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Fire");
-		this.chi = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Chi");
-		this.avatar = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Avatar");
 		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
 		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
 		this.slotFormat = ConfigManager.languageConfig.get().getString("Commands.Help.SlotFormat");
@@ -64,6 +61,14 @@ public class HelpCommand extends PKCommand {
 		this.bindSeperator = ConfigManager.languageConfig.get().getString("Commands.Help.BindSeparator");
 		this.bindEnd = ConfigManager.languageConfig.get().getString("Commands.Help.BindEnd");
 		this.hoverBind = ConfigManager.languageConfig.get().getString("Commands.Help.HoverBind");
+
+		elementHelp.clear();
+
+		for (Element e : Element.getAllElements()) {
+			if (ConfigManager.languageConfig.get().contains("Commands.Help.Elements." + e.getName())) {
+				elementHelp.put(e, ChatUtil.multiline(ChatUtil.color(ConfigManager.languageConfig.get().getString("Commands.Help.Elements." + e.getName()))));
+			}
+		}
 	}
 
 	@Override
@@ -134,17 +139,23 @@ public class HelpCommand extends PKCommand {
 			
 			if (!isPassiveAbility && sender instanceof Player && sender.hasPermission("bending.ability." + arg)) {
 				final ComponentBuilder bindShortcut = new ComponentBuilder();
+				bindShortcut.appendLegacy(ChatUtil.color(this.bindStart));
+				bindShortcut.append("", ComponentBuilder.FormatRetention.NONE);
+
 				for (int i = 1; i <= 9; i++) {
-					if (!bindShortcut.getParts().isEmpty()) {
-						bindShortcut.appendLegacy(color(this.bindSeperator));
+					if (i > 1) {
+						bindShortcut.appendLegacy(ChatUtil.color(this.bindSeperator));
+						bindShortcut.append("", ComponentBuilder.FormatRetention.NONE);
 					}
 					
-					bindShortcut.appendLegacy(this.color(this.slotFormat.replace("{slot}", String.valueOf(i)).replace("{element_color}", color.toString())));
+					bindShortcut.appendLegacy(ChatUtil.color(this.slotFormat.replace("{slot}", String.valueOf(i)).replace("{element_color}", color.toString())));
 					bindShortcut.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder().appendLegacy( ChatColor.WHITE + this.hoverBind.replace("{ability}", color + ability.getName() + ChatColor.WHITE).replace("{slot}", color + String.valueOf(i) + ChatColor.WHITE)).create())));
 					bindShortcut.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bending bind " + ability.getName() + " " + i));
+					bindShortcut.append("", ComponentBuilder.FormatRetention.NONE);
 				}
-				bindShortcut.appendLegacy(this.color(this.bindEnd));
-				sender.spigot().sendMessage(new ComponentBuilder().appendLegacy(this.color(this.bindStart)).append(bindShortcut.create()).create());
+
+				bindShortcut.appendLegacy(ChatUtil.color(this.bindEnd));
+				sender.spigot().sendMessage(bindShortcut.create());
 			}
 			
 			if (isAddonAbility) {
@@ -153,23 +164,20 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + addonAbility.getVersion());
 			}
 		} else if (Arrays.asList(Commands.airaliases).contains(arg)) {
-			sender.sendMessage(Element.AIR.getColor() + this.air.replace("/b display Air", Element.AIR.getSubColor() + "/b display Air" + Element.AIR.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.AIR.getColor() + this.elementHelp.get(Element.AIR).replaceAll("(?i)/b display air", Element.AIR.getSubColor() + "/b display air" + Element.AIR.getColor()));
 		} else if (Arrays.asList(Commands.wateraliases).contains(arg)) {
-			sender.sendMessage(Element.WATER.getColor() + this.water.replace("/b display Water", Element.WATER.getSubColor() + "/b display Water" + Element.WATER.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.WATER.getColor() + this.elementHelp.get(Element.WATER).replaceAll("(?i)/b display water", Element.WATER.getSubColor() + "/b display water" + Element.WATER.getColor()));
 		} else if (Arrays.asList(Commands.earthaliases).contains(arg)) {
-			sender.sendMessage(Element.EARTH.getColor() + this.earth.replace("/b display Earth", Element.EARTH.getSubColor() + "/b display Earth" + Element.EARTH.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.EARTH.getColor() + this.elementHelp.get(Element.EARTH).replaceAll("(?i)/b display earth", Element.EARTH.getSubColor() + "/b display earth" + Element.EARTH.getColor()));
 		} else if (Arrays.asList(Commands.firealiases).contains(arg)) {
-			sender.sendMessage(Element.FIRE.getColor() + this.fire.replace("/b display Fire", Element.FIRE.getSubColor() + "/b display Fire" + Element.FIRE.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.FIRE.getColor() + this.elementHelp.get(Element.FIRE).replaceAll("(?i)/b display fire", Element.FIRE.getSubColor() + "/b display fire" + Element.FIRE.getColor()));
 		} else if (Arrays.asList(Commands.chialiases).contains(arg)) {
-			sender.sendMessage(Element.CHI.getColor() + this.chi.replace("/b display Chi", Element.CHI.getSubColor() + "/b display Chi" + Element.CHI.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.CHI.getColor() + this.elementHelp.get(Element.CHI).replaceAll("(?i)/b display chi", Element.CHI.getSubColor() + "/b display chi" + Element.CHI.getColor()));
 		} else if (Arrays.asList(Commands.avataraliases).contains(arg)) {
-			sender.sendMessage(Element.AVATAR.getColor() + this.avatar.replace("/b display Avatar", Element.AVATAR.getSubColor() + "/b display Avatar" + Element.AVATAR.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + this.learnMore + ChatColor.DARK_AQUA + "http://projectkorra.com/");
+			sender.sendMessage(Element.AVATAR.getColor() + this.elementHelp.get(Element.AVATAR).replaceAll("(?i)/b display avatar", Element.AVATAR.getSubColor() + "/b display avatar" + Element.AVATAR.getColor()));
+		} else if (Element.getElement(arg) != null && elementHelp.containsKey(Element.getElement(arg))) {
+			Element element = Element.getElement(arg);
+			sender.sendMessage(element.getColor() + this.elementHelp.get(element).replaceAll("(?i)/b display " + element.getName().toLowerCase(), element.getSubColor() + "/b display " + element.getName().toLowerCase() + element.getColor()));
 		} else {
 			// combos - handled differently because they're stored in CamelCase in ComboManager.
 			for (final String combo : ComboManager.getDescriptions().keySet()) {
@@ -227,9 +235,5 @@ public class HelpCommand extends PKCommand {
 		Collections.sort(abils);
 		list.addAll(abils);
 		return list;
-	}
-	
-	private final String color(String toColor) {
-		return ChatColor.translateAlternateColorCodes('&', toColor);
 	}
 }

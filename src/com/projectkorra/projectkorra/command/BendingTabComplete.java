@@ -20,12 +20,12 @@ public class BendingTabComplete implements TabCompleter {
 	public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
 		if (args.length == 0 || args.length == 1) {
 			return getPossibleCompletions(args, getCommandsForUser(sender));
-		} else if (args.length > 1) {
+		} else {
 			for (final PKCommand cmd : PKCommand.instances.values()) {
 				if (Arrays.asList(cmd.getAliases()).contains(args[0].toLowerCase()) && sender.hasPermission("bending.command." + cmd.getName())) {
-					final List<String> newargs = new ArrayList<String>();
+					final List<String> newargs = new ArrayList<>();
 					for (int i = 1; i < args.length - 1; i++) {
-						if (!(args[i].equals("") || args[i].equals(" ")) && args.length >= 1) {
+						if (!(args[i].equals("") || args[i].equals(" "))) {
 							newargs.add(args[i]);
 						}
 					}
@@ -34,7 +34,7 @@ public class BendingTabComplete implements TabCompleter {
 			}
 		}
 
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -62,10 +62,6 @@ public class BendingTabComplete implements TabCompleter {
 		return listOfPossibleCompletions;
 	}
 
-	public static List<String> getPossibleCompletions(final String[] args, final String[] possibilitiesOfCompletion) {
-		return getPossibleCompletions(args, Arrays.asList(possibilitiesOfCompletion));
-	}
-
 	/** Returns a list of subcommands the sender can use. */
 	public static List<String> getCommandsForUser(final CommandSender sender) {
 		final List<String> list = new ArrayList<String>();
@@ -77,5 +73,4 @@ public class BendingTabComplete implements TabCompleter {
 		Collections.sort(list);
 		return list;
 	}
-
 }
