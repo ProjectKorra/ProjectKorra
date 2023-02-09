@@ -31,13 +31,6 @@ public class HelpCommand extends PKCommand {
 	private final String required;
 	private final String optional;
 	private final String properUsage;
-	private final String learnMore;
-	/*private final String air;
-	private final String water;
-	private final String earth;
-	private final String fire;
-	private final String chi;
-	private final String avatar;*/
 	private final Map<Element, String> elementHelp = new HashMap<>();
 	private final String invalidTopic;
 	private final String usage;
@@ -53,7 +46,6 @@ public class HelpCommand extends PKCommand {
 		this.required = ConfigManager.languageConfig.get().getString("Commands.Help.Required");
 		this.optional = ConfigManager.languageConfig.get().getString("Commands.Help.Optional");
 		this.properUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ProperUsage");
-		this.learnMore = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.LearnMore");
 		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
 		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
 		this.slotFormat = ConfigManager.languageConfig.get().getString("Commands.Help.SlotFormat");
