@@ -215,10 +215,10 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more at our website! ");
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
-			config.addDefault("Commands.Help.BindStart", "Bind: &7◂ ");
-			config.addDefault("Commands.Help.SlotFormat", "{element_color}{slot}");
-			config.addDefault("Commands.Help.BindSeparator", " &7| ");
-			config.addDefault("Commands.Help.BindEnd", " &7▸");
+			config.addDefault("Commands.Help.BindStart", "Bind: &7&l◀");
+			config.addDefault("Commands.Help.SlotFormat", " {element_color}{slot} ");
+			config.addDefault("Commands.Help.BindSeparator", "&7|");
+			config.addDefault("Commands.Help.BindEnd", "&7&l▶");
 			config.addDefault("Commands.Help.HoverBind", "Click to bind {ability} to slot {slot}!");
 
 			config.addDefault("Commands.Display.Description", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.");
@@ -233,7 +233,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Display.PlayersOnly", "This command is only usable by players.");
 			config.addDefault("Commands.Display.NoBinds", "You do not have any abilities bound.\nIf you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
 			config.addDefault("Commands.Display.Format", "{ability}");
-			config.addDefault("Commands.Display.Separator", "\n");
+			config.addDefault("Commands.Display.Separator", "\\n");
 			config.addDefault("Commands.Display.HoverType", "Click to display {type}.");
 			config.addDefault("Commands.Display.HoverAbility", "Click to view how to use {ability}.");
 

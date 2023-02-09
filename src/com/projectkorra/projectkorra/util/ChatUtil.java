@@ -72,14 +72,17 @@ public class ChatUtil {
      */
     public static String multiline(String string) {
         string = color(string);
-        char lastColor = 'f';
+        Character lastColor = null;
         String hex = null;
         List<String> l = new ArrayList<>();
         for (String line : string.split("\n")) {
-            String prefix = "\u00A7" + lastColor; //Make the prefix the current color
-            if (hex != null) prefix += hex; //If the current color is a hex code, add on the RGB as well
+            String prefix = "";
+            if (lastColor != null) {
+                prefix = "\u00A7" + lastColor;  //Make the prefix the current color
+                if (hex != null) prefix += hex; //If the current color is a hex code, add on the RGB as well
 
-            if (l.size() == 0 && string.charAt(0) == '\u00A7') prefix = ""; //Don't bother adding a pointless color code
+                if (l.size() == 0 && string.charAt(0) == '\u00A7') prefix = ""; //Don't bother adding a pointless color code
+            }
 
             l.add(prefix + line);
             if (line.contains("\u00A7")) {
