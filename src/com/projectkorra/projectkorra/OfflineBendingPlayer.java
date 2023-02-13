@@ -69,7 +69,7 @@ public class OfflineBendingPlayer {
 
     private int currentSlot;
     private long lastAccessed;
-    private long uncacheTime = 30_000;
+    private long uncacheTime = 30_000; //This is the default time to unload after when the data is accessed by code, NOT when logging out
     private BukkitTask uncache;
 
     public OfflineBendingPlayer(@NotNull OfflinePlayer player) {
