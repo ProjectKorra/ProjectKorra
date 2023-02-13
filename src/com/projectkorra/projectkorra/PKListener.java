@@ -1044,6 +1044,13 @@ public class PKListener implements Listener {
 					}
 				}
 			}
+
+			PlayerSwingEvent swingEvent = new PlayerSwingEvent((Player)e.getDamager()); //Allow addons to handle a swing without
+			Bukkit.getPluginManager().callEvent(swingEvent);                       		//needing to repeat the checks above themselves
+			if (swingEvent.isCancelled()) {
+				e.setCancelled(true);
+				return;
+			}
 		}
 	}
 
@@ -1636,7 +1643,7 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerSwing(final PlayerInteractEvent event) {
+	public void onPlayerInteract(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 
 		if (PLAYER_DROPPED_ITEM.contains(player)) {
@@ -1697,6 +1704,12 @@ public class PKListener implements Listener {
 
 		BlockSource.update(player, ClickType.LEFT_CLICK);
 		AirScooter.check(player);
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerSwingEvent event) {
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		String abil = bPlayer.getBoundAbilityName();
 		final CoreAbility coreAbil = bPlayer.getBoundAbility();
