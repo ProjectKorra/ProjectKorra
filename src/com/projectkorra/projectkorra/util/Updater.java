@@ -132,10 +132,28 @@ public class Updater {
 		}
 		final String numericUpdateVersion = updateVersion.split(" ")[0]; // Only take the left half if there is words in it too.
 		final String numericCurrentVersion = this.currentVersion.split(" ")[0];
-		final int currentNumber = Integer.parseInt(numericCurrentVersion.replaceAll("[^\\d]", "")); // Replace points So version is just 186 instead of 1.8.6, etc.
-		final int updateNumber = Integer.parseInt(numericUpdateVersion.replaceAll("[^\\d]", ""));
 
-		return currentNumber < updateNumber || this.currentVersion.hashCode() != updateVersion.hashCode(); // If the numeric versions are the same, check if the version string is different.
+		final int currentNumber = getNumericalVersion(numericCurrentVersion);
+		final int updateNumber = getNumericalVersion(numericUpdateVersion);
+
+		return currentNumber < updateNumber || (currentNumber == updateNumber && this.currentVersion.hashCode() != updateVersion.hashCode()); // If the numeric versions are the same, check if the version string is different.
+	}
+
+	private int getNumericalVersion(String string) {
+		String[] split = string.split("\\.", 3);
+
+		int major = Integer.parseInt(split[0]);
+		int minor = 0;
+		int fix = 0;
+
+		if (split.length > 1) {
+			minor = Integer.parseInt(split[1]);
+
+			if (split.length > 2) {
+				fix = Integer.parseInt(split[2]);
+			}
+		}
+		return major * 1000 + minor * 10 + fix; //1.9.3 -> 1093, 1.10.2 -> 1102
 	}
 
 	/**

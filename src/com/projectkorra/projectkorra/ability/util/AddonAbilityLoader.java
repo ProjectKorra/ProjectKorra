@@ -19,7 +19,6 @@ import sun.reflect.ReflectionFactory;
 import org.bukkit.plugin.Plugin;
 
 import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-import com.projectkorra.projectkorra.util.FileExtensionFilter;
 
 public class AddonAbilityLoader<T> {
 
@@ -37,7 +36,7 @@ public class AddonAbilityLoader<T> {
 			return;
 		}
 
-		for (final File f : directory.listFiles(new FileExtensionFilter(".jar"))) {
+		for (final File f : directory.listFiles((file) -> file.getName().endsWith(".jar"))) {
 			this.files.add(f);
 		}
 
