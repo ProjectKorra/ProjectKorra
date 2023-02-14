@@ -362,16 +362,20 @@ public class TempBlock {
 	}
 
 	/**
+	 * <b>Not yet implemented. For future use.</b>
 	 * @return Can this TempBlock be used as a source block
 	 */
+	@Experimental
 	public boolean isBendableSource() {
 		return isBendableSource;
 	}
 
 	/**
+	 * <b>Not yet implemented. For future use.</b>
 	 * Set if the TempBlock can be used as a source block
 	 * @param bool If it can be used as a source block
 	 */
+	@Experimental
 	public TempBlock setBendableSource(boolean bool) {
 		this.isBendableSource = bool;
 		return this;
