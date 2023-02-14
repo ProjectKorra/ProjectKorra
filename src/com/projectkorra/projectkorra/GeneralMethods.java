@@ -1803,12 +1803,6 @@ public class GeneralMethods {
 	}
 
 	public static void stopBending() {
-		for (final CoreAbility ability : CoreAbility.getAbilities()) {
-			if (ability instanceof AddonAbility) {
-				((AddonAbility) ability).stop();
-			}
-		}
-
 		CoreAbility.removeAll();
 		EarthAbility.stopBending();
 		WaterAbility.stopBending();

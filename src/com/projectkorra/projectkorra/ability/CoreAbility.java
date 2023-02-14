@@ -304,14 +304,23 @@ public abstract class CoreAbility implements Ability {
 	public static void removeAll() {
 		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (final CoreAbility abil : setAbils) {
-				abil.remove();
+				try {
+					abil.remove();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
 		for (final CoreAbility coreAbility : ABILITIES_BY_NAME.values()) {
 			if (coreAbility instanceof AddonAbility) {
 				final AddonAbility addon = (AddonAbility) coreAbility;
-				addon.stop();
+				try {
+					addon.stop();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
 		}
 	}
