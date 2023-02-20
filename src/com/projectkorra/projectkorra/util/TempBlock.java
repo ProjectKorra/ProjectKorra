@@ -273,6 +273,14 @@ public class TempBlock {
 		this.revertTask = task;
 	}
 
+	/**
+	 * Use {@link #setRevertTask(Runnable)} instead
+	 */
+	@Deprecated
+	public void setRevertTask(final RevertTask task) {
+		this.revertTask = task;
+	}
+
 	public long getRevertTime() {
 		return this.revertTime;
 	}
