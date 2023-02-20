@@ -32,11 +32,17 @@ import java.util.function.Predicate;
 
 import com.google.common.io.Files;
 import com.google.common.reflect.ClassPath;
+import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
+import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
 import com.projectkorra.projectkorra.command.PKCommand;
+import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
+import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
@@ -1401,6 +1407,17 @@ public class GeneralMethods {
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
 		EarthTunnel.clearBendableMaterials();
+
+		Bukkit.getScheduler().cancelTasks(ProjectKorra.plugin);
+		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new BendingManager(), 0, 1);
+		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new AirbendingManager(ProjectKorra.plugin), 0, 1);
+		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new WaterbendingManager(ProjectKorra.plugin), 0, 1);
+		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new EarthbendingManager(ProjectKorra.plugin), 0, 1);
+		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
+		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
+		ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
+		TempBlock.startReversion();
+
 		EarthTunnel.setupBendableMaterials();
 		Bloodbending.loadBloodlessFromConfig();
 		Preset.loadExternalPresets();

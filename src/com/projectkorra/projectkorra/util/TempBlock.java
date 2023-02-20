@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,7 +35,7 @@ import io.papermc.lib.PaperLib;
 
 public class TempBlock {
 
-	private static final Map<Block, LinkedList<TempBlock>> instances_ = new ConcurrentHashMap<>();
+	private static final Map<Block, LinkedList<TempBlock>> instances_ = new HashMap<>();
 	/**
 	 * Marked for removal. Doesn't do anything right now
 	 */
@@ -97,12 +98,9 @@ public class TempBlock {
 
 		if (instances_.containsKey(block)) {
 			final TempBlock temp = instances_.get(block).getFirst();
-			if (!newData.equals(temp.block.getBlockData())) {
-				temp.block.setBlockData(newData, applyPhysics(newData.getMaterial()));
-				temp.newData = newData;
-			}
 			this.state = temp.state; //Set the original blockstate of the tempblock
 			put(block, this);
+			block.setBlockData(newData, applyPhysics(newData.getMaterial()));
 		} else {
 			this.state = block.getState();
 
@@ -175,7 +173,7 @@ public class TempBlock {
 	 * Remove and revert all TempBlocks on the server. Done at server shutdown or PK reload.
 	 */
 	public static void removeAll() {
-		for (final Block block : instances_.keySet()) {
+		for (final Block block : new HashSet<>(instances_.keySet())) {
 			revertBlock(block, Material.AIR);
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
@@ -218,10 +216,12 @@ public class TempBlock {
 	 */
 	public static void revertBlock(final Block block, final Material defaulttype) {
 		if (instances_.containsKey(block)) {
-			//We clone the list first, then revert, then remove them all. This is so we get no concurrent modification exceptions
+			//We clone the list first, then remove before reverting. The tempblock list is cloned so we get no concurrent modification exceptions
 			List<TempBlock> tempBlocks = new ArrayList<>(instances_.get(block));
-			tempBlocks.forEach(TempBlock::remove);
-			tempBlocks.forEach(TempBlock::trueRevertBlock);
+			tempBlocks.forEach((b) -> {
+				TempBlock.remove(b);
+				b.trueRevertBlock();
+			});
 		} else {
 			if ((defaulttype == Material.LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block, true)) {
 				final BlockData data = Material.LAVA.createBlockData();
@@ -285,6 +285,10 @@ public class TempBlock {
 		return this.revertTime;
 	}
 
+	/**
+	 * Make this TempBlock revert automatically after the specified amount of time
+	 * @param revertTime The time it takes to revert. In milliseconds.
+	 */
 	public void setRevertTime(final long revertTime) {
 		if (revertTime <= 0 || state instanceof Container) {
 			return;
@@ -295,7 +299,9 @@ public class TempBlock {
 		}
 		this.inRevertQueue = true;
 		this.revertTime = revertTime + System.currentTimeMillis();
-		REVERT_QUEUE.add(this);
+		if (!REVERT_QUEUE.contains(this)) {
+			REVERT_QUEUE.add(this);
+		}
 	}
 
 	/**
@@ -344,7 +350,7 @@ public class TempBlock {
 		} else {
 			//Previous Material was SNOW
 			if (this.state.getType() == Material.SNOW){
-				updateSnowableBlock(block.getRelative(BlockFace.DOWN),true);
+				updateSnowableBlock(block.getRelative(BlockFace.DOWN), true);
 			}
 
 			//Revert the original blockstate
@@ -419,6 +425,8 @@ public class TempBlock {
 	}
 
 	public void setType(final BlockData data) {
+		if (isReverted())
+			return;
 		this.newData = data;
 		this.block.setBlockData(data, applyPhysics(data.getMaterial()));
 	}

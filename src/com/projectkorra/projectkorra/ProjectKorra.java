@@ -44,7 +44,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
 	public Updater updater;
-	private BukkitTask revertChecker;
+	BukkitTask revertChecker;
 	private static TimingManager timingManager;
 	private static PlaceholderAPIHook papiHook;
 

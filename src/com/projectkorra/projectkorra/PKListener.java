@@ -551,7 +551,7 @@ public class PKListener implements Listener {
 				TempBlock.get(block).getAbility().ifPresent(ability -> new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true));
 				event.setCancelled(true);
 				FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
-			} else if (!TempBlock.get(block).canSuffocate()) {
+			} else if (!TempBlock.get(block).canSuffocate() && event.getCause() == DamageCause.SUFFOCATION) {
 				event.setCancelled(true);
 			}
 		}
