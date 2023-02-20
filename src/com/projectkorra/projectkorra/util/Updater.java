@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -130,13 +131,18 @@ public class Updater {
 		if (updateVersion == null) {
 			return false;
 		}
-		final String numericUpdateVersion = updateVersion.split(" ")[0]; // Only take the left half if there is words in it too.
-		final String numericCurrentVersion = this.currentVersion.split(" ")[0];
+		final String numericUpdateVersion = updateVersion.split("[ -(|]")[0].replaceAll("[A-Za-z]", ""); // Only take the left half if there is words in it too.
+		final String numericCurrentVersion = this.currentVersion.split("[ -(|]")[0].replaceAll("[A-Za-z]", "");
 
-		final int currentNumber = getNumericalVersion(numericCurrentVersion);
-		final int updateNumber = getNumericalVersion(numericUpdateVersion);
+		try {
+			final int currentNumber = getNumericalVersion(numericCurrentVersion);
+			final int updateNumber = getNumericalVersion(numericUpdateVersion);
 
-		return currentNumber < updateNumber || (currentNumber == updateNumber && this.currentVersion.hashCode() != updateVersion.hashCode()); // If the numeric versions are the same, check if the version string is different.
+			return currentNumber < updateNumber || (currentNumber == updateNumber && this.currentVersion.hashCode() != updateVersion.hashCode()); // If the numeric versions are the same, check if the version string is different.
+
+		} catch (NumberFormatException e) { //Some version can't be parsed
+			return !currentVersion.equals(updateVersion); //If they are different, say there is an update. Best we can do.
+		}
 	}
 
 	private int getNumericalVersion(String string) {

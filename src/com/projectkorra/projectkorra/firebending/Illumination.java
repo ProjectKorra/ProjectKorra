@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -91,7 +92,13 @@ public class Illumination extends FireAbility {
 			return;
 		}
 
+		this.oldLevel = player.getLocation().getBlock().getLightLevel();
 		if (this.oldLevel > this.lightThreshold) {
+			this.remove();
+			return;
+		}
+
+		if (WaterAbility.isWater(this.player.getEyeLocation().getBlock())) {
 			this.remove();
 			return;
 		}

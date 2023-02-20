@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.configuration;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -48,7 +49,7 @@ public class ConfigManager {
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
-			config.addDefault("Chat.Enable", true);
+			config.addDefault("Chat.Enable", !hasChatPlugin());
 			config.addDefault("Chat.Format", "<name>: <message>");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
 			config.addDefault("Chat.Colors.Air", "GRAY");
@@ -1766,5 +1767,11 @@ public class ConfigManager {
 
 	public static FileConfiguration getConfig() {
 		return ConfigManager.defaultConfig.get();
+	}
+
+	private static boolean hasChatPlugin() {
+		List<String> plugins = Arrays.asList("EssentialsChat", "VentureChat", "LPC", "ChatManager", "ChatControl", "DeluxeChat");
+
+		return Arrays.stream(Bukkit.getPluginManager().getPlugins()).anyMatch(pl -> plugins.contains(pl.getName()));
 	}
 }
