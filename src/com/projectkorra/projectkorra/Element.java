@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.Experimental;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -72,6 +74,7 @@ public class Element {
 	protected final Plugin plugin;
 	protected ChatColor color;
 	protected ChatColor subColor;
+	protected boolean countsTowardsAvatar = true;
 
 	/**
 	 * To be used when creating a new Element. Do not use for comparing
@@ -105,9 +108,25 @@ public class Element {
 	 * @param plugin The plugin that is adding the element.
 	 */
 	public Element(final String name, final ElementType type, final Plugin plugin) {
+		this(name, type, plugin, true);
+	}
+
+	/**
+	 * To be used when creating a new Element. Do not use for comparing
+	 * Elements.
+	 *
+	 * @param name Name of the new Element.
+	 * @param type ElementType specifies if its a regular element or chi style
+	 *            element.
+	 * @param plugin The plugin that is adding the element.
+	 * @param countTowardsAvatar If this element is used when calculating if a player has avatar
+	 */
+	@Experimental
+	public Element(final String name, final ElementType type, final Plugin plugin, boolean countTowardsAvatar) {
 		this.name = name;
 		this.type = type;
 		this.plugin = plugin;
+		this.countsTowardsAvatar = countTowardsAvatar;
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
 	}
 
@@ -116,7 +135,7 @@ public class Element {
 		if (this instanceof SubElement) {
 			name_ = ((SubElement) this).parentElement.name;
 		}
-		return this.getColor() + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_)) + " ";
+		return this.getColor() + ChatUtil.color(ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_)) + " ";
 	}
 
 	public ChatColor getColor() {
@@ -180,6 +199,18 @@ public class Element {
 			return ElementType.NO_SUFFIX;
 		}
 		return this.type;
+	}
+
+	/**
+	 * Does this element count towards avatar? If a player has two or more elements
+	 * that have this as true, they will be considered an avatar.
+	 * @return True if the element should count towards being an avatar. E.g. fire,
+	 * water, earth, air
+	 */
+	@Experimental
+	public boolean doesCountTowardsAvatar() {
+		if (this instanceof SubElement) return false;
+		return countsTowardsAvatar;
 	}
 
 	@Override
@@ -385,6 +416,7 @@ public class Element {
 		}
 	}
 
+	@Experimental
 	public static class MultiSubElement extends SubElement {
 
 		private Element[] parentElements;
