@@ -988,6 +988,9 @@ public class PKListener implements Listener {
 			Suffocate.remove((Player) entity);
 		}
 
+		//Stop DamageHandler causing this event to fire infinitely
+		if (entity instanceof LivingEntity && DamageHandler.isReceivingDamage((LivingEntity) e.getEntity())) return;
+
 		if (source instanceof Player) { // This is the player hitting someone.
 			final Player sourcePlayer = (Player) source;
 			final BendingPlayer sourceBPlayer = BendingPlayer.getBendingPlayer(sourcePlayer);
@@ -1037,11 +1040,13 @@ public class PKListener implements Listener {
 				}
 			}
 
-			PlayerSwingEvent swingEvent = new PlayerSwingEvent((Player)e.getDamager()); //Allow addons to handle a swing without
-			Bukkit.getPluginManager().callEvent(swingEvent);                       		//needing to repeat the checks above themselves
-			if (swingEvent.isCancelled()) {
-				e.setCancelled(true);
-				return;
+			if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+				PlayerSwingEvent swingEvent = new PlayerSwingEvent((Player)e.getDamager()); //Allow addons to handle a swing without
+				Bukkit.getPluginManager().callEvent(swingEvent);                       		//needing to repeat the checks above themselves
+				if (swingEvent.isCancelled()) {
+					e.setCancelled(true);
+					return;
+				}
 			}
 		}
 	}

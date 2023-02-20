@@ -22,16 +22,23 @@ import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DamageHandler {
+
+	// Armor percentage
+	private static final HashMap<Integer, Double> ARMOR_PERCENTAGE_BY_ENTITY_ID = new HashMap<>();
+	private static final String IGNORE_ARMOR_PREFIX = "Properties.IgnoreArmorPercentage.";
+	private static final Set<LivingEntity> BEING_DAMAGED = new HashSet<>();
 
 	private static boolean checkTicks(LivingEntity entity, double damage) {
 		return entity.getNoDamageTicks() > entity.getMaximumNoDamageTicks() / 2.0f && damage <= entity.getLastDamage();
 	}
 
-	// Armor
 
-	private static final HashMap<Integer, Double> ARMOR_PERCENTAGE_BY_ENTITY_ID = new HashMap<>();
+
+
 
 	/**
 	 *
@@ -42,7 +49,7 @@ public class DamageHandler {
 		return ARMOR_PERCENTAGE_BY_ENTITY_ID.containsKey(entity.getEntityId());
 	}
 
-	private static final String IGNORE_ARMOR_PREFIX = "Properties.IgnoreArmorPercentage.";
+
 	public static double getIgnoreArmorPercentage(final Ability ability) {
 		FileConfiguration config = ProjectKorra.plugin.getConfig();
 
@@ -113,15 +120,19 @@ public class DamageHandler {
 		if (ignorePercentage == 0) return;
 
 		if (ignorePercentage == 1) {
-			event.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, 0);
 			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
 		} else {
-			event.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) * (1d - ignorePercentage));
 			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, event.getDamage(EntityDamageEvent.DamageModifier.ARMOR) * (1d - ignorePercentage));
 		}
 	}
 
-	// ---
+	/**
+	 * @param livingEntity The living entity
+	 * @return If the player is receiving bending damage, return true. Used to stop swing events that shouldn't fire
+	 */
+	public static boolean isReceivingDamage(LivingEntity livingEntity) {
+		return BEING_DAMAGED.contains(livingEntity);
+	}
 
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a
@@ -193,11 +204,15 @@ public class DamageHandler {
 
 			final EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, DamageCause.CUSTOM, damage);
 			final double prevHealth = lent.getHealth();
+			BEING_DAMAGED.add(lent); //Stops StackOverflows
+
 			if (doSourcelessDamage) {
 				lent.damage(damage);
 			} else {
 				lent.damage(damage, source);
 			}
+			BEING_DAMAGED.remove(lent);
+
 			final double nextHealth = lent.getHealth();
 			entity.setLastDamageCause(finalEvent);
 
