@@ -216,6 +216,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more at our website! ");
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
+			config.addDefault("Commands.Help.EnableQuickBind", true);
 			config.addDefault("Commands.Help.BindStart", "Bind: &7&l◀");
 			config.addDefault("Commands.Help.SlotFormat", " {element_color}{slot} ");
 			config.addDefault("Commands.Help.BindSeparator", "&7|");
@@ -237,6 +238,8 @@ public class ConfigManager {
 			config.addDefault("Commands.Display.Separator", "\\n");
 			config.addDefault("Commands.Display.HoverType", "Click to display {type}.");
 			config.addDefault("Commands.Display.HoverAbility", "Click to view how to use {ability}.");
+			config.addDefault("Commands.Display.SubHeader", "\\n");
+			config.addDefault("Commands.Display.ComboPassiveHeader", "\\n");
 
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
 			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report on the ProjectKorra forum if you need to.");
