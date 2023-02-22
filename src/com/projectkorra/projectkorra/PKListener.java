@@ -1448,8 +1448,6 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
-		AirScooter.check(player);
-
 		final CoreAbility coreAbil = bPlayer.getBoundAbility();
 		final String abil = bPlayer.getBoundAbilityName();
 
@@ -1700,7 +1698,6 @@ public class PKListener implements Listener {
 		}
 
 		BlockSource.update(player, ClickType.LEFT_CLICK);
-		AirScooter.check(player);
 	}
 
 	@EventHandler

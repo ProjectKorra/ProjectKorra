@@ -126,7 +126,7 @@ public class AirScooter extends AirAbility {
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			this.remove();
 			return;
-		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
+		} else if (this.duration > 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;

@@ -131,8 +131,8 @@ public class Updater {
 		if (updateVersion == null) {
 			return false;
 		}
-		final String numericUpdateVersion = updateVersion.split("[ -(|]")[0].replaceAll("[A-Za-z]", ""); // Only take the left half if there is words in it too.
-		final String numericCurrentVersion = this.currentVersion.split("[ -(|]")[0].replaceAll("[A-Za-z]", "");
+		final String numericUpdateVersion = updateVersion.split("[ \\-(|]")[0].replaceAll("[A-Za-z]", ""); // Only take the left half if there is words in it too.
+		final String numericCurrentVersion = this.currentVersion.split("[ \\-(|]")[0].replaceAll("[A-Za-z]", "");
 
 		try {
 			final int currentNumber = getNumericalVersion(numericCurrentVersion);
