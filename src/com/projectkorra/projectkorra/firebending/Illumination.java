@@ -25,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Illumination extends FireAbility {
 
-	private static final Map<TempBlock, Player> BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<>();
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -33,7 +33,7 @@ public class Illumination extends FireAbility {
 	private double range;
 	private int lightThreshold;
 	private int lightLevel;
-	private TempBlock block;
+	private Block block;
 	private int oldLevel;
 
 	private static boolean MODERN = GeneralMethods.getMCVersion() >= 1170;
@@ -92,27 +92,12 @@ public class Illumination extends FireAbility {
 			return;
 		}
 
-		this.oldLevel = player.getLocation().getBlock().getLightLevel();
-		if (this.oldLevel > this.lightThreshold) {
-			this.remove();
-			return;
-		}
-
-		if (WaterAbility.isWater(this.player.getEyeLocation().getBlock())) {
+		if (WaterAbility.isWater(getLocation().getBlock())) {
 			this.remove();
 			return;
 		}
 
 		if (this.block == null) {
-			return;
-		}
-
-		if (!this.player.getWorld().equals(this.block.getBlock().getWorld())) {
-			this.remove();
-			return;
-		}
-
-		if (this.player.getLocation().distanceSquared(this.block.getLocation()) > this.range * this.range) {
 			this.remove();
 			return;
 		}
@@ -144,7 +129,7 @@ public class Illumination extends FireAbility {
 	private void revert() {
 		if (this.block != null) {
 			BLOCKS.remove(this.block);
-			this.block.revertBlock();
+			this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), this.block.getBlockData()));
 		}
 	}
 
@@ -152,9 +137,9 @@ public class Illumination extends FireAbility {
 		if (MODERN) { //Light block implementation
 			Block eyeBlock = this.player.getEyeLocation().getBlock();
 			int level = lightLevel;
-			if (!eyeBlock.getType().isAir() && (this.block == null || !this.block.getBlock().equals(eyeBlock))) {
+			if (!eyeBlock.getType().isAir() && (this.block == null || !this.block.equals(eyeBlock))) {
 				for (BlockFace face : new BlockFace[] {BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
-					if (eyeBlock.getRelative(face).getType().isAir() || (this.block != null && this.block.getBlock().equals(eyeBlock.getRelative(face)))) {
+					if (eyeBlock.getRelative(face).getType().isAir() || (this.block != null && this.block.equals(eyeBlock.getRelative(face)))) {
 						eyeBlock = eyeBlock.getRelative(face);
 						level = lightLevel - 1; //Make the light level 1 less
 						break;
@@ -166,16 +151,33 @@ public class Illumination extends FireAbility {
 
 			BlockData clonedData = LIGHT.createBlockData();
 			((Levelled)clonedData).setLevel(level);
-			if (this.block == null || (!eyeBlock.equals(this.block.getBlock()))) {
+
+			if ((!eyeBlock.equals(this.block))) { //On block change
 				this.revert();
-				this.block = new TempBlock(eyeBlock, clonedData);
+
+				this.oldLevel = player.getLocation().getBlock().getLightLevel();
+
+				if (this.oldLevel > this.lightThreshold) {
+					remove();
+					return;
+				}
+
+				this.block = eyeBlock;
+				this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), clonedData));
+			} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
+				//We have to set the block back to the actual one because if they couldn't render the initial block change,
+				//(due to it not being in render distance) then no further packets will modify the block either.
+				this.block.getWorld().getPlayers().forEach(p -> {
+					p.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
+					p.sendBlockChange(this.block.getLocation(), clonedData);
+				});
 			}
 		} else { //Legacy 1.16 illumination
 			final Block standingBlock = this.player.getLocation().getBlock();
 			final Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
 			if (!isIgnitable(standingBlock)) {
 				return;
-			} else if (this.block != null && standingBlock.equals(this.block.getBlock())) {
+			} else if (standingBlock.equals(this.block)) {
 				return;
 			} else if (Tag.LEAVES.isTagged(standBlock.getType())) {
 				return;
@@ -183,10 +185,26 @@ public class Illumination extends FireAbility {
 				return;
 			}
 
-			if (this.block == null || !standBlock.equals(this.block.getBlock())) {
+			Material torch = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_TORCH : Material.TORCH;
+
+			if (!standBlock.equals(this.block)) { //On block change
 				this.revert();
-				Material torch = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_TORCH : Material.TORCH;
-				this.block = new TempBlock(standingBlock, torch);
+
+				this.oldLevel = player.getLocation().getBlock().getLightLevel();
+				if (this.oldLevel > this.lightThreshold) {
+					remove();
+					return;
+				}
+
+				this.block = standBlock;
+				this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), torch.createBlockData()));
+			} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
+				//We have to set the block back to the actual one because if they couldn't render the initial block change,
+				//(due to it not being in render distance) then no further packets will modify the block either.
+				this.block.getWorld().getPlayers().forEach(p -> {
+					p.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
+					p.sendBlockChange(this.block.getLocation(), torch.createBlockData());
+				});
 			}
 		}
 
@@ -200,7 +218,7 @@ public class Illumination extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return this.player != null ? this.player.getLocation() : null;
+		return this.player != null ? (MODERN ? this.player.getEyeLocation() : this.player.getLocation()) : null;
 	}
 
 	@Override
@@ -230,15 +248,15 @@ public class Illumination extends FireAbility {
 		return MODERN;
 	}
 
-	public TempBlock getBlock() {
+	public Block getBlock() {
 		return this.block;
 	}
 
-	public void setBlock(final TempBlock block) {
+	public void setBlock(final Block block) {
 		this.block = block;
 	}
 
-	public static Map<TempBlock, Player> getBlocks() {
+	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
 	}
 
@@ -248,13 +266,13 @@ public class Illumination extends FireAbility {
 	 * @param block The block being tested
 	 */
 	public static boolean isIlluminationTorch(final Block block) {
-		final TempBlock tempBlock = TempBlock.get(block);
+		/*final TempBlock tempBlock = TempBlock.get(block);
 
 		if (tempBlock == null || ((!MODERN && block.getType() != Material.TORCH && block.getType() != Material.SOUL_TORCH) || block.getType() == LIGHT) || !BLOCKS.containsKey(tempBlock)) {
 			return false;
-		}
+		}*/
 
-		return true;
+		return false;
 	}
 
 	public void setCooldown(final long cooldown) {
