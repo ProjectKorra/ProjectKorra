@@ -65,6 +65,12 @@ public class AddonAbilityLoader<T> {
 			JarFile jarFile = null;
 			try {
 				jarFile = new JarFile(file);
+
+				if (jarFile.getEntry("plugin.yml") != null) {
+					this.plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " is a plugin and not an ability! Put it in the plugins folder!");
+					continue;
+				}
+
 				final Enumeration<JarEntry> entries = jarFile.entries();
 
 				while (entries.hasMoreElements()) {
@@ -88,6 +94,7 @@ public class AddonAbilityLoader<T> {
 					final ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
 					final Constructor<?> objDef = parentClass.getDeclaredConstructor();
 					final Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
+
 					final T loadable = (T) clazz.cast(intConstr.newInstance());
 
 					loadables.add(loadable);
