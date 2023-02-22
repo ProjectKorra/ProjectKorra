@@ -1842,30 +1842,38 @@ public class GeneralMethods {
 	}
 
 	public static boolean isLightEmitting(final Material material) {
-		switch (material) {
-			case GLOWSTONE:
-			case TORCH:
-			case SEA_LANTERN:
-			case BEACON:
-			case REDSTONE_LAMP:
-			case REDSTONE_TORCH:
-			case MAGMA_BLOCK:
-			case LAVA:
-			case JACK_O_LANTERN:
-			case CRYING_OBSIDIAN:
-			case SHROOMLIGHT:
-			case CAMPFIRE:
-			case SOUL_CAMPFIRE:
-			case SOUL_TORCH:
-			case LANTERN:
-			case SOUL_LANTERN:
-			case CONDUIT:
-			case RESPAWN_ANCHOR:
-			case BROWN_MUSHROOM:
-			case BREWING_STAND:
-			case ENDER_CHEST:
-			case END_PORTAL_FRAME:
-			case END_ROD:
+		switch (material.name()) {
+			case "GLOWSTONE":
+			case "TORCH":
+			case "SEA_LANTERN":
+			case "BEACON":
+			case "REDSTONE_LAMP":
+			case "REDSTONE_TORCH":
+			case "MAGMA_BLOCK":
+			case "LAVA":
+			case "JACK_O_LANTERN":
+			case "CRYING_OBSIDIAN":
+			case "SHROOMLIGHT":
+			case "CAMPFIRE":
+			case "SOUL_CAMPFIRE":
+			case "SOUL_TORCH":
+			case "LANTERN":
+			case "SOUL_LANTERN":
+			case "CONDUIT":
+			case "RESPAWN_ANCHOR":
+			case "BROWN_MUSHROOM":
+			case "BREWING_STAND":
+			case "ENDER_CHEST":
+			case "END_PORTAL_FRAME":
+			case "END_ROD":
+			case "LIGHT":
+			case "AMETHYST_CLUSTER":
+			case "CAVE_VINES":
+			case "GLOW_LICHEN":
+			case "OCHRE_FROGLIGHT":
+			case "PEARLESCENT_FROGLIGHT":
+			case "VERDANT_FROGLIGHT":
+			case "SCULK_CATALYST":
 				return true;
 			default:
 				return false;

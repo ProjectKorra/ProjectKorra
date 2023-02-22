@@ -103,6 +103,7 @@ permissions:
       bending.ability.WaterCombo: true
       bending.water.plantbending: true
       bending.message.nightmessage: true
+      bending.message.daymessage: true
       bending.water.passive: true
       bending.water.icebending: true
       bending.water.healing: true
@@ -159,6 +160,7 @@ permissions:
       bending.ability.FireManipulation: true
       bending.ability.FireCombo: true
       bending.message.daymessage: true
+      bending.message.nightmessage: true
       bending.fire.passive: true
       bending.fire.lightningbending: true
       bending.fire.combustionbending: true
