@@ -507,9 +507,7 @@ public class SurgeWall extends WaterAbility {
 			}
 		}
 
-		if (wall != null) {
-			wall.moveWater();
-		}
+		wall.moveWater();
 	}
 
 	public static void removeAllCleanup() {
@@ -527,14 +525,10 @@ public class SurgeWall extends WaterAbility {
 
 	public static boolean wasBrokenFor(final Player player, final Block block) {
 		final SurgeWall wall = getAbility(player, SurgeWall.class);
-		if (wall != null) {
-			if (wall.sourceBlock == null) {
-				return false;
-			} else if (wall.sourceBlock.equals(block)) {
-				return true;
-			}
-		}
-		return false;
+		if (wall == null) return false;
+		if (wall.sourceBlock == null) return false;
+
+		return wall.sourceBlock.equals(block);
 	}
 
 	private void returnWater() {

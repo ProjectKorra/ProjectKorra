@@ -22,8 +22,8 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterSpout extends WaterAbility {
 
-	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
-	private final List<TempBlock> blocks = new ArrayList<TempBlock>();
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
+	private final List<TempBlock> blocks = new ArrayList<>();
 
 	@Attribute("CanBendOnPackedIce")
 	private boolean canBendOnPackedIce;

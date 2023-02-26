@@ -254,7 +254,7 @@ permissions:
   bending.fire.passive:
     default: false
     description: Grants access to all fire passives.
-    children:
+    children: []
   bending.water.passive:
     default: false
     description: Grants access to all water passives.

@@ -1,20 +1,7 @@
 package com.projectkorra.projectkorra;
 
-import java.util.HashMap;
-import java.util.logging.Logger;
-
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
-
 import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
-
-import com.projectkorra.projectkorra.region.RegionProtection;
-import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
-
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
@@ -30,13 +17,22 @@ import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.hooks.PlaceholderAPIHook;
 import com.projectkorra.projectkorra.hooks.WorldGuardFlag;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.Metrics;
-import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.StatisticsManager;
+import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
+import com.projectkorra.projectkorra.util.Metrics;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class ProjectKorra extends JavaPlugin {
 

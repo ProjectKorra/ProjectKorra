@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -115,13 +116,10 @@ public class TorrentWave extends WaterAbility {
 		this.blocks.clear();
 		this.affectedEntities.clear();
 
-		final ArrayList<Entity> indexList = new ArrayList<Entity>();
-		indexList.addAll(GeneralMethods.getEntitiesAroundPoint(this.origin, this.radius + 2));
-		final ArrayList<Block> torrentBlocks = new ArrayList<Block>();
+		final ArrayList<Entity> indexList = new ArrayList<>(GeneralMethods.getEntitiesAroundPoint(this.origin, this.radius + 2));
+		final ArrayList<Block> torrentBlocks = new ArrayList<>();
 
-		if (indexList.contains(this.player)) {
-			indexList.remove(this.player);
-		}
+		indexList.remove(this.player);
 
 		for (final int id : this.heights.keySet()) {
 			final ConcurrentHashMap<Integer, Double> angles = this.heights.get(id);
@@ -193,7 +191,9 @@ public class TorrentWave extends WaterAbility {
 
 	private void returnWater() {
 		final Location location = new Location(this.origin.getWorld(), this.origin.getX() + this.radius, this.origin.getY(), this.origin.getZ());
-		if (!location.getWorld().equals(this.player.getWorld())) {
+		final World world = location.getWorld();
+		if (world == null) return;
+		if (!world.equals(this.player.getWorld())) {
 			return;
 		}
 		final double radiusOffsetSquared = (this.maxRadius + 5) * (this.maxRadius + 5);

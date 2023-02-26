@@ -1,15 +1,5 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -38,6 +28,14 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class HeatControl extends FireAbility {
 
@@ -184,11 +182,6 @@ public class HeatControl extends FireAbility {
 				this.bPlayer.addCooldown(this.getName() + "Extinguish", this.extinguishCooldown);
 				this.remove();
 				return;
-			}
-
-			final Set<Material> blocks = new HashSet<>();
-			for (final Material material : getTransparentMaterials()) {
-				blocks.add(material);
 			}
 
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {

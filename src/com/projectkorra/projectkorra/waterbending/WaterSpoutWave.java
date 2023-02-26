@@ -32,11 +32,11 @@ import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class WaterSpoutWave extends WaterAbility {
 
-	public static enum AbilityType {
+	public enum AbilityType {
 		CLICK, SHIFT, RELEASE
 	}
 
-	public static enum AnimateState {
+	public enum AnimateState {
 		RISE, TOWARD_PLAYER, CIRCLE, SHRINK
 	}
 
@@ -254,7 +254,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 			} else if (this.animation == AnimateState.TOWARD_PLAYER) {
 				this.revertBlocks();
-				final Location eyeLoc = this.player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
+				final Location eyeLoc = this.player.getTargetBlock(null, 2).getLocation();
 				eyeLoc.setY(this.player.getEyeLocation().getY());
 				final Vector vec = GeneralMethods.getDirection(this.location, eyeLoc);
 				this.location.add(vec.normalize().multiply(this.animationSpeed));
@@ -423,7 +423,7 @@ public class WaterSpoutWave extends WaterAbility {
 						continue;
 					}
 					if (entity instanceof Player) {
-						if (Commands.invincible.contains(((Player) entity).getName())) {
+						if (Commands.invincible.contains(entity.getName())) {
 							return;
 						}
 						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
@@ -465,7 +465,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public static ArrayList<WaterSpoutWave> getType(final Player player, final AbilityType type) {
-		final ArrayList<WaterSpoutWave> list = new ArrayList<WaterSpoutWave>();
+		final ArrayList<WaterSpoutWave> list = new ArrayList<>();
 		for (final WaterSpoutWave wave : getAbilities(player, WaterSpoutWave.class)) {
 			if (wave.type.equals(type)) {
 				list.add(wave);
@@ -476,15 +476,12 @@ public class WaterSpoutWave extends WaterAbility {
 
 	public static boolean wasBrokenFor(final Player player, final Block block) {
 		final ArrayList<WaterSpoutWave> waves = getType(player, AbilityType.CLICK);
-		if (!waves.isEmpty()) {
-			final WaterSpoutWave wave = waves.get(0);
-			if (wave.origin == null) {
-				return false;
-			} else if (wave.origin.getBlock().equals(block)) {
-				return true;
-			}
-		}
-		return false;
+		if (waves.isEmpty()) return false;
+
+		final WaterSpoutWave wave = waves.get(0);
+		if (wave.origin == null) return false;
+
+		return wave.origin.getBlock().equals(block);
 	}
 
 	public static void progressAllCleanup() {
@@ -496,7 +493,6 @@ public class WaterSpoutWave extends WaterAbility {
 			}
 			if (tb == null || !TempBlock.isTempBlock(block)) {
 				FROZEN_BLOCKS.remove(block);
-				continue;
 			}
 		}
 	}
@@ -538,7 +534,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		return this.isIceWave() ? true : false;
+		return this.isIceWave();
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class FlightHandler extends Manager {
 
 	/**
 	 * Create a new Flight instance for the provided player with an unlimited
-	 * duration. Call {@link FlightHandler#removeInstance(Player)} to remove
+	 * duration. Call {@link FlightHandler#removeInstance(Player, String)} to remove
 	 * this instance when necessary.
 	 *
 	 * @param player The flying player
@@ -48,7 +48,7 @@ public class FlightHandler extends Manager {
 	 * Create a new Flight instance for the provided player with an unlimited
 	 * duration. This method will set the source for this Flight instance to the
 	 * second provided player argument. Call
-	 * {@link FlightHandler#removeInstance(Player)} to remove this instance when
+	 * {@link FlightHandler#removeInstance(Player, String)} to remove this instance when
 	 * necessary.
 	 *
 	 * @param player The flying player
