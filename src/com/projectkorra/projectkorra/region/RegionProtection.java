@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,6 @@ public class RegionProtection {
         }
         if (enabled("LWC")) new LWC();
         if (enabled("Towny")) new Towny();
-        if (enabled("Kingdoms")) new Kingdoms();
         if (enabled("RedProtect")) new RedProtect();
         if (enabled("GriefDefender")) new GriefDefender();
         if (enabled("GriefPrevention")) new GriefPrevention();
@@ -73,8 +71,8 @@ public class RegionProtection {
      * Get a list of currently active custom region protections
      * @return Enabled region protections
      */
-    public static Collection<RegionProtectionHook> getActiveProtections() {
-        return PROTECTIONS.values();
+    public static Map<JavaPlugin, RegionProtectionHook> getActiveProtections() {
+        return PROTECTIONS;
     }
 
     /**
@@ -160,7 +158,7 @@ public class RegionProtection {
     }
 
     private static boolean checkAll(Player player, Location location, CoreAbility ability) {
-        for (RegionProtectionHook protection : RegionProtection.getActiveProtections()) {
+        for (RegionProtectionHook protection : RegionProtection.getActiveProtections().values()) {
             try {
                 if (protection.isRegionProtected(player, location, ability)) {
                     return true;

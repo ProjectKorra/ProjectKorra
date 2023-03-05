@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.configuration;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -48,7 +49,7 @@ public class ConfigManager {
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
-			config.addDefault("Chat.Enable", true);
+			config.addDefault("Chat.Enable", !hasChatPlugin());
 			config.addDefault("Chat.Format", "<name>: <message>");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
 			config.addDefault("Chat.Colors.Air", "GRAY");
@@ -215,6 +216,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more at our website! ");
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
+			config.addDefault("Commands.Help.EnableQuickBind", true);
 			config.addDefault("Commands.Help.BindStart", "Bind: &7&l◀");
 			config.addDefault("Commands.Help.SlotFormat", " {element_color}{slot} ");
 			config.addDefault("Commands.Help.BindSeparator", "&7|");
@@ -236,9 +238,11 @@ public class ConfigManager {
 			config.addDefault("Commands.Display.Separator", "\\n");
 			config.addDefault("Commands.Display.HoverType", "Click to display {type}.");
 			config.addDefault("Commands.Display.HoverAbility", "Click to view how to use {ability}.");
+			config.addDefault("Commands.Display.SubHeader", "\\n");
+			config.addDefault("Commands.Display.ComboPassiveHeader", "\\n");
 
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
-			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
+			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report on the ProjectKorra forum if you need to.");
 
 			config.addDefault("Commands.Board.Description", "Toggle bending board visibility.");
 			config.addDefault("Commands.Board.Disabled", "Bending board is disabled.");
@@ -673,11 +677,12 @@ public class ConfigManager {
 			config.addDefault("Properties.BendingAffectFallingSand.TNT", true);
 			config.addDefault("Properties.BendingAffectFallingSand.TNTStrengthMultiplier", 1.0);
 			config.addDefault("Properties.GlobalCooldown", 500);
+			config.addDefault("Properties.PlayerDataUnloadTime", 1000 * 60 * 5);
 			config.addDefault("Properties.TogglePassivesWithAllBending", true);
 			config.addDefault("Properties.SeaLevel", 62);
 			config.addDefault("Properties.ChooseCooldown", 0L);
 			config.addDefault("Properties.MaxPresets", 10);
-			config.addDefault("Properties.IgnoreArmorPercentage.Default", 1.0);
+			config.addDefault("Properties.IgnoreArmorPercentage.Default", 0.5);
 
 			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 			config.addDefault("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock", false);
@@ -1765,5 +1770,11 @@ public class ConfigManager {
 
 	public static FileConfiguration getConfig() {
 		return ConfigManager.defaultConfig.get();
+	}
+
+	private static boolean hasChatPlugin() {
+		List<String> plugins = Arrays.asList("EssentialsChat", "VentureChat", "LPC", "ChatManager", "ChatControl", "DeluxeChat");
+
+		return Arrays.stream(Bukkit.getPluginManager().getPlugins()).anyMatch(pl -> plugins.contains(pl.getName()));
 	}
 }

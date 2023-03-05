@@ -304,14 +304,23 @@ public abstract class CoreAbility implements Ability {
 	public static void removeAll() {
 		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (final CoreAbility abil : setAbils) {
-				abil.remove();
+				try {
+					abil.remove();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
 		for (final CoreAbility coreAbility : ABILITIES_BY_NAME.values()) {
 			if (coreAbility instanceof AddonAbility) {
 				final AddonAbility addon = (AddonAbility) coreAbility;
-				addon.stop();
+				try {
+					addon.stop();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
 		}
 	}
@@ -536,13 +545,14 @@ public abstract class CoreAbility implements Ability {
 
 		for (final CoreAbility coreAbil : loadedAbilities) {
 			if (!coreAbil.isEnabled()) {
-				plugin.getLogger().info(coreAbil.getName() + " is disabled");
+				//plugin.getLogger().info(coreAbil.getName() + " is disabled");
+				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
 				continue;
 			}
 
 			final String name = coreAbil.getName();
 
-			if (name == null) {
+			if (name == null || name.equals("")) {
 				plugin.getLogger().warning("Ability " + coreAbil.getClass().getName() + " has no name?");
 				continue;
 			}
@@ -605,12 +615,18 @@ public abstract class CoreAbility implements Ability {
 				plugin.getLogger().warning(coreAbil.getName() + " is an addon ability and must implement the AddonAbility interface");
 				continue;
 			} else if (!coreAbil.isEnabled()) {
-				plugin.getLogger().info(coreAbil.getName() + " is disabled");
+				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
+				//plugin.getLogger().info(coreAbil.getName() + " is disabled");
 				continue;
 			}
 
 			final AddonAbility addon = (AddonAbility) coreAbil;
 			final String name = coreAbil.getName();
+
+			if (name == null || name.equals("")) {
+				plugin.getLogger().warning("AddonAbility " + coreAbil.getClass().getName() + " has no name?");
+				continue;
+			}
 
 			try {
 				addon.load();
@@ -658,7 +674,11 @@ public abstract class CoreAbility implements Ability {
 			} catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
 				e.printStackTrace();
-				addon.stop();
+				try {
+					addon.stop();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 				ABILITIES_BY_NAME.remove(name.toLowerCase());
 				ABILITIES_BY_CLASS.remove(coreAbil.getClass());
 			}

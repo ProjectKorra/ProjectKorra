@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +61,7 @@ public class WhoCommand extends PKCommand {
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 
 					// Read all the text returned by the server.
-					final BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), Charset.forName("UTF-8")));
+					final BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), StandardCharsets.UTF_8));
 					String unparsed;
 					while ((unparsed = in.readLine()) != null) {
 						final String[] staffEntry = unparsed.split("/");
@@ -73,8 +74,6 @@ public class WhoCommand extends PKCommand {
 					WhoCommand.this.staff.putAll(updatedstaff);
 				} catch (final SocketException e) {
 					ProjectKorra.log.info("Could not update staff list.");
-				} catch (final MalformedURLException e) {
-					e.printStackTrace();
 				} catch (final IOException e) {
 					e.printStackTrace();
 				}

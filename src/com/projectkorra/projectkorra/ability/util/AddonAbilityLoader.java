@@ -19,7 +19,6 @@ import sun.reflect.ReflectionFactory;
 import org.bukkit.plugin.Plugin;
 
 import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-import com.projectkorra.projectkorra.util.FileExtensionFilter;
 
 public class AddonAbilityLoader<T> {
 
@@ -37,7 +36,7 @@ public class AddonAbilityLoader<T> {
 			return;
 		}
 
-		for (final File f : directory.listFiles(new FileExtensionFilter(".jar"))) {
+		for (final File f : directory.listFiles((file) -> file.getName().endsWith(".jar"))) {
 			this.files.add(f);
 		}
 
@@ -66,6 +65,12 @@ public class AddonAbilityLoader<T> {
 			JarFile jarFile = null;
 			try {
 				jarFile = new JarFile(file);
+
+				if (jarFile.getEntry("plugin.yml") != null) {
+					this.plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " is a plugin and not an ability! Put it in the plugins folder!");
+					continue;
+				}
+
 				final Enumeration<JarEntry> entries = jarFile.entries();
 
 				while (entries.hasMoreElements()) {
@@ -89,6 +94,7 @@ public class AddonAbilityLoader<T> {
 					final ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
 					final Constructor<?> objDef = parentClass.getDeclaredConstructor();
 					final Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
+
 					final T loadable = (T) clazz.cast(intConstr.newInstance());
 
 					loadables.add(loadable);

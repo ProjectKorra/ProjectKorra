@@ -39,6 +39,7 @@ public class HelpCommand extends PKCommand {
 	private final String bindSeperator;
 	private final String bindEnd;
 	private final String hoverBind;
+	private final boolean enableQuickBind;
 
 	public HelpCommand() {
 		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
@@ -53,6 +54,7 @@ public class HelpCommand extends PKCommand {
 		this.bindSeperator = ConfigManager.languageConfig.get().getString("Commands.Help.BindSeparator");
 		this.bindEnd = ConfigManager.languageConfig.get().getString("Commands.Help.BindEnd");
 		this.hoverBind = ConfigManager.languageConfig.get().getString("Commands.Help.HoverBind");
+		this.enableQuickBind = ConfigManager.languageConfig.get().getBoolean("Commands.Help.EnableQuickBind");
 
 		elementHelp.clear();
 
@@ -129,7 +131,7 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
 			}
 			
-			if (!isPassiveAbility && sender instanceof Player && sender.hasPermission("bending.ability." + arg)) {
+			if (!isPassiveAbility && sender instanceof Player && sender.hasPermission("bending.ability." + arg) && this.enableQuickBind) {
 				final ComponentBuilder bindShortcut = new ComponentBuilder();
 				bindShortcut.appendLegacy(ChatUtil.color(this.bindStart));
 				bindShortcut.append("", ComponentBuilder.FormatRetention.NONE);

@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
-
 import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
@@ -46,8 +44,9 @@ public class ProjectKorra extends JavaPlugin {
 	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
 	public Updater updater;
-	private BukkitTask revertChecker;
+	BukkitTask revertChecker;
 	private static TimingManager timingManager;
+	private static PlaceholderAPIHook papiHook;
 
 	@Override
 	public void onEnable() {
@@ -129,7 +128,8 @@ public class ProjectKorra extends JavaPlugin {
 		RegionProtection.startCleanCacheTask(cacheTime);
 
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-			new PlaceholderAPIHook(this).register();
+			papiHook = new PlaceholderAPIHook(this);
+			papiHook.register();
 		}
 	}
 
@@ -149,6 +149,10 @@ public class ProjectKorra extends JavaPlugin {
 		Manager.shutdown();
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
+		}
+
+		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+			papiHook.unregister();
 		}
 	}
 

@@ -14,6 +14,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -44,6 +45,8 @@ public class DisplayCommand extends PKCommand {
 	private final String separator;
 	private final String hoverType;
 	private final String hoverAbility;
+	private final String subHeader;
+	private final String comboPassiveHeader;
 
 	public DisplayCommand() {
 		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
@@ -61,7 +64,8 @@ public class DisplayCommand extends PKCommand {
 		this.separator = ConfigManager.languageConfig.get().getString("Commands.Display.Separator").replaceAll("\\\\n", "\n");
 		this.hoverType = ConfigManager.languageConfig.get().getString("Commands.Display.HoverType");
 		this.hoverAbility = ConfigManager.languageConfig.get().getString("Commands.Display.HoverAbility");
-		
+		this.subHeader = ConfigManager.languageConfig.get().getString("Commands.Display.SubHeader").replaceAll("\\\\n", "\n");
+		this.comboPassiveHeader = ConfigManager.languageConfig.get().getString("Commands.Display.ComboPassiveHeader").replaceAll("\\\\n", "\n");
 		this.fillAbbreviations();
 	}
 
@@ -253,9 +257,13 @@ public class DisplayCommand extends PKCommand {
 		
 		this.iterateAbilities(sender, abilities);
 
+		if (!(combos.isEmpty() || passives.isEmpty()) && ChatColor.stripColor(this.comboPassiveHeader).length() > 0) {
+			sender.spigot().sendMessage(TextComponent.fromLegacyText(ChatUtil.multiline(mainColor + ChatUtil.color(this.comboPassiveHeader
+					.replaceAll("\\{(?i)element}", elementName).replaceAll("\\{(?i)element_?color}", mainColor.toString())))));
+		}
+
 		//Display the number of Passives and Combos
 		if (!combos.isEmpty()) {
-			sender.sendMessage("");
 			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + elementName + " Combos (#)".replace("#", String.valueOf(combos.size())));
 			messageBuilder.event(this.hoverEvent(mainColor + ChatUtil.color(this.hoverType.replace("{type}", subColor + elementName + "Combos"))));
 			messageBuilder.event(this.clickEvent("/bending display " + elementName + "Combos"));
@@ -263,10 +271,6 @@ public class DisplayCommand extends PKCommand {
 		}
 		
 		if (!passives.isEmpty()) {
-			if (combos.isEmpty()) {
-				sender.sendMessage("");
-			}
-			
 			final ComponentBuilder messageBuilder = new ComponentBuilder().appendLegacy(subColor + elementName + " Passives (#)".replace("#", String.valueOf(passives.size())));
 			messageBuilder.event(this.hoverEvent(mainColor + ChatUtil.color(this.hoverType.replace("{type}", subColor + elementName + "Passives"))));
 			messageBuilder.event(this.clickEvent("/bending display " + elementName + "Passives"));
@@ -292,7 +296,10 @@ public class DisplayCommand extends PKCommand {
 				}
 			}
 			if (!message.getParts().isEmpty()) {
-				sender.sendMessage("");
+				if (ChatColor.stripColor(this.subHeader).length() > 0) {
+					sender.spigot().sendMessage(TextComponent.fromLegacyText(ChatUtil.multiline(mainColor + ChatUtil.color(this.subHeader)
+							.replaceAll("\\{(?i)element}", elementName).replaceAll("\\{(?i)element_?color}", mainColor.toString()))));
+				}
 				sender.spigot().sendMessage(message.create());
 			}
 		}
