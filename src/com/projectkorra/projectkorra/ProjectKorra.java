@@ -124,7 +124,6 @@ public class ProjectKorra extends JavaPlugin {
 
 		final double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
 
-		GeneralMethods.deserializeFile();
 		RegionProtection.startCleanCacheTask(cacheTime);
 
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

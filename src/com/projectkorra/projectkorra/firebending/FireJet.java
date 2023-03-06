@@ -1,11 +1,9 @@
 package com.projectkorra.projectkorra.firebending;
 
-import static com.projectkorra.projectkorra.firebending.Illumination.isIlluminationTorch;
-
 import java.util.Random;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -57,7 +55,7 @@ public class FireJet extends FireAbility {
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || block.getType() == Material.STONE_SLAB || block.getType() == Material.ACACIA_SLAB || block.getType() == Material.BIRCH_SLAB || block.getType() == Material.DARK_OAK_SLAB || block.getType() == Material.JUNGLE_SLAB || block.getType() == Material.OAK_SLAB || block.getType() == Material.SPRUCE_SLAB || isIlluminationTorch(block) || this.bPlayer.isAvatarState()) {
+		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || Tag.SLABS.isTagged(block.getType()) || this.bPlayer.isAvatarState()) {
 			GeneralMethods.setVelocity(this, player, player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
 				if (ElementalAbility.isAir(block.getType())) {

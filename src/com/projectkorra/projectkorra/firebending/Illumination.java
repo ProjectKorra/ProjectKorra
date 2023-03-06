@@ -261,17 +261,13 @@ public class Illumination extends FireAbility {
 	}
 
 	/**
+	 * <b>Deprecated. Current Illumination uses fake Blocks, so this will always return false</b>
 	 * Returns whether the block provided is a torch created by Illumination
 	 *
 	 * @param block The block being tested
 	 */
+	@Deprecated
 	public static boolean isIlluminationTorch(final Block block) {
-		/*final TempBlock tempBlock = TempBlock.get(block);
-
-		if (tempBlock == null || ((!MODERN && block.getType() != Material.TORCH && block.getType() != Material.SOUL_TORCH) || block.getType() == LIGHT) || !BLOCKS.containsKey(tempBlock)) {
-			return false;
-		}*/
-
 		return false;
 	}
 
