@@ -282,7 +282,7 @@ public class DisplayCommand extends PKCommand {
 			final ComponentBuilder message = new ComponentBuilder();
 			for (final SubElement sub : Element.getSubElements(element)) {
 				final int count = this.filterAbilities(sender, this.getAbilities(sub)).size();
-				if ((!(sender instanceof Player) || sender.hasPermission("bending." + elementName.toLowerCase() + "." + sub.getName().toLowerCase())) && count > 0) {
+				if ((!(sender instanceof Player) || sender.hasPermission("bending." + elementName.toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) && count > 0) {
 					final ChatColor color = sub.getColor();
 					final String name = sub.getName();
 					
