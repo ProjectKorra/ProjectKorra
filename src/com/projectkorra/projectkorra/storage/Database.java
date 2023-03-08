@@ -115,7 +115,6 @@ public abstract class Database {
 	public ResultSet readQuery(final String query) {
 		try {
 			if (this.connection == null || this.connection.isClosed()) {
-				System.out.println("Connection is closed, opening connection...+" + query);
 				this.open();
 			}
 			final PreparedStatement stmt = this.connection.prepareStatement(query);
@@ -173,7 +172,6 @@ public abstract class Database {
 	private synchronized void doQuery(final String query) {
 		try {
 			if (this.connection == null || this.connection.isClosed()) {
-				System.out.println("Connection is closed, opening connection...+" + query);
 				this.open();
 			}
 			final PreparedStatement stmt = this.connection.prepareStatement(query);
