@@ -9,7 +9,6 @@ import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.Cooldown;
-import com.projectkorra.projectkorra.util.DBCooldownManager;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.Bukkit;
@@ -65,7 +64,6 @@ public class OfflineBendingPlayer {
     protected final Map<String, Cooldown> cooldowns = new HashMap<>();
     protected final Set<Element> toggledElements = new HashSet<>();
     protected final Set<Element> toggledPassives = new HashSet<>();
-    protected final DBCooldownManager cooldownManager;
 
     private int currentSlot;
     private long lastAccessed;
@@ -79,7 +77,6 @@ public class OfflineBendingPlayer {
         this.allPassivesToggled = true;
         this.loading = true;
 
-        this.cooldownManager = Manager.getManager(DBCooldownManager.class);
         this.lastAccessed = System.currentTimeMillis();
     }
 
@@ -365,9 +362,8 @@ public class OfflineBendingPlayer {
                     if (ProjectKorra.isDatabaseCooldownsEnabled()) {
                         try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_cooldowns WHERE uuid = '" + uuid.toString() + "'")) {
                             while (rs.next()) {
-                                final int cooldownId = rs.getInt("cooldown_id");
+                                final String name = rs.getString("cooldown");
                                 final long value = rs.getLong("value");
-                                final String name = bPlayer.cooldownManager.getCooldownName(cooldownId);
                                 bPlayer.cooldowns.put(name, new Cooldown(value, true));
                             }
                         } catch (final SQLException e) {
@@ -777,19 +773,20 @@ public class OfflineBendingPlayer {
         CooldownCommand.addCooldownType(ability);
     }
 
-    //TODO Rewrite cooldowns with the ID system
+    /**
+     * Commits cooldowns to the database
+     */
     private void saveCooldownsForce() {
         DBConnection.sql.modifyQuery("DELETE FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "'", false);
         for (final Map.Entry<String, Cooldown> entry : this.cooldowns.entrySet()) {
             final String name = entry.getKey();
             final Cooldown cooldown = entry.getValue();
             if (!cooldown.isDatabase()) continue;
-            final int cooldownId = this.cooldownManager.getCooldownId(name, false);
-            try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId)) {
+            try (ResultSet rs = DBConnection.sql.readQuery("SELECT value FROM pk_cooldowns WHERE uuid = '" + this.uuid.toString() + "' AND cooldown = '" + name + "'")) {
                 if (rs.next()) {
-                    DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown_id = " + cooldownId, false);
+                    DBConnection.sql.modifyQuery("UPDATE pk_cooldowns SET value = " + cooldown.getCooldown() + " WHERE uuid = '" + this.uuid.toString() + "' AND cooldown = '" + name + "'", false);
                 } else {
-                    DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown_id, value) VALUES ('" + this.uuid.toString() + "', " + cooldownId + ", " + cooldown.getCooldown() + ")", false);
+                    DBConnection.sql.modifyQuery("INSERT INTO  pk_cooldowns (uuid, cooldown, value) VALUES ('" + this.uuid.toString() + "', '" + name + "', " + cooldown.getCooldown() + ")", false);
                 }
             } catch (final SQLException e) {
                 e.printStackTrace();
