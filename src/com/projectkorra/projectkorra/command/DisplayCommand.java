@@ -221,7 +221,7 @@ public class DisplayCommand extends PKCommand {
 			}
 
 			final ChatColor color = coreAbil.getElement().getColor();
-			final ChatColor subColor = coreAbil.getElement() instanceof SubElement ? color : coreAbil.getElement().getSubColor();
+			final ChatColor subColor = coreAbil.getElement() instanceof SubElement || coreAbil.getElement() == Element.AVATAR ? color : coreAbil.getElement().getSubColor();
 			
 			messageBuilder.appendLegacy(ChatUtil.color(this.format.replace("{ability}", color + abilityName)));
 			messageBuilder.event(this.hoverEvent(color + ChatUtil.color(this.hoverAbility.replace("{ability}", subColor + abilityName))));
@@ -246,7 +246,7 @@ public class DisplayCommand extends PKCommand {
 		final String elementName = element.getName();
 		final String bending = element.getType().getBending();
 		final ChatColor mainColor = element.getColor();
-		final ChatColor subColor = element instanceof SubElement ? mainColor : element.getSubColor();
+		final ChatColor subColor = element instanceof SubElement || element == Element.AVATAR ? mainColor : element.getSubColor();
 
 		if (abilities.isEmpty() && combos.isEmpty() && passives.isEmpty()) {
 			sender.sendMessage(ChatColor.YELLOW + (allAbilities.isEmpty() && allCombos.isEmpty() && allPassives.isEmpty() ? this.noAbilitiesAvailable : this.noAbilitiesAccess).replace("{element}", mainColor + elementName + ChatColor.YELLOW));
