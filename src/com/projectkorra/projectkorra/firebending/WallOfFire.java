@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -170,22 +171,21 @@ public class WallOfFire extends FireAbility {
 
 	private void initializeBlocks() {
 		Vector direction = this.player.getEyeLocation().getDirection();
-		direction = direction.normalize();
 
-		Vector ortholr = GeneralMethods.getOrthogonalVector(direction, 0, 1);
-		ortholr = ortholr.normalize();
+		//Vector horizontal = GeneralMethods.getOrthogonalVector(direction, 0, 1);
+		Vector horizontal = new Vector(direction.getZ(), 0, -direction.getX()).normalize();
 
-		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
-		orthoud = orthoud.normalize();
+		//Vector vertical = GeneralMethods.getOrthogonalVector(direction, 90, 1);
+		Vector vertical = direction.clone().crossProduct(horizontal).normalize();
 
 		final double w = this.width;
 		final double h = this.height;
 
 		for (double i = -w; i <= w; i++) {
 			for (double j = -h; j <= h; j++) {
-				Location location = this.origin.clone().add(orthoud.clone().multiply(j));
-				location = location.add(ortholr.clone().multiply(i));
-				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				Location location = this.origin.clone().add(vertical.clone().multiply(j));
+				location = location.add(horizontal.clone().multiply(i));
+				if (RegionProtection.isRegionProtected(this, location)) {
 					continue;
 				}
 				final Block block = location.getBlock();
