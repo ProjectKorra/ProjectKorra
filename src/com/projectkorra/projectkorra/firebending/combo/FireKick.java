@@ -103,13 +103,14 @@ public class FireKick extends FireAbility implements ComboAbility {
 			final Vector eyeDir = this.player.getEyeLocation().getDirection().normalize().multiply(this.range);
 			this.destination = this.player.getEyeLocation().add(eyeDir);
 
-			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_HORSE_JUMP, 0.5f, 0f);
-			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 1f);
+			Location origin = this.player.getLocation();
+			this.player.getWorld().playSound(origin, Sound.ENTITY_HORSE_JUMP, 0.5f, 0f);
+			this.player.getWorld().playSound(origin, Sound.ENTITY_CREEPER_PRIMED, 0.5f, 1f);
 			for (int i = -this.arc; i <= this.arc; i += this.arcIncrement) {
-				Vector vec = GeneralMethods.getDirection(this.player.getLocation(), this.destination.clone());
-				vec = GeneralMethods.rotateVectorAroundVector(GeneralMethods.getOrthogonalVector(vec,90,1), vec, i);
+				Vector vec = GeneralMethods.getDirection(origin, this.destination.clone());
+				vec = GeneralMethods.rotateVectorAroundVector(GeneralMethods.getOrthogonalVector(vec, origin.getYaw(), 90, 1), vec, i);
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation().add(0,.1,0), this.range, this.speed);
+				final FireComboStream fs = new FireComboStream(this.player, this, vec, origin, this.range, this.speed);
 				fs.setSpread(0.2F);
 				fs.setDensity(5);
 				fs.setUseNewParticles(true);
@@ -119,7 +120,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 				}
 				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 				this.tasks.add(fs);
-				this.player.getWorld().playSound(this.player.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 0.5f, 1f);
+				this.player.getWorld().playSound(origin, Sound.ITEM_FLINTANDSTEEL_USE, 0.5f, 1f);
 			}
 		} else if (this.tasks.size() == 0) {
 			this.remove();

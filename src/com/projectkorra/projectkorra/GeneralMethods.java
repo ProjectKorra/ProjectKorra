@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 import com.google.common.io.Files;
@@ -880,16 +881,43 @@ public class GeneralMethods {
 	/**
 	 * Get a vector located in a plane perpendicular to the given axis, rotated up to the given degree.
 	 * @param axis The original direction
+	 * @param yaw yaw of the vector.
 	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
 	 * @param length Length of the returned orthogonal vector.
 	 * @return the orthogonal vector.
 	 */
-	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
+	public static Vector getOrthogonalVector(final Vector axis, final float yaw, final double degrees, final double length) {
 		Vector ortho = new Vector(-axis.getZ(), 0, axis.getX());
+		if(ortho.length()==0)
+			ortho = new Vector(-Math.cos(Math.toRadians(yaw)), 0, -Math.sin(Math.toRadians(yaw)));
 		ortho = ortho.normalize();
 		ortho = ortho.multiply(length);
 
 		return rotateVectorAroundVector(axis, ortho, -degrees);
+	}
+
+	/**
+	 * @see GeneralMethods#getOrthogonalVector(Vector, float, double, double)
+	 * @apiNote If axis is (0, y, 0), then you'll have random degree, because you can't say how vertical vector is rotated.
+	 * @param axis The original direction
+	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
+	 * @param length Length of the returned orthogonal vector.
+	 * @return
+	 */
+	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
+		return getOrthogonalVector(axis, ThreadLocalRandom.current().nextFloat(-180,180), degrees, length);
+	}
+
+	/**
+	 * @see GeneralMethods#getOrthogonalVector(Vector, float, double, double)
+	 * @apiNote Location should have direction and yaw.
+	 * @param axisLocation Location with axis direction
+	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
+	 * @param length Length of the returned orthogonal vector.
+	 * @return
+	 */
+	public static Vector getOrthogonalVector(final Location axisLocation, final double degrees, final double length) {
+		return getOrthogonalVector(axisLocation.getDirection(), axisLocation.getYaw(), degrees, length);
 	}
 
 	public static Collection<Player> getPlayersAroundPoint(final Location location, final double distance) {
