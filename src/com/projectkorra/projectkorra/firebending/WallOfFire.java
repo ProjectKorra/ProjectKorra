@@ -172,19 +172,17 @@ public class WallOfFire extends FireAbility {
 	private void initializeBlocks() {
 		Vector direction = this.player.getEyeLocation().getDirection();
 
-		//Vector horizontal = GeneralMethods.getOrthogonalVector(direction, 0, 1);
-		Vector horizontal = new Vector(direction.getZ(), 0, -direction.getX()).normalize();
+		Vector ortholr = GeneralMethods.getOrthogonalVector(direction, 0, 1);
 
-		//Vector vertical = GeneralMethods.getOrthogonalVector(direction, 90, 1);
-		Vector vertical = direction.clone().crossProduct(horizontal).normalize();
+		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
 
 		final double w = this.width;
 		final double h = this.height;
 
 		for (double i = -w; i <= w; i++) {
 			for (double j = -h; j <= h; j++) {
-				Location location = this.origin.clone().add(vertical.clone().multiply(j));
-				location = location.add(horizontal.clone().multiply(i));
+				Location location = this.origin.clone().add(orthoud.clone().multiply(j));
+				location = location.add(ortholr.clone().multiply(i));
 				if (RegionProtection.isRegionProtected(this, location)) {
 					continue;
 				}

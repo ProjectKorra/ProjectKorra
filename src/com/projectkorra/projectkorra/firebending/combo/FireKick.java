@@ -23,6 +23,10 @@ import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireKick extends FireAbility implements ComboAbility {
 
+	@Attribute("Arc")
+	private int arc;
+	@Attribute("ArcIncrement")
+	private int arcIncrement;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DAMAGE)
@@ -48,6 +52,8 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireKick.Damage"));
 		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireKick.Range"));
+		this.arc = getConfig().getInt("Abilities.Fire.FireKick.Arc");
+		this.arcIncrement = getConfig().getInt("Abilities.Fire.FireKick.StepSize");
 		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireKick.Cooldown"));
 		this.speed = getConfig().getLong("Abilities.Fire.FireKick.Speed");
 
@@ -99,11 +105,11 @@ public class FireKick extends FireAbility implements ComboAbility {
 
 			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_HORSE_JUMP, 0.5f, 0f);
 			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 1f);
-			for (int i = -30; i <= 30; i += 5) {
+			for (int i = -this.arc; i <= this.arc; i += this.arcIncrement) {
 				Vector vec = GeneralMethods.getDirection(this.player.getLocation(), this.destination.clone());
-				vec = GeneralMethods.rotateXZ(vec, i);
+				vec = GeneralMethods.rotateVectorAroundVector(GeneralMethods.getOrthogonalVector(vec,90,1), vec, i);
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation(), this.range, this.speed);
+				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation().add(0,.1,0), this.range, this.speed);
 				fs.setSpread(0.2F);
 				fs.setDensity(5);
 				fs.setUseNewParticles(true);

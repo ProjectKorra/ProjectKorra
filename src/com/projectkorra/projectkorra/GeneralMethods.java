@@ -877,8 +877,15 @@ public class GeneralMethods {
 		return 0;
 	}
 
+	/**
+	 * Get a vector located in a plane perpendicular to the given axis, rotated up to the given degree.
+	 * @param axis The original direction
+	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
+	 * @param length Length of the returned orthogonal vector.
+	 * @return the orthogonal vector.
+	 */
 	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
-		Vector ortho = new Vector(axis.getY(), -axis.getX(), 0);
+		Vector ortho = new Vector(-axis.getZ(), 0, axis.getX());
 		ortho = ortho.normalize();
 		ortho = ortho.multiply(length);
 

@@ -1662,7 +1662,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireKick.Range", 7.0);
 			config.addDefault("Abilities.Fire.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireKick.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireKick.Arc", 30.0);
 			config.addDefault("Abilities.Fire.FireKick.Speed", 1);
+			config.addDefault("Abilities.Fire.FireKick.StepSize", 5.0);
 			config.addDefault("Abilities.Fire.FireKick.Combination", Arrays.asList("FireBlast:LEFT_CLICK", "FireBlast:LEFT_CLICK", "FireBlast:SNEAK_DOWN", "FireBlast:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Fire.FireSpin.Enabled", true);

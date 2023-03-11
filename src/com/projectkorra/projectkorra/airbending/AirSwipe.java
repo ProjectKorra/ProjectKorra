@@ -264,7 +264,7 @@ public class AirSwipe extends AirAbility {
 		this.bPlayer.addCooldown("AirSwipe", this.cooldown);
 		this.origin = this.player.getEyeLocation();
 		final Vector direction = this.player.getEyeLocation().getDirection().clone();
-		Vector xz = new Vector(-direction.getZ(), 0, direction.getX()).normalize();
+		Vector xz = GeneralMethods.getOrthogonalVector(direction, 0, 1);
 		for (double i = -this.arc; i <= this.arc; i += this.arcIncrement) {
 			final double angle = Math.toRadians(i);
 			this.streams.put(direction.clone().multiply(Math.cos(angle))
