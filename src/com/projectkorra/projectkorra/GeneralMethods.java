@@ -889,7 +889,7 @@ public class GeneralMethods {
 		ortho = ortho.normalize();
 		ortho = ortho.multiply(length);
 
-		return rotateVectorAroundVector(axis, ortho, degrees);
+		return rotateVectorAroundVector(axis, ortho, -degrees);
 	}
 
 	public static Collection<Player> getPlayersAroundPoint(final Location location, final double distance) {
