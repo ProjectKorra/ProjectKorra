@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -283,7 +284,7 @@ public class PhaseChange extends IceAbility {
 			return;
 		}
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, b.getLocation())) {
+		if (RegionProtection.isRegionProtected(this.player, b.getLocation(), this)) {
 			return;
 		}
 
@@ -315,7 +316,6 @@ public class PhaseChange extends IceAbility {
 		for (final Location l : GeneralMethods.getCircle(center, radius, 3, true, true, 0)) {
 			if (isIce(l.getBlock()) || isSnow(l.getBlock())) {
 				ice.add(l.getBlock());
-
 			}
 		}
 
@@ -344,7 +344,7 @@ public class PhaseChange extends IceAbility {
 		if (b.getLocation().distanceSquared(this.player.getLocation()) > this.controlRadius * this.controlRadius) {
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, b.getLocation())) {
+		if (RegionProtection.isRegionProtected(this.player, b.getLocation(), this)) {
 			return;
 		}
 		if (SurgeWall.getWallBlocks().containsKey(b)) {
