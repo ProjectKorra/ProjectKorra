@@ -245,15 +245,6 @@ public class PKListener implements Listener {
 		final String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability;
 
-		if (Illumination.isIlluminationTorch(block.getRelative(BlockFace.UP))) {
-			TempBlock torch = TempBlock.get(block.getRelative(BlockFace.UP));
-			Player user = Illumination.getBlocks().get(torch);
-			Illumination illumination = CoreAbility.getAbility(user, Illumination.class);
-			if (illumination != null) {
-				illumination.remove();
-			}
-		}
-
 		if (bPlayer.isElementToggled(Element.EARTH) && bPlayer.isPassiveToggled(Element.EARTH)) {
 			Tremorsense tremorsense = CoreAbility.getAbility(player, Tremorsense.class);
 			if (tremorsense != null) {
@@ -294,8 +285,6 @@ public class PKListener implements Listener {
 			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			event.setCancelled(true);
-		} else if (Illumination.isIlluminationTorch(block)) {
-			event.setCancelled(true);
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
 			event.setCancelled(true);
@@ -327,12 +316,6 @@ public class PKListener implements Listener {
 				event.setCancelled(WaterBubble.isAir(toblock));
 				if (!event.isCancelled()) {
 					event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
-				}
-
-				if (!event.isCancelled()) {
-					if (Illumination.isIlluminationTorch(toblock)) {
-						toblock.setType(Material.AIR);
-					}
 				}
 			}
 		}
@@ -388,7 +371,6 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		event.setCancelled(Illumination.isIlluminationTorch(block));
 		if (!event.isCancelled()) {
 			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
 		}
@@ -423,13 +405,6 @@ public class PKListener implements Listener {
 
 		try (MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
 			if (!EarthPassive.canPhysicsChange(block)) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-
-		try (MCTiming timing = TimingPhysicsIlluminationTorchCheck.startTiming()) {
-			if (Illumination.isIlluminationTorch(block) || Illumination.isIlluminationTorch(block.getRelative(BlockFace.UP))) {
 				event.setCancelled(true);
 				return;
 			}
@@ -846,10 +821,6 @@ public class PKListener implements Listener {
 	public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event) {
 		final Block block = event.getBlockClicked().getRelative(event.getBlockFace());
 
-		if (Illumination.isIlluminationTorch(block)) {
-			final Player player = Illumination.getBlocks().get(TempBlock.get(block));
-			CoreAbility.getAbility(player, Illumination.class).remove();
-		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

@@ -56,6 +56,8 @@ public class WaterArmsSpear extends WaterAbility {
 	private Location initLocation;
 	private WaterArms waterArms;
 	private final List<Location> spearLocations;
+	private List<TempBlock> waterBlocks = new ArrayList<>();
+	private List<TempBlock> iceBlocks = new ArrayList<>();
 
 	public WaterArmsSpear(final Player player, final boolean freeze) {
 		super(player);
@@ -178,7 +180,7 @@ public class WaterArmsSpear extends WaterAbility {
 				return;
 			}
 
-			new TempBlock(this.location.getBlock(), Material.WATER);
+			waterBlocks.add(new TempBlock(this.location.getBlock(), Material.WATER));
 			getIceBlocks().put(this.location.getBlock(), System.currentTimeMillis() + 600L);
 			final Vector direction = GeneralMethods.getDirection(this.initLocation, GeneralMethods.getTargetedLocation(this.player, this.spearRange, getTransparentMaterials())).normalize();
 
@@ -190,6 +192,9 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private void createSpear() {
+		waterBlocks.forEach(TempBlock::revertBlock);
+		waterBlocks.clear();
+
 		for (int i = this.spearLocations.size() - this.spearLength; i < this.spearLocations.size(); i++) {
 			if (i >= 0) {
 				final Block block = this.spearLocations.get(i).getBlock();
@@ -199,7 +204,7 @@ public class WaterArmsSpear extends WaterAbility {
 						getIceBlocks().remove(block);
 					}
 
-					new TempBlock(block, Material.ICE);
+					iceBlocks.add(new TempBlock(block, Material.ICE));
 
 					getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 				}

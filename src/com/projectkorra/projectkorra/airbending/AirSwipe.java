@@ -267,17 +267,10 @@ public class AirSwipe extends AirAbility {
 			final double angle = Math.toRadians(i);
 			final Vector direction = this.player.getEyeLocation().getDirection().clone();
 
-			double x, z, vx, vz;
-			x = direction.getX();
-			z = direction.getZ();
+			Vector xz = GeneralMethods.rotateVectorAroundVector(direction, new Vector(-direction.getZ(), 0, direction.getX()).normalize(), 0);
 
-			vx = x * Math.cos(angle) - z * Math.sin(angle);
-			vz = x * Math.sin(angle) + z * Math.cos(angle);
-
-			direction.setX(vx);
-			direction.setZ(vz);
-
-			this.streams.put(direction, this.origin);
+			this.streams.put(direction.clone().multiply(Math.cos(angle))
+					.add(xz.clone().multiply(Math.sin(angle))).normalize(), this.origin);
 		}
 	}
 

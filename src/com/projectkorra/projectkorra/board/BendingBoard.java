@@ -50,7 +50,8 @@ public class BendingBoard {
 		}
 		
 		private void set() {
-			obj.getScore(entry).setScore(-slot);
+			int s = Math.min(slot, 11);
+			obj.getScore(entry).setScore(-s);
 		}
 		
 		public void update(String prefix, String name) {
@@ -91,6 +92,7 @@ public class BendingBoard {
 	
 	private final BoardSlot[] slots = new BoardSlot[9];
 	private final Map<String, BoardSlot> misc = new HashMap<>();
+	private int miscSlot = 0;
 	private BoardSlot miscTail = null;
 
 	private final Player player;
@@ -249,7 +251,10 @@ public class BendingBoard {
 				bendingBoard.resetScores(miscSeparator);
 			}
 		} else if (!misc.containsKey(name)) {
-			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 10 + misc.size());
+			if (miscSlot >= 90) {
+				miscSlot = 0;
+			}
+			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 10 + miscSlot++);
 			slot.update(String.join("", Collections.nCopies(ChatColor.stripColor(prefix).length() + 1, " ")), color + "" + ChatColor.STRIKETHROUGH + name);
 			
 			if (miscTail != null) {

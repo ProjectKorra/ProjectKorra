@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.command;
 
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -131,7 +132,7 @@ public class HelpCommand extends PKCommand {
 				sender.sendMessage(ChatColor.WHITE + this.usage + ability.getInstructions());
 			}
 			
-			if (!isPassiveAbility && sender instanceof Player && sender.hasPermission("bending.ability." + arg) && this.enableQuickBind) {
+			if (!isPassiveAbility && sender instanceof Player && this.enableQuickBind && BendingPlayer.getBendingPlayer((Player)sender).canBind(CoreAbility.getAbility(arg))) {
 				final ComponentBuilder bindShortcut = new ComponentBuilder();
 				bindShortcut.appendLegacy(ChatUtil.color(this.bindStart));
 				bindShortcut.append("", ComponentBuilder.FormatRetention.NONE);

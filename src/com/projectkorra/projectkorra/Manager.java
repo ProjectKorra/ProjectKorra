@@ -12,7 +12,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.StatisticsManager;
 
@@ -109,7 +108,6 @@ public abstract class Manager implements Listener {
 	 */
 	public static void startup() {
 		registerManager(StatisticsManager.class);
-		registerManager(DBCooldownManager.class);
 		registerManager(FlightHandler.class);
 	}
 
