@@ -160,9 +160,9 @@ public class LavaFlow extends LavaAbility {
 				return;
 			}
 
+			this.makeLava = !isLava(sourceBlock);
 			final long cooldown = this.makeLava ? this.clickLavaCooldown : this.clickLandCooldown;
 			this.origin = sourceBlock.getLocation();
-			this.makeLava = !isLava(sourceBlock);
 			if (this.bPlayer.isOnCooldown("LavaFlow")) {
 				this.removeSlowly();
 				return;
@@ -668,7 +668,7 @@ public class LavaFlow extends LavaAbility {
 
 	@Override
 	public long getCooldown() {
-		return this.type == AbilityType.CLICK ? this.clickLandCooldown : this.shiftCooldown;
+		return this.type == AbilityType.CLICK ? this.makeLava ? this.clickLavaCooldown : this.clickLandCooldown : this.shiftCooldown;
 	}
 
 	@Override
