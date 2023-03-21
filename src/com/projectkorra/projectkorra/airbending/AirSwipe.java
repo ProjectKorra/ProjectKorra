@@ -59,7 +59,7 @@ public class AirSwipe extends AirAbility {
     private double maxChargePushFactor;
     private double minCameraTickAngle;
     private boolean tiltedSwipeEnabled;
-    private boolean tiltedSwipeOnSneakOnly;
+	private boolean tiltedSwipeOnClickOnly;
 	private Location origin;
 	private Map<Vector, Location> streams;
 	private ArrayList<Entity> affectedEntities;
@@ -100,7 +100,8 @@ public class AirSwipe extends AirAbility {
         this.maxChargePushFactor = getConfig().getDouble("Abilities.Air.AirSwipe.ChargePushFactor");
 
         this.tiltedSwipeEnabled = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.Enabled");
-        this.tiltedSwipeOnSneakOnly = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.SneakOnly");
+		boolean tiltedSwipeOnSneakOnly = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.SneakOnly");
+        this.tiltedSwipeOnClickOnly = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.ClickOnly");
         this.minCameraTickAngle = getConfig().getDouble("Abilities.Air.AirSwipe.TiltedSwipe.MinCameraTickAngle");
 
         this.tiltSwipe = tiltedSwipeEnabled && !(tiltedSwipeOnSneakOnly && !(player.isSneaking()||charging));
@@ -344,6 +345,8 @@ public class AirSwipe extends AirAbility {
 			this.advanceSwipe();
 		} else {
 			if (!this.player.isSneaking()) {
+				if(tiltedSwipeOnClickOnly)
+					tiltSwipe=false;
                 chargedLaunch();
 			} else {
                 if (System.currentTimeMillis() >= this.getStartTime() + this.maxChargeTime) {

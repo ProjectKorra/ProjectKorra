@@ -1018,6 +1018,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.StepSize", 4);
 			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.Enabled", false);
 			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.SneakOnly", true);
+			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.ClickOnly", false);
 			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.MinCameraTickAngle", 0.03);
 			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.Enabled", true);
 			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.OnReleaseSneak", true);
