@@ -102,6 +102,8 @@ public class ConfigManager {
 			if (!config.contains("Board.Extras")) {
 				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
 				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
+				config.addDefault("Board.Extras.SurgeWall", ChatColor.AQUA.getName());
+				config.addDefault("Board.Extras.SideSwipe", ChatColor.GRAY.getName());
 			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
@@ -333,6 +335,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSuction.HorizontalVelocityDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.AirSwipe.Description", "AirSwipe is the most commonly used damage ability in an airbender's arsenal. An arc of air will flow from you towards the direction you're facing, cutting and pushing back anything in its path. This ability will extinguish fires, cool lava, and cut things like grass, mushrooms, and flowers.");
 			config.addDefault("Abilities.Air.AirSwipe.Instructions", "\n" + "(Uncharged) Simply left click to send an air swipe out that will damage targets that it comes into contact with." + "\n" + "(Charged) Hold sneak until particles appear, then release sneak to send a more powerful air swipe out that damages entity's that it comes into contact with.");
+			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.Instructions", "\n(Tilted) Use the ability while moving your camera fast enough. It possibly may work only when using sneak.");
+			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.Instructions", "\n(Leap) Use the tilted swipe being midair to jump aside opposite of impact. It possibly may work only when releasing sneak or left click with held sneak.");
 			config.addDefault("Abilities.Air.AirSwipe.DeathMessage", "{victim} was struck by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.Flight.Description", "Fly through the air as Zaheer and Guru Laghima did! This multiability allows for three modes of flight: soaring, gliding, and levitating. You can also right-click another player while flying to have them become your passenger! When flying at fast speeds, flying past nearby enemies will damage them for half your speed and knock them in the direction you're heading!");
 			config.addDefault("Abilities.Air.Flight.Instructions", "\n- (To start flying, jump and left-click)\n- (Soar) Left-Click to change flying speeds.\n- (Glide) Normal minecraft gliding. Slowing down or speeding up in this mode will affect the Soar speed.\n- (Levitate) Basically minecraft flying, allowing players to fly around for building purposes or a more controlled 'hovering'.\n- (Ending) Being in this mode sets any gliding and flight back the the state they were before using the ability.");
@@ -1008,9 +1012,19 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 			config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
 			config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
+			config.addDefault("Abilities.Air.AirSwipe.ChargePushFactor", 3);
 			config.addDefault("Abilities.Air.AirSwipe.MaxChargeTime", 2500);
 			config.addDefault("Abilities.Air.AirSwipe.Particles", 3);
 			config.addDefault("Abilities.Air.AirSwipe.StepSize", 4);
+			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.Enabled", false);
+			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.SneakOnly", true);
+			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe.MinCameraTickAngle", 0.03);
+			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.Enabled", true);
+			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.OnReleaseSneak", true);
+			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.OnSneakClick", false);
+			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.RevertCooldownAtLanding", true);
+			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.Velocity", 0.8);
+			config.addDefault("Abilities.Air.AirSwipe.SideSwipe.Cooldown", 7000);
 
 			config.addDefault("Abilities.Air.Flight.Enabled", true);
 			config.addDefault("Abilities.Air.Flight.Cooldown", 0);
