@@ -14,13 +14,11 @@ import com.projectkorra.projectkorra.ProjectKorra;
 public abstract class Database {
 
 	protected final Logger log;
-	protected final String prefix;
 	protected final String dbprefix;
 	protected Connection connection = null;
 
-	public Database(final Logger log, final String prefix, final String dbprefix) {
+	public Database(final Logger log, final String dbprefix) {
 		this.log = log;
-		this.prefix = prefix;
 		this.dbprefix = dbprefix;
 	}
 
@@ -30,7 +28,7 @@ public abstract class Database {
 	 * @param message The string to print to console
 	 */
 	protected void printInfo(final String message) {
-		this.log.info(this.prefix + this.dbprefix + message);
+		this.log.info(this.dbprefix + message);
 	}
 
 	/**
@@ -42,9 +40,9 @@ public abstract class Database {
 	 */
 	protected void printErr(final String message, final boolean severe) {
 		if (severe) {
-			this.log.severe(this.prefix + this.dbprefix + message);
+			this.log.severe(this.dbprefix + message);
 		} else {
-			this.log.warning(this.prefix + this.dbprefix + message);
+			this.log.warning(this.dbprefix + message);
 		}
 	}
 

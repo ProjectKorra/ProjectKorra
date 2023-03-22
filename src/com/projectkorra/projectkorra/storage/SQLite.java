@@ -11,8 +11,8 @@ public class SQLite extends Database {
 	private final String database;
 	private final File SQLfile;
 
-	public SQLite(final Logger log, final String prefix, final String database, final String location) {
-		super(log, prefix, "[SQLite] ");
+	public SQLite(final Logger log, final String database, final String location) {
+		super(log, "[SQLite] ");
 		this.database = database;
 		this.location = location;
 
@@ -28,9 +28,11 @@ public class SQLite extends Database {
 	@Override
 	public Connection open() {
 		try {
-			Class.forName("org.sqlite.JDBC");
+			this.log.info("Establishing SQLite Connection...");
 
+			Class.forName("org.sqlite.JDBC");
 			this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.SQLfile.getAbsolutePath());
+
 			this.printInfo("Connection established!");
 
 			return this.connection;

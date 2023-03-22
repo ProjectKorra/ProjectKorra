@@ -253,64 +253,19 @@ public class GeneralMethods {
 		return getArmorTier(first) - getArmorTier(second);
 	}
 
-	/**
-	 * Creates a {@link BendingPlayer} with the data from the database. This
-	 * runs when a player logs in.
-	 *
-	 * @param uuid The UUID of the player
-	 * @param player The player name
-	 * @throws SQLException
-	 */
-	/*public static void createBendingPlayer(final UUID uuid, final String player) {
-		new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				OfflineBendingPlayer.createBendingPlayerAsynchronously(uuid, player);
-			}
-
-		}.runTaskAsynchronously(ProjectKorra.plugin);
-	}*/
-
-	/**
-	 * Deserializes the configuration file "bendingPlayers.yml" of the old
-	 * BendingPlugin and creates a converted.yml ready for conversion.
-	 *
-	 * @throws IOException If the "bendingPlayers.yml" file is not found
-	 */
-	public static void deserializeFile() {
-		final File readFile = new File(".", "bendingPlayers.yml");
-		final File writeFile = new File(".", "converted.yml");
-		if (readFile.exists()) {
-			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile)); BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
-
-				String line;
-				while ((line = reader.readLine()) != null) {
-					if (!line.trim().contains("==: BendingPlayer")) {
-						writer.write(line + "\n");
-					}
-				}
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	@Deprecated
 	public static void displayColoredParticle(final Location loc, ParticleEffect type, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
 		int r = 0;
 		int g = 0;
 		int b = 0;
 		if (hexVal.length() <= 6) {
-			r = Integer.valueOf(hexVal.substring(0, 2), 16).intValue();
-			g = Integer.valueOf(hexVal.substring(2, 4), 16).intValue();
-			b = Integer.valueOf(hexVal.substring(4, 6), 16).intValue();
-		} else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
-			r = Integer.valueOf(hexVal.substring(1, 3), 16).intValue();
-			g = Integer.valueOf(hexVal.substring(3, 5), 16).intValue();
-			b = Integer.valueOf(hexVal.substring(5, 7), 16).intValue();
+			r = Integer.valueOf(hexVal.substring(0, 2), 16);
+			g = Integer.valueOf(hexVal.substring(2, 4), 16);
+			b = Integer.valueOf(hexVal.substring(4, 6), 16);
+		} else if (hexVal.length() <= 7 && hexVal.charAt(0) == '#') {
+			r = Integer.valueOf(hexVal.substring(1, 3), 16);
+			g = Integer.valueOf(hexVal.substring(3, 5), 16);
+			b = Integer.valueOf(hexVal.substring(5, 7), 16);
 		}
 		float red = r / 255.0F;
 		final float green = g / 255.0F;
@@ -1264,10 +1219,6 @@ public class GeneralMethods {
 			}
 		}
 		return sources >= 2;
-	}
-
-	public static boolean isImportEnabled() {
-		return ConfigManager.defaultConfig.get().getBoolean("Properties.ImportEnabled");
 	}
 
 	public static boolean isInteractable(final Block block) {

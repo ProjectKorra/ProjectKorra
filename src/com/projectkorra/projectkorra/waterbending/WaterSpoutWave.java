@@ -381,6 +381,9 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
+		if (this.affectedBlocks.contains(block)) {
+			this.affectedBlocks.get(block).revertBlock();
+		}
 		this.affectedBlocks.put(block, new TempBlock(block, mat));
 	}
 

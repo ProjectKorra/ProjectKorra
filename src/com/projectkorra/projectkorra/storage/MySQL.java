@@ -13,8 +13,8 @@ public class MySQL extends Database {
 	private String pass = "";
 	private final String database;
 
-	public MySQL(final Logger log, final String prefix, final String host, final int port, final String user, final String pass, final String database) {
-		super(log, prefix, "[MySQL] ");
+	public MySQL(final Logger log, final String host, final int port, final String user, final String pass, final String database) {
+		super(log, "[MySQL] ");
 		this.host = host;
 		this.port = port;
 		this.user = user;
@@ -22,8 +22,8 @@ public class MySQL extends Database {
 		this.database = database;
 	}
 
-	public MySQL(final Logger log, final String prefix, final String user, final String pass, final String database) {
-		super(log, prefix, "[MySQL] ");
+	public MySQL(final Logger log, final String user, final String pass, final String database) {
+		super(log, "[MySQL] ");
 		this.user = user;
 		this.pass = pass;
 		this.database = database;
@@ -32,8 +32,9 @@ public class MySQL extends Database {
 	@Override
 	public Connection open() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			this.log.info("Establishing MySQL Connection...");
 
+			Class.forName("com.mysql.jdbc.Driver");
 			final String url = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database;
 
 			this.connection = DriverManager.getConnection(url, this.user, this.pass);
