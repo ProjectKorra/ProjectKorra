@@ -431,24 +431,6 @@ public class TempBlock {
 		this.block.setBlockData(data, applyPhysics(data.getMaterial()));
 	}
 
-	public static void startReversion() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				final long currentTime = System.currentTimeMillis();
-				while (!REVERT_QUEUE.isEmpty()) {
-					final TempBlock tempBlock = REVERT_QUEUE.peek();
-					if (currentTime >= tempBlock.revertTime) {
-						REVERT_QUEUE.poll();
-						tempBlock.revertBlock();
-					} else {
-						break;
-					}
-				}
-			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
-	}
-
 	/**
 	 * @return If the TempBlock has reverted
 	 */

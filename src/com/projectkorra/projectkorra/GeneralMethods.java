@@ -1367,7 +1367,6 @@ public class GeneralMethods {
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
 		ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
-		TempBlock.startReversion();
 
 		EarthTunnel.setupBendableMaterials();
 		Bloodbending.loadBloodlessFromConfig();

@@ -88,8 +88,6 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 
-		TempBlock.startReversion();
-
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
 

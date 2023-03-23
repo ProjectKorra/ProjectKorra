@@ -8,9 +8,10 @@ import co.aikar.timings.lib.MCTiming;
 
 import com.projectkorra.projectkorra.event.WorldTimeEvent;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -34,7 +35,8 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, WorldTimeEvent.Time> times = new HashMap<>(); // true if day time
 
-	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCKS;
+	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING,
+			COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCK_TIMING, TEMP_BLOCK_TIMING, BPLAYER_TEMPELEMENT_TIMING;
 
 	public BendingManager() {
 		instance = this;
@@ -47,7 +49,9 @@ public class BendingManager implements Runnable {
 		this.COOLDOWN_TIMING = ProjectKorra.timing("HandleCooldowns");
 		this.TEMP_ARMOR_TIMING = ProjectKorra.timing("TempArmor#Cleanup");
 		this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
-		this.TEMP_FALLING_BLOCKS = ProjectKorra.timing("TempFallingBlock#manage");
+		this.TEMP_FALLING_BLOCK_TIMING = ProjectKorra.timing("TempFallingBlock#manage");
+		this.TEMP_BLOCK_TIMING = ProjectKorra.timing("TempBlockRevert");
+		this.BPLAYER_TEMPELEMENT_TIMING = ProjectKorra.timing("BendingPlayerTempElements");
 
 		times.clear();
 
@@ -158,8 +162,34 @@ public class BendingManager implements Runnable {
 			}
 		}
 
-		try (MCTiming timing = this.TEMP_FALLING_BLOCKS.startTiming()) {
+		try (MCTiming timing = this.TEMP_FALLING_BLOCK_TIMING.startTiming()) {
 			TempFallingBlock.manage();
+		}
+
+		try (MCTiming timing = this.TEMP_BLOCK_TIMING.startTiming()) {
+			final long currentTime = System.currentTimeMillis();
+			while (!TempBlock.REVERT_QUEUE.isEmpty()) {
+				final TempBlock tempBlock = TempBlock.REVERT_QUEUE.peek(); //Check if the top TempBlock is ready for reverting
+				if (currentTime >= tempBlock.getRevertTime()) {
+					TempBlock.REVERT_QUEUE.poll();
+					tempBlock.revertBlock();
+				} else {
+					break;
+				}
+			}
+		}
+
+		try (MCTiming timing = this.BPLAYER_TEMPELEMENT_TIMING.startTiming()) {
+			while (!BendingPlayer.TEMP_ELEMENTS.isEmpty()) {
+				Pair<Player, Long> pair = BendingPlayer.TEMP_ELEMENTS.peek();
+
+				if (System.currentTimeMillis() > pair.getRight()) { //Check if the top temp element has expired
+					BendingPlayer.TEMP_ELEMENTS.poll(); //And if it has, recalculate temp elements for that player
+					BendingPlayer.getBendingPlayer(pair.getLeft()).recalculateTempElements(false);
+				} else {
+					break;
+				}
+			}
 		}
 	}
 
