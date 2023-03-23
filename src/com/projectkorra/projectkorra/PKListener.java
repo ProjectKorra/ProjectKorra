@@ -523,9 +523,11 @@ public class PKListener implements Listener {
 			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
 			} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-				TempBlock.get(block).getAbility().ifPresent(ability -> new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true));
-				event.setCancelled(true);
-				FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
+				TempBlock.get(block).getAbility().ifPresent(ability -> {
+					new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
+					event.setCancelled(true);
+					FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
+				});
 			} else if (!TempBlock.get(block).canSuffocate() && event.getCause() == DamageCause.SUFFOCATION) {
 				event.setCancelled(true);
 			}
