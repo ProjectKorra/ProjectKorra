@@ -2,8 +2,10 @@ package com.projectkorra.projectkorra.board;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -24,6 +26,8 @@ import net.md_5.bungee.api.ChatColor;
  * Represents a player's scoreboard for bending purposes
  */
 public class BendingBoard {
+
+	private static final char[] CHAT_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	
 	public static class BoardSlot {
 		
@@ -41,10 +45,11 @@ public class BendingBoard {
 			this.formTeam();
 		}
 
-		@SuppressWarnings("deprecation")
 		private void formTeam() {
-			this.team = board.registerNewTeam("slot" + this.slot);
-			this.entry = ChatColor.values()[slot % 10] + "" + ChatColor.values()[slot % 16];
+			this.team = board.getTeam("slot" + this.slot) == null
+					? board.registerNewTeam("slot" + this.slot)
+					: board.getTeam("slot" + this.slot);
+			this.entry = "\u00A7" + CHAT_CHARS[slot % 10] + "" + "\u00A7" + CHAT_CHARS[slot % 16];
 			
 			team.addEntry(entry);
 		}
@@ -92,7 +97,7 @@ public class BendingBoard {
 	
 	private final BoardSlot[] slots = new BoardSlot[9];
 	private final Map<String, BoardSlot> misc = new HashMap<>();
-	private int miscSlot = 0;
+	private final Queue<Integer> miscSlotIds = new LinkedList<>();
 	private BoardSlot miscTail = null;
 
 	private final Player player;
@@ -123,6 +128,10 @@ public class BendingBoard {
 		prefix = ChatColor.stripColor(ConfigManager.languageConfig.get().getString("Board.Prefix.Text"));
 		emptySlot = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.EmptySlot"));
 		miscSeparator = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.MiscSeparator"));
+
+		for (int i = 0; i < 9; i++) {
+			miscSlotIds.add(i);
+		}
 
 		updateAll();
 	}
@@ -244,6 +253,7 @@ public class BendingBoard {
 				}
 				
 				slot.clear(false);
+				miscSlotIds.add(slot.slot - 10);
 				return null;
 			});
 				
@@ -251,10 +261,7 @@ public class BendingBoard {
 				bendingBoard.resetScores(miscSeparator);
 			}
 		} else if (!misc.containsKey(name)) {
-			if (miscSlot >= 90) {
-				miscSlot = 0;
-			}
-			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 10 + miscSlot++);
+			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 10 + miscSlotIds.poll());
 			slot.update(String.join("", Collections.nCopies(ChatColor.stripColor(prefix).length() + 1, " ")), color + "" + ChatColor.STRIKETHROUGH + name);
 			
 			if (miscTail != null) {
