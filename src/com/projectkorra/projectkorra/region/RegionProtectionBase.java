@@ -46,13 +46,13 @@ public abstract class RegionProtectionBase implements RegionProtectionHook {
                 isHarmless = ability.isHarmlessAbility();
             }
 
-            if (ability == null && allowHarmless) {
+            if ((ability == null || isHarmless) && allowHarmless) {
                 return false;
             }
-            return isRegionProtectedReal(player, location, ability, isHarmless, isIgnite, isExplosive);
+            return isRegionProtectedReal(player, location, ability, isIgnite, isExplosive);
         }
         return false;
     }
 
-    public abstract boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility);
+    public abstract boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility);
 }

@@ -13,11 +13,11 @@ class RedProtect extends RegionProtectionBase {
     }
 
     @Override
-    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
+    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
         final RedProtectAPI api = br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect.get().getAPI();
         final Region region = api.getRegion(location);
         if (region != null) {
-            if (!region.canBuild(player) && !harmless) return true;
+            if (!region.canBuild(player)) return true;
             return !region.canFire() && (igniteAbility || explosiveAbility);
         }
 

@@ -12,7 +12,7 @@ class GriefPrevention extends RegionProtectionBase {
     }
 
     @Override
-    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
+    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
         final String reason = me.ryanhamshire.GriefPrevention.GriefPrevention.instance.allowBuild(player, location);
 
         final Claim claim = me.ryanhamshire.GriefPrevention.GriefPrevention.instance.dataStore.getClaimAt(location, true, null);

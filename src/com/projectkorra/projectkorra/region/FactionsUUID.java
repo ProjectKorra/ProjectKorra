@@ -17,7 +17,7 @@ class FactionsUUID extends RegionProtectionBase {
     }
 
     @Override
-    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
+    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
         final FPlayer fPlayer = FPlayers.getInstance().getByPlayer(player);
         FLocation fLoc = new FLocation(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
         final Faction faction = com.massivecraft.factions.Board.getInstance().getFactionAt(fLoc);
