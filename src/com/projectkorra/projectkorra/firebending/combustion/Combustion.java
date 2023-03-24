@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combustion;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -71,7 +72,7 @@ public class Combustion extends CombustionAbility {
 			this.damage = this.getDayFactor(this.damage);
 		}*/
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this, GeneralMethods.getTargetedLocation(player, this.range))) {
+		if (RegionProtection.isRegionProtected(this, GeneralMethods.getTargetedLocation(player, this.range))) {
 			return;
 		}
 
@@ -115,12 +116,7 @@ public class Combustion extends CombustionAbility {
 	}
 
 	private void createExplosion(final Location block, final float power, final boolean canBreakBlocks) {
-		ParticleEffect.EXPLOSION_LARGE.display(block, 3, 2, 2, 2, 0);
-		
-		if (canFireGrief()) {
-			block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
-		}
-		for (final Entity entity : block.getWorld().getEntities()) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block, power)) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distanceSquared(block) < this.radius * this.radius) { // They are close enough to the explosion.
 					DamageHandler.damageEntity(entity, this.damage, this);
@@ -128,6 +124,8 @@ public class Combustion extends CombustionAbility {
 				}
 			}
 		}
+
+		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, canFireGrief(), canBreakBlocks);
 		
 		this.remove();
 	}
@@ -137,7 +135,7 @@ public class Combustion extends CombustionAbility {
 		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		} else if (RegionProtection.isRegionProtected(this, this.location)) {
 			this.remove();
 			return;
 		}
