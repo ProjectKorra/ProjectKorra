@@ -1663,14 +1663,14 @@ public class PKListener implements Listener {
 			return;
 		}
 
+		BlockSource.update(player, ClickType.LEFT_CLICK);
+
 		PlayerSwingEvent swingEvent = new PlayerSwingEvent(event.getPlayer()); //Allow addons to handle a swing without
 		Bukkit.getPluginManager().callEvent(swingEvent);                       //needing to repeat the checks above themselves
 		if (swingEvent.isCancelled()) {
 			event.setCancelled(true);
 			return;
 		}
-
-		BlockSource.update(player, ClickType.LEFT_CLICK);
 	}
 
 	@EventHandler
