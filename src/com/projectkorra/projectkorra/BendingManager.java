@@ -36,7 +36,7 @@ public class BendingManager implements Runnable {
 	private final HashMap<World, WorldTimeEvent.Time> times = new HashMap<>(); // true if day time
 
 	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING,
-			COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCK_TIMING, TEMP_BLOCK_TIMING, BPLAYER_TEMPELEMENT_TIMING;
+			COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCK_TIMING, TEMP_BLOCK_TIMING;
 
 	public BendingManager() {
 		instance = this;
@@ -51,7 +51,6 @@ public class BendingManager implements Runnable {
 		this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
 		this.TEMP_FALLING_BLOCK_TIMING = ProjectKorra.timing("TempFallingBlock#manage");
 		this.TEMP_BLOCK_TIMING = ProjectKorra.timing("TempBlockRevert");
-		this.BPLAYER_TEMPELEMENT_TIMING = ProjectKorra.timing("BendingPlayerTempElements");
 
 		times.clear();
 
@@ -173,19 +172,6 @@ public class BendingManager implements Runnable {
 				if (currentTime >= tempBlock.getRevertTime()) {
 					TempBlock.REVERT_QUEUE.poll();
 					tempBlock.revertBlock();
-				} else {
-					break;
-				}
-			}
-		}
-
-		try (MCTiming timing = this.BPLAYER_TEMPELEMENT_TIMING.startTiming()) {
-			while (!BendingPlayer.TEMP_ELEMENTS.isEmpty()) {
-				Pair<Player, Long> pair = BendingPlayer.TEMP_ELEMENTS.peek();
-
-				if (System.currentTimeMillis() > pair.getRight()) { //Check if the top temp element has expired
-					BendingPlayer.TEMP_ELEMENTS.poll(); //And if it has, recalculate temp elements for that player
-					BendingPlayer.getBendingPlayer(pair.getLeft()).recalculateTempElements(false);
 				} else {
 					break;
 				}
