@@ -101,6 +101,7 @@ public class ConfigManager {
 			
 			if (!config.contains("Board.Extras")) {
 				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
+				config.addDefault("Board.Extras.SmashBounce", ChatColor.GREEN.getName());
 				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
 				config.addDefault("Board.Extras.SurgeWall", ChatColor.AQUA.getName());
 			}
@@ -422,6 +423,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.LavaFlow.DeathMessage", "{victim} was caught by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.EarthSmash.Description", "EarthSmash is an advanced earthbending technique that has lots of utility. It can be comboed with abilities such as Shockwave, but also be used for mobility and to produce high damage. EarthSmash is great for escaping when at low health.");
 			config.addDefault("Abilities.Earth.EarthSmash.Instructions", "\n" + "(Smash) Hold sneak until particles appear, then release sneak while looking at an earthbendable block which will raise an earth boulder. Then, hold sneak while looking at this boulder to control it. Left click to send the bounder in the direction you're facing, damaging entities and knocking them back." + "\n" + "(Ride) After you have created an earth boulder, hold sneak and right click on the boulder to ride it. You will now ride the boulder in whatever direction you look. Additionally, you can ride the boulder by going on top of it and holding sneak. If you come into contact with an entity while riding the boulder, it will drag them along with you. If you left go of sneak, the ability will cancel.");
+			config.addDefault("Abilities.Earth.EarthSmash.Bounce", "\n" + "(Bounce) Left click while riding the boulder to bounce from it and shoot it to the direction where you looked.");
 			config.addDefault("Abilities.Earth.EarthSmash.DeathMessage", "{victim} was crushed by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips is an advanced metalbending ability that allows you to take control of a fight. It gives the metalbender the ability to control an entity, create space between them and a player and even added utility.");
 			config.addDefault("Abilities.Earth.MetalClips.Instructions", "\n" + "(Clips) This ability requires iron ingots in your inventory. Left click to throw an ingot at an entity, dealing damage to them. This ingot will form into armor, wrapping itself around the entity. Once enough armor pieces are around the entity, you can then control them. To control them, hold sneak while looking at them and then they will be moved in the direction you look. Additionally, you can release sneak to throw them in the direction you're looking." + "\n" + "(Magnet) Hold sneak with this ability to pull iron ingots towards you.");
@@ -1474,6 +1476,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.Range", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.AnimationInterval", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.CollisionRadius", 2.5);
+			config.addDefault("Abilities.Earth.EarthSmash.Bounce.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthSmash.Bounce.Knockback", 1.0d);
+			config.addDefault("Abilities.Earth.EarthSmash.Bounce.Cooldown", 12000);
 			config.addDefault("Abilities.Earth.EarthSmash.RequiredBendableBlocks", 11);
 			config.addDefault("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough", 3);
 			config.addDefault("Abilities.Earth.EarthSmash.LiftAnimationInterval", 30);
