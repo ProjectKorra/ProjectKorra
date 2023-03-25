@@ -97,11 +97,11 @@ public class BendingManager implements Runnable {
 						if (bPlayer == null) continue;
 
 						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
-							String s = getMoonriseMessage();
+							String s = getMoonsetMessage();
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
 						else if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
-							String s = getMoonsetMessage();
+							String s = getMoonriseMessage();
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
 
