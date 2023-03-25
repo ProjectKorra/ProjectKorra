@@ -145,7 +145,7 @@ public class WallOfFire extends FireAbility {
 			entities.remove(this.player);
 		}
 		for (final Entity entity : entities) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 				continue;
 			}
 			for (final Block block : this.blocks) {

@@ -30,6 +30,7 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class OctopusForm extends WaterAbility {
 
@@ -201,7 +202,7 @@ public class OctopusForm extends WaterAbility {
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, this.attackRange)) {
 			if (entity.getEntityId() == this.player.getEntityId()) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			} else if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 				continue;
 			} else if (GeneralMethods.isObstructed(location, entity.getLocation())) {
 				continue;
@@ -421,7 +422,7 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void addWater(final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 			return;
 		}
 

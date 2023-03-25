@@ -25,6 +25,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class LavaFlow extends LavaAbility {
 
@@ -229,7 +230,7 @@ public class LavaFlow extends LavaAbility {
 
 					final double dSquared = distanceSquaredXZ(block.getLocation(), this.origin);
 					if (dSquared > Math.pow(this.shiftPlatformRadius, 2)) {
-						if (dSquared < Math.pow(this.currentRadius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+						if (dSquared < Math.pow(this.currentRadius, 2) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 							if (dSquared < this.shiftPlatformRadius * 4 || this.getAdjacentLavaBlocks(block.getLocation()).size() > 0) {
 								if (!isLava(block)) {
 									if (isPlant(block) || isSnow(block)) {
@@ -327,7 +328,7 @@ public class LavaFlow extends LavaAbility {
 						final Block tempBlock = GeneralMethods.getTopBlock(loc, this.upwardFlow, this.downwardFlow);
 
 						final double dSquared = distanceSquaredXZ(tempBlock.getLocation(), this.origin);
-						if (dSquared < Math.pow(radius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
+						if (dSquared < Math.pow(radius, 2) && !RegionProtection.isRegionProtected(this, loc)) {
 							if (this.makeLava && !isLava(tempBlock)) {
 								this.clickIsFinished = false;
 								if (Math.random() < this.lavaCreateSpeed) {

@@ -371,7 +371,7 @@ public class EarthSmash extends EarthAbility {
 					for (int y = -2; y <= -1; y++) {
 						for (int z = -1; z <= 1; z++) {
 							final Block block = this.location.clone().add(x, y, z).getBlock();
-							if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+							if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 								this.remove();
 								return;
 							}
@@ -605,7 +605,7 @@ public class EarthSmash extends EarthAbility {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.hitRadius);
 		for (final Entity entity : entities) {
 			if (entity instanceof LivingEntity && entity != this.player && !this.affectedEntities.contains(entity)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 					continue;
 				}
 				this.affectedEntities.add(entity);

@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Extraction extends MetalAbility {
 
@@ -44,7 +45,7 @@ public class Extraction extends MetalAbility {
 
 		this.originBlock = player.getTargetBlock(null, this.selectRange);
 
-		if (!GeneralMethods.isRegionProtectedFromBuild(this, this.originBlock.getLocation()) && !TempBlock.isTempBlock(this.originBlock)) {
+		if (!RegionProtection.isRegionProtected(this, this.originBlock.getLocation()) && !TempBlock.isTempBlock(this.originBlock)) {
 			this.start();
 		}
 	}

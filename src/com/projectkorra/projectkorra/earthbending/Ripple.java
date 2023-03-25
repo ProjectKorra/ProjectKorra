@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Ripple extends EarthAbility {
 
@@ -275,7 +276,7 @@ public class Ripple extends EarthAbility {
 	}
 
 	private void affect(final Entity entity) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+		if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			return;
 		}
 		if (entity instanceof LivingEntity) {

@@ -10,11 +10,11 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Smokescreen extends ChiAbility {
 
@@ -72,7 +72,7 @@ public class Smokescreen extends ChiAbility {
 		if (entity instanceof Player) {
 			if (Commands.invincible.contains(((Player) entity).getName())) {
 				return;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			} else if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 				return;
 			}
 			final Player p = (Player) entity;

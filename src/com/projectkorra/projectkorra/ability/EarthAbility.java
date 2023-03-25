@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,6 +32,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public abstract class EarthAbility extends ElementalAbility {
 
@@ -137,7 +137,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer) {
-		if ((!TempBlock.isTempBlock(block) || isBendableEarthTempBlock(block)) && this.isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if ((!TempBlock.isTempBlock(block) || isBendableEarthTempBlock(block)) && this.isEarthbendable(block) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			boolean up = false;
 			boolean down = false;
 			final Vector norm = direction.clone().normalize();

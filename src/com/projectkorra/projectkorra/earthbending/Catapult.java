@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Catapult extends EarthAbility {
 
@@ -70,7 +71,7 @@ public class Catapult extends EarthAbility {
 	private void moveEarth(final Vector apply, final Vector direction) {
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, 2)) {
 			if (entity.getEntityId() != this.player.getEntityId()) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 					continue;
 				}
 				GeneralMethods.setVelocity(this, entity, apply);

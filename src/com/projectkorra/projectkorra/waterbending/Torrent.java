@@ -32,6 +32,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Torrent extends WaterAbility {
 
@@ -128,7 +129,7 @@ public class Torrent extends WaterAbility {
 
 		this.time = System.currentTimeMillis();
 		this.sourceBlock = BlockSource.getWaterSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
-		if (this.sourceBlock != null && !GeneralMethods.isRegionProtectedFromBuild(this, this.sourceBlock.getLocation())) {
+		if (this.sourceBlock != null && !RegionProtection.isRegionProtected(this, this.sourceBlock.getLocation())) {
 			this.sourceSelected = true;
 			this.start();
 		}
@@ -355,7 +356,7 @@ public class Torrent extends WaterAbility {
 				}
 
 				final Block block = blockloc.getBlock();
-				if (!doneBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, blockloc)) {
+				if (!doneBlocks.contains(block) && !RegionProtection.isRegionProtected(this, blockloc)) {
 					if (isTransparent(this.player, block)) {
 						this.launchedBlocks.add(new TempBlock(block, Material.WATER));
 						doneBlocks.add(block);
@@ -391,7 +392,7 @@ public class Torrent extends WaterAbility {
 		}
 
 		final Block locBlock = this.location.getBlock();
-		if (this.location.distanceSquared(this.player.getLocation()) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		if (this.location.distanceSquared(this.player.getLocation()) > this.range * this.range || RegionProtection.isRegionProtected(this, this.location)) {
 			if (this.layer < this.maxLayer) {
 				if (this.freeze || this.layer < 1) {
 					this.layer++;
@@ -568,7 +569,7 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+		if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 			return;
 		}
 		double x, z, vx, vz, mag;
@@ -607,7 +608,7 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == this.player.getEntityId()) {
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
+		if (RegionProtection.isRegionProtected(this, entity.getLocation()) || (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName()))) {
 			return;
 		}
 		if (direction.getY() > this.knockup) {

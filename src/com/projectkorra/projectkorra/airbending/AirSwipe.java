@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,6 +29,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class AirSwipe extends AirAbility {
 
@@ -188,7 +188,7 @@ public class AirSwipe extends AirAbility {
 		if (GeneralMethods.checkDiagonalWall(block.getLocation(), direction) || !block.isPassable()) {
 			return false;
 		}  else {
-			if (block.getLocation().distanceSquared(this.origin) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (block.getLocation().distanceSquared(this.origin) > this.range * this.range || RegionProtection.isRegionProtected(this, block.getLocation())) {
 				this.streams.clear();
 			} else {
 				if (!ElementalAbility.isTransparent(this.player, block) || !block.isPassable()) {

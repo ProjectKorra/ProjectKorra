@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class FireBlastCharged extends FireAbility {
 
@@ -195,7 +196,7 @@ public class FireBlastCharged extends FireAbility {
 	public void explode() {
 		boolean explode = true;
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, 3)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 				explode = false;
 				break;
 			}
@@ -256,7 +257,7 @@ public class FireBlastCharged extends FireAbility {
 
 		boolean exploded = false;
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
-			if (entity.getEntityId() == this.player.getEntityId() || GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			if (entity.getEntityId() == this.player.getEntityId() || RegionProtection.isRegionProtected(this, entity.getLocation())) {
 				continue;
 			}
 			entity.setFireTicks((int) (this.fireTicks * 20));
@@ -303,7 +304,7 @@ public class FireBlastCharged extends FireAbility {
 
 		if (System.currentTimeMillis() > this.time + this.interval) {
 			if (this.launched) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+				if (RegionProtection.isRegionProtected(this, this.location)) {
 					this.remove();
 					return;
 				}

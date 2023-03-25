@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Combustion extends CombustionAbility {
 
@@ -71,7 +72,7 @@ public class Combustion extends CombustionAbility {
 			this.damage = this.getDayFactor(this.damage);
 		}*/
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this, GeneralMethods.getTargetedLocation(player, this.range))) {
+		if (RegionProtection.isRegionProtected(this, GeneralMethods.getTargetedLocation(player, this.range))) {
 			return;
 		}
 
@@ -137,7 +138,7 @@ public class Combustion extends CombustionAbility {
 		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
 			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		} else if (RegionProtection.isRegionProtected(this, this.location)) {
 			this.remove();
 			return;
 		}

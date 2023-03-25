@@ -25,6 +25,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class IceSpikePillar extends IceAbility {
 
@@ -224,7 +225,7 @@ public class IceSpikePillar extends IceAbility {
 		final Block affectedBlock = this.location.clone().add(this.direction).getBlock();
 		this.location = this.location.add(this.direction);
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		if (RegionProtection.isRegionProtected(this, this.location)) {
 			return false;
 		}
 

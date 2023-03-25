@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class EarthTunnel extends EarthAbility {
 
@@ -70,7 +71,7 @@ public class EarthTunnel extends EarthAbility {
 		if (!this.bPlayer.canBend(this) || (!EarthAbility.isEarthbendable(player, this.block) && !ElementalAbility.isTransparent(player, "EarthTunnel", this.block))) {
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
+		if (RegionProtection.isRegionProtected(this, this.block.getLocation())) {
 			return;
 		}
 		if (this.bPlayer.isAvatarState()) {
@@ -126,7 +127,7 @@ public class EarthTunnel extends EarthAbility {
 						this.block = this.location.clone().add(this.direction.clone().normalize().multiply(this.depth)).add(vec).getBlock();
 					}
 
-					if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
+					if (RegionProtection.isRegionProtected(this, this.block.getLocation())) {
 						this.bPlayer.addCooldown(this);
 						this.remove();
 						return;

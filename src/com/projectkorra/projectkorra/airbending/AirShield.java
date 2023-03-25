@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +19,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class AirShield extends AirAbility {
 
@@ -188,7 +188,7 @@ public class AirShield extends AirAbility {
 			z = origin.getZ() + this.radius * Math.sin(angle) * f;
 
 			final Location effect = new Location(origin.getWorld(), x, y, z);
-			if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
+			if (!RegionProtection.isRegionProtected(this, effect)) {
 				playAirbendingParticles(effect, this.particles);
 				if (this.random.nextInt(4) == 0) {
 					playAirbendingSound(effect);

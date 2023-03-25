@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class WaterSpout extends WaterAbility {
 
@@ -259,7 +260,7 @@ public class WaterSpout extends WaterAbility {
 		for (int i = 0; i < this.maxHeight; i++) {
 
 			blocki = location.clone().add(0, -i, 0).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, blocki.getLocation())) {
 				return -1;
 			}
 

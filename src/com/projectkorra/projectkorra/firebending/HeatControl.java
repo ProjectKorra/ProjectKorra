@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +37,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class HeatControl extends FireAbility {
 
@@ -193,7 +193,7 @@ public class HeatControl extends FireAbility {
 
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {
 				final Material material = block.getType();
-				if (isFire(material) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (isFire(material) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 
 					block.setType(Material.AIR);
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
@@ -480,7 +480,7 @@ public class HeatControl extends FireAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, location)) {
+			if (RegionProtection.isRegionProtected(player, location)) {
 				continue;
 			}
 			if (isLava(block)) {

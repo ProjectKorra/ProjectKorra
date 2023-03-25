@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class WaterArmsFreeze extends IceAbility {
 
@@ -119,7 +120,7 @@ public class WaterArmsFreeze extends IceAbility {
 	private boolean canPlaceBlock(final Block block) {
 		if (!isTransparent(this.player, block) && !((isWater(block)) && TempBlock.isTempBlock(block))) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		} else if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 			return false;
 		}
 		return true;
@@ -131,7 +132,7 @@ public class WaterArmsFreeze extends IceAbility {
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && !(entity instanceof ArmorStand)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 					continue;
 				}
 				DamageHandler.damageEntity(entity, this.iceDamage, this);
