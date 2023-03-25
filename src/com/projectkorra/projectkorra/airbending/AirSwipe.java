@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -57,12 +58,10 @@ public class AirSwipe extends AirAbility {
 	private double radius;
 	private double maxChargeFactor;
     private double maxChargePushFactor;
-    private double minCameraTickAngle;
-    private boolean tiltedSwipeEnabled;
-	private boolean tiltedSwipeOnClickOnly;
 	private Location origin;
 	private Map<Vector, Location> streams;
 	private ArrayList<Entity> affectedEntities;
+    private Vector direction;
     private Vector previousDirection;
     private Vector swipeDirection;
 	private boolean tiltSwipe;
@@ -77,7 +76,10 @@ public class AirSwipe extends AirAbility {
 		if (CoreAbility.hasAbility(player, AirSwipe.class)) {
 			for (final AirSwipe ability : CoreAbility.getAbilities(player, AirSwipe.class)) {
 				if (ability.charging) {
-                    ability.previousDirection = null;
+					boolean tiltedSwipeEnabled = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe");
+					if (tiltedSwipeEnabled && ability.direction.angle(ability.previousDirection) != 0) {
+						ability.tiltSwipe = true;
+					}
                     ability.chargedLaunch();
 					return;
 				}
@@ -96,17 +98,13 @@ public class AirSwipe extends AirAbility {
 		this.speed = getConfig().getDouble("Abilities.Air.AirSwipe.Speed") * (ProjectKorra.time_step / 1000.0);
 		this.range = getConfig().getDouble("Abilities.Air.AirSwipe.Range");
 		this.radius = getConfig().getDouble("Abilities.Air.AirSwipe.Radius");
+		this.maxChargePushFactor = getConfig().getDouble("Abilities.Air.AirSwipe.ChargePushFactor");
 		this.maxChargeFactor = getConfig().getDouble("Abilities.Air.AirSwipe.ChargeFactor");
-        this.maxChargePushFactor = getConfig().getDouble("Abilities.Air.AirSwipe.ChargePushFactor");
-
-        this.tiltedSwipeEnabled = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.Enabled");
-		boolean tiltedSwipeOnSneakOnly = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.SneakOnly");
-        this.tiltedSwipeOnClickOnly = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.ClickOnly");
-        this.minCameraTickAngle = getConfig().getDouble("Abilities.Air.AirSwipe.TiltedSwipe.MinCameraTickAngle");
-
-        this.tiltSwipe = tiltedSwipeEnabled && !(tiltedSwipeOnSneakOnly && !(player.isSneaking()||charging));
 		this.streams = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
+		this.direction = player.getLocation().getDirection();
+		this.previousDirection = direction.clone();
+		this.tiltSwipe = false;
 
 		if (this.bPlayer.isOnCooldown(this) || player.getEyeLocation().getBlock().isLiquid()) {
 			this.remove();
@@ -246,7 +244,7 @@ public class AirSwipe extends AirAbility {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					if (GeneralMethods.isRegionProtectedFromBuild(AirSwipe.this, entity.getLocation())) {
+					if (RegionProtection.isRegionProtected(AirSwipe.this, entity.getLocation())) {
 						return;
 					}
 					if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && entity instanceof LivingEntity) {
@@ -273,53 +271,38 @@ public class AirSwipe extends AirAbility {
 		}
 	}
 
-    private void chargedLaunch() {
-        double damageFactor;
-        double pushFactor;
-        if (System.currentTimeMillis() >= this.getStartTime() + this.maxChargeTime) {
-            damageFactor = this.maxChargeFactor;
-            pushFactor = this.maxChargePushFactor;
-        } else {
-            damageFactor = this.maxChargeFactor * (System.currentTimeMillis() - this.getStartTime()) / this.maxChargeTime;
-            pushFactor = this.maxChargePushFactor * (System.currentTimeMillis() - this.getStartTime()) / this.maxChargeTime;
-        }
+	private void chargedLaunch() {
+		double damageFactor;
+		double pushFactor;
+		if (System.currentTimeMillis() >= this.getStartTime() + this.maxChargeTime) {
+			damageFactor = this.maxChargeFactor;
+			pushFactor = this.maxChargePushFactor;
+		} else {
+			damageFactor = this.maxChargeFactor * (System.currentTimeMillis() - this.getStartTime()) / this.maxChargeTime;
+			pushFactor = this.maxChargePushFactor * (System.currentTimeMillis() - this.getStartTime()) / this.maxChargeTime;
+		}
 
-        this.launch();
-		this.charging = false;
 		damageFactor = Math.abs(damageFactor) < 1 ? 1 : damageFactor;
 		pushFactor = Math.abs(pushFactor) < 1 ? 1 : pushFactor;
 		this.damage *= Math.abs(Math.pow(damageFactor, Math.signum(damageFactor)));
 		this.pushFactor *= Math.abs(Math.pow(pushFactor, Math.signum(pushFactor)));
-    }
+		this.charging = false;
+		this.launch();
+	}
 
-    private void launch() {
-		this.bPlayer.addCooldown(this, cooldown);
-        AirSwipe swipe = this;
-        BukkitRunnable launchTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                swipe.origin = swipe.player.getEyeLocation();
-                final Vector direction = swipe.player.getEyeLocation().getDirection();
-				double cameraMovementAngle = tiltSwipe ? direction.angle(swipe.previousDirection) : 0;
-				swipe.tiltSwipe = swipe.tiltSwipe && cameraMovementAngle >= minCameraTickAngle;
-				swipe.swipeDirection = !tiltSwipe ?
-                        GeneralMethods.getOrthogonalVector(direction, 0, 1) :
-                        (((direction.clone().multiply(Math.sin(Math.PI/2 - cameraMovementAngle)))
-                                .subtract(swipe.previousDirection)).normalize());
-                for (double i = -swipe.arc; i <= swipe.arc; i += swipe.arcIncrement) {
-                    final double angle = Math.toRadians(i);
-                    swipe.streams.put(direction.clone().multiply(Math.cos(angle))
-                            .add(swipeDirection.clone().multiply(Math.sin(angle))).normalize(), swipe.origin);
-                }
-				new SideSwipe(swipe);
-            }
-        };
-        if(tiltSwipe && previousDirection==null) {
-            previousDirection = player.getLocation().getDirection().multiply(2);
-            launchTask.runTaskLater(ProjectKorra.plugin,1);
-        } else
-            launchTask.run();
-    }
+	private void launch() {
+		this.bPlayer.addCooldown("AirSwipe", this.cooldown);
+		this.origin = this.player.getEyeLocation();
+		//final Vector direction = this.player.getLocation().getDirection();
+		swipeDirection = tiltSwipe
+				? ((direction.clone().multiply(Math.sin(Math.PI / 2 - direction.angle(previousDirection)))).subtract(previousDirection)).normalize()
+				: GeneralMethods.getOrthogonalVector(direction, 0, 1);
+		for (double i = -this.arc; i <= this.arc; i += this.arcIncrement) {
+			final double angle = Math.toRadians(i);
+			this.streams.put(direction.clone().multiply(Math.cos(angle))
+							.add(swipeDirection.clone().multiply(Math.sin(angle))).normalize(), this.origin);
+		}
+	}
 
 	@Override
 	public void progress() {
@@ -333,11 +316,12 @@ public class AirSwipe extends AirAbility {
 			return;
 		}
 
+		if (direction.angle(player.getLocation().getDirection()) > 0) {
+			previousDirection = direction.clone();
+			direction = player.getLocation().getDirection();
+		}
+
 		if (!this.charging) {
-            if(tiltSwipe && previousDirection.length()>1) {
-                previousDirection = previousDirection.normalize();
-                return;
-            }
 			if (this.streams.isEmpty()) {
 				this.remove();
 				return;
@@ -345,16 +329,12 @@ public class AirSwipe extends AirAbility {
 			this.advanceSwipe();
 		} else {
 			if (!this.player.isSneaking()) {
-				if(tiltedSwipeOnClickOnly)
-					tiltSwipe=false;
-                chargedLaunch();
+				chargedLaunch();
 			} else {
-                if (System.currentTimeMillis() >= this.getStartTime() + this.maxChargeTime) {
-                    playAirbendingParticles(this.player.getEyeLocation(), this.particles);
-                }
-                if (tiltedSwipeEnabled)
-                    previousDirection = player.getLocation().getDirection();
-            }
+				if (System.currentTimeMillis() >= this.getStartTime() + this.maxChargeTime) {
+					playAirbendingParticles(this.player.getEyeLocation(), this.particles);
+				}
+			}
 		}
 	}
 
@@ -366,13 +346,10 @@ public class AirSwipe extends AirAbility {
 	@Override
 	public String getInstructions() {
 		String instructions = super.getInstructions();
-		String tiltedSwipePath = "Abilities.Air.AirSwipe.TiltedSwipe.Instructions";
-		String sideSwipePath = "Abilities.Air.AirSwipe.SideSwipe.Instructions";
-		boolean tiltedSwipeEnabled = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe.Enabled");
+		String tiltedSwipePath = "Abilities.Air.AirSwipe.TiltedSwipe";
+		boolean tiltedSwipeEnabled = getConfig().getBoolean(tiltedSwipePath, false);
 		if (tiltedSwipeEnabled)
 			instructions += getLanguageConfig().getString(tiltedSwipePath, "");
-		if (getAbility(SideSwipe.class).isEnabled())
-			instructions += getLanguageConfig().getString(sideSwipePath, "");
 		return instructions;
 	}
 
