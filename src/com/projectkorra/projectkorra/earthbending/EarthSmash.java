@@ -213,7 +213,7 @@ public class EarthSmash extends EarthAbility {
 				return;
 			}
 		} else if (this.state == State.GRABBED) {
-			if (this.bPlayer.getBoundAbilityName().equalsIgnoreCase(getName())) {
+			if (!this.bPlayer.getBoundAbilityName().equalsIgnoreCase(getName())) {
 				this.state = State.LIFTED;
 				return;
 			}
