@@ -142,6 +142,7 @@ public class FlightHandler extends Manager {
 			player.setAllowFlight(flight.couldFly);
 			player.setFlying(flight.wasFlying);
 		}
+		player.setFlySpeed(flight.originalFlySpeed);
 
 		flight.abilities.values().forEach(ability -> this.CLEANUP.remove(ability));
 		this.INSTANCES.remove(player.getUniqueId());
@@ -186,6 +187,7 @@ public class FlightHandler extends Manager {
 		private final Player source;
 		private final boolean couldFly;
 		private final boolean wasFlying;
+		private final float originalFlySpeed;
 		private final Map<String, FlightAbility> abilities;
 
 		public Flight(final Player player, final Player source) {
@@ -193,6 +195,7 @@ public class FlightHandler extends Manager {
 			this.source = source;
 			this.couldFly = player.getAllowFlight();
 			this.wasFlying = player.isFlying();
+			this.originalFlySpeed = player.getFlySpeed();
 			this.abilities = new HashMap<>();
 		}
 
@@ -206,7 +209,7 @@ public class FlightHandler extends Manager {
 
 		@Override
 		public String toString() {
-			return "Flight{player=" + this.player.getName() + ",source=" + (this.source != null ? this.source.getName() : "null") + ",couldFly=" + this.couldFly + ",wasFlying=" + this.wasFlying + ",abilities=" + this.abilities + "}";
+			return "Flight{player=" + this.player.getName() + ",source=" + (this.source != null ? this.source.getName() : "null") + ",couldFly=" + this.couldFly + ",wasFlying=" + this.wasFlying + ",originalFlySpeed=" + this.originalFlySpeed + ",abilities=" + this.abilities + "}";
 		}
 	}
 
