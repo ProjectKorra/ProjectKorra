@@ -71,7 +71,7 @@ public class EarthSmash extends EarthAbility {
 	private double liftRange;
 	@Attribute(Attribute.SPEED)
 	private double flightSpeed;
-	private boolean bounceEnabled;
+	private boolean allowBounce;
 	private double bounceKnockback;
 	private long bounceCooldown;
 	private double grabbedDistance;
@@ -131,7 +131,7 @@ public class EarthSmash extends EarthAbility {
 			for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
 				if ((smash.state == State.GRABBED || smash.state == State.FLYING) && smash.player == player) {
 					if (smash.state == State.FLYING) {
-						if (!smash.bounceEnabled)
+						if (!smash.allowBounce)
 							return;
 						if (bPlayer.isOnCooldown("SmashBounce"))
 							return;
@@ -181,7 +181,7 @@ public class EarthSmash extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
 		this.flightDuration = getConfig().getLong("Abilities.Earth.EarthSmash.Flight.Duration");
 		this.duration = getConfig().getLong("Abilities.Earth.EarthSmash.Duration");
-		this.bounceEnabled = getConfig().getBoolean("Abilities.Earth.EarthSmash.Bounce.Enabled");
+		this.allowBounce = getConfig().getBoolean("Abilities.Earth.EarthSmash.Bounce.Enabled");
 		this.bounceKnockback = getConfig().getDouble("Abilities.Earth.EarthSmash.Bounce.Knockback");
 		this.bounceCooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Bounce.Cooldown");
 
