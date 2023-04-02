@@ -155,7 +155,7 @@ public class Combustion extends CombustionAbility {
 
 		final Block block = this.location.getBlock();
 		if (block != null) {
-			if (!ElementalAbility.isAir(block.getType()) && !isWater(block)) {
+			if (!ElementalAbility.isAir(block) && !isWater(block)) {
 				this.createExplosion(block.getLocation(), this.explosivePower, this.breakBlocks);
 			}
 		}

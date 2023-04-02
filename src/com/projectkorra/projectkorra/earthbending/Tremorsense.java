@@ -74,7 +74,7 @@ public class Tremorsense extends EarthAbility {
 					} else if (!this.isEarthbendable(blocki) && earth) {
 						foundAir = true;
 						break;
-					} else if (!this.isEarthbendable(blocki) && !earth && !ElementalAbility.isAir(blocki.getType())) {
+					} else if (!this.isEarthbendable(blocki) && !earth && !ElementalAbility.isAir(blocki)) {
 						break;
 					}
 				}

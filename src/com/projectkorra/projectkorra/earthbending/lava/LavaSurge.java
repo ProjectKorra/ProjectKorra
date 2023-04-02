@@ -96,7 +96,7 @@ public class LavaSurge extends LavaAbility {
 	public boolean prepare() {
 		final Block targetBlock = BlockSource.getEarthSourceBlock(this.player, this.prepareRange, ClickType.SHIFT_DOWN);
 
-		if (targetBlock == null || !(ElementalAbility.isAir(targetBlock.getRelative(BlockFace.UP).getType())) && !isLava(targetBlock.getRelative(BlockFace.UP))) {
+		if (targetBlock == null || !(ElementalAbility.isAir(targetBlock.getRelative(BlockFace.UP))) && !isLava(targetBlock.getRelative(BlockFace.UP))) {
 			return false;
 		}
 

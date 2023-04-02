@@ -95,9 +95,19 @@ public abstract class ElementalAbility extends CoreAbility {
 		return new HashSet<>(TRANSPARENT);
 	}
 
+	/**
+	 * @see ElementalAbility#isAir(Block) 
+	 */
 	public static boolean isAir(final Material material) {
 		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR ||
 				(GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT"));
+	}
+
+	/**
+	 * @apiNote Use this method to make sure that block is not waterlogged light.
+	 */
+	public static boolean isAir(final Block block) {
+		return !(block instanceof Waterlogged && ((Waterlogged)block).isWaterlogged()) && isAir(block.getType());
 	}
 
 	public static boolean isDay(final World world) {

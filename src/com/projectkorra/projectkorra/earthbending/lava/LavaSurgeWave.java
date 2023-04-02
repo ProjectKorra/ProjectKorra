@@ -166,13 +166,13 @@ public class LavaSurgeWave extends LavaAbility {
 			final Block blockl = this.location.getBlock();
 			final ArrayList<Block> blocks = new ArrayList<Block>();
 
-			if (!RegionProtection.isRegionProtected(this, this.location) && (ElementalAbility.isAir(blockl.getType()) || blockl.getType() == Material.FIRE || ElementalAbility.isPlant(blockl) || isLava(blockl))) {
+			if (!RegionProtection.isRegionProtected(this, this.location) && (ElementalAbility.isAir(blockl) || blockl.getType() == Material.FIRE || ElementalAbility.isPlant(blockl) || isLava(blockl))) {
 				for (double i = 0; i <= this.radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 						final Block block = this.location.clone().add(vec).getBlock();
 
-						if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || block.getType() == Material.FIRE) || this.isLavabendable(block)) {
+						if (!blocks.contains(block) && (ElementalAbility.isAir(block) || block.getType() == Material.FIRE) || this.isLavabendable(block)) {
 							blocks.add(block);
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}

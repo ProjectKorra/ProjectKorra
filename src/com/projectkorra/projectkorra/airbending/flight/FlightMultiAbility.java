@@ -251,7 +251,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			this.player.setFlying(false);
 		}
 
-		if (isWater(this.player.getEyeLocation().clone().getBlock().getType())) {
+		if (isWater(this.player.getEyeLocation().clone().getBlock())) {
 			this.remove();
 		}
 

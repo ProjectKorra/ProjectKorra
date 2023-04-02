@@ -225,7 +225,7 @@ public class EarthGrab extends EarthAbility {
 
 		ParticleEffect.BLOCK_DUST.display(this.target.getLocation(), 36, 0.3, 0.6, 0.3, this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
 
-		if (!ElementalAbility.isAir(this.trap.getLocation().clone().subtract(0, 0.1, 0).getBlock().getType())) {
+		if (!ElementalAbility.isAir(this.trap.getLocation().clone().subtract(0, 0.1, 0).getBlock())) {
 			this.trap.setGravity(false);
 		} else {
 			this.trap.setGravity(true);

@@ -111,7 +111,7 @@ public class WaterSpout extends WaterAbility {
 			loc.add(x, height, z);
 
 			final Block block = loc.getBlock();
-			if ((!TempBlock.isTempBlock(block)) && (ElementalAbility.isAir(block.getType()) || !GeneralMethods.isSolid(block))) {
+			if ((!TempBlock.isTempBlock(block)) && (ElementalAbility.isAir(block) || !GeneralMethods.isSolid(block))) {
 				this.blocks.add(new TempBlock(block, GeneralMethods.getWaterData(7)));
 				AFFECTED_BLOCKS.put(block, block);
 			}
@@ -297,7 +297,7 @@ public class WaterSpout extends WaterAbility {
 					return i;
 				}
 
-				if ((!ElementalAbility.isAir(blocki.getType()) && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
+				if ((!ElementalAbility.isAir(blocki) && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
 					this.revertBaseBlock();
 					return -1;
 				}

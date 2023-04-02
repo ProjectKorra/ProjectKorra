@@ -194,9 +194,9 @@ public abstract class EarthAbility extends ElementalAbility {
 				}
 				if (up) {
 					final Block topblock = affectedblock.getRelative(BlockFace.UP);
-					if (!isAir(topblock.getType())) {
+					if (!isAir(topblock)) {
 						GeneralMethods.breakBlock(affectedblock);
-					} else if (!affectedblock.isLiquid() && !isAir(affectedblock.getType())) {
+					} else if (!affectedblock.isLiquid() && !isAir(affectedblock)) {
 						moveEarthBlock(affectedblock, topblock);
 					}
 				} else {
@@ -210,7 +210,7 @@ public abstract class EarthAbility extends ElementalAbility {
 					affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
 					if (!this.isEarthbendable(affectedblock)) {
 						if (down) {
-							if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && !isAir(affectedblock.getType())) {
+							if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && !isAir(affectedblock)) {
 								moveEarthBlock(affectedblock, block);
 							}
 						}
@@ -233,7 +233,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
 				if (!this.isEarthbendable(affectedblock)) {
 					if (down) {
-						if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && !isAir(affectedblock.getType())) {
+						if (this.isTransparent(affectedblock) && !affectedblock.isLiquid() && !isAir(affectedblock)) {
 							moveEarthBlock(affectedblock, block);
 						}
 					}
@@ -585,7 +585,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		final Information info = TEMP_AIR_LOCATIONS.get(i);
 		final Block block = info.getState().getBlock();
 
-		if (!ElementalAbility.isAir(block.getType()) && !block.isLiquid()) {
+		if (!ElementalAbility.isAir(block) && !block.isLiquid()) {
 			if (force || !MOVED_EARTH.containsKey(block)) {
 				TEMP_AIR_LOCATIONS.remove(i);
 			} else {
@@ -607,7 +607,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			final Information info = MOVED_EARTH.get(block);
 			final Block sourceblock = info.getState().getBlock();
 
-			if (ElementalAbility.isAir(info.getState().getType())) {
+			if (ElementalAbility.isAir(info.getState().getBlock())) {
 				MOVED_EARTH.remove(block);
 				return true;
 			}
@@ -630,7 +630,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				return true;
 			}
 
-			if (ElementalAbility.isAir(sourceblock.getType()) || sourceblock.isLiquid()) {
+			if (ElementalAbility.isAir(sourceblock) || sourceblock.isLiquid()) {
 				info.getState().update(true, false);
 			} else {
 

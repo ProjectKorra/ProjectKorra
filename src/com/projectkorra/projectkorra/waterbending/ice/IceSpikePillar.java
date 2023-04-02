@@ -185,7 +185,7 @@ public class IceSpikePillar extends IceAbility {
 		Block b;
 		for (int i = 1; i <= this.height; i++) {
 			b = this.source_block.getWorld().getBlockAt(this.location.clone().add(this.direction.clone().multiply(i)));
-			if (!ElementalAbility.isAir(b.getType())) {
+			if (!ElementalAbility.isAir(b)) {
 				return false;
 			}
 

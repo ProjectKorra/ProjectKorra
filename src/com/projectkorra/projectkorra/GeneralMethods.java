@@ -1071,19 +1071,19 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			final Block tempBlock = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(tempBlock.getType())) {
+			if (ElementalAbility.isAir(tempBlock)) {
 				return blockHolder;
 			}
 			blockHolder = tempBlock;
 		}
 
-		while (ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
+		while (ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (!ElementalAbility.isAir(blockHolder.getType())) {
+			if (!ElementalAbility.isAir(blockHolder)) {
 				return blockHolder;
 			}
 		}
@@ -1094,20 +1094,20 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			final Block tempblock = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(tempblock.getType())) {
+			if (ElementalAbility.isAir(tempblock)) {
 				return blockHolder;
 			}
 
 			blockHolder = tempblock;
 		}
 
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(blockHolder.getType())) {
+			if (ElementalAbility.isAir(blockHolder)) {
 				return blockHolder;
 			}
 		}

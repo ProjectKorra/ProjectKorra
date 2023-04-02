@@ -106,7 +106,7 @@ public class Tornado extends AirAbility {
 		final double timefactor = this.currentHeight / this.maxHeight;
 		this.currentRadius = timefactor * this.radius;
 
-		if (!ElementalAbility.isAir(this.origin.getBlock().getType()) && this.origin.getBlock().getType() != Material.BARRIER) {
+		if (!ElementalAbility.isAir(this.origin.getBlock()) && this.origin.getBlock().getType() != Material.BARRIER) {
 			this.origin.setY(this.origin.getY() - 1. / 10. * this.currentHeight);
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, this.currentHeight)) {

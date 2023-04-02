@@ -195,7 +195,7 @@ public class EarthArmor extends EarthAbility {
 
 		if (this.isTransparent(newHeadBlock) && !newHeadBlock.isLiquid()) {
 			GeneralMethods.breakBlock(newHeadBlock);
-		} else if (!this.isEarthbendable(newHeadBlock) && !newHeadBlock.isLiquid() && !ElementalAbility.isAir(newHeadBlock.getType())) {
+		} else if (!this.isEarthbendable(newHeadBlock) && !newHeadBlock.isLiquid() && !ElementalAbility.isAir(newHeadBlock)) {
 			ParticleEffect.BLOCK_CRACK.display(newHeadBlock.getLocation(), 8, 0.5, 0.5, 0.5, newHeadBlock.getBlockData());
 			this.remove();
 			return false;
@@ -203,7 +203,7 @@ public class EarthArmor extends EarthAbility {
 
 		if (this.isTransparent(newLegsBlock) && !newLegsBlock.isLiquid()) {
 			GeneralMethods.breakBlock(newLegsBlock);
-		} else if (!this.isEarthbendable(newLegsBlock) && !newLegsBlock.isLiquid() && !ElementalAbility.isAir(newLegsBlock.getType())) {
+		} else if (!this.isEarthbendable(newLegsBlock) && !newLegsBlock.isLiquid() && !ElementalAbility.isAir(newLegsBlock)) {
 			newLegsBlock.getLocation().getWorld().playSound(newLegsBlock.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
 			ParticleEffect.BLOCK_CRACK.display(newHeadBlock.getLocation(), 8, 0.5, 0.5, 0.5, newLegsBlock.getBlockData());
 			this.remove();

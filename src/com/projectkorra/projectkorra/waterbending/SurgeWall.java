@@ -283,7 +283,7 @@ public class SurgeWall extends WaterAbility {
 							continue;
 						} else if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || FireAbility.isFire(block.getType()) || this.isWaterbendable(block)) && this.isTransparent(block)) {
+						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block) || FireAbility.isFire(block.getType()) || this.isWaterbendable(block)) && this.isTransparent(block)) {
 							WALL_BLOCKS.put(block, this.player);
 							this.addWallBlock(block);
 							blocks.add(block);
@@ -339,7 +339,7 @@ public class SurgeWall extends WaterAbility {
 				block = this.location.getBlock();
 			}
 
-			if (!ElementalAbility.isAir(block.getType())) {
+			if (!ElementalAbility.isAir(block)) {
 				this.remove();
 				return;
 			} else if (!this.progressing) {

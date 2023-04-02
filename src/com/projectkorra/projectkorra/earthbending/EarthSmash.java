@@ -266,7 +266,7 @@ public class EarthSmash extends EarthAbility {
 
 				// Check to make sure the new location is available to move to.
 				for (final Block block : this.getBlocks()) {
-					if (!ElementalAbility.isAir(block.getType()) && !this.isTransparent(block)) {
+					if (!ElementalAbility.isAir(block) && !this.isTransparent(block)) {
 						this.location = oldLoc;
 						break;
 					}
@@ -295,7 +295,7 @@ public class EarthSmash extends EarthAbility {
 				// If an earthsmash runs into too many blocks we should remove it.
 				int badBlocksFound = 0;
 				for (final Block block : this.getBlocks()) {
-					if (!ElementalAbility.isAir(block.getType()) && (!this.isTransparent(block) || block.getType() == Material.WATER)) {
+					if (!ElementalAbility.isAir(block) && (!this.isTransparent(block) || block.getType() == Material.WATER)) {
 						badBlocksFound++;
 					}
 				}
@@ -388,7 +388,7 @@ public class EarthSmash extends EarthAbility {
 				// Make sure there is a clear path upward otherwise remove.
 				for (int y = 0; y <= 3; y++) {
 					final Block tempBlock = this.location.clone().add(0, y, 0).getBlock();
-					if (!this.isTransparent(tempBlock) && !ElementalAbility.isAir(tempBlock.getType())) {
+					if (!this.isTransparent(tempBlock) && !ElementalAbility.isAir(tempBlock)) {
 						this.remove();
 						return;
 					}

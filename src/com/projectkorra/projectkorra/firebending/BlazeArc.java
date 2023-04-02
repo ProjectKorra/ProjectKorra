@@ -48,7 +48,7 @@ public class BlazeArc extends FireAbility {
 	}
 
 	private void ignite(final Block block) {
-		if (!isFire(block.getType()) && !isAir(block.getType())) {
+		if (!isFire(block.getType()) && !isAir(block)) {
 			if (canFireGrief()) {
 				if (isPlant(block) || isSnow(block)) {
 					new PlantRegrowth(this.player, block);

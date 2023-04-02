@@ -208,7 +208,7 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private boolean canPlaceBlock(final Block block) {
-		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || ElementalAbility.isAir(block.getType());
+		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || ElementalAbility.isAir(block);
 	}
 
 	/**

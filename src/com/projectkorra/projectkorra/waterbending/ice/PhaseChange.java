@@ -230,7 +230,7 @@ public class PhaseChange extends IceAbility {
 			final Block b = l.getBlock();
 			loop: for (int i = 1; i <= this.depth; i++) {
 				for (final BlockFace face : this.getBlockFacesTowardsPlayer(center)) {
-					if (ElementalAbility.isAir(b.getRelative(face, i).getType())) {
+					if (ElementalAbility.isAir(b.getRelative(face, i))) {
 						blocks.add(b);
 						break loop;
 					}
@@ -394,7 +394,7 @@ public class PhaseChange extends IceAbility {
 				}
 			}
 
-			if (isIce(tb.getBlock()) && ElementalAbility.isWater(tb.getState().getBlockData().getMaterial())) {
+			if (isIce(tb.getBlock()) && ElementalAbility.isWater(tb.getState().getBlockData())) {
 				tb.revertBlock();
 			}
 		} else if (isWater(b)) {
