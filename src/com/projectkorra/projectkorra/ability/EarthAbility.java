@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -137,6 +138,10 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer) {
+		return moveEarth(block, direction, chainlength, throwplayer, 1);
+	}
+
+	public boolean moveEarth(Block block, final Vector direction, final int chainlength, final boolean throwplayer, final double soundChance) {
 		if ((!TempBlock.isTempBlock(block) || isBendableEarthTempBlock(block)) && this.isEarthbendable(block) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			boolean up = false;
 			boolean down = false;
@@ -180,7 +185,6 @@ public abstract class EarthAbility extends ElementalAbility {
 							if (lentity.getEyeLocation().getBlockX() == affectedblock.getX() && lentity.getEyeLocation().getBlockZ() == affectedblock.getZ()) {
 								if (!(entity instanceof FallingBlock)) {
 									GeneralMethods.setVelocity(this, entity, norm.clone().multiply(.75));
-									
 								}
 							}
 						} else {
@@ -204,7 +208,8 @@ public abstract class EarthAbility extends ElementalAbility {
 				}
 
 				moveEarthBlock(block, affectedblock);
-				playEarthbendingSound(block.getLocation());
+				if (ThreadLocalRandom.current().nextDouble() < soundChance)
+					playEarthbendingSound(block.getLocation());
 
 				for (double i = 1; i < chainlength; i++) {
 					affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();

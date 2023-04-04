@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.earthbending;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -201,6 +202,9 @@ public class Ripple extends EarthAbility {
 		}
 
 		this.step += 1;
+		int ripplesCount = getAbilities(player, Ripple.class).size();
+		if (ThreadLocalRandom.current().nextDouble() < 4. / ripplesCount)
+			playEarthbendingSound(this.location);
 		for (final Entity entity : this.entities) {
 			this.affect(entity);
 		}
@@ -245,7 +249,7 @@ public class Ripple extends EarthAbility {
 			length = 2;
 			block = botBlock;
 		}
-		return this.moveEarth(block, new Vector(0, -1, 0), length, false);
+		return this.moveEarth(block, new Vector(0, -1, 0), length, false, 0);
 	}
 
 	private boolean increase(final Block block) {
@@ -262,7 +266,7 @@ public class Ripple extends EarthAbility {
 		if (this.isEarthbendable(botblock)) {
 			length = 2;
 		}
-		if (this.moveEarth(block, new Vector(0, 1, 0), length, false)) {
+		if (this.moveEarth(block, new Vector(0, 1, 0), length, false, 0)) {
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2)) {
 				if (entity.getEntityId() != this.player.getEntityId() && !this.entities.contains(entity)) {
 					if (!(entity instanceof FallingBlock)) {
