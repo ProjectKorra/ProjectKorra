@@ -96,18 +96,36 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	/**
-	 * @see ElementalAbility#isAir(Block) 
+	 * @deprecated since LIGHT block was added to the game, which can be waterlogged, so you can't say for sure if it's air or not.
+	 * @apiNote this method will return true if you'll check waterlogged light block's type!
+	 * @see ElementalAbility#isAir(Block) Use this method instead.
 	 */
+	@Deprecated
 	public static boolean isAir(final Material material) {
-		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR ||
-				(GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT"));
+		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR || isLight(material);
 	}
 
 	/**
 	 * @apiNote Use this method to make sure that block is not waterlogged light.
 	 */
 	public static boolean isAir(final Block block) {
-		return !(block instanceof Waterlogged && ((Waterlogged)block).isWaterlogged()) && isAir(block.getType());
+		return isLight(block, false) || isAir(block.getType());
+	}
+
+	/**
+	 * @see #isLight(Block, boolean)
+	 */
+	public static boolean isLight(final Material material) {
+		return GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT");
+	}
+
+	/**
+	 * @param waterlogged set true if you want to check if it's waterlogged light, or false if you want to check if it's air light.
+	 */
+	public static boolean isLight(final Block block, boolean waterlogged) {
+		if(!isLight(block.getType()))
+			return false;
+		return ((Waterlogged)block.getBlockData()).isWaterlogged() == waterlogged;
 	}
 
 	public static boolean isDay(final World world) {

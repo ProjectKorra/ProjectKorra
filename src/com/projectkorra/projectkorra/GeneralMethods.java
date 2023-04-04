@@ -206,12 +206,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Breaks a block and sets it to {@link Material#AIR AIR}.
-	 *
+	 * Breaks a block and sets it to {@link Material#AIR AIR}, if it isn't air already.
 	 * @param block The block to break
 	 */
 	public static void breakBlock(final Block block) {
-		block.breakNaturally(new ItemStack(Material.AIR));
+		if (!ElementalAbility.isAir(block)) // checking block, so CAVE_AIR, VOID_AIR and LIGHT won't be replaced with AIR
+			block.breakNaturally(new ItemStack(Material.AIR));
 	}
 
 	public static boolean canView(final Player player, final String ability) {
