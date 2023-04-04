@@ -57,6 +57,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -1460,6 +1461,19 @@ public class GeneralMethods {
 			}
 		} else {
 			block.setType(Material.AIR);
+		}
+	}
+
+	public static void removeWater(final Block block) {
+		if (ElementalAbility.isWater(block) && !GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if (block.getBlockData() instanceof Waterlogged) {
+				Waterlogged drain = (Waterlogged) block.getBlockData();
+				drain.setWaterlogged(false);
+				block.setBlockData(drain);
+			} else if (block.getBlockData() instanceof Levelled) {
+				Levelled lvl = (Levelled) block.getBlockData();
+				lvl.setLevel(Math.min(7, lvl.getLevel() + 1));
+			}
 		}
 	}
 
