@@ -364,20 +364,21 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isWaterbendable(block.getType())) {
-			return false;
-		}
 		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
-		} else if (isWater(block) && block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
-			return true;
-		} else if (isIce(block) && !bPlayer.canIcebend()) {
-			return false;
-		} else if (isPlant(block) && !bPlayer.canPlantbend()) {
-			return false;
+		} else {
+			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			if (bPlayer == null) {
+				return false;
+			} else if ((isWater(block) || isSnow(block) || isCauldron(block)) && bPlayer.hasElement(Element.WATER)) {
+				return true;
+			} else if (isIce(block) && bPlayer.canIcebend()) {
+				return true;
+			} else if (isPlant(block) && bPlayer.canPlantbend()) {
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 
 	public static void playFocusWaterEffect(final Block block) {
