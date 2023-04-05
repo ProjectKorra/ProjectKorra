@@ -39,7 +39,6 @@ public class TorrentWave extends WaterAbility {
 	private double maxHeight;
 	@Attribute("Grow" + Attribute.SPEED)
 	private double growSpeed;
-
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private Location origin;
@@ -186,7 +185,7 @@ public class TorrentWave extends WaterAbility {
 		final Vector direction = GeneralMethods.getDirection(this.origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
-		if (entity instanceof LivingEntity){
+		if (damage > 0 && entity instanceof LivingEntity){
 			LivingEntity living = (LivingEntity) entity;
 			DamageHandler.damageEntity(living, this.damage ,this);
 		}
