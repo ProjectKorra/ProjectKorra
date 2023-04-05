@@ -57,13 +57,13 @@ public class AirSwipe extends AirAbility {
 	@Attribute(Attribute.RADIUS)
 	private double radius;
 	private double maxChargeFactor;
-    private double maxChargePushFactor;
+	private double maxChargePushFactor;
 	private Location origin;
 	private Map<Vector, Location> streams;
 	private ArrayList<Entity> affectedEntities;
-    private Vector direction;
-    private Vector previousDirection;
-    private Vector swipeDirection;
+	private Vector direction;
+	private Vector previousDirection;
+	private Vector swipeDirection;
 	private boolean tiltSwipe;
 
 	public AirSwipe(final Player player) {
@@ -80,7 +80,7 @@ public class AirSwipe extends AirAbility {
 					if (tiltedSwipeEnabled && ability.direction.angle(ability.previousDirection) != 0) {
 						ability.tiltSwipe = true;
 					}
-                    ability.chargedLaunch();
+					ability.chargedLaunch();
 					return;
 				}
 			}
