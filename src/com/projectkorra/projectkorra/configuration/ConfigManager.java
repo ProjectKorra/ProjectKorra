@@ -98,13 +98,10 @@ public class ConfigManager {
 			config.addDefault("Board.Prefix.NonSelectedColor", ChatColor.DARK_GRAY.getName());
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
 			config.addDefault("Board.MiscSeparator", "  ----------");
-
+			
 			if (!config.contains("Board.Extras")) {
 				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
-				config.addDefault("Board.Extras.SmashBounce", ChatColor.GREEN.getName());
 				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
-				config.addDefault("Board.Extras.SurgeWall", ChatColor.AQUA.getName());
-				config.addDefault("Board.Extras.TorrentWave", ChatColor.AQUA.getName());
 			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
@@ -422,7 +419,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.LavaFlow.Instructions", "\n" + "(Flow) Hold sneak and lava will begin expanding outwards. Once the lava has stopped expanding, you can release sneak. Additionally, if you tap sneak the lava you created will revert back to the earthbendable block." + "\n" + "(Lava Pool) Left click to slowly transform earthbendable blocks into a pool of lava." + "\n" + "(Solidify) Left click on lava to solidify it, turning it to stone.");
 			config.addDefault("Abilities.Earth.LavaFlow.DeathMessage", "{victim} was caught by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.EarthSmash.Description", "EarthSmash is an advanced earthbending technique that has lots of utility. It can be comboed with abilities such as Shockwave, but also be used for mobility and to produce high damage. EarthSmash is great for escaping when at low health.");
-			config.addDefault("Abilities.Earth.EarthSmash.Instructions", "\n" + "(Smash) Hold sneak until particles appear, then release sneak while looking at an earthbendable block which will raise an earth boulder. Then, hold sneak while looking at this boulder to control it. Left click to send the bounder in the direction you're facing, damaging entities and knocking them back." + "\n" + "(Ride) After you have created an earth boulder, hold sneak and right click on the boulder to ride it. You will now ride the boulder in whatever direction you look. Additionally, you can ride the boulder by going on top of it and holding sneak. If you come into contact with an entity while riding the boulder, it will drag them along with you. If you left go of sneak, the ability will cancel." + "\n(Bounce) Left click while riding the boulder to bounce from it and shoot it to the direction where you looked.");
+			config.addDefault("Abilities.Earth.EarthSmash.Instructions", "\n" + "(Smash) Hold sneak until particles appear, then release sneak while looking at an earthbendable block which will raise an earth boulder. Then, hold sneak while looking at this boulder to control it. Left click to send the bounder in the direction you're facing, damaging entities and knocking them back." + "\n" + "(Ride) After you have created an earth boulder, hold sneak and right click on the boulder to ride it. You will now ride the boulder in whatever direction you look. Additionally, you can ride the boulder by going on top of it and holding sneak. If you come into contact with an entity while riding the boulder, it will drag them along with you. If you left go of sneak, the ability will cancel.");
 			config.addDefault("Abilities.Earth.EarthSmash.DeathMessage", "{victim} was crushed by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips is an advanced metalbending ability that allows you to take control of a fight. It gives the metalbender the ability to control an entity, create space between them and a player and even added utility.");
 			config.addDefault("Abilities.Earth.MetalClips.Instructions", "\n" + "(Clips) This ability requires iron ingots in your inventory. Left click to throw an ingot at an entity, dealing damage to them. This ingot will form into armor, wrapping itself around the entity. Once enough armor pieces are around the entity, you can then control them. To control them, hold sneak while looking at them and then they will be moved in the direction you look. Additionally, you can release sneak to throw them in the direction you're looking." + "\n" + "(Magnet) Hold sneak with this ability to pull iron ingots towards you.");
@@ -1011,11 +1008,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 			config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
 			config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
-			config.addDefault("Abilities.Air.AirSwipe.ChargePushFactor", 3);
 			config.addDefault("Abilities.Air.AirSwipe.MaxChargeTime", 2500);
 			config.addDefault("Abilities.Air.AirSwipe.Particles", 3);
 			config.addDefault("Abilities.Air.AirSwipe.StepSize", 4);
-			config.addDefault("Abilities.Air.AirSwipe.TiltedSwipe", true);
 
 			config.addDefault("Abilities.Air.Flight.Enabled", true);
 			config.addDefault("Abilities.Air.Flight.Cooldown", 0);
@@ -1096,7 +1091,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.Cooldown", 3000);
 			config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", true);
 			config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
-
+			
 			List<String> bloodless = new ArrayList<>();
 			bloodless.add(EntityType.SKELETON.name());
 			bloodless.add(EntityType.IRON_GOLEM.name());
@@ -1106,7 +1101,7 @@ public class ConfigManager {
 			bloodless.add(EntityType.SKELETON_HORSE.name());
 			bloodless.add(EntityType.WITHER_SKELETON.name());
 			bloodless.add(EntityType.STRAY.name());
-
+			
 			config.addDefault("Abilities.Water.Bloodbending.Bloodless", bloodless);
 
 			config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
@@ -1212,7 +1207,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.RevertTime", 60000);
 			config.addDefault("Abilities.Water.Torrent.Wave.Radius", 12);
 			config.addDefault("Abilities.Water.Torrent.Wave.Knockback", 1.5);
-			config.addDefault("Abilities.Water.Torrent.Wave.Damage", 0);
 			config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
 			config.addDefault("Abilities.Water.Torrent.Wave.GrowSpeed", 0.5);
 			config.addDefault("Abilities.Water.Torrent.Wave.Interval", 30);
@@ -1476,9 +1470,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.Range", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.AnimationInterval", 25);
 			config.addDefault("Abilities.Earth.EarthSmash.Shoot.CollisionRadius", 2.5);
-			config.addDefault("Abilities.Earth.EarthSmash.Bounce.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthSmash.Bounce.Knockback", 1.0d);
-			config.addDefault("Abilities.Earth.EarthSmash.Bounce.Cooldown", 12000);
 			config.addDefault("Abilities.Earth.EarthSmash.RequiredBendableBlocks", 11);
 			config.addDefault("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough", 3);
 			config.addDefault("Abilities.Earth.EarthSmash.LiftAnimationInterval", 30);
@@ -1671,9 +1662,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireKick.Range", 7.0);
 			config.addDefault("Abilities.Fire.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireKick.Cooldown", 6000);
-			config.addDefault("Abilities.Fire.FireKick.Arc", 30.0);
 			config.addDefault("Abilities.Fire.FireKick.Speed", 1);
-			config.addDefault("Abilities.Fire.FireKick.StepSize", 5.0);
 			config.addDefault("Abilities.Fire.FireKick.Combination", Arrays.asList("FireBlast:LEFT_CLICK", "FireBlast:LEFT_CLICK", "FireBlast:SNEAK_DOWN", "FireBlast:LEFT_CLICK"));
 
 			config.addDefault("Abilities.Fire.FireSpin.Enabled", true);
