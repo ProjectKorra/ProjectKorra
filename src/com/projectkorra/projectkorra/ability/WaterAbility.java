@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,10 +10,15 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -195,7 +199,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @param plantbending true if the player can bend plants.
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
-	public static Block getWaterSourceBlock(final Player player, final double range, final boolean plantbending) {
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean plantbending) {
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
 
@@ -215,15 +219,16 @@ public abstract class WaterAbility extends ElementalAbility {
 		final Block testBlock = player.getTargetBlock(trans, Math.max(1, Math.min(3, (int)range)));
 		if (bPlayer == null) {
 			return null;
-		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
-			return testBlock;
+		} else {
+			plantbending = bPlayer.canPlantbend() && plantbending;
+			if (isWaterbendable(player, null, testBlock) && !(isPlant(testBlock) && !plantbending)) {
+				return testBlock;
+			}
 		}
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
-				continue;
-			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
+			if ((isWaterbendable(player, null, block) && !(isPlant(block) && !plantbending)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 					continue;
 				}
