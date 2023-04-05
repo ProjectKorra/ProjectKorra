@@ -238,6 +238,82 @@ public abstract class WaterAbility extends ElementalAbility {
 		return null;
 	}
 
+	public static boolean reduceWaterbendingSource(Player player, Block block) {
+		return reduceWaterbendingSource(player, block, true);
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowIce) {
+		return reduceWaterbendingSource(player, block, true, allowIce);
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowPlant, boolean allowIce) {
+		return reduceWaterbendingSource(player, block, true, allowPlant, allowIce);
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowSnow, boolean allowPlant, boolean allowIce) {
+		return reduceWaterbendingSource(player, block, true, allowSnow, allowPlant, allowIce);
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowWater, boolean allowSnow, boolean allowPlant, boolean allowIce) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null)
+			return false;
+		allowWater = bPlayer.hasElement(Element.WATER) && allowWater;
+		allowSnow = bPlayer.hasElement(Element.WATER) && allowSnow;
+		allowPlant = bPlayer.canPlantbend() && allowPlant;
+		allowIce = bPlayer.canIcebend() && allowIce;
+		if (isWaterbendable(player, null, block) && bPlayer.hasElement(Element.WATER)) {
+			BlockData data = block.getBlockData();
+			if (allowWater && data instanceof Levelled) { // Cauldrons, just water
+				Levelled lvl = (Levelled) data;
+				if (isCauldron(block)) { // Cauldrons
+					GeneralMethods.setCauldronData(block, lvl.getLevel() - 1);
+					return true;
+				}
+				if (GeneralMethods.isAdjacentToThreeOrMoreSources(block) || lvl.getLevel() >= 8)
+					return true;
+				if (lvl.getLevel() == 7 || lvl.getLevel() == 15) { // lowest water lvls
+					GeneralMethods.removeBlock(block);
+					return true;
+				}
+				lvl.setLevel(Math.min(lvl.getMaximumLevel(), lvl.getLevel() + 1));
+				block.setBlockData(lvl);
+				return true;
+			} else if (allowSnow && isSnow(block)) { // layered snow
+				Snow snow = (Snow) (data instanceof Snow ? data : Material.SNOW.createBlockData( bd -> ((Levelled)bd).setLevel(((Levelled) bd).getMaximumLevel())));
+				int layers = snow.getLayers() - 1;
+				if (layers >= snow.getMinimumLayers()) {
+					snow.setLayers(layers);
+					block.setBlockData(snow);
+				} else
+					GeneralMethods.removeBlock(block);
+				return true;
+			} else if (allowWater && !GeneralMethods.isAdjacentToThreeOrMoreSources(block) && data instanceof Waterlogged && ((Waterlogged) data).isWaterlogged()) { // anything waterlogged
+				Waterlogged drain = (Waterlogged) data;
+				drain.setWaterlogged(false);
+				block.setBlockData(drain);
+				return true;
+			} else if ((allowSnow && isSnow(block)) || (allowIce && isIce(block)) || (allowPlant && isPlant(block))) {
+				if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
+					PhaseChange.thaw(block);
+					return true;
+				}
+				if (TempBlock.isTempBlock(block)) {
+					final TempBlock tb = TempBlock.get(block);
+					if (isBendableWaterTempBlock(tb)) {
+						tb.revertBlock();
+						return true;
+					}
+				} else {
+					new PlantRegrowth(player, block);
+					GeneralMethods.removeBlock(block);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public static boolean isAdjacentToFrozenBlock(final Block block) {
 		final BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
 		boolean adjacent = false;
