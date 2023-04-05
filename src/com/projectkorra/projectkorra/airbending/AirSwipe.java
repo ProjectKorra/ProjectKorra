@@ -73,10 +73,10 @@ public class AirSwipe extends AirAbility {
 	public AirSwipe(final Player player, final boolean charging) {
 		super(player);
 
+		boolean tiltedSwipeEnabled = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe");
 		if (CoreAbility.hasAbility(player, AirSwipe.class)) {
 			for (final AirSwipe ability : CoreAbility.getAbilities(player, AirSwipe.class)) {
 				if (ability.charging) {
-					boolean tiltedSwipeEnabled = getConfig().getBoolean("Abilities.Air.AirSwipe.TiltedSwipe");
 					if (tiltedSwipeEnabled && ability.direction.angle(ability.previousDirection) != 0) {
 						ability.tiltSwipe = true;
 					}
@@ -116,9 +116,6 @@ public class AirSwipe extends AirAbility {
 			return;
 		}
 
-		if (!charging) {
-			this.launch();
-		}
 
 		if (this.bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown");
@@ -128,7 +125,25 @@ public class AirSwipe extends AirAbility {
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius");
 		}
 
-		this.start();
+		if (!charging) {
+			if (tiltedSwipeEnabled && player.isSneaking()){
+				new BukkitRunnable(){
+					@Override
+					public void run() {
+						AirSwipe.this.direction = player.getLocation().getDirection();
+						if (AirSwipe.this.direction.angle(AirSwipe.this.previousDirection) != 0) {
+							AirSwipe.this.tiltSwipe = true;
+						}
+						AirSwipe.this.launch();
+						AirSwipe.this.start();
+					}
+				}.runTaskLater(ProjectKorra.plugin, 1);
+			} else {
+				this.launch();
+				this.start();
+			}
+		} else
+			this.start();
 	}
 
 	/**
