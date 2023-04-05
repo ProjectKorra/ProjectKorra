@@ -38,7 +38,7 @@ public class SwiftKick extends ChiAbility {
 			this.remove();
 			return;
 		}
-		if (!ElementalAbility.isAir(this.player.getLocation().subtract(0, 0.5, 0).getBlock().getType())) {
+		if (!ElementalAbility.isAir(this.player.getLocation().subtract(0, 0.5, 0).getBlock())) {
 			this.remove();
 			return;
 		}

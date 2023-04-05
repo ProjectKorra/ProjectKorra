@@ -10,9 +10,9 @@ import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class FerroControl extends MetalAbility implements PassiveAbility {
 
@@ -35,7 +35,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 		this.block = this.player.getTargetBlock((HashSet<Material>) null, 5);
 
 		if (this.block != null) {
-			if (this.block.getType() == Material.IRON_DOOR && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
+			if (this.block.getType() == Material.IRON_DOOR && !RegionProtection.isRegionProtected(this.player, this.block.getLocation())) {
 				final Door door = (Door) this.block.getBlockData();
 
 				door.setOpen(!door.isOpen());
@@ -43,7 +43,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 
 				open = door.isOpen();
 				used = true;
-			} else if (this.block.getType() == Material.IRON_TRAPDOOR && !GeneralMethods.isRegionProtectedFromBuild(this.player, this.block.getLocation())) {
+			} else if (this.block.getType() == Material.IRON_TRAPDOOR && !RegionProtection.isRegionProtected(this.player, this.block.getLocation())) {
 				final TrapDoor trap = (TrapDoor) this.block.getBlockData();
 
 				trap.setOpen(!trap.isOpen());

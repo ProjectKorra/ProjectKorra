@@ -74,7 +74,7 @@ public class IceSpikePillarField extends IceAbility {
 				for (int y = -1; y <= 1; y++) {
 					final Block testBlock = this.player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
 
-					if (((WaterAbility.isIcebendable(this.player, testBlock.getType(), false) && !TempBlock.isTempBlock(testBlock)) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) && ElementalAbility.isAir(testBlock.getRelative(BlockFace.UP).getType()) && !(testBlock.getX() == this.player.getEyeLocation().getBlock().getX() && testBlock.getZ() == this.player.getEyeLocation().getBlock().getZ())) {
+					if (((WaterAbility.isIcebendable(this.player, testBlock.getType(), false) && !TempBlock.isTempBlock(testBlock)) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) && ElementalAbility.isAir(testBlock.getRelative(BlockFace.UP)) && !(testBlock.getX() == this.player.getEyeLocation().getBlock().getX() && testBlock.getZ() == this.player.getEyeLocation().getBlock().getZ())) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
 							final Random rand = new Random();

@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class IceBlast extends IceAbility {
 
@@ -84,7 +85,7 @@ public class IceBlast extends IceAbility {
 
 		if (sourceBlock == null) {
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
+		} else if (RegionProtection.isRegionProtected(this, sourceBlock.getLocation())) {
 			return;
 		} else {
 			this.prepare(sourceBlock);
@@ -115,7 +116,7 @@ public class IceBlast extends IceAbility {
 				continue;
 			} else if (iceBlast.getPlayer().equals(player)) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(iceBlast, iceBlast.location)) {
+			} else if (RegionProtection.isRegionProtected(iceBlast, iceBlast.location)) {
 				continue;
 			}
 
@@ -216,7 +217,7 @@ public class IceBlast extends IceAbility {
 			TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE);
 			this.source = TempBlock.get(this.sourceBlock);
 		} else {
-			new TempBlock(this.sourceBlock, Material.AIR);
+			reduceWaterbendingSource(player, this.sourceBlock);
 			this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE);
 		}
 	}
@@ -277,7 +278,7 @@ public class IceBlast extends IceAbility {
 			this.source.revertBlock();
 			this.source = null;
 
-			if (isTransparent(this.player, block) && !block.isLiquid()) {
+			if (isTransparent(this.player, block) && !block.isLiquid() && !isLight(block, true)) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
 				this.breakParticles(20);
@@ -286,7 +287,7 @@ public class IceBlast extends IceAbility {
 				return;
 			}
 
-			if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+			if (RegionProtection.isRegionProtected(this, this.location)) {
 				this.remove();
 				this.returnWater();
 				return;

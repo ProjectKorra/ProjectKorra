@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,6 +36,7 @@ import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class AirBlast extends AirAbility {
 
@@ -313,7 +313,7 @@ public class AirBlast extends AirAbility {
 		if (this.player.isDead() || !this.player.isOnline()) {
 			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		} else if (RegionProtection.isRegionProtected(this, this.location)) {
 			this.remove();
 			return;
 		}
@@ -329,7 +329,7 @@ public class AirBlast extends AirAbility {
 		final Block block = this.location.getBlock();
 
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 				continue;
 			} else if (FireAbility.isFire(testblock.getType())) {
 				testblock.setType(Material.AIR);
@@ -450,7 +450,7 @@ public class AirBlast extends AirAbility {
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+			if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 				continue;
 			}
 			this.affect(entity);

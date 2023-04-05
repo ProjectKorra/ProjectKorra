@@ -3,22 +3,26 @@ package com.projectkorra.projectkorra.waterbending;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class TorrentWave extends WaterAbility {
 
@@ -35,6 +39,8 @@ public class TorrentWave extends WaterAbility {
 	private double maxHeight;
 	@Attribute("Grow" + Attribute.SPEED)
 	private double growSpeed;
+	@Attribute(Attribute.DAMAGE)
+	private double damage;
 	private Location origin;
 	private ArrayList<TempBlock> blocks;
 	private ArrayList<Entity> affectedEntities;
@@ -56,6 +62,7 @@ public class TorrentWave extends WaterAbility {
 		this.maxHeight = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Height"));
 		this.maxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius"));
 		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback"));
+		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Damage"));
 		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.Wave.Cooldown"));
 		this.growSpeed = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed"));
 		this.origin = location.clone();
@@ -73,7 +80,7 @@ public class TorrentWave extends WaterAbility {
 	}
 
 	private void initializeHeightsMap() {
-		for (int i = -1; i <= this.maxHeight; i++) {
+		for (int i = maxHeight > 1 ? -1 : 0; i <= (maxHeight > 2 ? maxHeight - 1 : 0); i++) {
 			final ConcurrentHashMap<Integer, Double> angles = new ConcurrentHashMap<>();
 			final double dtheta = Math.toDegrees(1 / (this.maxRadius + 2));
 			int j = 0;
@@ -140,7 +147,9 @@ public class TorrentWave extends WaterAbility {
 				}
 
 				if (isTransparent(this.player, block)) {
-					final TempBlock tempBlock = new TempBlock(block, Material.WATER);
+					Levelled lvl = (Levelled) Material.WATER.createBlockData();
+					lvl.setLevel((int) Math.round(7 * this.radius / this.maxRadius));
+					final TempBlock tempBlock = new TempBlock(block, lvl);
 					this.blocks.add(tempBlock);
 					torrentBlocks.add(block);
 				} else {
@@ -150,8 +159,8 @@ public class TorrentWave extends WaterAbility {
 
 				for (final Entity entity : indexList) {
 					if (!this.affectedEntities.contains(entity)) {
-						if (entity.getLocation().distanceSquared(location) <= 4) {
-							if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+						if (entity.getLocation().add(0, entity.getHeight()/2 ,0).distanceSquared(location) <= 4) {
+							if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 								continue;
 							}
 							this.affectedEntities.add(entity);
@@ -159,17 +168,13 @@ public class TorrentWave extends WaterAbility {
 						}
 					}
 				}
-
-				final Random random = new Random();
-				for (final Block sound : torrentBlocks) {
-					if (random.nextInt(50) == 0) {
-						playWaterbendingSound(sound.getLocation());
-					}
-				}
 			}
 			if (angles.isEmpty()) {
 				this.heights.remove(id);
 			}
+		}
+		for (int i = 0; i < 1 + torrentBlocks.size() / radius / maxHeight / 2; i++) {
+			playWaterbendingSound(torrentBlocks.get(ThreadLocalRandom.current().nextInt(torrentBlocks.size())).getLocation());
 		}
 		if (this.heights.isEmpty()) {
 			this.remove();
@@ -180,6 +185,10 @@ public class TorrentWave extends WaterAbility {
 		final Vector direction = GeneralMethods.getDirection(this.origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
+		if (damage > 0 && entity instanceof LivingEntity){
+			LivingEntity living = (LivingEntity) entity;
+			DamageHandler.damageEntity(living, this.damage ,this);
+		}
 		GeneralMethods.setVelocity(this, entity, entity.getVelocity().clone().add(direction.multiply(this.knockback)));
 	}
 
@@ -192,7 +201,7 @@ public class TorrentWave extends WaterAbility {
 	}
 
 	private void returnWater() {
-		final Location location = new Location(this.origin.getWorld(), this.origin.getX() + this.radius, this.origin.getY(), this.origin.getZ());
+		final Location location = this.origin.clone().add(GeneralMethods.getOrthogonalVector(new Vector(0, -1, 0), player.getLocation().getYaw(), 90, radius));
 		if (!location.getWorld().equals(this.player.getWorld())) {
 			return;
 		}
@@ -317,4 +326,11 @@ public class TorrentWave extends WaterAbility {
 		this.cooldown = cooldown;
 	}
 
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(final double damage) {
+		this.damage = damage;
+	}
 }

@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 import com.google.common.io.Files;
@@ -56,6 +57,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -205,12 +207,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Breaks a block and sets it to {@link Material#AIR AIR}.
-	 *
+	 * Breaks a block and sets it to {@link Material#AIR AIR}, if it isn't air already.
 	 * @param block The block to break
 	 */
 	public static void breakBlock(final Block block) {
-		block.breakNaturally(new ItemStack(Material.AIR));
+		if (!ElementalAbility.isAir(block)) // checking block, so CAVE_AIR, VOID_AIR and LIGHT won't be replaced with AIR
+			block.breakNaturally(new ItemStack(Material.AIR));
 	}
 
 	public static boolean canView(final Player player, final String ability) {
@@ -832,12 +834,46 @@ public class GeneralMethods {
 		return 0;
 	}
 
-	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
-		Vector ortho = new Vector(axis.getY(), -axis.getX(), 0);
+	/**
+	 * Get a vector located in a plane perpendicular to the given axis, rotated up to the given degree.
+	 * @param axis The original direction
+	 * @param yaw yaw of the vector.
+	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
+	 * @param length Length of the returned orthogonal vector.
+	 * @return the orthogonal vector.
+	 */
+	public static Vector getOrthogonalVector(final Vector axis, final float yaw, final double degrees, final double length) {
+		Vector ortho = new Vector(-axis.getZ(), 0, axis.getX());
+		if(ortho.length()==0)
+			ortho = new Vector(-Math.cos(Math.toRadians(yaw)), 0, -Math.sin(Math.toRadians(yaw)));
 		ortho = ortho.normalize();
 		ortho = ortho.multiply(length);
 
-		return rotateVectorAroundVector(axis, ortho, degrees);
+		return rotateVectorAroundVector(axis, ortho, -degrees);
+	}
+
+	/**
+	 * @see GeneralMethods#getOrthogonalVector(Vector, float, double, double)
+	 * @apiNote If axis is (0, y, 0), then you'll have random degree, because you can't say how vertical vector is rotated.
+	 * @param axis The original direction
+	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
+	 * @param length Length of the returned orthogonal vector.
+	 * @return
+	 */
+	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
+		return getOrthogonalVector(axis, ThreadLocalRandom.current().nextFloat(-180,180), degrees, length);
+	}
+
+	/**
+	 * @see GeneralMethods#getOrthogonalVector(Vector, float, double, double)
+	 * @apiNote Location should have direction and yaw.
+	 * @param axisLocation Location with axis direction
+	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
+	 * @param length Length of the returned orthogonal vector.
+	 * @return
+	 */
+	public static Vector getOrthogonalVector(final Location axisLocation, final double degrees, final double length) {
+		return getOrthogonalVector(axisLocation.getDirection(), axisLocation.getYaw(), degrees, length);
 	}
 
 	public static Collection<Player> getPlayersAroundPoint(final Location location, final double distance) {
@@ -947,7 +983,7 @@ public class GeneralMethods {
 		final Vector direction = player.getEyeLocation().getDirection().normalize();
 		for (final Entity entity : getEntitiesAroundPoint(origin, range)) {
 			if (entity instanceof Player) {
-				if (((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
+				if (entity.equals(player) || ((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
 					continue;
 				}
 			}
@@ -1036,19 +1072,19 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			final Block tempBlock = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(tempBlock.getType())) {
+			if (ElementalAbility.isAir(tempBlock)) {
 				return blockHolder;
 			}
 			blockHolder = tempBlock;
 		}
 
-		while (ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
+		while (ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (!ElementalAbility.isAir(blockHolder.getType())) {
+			if (!ElementalAbility.isAir(blockHolder)) {
 				return blockHolder;
 			}
 		}
@@ -1059,20 +1095,20 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			final Block tempblock = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(tempblock.getType())) {
+			if (ElementalAbility.isAir(tempblock)) {
 				return blockHolder;
 			}
 
 			blockHolder = tempblock;
 		}
 
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(blockHolder.getType())) {
+			if (ElementalAbility.isAir(blockHolder)) {
 				return blockHolder;
 			}
 		}
@@ -1425,6 +1461,19 @@ public class GeneralMethods {
 			}
 		} else {
 			block.setType(Material.AIR);
+		}
+	}
+
+	public static void removeWater(final Block block) {
+		if (ElementalAbility.isWater(block) && !GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if (block.getBlockData() instanceof Waterlogged) {
+				Waterlogged drain = (Waterlogged) block.getBlockData();
+				drain.setWaterlogged(false);
+				block.setBlockData(drain);
+			} else if (block.getBlockData() instanceof Levelled) {
+				Levelled lvl = (Levelled) block.getBlockData();
+				lvl.setLevel(Math.min(7, lvl.getLevel() + 1));
+			}
 		}
 	}
 

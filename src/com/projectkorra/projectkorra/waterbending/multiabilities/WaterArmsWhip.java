@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class WaterArmsWhip extends WaterAbility {
 
@@ -232,7 +233,7 @@ public class WaterArmsWhip extends WaterAbility {
 	private boolean canPlaceBlock(final Block block) {
 		if (!isTransparent(this.player, block) && !(isWater(block) && TempBlock.isTempBlock(block))) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		} else if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 			return false;
 		}
 		return true;
@@ -297,7 +298,7 @@ public class WaterArmsWhip extends WaterAbility {
 		switch (this.ability) {
 			case PULL:
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 						continue;
 					}
 					final Vector vector = endOfArm.toVector().subtract(entity.getLocation().toVector());
@@ -306,7 +307,7 @@ public class WaterArmsWhip extends WaterAbility {
 				break;
 			case PUNCH:
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 						continue;
 					}
 
@@ -327,7 +328,7 @@ public class WaterArmsWhip extends WaterAbility {
 				if (this.grabbedEntity == null) {
 					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId() && !GRABBED_ENTITIES.containsKey(entity)) {
-							if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+							if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 								continue;
 							}
 							GRABBED_ENTITIES.put((LivingEntity) entity, this);
@@ -388,7 +389,7 @@ public class WaterArmsWhip extends WaterAbility {
 
 	private void grapplePlayer(final Location location) {
 		if (this.reverting && this.grappled && this.player != null && this.end != null && this.ability.equals(Whip.GRAPPLE)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && this.grappleRespectRegions) {
+			if (RegionProtection.isRegionProtected(this, location) && this.grappleRespectRegions) {
 				return;
 			}
 

@@ -245,17 +245,14 @@ public class BlockSource {
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
 	public static Block getWaterSourceBlock(final Player player, final double range, final ClickType clickType, final boolean allowWater, final boolean allowIce, final boolean allowPlant, final boolean allowSnow, final boolean allowWaterBottles) {
-		Block sourceBlock = null;
-		if (allowWaterBottles) {
-			// Check the block in front of the player's eyes, it may have been created by a WaterBottle.
-			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
-			if (sourceBlock == null || (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) > 3)) {
-				sourceBlock = null;
-			}
+		Block sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowWater, allowIce, allowPlant, allowSnow);
+		// Check the block in front of the player's eyes, it may have been created by a WaterBottle.
+		if (!allowWaterBottles && sourceBlock != null && (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) <= 3)) {
+			sourceBlock = null;
 		}
 		final boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing");
 		if (dynamic && sourceBlock == null) {
-			if (allowWater && sourceBlock == null) {
+			if (allowWater) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
 			}
 			if (allowIce && sourceBlock == null) {
@@ -267,10 +264,8 @@ public class BlockSource {
 			if (allowSnow && sourceBlock == null) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 			}
-		} else {
-			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
 		}
-		if (sourceBlock != null && !ElementalAbility.isAir(sourceBlock.getType()) && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock) || WaterAbility.isCauldron(sourceBlock))) {
+		if (sourceBlock != null && (WaterAbility.isWaterbendable(player, null, sourceBlock))) {
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {
 				return null;
 			}

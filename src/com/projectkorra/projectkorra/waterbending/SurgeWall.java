@@ -199,12 +199,8 @@ public class SurgeWall extends WaterAbility {
 				this.firstDirection = this.getDirection(this.sourceBlock.getLocation(), this.firstDestination);
 				this.targetDirection = this.getDirection(this.firstDestination, this.targetDestination);
 
-				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-					new PlantRegrowth(this.player, this.sourceBlock);
-					this.sourceBlock.setType(Material.AIR, false);
-				} else if (isCauldron(this.sourceBlock)) {
-					GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-				}
+				reduceWaterbendingSource(player, this.sourceBlock, false);
+
 				this.addWater(this.sourceBlock);
 			}
 
@@ -283,7 +279,7 @@ public class SurgeWall extends WaterAbility {
 							continue;
 						} else if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || FireAbility.isFire(block.getType()) || this.isWaterbendable(block)) && this.isTransparent(block)) {
+						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block) || FireAbility.isFire(block.getType()) || this.isWaterbendable(block)) && this.isTransparent(block)) {
 							WALL_BLOCKS.put(block, this.player);
 							this.addWallBlock(block);
 							blocks.add(block);
@@ -339,7 +335,7 @@ public class SurgeWall extends WaterAbility {
 				block = this.location.getBlock();
 			}
 
-			if (!ElementalAbility.isAir(block.getType())) {
+			if (!ElementalAbility.isAir(block)) {
 				this.remove();
 				return;
 			} else if (!this.progressing) {

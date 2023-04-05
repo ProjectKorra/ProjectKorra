@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class EarthBlast extends EarthAbility {
 	private boolean isProgressing;
@@ -88,7 +89,7 @@ public class EarthBlast extends EarthAbility {
 				continue;
 			} else if (!blast.isProgressing) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, blast.location)) {
+			} else if (RegionProtection.isRegionProtected(this, blast.location)) {
 				continue;
 			}
 
@@ -268,7 +269,7 @@ public class EarthBlast extends EarthAbility {
 				}
 
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.collisionRadius)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+					if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 						continue;
 					}
 
@@ -456,7 +457,7 @@ public class EarthBlast extends EarthAbility {
 				continue;
 			} else if (!blast.location.getWorld().equals(player.getWorld())) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(blast, blast.location)) {
+			} else if (RegionProtection.isRegionProtected(blast, blast.location)) {
 				continue;
 			} else if (blast.player.equals(player)) {
 				blast.redirect(player, blast.getTargetLocation());

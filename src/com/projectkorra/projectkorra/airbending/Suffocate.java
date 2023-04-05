@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 /**
  * Suffocate
@@ -150,7 +151,7 @@ public class Suffocate extends AirAbility {
 	public void progress() {
 		for (int i = 0; i < this.targets.size(); i++) {
 			final LivingEntity target = this.targets.get(i);
-			if (target.isDead() || !target.getWorld().equals(this.player.getWorld()) || target.getLocation().distanceSquared(this.player.getEyeLocation()) > this.range * this.range || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation()) || target instanceof ArmorStand) {
+			if (target.isDead() || !target.getWorld().equals(this.player.getWorld()) || target.getLocation().distanceSquared(this.player.getEyeLocation()) > this.range * this.range || RegionProtection.isRegionProtected(this, target.getLocation()) || target instanceof ArmorStand) {
 				this.breakSuffocateLocal(target);
 				i--;
 			} else if (target instanceof Player) {

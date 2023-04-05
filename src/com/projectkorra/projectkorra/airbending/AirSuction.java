@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,6 +25,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class AirSuction extends AirAbility {
 
@@ -199,7 +199,7 @@ public class AirSuction extends AirAbility {
 			}
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 					continue;
 				}
 				if ((entity.getEntityId() == this.player.getEntityId()) && !this.canAffectSelf) {

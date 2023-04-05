@@ -55,14 +55,14 @@ public class FireJet extends FireAbility {
 		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
 
-		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || Tag.SLABS.isTagged(block.getType()) || this.bPlayer.isAvatarState()) {
+		if (isIgnitable(block) || ElementalAbility.isAir(block) || Tag.SLABS.isTagged(block.getType()) || this.bPlayer.isAvatarState()) {
 			GeneralMethods.setVelocity(this, player, player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));
 			if (!canFireGrief()) {
-				if (ElementalAbility.isAir(block.getType())) {
+				if (ElementalAbility.isAir(block)) {
 					createTempFire(block.getLocation());
 				}
 
-			} else if (ElementalAbility.isAir(block.getType())) {
+			} else if (ElementalAbility.isAir(block)) {
 				createTempFire(block.getLocation());
 			}
 

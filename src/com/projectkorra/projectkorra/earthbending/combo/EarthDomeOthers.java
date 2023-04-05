@@ -1,11 +1,5 @@
 package com.projectkorra.projectkorra.earthbending.combo;
 
-import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.ComboUtil;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,6 +10,12 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -60,7 +60,7 @@ public class EarthDomeOthers extends EarthAbility implements ComboAbility {
 			this.remove(true);
 			return;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.loc)) {
+		if (RegionProtection.isRegionProtected(this.player, this.loc)) {
 			this.remove(true);
 			return;
 		}

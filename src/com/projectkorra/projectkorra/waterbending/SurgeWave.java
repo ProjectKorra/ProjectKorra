@@ -3,8 +3,8 @@ package com.projectkorra.projectkorra.waterbending;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -31,6 +31,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class SurgeWave extends WaterAbility {
 
@@ -109,7 +110,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	private void addWater(final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.WATER);
@@ -154,7 +155,7 @@ public class SurgeWave extends WaterAbility {
 		}
 		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.frozenLocation, freezeradius);
 		ICE_SETTING: for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
@@ -175,7 +176,7 @@ public class SurgeWave extends WaterAbility {
 			}
 
 			final Block oldBlock = block;
-			if (!isAir(block.getType()) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
+			if (!isAir(block) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
 				continue;
 			} else if (isPlant(block)) {
 				block.breakNaturally();
@@ -185,11 +186,11 @@ public class SurgeWave extends WaterAbility {
 
 			tblock.setRevertTask(() -> SurgeWave.this.frozenBlocks.remove(block));
 
-			tblock.setRevertTime(this.iceRevertTime + (new Random().nextInt(1000)));
+			tblock.setRevertTime(this.iceRevertTime + (ThreadLocalRandom.current().nextInt(1000)));
 			this.frozenBlocks.put(block, oldBlock.getType());
 
 			for (final Block sound : this.frozenBlocks.keySet()) {
-				if ((new Random()).nextInt(4) == 0) {
+				if (ThreadLocalRandom.current().nextInt(4) == 0) {
 					playWaterbendingSound(sound.getLocation());
 				}
 			}
@@ -242,12 +243,7 @@ public class SurgeWave extends WaterAbility {
 				this.targetDirection = this.getDirection(this.sourceBlock.getLocation(), this.targetDestination).normalize();
 				this.targetDestination = this.location.clone().add(this.targetDirection.clone().multiply(this.range));
 
-				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-					new PlantRegrowth(this.player, this.sourceBlock);
-					this.sourceBlock.setType(Material.AIR, false);
-				} else if (isCauldron(this.sourceBlock)) {
-					GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-				}
+				reduceWaterbendingSource(player, this.sourceBlock, false);
 
 				if (TempBlock.isTempBlock(this.sourceBlock)) {
 					final TempBlock tb = TempBlock.get(this.sourceBlock);
@@ -263,7 +259,7 @@ public class SurgeWave extends WaterAbility {
 	public boolean prepare() {
 		this.cancelPrevious();
 		final Block block = BlockSource.getWaterSourceBlock(this.player, this.selectRange, ClickType.SHIFT_DOWN, true, true, this.bPlayer.canPlantbend());
-		if (block != null && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (block != null && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			this.sourceBlock = block;
 			this.focusBlock();
 			return true;
@@ -303,19 +299,15 @@ public class SurgeWave extends WaterAbility {
 				final Block blockl = this.location.getBlock();
 				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((isAir(blockl.getType()) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
+				if (!RegionProtection.isRegionProtected(this, this.location) && (((isAir(blockl) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(blockl))))) {
 					for (double i = 0; i <= this.currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
 							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 							final Block block = this.location.clone().add(vec).getBlock();
 
-							if (!blocks.contains(block) && (isAir(block.getType()) || isFire(block.getType())) || this.isWaterbendable(block)) {
+							if (!blocks.contains(block) && (isAir(block) || isFire(block.getType()) || this.isWaterbendable(block))) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
-							}
-
-							if ((new Random()).nextInt(15) == 0) {
-								playWaterbendingSound(this.location);
 							}
 						}
 					}
@@ -347,6 +339,8 @@ public class SurgeWave extends WaterAbility {
 				for (final Block block : blocks) {
 					if (!this.waveBlocks.containsKey(block)) {
 						this.addWater(block);
+						if (ThreadLocalRandom.current().nextDouble() < 5. / blocks.size())
+							playWaterbendingSound(block.getLocation());
 					}
 				}
 
@@ -373,7 +367,7 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
-						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+						if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 							continue;
 						}
 						final Vector dir = direction.clone();

@@ -1,13 +1,14 @@
 package com.projectkorra.projectkorra.firebending.lightning;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.firebending.FireJet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,6 +35,9 @@ import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.MovementHandler;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Lightning extends LightningAbility {
 
@@ -102,9 +106,8 @@ public class Lightning extends LightningAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<Location> locations;
 	private Block[] chargedCopperBlocks;
-	private static final Set<EntityType> LIGHTNING_AFFECTED = Set.of(EntityType.CREEPER, EntityType.VILLAGER,
-			EntityType.PIG, EntityType.MUSHROOM_COW, EntityType.TURTLE, EntityType.SKELETON_HORSE
-	);
+	private static final Set<EntityType> LIGHTNING_AFFECTED = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			EntityType.CREEPER, EntityType.VILLAGER, EntityType.PIG, EntityType.MUSHROOM_COW, EntityType.TURTLE, EntityType.SKELETON_HORSE)));
 
 	public Lightning(final Player player) {
 		super(player);
@@ -200,7 +203,7 @@ public class Lightning extends LightningAbility {
 	 */
 	private boolean isTransparentForLightning(final Player player, final Block block) {
 		if (this.isTransparent(block)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 				return false;
 			} else if (isIce(block)) {
 				return this.arcOnIce;

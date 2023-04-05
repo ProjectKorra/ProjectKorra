@@ -32,6 +32,7 @@ import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class FlightMultiAbility extends FlightAbility implements MultiAbility {
@@ -224,7 +225,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 				for (final Entity e : GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.speed)) {
 					if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId() && !this.player.getPassengers().contains(e)) {
-						if (!GeneralMethods.isRegionProtectedFromBuild(this.player, e.getLocation())) {
+						if (!RegionProtection.isRegionProtected(this.player, e.getLocation())) {
 							final LivingEntity le = (LivingEntity) e;
 							DamageHandler.damageEntity(le, this.speed / 2, this);
 							GeneralMethods.setVelocity(this, le, this.player.getVelocity().clone().multiply(2 / 3));
@@ -250,7 +251,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			this.player.setFlying(false);
 		}
 
-		if (isWater(this.player.getEyeLocation().clone().getBlock().getType())) {
+		if (isWater(this.player.getEyeLocation().clone().getBlock())) {
 			this.remove();
 		}
 

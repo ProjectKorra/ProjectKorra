@@ -2,8 +2,6 @@ package com.projectkorra.projectkorra.chiblocking.combo;
 
 import java.util.ArrayList;
 
-import com.projectkorra.projectkorra.ability.util.ComboUtil;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -17,8 +15,10 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.MovementHandler;
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Immobilize extends ChiAbility implements ComboAbility {
 
@@ -41,7 +41,7 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 			this.remove();
 			return;
 		} else {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, this.target.getLocation()) || ((this.target instanceof Player) && Commands.invincible.contains(((Player) this.target).getName()))) {
+			if (RegionProtection.isRegionProtected(this, this.target.getLocation()) || ((this.target instanceof Player) && Commands.invincible.contains(((Player) this.target).getName()))) {
 				return;
 			}
 			paralyze(this.target, this.duration);

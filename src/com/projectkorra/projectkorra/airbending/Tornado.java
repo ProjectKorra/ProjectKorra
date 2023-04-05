@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Tornado extends AirAbility {
 
@@ -81,7 +82,7 @@ public class Tornado extends AirAbility {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.origin)) {
+		} else if (RegionProtection.isRegionProtected(this, this.origin)) {
 			this.remove();
 			return;
 		} else if (this.duration != 0) {
@@ -105,11 +106,11 @@ public class Tornado extends AirAbility {
 		final double timefactor = this.currentHeight / this.maxHeight;
 		this.currentRadius = timefactor * this.radius;
 
-		if (!ElementalAbility.isAir(this.origin.getBlock().getType()) && this.origin.getBlock().getType() != Material.BARRIER) {
+		if (!ElementalAbility.isAir(this.origin.getBlock()) && this.origin.getBlock().getType() != Material.BARRIER) {
 			this.origin.setY(this.origin.getY() - 1. / 10. * this.currentHeight);
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, this.currentHeight)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 					continue;
 				}
 				final double y = entity.getLocation().getY();
@@ -189,7 +190,7 @@ public class Tornado extends AirAbility {
 				z = this.origin.getZ() + timefactor * factor * this.currentRadius * Math.sin(angle);
 
 				final Location effect = new Location(this.origin.getWorld(), x, y, z);
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
+				if (!RegionProtection.isRegionProtected(this, effect)) {
 					playAirbendingParticles(effect, this.particleCount);
 					if (this.random.nextInt(20) == 0) {
 						playAirbendingSound(effect);

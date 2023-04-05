@@ -203,7 +203,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			final Block block = loc.clone().add(dir).getBlock();
 			this.location = block.getLocation();
 
-			if (ElementalAbility.isAir(block.getType()) && !RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterManipulation")) {
+			if (ElementalAbility.isAir(block) && !RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterManipulation")) {
 				this.createBlock(block, mat, data);
 			}
 		}

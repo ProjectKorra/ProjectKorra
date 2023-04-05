@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class WaterSpout extends WaterAbility {
 
@@ -110,7 +111,7 @@ public class WaterSpout extends WaterAbility {
 			loc.add(x, height, z);
 
 			final Block block = loc.getBlock();
-			if ((!TempBlock.isTempBlock(block)) && (ElementalAbility.isAir(block.getType()) || !GeneralMethods.isSolid(block))) {
+			if ((!TempBlock.isTempBlock(block)) && (ElementalAbility.isAir(block) || !GeneralMethods.isSolid(block))) {
 				this.blocks.add(new TempBlock(block, GeneralMethods.getWaterData(7)));
 				AFFECTED_BLOCKS.put(block, block);
 			}
@@ -259,7 +260,7 @@ public class WaterSpout extends WaterAbility {
 		for (int i = 0; i < this.maxHeight; i++) {
 
 			blocki = location.clone().add(0, -i, 0).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, blocki.getLocation())) {
 				return -1;
 			}
 
@@ -296,7 +297,7 @@ public class WaterSpout extends WaterAbility {
 					return i;
 				}
 
-				if ((!ElementalAbility.isAir(blocki.getType()) && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
+				if ((!ElementalAbility.isAir(blocki) && (!isPlant(blocki) || !this.bPlayer.canPlantbend()))) {
 					this.revertBaseBlock();
 					return -1;
 				}

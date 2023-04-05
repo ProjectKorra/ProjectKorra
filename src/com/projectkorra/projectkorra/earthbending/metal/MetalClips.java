@@ -25,6 +25,7 @@ import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class MetalClips extends MetalAbility {
 
@@ -166,7 +167,7 @@ public class MetalClips extends MetalAbility {
 			return;
 		} else if (this.metalClipsCount == 3 && !this.canUse4Clips) {
 			return;
-		} else if (this.targetEntity != null && (GeneralMethods.isRegionProtectedFromBuild(this, this.targetEntity.getLocation()) || ((targetEntity instanceof Player) && Commands.invincible.contains(((Player) targetEntity).getName())))) {
+		} else if (this.targetEntity != null && (RegionProtection.isRegionProtected(this, this.targetEntity.getLocation()) || ((targetEntity instanceof Player) && Commands.invincible.contains(((Player) targetEntity).getName())))) {
 			return;
 		}
 

@@ -83,7 +83,7 @@ public class FireComboStream extends BukkitRunnable {
 			return;
 		}
 
-		if (!ElementalAbility.isAir(block.getRelative(BlockFace.UP).getType()) && !ElementalAbility.isPlant(block)) {
+		if (!ElementalAbility.isAir(block.getRelative(BlockFace.UP)) && !ElementalAbility.isPlant(block)) {
 			this.remove();
 			return;
 		}
