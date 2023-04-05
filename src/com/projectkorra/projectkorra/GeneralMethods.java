@@ -1464,19 +1464,6 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void removeWater(final Block block) {
-		if (ElementalAbility.isWater(block) && !GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
-			if (block.getBlockData() instanceof Waterlogged) {
-				Waterlogged drain = (Waterlogged) block.getBlockData();
-				drain.setWaterlogged(false);
-				block.setBlockData(drain);
-			} else if (block.getBlockData() instanceof Levelled) {
-				Levelled lvl = (Levelled) block.getBlockData();
-				lvl.setLevel(Math.min(7, lvl.getLevel() + 1));
-			}
-		}
-	}
-
 	/**
 	 * Deprecated. Use {@link BendingPlayer#removeUnusableAbilities()} instead.
 	 * @param player The name of the player
