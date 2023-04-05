@@ -344,16 +344,6 @@ public class AirSwipe extends AirAbility {
 	}
 
 	@Override
-	public String getInstructions() {
-		String instructions = super.getInstructions();
-		String tiltedSwipePath = "Abilities.Air.AirSwipe.TiltedSwipe";
-		boolean tiltedSwipeEnabled = getConfig().getBoolean(tiltedSwipePath, false);
-		if (tiltedSwipeEnabled)
-			instructions += getLanguageConfig().getString(tiltedSwipePath, "");
-		return instructions;
-	}
-
-	@Override
 	public Location getLocation() {
 		return this.streams.size() != 0 ? this.streams.values().iterator().next() : null;
 	}

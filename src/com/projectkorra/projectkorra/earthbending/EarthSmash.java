@@ -755,14 +755,6 @@ public class EarthSmash extends EarthAbility {
 	}
 
 	@Override
-	public String getInstructions() {
-		String instructions = super.getInstructions();
-		if (getConfig().getBoolean("Abilities.Earth.EarthSmash.Bounce.Enabled", false))
-			instructions += getLanguageConfig().getString("Abilities.Earth.EarthSmash.Bounce", "");
-		return instructions;
-	}
-
-	@Override
 	public Location getLocation() {
 		return this.location;
 	}
