@@ -109,7 +109,8 @@ public abstract class ElementalAbility extends CoreAbility {
 	 * @apiNote Use this method to make sure that block is not waterlogged light.
 	 */
 	public static boolean isAir(final Block block) {
-		return isLight(block, false) || isAir(block.getType());
+		Material material = block.getType();
+		return isLight(block, false) || material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR;
 	}
 
 	/**
