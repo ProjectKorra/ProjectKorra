@@ -235,7 +235,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		final Location location = player.getEyeLocation();
 		final Vector vector = location.getDirection().clone().normalize();
-		for (double i = 3; i <= range; i = i > 3 ? i + 1 : (i > 0 ? i - 1 : 4)) {
+		for (double i = range >= 3 ? 3 : range; i <= range; i = i > 3 ? i + 1 : (i > 0 ? i - 1 : 4)) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (((isWater(block) && allowWater)
 					|| (isCauldron(block) && allowWater)
