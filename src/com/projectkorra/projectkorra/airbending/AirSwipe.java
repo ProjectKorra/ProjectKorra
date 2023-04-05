@@ -505,13 +505,13 @@ public class AirSwipe extends AirAbility {
 		this.maxChargeFactor = maxChargeFactor;
 	}
 
-    public double getMaxChargePushFactor() {
-        return this.maxChargePushFactor;
-    }
+	public double getMaxChargePushFactor() {
+		return this.maxChargePushFactor;
+	}
 
-    public void setMaxChargePushFactor(final double maxChargeFactor) {
-        this.maxChargePushFactor = maxChargeFactor;
-    }
+	public void setMaxChargePushFactor(final double maxChargeFactor) {
+		this.maxChargePushFactor = maxChargeFactor;
+	}
 
 	public Map<Vector, Location> getElements() {
 		return this.streams;
