@@ -983,7 +983,7 @@ public class GeneralMethods {
 		final Vector direction = player.getEyeLocation().getDirection().normalize();
 		for (final Entity entity : getEntitiesAroundPoint(origin, range)) {
 			if (entity instanceof Player) {
-				if (((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
+				if (entity.equals(player) || ((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
 					continue;
 				}
 			}

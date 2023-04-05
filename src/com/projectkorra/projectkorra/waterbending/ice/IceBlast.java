@@ -217,7 +217,7 @@ public class IceBlast extends IceAbility {
 			TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE);
 			this.source = TempBlock.get(this.sourceBlock);
 		} else {
-			new TempBlock(this.sourceBlock, Material.AIR);
+			reduceWaterbendingSource(player, this.sourceBlock);
 			this.source = new TempBlock(this.sourceBlock, Material.PACKED_ICE);
 		}
 	}
@@ -278,7 +278,7 @@ public class IceBlast extends IceAbility {
 			this.source.revertBlock();
 			this.source = null;
 
-			if (isTransparent(this.player, block) && !block.isLiquid()) {
+			if (isTransparent(this.player, block) && !block.isLiquid() && !isLight(block, true)) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
 				this.breakParticles(20);

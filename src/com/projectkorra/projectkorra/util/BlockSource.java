@@ -245,12 +245,7 @@ public class BlockSource {
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
 	public static Block getWaterSourceBlock(final Player player, final double range, final ClickType clickType, final boolean allowWater, final boolean allowIce, final boolean allowPlant, final boolean allowSnow, final boolean allowWaterBottles) {
-		Block sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
-		if ((!allowWater && ElementalAbility.isWater(sourceBlock))
-				|| (!allowIce && ElementalAbility.isIce(sourceBlock))
-				|| (!allowPlant && ElementalAbility.isPlant(sourceBlock))
-				|| (!allowSnow && ElementalAbility.isSnow(sourceBlock)))
-			sourceBlock = null;
+		Block sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowWater, allowIce, allowPlant, allowSnow);
 		// Check the block in front of the player's eyes, it may have been created by a WaterBottle.
 		if (!allowWaterBottles && sourceBlock != null && (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) <= 3)) {
 			sourceBlock = null;
@@ -270,7 +265,7 @@ public class BlockSource {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 			}
 		}
-		if (sourceBlock != null && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock) || WaterAbility.isCauldron(sourceBlock))) {
+		if (sourceBlock != null && (WaterAbility.isWaterbendable(player, null, sourceBlock))) {
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {
 				return null;
 			}

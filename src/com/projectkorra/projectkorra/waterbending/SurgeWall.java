@@ -199,12 +199,8 @@ public class SurgeWall extends WaterAbility {
 				this.firstDirection = this.getDirection(this.sourceBlock.getLocation(), this.firstDestination);
 				this.targetDirection = this.getDirection(this.firstDestination, this.targetDestination);
 
-				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-					new PlantRegrowth(this.player, this.sourceBlock);
-					this.sourceBlock.setType(Material.AIR, false);
-				} else if (isCauldron(this.sourceBlock)) {
-					GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-				}
+				reduceWaterbendingSource(player, this.sourceBlock, false);
+
 				this.addWater(this.sourceBlock);
 			}
 

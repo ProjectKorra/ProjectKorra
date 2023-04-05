@@ -196,17 +196,34 @@ public abstract class WaterAbility extends ElementalAbility {
 	 *
 	 * @param player the player that is attempting to Waterbend.
 	 * @param range the maximum block selection range.
-	 * @param plantbending true if the player can bend plants.
+	 * @param allowPlant true if plants are allowed.
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
-	public static Block getWaterSourceBlock(final Player player, final double range, boolean plantbending) {
-		final Location location = player.getEyeLocation();
-		final Vector vector = location.getDirection().clone().normalize();
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant) {
+		return getWaterSourceBlock(player, range, true, true, allowPlant, true);
+	}
 
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant, boolean allowSnow) {
+		return getWaterSourceBlock(player, range, true, true, allowPlant, allowSnow);
+	}
+
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant, boolean allowSnow, boolean allowIce) {
+		return getWaterSourceBlock(player, range, true, allowIce, allowPlant, allowSnow);
+	}
+
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowWater, boolean allowIce, boolean allowPlant, boolean allowSnow) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final Set<Material> trans = getTransparentMaterialSet();
+		if (bPlayer == null) {
+			return null;
+		} else {
+			allowWater = bPlayer.hasElement(Element.WATER) && allowWater;
+			allowIce = bPlayer.canIcebend() && allowIce;
+			allowPlant = bPlayer.canPlantbend() && allowPlant;
+			allowSnow = bPlayer.hasElement(Element.WATER) && allowSnow;
+		}
 
-		if (plantbending) {
+		final Set<Material> trans = getTransparentMaterialSet();
+		if (allowPlant) {
 			final Set<Material> remove = new HashSet<>();
 			for (final Material m : trans) {
 				if (isPlant(m)) {
@@ -216,24 +233,18 @@ public abstract class WaterAbility extends ElementalAbility {
 			trans.removeAll(remove);
 		}
 
-		final Block testBlock = player.getTargetBlock(trans, Math.max(1, Math.min(3, (int)range)));
-		if (bPlayer == null) {
-			return null;
-		} else {
-			plantbending = bPlayer.canPlantbend() && plantbending;
-			if (isWaterbendable(player, null, testBlock) && !(isPlant(testBlock) && !plantbending)) {
-				return testBlock;
-			}
-		}
-
-		for (double i = 0; i <= range; i++) {
+		final Location location = player.getEyeLocation();
+		final Vector vector = location.getDirection().clone().normalize();
+		for (double i = 3; i <= range; i = i > 3 ? i + 1 : (i > 0 ? i - 1 : 4)) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((isWaterbendable(player, null, block) && !(isPlant(block) && !plantbending)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
-				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
-					continue;
-				}
+			if (((isWater(block) && allowWater)
+					|| (isCauldron(block) && allowWater)
+					|| (isIce(block) && allowIce)
+					|| (isPlant(block) && allowPlant)
+					|| (isSnow(block) && allowSnow))
+					&& !RegionProtection.isRegionProtected(player, location, "WaterManipulation")
+					&& !(TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)))
 				return block;
-			}
 		}
 		return null;
 	}
@@ -272,7 +283,7 @@ public abstract class WaterAbility extends ElementalAbility {
 				}
 				if (GeneralMethods.isAdjacentToThreeOrMoreSources(block) || lvl.getLevel() >= 8)
 					return true;
-				if (lvl.getLevel() == 7 || lvl.getLevel() == 15) { // lowest water lvls
+				if (lvl.getLevel() == 7) { // lowest water lvl
 					GeneralMethods.removeBlock(block);
 					return true;
 				}
@@ -280,8 +291,8 @@ public abstract class WaterAbility extends ElementalAbility {
 				block.setBlockData(lvl);
 				return true;
 			} else if (allowSnow && isSnow(block)) { // layered snow
-				Snow snow = (Snow) (data instanceof Snow ? data : Material.SNOW.createBlockData( bd -> ((Levelled)bd).setLevel(((Levelled) bd).getMaximumLevel())));
-				int layers = snow.getLayers() - 1;
+				Snow snow = (Snow) (data instanceof Snow ? data : Material.SNOW.createBlockData());
+				int layers = (data instanceof Snow ? snow.getLayers() : snow.getMaximumLayers()) - 1;
 				if (layers >= snow.getMinimumLayers()) {
 					snow.setLayers(layers);
 					block.setBlockData(snow);

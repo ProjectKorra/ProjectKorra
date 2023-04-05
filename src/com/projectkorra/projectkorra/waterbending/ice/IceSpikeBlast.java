@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,7 +21,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import com.projectkorra.projectkorra.region.RegionProtection;
 
@@ -188,7 +186,7 @@ public class IceSpikeBlast extends IceAbility {
 				return;
 			}
 
-			if (isTransparent(this.player, block) && !block.isLiquid()) {
+			if (isTransparent(this.player, block) && !block.isLiquid() && !isLight(block, true)) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
 				this.remove();
@@ -279,21 +277,7 @@ public class IceSpikeBlast extends IceAbility {
 		this.settingUp = true;
 		this.prepared = false;
 
-		if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-			new PlantRegrowth(this.player, this.sourceBlock);
-			this.sourceBlock.setType(Material.AIR);
-		} else if (isWater(this.sourceBlock)) {
-			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
-				this.sourceBlock.setType(Material.AIR);
-			}
-		} else if (TempBlock.isTempBlock(this.sourceBlock)) {
-			final TempBlock tb = TempBlock.get(this.sourceBlock);
-			if (isBendableWaterTempBlock(tb)) {
-				tb.revertBlock();
-			}
-		} else if (isCauldron(this.sourceBlock)) {
-			GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-		}
+		reduceWaterbendingSource(player, this.sourceBlock);
 	}
 
 	public static void activate(final Player player) {

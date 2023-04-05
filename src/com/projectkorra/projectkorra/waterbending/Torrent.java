@@ -12,8 +12,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -30,7 +30,6 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import com.projectkorra.projectkorra.region.RegionProtection;
 
@@ -202,14 +201,7 @@ public class Torrent extends WaterAbility {
 						}
 					}
 
-					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-						new PlantRegrowth(this.player, this.sourceBlock);
-						this.sourceBlock.setType(Material.AIR);
-					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock) && !isCauldron(this.sourceBlock)) {
-						this.sourceBlock.setType(Material.AIR);
-					} else if (isCauldron(this.sourceBlock)) {
-						GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-					}
+					reduceWaterbendingSource(player, this.sourceBlock);
 					
 					this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : Material.WATER.createBlockData());
 					this.location = this.sourceBlock.getLocation();
@@ -526,7 +518,7 @@ public class Torrent extends WaterAbility {
 			this.source.revertBlock();
 		}
 
-		if (this.location != null) {
+		if (this.location != null && !(this.formed && !this.player.isSneaking() && !this.launch)) {
 			this.returnWater(this.location);
 		}
 	}
@@ -544,6 +536,7 @@ public class Torrent extends WaterAbility {
 			final Location eyeLoc = player.getEyeLocation();
 			final Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
+				BlockData revert = block.getBlockData();
 				if (block.getType() != Material.WATER) {
 					block.setType(Material.WATER);
 					block.setBlockData(GeneralMethods.getWaterData(0));
@@ -553,7 +546,7 @@ public class Torrent extends WaterAbility {
 				if (tor.sourceSelected || tor.settingUp) {
 					WaterReturn.emptyWaterBottle(player);
 				}
-				block.setType(Material.AIR);
+				block.setBlockData(revert);
 			}
 		}
 	}

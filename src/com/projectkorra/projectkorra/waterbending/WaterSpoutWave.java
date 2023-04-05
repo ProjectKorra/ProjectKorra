@@ -210,12 +210,7 @@ public class WaterSpoutWave extends WaterAbility {
 				this.animation = AnimateState.RISE;
 				this.location = this.origin.clone();
 
-				if (isPlant(this.origin.getBlock()) || isSnow(this.origin.getBlock())) {
-					new PlantRegrowth(this.player, this.origin.getBlock());
-					this.origin.getBlock().setType(Material.AIR);
-				} else if (isCauldron(this.origin.getBlock())) {
-					this.origin.getBlock().setType(Material.CAULDRON);
-				}
+				reduceWaterbendingSource(player, this.origin.getBlock(), false);
 
 				if (TempBlock.isTempBlock(this.origin.getBlock())) {
 					final TempBlock tb = TempBlock.get(this.origin.getBlock());

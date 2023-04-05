@@ -104,6 +104,7 @@ public class ConfigManager {
 				config.addDefault("Board.Extras.SmashBounce", ChatColor.GREEN.getName());
 				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
 				config.addDefault("Board.Extras.SurgeWall", ChatColor.AQUA.getName());
+				config.addDefault("Board.Extras.TorrentWave", ChatColor.AQUA.getName());
 			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
@@ -1213,6 +1214,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.RevertTime", 60000);
 			config.addDefault("Abilities.Water.Torrent.Wave.Radius", 12);
 			config.addDefault("Abilities.Water.Torrent.Wave.Knockback", 1.5);
+			config.addDefault("Abilities.Water.Torrent.Wave.Damage", 0);
 			config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
 			config.addDefault("Abilities.Water.Torrent.Wave.GrowSpeed", 0.5);
 			config.addDefault("Abilities.Water.Torrent.Wave.Interval", 30);
