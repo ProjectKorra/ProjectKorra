@@ -187,7 +187,6 @@ public class SurgeWall extends WaterAbility {
 	public void moveWater() {
 		if (this.sourceBlock != null) {
 			this.targetDestination = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
-
 			if (this.targetDestination.distanceSquared(this.location) <= 1) {
 				this.progressing = false;
 				this.targetDestination = null;
@@ -198,9 +197,7 @@ public class SurgeWall extends WaterAbility {
 				this.firstDestination = this.getToEyeLevel();
 				this.firstDirection = this.getDirection(this.sourceBlock.getLocation(), this.firstDestination);
 				this.targetDirection = this.getDirection(this.firstDestination, this.targetDestination);
-
 				reduceWaterbendingSource(player, this.sourceBlock, false);
-
 				this.addWater(this.sourceBlock);
 			}
 

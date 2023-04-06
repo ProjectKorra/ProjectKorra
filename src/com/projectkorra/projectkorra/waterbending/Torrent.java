@@ -357,11 +357,7 @@ public class Torrent extends WaterAbility {
 					}
 				}
 			}
-			if (this.launchedBlocks.isEmpty()) {
-				return false;
-			} else {
-				return true;
-			}
+			return !this.launchedBlocks.isEmpty();
 		}
 
 		final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range, this.hurtEntities);

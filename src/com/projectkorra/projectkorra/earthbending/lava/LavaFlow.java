@@ -669,7 +669,9 @@ public class LavaFlow extends LavaAbility {
 
 	@Override
 	public long getCooldown() {
-		return this.type == AbilityType.CLICK ? this.makeLava ? this.clickLavaCooldown : this.clickLandCooldown : this.shiftCooldown;
+		return this.type == AbilityType.CLICK
+				? this.makeLava ? this.clickLavaCooldown : this.clickLandCooldown
+				: this.shiftCooldown;
 	}
 
 	@Override

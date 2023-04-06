@@ -174,10 +174,11 @@ public class OctopusForm extends WaterAbility {
 
 	private void form() {
 		this.incrementStep();
-
 		reduceWaterbendingSource(player, this.sourceBlock);
-
-		this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : GeneralMethods.getWaterData(0));
+		this.source = new TempBlock(this.sourceBlock,
+				isCauldron(this.sourceBlock)
+						? this.sourceBlock.getBlockData()
+						: GeneralMethods.getWaterData(0));
 	}
 
 	private void attack() {

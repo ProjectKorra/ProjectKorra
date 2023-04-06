@@ -83,11 +83,7 @@ public class IceBlast extends IceAbility {
 			return;
 		}
 
-		if (sourceBlock == null) {
-			return;
-		} else if (RegionProtection.isRegionProtected(this, sourceBlock.getLocation())) {
-			return;
-		} else {
+		if (sourceBlock != null && !RegionProtection.isRegionProtected(this, sourceBlock.getLocation())) {
 			this.prepare(sourceBlock);
 		}
 	}

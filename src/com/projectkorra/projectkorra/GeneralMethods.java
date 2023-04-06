@@ -211,8 +211,9 @@ public class GeneralMethods {
 	 * @param block The block to break
 	 */
 	public static void breakBlock(final Block block) {
-		if (!ElementalAbility.isAir(block)) // checking block, so CAVE_AIR, VOID_AIR and LIGHT won't be replaced with AIR
+		if (!ElementalAbility.isAir(block)) { // checking block, so CAVE_AIR, VOID_AIR and LIGHT won't be replaced with AIR
 			block.breakNaturally(new ItemStack(Material.AIR));
+		}
 	}
 
 	public static boolean canView(final Player player, final String ability) {
@@ -844,8 +845,9 @@ public class GeneralMethods {
 	 */
 	public static Vector getOrthogonalVector(final Vector axis, final float yaw, final double degrees, final double length) {
 		Vector ortho = new Vector(-axis.getZ(), 0, axis.getX());
-		if(ortho.length()==0)
+		if(ortho.length()==0) {
 			ortho = new Vector(-Math.cos(Math.toRadians(yaw)), 0, -Math.sin(Math.toRadians(yaw)));
+		}
 		ortho = ortho.normalize();
 		ortho = ortho.multiply(length);
 
@@ -858,7 +860,7 @@ public class GeneralMethods {
 	 * @param axis The original direction
 	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
 	 * @param length Length of the returned orthogonal vector.
-	 * @return
+	 * @return the orthogonal vector.
 	 */
 	public static Vector getOrthogonalVector(final Vector axis, final double degrees, final double length) {
 		return getOrthogonalVector(axis, ThreadLocalRandom.current().nextFloat(-180,180), degrees, length);
@@ -870,7 +872,7 @@ public class GeneralMethods {
 	 * @param axisLocation Location with axis direction
 	 * @param degrees Degrees for the orthogonal vector (0 - turn right, 90 - turn up, 180 - turn left, 270 - turn down)
 	 * @param length Length of the returned orthogonal vector.
-	 * @return
+	 * @return the orthogonal vector.
 	 */
 	public static Vector getOrthogonalVector(final Location axisLocation, final double degrees, final double length) {
 		return getOrthogonalVector(axisLocation.getDirection(), axisLocation.getYaw(), degrees, length);

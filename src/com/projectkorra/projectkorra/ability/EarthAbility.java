@@ -208,8 +208,9 @@ public abstract class EarthAbility extends ElementalAbility {
 				}
 
 				moveEarthBlock(block, affectedblock);
-				if (ThreadLocalRandom.current().nextDouble() < soundChance)
+				if (ThreadLocalRandom.current().nextDouble() < soundChance) {
 					playEarthbendingSound(block.getLocation());
+				}
 
 				for (double i = 1; i < chainlength; i++) {
 					affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();

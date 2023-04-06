@@ -203,8 +203,9 @@ public class Ripple extends EarthAbility {
 
 		this.step += 1;
 		int ripplesCount = getAbilities(player, Ripple.class).size();
-		if (ThreadLocalRandom.current().nextDouble() < 4. / ripplesCount)
+		if (ThreadLocalRandom.current().nextDouble() < 4. / ripplesCount) {
 			playEarthbendingSound(this.location);
+		}
 		for (final Entity entity : this.entities) {
 			this.affect(entity);
 		}

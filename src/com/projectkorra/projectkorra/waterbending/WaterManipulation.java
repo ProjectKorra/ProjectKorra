@@ -135,8 +135,9 @@ public class WaterManipulation extends WaterAbility {
 					Waterlogged devastate = (Waterlogged) block.getBlockData();
 					devastate.setWaterlogged(false);
 					block.setBlockData(devastate);
-				} else
+				} else {
 					block.setType(Material.AIR);
+				}
 			}
 			AFFECTED_BLOCKS.remove(block);
 		}
@@ -175,8 +176,9 @@ public class WaterManipulation extends WaterAbility {
 					this.targetDestination = GeneralMethods.getPointOnLine(this.firstDestination, this.targetDestination, this.range);
 					this.targetDirection = GeneralMethods.getDirection(this.firstDestination, this.targetDestination).normalize();
 
-					if (!reduceWaterbendingSource(player, this.sourceBlock, false))
+					if (!reduceWaterbendingSource(player, this.sourceBlock, false)) {
 						addWater(this.sourceBlock);
+					}
 				}
 			}
 			this.bPlayer.addCooldown(this);
@@ -351,8 +353,9 @@ public class WaterManipulation extends WaterAbility {
 					Waterlogged devastate = (Waterlogged) block.getBlockData();
 					devastate.setWaterlogged(false);
 					block.setBlockData(devastate);
-				} else
+				} else {
 					block.setType(Material.AIR);
+				}
 			}
 			AFFECTED_BLOCKS.remove(block);
 		}
@@ -366,8 +369,9 @@ public class WaterManipulation extends WaterAbility {
 						Waterlogged devastate = (Waterlogged) block.getBlockData();
 						devastate.setWaterlogged(false);
 						block.setBlockData(devastate);
-					} else
+					} else {
 						block.setType(Material.AIR);
+					}
 				}
 				AFFECTED_BLOCKS.remove(block);
 			}

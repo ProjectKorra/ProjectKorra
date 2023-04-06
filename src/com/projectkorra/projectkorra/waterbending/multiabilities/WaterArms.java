@@ -164,9 +164,10 @@ public class WaterArms extends WaterAbility {
 		final Block sourceBlock = getWaterSourceBlock(this.player, this.sourceGrabRange, this.canUsePlantSource);
 		if (sourceBlock != null) {
 
-			if (!reduceWaterbendingSource(player, sourceBlock, true, false, false, false)){
-				if (reduceWaterbendingSource(player, sourceBlock, false, true, true, false))
+			if (!reduceWaterbendingSource(player, sourceBlock, true, false, false, false)) {
+				if (reduceWaterbendingSource(player, sourceBlock, false, true, true, false)) {
 					this.fullSource = false;
+				}
 			}
 
 			ParticleEffect.SMOKE_LARGE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);

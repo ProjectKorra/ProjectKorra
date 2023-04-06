@@ -142,8 +142,9 @@ public class AirSwipe extends AirAbility {
 				this.launch();
 				this.start();
 			}
-		} else
+		} else {
 			this.start();
+		}
 	}
 
 	/**

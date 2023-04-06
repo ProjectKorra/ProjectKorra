@@ -267,8 +267,9 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowWater, boolean allowSnow, boolean allowPlant, boolean allowIce) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null)
+		if (bPlayer == null) {
 			return false;
+		}
 		allowWater = bPlayer.hasElement(Element.WATER) && allowWater;
 		allowSnow = bPlayer.hasElement(Element.WATER) && allowSnow;
 		allowPlant = bPlayer.canPlantbend() && allowPlant;
@@ -281,10 +282,10 @@ public abstract class WaterAbility extends ElementalAbility {
 					GeneralMethods.setCauldronData(block, lvl.getLevel() - 1);
 					return true;
 				}
-				if (GeneralMethods.isAdjacentToThreeOrMoreSources(block) || lvl.getLevel() >= 8)
-					return true;
-				if (lvl.getLevel() == 7) { // lowest water lvl
-					GeneralMethods.removeBlock(block);
+				if (GeneralMethods.isAdjacentToThreeOrMoreSources(block) || lvl.getLevel() >= 7) {
+					if (lvl.getLevel() == 7) { // lowest water lvl
+						GeneralMethods.removeBlock(block);
+					}
 					return true;
 				}
 				lvl.setLevel(Math.min(lvl.getMaximumLevel(), lvl.getLevel() + 1));
@@ -299,12 +300,15 @@ public abstract class WaterAbility extends ElementalAbility {
 				} else
 					GeneralMethods.removeBlock(block);
 				return true;
-			} else if (allowWater && !GeneralMethods.isAdjacentToThreeOrMoreSources(block) && data instanceof Waterlogged && ((Waterlogged) data).isWaterlogged()) { // anything waterlogged
+			} else if (allowWater && !GeneralMethods.isAdjacentToThreeOrMoreSources(block)
+					&& data instanceof Waterlogged && ((Waterlogged) data).isWaterlogged()) { // anything waterlogged
 				Waterlogged drain = (Waterlogged) data;
 				drain.setWaterlogged(false);
 				block.setBlockData(drain);
 				return true;
-			} else if ((allowSnow && isSnow(block)) || (allowIce && isIce(block)) || (allowPlant && isPlant(block))) {
+			} else if ((allowSnow && isSnow(block))
+					|| (allowIce && isIce(block))
+					|| (allowPlant && isPlant(block))) {
 				if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
 					PhaseChange.thaw(block);
 					return true;
@@ -381,15 +385,12 @@ public abstract class WaterAbility extends ElementalAbility {
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
 				return false;
-			} else if ((isWater(block) || isSnow(block) || isCauldron(block)) && bPlayer.hasElement(Element.WATER)) {
-				return true;
-			} else if (isIce(block) && bPlayer.canIcebend()) {
-				return true;
-			} else if (isPlant(block) && bPlayer.canPlantbend()) {
-				return true;
+			} else {
+				return ((isWater(block) || isSnow(block) || isCauldron(block)) && bPlayer.hasElement(Element.WATER))
+								|| (isIce(block) && bPlayer.canIcebend())
+								|| (isPlant(block) && bPlayer.canPlantbend());
 			}
 		}
-		return false;
 	}
 
 	public static void playFocusWaterEffect(final Block block) {

@@ -339,8 +339,9 @@ public class SurgeWave extends WaterAbility {
 				for (final Block block : blocks) {
 					if (!this.waveBlocks.containsKey(block)) {
 						this.addWater(block);
-						if (ThreadLocalRandom.current().nextDouble() < 5. / blocks.size())
+						if (ThreadLocalRandom.current().nextDouble() < 5. / blocks.size()) {
 							playWaterbendingSound(block.getLocation());
+						}
 					}
 				}
 
