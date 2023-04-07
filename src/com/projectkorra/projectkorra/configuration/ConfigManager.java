@@ -1185,14 +1185,15 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Wave.Interval", 30);
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Duration", 36000);
+			config.addDefault("Abilities.Water.Surge.Wave.IceRevertTime", 60000);
 			config.addDefault("Abilities.Water.Surge.Wall.Range", 5);
+			config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 12);
 			config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
 			config.addDefault("Abilities.Water.Surge.Wall.Cooldown", 0);
 			config.addDefault("Abilities.Water.Surge.Wall.Duration", 0);
 			config.addDefault("Abilities.Water.Surge.Wall.Interval", 30);
 			config.addDefault("Abilities.Water.Surge.Wall.SolidifyLava.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wall.SolidifyLava.Duration", 36000);
-			config.addDefault("Abilities.Water.Surge.Wave.IceRevertTime", 60000);
 
 			config.addDefault("Abilities.Water.Torrent.Enabled", true);
 			config.addDefault("Abilities.Water.Torrent.Range", 25);

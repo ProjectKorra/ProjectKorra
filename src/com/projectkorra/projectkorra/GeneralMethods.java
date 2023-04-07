@@ -1194,7 +1194,16 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block, final boolean lava) {
-		if (block == null || (TempBlock.isTempBlock(block) && (!lava && !WaterAbility.isBendableWaterTempBlock(block)))) {
+		return isAdjacentToThreeOrMoreSources(block, lava, true);
+	}
+
+	public static boolean isAdjacentToThreeOrMoreSources(final Block block, final boolean lava, final boolean ice) {
+		return isAdjacentToThreeOrMoreSources(block, lava, ice, true);
+	}
+
+	public static boolean isAdjacentToThreeOrMoreSources(final Block block, final boolean lava, final boolean ice, final boolean water) {
+		if (block == null || !(lava || ice || water)
+				|| (TempBlock.isTempBlock(block) && (!lava && !WaterAbility.isBendableWaterTempBlock(block)))) {
 			return false;
 		}
 		int sources = 0;
@@ -1206,7 +1215,8 @@ public class GeneralMethods {
 					continue;
 				}
 			} else {
-				if (!((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && WaterManipulation.canPhysicsChange(blocki))) {
+				if (!(((water && ElementalAbility.isWater(blocki)) || (ice && ElementalAbility.isIce(blocki)))
+								&& WaterManipulation.canPhysicsChange(blocki))) {
 					continue;
 				}
 			}

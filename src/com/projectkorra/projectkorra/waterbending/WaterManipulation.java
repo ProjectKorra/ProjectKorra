@@ -176,9 +176,7 @@ public class WaterManipulation extends WaterAbility {
 					this.targetDestination = GeneralMethods.getPointOnLine(this.firstDestination, this.targetDestination, this.range);
 					this.targetDirection = GeneralMethods.getDirection(this.firstDestination, this.targetDestination).normalize();
 
-					if (!reduceWaterbendingSource(player, this.sourceBlock, false)) {
-						addWater(this.sourceBlock);
-					}
+					reduceWaterbendingSource(player, this.sourceBlock);
 				}
 			}
 			this.bPlayer.addCooldown(this);

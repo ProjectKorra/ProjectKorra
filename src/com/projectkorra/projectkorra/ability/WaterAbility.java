@@ -250,7 +250,10 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean reduceWaterbendingSource(Player player, Block block) {
-		return reduceWaterbendingSource(player, block, true);
+		return reduceWaterbendingSource(player, block,
+				!GeneralMethods.isAdjacentToThreeOrMoreSources(block, false, true, false)
+						|| PhaseChange.getFrozenBlocksAsBlock().contains(block)
+						|| (TempBlock.isTempBlock(block) && isBendableWaterTempBlock(TempBlock.get(block))));
 	}
 
 	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowIce) {
@@ -320,7 +323,9 @@ public abstract class WaterAbility extends ElementalAbility {
 						return true;
 					}
 				} else {
-					new PlantRegrowth(player, block);
+					if (!isIce(block)) {
+						new PlantRegrowth(player, block);
+					}
 					GeneralMethods.removeBlock(block);
 					return true;
 				}

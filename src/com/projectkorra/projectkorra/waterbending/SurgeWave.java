@@ -241,7 +241,7 @@ public class SurgeWave extends WaterAbility {
 			} else {
 				this.progressing = true;
 				this.targetDirection = this.getDirection(this.sourceBlock.getLocation(), this.targetDestination).normalize();
-				this.targetDestination = this.location.clone().add(this.targetDirection.clone().multiply(this.range));
+				this.targetDestination = this.location.clone().add(this.targetDirection.clone().multiply(this.range + this.selectRange));
 
 				reduceWaterbendingSource(player, this.sourceBlock, false);
 
