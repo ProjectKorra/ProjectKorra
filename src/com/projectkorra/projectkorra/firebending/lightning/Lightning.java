@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +26,8 @@ import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -187,6 +190,8 @@ public class Lightning extends LightningAbility {
 		playLightningbendingHitSound(lent.getLocation());
 		playLightningbendingHitSound(this.player.getLocation());
 		DamageHandler.damageEntity(lent, this.damage, this);
+		ParticleEffect.FLASH.display(lent.getEyeLocation().add(lent.getLocation().getDirection().multiply(0.5)), 1);
+		lent.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 0));
 		if (ThreadLocalRandom.current().nextDouble() <= this.stunChance) {
 			final MovementHandler mh = new MovementHandler(lent, this);
 			mh.stopWithDuration((long) this.stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
@@ -664,7 +669,8 @@ public class Lightning extends LightningAbility {
 				if (ThreadLocalRandom.current().nextDouble() < chance) {
 					final Location loc = this.animationLocations.get(i).getLocation();
 					final double angle = (ThreadLocalRandom.current().nextDouble() - 0.5) * maxArcAngle * 2;
-					final Vector dir = GeneralMethods.rotateXZ(this.direction.clone(), angle);
+					final Vector dir = GeneralMethods.rotateVectorAroundVector(
+							GeneralMethods.getOrthogonalVector(direction, player.getLocation().getYaw(), 90, 1), direction, angle);
 					final double randRange = (ThreadLocalRandom.current().nextDouble() * range) + (range / 3.0);
 
 					final Location loc2 = loc.clone().add(dir.normalize().multiply(randRange));
@@ -707,7 +713,8 @@ public class Lightning extends LightningAbility {
 
 					final double radians = Math.toRadians(angle);
 					final double hypot = adjac / Math.cos(radians);
-					final Vector dir = GeneralMethods.rotateXZ(this.direction.clone(), angle);
+					final Vector dir = GeneralMethods.rotateVectorAroundVector(
+							GeneralMethods.getOrthogonalVector(direction, player.getLocation().getYaw(), 90, 1), direction, angle);
 					final Location newLoc = loc1.clone().add(dir.normalize().multiply(hypot));
 
 					newLoc.add(0, (ThreadLocalRandom.current().nextDouble() - 0.5) / 2.0, 0);
