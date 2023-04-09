@@ -76,13 +76,16 @@ public class BendingBoard {
 		}
 
 		public void clear(boolean formNewTeam) {
-			String prefix = team.getPrefix(), suffix = team.getSuffix();
-			board.resetScores(entry);
-			team.unregister();
-			if (formNewTeam) {
-				formTeam();
-				update(prefix, suffix);
+			if (team.getScoreboard() != null) { //In case the team has already been unregistered
+				String prefix = team.getPrefix(), suffix = team.getSuffix();
+				team.unregister();
+				if (formNewTeam) {
+					formTeam();
+					update(prefix, suffix);
+				}
 			}
+			board.resetScores(entry);
+
 			next.ifPresent(BoardSlot::decreaseSlot);
 		}
 		
