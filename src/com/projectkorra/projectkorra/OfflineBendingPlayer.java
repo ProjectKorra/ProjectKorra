@@ -848,6 +848,13 @@ public class OfflineBendingPlayer {
     }
 
     /**
+     * @return Is the player online?
+     */
+    public boolean isOnline() {
+        return this instanceof BendingPlayer;
+    }
+
+    /**
      * Checks if the {@link BendingPlayer} has the specified element toggled on
      *
      * @param element The element to check

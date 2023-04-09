@@ -1375,7 +1375,12 @@ public class PKListener implements Listener {
 		}
 
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
-				() -> OfflineBendingPlayer.convertToOffline(bPlayer).uncacheAfter(ConfigManager.defaultConfig.get().getLong("Properties.PlayerDataUnloadTime", 5 * 60 * 1000)), 1L);
+				() -> {
+					OfflineBendingPlayer converted = OfflineBendingPlayer.convertToOffline(bPlayer);
+					if (!converted.isOnline()) { //We test if they are still offline. If they relog by joining on a different client, they will be online now, and an error will be thrown otherwise.
+						converted.uncacheAfter(ConfigManager.defaultConfig.get().getLong("Properties.PlayerDataUnloadTime", 5 * 60 * 1000));
+					}
+				}, 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
