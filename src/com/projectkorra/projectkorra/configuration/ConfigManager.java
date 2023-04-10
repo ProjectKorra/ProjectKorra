@@ -103,6 +103,7 @@ public class ConfigManager {
 				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
 				config.addDefault("Board.Extras.SmashBounce", ChatColor.GREEN.getName());
 				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
+				config.addDefault("Board.Extras.SurgeFreeze", ChatColor.DARK_AQUA.getName());
 				config.addDefault("Board.Extras.SurgeWall", ChatColor.AQUA.getName());
 				config.addDefault("Board.Extras.TorrentWave", ChatColor.AQUA.getName());
 			}
@@ -1176,12 +1177,14 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Water.Surge.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wave.Radius", 3);
-			config.addDefault("Abilities.Water.Surge.Wave.Range", 20);
+			config.addDefault("Abilities.Water.Surge.Wave.ThawRadius", 25);
+			config.addDefault("Abilities.Water.Surge.Wave.Range", 12);
 			config.addDefault("Abilities.Water.Surge.Wave.SelectRange", 12);
 			config.addDefault("Abilities.Water.Surge.Wave.Knockback", 1);
 			config.addDefault("Abilities.Water.Surge.Wave.Knockup", 0.2);
 			config.addDefault("Abilities.Water.Surge.Wave.MaxFreezeRadius", 7);
 			config.addDefault("Abilities.Water.Surge.Wave.Cooldown", 500);
+			config.addDefault("Abilities.Water.Surge.Wave.FreezeCooldown", 5000);
 			config.addDefault("Abilities.Water.Surge.Wave.Interval", 30);
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Duration", 36000);

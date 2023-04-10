@@ -221,20 +221,8 @@ public abstract class WaterAbility extends ElementalAbility {
 			allowPlant = bPlayer.canPlantbend() && allowPlant;
 			allowSnow = bPlayer.hasElement(Element.WATER) && allowSnow;
 		}
-
-		final Set<Material> trans = getTransparentMaterialSet();
-		if (allowPlant) {
-			final Set<Material> remove = new HashSet<>();
-			for (final Material m : trans) {
-				if (isPlant(m)) {
-					remove.add(m);
-				}
-			}
-			trans.removeAll(remove);
-		}
-
 		final Location location = player.getEyeLocation();
-		final Vector vector = location.getDirection().clone().normalize();
+		final Vector vector = location.getDirection().normalize();
 		for (double i = range >= 3 ? 3 : range; i <= range; i = i > 3 ? i + 1 : (i > 0 ? i - 1 : 4)) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (((isWater(block) && allowWater)

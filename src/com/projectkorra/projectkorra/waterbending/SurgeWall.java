@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +17,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -144,10 +143,18 @@ public class SurgeWall extends WaterAbility {
 
 	private void freeze() {
 		this.frozen = true;
+		HashSet<Block> wall = new HashSet<>();
 		for (final Block block : WALL_BLOCKS.keySet()) {
 			if (WALL_BLOCKS.get(block) == this.player) {
+				wall.add(block);
 				new TempBlock(block, Material.ICE);
-				playIcebendingSound(block.getLocation());
+			}
+		}
+		double chance = wall.size();
+		for (Block block : wall) {
+			if (ThreadLocalRandom.current().nextDouble() <= chance / wall.size()) {
+				playIcebendingSound(block.getLocation().add(.5, .5, .5));
+				chance /= 2;
 			}
 		}
 	}
@@ -174,12 +181,12 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private void cancelPrevious() {
-		final SurgeWall oldWave = getAbility(this.player, SurgeWall.class);
-		if (oldWave != null) {
-			if (oldWave.progressing) {
-				oldWave.removeWater(oldWave.sourceBlock);
+		final SurgeWall oldWall = getAbility(this.player, SurgeWall.class);
+		if (oldWall != null) {
+			if (oldWall.progressing) {
+				oldWall.removeWater(oldWall.sourceBlock);
 			} else {
-				oldWave.remove();
+				oldWall.remove();
 			}
 		}
 	}
@@ -249,7 +256,7 @@ public class SurgeWall extends WaterAbility {
 			this.time = System.currentTimeMillis();
 			final boolean matchesName = this.bPlayer.getBoundAbilityName().equals(this.getName());
 
-			if (!this.progressing && !matchesName) {
+			if (!this.progressing && (!matchesName || hasAbility(player, SurgeWave.class))) {
 				this.remove();
 				return;
 			} else if (this.progressing && (!this.player.isSneaking() || !matchesName)) {
@@ -447,7 +454,6 @@ public class SurgeWall extends WaterAbility {
 		}
 
 		final double wallSelectRange = WaterAbility.getNightFactor(player.getWorld()) * getConfig().getDouble("Abilities.Water.Surge.Wall.SelectRange");
-		final double waveSelectRange = WaterAbility.getNightFactor(player.getWorld()) * getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 
@@ -497,15 +503,7 @@ public class SurgeWall extends WaterAbility {
 			if (!bPlayer.isOnCooldown("SurgeWave")) {
 				wave = new SurgeWave(player);
 			}
-			return;
 		} else {
-			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, Math.max(1, (int)waveSelectRange)))) {
-				wave = new SurgeWave(player);
-				return;
-			}
-		}
-
-		if (wall != null) {
 			wall.moveWater();
 		}
 	}

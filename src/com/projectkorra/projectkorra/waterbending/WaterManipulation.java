@@ -211,7 +211,7 @@ public class WaterManipulation extends WaterAbility {
 				return;
 			} else {
 				if (!this.progressing) {
-					if (!(isWater(this.sourceBlock) || isCauldron(this.sourceBlock) || (isIce(this.sourceBlock) && this.bPlayer.canIcebend()) || (isSnow(this.sourceBlock) && this.bPlayer.canIcebend()) || (isPlant(this.sourceBlock) && this.bPlayer.canPlantbend()))) {
+					if (!(isWaterbendable(this.sourceBlock))) {
 						this.remove();
 						return;
 					}
