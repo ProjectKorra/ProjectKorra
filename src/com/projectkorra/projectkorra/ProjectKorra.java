@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 import co.aikar.timings.lib.MCTiming;
@@ -78,6 +79,7 @@ public class ProjectKorra extends JavaPlugin {
 
 		Manager.startup();
 		BendingBoardManager.setup();
+		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 
 		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);

@@ -1,11 +1,13 @@
 package com.projectkorra.projectkorra;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -59,6 +62,7 @@ import org.jetbrains.annotations.NotNull;
 public class BendingPlayer extends OfflineBendingPlayer {
 
 	protected static Map<JavaPlugin, CanBendHook> HOOKS = new HashMap<>();
+	static Set<String> DISABLED_WORLDS = new HashSet<>();
 
 	private long slowTime;
 	private final Player player;
@@ -249,6 +253,18 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		return (System.currentTimeMillis() > this.slowTime);
 	}
 
+	/**
+	 * Check if the {@link BendingPlayer} can bend in the world they are in
+	 */
+	public boolean canBendInWorld() {
+		return !DISABLED_WORLDS.contains(this.getPlayer().getWorld().getName());
+	}
+
+	/**
+	 * Check if the {@link BendingPlayer} can bind the provided {@link CoreAbility}
+	 * @param ability The {@link CoreAbility} to check
+	 * @return True if they can bind it
+	 */
 	public boolean canBind(final CoreAbility ability) {
 		if (ability == null || !this.player.isOnline() || !ability.isEnabled()) {
 			return false;
@@ -521,6 +537,15 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	public boolean isIlluminating() {
 		return this.illumination;
+	}
+
+	/**
+	 * Check if bending is disabled in the provided world
+	 * @param world The world to check
+	 * @return True if bending is disabled in the world
+	 */
+	public static boolean isWorldDisabled(World world) {
+		return DISABLED_WORLDS.contains(world.getName());
 	}
 
 	/**

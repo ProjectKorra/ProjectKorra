@@ -1393,6 +1393,7 @@ public class GeneralMethods {
 		}
 		BendingPlayer.getOfflinePlayers().clear();
 		BendingPlayer.getPlayers().clear();
+		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 		BendingBoardManager.reload();
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
