@@ -1580,7 +1580,9 @@ public class GeneralMethods {
 		final ClassLoader loader = ProjectKorra.class.getClassLoader();
 		try {
 			for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
-				if (info.getName().startsWith("com.projectkorra.") && !info.getName().contains("hooks") && !info.getName().startsWith("com.projectkorra.projectkorra.region")) {
+				if (info.getName().startsWith("com.projectkorra.") && !info.getName().contains("hooks")
+						&& !info.getName().startsWith("com.projectkorra.projectkorra.region")
+						&& !info.getName().startsWith("com.projectkorra.projectkorra.ProjectKorra")) {
 					try {
 						final Class<?> clazz = info.load();
 						for (final Field field : clazz.getDeclaredFields()) {

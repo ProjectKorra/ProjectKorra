@@ -472,4 +472,18 @@ public class TempBlock {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "TempBlock{" +
+				"block=[" + block.getX() + "," + block.getY() + "," + block.getZ() + "]" +
+				", newData=" + newData.getAsString() +
+				", attachedTempBlocks=" + attachedTempBlocks.size() +
+				", revertTime=" + (revertTime == 0 ? "N/A" : (revertTime - System.currentTimeMillis()) + "ms") +
+				", reverted=" + reverted +
+				", revertTask=" + (revertTask != null) +
+				", ability=" + (ability.isPresent() ? ability.get().getClass() : "null") +
+				", isBendableSource=" + isBendableSource +
+				", suffocate=" + suffocate +
+				'}';
+	}
 }
