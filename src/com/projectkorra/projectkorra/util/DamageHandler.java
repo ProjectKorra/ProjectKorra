@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -119,6 +120,8 @@ public class DamageHandler {
 		ARMOR_PERCENTAGE_BY_ENTITY_ID.remove(event.getEntity().getEntityId()); // We get rid of the entry, so it doesn't call back future non-ability related damage.
 
 		if (ignorePercentage == 0) return;
+
+		if (event.getEntity() instanceof ArmorStand) return; //ArmorStands produce errors when we modify the armor damage, so ignore them.
 
 		if (ignorePercentage == 1) {
 			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
