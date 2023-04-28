@@ -76,7 +76,8 @@ public class BendingBoard {
 		}
 
 		public void clear(boolean formNewTeam) {
-			if (team.getScoreboard() != null) { //In case the team has already been unregistered
+			//Make sure the team hasn't already been unregistered
+			if (team.getScoreboard() != null && team.getScoreboard().getTeam("slot" + this.slot) != null) {
 				String prefix = team.getPrefix(), suffix = team.getSuffix();
 				team.unregister();
 				if (formNewTeam) {
