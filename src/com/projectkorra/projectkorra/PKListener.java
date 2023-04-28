@@ -412,33 +412,33 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		final Block block = event.getBlock();
 
-		try (MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
+		//try (MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
 			if (!WaterManipulation.canPhysicsChange(block)) {
 				event.setCancelled(true);
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
+		//try (MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
 			if (!EarthPassive.canPhysicsChange(block)) {
 				event.setCancelled(true);
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
+		//try (MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
 			if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 				event.setCancelled(true);
 				return;
 			}
-		}
+		//}
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
-		try (MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
+		//try (MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
 			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))) {
 				event.setCancelled(true);
 			}
-		}
+		//}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1306,16 +1306,16 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		try (MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
 			if (MovementHandler.isStopped(player)) {
 				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
 					event.setCancelled(true);
 				}
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
 			if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
 				Vector vel = new Vector();
 				vel.setX(event.getTo().getX() - event.getFrom().getX());
@@ -1331,9 +1331,9 @@ public class PKListener implements Listener {
 				}
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
 			if (Bloodbending.isBloodbent(player)) {
 				final BendingPlayer bender = Bloodbending.getBloodbender(player);
 				if (bender.isAvatarState()) {
@@ -1349,23 +1349,23 @@ public class PKListener implements Listener {
 				}
 				return;
 			}
-		}
+		//}
 
 		if (bPlayer != null) {
-			try (MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
+			//try (MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
 					PassiveHandler.checkExhaustionPassives(player);
 				}
-			}
+			//}
 
-			try (MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
+			//try (MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
 				if (event.getTo().getBlock() != event.getFrom().getBlock()) {
 					FirePassive.handle(player);
 				}
-			}
+			//}
 		}
 
-		try (MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
 			if (event.getTo().getY() > event.getFrom().getY()) {
 				if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
 					final int current = player.getStatistic(Statistic.JUMP);
@@ -1382,7 +1382,7 @@ public class PKListener implements Listener {
 					}
 				}
 			}
-		}
+		//}
 	}
 
 	@EventHandler

@@ -186,6 +186,7 @@ public class ProjectKorra extends JavaPlugin {
 		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
 	}
 
+	@Deprecated
 	public static MCTiming timing(final String name) {
 		return timingManager.of(name);
 	}
