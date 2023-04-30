@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.type.Campfire;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Smoker;
@@ -41,6 +42,7 @@ public class FireBlast extends FireAbility {
 	private boolean powerFurnace;
 	private boolean showParticles;
 	private boolean dissipate;
+	private boolean lightCandles;
 	private boolean isFireBurst = false;
 	private boolean fireBurstIgnite;
 	private int ticks;
@@ -110,6 +112,7 @@ public class FireBlast extends FireAbility {
 		this.isFireBurst = true;
 		this.powerFurnace = true;
 		this.showParticles = true;
+		this.lightCandles = true;
 		this.fireBurstIgnite = getConfig().getBoolean("Abilities.Fire.FireBurst.Ignite");
 		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireBlast.Cooldown"));
@@ -163,9 +166,13 @@ public class FireBlast extends FireAbility {
 				blastF.update();
 			} else if (block instanceof Campfire) {
 				final Campfire campfire = (Campfire) block.getBlockData();
-				if(!campfire.isLit()) {
-					if(block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
+				if (!campfire.isLit()) {
+					if (block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
 						campfire.setLit(true);
+					} else if (lightCandles && block.getType().name().toLowerCase().endsWith("candle") && lightCandles && block.getBlockData() instanceof Lightable) {
+						Lightable candle = (Lightable) block.getBlockData();
+						candle.setLit(true);
+						block.setBlockData(candle);
 					}
 				}
 			} else if (isIgnitable(this.location.getBlock())) {
