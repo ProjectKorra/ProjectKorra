@@ -566,6 +566,16 @@ public class GeneralMethods {
 		return blocks;
 	}
 
+	public static List<Location> getLocationsAroundPoint(final Location location, final double radius) {
+       		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(location, radius);
+      	 	List<Location> locations = new ArrayList<>();
+       		for (int i = 0; i < blocks.size(); i++) {
+        		Block block = blocks.get(i);
+            		locations.add(block.getLocation());
+        }
+        return locations;
+    }
+	
 	public static BlockFace getCardinalDirection(final Vector vector) {
 		final BlockFace[] faces = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
 		Vector n, ne, e, se, s, sw, w, nw;
