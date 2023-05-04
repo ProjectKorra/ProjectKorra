@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.type.Campfire;
 import org.bukkit.block.Furnace;
@@ -164,15 +165,15 @@ public class FireBlast extends FireAbility {
 				final BlastFurnace blastF = (BlastFurnace) block.getState();
 				blastF.setBurnTime((short) 800);
 				blastF.update();
-			} else if (block instanceof Campfire) {
-				final Campfire campfire = (Campfire) block.getBlockData();
-				if (!campfire.isLit()) {
+			} else if (block.getBlockData() instanceof Lightable) {
+				final Lightable lightable = (Lightable) block.getBlockData();
+				if (!lightable.isLit()) {
 					if (block.getType() != Material.SOUL_CAMPFIRE || bPlayer.canUseSubElement(SubElement.BLUE_FIRE)) {
-						campfire.setLit(true);
-					} else if (lightCandles && block.getType().name().toLowerCase().endsWith("candle") && lightCandles && block.getBlockData() instanceof Lightable) {
-						Lightable candle = (Lightable) block.getBlockData();
-						candle.setLit(true);
-						block.setBlockData(candle);
+						lightable.setLit(true);
+						block.setBlockData(lightable);
+					} else if (block.getType().name().toLowerCase().endsWith("candle") && lightCandles) {
+						lightable.setLit(true);
+						block.setBlockData(lightable);
 					}
 				}
 			} else if (isIgnitable(this.location.getBlock())) {
