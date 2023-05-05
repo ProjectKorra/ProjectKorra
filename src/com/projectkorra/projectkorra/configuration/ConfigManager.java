@@ -101,7 +101,7 @@ public class ConfigManager {
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
 			config.addDefault("Board.MiscSeparator", "  ----------");
 			
-			if (!config.contains("Board.Extras)) {
+			if (!config.contains("Board.Extras")) {
 			    config.addDefault("Board.Extras.RaiseEarthWall", Element.EARTH.getColor());
 			    config.addDefault("Board.Extras.SurgeWave", Element.WATER.getColor());
 			    config.addDefault("Board.Extras.SpoutHop", Element.WATER.getColor());
