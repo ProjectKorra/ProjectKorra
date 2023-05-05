@@ -101,11 +101,11 @@ public class ConfigManager {
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
 			config.addDefault("Board.MiscSeparator", "  ----------");
 			
-
-			config.addDefault("Board.Extras.RaiseEarthWall", Element.EARTH.getColor());
-			config.addDefault("Board.Extras.SurgeWave", Element.WATER.getColor());
-			config.addDefault("Board.Extras.SpoutHop", Element.WATER.getColor());
-
+			if (!config.contains("Board.Extras)) {
+			    config.addDefault("Board.Extras.RaiseEarthWall", Element.EARTH.getColor());
+			    config.addDefault("Board.Extras.SurgeWave", Element.WATER.getColor());
+			    config.addDefault("Board.Extras.SpoutHop", Element.WATER.getColor());
+			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
