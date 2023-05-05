@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.configuration;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
 
@@ -99,10 +101,11 @@ public class ConfigManager {
 			config.addDefault("Board.EmptySlot", "&8-- Slot {slot_number} --");
 			config.addDefault("Board.MiscSeparator", "  ----------");
 			
-			if (!config.contains("Board.Extras")) {
-				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
-				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
-			}
+
+			config.addDefault("Board.Extras.RaiseEarthWall", Element.EARTH.getColor());
+			config.addDefault("Board.Extras.SurgeWave", Element.WATER.getColor());
+			config.addDefault("Board.Extras.SpoutHop", Element.WATER.getColor());
+
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
@@ -1296,6 +1299,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Interval", 50);
 			config.addDefault("Abilities.Water.WaterSpout.BlockSpiral", true);
 			config.addDefault("Abilities.Water.WaterSpout.Particles", false);
+			config.addDefault("Abilities.Water.WaterSpout.SpoutHop.Enabled", true);
+			config.addDefault("Abilities.Water.WaterSpout.SpoutHop.Power", 0.85);
+			config.addDefault("Abilities.Water.WaterSpout.SpoutHop.Cooldown", 0);
+
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Particles", false);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Enabled", true);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.AllowPlantSource", true);
