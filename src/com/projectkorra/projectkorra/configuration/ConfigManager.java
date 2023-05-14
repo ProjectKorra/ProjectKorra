@@ -1307,6 +1307,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Wave.FlightDuration", 2500);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.3);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 6000);
+			config.addDefault("Abilities.Water.WaterSpout.Wave.TrailRevertTime", 1000);
 
 			config.addDefault("Abilities.Water.IceWave.Enabled", true);
 			config.addDefault("Abilities.Water.IceWave.Damage", 3);

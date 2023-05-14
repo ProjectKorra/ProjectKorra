@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import net.md_5.bungee.api.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a player's scoreboard for bending purposes
@@ -59,7 +60,7 @@ public class BendingBoard {
 			obj.getScore(entry).setScore(-s);
 		}
 		
-		public void update(String prefix, String name) {
+		public void update(@NotNull String prefix, @NotNull String name) {
 			team.setPrefix(prefix);
 			team.setSuffix(name);
 			set();
@@ -68,11 +69,6 @@ public class BendingBoard {
 		public void setSlot(int slot) {
 			this.slot = slot + 1;
 			set();
-		}
-
-		public void decreaseSlot() {
-			--this.slot;
-			clear(true);
 		}
 
 		public void clear(boolean formNewTeam) {
@@ -86,8 +82,6 @@ public class BendingBoard {
 				}
 			}
 			board.resetScores(entry);
-
-			next.ifPresent(BoardSlot::decreaseSlot);
 		}
 		
 		private void setNext(BoardSlot slot) {

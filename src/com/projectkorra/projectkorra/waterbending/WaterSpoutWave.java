@@ -71,6 +71,7 @@ public class WaterSpoutWave extends WaterAbility {
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double animationSpeed;
+	private long trailRevertTime;
 	private AbilityType type;
 	private AnimateState animation;
 	private Block sourceBlock;
@@ -101,6 +102,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown"));
 		this.revertSphereTime = getConfig().getLong("Abilities.Water.IceWave.RevertSphereTime");
 		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.IceWave.RevertSphere");
+		this.trailRevertTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.TrailRevertTime");
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -383,8 +385,8 @@ public class WaterSpoutWave extends WaterAbility {
 		if (this.affectedBlocks.containsKey(block)) {
 			this.affectedBlocks.get(block).revertBlock();
 		}
-		TempBlock tb = new TempBlock(block, mat.createBlockData(), 20L);
-		tb.setRevertTask(() -> affectedBlocks.remove(block));
+		TempBlock tb = new TempBlock(block, mat.createBlockData(), this.trailRevertTime);
+		tb.setRevertTask(() -> this.affectedBlocks.remove(block));
 		this.affectedBlocks.put(block, tb);
 	}
 
