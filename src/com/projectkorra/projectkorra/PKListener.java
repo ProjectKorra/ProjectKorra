@@ -1265,22 +1265,6 @@ public class PKListener implements Listener {
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
-
-		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
-				ChatColor color = ChatColor.of(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-				color = color == null ? ChatColor.GOLD : color;
-				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
-				final String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
-				if (!topBorder.isEmpty()) {
-					player.sendMessage(ChatUtil.color(topBorder));
-				}
-				player.sendMessage(ChatUtil.multiline(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!"));
-				if (!bottomBorder.isEmpty()) {
-					player.sendMessage(ChatUtil.color(bottomBorder));
-				}
-			}, 20 * 4);
-		}
 	}
 
 	@EventHandler

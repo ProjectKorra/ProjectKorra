@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -245,57 +246,40 @@ public abstract class CoreAbility implements Ability {
 	 * Causes {@link #progress()} to be called on every CoreAbility instance
 	 * that has been started and has not been removed.
 	 */
-	public static void progressAll() {
-		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
-			for (final CoreAbility abil : setAbils) {
-				if (abil instanceof PassiveAbility) {
-					if (!((PassiveAbility) abil).isProgressable()) {
-						continue;
-					}
-
-					if (!abil.getPlayer().isOnline()) { // This has to be before isDead as isDead.
-						abil.remove(); // will return true if they are offline.
-						continue;
-					} else if (abil.getPlayer().isDead()) {
-						continue;
-					}
-				} else if (abil.getPlayer().isDead()) {
-					abil.remove();
-					continue;
-				} else if (!abil.getPlayer().isOnline()) {
-					abil.remove();
-					continue;
-				}
-
-				try {
-					if (!abil.attributesModified) {
-						abil.modifyAttributes();
-						abil.attributesModified = true;
-					}
-
-					//try (MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
+		public static void progressAll() {
+			INSTANCES_BY_CLASS.values().stream()
+				.flatMap(Collection::stream)
+				.filter(Objects::nonNull)
+				.filter(abil -> abil.getPlayer() != null && abil.getPlayer().isValid())
+				.forEach(abil -> {
+					try {
+						if (!abil.attributesModified) {
+							abil.modifyAttributes();
+							abil.attributesModified = true;
+						}
+		
 						abil.progress();
-					//}
-
-					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
-				} catch (final Exception e) {
-					e.printStackTrace();
-					Bukkit.getLogger().severe(abil.toString());
-					try {
-						abil.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + abil.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
-					} catch (final Exception me) {
-						Bukkit.getLogger().severe("unable to notify ability user of error");
+		
+						Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
+					} catch (final Exception e) {
+						e.printStackTrace();
+						Bukkit.getLogger().severe(abil.toString());
+						try {
+							if (abil.getPlayer() != null) {
+								abil.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + abil.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
+							}
+						} catch (final Exception me) {
+							Bukkit.getLogger().severe("unable to notify ability user of error");
+						}
+						try {
+							abil.remove();
+						} catch (final Exception re) {
+							Bukkit.getLogger().severe("unable to fully remove ability of above error");
+						}
 					}
-					try {
-						abil.remove();
-					} catch (final Exception re) {
-						Bukkit.getLogger().severe("unable to fully remove ability of above error");
-					}
-				}
-			}
+				});
+			currentTick++;
 		}
-		currentTick++;
-	}
 
 	/**
 	 * Removes every CoreAbility instance that has been started but not yet
