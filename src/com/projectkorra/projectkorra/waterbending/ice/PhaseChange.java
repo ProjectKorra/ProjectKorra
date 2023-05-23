@@ -481,7 +481,7 @@ public class PhaseChange extends IceAbility {
 	}
 
 	public void revertFrozenBlocks() {
-		if (this.active_types.contains(PhaseChangeType.FREEZE)) {
+		if (this.active_types.contains(PhaseChangeType.FREEZE) || this.active_types.contains(PhaseChangeType.CUSTOM)) {
 			for (final TempBlock tb : this.blocks) {
 				PLAYER_BY_BLOCK.remove(tb);
 				BLOCKS.remove(tb.getBlock());

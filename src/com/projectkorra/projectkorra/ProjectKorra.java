@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 import co.aikar.timings.lib.MCTiming;
@@ -78,6 +79,7 @@ public class ProjectKorra extends JavaPlugin {
 
 		Manager.startup();
 		BendingBoardManager.setup();
+		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 
 		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
@@ -87,8 +89,6 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
-
-		TempBlock.startReversion();
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
@@ -186,6 +186,7 @@ public class ProjectKorra extends JavaPlugin {
 		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
 	}
 
+	@Deprecated
 	public static MCTiming timing(final String name) {
 		return timingManager.of(name);
 	}

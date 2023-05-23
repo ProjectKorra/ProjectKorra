@@ -147,7 +147,7 @@ public class Element {
 			if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
 				this.color = ((SubElement) this).parentElement.getSubColor();
 				return this.color;
-			}
+			} else if (value == null) value = "WHITE";
 
 			try {
 				this.color = ChatColor.of(value);
@@ -168,7 +168,8 @@ public class Element {
 			if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
 				this.color = ((SubElement) this).parentElement.getSubColor();
 				return this.color;
-			}
+			} else if (value == null) value = getColor().getName();
+
 			try {
 				this.subColor = ChatColor.of(value);
 			} catch (IllegalArgumentException e) {

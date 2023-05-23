@@ -1307,6 +1307,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Wave.FlightDuration", 2500);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.3);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 6000);
+			config.addDefault("Abilities.Water.WaterSpout.Wave.TrailRevertTime", 1000);
 
 			config.addDefault("Abilities.Water.IceWave.Enabled", true);
 			config.addDefault("Abilities.Water.IceWave.Damage", 3);
@@ -1533,7 +1534,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Combustion.Enabled", true);
 			config.addDefault("Abilities.Fire.Combustion.Cooldown", 10000);
 			config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
-			config.addDefault("Abilities.Fire.Combustion.ExplosivePower", 1.0);
+			config.addDefault("Abilities.Fire.Combustion.ExplosivePower", 2.0);
 			config.addDefault("Abilities.Fire.Combustion.Damage", 4);
 			config.addDefault("Abilities.Fire.Combustion.Radius", 4);
 			config.addDefault("Abilities.Fire.Combustion.Range", 35);

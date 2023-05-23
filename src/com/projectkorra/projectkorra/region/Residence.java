@@ -28,7 +28,7 @@ class Residence extends RegionProtectionBase {
     }
 
     @Override
-    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
+    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
         final ResidenceInterface res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManagerAPI();
         final ClaimedResidence claim = res.getByLoc(location);
         if (claim != null) {
@@ -36,7 +36,7 @@ class Residence extends RegionProtectionBase {
             //If is their residence
             if (perms.hasResidencePermission(player, false)) return false;
             //If the bending flag is turned off
-            if (!perms.playerHas(player.getName(), this.flag, false)) {
+            if (!perms.playerHas(player, this.flag, false)) {
                 return true;
             }
         }

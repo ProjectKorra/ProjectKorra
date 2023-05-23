@@ -2,10 +2,9 @@ package com.projectkorra.projectkorra.waterbending;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +24,7 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
@@ -71,6 +71,7 @@ public class WaterSpoutWave extends WaterAbility {
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double animationSpeed;
+	private long trailRevertTime;
 	private AbilityType type;
 	private AnimateState animation;
 	private Block sourceBlock;
@@ -101,6 +102,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown"));
 		this.revertSphereTime = getConfig().getLong("Abilities.Water.IceWave.RevertSphereTime");
 		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.IceWave.RevertSphere");
+		this.trailRevertTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.TrailRevertTime");
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -254,7 +256,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 			} else if (this.animation == AnimateState.TOWARD_PLAYER) {
 				this.revertBlocks();
-				final Location eyeLoc = this.player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
+				final Location eyeLoc = this.player.getTargetBlock(null, 2).getLocation();
 				eyeLoc.setY(this.player.getEyeLocation().getY());
 				final Vector vec = GeneralMethods.getDirection(this.location, eyeLoc);
 				this.location.add(vec.normalize().multiply(this.animationSpeed));
@@ -303,7 +305,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 				GeneralMethods.setVelocity(this, this.player, this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
-					if (ElementalAbility.isAir(block.getType()) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					if (ElementalAbility.isAir(block.getType()) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 						if (this.iceWave) {
 							this.createBlockDelay(block, Material.ICE, 2L);
 						} else {
@@ -311,7 +313,6 @@ public class WaterSpoutWave extends WaterAbility {
 						}
 					}
 				}
-				this.revertBlocksDelay(20L);
 
 				if (this.iceWave && this.progressCounter % 3 == 0) {
 					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius * 1.5)) {
@@ -381,10 +382,12 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public void createBlock(final Block block, final Material mat) {
-		if (this.affectedBlocks.contains(block)) {
+		if (this.affectedBlocks.containsKey(block)) {
 			this.affectedBlocks.get(block).revertBlock();
 		}
-		this.affectedBlocks.put(block, new TempBlock(block, mat));
+		TempBlock tb = new TempBlock(block, mat.createBlockData(), this.trailRevertTime);
+		tb.setRevertTask(() -> this.affectedBlocks.remove(block));
+		this.affectedBlocks.put(block, tb);
 	}
 
 	public void revertBlocks() {
@@ -396,24 +399,6 @@ public class WaterSpoutWave extends WaterAbility {
 		}
 	}
 
-	public void revertBlocksDelay(final long delay) {
-		final Enumeration<Block> keys = this.affectedBlocks.keys();
-		while (keys.hasMoreElements()) {
-			final Block block = keys.nextElement();
-			final TempBlock tblock = this.affectedBlocks.get(block);
-			this.affectedBlocks.remove(block);
-
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					if (!FROZEN_BLOCKS.containsKey(block)) {
-						tblock.revertBlock();
-					}
-				}
-			}.runTaskLater(ProjectKorra.plugin, delay);
-		}
-	}
-
 	public void createIceSphere(final Player player, final Entity entity, final double radius) {
 		for (double x = -radius; x <= radius; x += 0.5) {
 			for (double y = -radius; y <= radius; y += 0.5) {
@@ -422,11 +407,11 @@ public class WaterSpoutWave extends WaterAbility {
 					if (block.getLocation().distanceSquared(entity.getLocation().getBlock().getLocation()) > radius * radius) {
 						continue;
 					}
-					if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 						continue;
 					}
 					if (entity instanceof Player) {
-						if (Commands.invincible.contains(((Player) entity).getName())) {
+						if (Commands.invincible.contains(entity.getName())) {
 							return;
 						}
 						if (!getConfig().getBoolean("Properties.Water.FreezePlayerHead") && GeneralMethods.playerHeadIsInBlock((Player) entity, block)) {
@@ -441,7 +426,7 @@ public class WaterSpoutWave extends WaterAbility {
 							final TempBlock tblock = new TempBlock(block, Material.ICE);
 							FROZEN_BLOCKS.put(block, tblock);
 							if (this.revertIceSphere) {
-								tblock.setRevertTime(this.revertSphereTime + (new Random().nextInt(1000) - 500));
+								tblock.setRevertTime(this.revertSphereTime + ThreadLocalRandom.current().nextLong(-500, 500));
 							}
 						}
 					}
@@ -468,7 +453,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public static ArrayList<WaterSpoutWave> getType(final Player player, final AbilityType type) {
-		final ArrayList<WaterSpoutWave> list = new ArrayList<WaterSpoutWave>();
+		final ArrayList<WaterSpoutWave> list = new ArrayList<>();
 		for (final WaterSpoutWave wave : getAbilities(player, WaterSpoutWave.class)) {
 			if (wave.type.equals(type)) {
 				list.add(wave);
@@ -541,7 +526,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		return this.isIceWave() ? true : false;
+		return this.isIceWave();
 	}
 
 	@Override

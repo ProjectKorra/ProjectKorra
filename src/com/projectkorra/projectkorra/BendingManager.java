@@ -8,9 +8,10 @@ import co.aikar.timings.lib.MCTiming;
 
 import com.projectkorra.projectkorra.event.WorldTimeEvent;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -34,7 +35,8 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, WorldTimeEvent.Time> times = new HashMap<>(); // true if day time
 
-	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCKS;
+	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING,
+			COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCK_TIMING, TEMP_BLOCK_TIMING;
 
 	public BendingManager() {
 		instance = this;
@@ -47,7 +49,8 @@ public class BendingManager implements Runnable {
 		this.COOLDOWN_TIMING = ProjectKorra.timing("HandleCooldowns");
 		this.TEMP_ARMOR_TIMING = ProjectKorra.timing("TempArmor#Cleanup");
 		this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
-		this.TEMP_FALLING_BLOCKS = ProjectKorra.timing("TempFallingBlock#manage");
+		this.TEMP_FALLING_BLOCK_TIMING = ProjectKorra.timing("TempFallingBlock#manage");
+		this.TEMP_BLOCK_TIMING = ProjectKorra.timing("TempBlockRevert");
 
 		times.clear();
 
@@ -94,11 +97,11 @@ public class BendingManager implements Runnable {
 						if (bPlayer == null) continue;
 
 						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
-							String s = getMoonriseMessage();
+							String s = getMoonsetMessage();
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
 						else if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
-							String s = getMoonsetMessage();
+							String s = getMoonriseMessage();
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
 
@@ -122,33 +125,33 @@ public class BendingManager implements Runnable {
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
 
-		try (MCTiming timing = this.CORE_ABILITY_TIMING.startTiming()) {
+		//try (MCTiming timing = this.CORE_ABILITY_TIMING.startTiming()) {
 			CoreAbility.progressAll();
-		}
+		//}
 
-		try (MCTiming timing = this.TEMP_POTION_TIMING.startTiming()) {
+		//try (MCTiming timing = this.TEMP_POTION_TIMING.startTiming()) {
 			TempPotionEffect.progressAll();
-		}
+		//}
 
-		try (MCTiming timing = this.DAY_NIGHT_TIMING.startTiming()) {
+		//try (MCTiming timing = this.DAY_NIGHT_TIMING.startTiming()) {
 			this.handleDayNight();
-		}
+		//}
 
 		RevertChecker.revertAirBlocks();
 
-		try (MCTiming timing = this.HORIZONTAL_VELOCITY_TRACKER_TIMING.startTiming()) {
+		//try (MCTiming timing = this.HORIZONTAL_VELOCITY_TRACKER_TIMING.startTiming()) {
 			HorizontalVelocityTracker.updateAll();
-		}
+		//}
 
-		try (MCTiming timing = this.COOLDOWN_TIMING.startTiming()) {
+		//try (MCTiming timing = this.COOLDOWN_TIMING.startTiming()) {
 			this.handleCooldowns();
-		}
+		//}
 
-		try (MCTiming timing = this.TEMP_ARMOR_TIMING.startTiming()) {
+		//try (MCTiming timing = this.TEMP_ARMOR_TIMING.startTiming()) {
 			TempArmor.cleanup();
-		}
+		//}
 
-		try (MCTiming timing = this.ACTIONBAR_STATUS_TIMING.startTiming()) {
+		//try (MCTiming timing = this.ACTIONBAR_STATUS_TIMING.startTiming()) {
 			for (final Player player : Bukkit.getOnlinePlayers()) {
 				if (Bloodbending.isBloodbent(player)) {
 					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
@@ -156,11 +159,24 @@ public class BendingManager implements Runnable {
 					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
 				}
 			}
-		}
+		//}
 
-		try (MCTiming timing = this.TEMP_FALLING_BLOCKS.startTiming()) {
+		//try (MCTiming timing = this.TEMP_FALLING_BLOCK_TIMING.startTiming()) {
 			TempFallingBlock.manage();
-		}
+		//}
+
+		//try (MCTiming timing = this.TEMP_BLOCK_TIMING.startTiming()) {
+			final long currentTime = System.currentTimeMillis();
+			while (!TempBlock.REVERT_QUEUE.isEmpty()) {
+				final TempBlock tempBlock = TempBlock.REVERT_QUEUE.peek(); //Check if the top TempBlock is ready for reverting
+				if (currentTime >= tempBlock.getRevertTime()) {
+					TempBlock.REVERT_QUEUE.poll();
+					tempBlock.revertBlock();
+				} else {
+					break;
+				}
+			}
+		//}
 	}
 
 	public static String getSunriseMessage() {

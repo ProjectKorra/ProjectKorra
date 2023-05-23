@@ -12,10 +12,11 @@ class GriefDefender extends RegionProtectionBase {
     }
 
     @Override
-    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
+    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
         final com.griefdefender.api.claim.Claim claim = com.griefdefender.api.GriefDefender.getCore().getClaimAt(location);
         if (claim != null) {
             final User user = com.griefdefender.api.GriefDefender.getCore().getUser(player.getUniqueId());
+
             return !claim.canBreak(player, location, user);
         }
 

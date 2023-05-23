@@ -273,9 +273,9 @@ public abstract class CoreAbility implements Ability {
 						abil.attributesModified = true;
 					}
 
-					try (MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
+					//try (MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
 						abil.progress();
-					}
+					//}
 
 					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 				} catch (final Exception e) {

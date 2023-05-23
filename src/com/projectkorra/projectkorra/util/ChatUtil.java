@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.logging.log4j.util.Strings;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,6 +23,8 @@ public class ChatUtil {
      * @param message
      */
     public static void sendBrandingMessage(final CommandSender receiver, final String message) {
+        if (Strings.isEmpty(ChatColor.stripColor(message))) return;
+
         ChatColor color;
         try {
             color = ChatColor.of(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());

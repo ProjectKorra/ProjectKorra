@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -20,6 +21,7 @@ import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,21 +38,21 @@ public class DamageHandler {
 		return entity.getNoDamageTicks() > entity.getMaximumNoDamageTicks() / 2.0f && damage <= entity.getLastDamage();
 	}
 
-
-
-
-
 	/**
 	 *
 	 * @param entity The entity that is being damaged.
 	 * @return If this damage event should be call-backed to {@link #entityDamageCallback(EntityDamageEvent)}.
 	 */
-	public static boolean ignoreArmor(Entity entity) {
+	public static boolean ignoreArmor(@NotNull Entity entity) {
 		return ARMOR_PERCENTAGE_BY_ENTITY_ID.containsKey(entity.getEntityId());
 	}
 
-
-	public static double getIgnoreArmorPercentage(final Ability ability) {
+	/**
+	 * Get the percentage of armor that should be ignored for this ability.
+	 * @param ability The ability
+	 * @return The percentage, between 0.0 and 1.0
+	 */
+	public static double getIgnoreArmorPercentage(@NotNull final Ability ability) {
 		FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 		double percentage = config.getDouble(IGNORE_ARMOR_PREFIX + "Default", 0.0);
@@ -118,6 +120,8 @@ public class DamageHandler {
 		ARMOR_PERCENTAGE_BY_ENTITY_ID.remove(event.getEntity().getEntityId()); // We get rid of the entry, so it doesn't call back future non-ability related damage.
 
 		if (ignorePercentage == 0) return;
+
+		if (event.getEntity() instanceof ArmorStand) return; //ArmorStands produce errors when we modify the armor damage, so ignore them.
 
 		if (ignorePercentage == 1) {
 			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
@@ -236,7 +240,7 @@ public class DamageHandler {
 	}
 	
 	public static void damageEntity(final Entity entity, final Player source, final double damage, final Ability ability, final boolean ignoreArmor) {
-		damageEntity(entity, source, damage, ability, ignoreArmor);
+		damageEntity(entity, source, damage, ability, ignoreArmor, false);
 	}
 	
 	public static void damageEntity(final Entity entity, final double damage, final Ability ability, final boolean ignoreArmor) {
