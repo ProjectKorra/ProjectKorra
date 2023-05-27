@@ -178,16 +178,17 @@ public class RegionProtection {
      */
     public static void startCleanCacheTask(double period) {
         Bukkit.getScheduler().runTaskTimer(ProjectKorra.plugin, () -> {
+            final long currentTime = System.currentTimeMillis();
             for (final String player : BLOCK_CACHE.keySet()) {
                 final Map<Block, BlockCacheElement> map = BLOCK_CACHE.get(player);
                 for (final Block key : map.keySet()) {
                     final BlockCacheElement value = map.get(key);
 
-                    if (System.currentTimeMillis() - value.getTime() > period) {
+                    if (currentTime - value.getTime() > period) {
                         map.remove(key);
                     }
                 }
-                if (map.count == 0) {
+                if (map.size() == 0) {
                     BLOCK_CACHE.remove(player);
                 }
 
