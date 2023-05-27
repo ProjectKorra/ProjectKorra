@@ -84,11 +84,13 @@ public class RegionProtection {
      * @return True if the region is protected by other plugins
      */
     public static boolean isRegionProtected(@NotNull Player player, @Nullable Location location, @Nullable CoreAbility ability) {
-        if (!BLOCK_CACHE.containsKey(player.getName())) {
-            BLOCK_CACHE.put(player.getName(), new ConcurrentHashMap<>());
+        String playerName = player.getName();
+        final Map<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(playerName);
+        if (null == blockMap) {
+            blockMap = new ConcurrentHashMap<>();
+            BLOCK_CACHE.put(playerName, blockMap);
         }
-
-        final Map<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(player.getName());
+        
         Block block = player.getLocation().getBlock();
         if (location != null) block = location.getBlock();
         if (blockMap.containsKey(block)) {
@@ -176,7 +178,8 @@ public class RegionProtection {
      */
     public static void startCleanCacheTask(double period) {
         Bukkit.getScheduler().runTaskTimer(ProjectKorra.plugin, () -> {
-            for (final Map<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
+            for (final String player : BLOCK_CACHE.keySet()) {
+                final Map<Block, BlockCacheElement> map = BLOCK_CACHE.get(player);
                 for (final Block key : map.keySet()) {
                     final BlockCacheElement value = map.get(key);
 
@@ -184,6 +187,10 @@ public class RegionProtection {
                         map.remove(key);
                     }
                 }
+                if (map.count == 0) {
+                    BLOCK_CACHE.remove(player);
+                }
+
             }
         }, 0, (long) (period / 50));
     }
