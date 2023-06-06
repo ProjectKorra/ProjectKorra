@@ -1415,7 +1415,6 @@ public class GeneralMethods {
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
 		ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
-		TempBlock.startReversion();
 
 		EarthTunnel.setupBendableMaterials();
 		Bloodbending.loadBloodlessFromConfig();
@@ -1442,6 +1441,7 @@ public class GeneralMethods {
 		}
 		BendingPlayer.getOfflinePlayers().clear();
 		BendingPlayer.getPlayers().clear();
+		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 		BendingBoardManager.reload();
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
@@ -1628,7 +1628,9 @@ public class GeneralMethods {
 		final ClassLoader loader = ProjectKorra.class.getClassLoader();
 		try {
 			for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
-				if (info.getName().startsWith("com.projectkorra.") && !info.getName().contains("hooks") && !info.getName().startsWith("com.projectkorra.projectkorra.region")) {
+				if (info.getName().startsWith("com.projectkorra.") && !info.getName().contains("hooks")
+						&& !info.getName().startsWith("com.projectkorra.projectkorra.region")
+						&& !info.getName().startsWith("com.projectkorra.projectkorra.ProjectKorra")) {
 					try {
 						final Class<?> clazz = info.load();
 						for (final Field field : clazz.getDeclaredFields()) {

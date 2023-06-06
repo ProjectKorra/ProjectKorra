@@ -12,7 +12,7 @@ class LWC extends RegionProtectionBase {
     }
 
     @Override
-    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
+    public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
         final com.griefcraft.lwc.LWC lwc2 = com.griefcraft.lwc.LWC.getInstance();
         final Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
         if (protection != null) {

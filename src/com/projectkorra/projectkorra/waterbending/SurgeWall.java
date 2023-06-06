@@ -64,7 +64,7 @@ public class SurgeWall extends WaterAbility {
 	private ArrayList<Location> locations;
 	private Vector firstDirection;
 	private Vector targetDirection;
-	private Map<Block, Material> oldTemps;
+	private Map<Block, TempBlock> tempBlocks = new HashMap<>();
 
 	public SurgeWall(final Player player) {
 		super(player);
@@ -83,7 +83,6 @@ public class SurgeWall extends WaterAbility {
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
 		this.locations = new ArrayList<>();
-		this.oldTemps = new HashMap<>();
 
 		if (this.bPlayer.isAvatarState()) {
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius");
@@ -143,11 +142,15 @@ public class SurgeWall extends WaterAbility {
 
 	private void freeze() {
 		this.frozen = true;
+    
+		tempBlocks.values().forEach(TempBlock::revertBlock);
+		tempBlocks.clear();
+    
 		HashSet<Block> wall = new HashSet<>();
 		for (final Block block : WALL_BLOCKS.keySet()) {
 			if (WALL_BLOCKS.get(block) == this.player) {
 				wall.add(block);
-				new TempBlock(block, Material.ICE);
+				tempBlocks.put(block, new TempBlock(block, Material.ICE));
 			}
 		}
 		double chance = wall.size();
@@ -161,9 +164,13 @@ public class SurgeWall extends WaterAbility {
 
 	private void thaw() {
 		this.frozen = false;
+
+		tempBlocks.values().forEach(TempBlock::revertBlock);
+		tempBlocks.clear();
+
 		for (final Block block : WALL_BLOCKS.keySet()) {
 			if (WALL_BLOCKS.get(block) == this.player) {
-				new TempBlock(block, Material.WATER);
+				tempBlocks.put(block, new TempBlock(block, Material.WATER));
 			}
 		}
 	}
@@ -363,14 +370,10 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private void addWallBlock(final Block block) {
-		if (TempBlock.isTempBlock(block)) {
-			this.oldTemps.put(block, block.getType());
-		}
-
 		if (this.frozen) {
-			new TempBlock(block, Material.ICE);
+			tempBlocks.put(block, new TempBlock(block, Material.ICE));
 		} else {
-			new TempBlock(block, Material.WATER);
+			tempBlocks.put(block, new TempBlock(block, Material.WATER));
 		}
 	}
 
@@ -392,13 +395,9 @@ public class SurgeWall extends WaterAbility {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
-					if (this.oldTemps.containsKey(block)) {
-						final TempBlock tb = TempBlock.get(block);
-						if (tb != null) {
-							tb.setType(this.oldTemps.get(block));
-						}
-					} else {
-						TempBlock.revertBlock(block, Material.AIR);
+					TempBlock tb = tempBlocks.get(block);
+					if (tb != null) {
+						tb.revertBlock();
 					}
 				}
 				AFFECTED_BLOCKS.remove(block);
@@ -409,24 +408,18 @@ public class SurgeWall extends WaterAbility {
 	private void finalRemoveWater(final Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				if (this.oldTemps.containsKey(block)) {
-					final TempBlock tb = TempBlock.get(block);
-					if (tb != null) {
-						tb.setType(this.oldTemps.get(block));
-					}
-				} else {
-					TempBlock.revertBlock(block, Material.AIR);
+
+				TempBlock tb = tempBlocks.get(block);
+				if (tb != null) {
+					tb.revertBlock();
 				}
+
 				AFFECTED_BLOCKS.remove(block);
 			}
 			if (WALL_BLOCKS.containsKey(block)) {
-				if (this.oldTemps.containsKey(block)) {
-					final TempBlock tb = TempBlock.get(block);
-					if (tb != null) {
-						tb.setType(this.oldTemps.get(block));
-					}
-				} else {
-					TempBlock.revertBlock(block, Material.AIR);
+				TempBlock tb = tempBlocks.get(block);
+				if (tb != null) {
+					tb.revertBlock();
 				}
 				WALL_BLOCKS.remove(block);
 			}
@@ -437,7 +430,7 @@ public class SurgeWall extends WaterAbility {
 		if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.WATER);
+			tempBlocks.put(block, new TempBlock(block, Material.WATER));
 			AFFECTED_BLOCKS.put(block, block);
 		}
 	}

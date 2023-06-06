@@ -239,6 +239,10 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(final BlockBreakEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+			return;
+		}
+
 		final Block block = event.getBlock();
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -307,6 +311,10 @@ public class PKListener implements Listener {
 		final Block toblock = event.getToBlock();
 		final Block fromblock = event.getBlock();
 
+		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+			return;
+		}
+
 		if (TempBlock.isTempBlock(fromblock) || TempBlock.isTempBlock(toblock)) {
 			event.setCancelled(true);
 		} else {
@@ -323,6 +331,10 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onFluidLevelChange(final FluidLevelChangeEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+			return;
+		}
+
 		if (TempBlock.isTempBlock(event.getBlock())) {
 			event.setCancelled(true);
 		} else if (TempBlock.isTouchingTempBlock(event.getBlock())) {
@@ -332,6 +344,10 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockForm(final BlockFormEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+			return;
+		}
+
 		if (TempBlock.isTempBlock(event.getBlock())) {
 			event.setCancelled(true);
 		}
@@ -396,33 +412,33 @@ public class PKListener implements Listener {
 	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		final Block block = event.getBlock();
 
-		try (MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
+		//try (MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
 			if (!WaterManipulation.canPhysicsChange(block)) {
 				event.setCancelled(true);
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
+		//try (MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
 			if (!EarthPassive.canPhysicsChange(block)) {
 				event.setCancelled(true);
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
+		//try (MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
 			if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 				event.setCancelled(true);
 				return;
 			}
-		}
+		//}
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
-		try (MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
-			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && ElementalAbility.isAir(block.getRelative(BlockFace.DOWN)) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))) {
+		//try (MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
+			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))) {
 				event.setCancelled(true);
 			}
-		}
+		//}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -482,6 +498,10 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityChangeBlockEvent(final EntityChangeBlockEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+			return;
+		}
+
 		final Entity entity = event.getEntity();
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
@@ -517,15 +537,19 @@ public class PKListener implements Listener {
 		final Block block = event.getDamager();
 		if (block == null) {
 			return;
+		} else if (BendingPlayer.isWorldDisabled(block.getWorld())) {
+			return;
 		}
 
 		if (TempBlock.isTempBlock(block)) {
 			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
 			} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-				TempBlock.get(block).getAbility().ifPresent(ability -> new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true));
-				event.setCancelled(true);
-				FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
+				TempBlock.get(block).getAbility().ifPresent(ability -> {
+					new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
+					event.setCancelled(true);
+					FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
+				});
 			} else if (!TempBlock.get(block).canSuffocate() && event.getCause() == DamageCause.SUFFOCATION) {
 				event.setCancelled(true);
 			}
@@ -536,6 +560,10 @@ public class PKListener implements Listener {
 	public void onEntityDamageEvent(final EntityDamageEvent event) {
 		final Entity entity = event.getEntity();
 		double damage = event.getDamage();
+
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 
 		if (event.getCause() == DamageCause.FIRE && FireAbility.getSourcePlayers().containsKey(entity.getLocation().getBlock())) {
 			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(entity.getLocation().getBlock()), null, true);
@@ -549,7 +577,7 @@ public class PKListener implements Listener {
 		if (entity instanceof Player) {
 			final Player player = (Player) entity;
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer == null) {
+			if (bPlayer == null || !bPlayer.canBendInWorld()) {
 				return;
 			}
 
@@ -672,16 +700,20 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityExplodeEvent(final EntityExplodeEvent event) {
 		final Entity entity = event.getEntity();
-		if (entity != null) {
-			if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
-				event.setCancelled(true);
-			}
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
+		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
+			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityInteractEvent(final EntityInteractEvent event) {
 		final Entity entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
 		}
@@ -690,6 +722,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityProjectileLaunchEvent(final ProjectileLaunchEvent event) {
 		final Entity entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
 		}
@@ -698,6 +733,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityShootBowEvent(final EntityShootBowEvent event) {
 		final Entity entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
 		}
@@ -706,23 +744,29 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntitySlimeSplitEvent(final SlimeSplitEvent event) {
 		final Entity entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	/*@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntitySuffocatedByTempBlocks(final EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.SUFFOCATION) {
 			if (TempBlock.isTempBlock(event.getEntity().getLocation().add(0, 1, 0).getBlock())) {
 				event.setCancelled(true);
 			}
 		}
-	}
+	}*/
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTarget(final EntityTargetEvent event) {
 		final Entity entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity)) {
 			event.setCancelled(true);
 		}
@@ -731,6 +775,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTargetLiving(final EntityTargetLivingEntityEvent event) {
 		final Entity entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity)) {
 			event.setCancelled(true);
 		}
@@ -739,6 +786,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTeleportEvent(final EntityTeleportEvent event) {
 		final Entity entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
 		if (MovementHandler.isStopped(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity) || (entity instanceof LivingEntity && MetalClips.isControlled((LivingEntity) entity))) {
 			event.setCancelled(true);
 		}
@@ -817,12 +867,6 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event) {
-		final Block block = event.getBlockClicked().getRelative(event.getBlockFace());
-
-	}
-
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerChat(final AsyncPlayerChatEvent event) {
 		final Player player = event.getPlayer();
@@ -858,6 +902,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDamage(final EntityDamageEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getEntity().getWorld())) {
+			return;
+		}
 		if (event.getEntity() instanceof Player) {
 			final Player player = (Player) event.getEntity();
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -939,6 +986,10 @@ public class PKListener implements Listener {
 	public void onPlayerDamageByPlayer(final EntityDamageByEntityEvent e) {
 		final Entity source = e.getDamager();
 		final Entity entity = e.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+			return;
+		}
+
 		final FireBlastCharged fireball = FireBlastCharged.getFireball(source);
 
 		if (fireball != null) {
@@ -1030,7 +1081,6 @@ public class PKListener implements Listener {
 					armor.revert(event.getDrops());
 				}
 			} // Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath.
-
 		}
 		
 		if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
@@ -1096,6 +1146,11 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
+		//If the world is disabled
+		if (!bPlayer.canBendInWorld()) {
+			return;
+		}
+
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			final UUID uuid = player.getUniqueId();
 
@@ -1133,6 +1188,11 @@ public class PKListener implements Listener {
 	public void onPlayerInteractEntity(final PlayerInteractAtEntityEvent event) {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		//If the world is disabled
+		if (!bPlayer.canBendInWorld()) {
+			return;
+		}
 
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
@@ -1236,6 +1296,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerMove(final PlayerMoveEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getPlayer().getWorld())) {
+			return;
+		}
 		if (event.getTo().getX() == event.getFrom().getX() && event.getTo().getY() == event.getFrom().getY() && event.getTo().getZ() == event.getFrom().getZ()) {
 			return;
 		}
@@ -1243,16 +1306,16 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		try (MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveMovementHandlerCheck.startTiming()) {
 			if (MovementHandler.isStopped(player)) {
 				if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ() || event.getTo().getY() > event.getFrom().getY()) {
 					event.setCancelled(true);
 				}
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveSpoutCheck.startTiming()) {
 			if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
 				Vector vel = new Vector();
 				vel.setX(event.getTo().getX() - event.getFrom().getX());
@@ -1268,9 +1331,9 @@ public class PKListener implements Listener {
 				}
 				return;
 			}
-		}
+		//}
 
-		try (MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveBloodbentCheck.startTiming()) {
 			if (Bloodbending.isBloodbent(player)) {
 				final BendingPlayer bender = Bloodbending.getBloodbender(player);
 				if (bender.isAvatarState()) {
@@ -1286,23 +1349,23 @@ public class PKListener implements Listener {
 				}
 				return;
 			}
-		}
+		//}
 
 		if (bPlayer != null) {
-			try (MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
+			//try (MCTiming timing = TimingPlayerMoveAirChiPassiveCheck) {
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
 					PassiveHandler.checkExhaustionPassives(player);
 				}
-			}
+			//}
 
-			try (MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
+			//try (MCTiming timing = TimingPlayerMoveFirePassiveCheck.startTiming()) {
 				if (event.getTo().getBlock() != event.getFrom().getBlock()) {
 					FirePassive.handle(player);
 				}
-			}
+			//}
 		}
 
-		try (MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
+		//try (MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
 			if (event.getTo().getY() > event.getFrom().getY()) {
 				if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
 					final int current = player.getStatistic(Statistic.JUMP);
@@ -1319,7 +1382,7 @@ public class PKListener implements Listener {
 					}
 				}
 			}
-		}
+		//}
 	}
 
 	@EventHandler
@@ -1373,12 +1436,21 @@ public class PKListener implements Listener {
 		}
 
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
-				() -> OfflineBendingPlayer.convertToOffline(bPlayer).uncacheAfter(ConfigManager.defaultConfig.get().getLong("Properties.PlayerDataUnloadTime", 5 * 60 * 1000)), 1L);
+				() -> {
+					OfflineBendingPlayer converted = OfflineBendingPlayer.convertToOffline(bPlayer);
+					if (!converted.isOnline()) { //We test if they are still offline. If they relog by joining on a different client, they will be online now, and an error will be thrown otherwise.
+						converted.uncacheAfter(ConfigManager.defaultConfig.get().getLong("Properties.PlayerDataUnloadTime", 5 * 60 * 1000));
+					}
+				}, 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSneak(final PlayerToggleSneakEvent event) {
 		final Player player = event.getPlayer();
+		if (BendingPlayer.isWorldDisabled(player.getWorld())) {
+			return;
+		}
+
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (bPlayer == null) {
@@ -1573,6 +1645,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerSlotChange(final PlayerItemHeldEvent event) {
 		final Player player = event.getPlayer();
+		if (BendingPlayer.isWorldDisabled(player.getWorld())) {
+			return;
+		}
 		if (!MultiAbilityManager.canChangeSlot(player, event.getNewSlot())) {
 			event.setCancelled(true);
 			return;
@@ -1611,6 +1686,10 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
+
+		if (BendingPlayer.isWorldDisabled(player.getWorld())) {
+			return;
+		}
 
 		if (PLAYER_DROPPED_ITEM.contains(player)) {
 			PLAYER_DROPPED_ITEM.remove(player);
@@ -1661,19 +1740,22 @@ public class PKListener implements Listener {
 			return;
 		}
 
+		BlockSource.update(player, ClickType.LEFT_CLICK);
+
 		PlayerSwingEvent swingEvent = new PlayerSwingEvent(event.getPlayer()); //Allow addons to handle a swing without
 		Bukkit.getPluginManager().callEvent(swingEvent);                       //needing to repeat the checks above themselves
 		if (swingEvent.isCancelled()) {
 			event.setCancelled(true);
 			return;
 		}
-
-		BlockSource.update(player, ClickType.LEFT_CLICK);
 	}
 
 	@EventHandler
 	public void onPlayerInteract(PlayerSwingEvent event) {
 		Player player = event.getPlayer();
+		if (BendingPlayer.isWorldDisabled(player.getWorld())) {
+			return;
+		}
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		String abil = bPlayer.getBoundAbilityName();
@@ -1859,6 +1941,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerToggleFlight(final PlayerToggleFlightEvent event) {
 		final Player player = event.getPlayer();
+		if (BendingPlayer.isWorldDisabled(player.getWorld())) {
+			return;
+		}
 		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
 			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
 			return;
@@ -1873,7 +1958,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerToggleGlide(final EntityToggleGlideEvent event) {
-		if (!(event.getEntity() instanceof Player)) {
+		if (!(event.getEntity() instanceof Player) || BendingPlayer.isWorldDisabled(event.getEntity().getWorld())) {
 			return;
 		}
 		final Player player = (Player) event.getEntity();
@@ -1908,6 +1993,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPickupItem(final EntityPickupItemEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getEntity().getWorld())) {
+			return;
+		}
 		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);
@@ -1944,6 +2032,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryPickupItem(final InventoryPickupItemEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getItem().getWorld())) {
+			return;
+		}
 		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);
@@ -1953,6 +2044,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onItemMerge(final ItemMergeEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getEntity().getWorld())) {
+			return;
+		}
 		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getEntity()) || metalClips.getTrackedIngots().contains(event.getTarget())) {
 				event.setCancelled(true);
@@ -1962,6 +2056,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPistonExtendEvent(final BlockPistonExtendEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+			return;
+		}
 		for (final Block b : event.getBlocks()) {
 			if (TempBlock.isTempBlock(b)) {
 				event.setCancelled(true);
@@ -1972,6 +2069,9 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPistonRetractEvent(final BlockPistonRetractEvent event) {
+		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+			return;
+		}
 		for (final Block b : event.getBlocks()) {
 			if (TempBlock.isTempBlock(b)) {
 				event.setCancelled(true);

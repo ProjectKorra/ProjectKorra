@@ -241,10 +241,17 @@ public class MultiAbilityManager {
 	public static class MultiAbilityInfoSub {
 		private String name;
 		private Element element;
+		private ChatColor color;
 
 		public MultiAbilityInfoSub(final String name, final Element element) {
 			this.name = name;
 			this.element = element;
+		}
+
+		public MultiAbilityInfoSub(final String name, final Element element, final ChatColor color) {
+			this.name = name;
+			this.element = element;
+			this.color = color;
 		}
 
 		public Element getElement() {
@@ -264,7 +271,15 @@ public class MultiAbilityManager {
 		}
 
 		public ChatColor getAbilityColor() {
-			return this.element != null ? this.element.getColor() : null;
+			if (this.element == null){
+				return null;
+			}
+
+			if (this.color == null){
+				return this.element.getColor();
+			}else{
+				return this.color;
+			}
 		}
 	}
 

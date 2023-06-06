@@ -16,7 +16,7 @@ class WorldGuard extends RegionProtectionBase {
     }
 
     @Override
-    public boolean isRegionProtectedReal(Player player, org.bukkit.Location reallocation, CoreAbility ability, boolean harmless, boolean igniteAbility, boolean explosiveAbility) {
+    public boolean isRegionProtectedReal(Player player, org.bukkit.Location reallocation, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
         World world = reallocation.getWorld();
 
         if (player.hasPermission("worldguard.region.bypass." + world.getName())) return false;
