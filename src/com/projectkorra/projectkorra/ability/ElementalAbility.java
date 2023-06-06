@@ -17,6 +17,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -182,6 +183,22 @@ public abstract class ElementalAbility extends CoreAbility {
 		return SNOW_BLOCKS.contains(material.toString());
 	}
 
+	public static boolean isLeaves(final Block block) {
+		return block != null && isLeaves(block.getType());
+	}
+
+	public static boolean isLeaves(final Material material) {
+		return Tag.LEAVES.isTagged(material);
+	}
+
+	public static boolean isCauldron(final Block block) {
+		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
+	}
+
+	public static boolean isCauldron(final Material material) {
+		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
+	}
+
 	public static boolean isMeltable(final Block block) {
 		return isIce(block) || isSnow(block);
 	}
@@ -259,6 +276,14 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isTransparent(final Player player, final String abilityName, final Block block) {
 		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName));
+	}
+
+	public static boolean isRain(final Block block) {
+		World w = block.getWorld();
+		return ((!w.isClearWeather())
+				&& ElementalAbility.isAir(block.getType())
+				&& block.getTemperature() < 0.95
+				&& w.getHighestBlockYAt(block.getLocation()) <= block.getY());
 	}
 
 	public static boolean isWater(final Block block) {
