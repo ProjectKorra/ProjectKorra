@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.util.BlockSource;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -161,16 +162,13 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private boolean prepare() {
-		final Block sourceBlock = getWaterSourceBlock(this.player, this.sourceGrabRange, this.canUsePlantSource);
+		final Block sourceBlock = BlockSource.getWaterSourceBlock(this.player, this.sourceGrabRange, true, true, this.canUsePlantSource);
 		if (sourceBlock != null) {
 
 			if (!reduceWaterbendingSource(player, sourceBlock, true, false, false, false)) {
-				if (reduceWaterbendingSource(player, sourceBlock, false, true, true, false)) {
-					this.fullSource = false;
-				}
+				reduceWaterbendingSource(player, sourceBlock, false, true, true, false);
+				this.fullSource = false;
 			}
-
-			ParticleEffect.SMOKE_LARGE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(this.player)) {
 			WaterReturn.emptyWaterBottle(this.player);

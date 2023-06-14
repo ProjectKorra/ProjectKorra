@@ -168,7 +168,7 @@ public class WaterSpoutWave extends WaterAbility {
 				this.removeOldType(this.player, AbilityType.CLICK);
 				this.sourceBlock = getWaterSourceBlock(this.player, this.selectRange, this.plant);
 
-				if (this.sourceBlock == null) {
+				if (this.sourceBlock == null || (isRain(this.sourceBlock) && !this.player.isSneaking())) {
 					this.remove();
 					return;
 				}

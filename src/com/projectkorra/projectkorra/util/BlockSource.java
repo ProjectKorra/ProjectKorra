@@ -245,7 +245,7 @@ public class BlockSource {
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
 	public static Block getWaterSourceBlock(final Player player, final double range, final ClickType clickType, final boolean allowWater, final boolean allowIce, final boolean allowPlant, final boolean allowSnow, final boolean allowWaterBottles) {
-		Block sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowWater, allowIce, allowPlant, allowSnow);
+		Block sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant, allowSnow, allowIce, allowWater);
 		// Check the block in front of the player's eyes, it may have been created by a WaterBottle.
 		if (!allowWaterBottles && sourceBlock != null && (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) <= 3)) {
 			sourceBlock = null;

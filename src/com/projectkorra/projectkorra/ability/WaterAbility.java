@@ -100,7 +100,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static Block getIceSourceBlock(final Player player, final double range) {
-		return getWaterSourceBlock(player, range, false, false, true, false, false);
+		return getWaterSourceBlock(player, range, false, false, true, false);
 	}
 
 	public Block getPlantSourceBlock(final double range) {
@@ -112,7 +112,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static Block getPlantSourceBlock(final Player player, final double range, final boolean onlyLeaves) {
-		Block plant = getWaterSourceBlock(player, range, false, false, true, false, false);
+		Block plant = getWaterSourceBlock(player, range, false, false, true, false);
 		if (plant != null && !isPlantbendable(player, plant.getType(), onlyLeaves))
 			plant = null;
 		return plant;
@@ -142,10 +142,6 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant, boolean allowSnow, boolean allowIce, boolean allowWater) {
-		return getWaterSourceBlock(player, range, allowPlant, allowSnow, allowIce, allowWater, allowWater); // by default rain is allowed if water is allowed
-	}
-
-	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant, boolean allowSnow, boolean allowIce, boolean allowWater, boolean allowRain) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return null;
@@ -168,7 +164,7 @@ public abstract class WaterAbility extends ElementalAbility {
 					&& !RegionProtection.isRegionProtected(player, location, "WaterManipulation")
 					&& !(TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)))
 				return block;
-			if (allowRain && rain == null && isRain(block)){
+			if (allowWater && rain == null && isRain(block)){ // rain is allowed is water is allowed and player can bend rain
 				rain = block;
 			}
 		}

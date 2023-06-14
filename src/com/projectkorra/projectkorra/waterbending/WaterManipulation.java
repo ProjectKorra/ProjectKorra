@@ -377,6 +377,8 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	private void addWater(final Block block) {
+		if (this.source != null)
+			this.source.revertBlock();
 		if (!isWater(block)) {
 			if (!AFFECTED_BLOCKS.containsKey(block)) {
 				AFFECTED_BLOCKS.put(block, block);
@@ -384,14 +386,10 @@ public class WaterManipulation extends WaterAbility {
 			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
 				PhaseChange.thaw(block);
 			}
-			if (this.source != null) this.source.revertBlock();
 			this.source = new TempBlock(block, WATER, this);
-		} else {
-			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
-				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
-			}
+		} else if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
+			ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
 		}
-
 	}
 
 	/**
