@@ -203,7 +203,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import co.aikar.timings.lib.MCTiming;
+//import co.aikar.timings.lib.MCTiming;
 
 public class PKListener implements Listener {
 	ProjectKorra plugin;
@@ -216,25 +216,25 @@ public class PKListener implements Listener {
 	private static final Set<Player> PLAYER_DROPPED_ITEM = new HashSet<>(); // Player dropped an item.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
-	private static MCTiming TimingPhysicsWaterManipulationCheck, TimingPhysicsEarthPassiveCheck, TimingPhysicsIlluminationTorchCheck, TimingPhysicsEarthAbilityCheck, TimingPhysicsAirTempBlockBelowFallingBlockCheck;
-	private static MCTiming TimingPlayerMoveMovementHandlerCheck, TimingPlayerMoveSpoutCheck, TimingPlayerMoveBloodbentCheck, TimingPlayerMoveAirChiPassiveCheck, TimingPlayerMoveFirePassiveCheck, TimingPlayerMoveJumpCheck;
+	//private static MCTiming TimingPhysicsWaterManipulationCheck, TimingPhysicsEarthPassiveCheck, TimingPhysicsIlluminationTorchCheck, TimingPhysicsEarthAbilityCheck, TimingPhysicsAirTempBlockBelowFallingBlockCheck;
+	//private static MCTiming TimingPlayerMoveMovementHandlerCheck, TimingPlayerMoveSpoutCheck, TimingPlayerMoveBloodbentCheck, TimingPlayerMoveAirChiPassiveCheck, TimingPlayerMoveFirePassiveCheck, TimingPlayerMoveJumpCheck;
 
 	public PKListener(final ProjectKorra plugin) {
 
 		this.plugin = plugin;
 
-		TimingPhysicsWaterManipulationCheck = ProjectKorra.timing("PhysicsWaterManipulationCheck");
-		TimingPhysicsEarthPassiveCheck = ProjectKorra.timing("PhysicsEarthPassiveCheck");
-		TimingPhysicsIlluminationTorchCheck = ProjectKorra.timing("PhysicsIlluminationTorchCheck");
-		TimingPhysicsEarthAbilityCheck = ProjectKorra.timing("PhysicsEarthAbilityCheck");
-		TimingPhysicsAirTempBlockBelowFallingBlockCheck = ProjectKorra.timing("PhysicsAirTempBlockBelowFallingBlockCheck");
+		//TimingPhysicsWaterManipulationCheck = ProjectKorra.timing("PhysicsWaterManipulationCheck");
+		//TimingPhysicsEarthPassiveCheck = ProjectKorra.timing("PhysicsEarthPassiveCheck");
+		//TimingPhysicsIlluminationTorchCheck = ProjectKorra.timing("PhysicsIlluminationTorchCheck");
+		//TimingPhysicsEarthAbilityCheck = ProjectKorra.timing("PhysicsEarthAbilityCheck");
+		//TimingPhysicsAirTempBlockBelowFallingBlockCheck = ProjectKorra.timing("PhysicsAirTempBlockBelowFallingBlockCheck");
 
-		TimingPlayerMoveMovementHandlerCheck = ProjectKorra.timing("PlayerMoveMovementHandlerCheck");
-		TimingPlayerMoveSpoutCheck = ProjectKorra.timing("PlayerMoveSpoutCheck");
-		TimingPlayerMoveBloodbentCheck = ProjectKorra.timing("PlayerMoveBloodbentCheck");
-		TimingPlayerMoveAirChiPassiveCheck = ProjectKorra.timing("PlayerMoveAirChiPassiveCheck");
-		TimingPlayerMoveFirePassiveCheck = ProjectKorra.timing("PlayerMoveFirePassiveCheck");
-		TimingPlayerMoveJumpCheck = ProjectKorra.timing("PlayerMoveJumpCheck");
+		//TimingPlayerMoveMovementHandlerCheck = ProjectKorra.timing("PlayerMoveMovementHandlerCheck");
+		//TimingPlayerMoveSpoutCheck = ProjectKorra.timing("PlayerMoveSpoutCheck");
+		//TimingPlayerMoveBloodbentCheck = ProjectKorra.timing("PlayerMoveBloodbentCheck");
+		//TimingPlayerMoveAirChiPassiveCheck = ProjectKorra.timing("PlayerMoveAirChiPassiveCheck");
+		//TimingPlayerMoveFirePassiveCheck = ProjectKorra.timing("PlayerMoveFirePassiveCheck");
+		//TimingPlayerMoveJumpCheck = ProjectKorra.timing("PlayerMoveJumpCheck");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

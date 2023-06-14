@@ -219,7 +219,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or {@link ClickType}.LEFT_CLICK.
 	 * @param allowWater true if water blocks are allowed.
 	 * @param allowIce true if ice blocks are allowed.
 	 * @param allowPlant true if plant blocks are allowed.
