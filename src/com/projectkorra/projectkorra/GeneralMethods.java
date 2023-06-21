@@ -38,6 +38,7 @@ import com.projectkorra.projectkorra.command.PKCommand;
 import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.runnable.BendingManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempFallingBlock;

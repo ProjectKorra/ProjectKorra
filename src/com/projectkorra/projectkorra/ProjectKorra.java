@@ -8,6 +8,10 @@ import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.runnable.BendingManager;
+import com.projectkorra.projectkorra.runnable.BendingManagerSecondary;
+import com.projectkorra.projectkorra.runnable.CoreAbilityManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -82,7 +86,9 @@ public class ProjectKorra extends JavaPlugin {
 		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 
 		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 2L);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManagerSecondary(), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new CoreAbilityManager(), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
