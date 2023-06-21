@@ -58,7 +58,6 @@ public class BendingManagerSecondary implements Runnable {
 	public void handleCooldowns() {
 		for (Map.Entry<UUID, BendingPlayer> entry : BendingPlayer.getPlayers().entrySet()) {
 			BendingPlayer bPlayer = entry.getValue();
-
 			bPlayer.removeOldCooldowns();
 		}
 	}

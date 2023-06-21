@@ -580,7 +580,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * the iterator instead of the map like we do in {@link #removeCooldown(String)}
 	 */
 	@Override
-	protected void removeOldCooldowns() {
+	public void removeOldCooldowns() {
 		Iterator<Entry<String, Cooldown>> iterator = this.cooldowns.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, Cooldown> entry = iterator.next();
