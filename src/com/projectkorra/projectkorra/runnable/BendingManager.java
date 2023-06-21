@@ -35,8 +35,6 @@ public class BendingManager implements Runnable {
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
 
-		CoreAbility.progressAll();
-
 		RevertChecker.revertAirBlocks();
 
 		HorizontalVelocityTracker.updateAll();
