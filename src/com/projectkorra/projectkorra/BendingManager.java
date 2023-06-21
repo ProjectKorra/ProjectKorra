@@ -35,25 +35,8 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, WorldTimeEvent.Time> times = new HashMap<>(); // true if day time
 
-	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING,
-			COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCK_TIMING, TEMP_BLOCK_TIMING;
-
 	public BendingManager() {
 		instance = this;
-		this.time = System.currentTimeMillis();
-
-		this.CORE_ABILITY_TIMING = ProjectKorra.timing("CoreAbility#ProgressAll");
-		this.TEMP_POTION_TIMING = ProjectKorra.timing("TempPotion#ProgressAll");
-		this.DAY_NIGHT_TIMING = ProjectKorra.timing("HandleDayNight");
-		this.HORIZONTAL_VELOCITY_TRACKER_TIMING = ProjectKorra.timing("HorizontalVelocityTracker#UpdateAll");
-		this.COOLDOWN_TIMING = ProjectKorra.timing("HandleCooldowns");
-		this.TEMP_ARMOR_TIMING = ProjectKorra.timing("TempArmor#Cleanup");
-		this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
-		this.TEMP_FALLING_BLOCK_TIMING = ProjectKorra.timing("TempFallingBlock#manage");
-		this.TEMP_BLOCK_TIMING = ProjectKorra.timing("TempBlockRevert");
-
-		times.clear();
-
 		handleDayNight();
 	}
 
@@ -89,32 +72,6 @@ public class BendingManager implements Runnable {
 				Bukkit.getPluginManager().callEvent(event);
 
 				this.times.put(world, to);
-
-				//RPG will handle its own day/night messages, so don't run PK Core ones if RPG exists
-				if (GeneralMethods.getRPG() == null) {
-					for (final Player player : world.getPlayers()) {
-						final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-						if (bPlayer == null) continue;
-
-						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
-							String s = getMoonsetMessage();
-							player.sendMessage(Element.WATER.getColor() + s);
-						}
-						else if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
-							String s = getMoonriseMessage();
-							player.sendMessage(Element.WATER.getColor() + s);
-						}
-
-						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
-							String s = getSunsetMessage();
-							player.sendMessage(Element.FIRE.getColor() + s);
-						}
-						else if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
-							String s = getSunriseMessage();
-							player.sendMessage(Element.FIRE.getColor() + s);
-						}
-					}
-				}
 			}
 		}
 	}
@@ -125,58 +82,40 @@ public class BendingManager implements Runnable {
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
 
-		//try (MCTiming timing = this.CORE_ABILITY_TIMING.startTiming()) {
-			CoreAbility.progressAll();
-		//}
+		CoreAbility.progressAll();
 
-		//try (MCTiming timing = this.TEMP_POTION_TIMING.startTiming()) {
-			TempPotionEffect.progressAll();
-		//}
+		TempPotionEffect.progressAll();
 
-		//try (MCTiming timing = this.DAY_NIGHT_TIMING.startTiming()) {
-			this.handleDayNight();
-		//}
+		this.handleDayNight();
 
 		RevertChecker.revertAirBlocks();
 
-		//try (MCTiming timing = this.HORIZONTAL_VELOCITY_TRACKER_TIMING.startTiming()) {
-			HorizontalVelocityTracker.updateAll();
-		//}
+		HorizontalVelocityTracker.updateAll();
 
-		//try (MCTiming timing = this.COOLDOWN_TIMING.startTiming()) {
-			this.handleCooldowns();
-		//}
+		this.handleCooldowns();
 
-		//try (MCTiming timing = this.TEMP_ARMOR_TIMING.startTiming()) {
-			TempArmor.cleanup();
-		//}
+		TempArmor.cleanup();
 
-		//try (MCTiming timing = this.ACTIONBAR_STATUS_TIMING.startTiming()) {
-			for (final Player player : Bukkit.getOnlinePlayers()) {
-				if (Bloodbending.isBloodbent(player)) {
-					ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
-				} else if (MetalClips.isControlled(player)) {
-					ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
-				}
+		for (final Player player : Bukkit.getOnlinePlayers()) {
+			if (Bloodbending.isBloodbent(player)) {
+				ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
+			} else if (MetalClips.isControlled(player)) {
+				ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
 			}
-		//}
+		}
 
-		//try (MCTiming timing = this.TEMP_FALLING_BLOCK_TIMING.startTiming()) {
-			TempFallingBlock.manage();
-		//}
+		TempFallingBlock.manage();
 
-		//try (MCTiming timing = this.TEMP_BLOCK_TIMING.startTiming()) {
-			final long currentTime = System.currentTimeMillis();
-			while (!TempBlock.REVERT_QUEUE.isEmpty()) {
-				final TempBlock tempBlock = TempBlock.REVERT_QUEUE.peek(); //Check if the top TempBlock is ready for reverting
-				if (currentTime >= tempBlock.getRevertTime()) {
-					TempBlock.REVERT_QUEUE.poll();
-					tempBlock.revertBlock();
-				} else {
-					break;
-				}
+		final long currentTime = System.currentTimeMillis();
+		while (!TempBlock.REVERT_QUEUE.isEmpty()) {
+			final TempBlock tempBlock = TempBlock.REVERT_QUEUE.peek(); //Check if the top TempBlock is ready for reverting
+			if (currentTime >= tempBlock.getRevertTime()) {
+				TempBlock.REVERT_QUEUE.poll();
+				tempBlock.revertBlock();
+			} else {
+				break;
 			}
-		//}
+		}
 	}
 
 	public static String getSunriseMessage() {
