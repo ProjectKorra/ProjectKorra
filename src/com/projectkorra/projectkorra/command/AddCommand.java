@@ -215,6 +215,11 @@ public class AddCommand extends PKCommand {
 					// if it's a sub element:
 				} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
 					final SubElement sub = (SubElement) e;
+
+					if (!sender.hasPermission("bending.command." + this.getName() + "." + sub.getName().toLowerCase())) { // if command sender has permission to add this element
+						return;
+					}
+
 					if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
 						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
