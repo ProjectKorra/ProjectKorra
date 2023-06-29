@@ -217,6 +217,7 @@ public class AddCommand extends PKCommand {
 					final SubElement sub = (SubElement) e;
 
 					if (!sender.hasPermission("bending.command." + this.getName() + "." + sub.getName().toLowerCase())) { // if command sender has permission to add this element
+						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPermissionMessage);
 						return;
 					}
 
