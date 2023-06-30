@@ -84,19 +84,13 @@ public class RegionProtection {
      * @return True if the region is protected by other plugins
      */
     public static boolean isRegionProtected(@NotNull Player player, @Nullable Location location, @Nullable CoreAbility ability) {
-        String playerName = player.getName();
-        final Map<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(playerName);
-        if (null == blockMap) {
-            blockMap = new ConcurrentHashMap<>();
-            BLOCK_CACHE.put(playerName, blockMap);
-        }
-        
-        Block block = player.getLocation().getBlock();
-        if (location != null) block = location.getBlock();
+        final String playerName = player.getName();
+        final Block block = location != null ? location.getBlock() : player.getLocation().getBlock();
+        final Map<Block, BlockCacheElement> blockMap = BLOCK_CACHE.computeIfAbsent(playerName, name -> new ConcurrentHashMap<>());
+
+        // Both abilities must be equal to each other to use the cache
         if (blockMap.containsKey(block)) {
             final BlockCacheElement elem = blockMap.get(block);
-
-            // both abilities must be equal to each other to use the cache
             if ((ability == null && elem.getAbility() == null) || (elem.getAbility() != null && elem.getAbility().equals(ability))) {
                 return elem.isAllowed();
             }
@@ -106,7 +100,7 @@ public class RegionProtection {
         blockMap.put(block, new BlockCacheElement(player, block, ability, value, System.currentTimeMillis()));
         return value;
     }
-
+    
     /**
      * Checks if a location is protected by region protection plugins. Abilities that damage terrain
      * will not damage the terrain (or progress) if this method returns true
@@ -179,8 +173,8 @@ public class RegionProtection {
     public static void startCleanCacheTask(double period) {
         Bukkit.getScheduler().runTaskTimer(ProjectKorra.plugin, () -> {
             final long currentTime = System.currentTimeMillis();
-            for (final String player : BLOCK_CACHE.keySet()) {
-                final Map<Block, BlockCacheElement> map = BLOCK_CACHE.get(player);
+            for (final String playerName : BLOCK_CACHE.keySet()) {
+                final Map<Block, BlockCacheElement> map = BLOCK_CACHE.get(playerName);
                 for (final Block key : map.keySet()) {
                     final BlockCacheElement value = map.get(key);
 
@@ -189,7 +183,7 @@ public class RegionProtection {
                     }
                 }
                 if (map.size() == 0) {
-                    BLOCK_CACHE.remove(player);
+                    BLOCK_CACHE.remove(playerName);
                 }
 
             }
