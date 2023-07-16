@@ -15,6 +15,9 @@ import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.waterbending.TorrentWave;
 
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
+
 /**
  * The Ability interface defines the set of methods that any CoreAbility,
  * AddonAbility, ComboAbility, or MultiAbility should implement.
@@ -22,6 +25,14 @@ import com.projectkorra.projectkorra.waterbending.TorrentWave;
  * methods, but most will need to be specified by each Ability individually.
  */
 public interface Ability {
+	public default void progress_timings(){
+		        Timing timing = Timings.ofStart(YourPlugin.getPlugin(), getName());
+        timing.startTiming();
+
+        progressLogic();
+
+        timing.stopTiming();
+	}
 	/**
 	 * Causes the ability to be updated.
 	 */

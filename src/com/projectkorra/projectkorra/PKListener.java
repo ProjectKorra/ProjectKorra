@@ -1352,10 +1352,10 @@ public class PKListener implements Listener {
 		//try (MCTiming timing = TimingPlayerMoveJumpCheck.startTiming()) {
 			if (event.getTo().getY() > event.getFrom().getY()) {
 				if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
-					final int current = player.getStatistic(Statistic.JUMP);
-					final int last = JUMPS.get(player);
+					final Integer current = player.getStatistic(Statistic.JUMP);
+					final Integer last = JUMPS.get(player);
 
-					if (last != current) {
+					if (last != null && last != current) {
 						JUMPS.put(player, current);
 
 						final double yDif = event.getTo().getY() - event.getFrom().getY();
