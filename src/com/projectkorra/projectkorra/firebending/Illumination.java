@@ -187,7 +187,7 @@ public class Illumination extends FireAbility {
 
 			Material torch = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_TORCH : Material.TORCH;
 
-			if (!standBlock.equals(this.block)) { //On block change
+			if (!standingBlock.equals(this.block)) { //On block change
 				this.revert();
 
 				this.oldLevel = player.getLocation().getBlock().getLightLevel();
@@ -196,7 +196,7 @@ public class Illumination extends FireAbility {
 					return;
 				}
 
-				this.block = standBlock;
+				this.block = standingBlock;
 				this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), torch.createBlockData()));
 			} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
 				//We have to set the block back to the actual one because if they couldn't render the initial block change,
