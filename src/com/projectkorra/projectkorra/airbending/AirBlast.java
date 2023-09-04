@@ -204,7 +204,7 @@ public class AirBlast extends AirAbility {
 
 	private void advanceLocation() {
 		if (this.showParticles) {
-			playAirbendingParticles(this.location, this.particles, 0.275F, 0.275F, 0.275F);
+			playAirbendingParticles(this, this.location, this.particles, 0.275F, 0.275F, 0.275F);
 		}
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.location);

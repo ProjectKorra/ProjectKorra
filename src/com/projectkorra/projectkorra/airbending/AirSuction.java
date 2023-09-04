@@ -100,7 +100,7 @@ public class AirSuction extends AirAbility {
 	}
 
 	private void advanceLocation() {
-		playAirbendingParticles(this.location, this.particleCount, 0.275F, 0.275F, 0.275F);
+		playAirbendingParticles(this, this.location, this.particleCount, 0.275F, 0.275F, 0.275F);
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.location);
 		}
@@ -259,7 +259,7 @@ public class AirSuction extends AirAbility {
 				return;
 			}
 
-			playAirbendingParticles(this.origin, 5, 0.5, 0.5, 0.5);
+			playAirbendingParticles(this, this.origin, 5, 0.5, 0.5, 0.5);
 		}
 	}
 
