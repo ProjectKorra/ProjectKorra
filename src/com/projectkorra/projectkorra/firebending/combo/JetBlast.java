@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending.combo;
 
 import java.util.ArrayList;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
@@ -14,13 +15,11 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireJet;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.util.Vector;
 
 public class JetBlast extends FireAbility implements ComboAbility {
 
-	private boolean firstTime;
-	private long time;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.SPEED)
@@ -29,17 +28,18 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	@Attribute(Attribute.DURATION)
 	private long duration;
 
+	private final FireJet fireJet;
+
 	public JetBlast(final Player player) {
 		super(player);
 
-		if (!this.bPlayer.canBendIgnoreBinds(this)) {
+		this.fireJet = CoreAbility.getAbility(player, FireJet.class);
+		if (!this.bPlayer.canBendIgnoreBinds(this)
+				|| CoreAbility.hasAbility(player, JetBlaze.class) || fireJet == null) {
 			return;
 		}
 
-		this.firstTime = true;
-		this.time = System.currentTimeMillis();
 		this.tasks = new ArrayList<>();
-
 		this.speed = getConfig().getDouble("Abilities.Fire.JetBlast.Speed");
 		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.JetBlast.Cooldown"));
 		this.duration = getConfig().getLong("Abilities.Fire.JetBlast.Duration");
@@ -48,7 +48,16 @@ public class JetBlast extends FireAbility implements ComboAbility {
 			this.cooldown = 0;
 		}
 
+		this.fireJet.setSpeed(speed);
+		this.fireJet.setDuration(duration);
 		this.start();
+		this.playExplosion();
+	}
+
+	private void playExplosion() {
+		final float spread = 0F;
+		ParticleEffect.EXPLOSION_LARGE.display(this.player.getLocation(), 1, spread, spread, spread, 0);
+		this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
 	}
 
 	@Override
@@ -63,38 +72,27 @@ public class JetBlast extends FireAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
-		if (System.currentTimeMillis() - this.time > this.duration) {
-			this.remove();
+		if (this.fireJet.isRemoved()) {
+			remove();
 			return;
-		} else if (hasAbility(this.player, FireJet.class)) {
-			if (this.firstTime) {
-				if (this.bPlayer.isOnCooldown("JetBlast") && !this.bPlayer.isAvatarState()) {
-					this.remove();
-					return;
-				}
-
-				this.firstTime = false;
-				final float spread = 0F;
-				ParticleEffect.EXPLOSION_LARGE.display(this.player.getLocation(), 1, spread, spread, spread, 0);
-				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
-			}
-			final FireJet fj = getAbility(this.player, FireJet.class);
-			fj.setSpeed(this.speed);
-			fj.setDuration(this.duration);
-
-			final FireComboStream fs = new FireComboStream(this.player, this, this.player.getVelocity().clone().multiply(-1), this.player.getLocation(), 3, 0.5);
-
-			fs.setDensity(1);
-			fs.setSpread(0.9F);
-			fs.setUseNewParticles(true);
-			fs.setCollides(false);
-			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
-			this.tasks.add(fs);
 		}
+
+		Vector streamDir = this.player.getVelocity().multiply(-1);
+		final FireComboStream fs = new FireComboStream(this.player, this, streamDir, this.player.getLocation(), 3, 0.5);
+		fs.setDensity(1);
+		fs.setSpread(0.9F);
+		fs.setUseNewParticles(true);
+		fs.setCollides(false);
+		fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
+		this.tasks.add(fs);
 	}
 
 	@Override
 	public void remove() {
+		if (!this.fireJet.isRemoved()) {
+			this.fireJet.remove();
+		}
+
 		for (final FireComboStream task : this.tasks) {
 			task.remove();
 		}
