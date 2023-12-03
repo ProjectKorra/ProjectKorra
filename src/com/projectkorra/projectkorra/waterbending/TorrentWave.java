@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -149,7 +150,7 @@ public class TorrentWave extends WaterAbility {
 				if (isTransparent(this.player, block)) {
 					Levelled lvl = (Levelled) Material.WATER.createBlockData();
 					lvl.setLevel((int) Math.round(7 * this.radius / this.maxRadius));
-					final TempBlock tempBlock = new TempBlock(block, lvl);
+					final TempBlock tempBlock = new TempBlock(block, lvl, this);
 					this.blocks.add(tempBlock);
 					torrentBlocks.add(block);
 				} else {
