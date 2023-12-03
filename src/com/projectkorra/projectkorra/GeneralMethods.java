@@ -296,6 +296,10 @@ public class GeneralMethods {
 	}
 
 	public static void displayColoredParticle(String hexVal, final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
+		displayColoredParticle(hexVal, 1F, loc, amount, offsetX, offsetY, offsetZ);
+	}
+
+	public static void displayColoredParticle(String hexVal, final float size, final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
 		int r = 0;
 		int g = 0;
 		int b = 0;
@@ -310,7 +314,7 @@ public class GeneralMethods {
 			b = Integer.valueOf(hexVal.substring(4, 6), 16).intValue();
 		}
 
-		new ColoredParticle(Color.fromRGB(r, g, b), 1F).display(loc, amount, offsetX, offsetY, offsetZ);
+		new ColoredParticle(Color.fromRGB(r, g, b), size).display(loc, amount, offsetX, offsetY, offsetZ);
 	}
 
 	public static void displayColoredParticle(final String hexVal, final Location loc) {
