@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.ability;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,10 +10,15 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -50,18 +54,6 @@ public abstract class WaterAbility extends ElementalAbility {
 		return Element.WATER;
 	}
 
-	public Block getIceSourceBlock(final double range) {
-		return getIceSourceBlock(this.player, range);
-	}
-
-	public Block getPlantSourceBlock(final double range) {
-		return this.getPlantSourceBlock(range, false);
-	}
-
-	public Block getPlantSourceBlock(final double range, final boolean onlyLeaves) {
-		return getPlantSourceBlock(this.player, range, onlyLeaves);
-	}
-
 	@Override
 	public boolean isExplosiveAbility() {
 		return false;
@@ -80,16 +72,199 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 	}
 
+	public boolean allowBreakPlants() {
+		return true;
+	}
+
 	public double getNightFactor(final double value) {
 		return this.player != null ? value * getNightFactor(player.getWorld()) : 1;
 	}
 
-	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
-		return isBendableWaterTempBlock(TempBlock.get(block));
+	public static double getNightFactor() {
+		return getConfig().getDouble("Properties.Water.NightFactor");
 	}
 
-	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
-		return PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock) || Torrent.getFrozenBlocks().containsKey(tempBlock);
+	public static double getNightFactor(final World world) {
+		return getNightFactor(1, world);
+	}
+
+	public static double getNightFactor(final double value, final World world) {
+		if (isNight(world)) {
+			return value * getNightFactor();
+		}
+		return value;
+	}
+
+	public Block getIceSourceBlock(final double range) {
+		return getIceSourceBlock(this.player, range);
+	}
+
+	public static Block getIceSourceBlock(final Player player, final double range) {
+		return getWaterSourceBlock(player, range, false, false, true, false);
+	}
+
+	public Block getPlantSourceBlock(final double range) {
+		return this.getPlantSourceBlock(range, false);
+	}
+
+	public Block getPlantSourceBlock(final double range, final boolean onlyLeaves) {
+		return getPlantSourceBlock(this.player, range, onlyLeaves);
+	}
+
+	public static Block getPlantSourceBlock(final Player player, final double range, final boolean onlyLeaves) {
+		Block plant = getWaterSourceBlock(player, range, false, false, true, false);
+		if (plant != null && !isPlantbendable(player, plant.getType(), onlyLeaves))
+			plant = null;
+		return plant;
+	}
+
+	/**
+	 * Finds a valid Water source for a Player. To use dynamic source selection,
+	 * use BlockSource.getWaterSourceBlock() instead of this method. Dynamic
+	 * source selection saves the user's previous source for future use.
+	 * {@link BlockSource#getWaterSourceBlock(Player, double)}
+	 *
+	 * @param player the player that is attempting to Waterbend.
+	 * @param range the maximum block selection range.
+	 * @param allowPlant true if plants are allowed.
+	 * @return a valid Water source block, or null if one could not be found.
+	 */
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant) {
+		return getWaterSourceBlock(player, range, allowPlant, true);
+	}
+
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant, boolean allowSnow) {
+		return getWaterSourceBlock(player, range, allowPlant, allowSnow, true);
+	}
+
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant, boolean allowSnow, boolean allowIce) {
+		return getWaterSourceBlock(player, range, allowPlant, allowSnow, allowIce, true);
+	}
+
+	public static Block getWaterSourceBlock(final Player player, final double range, boolean allowPlant, boolean allowSnow, boolean allowIce, boolean allowWater) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return null;
+		} else {
+			allowWater = bPlayer.hasElement(Element.WATER) && allowWater;
+			allowIce = bPlayer.canIcebend() && allowIce;
+			allowPlant = bPlayer.canPlantbend() && allowPlant;
+			allowSnow = bPlayer.hasElement(Element.WATER) && allowSnow;
+		}
+		final Location location = player.getEyeLocation();
+		final Vector vector = location.getDirection().normalize();
+		Block rain = null;
+		for (double i = range >= 3 ? 3 : range; i <= range; i = i > 3 ? i + 1 : (i > 0 ? i - 1 : 4)) {
+			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			if (((isWater(block) && allowWater)
+					|| (isCauldron(block) && allowWater)
+					|| (isIce(block) && allowIce)
+					|| (isPlant(block) && allowPlant)
+					|| (isSnow(block) && allowSnow))
+					&& !RegionProtection.isRegionProtected(player, location, "WaterManipulation")
+					&& !(TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)))
+				return block;
+			if (allowWater && rain == null && isRain(block)){ // rain is allowed is water is allowed and player can bend rain
+				rain = block;
+			}
+		}
+		return rain;
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block) {
+		return reduceWaterbendingSource(player, block,
+				!GeneralMethods.isAdjacentToThreeOrMoreSources(block, false, true, false)
+						|| PhaseChange.getFrozenBlocksAsBlock().contains(block)
+						|| (TempBlock.isTempBlock(block) && isBendableWaterTempBlock(TempBlock.get(block))));
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowIce) {
+		return reduceWaterbendingSource(player, block, true, allowIce);
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowPlant, boolean allowIce) {
+		return reduceWaterbendingSource(player, block, true, allowPlant, allowIce);
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowSnow, boolean allowPlant, boolean allowIce) {
+		return reduceWaterbendingSource(player, block, true, allowSnow, allowPlant, allowIce);
+	}
+
+	public static boolean reduceWaterbendingSource(Player player, Block block, boolean allowWater, boolean allowSnow, boolean allowPlant, boolean allowIce) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return false;
+		}
+		allowWater = bPlayer.hasElement(Element.WATER) && allowWater;
+		allowSnow = bPlayer.hasElement(Element.WATER) && allowSnow;
+		allowPlant = bPlayer.canPlantbend() && allowPlant;
+		allowIce = bPlayer.canIcebend() && allowIce;
+		if (isWaterbendable(player, null, block) && bPlayer.hasElement(Element.WATER)) {
+			BlockData data = block.getBlockData();
+			if (allowWater && data instanceof Levelled) { // Cauldrons, just water
+				Levelled lvl = (Levelled) data;
+				if (isCauldron(block)) { // Cauldrons
+					GeneralMethods.setCauldronData(block, lvl.getLevel() - 1);
+					return true;
+				}
+				if (GeneralMethods.isAdjacentToThreeOrMoreSources(block) || lvl.getLevel() >= 7) {
+					if (lvl.getLevel() == 7) { // lowest water lvl
+						GeneralMethods.removeBlock(block);
+					}
+					return true;
+				}
+				lvl.setLevel(Math.min(lvl.getMaximumLevel(), lvl.getLevel() + 1));
+				block.setBlockData(lvl);
+				return true;
+			} else if (allowSnow && isSnow(block)) { // layered snow
+				Snow snow = (Snow) (data instanceof Snow ? data : Material.SNOW.createBlockData());
+				int layers = (data instanceof Snow ? snow.getLayers() : snow.getMaximumLayers()) - 1;
+				if (layers >= snow.getMinimumLayers()) {
+					snow.setLayers(layers);
+					block.setBlockData(snow);
+				} else
+					GeneralMethods.removeBlock(block);
+				return true;
+			} else if (allowWater && !GeneralMethods.isAdjacentToThreeOrMoreSources(block)
+					&& data instanceof Waterlogged && ((Waterlogged) data).isWaterlogged()) { // anything waterlogged
+				Waterlogged drain = (Waterlogged) data;
+				drain.setWaterlogged(false);
+				block.setBlockData(drain);
+				return true;
+			} else if ((allowSnow && isSnow(block))
+					|| (allowIce && isIce(block))
+					|| (allowPlant && isPlant(block))) {
+				if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
+					PhaseChange.thaw(block);
+					return true;
+				}
+				if (TempBlock.isTempBlock(block)) {
+					final TempBlock tb = TempBlock.get(block);
+					if (isBendableWaterTempBlock(tb)) {
+						tb.revertBlock();
+						return true;
+					}
+				} else {
+					if (!isIce(block)) {
+						new PlantRegrowth(player, block);
+					}
+					GeneralMethods.removeBlock(block);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean isAdjacentToFrozenBlock(final Block block) {
+		final BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
+		boolean adjacent = false;
+		for (final BlockFace face : faces) {
+			if (PhaseChange.getFrozenBlocksAsBlock().contains((block.getRelative(face)))) {
+				adjacent = true;
+			}
+		}
+		return adjacent;
 	}
 
 	public boolean isIcebendable(final Block block) {
@@ -104,6 +279,11 @@ public abstract class WaterAbility extends ElementalAbility {
 		return isIcebendable(player, material, false);
 	}
 
+	public static boolean isIcebendable(final Player player, final Material material, final boolean onlyIce) {
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
+	}
+
 	public boolean isPlantbendable(final Block block) {
 		return this.isPlantbendable(block.getType());
 	}
@@ -116,139 +296,6 @@ public abstract class WaterAbility extends ElementalAbility {
 		return isPlantbendable(player, material, false);
 	}
 
-	public boolean isWaterbendable(final Block block) {
-		return this.isWaterbendable(this.player, block);
-	}
-
-	public boolean isWaterbendable(final Player player, final Block block) {
-		return isWaterbendable(player, null, block);
-	}
-
-	public boolean allowBreakPlants() {
-		return true;
-	}
-
-	public static boolean isWaterbendable(final Material material) {
-		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material) || isCauldron(material);
-	}
-
-	public static Block getIceSourceBlock(final Player player, final double range) {
-		final Location location = player.getEyeLocation();
-		final Vector vector = location.getDirection().clone().normalize();
-		for (double i = 0; i <= range; i++) {
-			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (RegionProtection.isRegionProtected(player, location,"IceBlast")) {
-				continue;
-			}
-			if (isIcebendable(player, block.getType(), false)) {
-				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
-					continue;
-				}
-				return block;
-			}
-		}
-		return null;
-	}
-
-	public static double getNightFactor() {
-		return getConfig().getDouble("Properties.Water.NightFactor");
-	}
-
-	public static double getNightFactor(final double value, final World world) {
-		if (isNight(world)) {
-			return value * getNightFactor();
-		}
-
-		return value;
-	}
-
-	public static double getNightFactor(final World world) {
-		return getNightFactor(1, world);
-	}
-
-	public static Block getPlantSourceBlock(final Player player, final double range, final boolean onlyLeaves) {
-		final Location location = player.getEyeLocation();
-		final Vector vector = location.getDirection().clone().normalize();
-
-		for (double i = 0; i <= range; i++) {
-			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (RegionProtection.isRegionProtected(player, location, "PlantDisc")) {
-				continue;
-			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
-				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
-					continue;
-				}
-				return block;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Finds a valid Water source for a Player. To use dynamic source selection,
-	 * use BlockSource.getWaterSourceBlock() instead of this method. Dynamic
-	 * source selection saves the user's previous source for future use.
-	 * {@link BlockSource#getWaterSourceBlock(Player, double)}
-	 *
-	 * @param player the player that is attempting to Waterbend.
-	 * @param range the maximum block selection range.
-	 * @param plantbending true if the player can bend plants.
-	 * @return a valid Water source block, or null if one could not be found.
-	 */
-	public static Block getWaterSourceBlock(final Player player, final double range, final boolean plantbending) {
-		final Location location = player.getEyeLocation();
-		final Vector vector = location.getDirection().clone().normalize();
-
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final Set<Material> trans = getTransparentMaterialSet();
-
-		if (plantbending) {
-			final Set<Material> remove = new HashSet<>();
-			for (final Material m : trans) {
-				if (isPlant(m)) {
-					remove.add(m);
-				}
-			}
-			trans.removeAll(remove);
-		}
-
-		final Block testBlock = player.getTargetBlock(trans, Math.max(1, Math.min(3, (int)range)));
-		if (bPlayer == null) {
-			return null;
-		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
-			return testBlock;
-		}
-
-		for (double i = 0; i <= range; i++) {
-			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
-				continue;
-			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
-				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
-					continue;
-				}
-				return block;
-			}
-		}
-		return null;
-	}
-
-	public static boolean isAdjacentToFrozenBlock(final Block block) {
-		final BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
-		boolean adjacent = false;
-		for (final BlockFace face : faces) {
-			if (PhaseChange.getFrozenBlocksAsBlock().contains((block.getRelative(face)))) {
-				adjacent = true;
-			}
-		}
-		return adjacent;
-	}
-
-	public static boolean isIcebendable(final Player player, final Material material, final boolean onlyIce) {
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
-	}
-
 	public static boolean isPlantbendable(final Player player, final Material material, final boolean onlyLeaves) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (onlyLeaves) {
@@ -258,45 +305,39 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 	}
 
-	public static boolean isLeaves(final Block block) {
-		return block != null ? isLeaves(block.getType()) : false;
+	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
+		return isBendableWaterTempBlock(TempBlock.get(block));
 	}
 
-	public static boolean isLeaves(final Material material) {
-		return Tag.LEAVES.isTagged(material);
+	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
+		return PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock) || SurgeWall.SOURCE_BLOCKS.contains(tempBlock) || Torrent.getFrozenBlocks().containsKey(tempBlock);
 	}
 
-	public static boolean isSnow(final Block block) {
-		return block != null ? isSnow(block.getType()) : false;
+	public static boolean isWaterbendable(final Material material) {
+		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material) || isCauldron(material);
 	}
 
-	public static boolean isSnow(final Material material) {
-		return material == Material.SNOW || material == Material.SNOW_BLOCK;
+	public boolean isWaterbendable(final Block block) {
+		return this.isWaterbendable(this.player, block);
 	}
-	
-	public static boolean isCauldron(final Block block) {
-		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
-	}
-	
-	public static boolean isCauldron(final Material material) {
-		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
+
+	public boolean isWaterbendable(final Player player, final Block block) {
+		return isWaterbendable(player, null, block);
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isWaterbendable(block.getType())) {
-			return false;
-		}
 		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
-		} else if (isWater(block) && block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
-			return true;
-		} else if (isIce(block) && !bPlayer.canIcebend()) {
-			return false;
-		} else if (isPlant(block) && !bPlayer.canPlantbend()) {
-			return false;
+		} else {
+			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			if (bPlayer == null) {
+				return false;
+			} else {
+				return ((isWater(block) || isSnow(block) || isCauldron(block) || isRain(block)) && bPlayer.hasElement(Element.WATER))
+								|| (isIce(block) && bPlayer.canIcebend())
+								|| (isPlant(block) && bPlayer.canPlantbend());
+			}
 		}
-		return true;
 	}
 
 	public static void playFocusWaterEffect(final Block block) {

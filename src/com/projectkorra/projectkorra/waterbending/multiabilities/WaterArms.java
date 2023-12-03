@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.util.BlockSource;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -161,18 +162,13 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private boolean prepare() {
-		final Block sourceBlock = getWaterSourceBlock(this.player, this.sourceGrabRange, this.canUsePlantSource);
+		final Block sourceBlock = BlockSource.getWaterSourceBlock(this.player, this.sourceGrabRange, true, true, this.canUsePlantSource);
 		if (sourceBlock != null) {
 
-			if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
-				new PlantRegrowth(this.player, sourceBlock);
-				sourceBlock.setType(Material.AIR);
+			if (!reduceWaterbendingSource(player, sourceBlock, true, false, false, false)) {
+				reduceWaterbendingSource(player, sourceBlock, false, true, true, false);
 				this.fullSource = false;
-			} else if (isCauldron(sourceBlock)) {
-				GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
 			}
-
-			ParticleEffect.SMOKE_LARGE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(this.player)) {
 			WaterReturn.emptyWaterBottle(this.player);
@@ -208,7 +204,7 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private boolean canPlaceBlock(final Block block) {
-		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || ElementalAbility.isAir(block.getType());
+		return isWaterbendable(block.getType()) || isIce(block) || isWater(block) || ElementalAbility.isAir(block);
 	}
 
 	/**

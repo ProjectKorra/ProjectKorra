@@ -10,10 +10,10 @@ import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class Tremorsense extends EarthAbility {
 
@@ -65,7 +65,7 @@ public class Tremorsense extends EarthAbility {
 
 				for (int k = 0; k <= this.maxDepth; k++) {
 					final Block blocki = block.getRelative(BlockFace.EAST, i).getRelative(BlockFace.NORTH, j).getRelative(BlockFace.DOWN, k);
-					if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
+					if (RegionProtection.isRegionProtected(this, blocki.getLocation())) {
 						continue;
 					}
 					if (this.isEarthbendable(blocki) && !earth) {
@@ -74,7 +74,7 @@ public class Tremorsense extends EarthAbility {
 					} else if (!this.isEarthbendable(blocki) && earth) {
 						foundAir = true;
 						break;
-					} else if (!this.isEarthbendable(blocki) && !earth && !ElementalAbility.isAir(blocki.getType())) {
+					} else if (!this.isEarthbendable(blocki) && !earth && !ElementalAbility.isAir(blocki)) {
 						break;
 					}
 				}

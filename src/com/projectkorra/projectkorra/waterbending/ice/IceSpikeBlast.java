@@ -1,12 +1,16 @@
 package com.projectkorra.projectkorra.waterbending.ice;
 
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,8 +26,8 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class IceSpikeBlast extends IceAbility {
 
@@ -94,7 +98,7 @@ public class IceSpikeBlast extends IceAbility {
 
 		if (this.sourceBlock == null) {
 			new IceSpikePillarField(player);
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.sourceBlock.getLocation())) {
+		} else if (RegionProtection.isRegionProtected(this, this.sourceBlock.getLocation())) {
 			return;
 		} else {
 			this.prepare(this.sourceBlock);
@@ -187,15 +191,25 @@ public class IceSpikeBlast extends IceAbility {
 				return;
 			}
 
-			if (isTransparent(this.player, block) && !block.isLiquid()) {
+			if (isTransparent(this.player, block) && !block.isLiquid() && !isLight(block, true)) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
-				this.remove();
-				this.returnWater();
-				return;
+				boolean blockCollision = true;
+				TempBlock tb = TempBlock.get(block);
+				if (tb != null && tb.getAbility().isPresent()) {
+					CoreAbility ability = tb.getAbility().get();
+					if (Objects.equals(ability.getName(), this.getName()) && Objects.equals(ability.getBendingPlayer(), this.bPlayer)) {
+						blockCollision = false;
+					}
+				}
+				if (blockCollision) {
+					this.remove();
+					this.returnWater();
+					return;
+				}
 			}
 
-			if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+			if (RegionProtection.isRegionProtected(this, this.location)) {
 				this.remove();
 				this.returnWater();
 				return;
@@ -219,8 +233,14 @@ public class IceSpikeBlast extends IceAbility {
 			}
 
 			this.sourceBlock = block;
-			this.source = new TempBlock(this.sourceBlock, this.sourceType);
-			this.source.setRevertTime(130);
+			if (source == null || !Objects.equals(source.getBlock(), this.sourceBlock)){
+				if (source != null){
+					source.setRevertTime(80);
+				}
+				this.source = new TempBlock(this.sourceBlock, this.sourceType.createBlockData(), this);
+			}
+
+			//this.source.setRevertTime(130);
 		} else if (this.prepared) {
 			if (this.sourceBlock != null) {
 				playFocusWaterEffect(this.sourceBlock);
@@ -237,13 +257,26 @@ public class IceSpikeBlast extends IceAbility {
 	public void remove() {
 		super.remove();
 		if (this.source != null) {
-			this.source.revertBlock();
+			source.setRevertTime(80);
+			ParticleEffect.BLOCK_CRACK.display(this.source.getLocation().add(0.5, 0.5, 0.5), 10, 0.71, 0.71, 0.71, 0.03, this.sourceType.createBlockData());
+			this.source.getBlock().getWorld().playSound(this.source.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1.2F);
 		}
 		this.progressing = false;
 	}
 
 	private void returnWater() {
 		new WaterReturn(this.player, this.location.getBlock());
+	}
+
+	private Location getToEyeLevel() {
+		final Location loc = this.sourceBlock.getLocation().clone();
+		final double dy = this.destination.getY() - this.sourceBlock.getY();
+		if (dy <= 2) {
+			loc.setY(this.sourceBlock.getY() + 2);
+		} else {
+			loc.setY(this.destination.getY() - 1);
+		}
+		return loc;
 	}
 
 	private void throwIce() {
@@ -266,33 +299,14 @@ public class IceSpikeBlast extends IceAbility {
 			return;
 		}
 
-		this.firstDestination = this.location.clone();
-		if (this.destination.getY() - this.location.getY() > 2) {
-			this.firstDestination.setY(this.destination.getY() - 1);
-		} else {
-			this.firstDestination.add(0, 2, 0);
-		}
+		this.firstDestination = this.getToEyeLevel();
 
 		this.destination = GeneralMethods.getPointOnLine(this.firstDestination, this.destination, this.range);
 		this.progressing = true;
 		this.settingUp = true;
 		this.prepared = false;
 
-		if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-			new PlantRegrowth(this.player, this.sourceBlock);
-			this.sourceBlock.setType(Material.AIR);
-		} else if (isWater(this.sourceBlock)) {
-			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
-				this.sourceBlock.setType(Material.AIR);
-			}
-		} else if (TempBlock.isTempBlock(this.sourceBlock)) {
-			final TempBlock tb = TempBlock.get(this.sourceBlock);
-			if (isBendableWaterTempBlock(tb)) {
-				tb.revertBlock();
-			}
-		} else if (isCauldron(this.sourceBlock)) {
-			GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-		}
+		reduceWaterbendingSource(player, this.sourceBlock);
 	}
 
 	public static void activate(final Player player) {
@@ -333,7 +347,7 @@ public class IceSpikeBlast extends IceAbility {
 			} else if (!iceSpike.progressing) {
 				continue;
 			}
-			if (GeneralMethods.isRegionProtectedFromBuild(iceSpike, iceSpike.location)) {
+			if (RegionProtection.isRegionProtected(iceSpike, iceSpike.location)) {
 				continue;
 			}
 
@@ -358,7 +372,7 @@ public class IceSpikeBlast extends IceAbility {
 				Location location;
 				final Entity target = GeneralMethods.getTargetedEntity(player, iceSpike.range);
 				if (target == null) {
-					location = GeneralMethods.getTargetedLocation(player, iceSpike.range);
+					location = GeneralMethods.getTargetedLocation(player, iceSpike.range, true, getTransparentMaterials());
 				} else {
 					location = ((LivingEntity) target).getEyeLocation();
 				}
@@ -370,13 +384,13 @@ public class IceSpikeBlast extends IceAbility {
 			final Vector vector = location.getDirection();
 			final Location mloc = iceSpike.location;
 
-			if (GeneralMethods.isRegionProtectedFromBuild(iceSpike, mloc)) {
+			if (RegionProtection.isRegionProtected(iceSpike, mloc)) {
 				continue;
 			} else if (mloc.distanceSquared(location) <= iceSpike.range * iceSpike.range && GeneralMethods.getDistanceFromLine(vector, location, iceSpike.location) < iceSpike.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				Location loc;
 				final Entity target = GeneralMethods.getTargetedEntity(player, iceSpike.range);
 				if (target == null) {
-					loc = GeneralMethods.getTargetedLocation(player, iceSpike.range, true);
+					loc = GeneralMethods.getTargetedLocation(player, iceSpike.range, true, getTransparentMaterials());
 				} else {
 					loc = ((LivingEntity) target).getEyeLocation();
 				}

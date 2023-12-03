@@ -178,7 +178,7 @@ public class LavaSurgeWall extends LavaAbility {
 						}
 						if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || block.getType() == Material.FIRE || this.isLavabendable(block))) {
+						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block) || block.getType() == Material.FIRE || this.isLavabendable(block))) {
 							WALL_BLOCKS.put(block, this.player);
 							this.addWallBlock(block);
 							blocks.add(block);
@@ -214,7 +214,7 @@ public class LavaSurgeWall extends LavaAbility {
 				block = this.location.getBlock();
 			}
 
-			if (!ElementalAbility.isAir(block.getType())) {
+			if (!ElementalAbility.isAir(block)) {
 				this.breakBlock();
 				return;
 			} else if (!this.progressing) {

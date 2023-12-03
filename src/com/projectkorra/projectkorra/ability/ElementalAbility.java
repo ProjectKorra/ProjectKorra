@@ -17,6 +17,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -95,9 +96,50 @@ public abstract class ElementalAbility extends CoreAbility {
 		return new HashSet<>(TRANSPARENT);
 	}
 
+	/**
+	 * @deprecated since LIGHT block was added to the game, which can be waterlogged, so you can't say for sure if it's air or not.
+	 * @apiNote this method will return true if you'll check waterlogged light block's type!
+	 * @see ElementalAbility#isAir(Block) Use this method instead.
+	 */
+	@Deprecated
 	public static boolean isAir(final Material material) {
-		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR ||
-				(GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT"));
+		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR || isLight(material);
+	}
+	/**
+	 * @apiNote Use this method to make sure that block is not waterlogged light.
+	 */
+	public static boolean isAir(final Block block) {
+		return isAir(block.getBlockData());
+	}
+
+	/**
+	 * @apiNote Use this method to make sure that block is not waterlogged light.
+	 */
+	public static boolean isAir(final BlockData blockData) {
+		Material material = blockData.getMaterial();
+		return isLight(blockData, false) || material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR;
+	}
+
+	/**
+	 * @see #isLight(Block, boolean)
+	 */
+	public static boolean isLight(final Material material) {
+		return GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT");
+	}
+
+	/**
+	 * @param waterlogged set true if you want to check if it's waterlogged light, or false if you want to check if it's air light.
+	 */
+	public static boolean isLight(final Block block, boolean waterlogged) {
+		return isLight(block.getBlockData(), waterlogged);
+	}
+	/**
+	 * @param waterlogged set true if you want to check if it's waterlogged light, or false if you want to check if it's air light.
+	 */
+	public static boolean isLight(final BlockData blockData, boolean waterlogged) {
+		if(!isLight(blockData.getMaterial()))
+			return false;
+		return ((Waterlogged)blockData).isWaterlogged() == waterlogged;
 	}
 
 	public static boolean isDay(final World world) {
@@ -151,6 +193,22 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isSnow(final Material material) {
 		return SNOW_BLOCKS.contains(material.toString());
+	}
+
+	public static boolean isLeaves(final Block block) {
+		return block != null && isLeaves(block.getType());
+	}
+
+	public static boolean isLeaves(final Material material) {
+		return Tag.LEAVES.isTagged(material);
+	}
+
+	public static boolean isCauldron(final Block block) {
+		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
+	}
+
+	public static boolean isCauldron(final Material material) {
+		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
 	}
 
 	public static boolean isMeltable(final Block block) {
@@ -230,6 +288,14 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isTransparent(final Player player, final String abilityName, final Block block) {
 		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName));
+	}
+
+	public static boolean isRain(final Block block) {
+		World w = block.getWorld();
+		return ((!w.isClearWeather())
+				&& ElementalAbility.isAir(block.getType())
+				&& block.getTemperature() < 0.95
+				&& w.getHighestBlockYAt(block.getLocation()) <= block.getY());
 	}
 
 	public static boolean isWater(final Block block) {

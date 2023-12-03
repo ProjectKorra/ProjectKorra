@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class WaterArmsSpear extends WaterAbility {
 
@@ -260,7 +261,7 @@ public class WaterArmsSpear extends WaterAbility {
 	private boolean canPlaceBlock(final Block block) {
 		if (!isTransparent(this.player, block) && !((isWater(block) || this.isIcebendable(block)) && (TempBlock.isTempBlock(block) && !getIceBlocks().containsKey(block)))) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isSolid(block)) {
+		} else if (RegionProtection.isRegionProtected(this, block.getLocation()) || GeneralMethods.isSolid(block)) {
 			return false;
 		} else if (WaterArms.isUnbreakable(block) && !isWater(block)) {
 			return false;

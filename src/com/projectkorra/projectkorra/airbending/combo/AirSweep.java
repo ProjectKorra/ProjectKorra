@@ -3,9 +3,6 @@ package com.projectkorra.projectkorra.airbending.combo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.projectkorra.projectkorra.ability.util.ComboUtil;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -17,13 +14,16 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class AirSweep extends AirAbility implements ComboAbility {
 
@@ -129,7 +129,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		if (this.player.isDead() || !this.player.isOnline()) {
 			this.remove();
 			return;
-		} else if (this.currentLoc != null && GeneralMethods.isRegionProtectedFromBuild(this, this.currentLoc)) {
+		} else if (this.currentLoc != null && RegionProtection.isRegionProtected(this, this.currentLoc)) {
 			this.remove();
 			return;
 		}
@@ -180,7 +180,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			final FireComboStream fstream = (FireComboStream) this.tasks.get(i);
 			final Location loc = fstream.getLocation();
 
-			if (GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
+			if (RegionProtection.isRegionProtected(this, loc)) {
 				fstream.remove();
 				return;
 			}
@@ -193,7 +193,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			}
 			if (i % 3 == 0) {
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, radius)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+					if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 						this.remove();
 						return;
 					}

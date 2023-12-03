@@ -59,7 +59,7 @@ public class WaterSourceGrabber {
 			this.currentLoc.add(0, this.animimationSpeed * Math.signum(locDiff), 0);
 			final Block block = this.currentLoc.getBlock();
 
-			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterSpout")) {
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block)) || RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterSpout")) {
 				this.remove();
 				return;
 			}
@@ -76,7 +76,7 @@ public class WaterSourceGrabber {
 			this.currentLoc.add(vec.normalize().multiply(this.animimationSpeed));
 
 			final Block block = this.currentLoc.getBlock();
-			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block.getType())) || RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterManipulation")) {
+			if (!(WaterAbility.isWaterbendable(this.player, null, block) || ElementalAbility.isAir(block)) || RegionProtection.isRegionProtected(this.player, block.getLocation(), "WaterManipulation")) {
 				this.remove();
 				return;
 			}

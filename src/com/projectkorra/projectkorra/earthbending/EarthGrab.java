@@ -37,6 +37,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempArmorStand;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class EarthGrab extends EarthAbility {
 
@@ -162,7 +163,7 @@ public class EarthGrab extends EarthAbility {
 			}
 		}
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.origin)) {
+		if (RegionProtection.isRegionProtected(this.player, this.origin)) {
 			this.remove();
 			return;
 		}
@@ -224,7 +225,7 @@ public class EarthGrab extends EarthAbility {
 
 		ParticleEffect.BLOCK_DUST.display(this.target.getLocation(), 36, 0.3, 0.6, 0.3, this.target.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
 
-		if (!ElementalAbility.isAir(this.trap.getLocation().clone().subtract(0, 0.1, 0).getBlock().getType())) {
+		if (!ElementalAbility.isAir(this.trap.getLocation().clone().subtract(0, 0.1, 0).getBlock())) {
 			this.trap.setGravity(false);
 		} else {
 			this.trap.setGravity(true);
@@ -281,7 +282,7 @@ public class EarthGrab extends EarthAbility {
 			return;
 		}
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.player.getLocation())) {
+		if (RegionProtection.isRegionProtected(this.player, this.player.getLocation())) {
 			this.remove();
 			return;
 		}

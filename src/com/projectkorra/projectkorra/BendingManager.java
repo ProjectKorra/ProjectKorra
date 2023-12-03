@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import co.aikar.timings.lib.MCTiming;
+//import co.aikar.timings.lib.MCTiming;
 
 import com.projectkorra.projectkorra.event.WorldTimeEvent;
 import com.projectkorra.projectkorra.util.ChatUtil;
@@ -35,22 +35,21 @@ public class BendingManager implements Runnable {
 	long interval;
 	private final HashMap<World, WorldTimeEvent.Time> times = new HashMap<>(); // true if day time
 
-	private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING,
-			COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCK_TIMING, TEMP_BLOCK_TIMING;
+	//private final MCTiming CORE_ABILITY_TIMING, TEMP_POTION_TIMING, DAY_NIGHT_TIMING, HORIZONTAL_VELOCITY_TRACKER_TIMING, COOLDOWN_TIMING, TEMP_ARMOR_TIMING, ACTIONBAR_STATUS_TIMING, TEMP_FALLING_BLOCK_TIMING, TEMP_BLOCK_TIMING;
 
 	public BendingManager() {
 		instance = this;
 		this.time = System.currentTimeMillis();
 
-		this.CORE_ABILITY_TIMING = ProjectKorra.timing("CoreAbility#ProgressAll");
-		this.TEMP_POTION_TIMING = ProjectKorra.timing("TempPotion#ProgressAll");
-		this.DAY_NIGHT_TIMING = ProjectKorra.timing("HandleDayNight");
-		this.HORIZONTAL_VELOCITY_TRACKER_TIMING = ProjectKorra.timing("HorizontalVelocityTracker#UpdateAll");
-		this.COOLDOWN_TIMING = ProjectKorra.timing("HandleCooldowns");
-		this.TEMP_ARMOR_TIMING = ProjectKorra.timing("TempArmor#Cleanup");
-		this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
-		this.TEMP_FALLING_BLOCK_TIMING = ProjectKorra.timing("TempFallingBlock#manage");
-		this.TEMP_BLOCK_TIMING = ProjectKorra.timing("TempBlockRevert");
+		//this.CORE_ABILITY_TIMING = ProjectKorra.timing("CoreAbility#ProgressAll");
+		//this.TEMP_POTION_TIMING = ProjectKorra.timing("TempPotion#ProgressAll");
+		//this.DAY_NIGHT_TIMING = ProjectKorra.timing("HandleDayNight");
+		//this.HORIZONTAL_VELOCITY_TRACKER_TIMING = ProjectKorra.timing("HorizontalVelocityTracker#UpdateAll");
+		//this.COOLDOWN_TIMING = ProjectKorra.timing("HandleCooldowns");
+		//this.TEMP_ARMOR_TIMING = ProjectKorra.timing("TempArmor#Cleanup");
+		//this.ACTIONBAR_STATUS_TIMING = ProjectKorra.timing("ActionBarCheck");
+		//this.TEMP_FALLING_BLOCK_TIMING = ProjectKorra.timing("TempFallingBlock#manage");
+		//this.TEMP_BLOCK_TIMING = ProjectKorra.timing("TempBlockRevert");
 
 		times.clear();
 

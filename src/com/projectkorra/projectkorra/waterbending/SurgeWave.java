@@ -3,8 +3,8 @@ package com.projectkorra.projectkorra.waterbending;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -31,6 +31,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class SurgeWave extends WaterAbility {
 
@@ -42,6 +43,8 @@ public class SurgeWave extends WaterAbility {
 	private long time;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute("Freeze"+Attribute.COOLDOWN)
+	private long freezeCooldown;
 	private long interval;
 	@Attribute("IceRevertTime")
 	private long iceRevertTime;
@@ -59,6 +62,8 @@ public class SurgeWave extends WaterAbility {
 	private double knockup;
 	@Attribute("Freeze" + Attribute.RADIUS)
 	private double maxFreezeRadius;
+	@Attribute("Thaw" + Attribute.RADIUS)
+	private double thawRadius;
 	private Block sourceBlock;
 	private Location location;
 	private Location targetDestination;
@@ -73,7 +78,9 @@ public class SurgeWave extends WaterAbility {
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null) {
 			if (wave.progressing && !wave.freezing) {
-				wave.freezing = true;
+				if (!wave.bPlayer.isOnCooldown("SurgeFreeze")) {
+					wave.freezing = true;
+				}
 				return;
 			}
 		}
@@ -81,8 +88,10 @@ public class SurgeWave extends WaterAbility {
 		this.canHitSelf = true;
 		this.currentRadius = 1;
 		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown"));
+		this.freezeCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wave.FreezeCooldown"));
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
 		this.maxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Radius"));
+		this.thawRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.ThawRadius"));
 		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback"));
 		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup"));
 		this.maxFreezeRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius"));
@@ -109,7 +118,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	private void addWater(final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.WATER);
@@ -142,19 +151,23 @@ public class SurgeWave extends WaterAbility {
 		this.location = this.sourceBlock.getLocation();
 	}
 
+	private boolean canFreeze(){
+		return this.bPlayer.canIcebend() && this.location.distance(this.player.getLocation().add(0, this.player.getHeight() / 2, 0)) <= this.thawRadius;
+	}
+
 	private void freeze() {
-		this.clearWave();
-		if (!this.bPlayer.canIcebend()) {
+		if (!this.canFreeze()) {
 			return;
 		}
-
+		this.clearWave();
+		this.activateFreeze = true;
 		double freezeradius = this.currentRadius;
 		if (freezeradius > this.maxFreezeRadius) {
 			freezeradius = this.maxFreezeRadius;
 		}
 		final List<Entity> trapped = GeneralMethods.getEntitiesAroundPoint(this.frozenLocation, freezeradius);
 		ICE_SETTING: for (final Block block : GeneralMethods.getBlocksAroundPoint(this.frozenLocation, freezeradius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
@@ -175,7 +188,7 @@ public class SurgeWave extends WaterAbility {
 			}
 
 			final Block oldBlock = block;
-			if (!isAir(block.getType()) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
+			if (!isAir(block) && block.getType() != Material.SNOW && !isWater(block) && !isPlant(block)) {
 				continue;
 			} else if (isPlant(block)) {
 				block.breakNaturally();
@@ -185,14 +198,18 @@ public class SurgeWave extends WaterAbility {
 
 			tblock.setRevertTask(() -> SurgeWave.this.frozenBlocks.remove(block));
 
-			tblock.setRevertTime(this.iceRevertTime + (new Random().nextInt(1000)));
+			tblock.setRevertTime(this.iceRevertTime + (ThreadLocalRandom.current().nextInt(1000)));
 			this.frozenBlocks.put(block, oldBlock.getType());
-
-			for (final Block sound : this.frozenBlocks.keySet()) {
-				if ((new Random()).nextInt(4) == 0) {
-					playWaterbendingSound(sound.getLocation());
-				}
+		}
+		double chance = this.frozenBlocks.keySet().size();
+		for (final Block sound : this.frozenBlocks.keySet()) {
+			if (ThreadLocalRandom.current().nextDouble() < chance / this.frozenBlocks.keySet().size()) {
+				playIcebendingSound(sound.getLocation().add(.5, .5, .5));
+				chance /= 1.5;
 			}
+		}
+		if (!bPlayer.isOnCooldown("SurgeFreeze")) {
+			bPlayer.addCooldown("SurgeFreeze", freezeCooldown);
 		}
 	}
 
@@ -227,9 +244,9 @@ public class SurgeWave extends WaterAbility {
 				this.knockback = AvatarState.getValue(this.knockback);
 			}
 
-			final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
+			final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range + this.selectRange);
 			if (target == null) {
-				this.targetDestination = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
+				this.targetDestination = this.player.getTargetBlock(getTransparentMaterialSet(), (int) (this.range + this.selectRange)).getLocation();
 			} else {
 				this.targetDestination = ((LivingEntity) target).getEyeLocation();
 			}
@@ -242,18 +259,16 @@ public class SurgeWave extends WaterAbility {
 				this.targetDirection = this.getDirection(this.sourceBlock.getLocation(), this.targetDestination).normalize();
 				this.targetDestination = this.location.clone().add(this.targetDirection.clone().multiply(this.range));
 
-				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-					new PlantRegrowth(this.player, this.sourceBlock);
-					this.sourceBlock.setType(Material.AIR, false);
-				} else if (isCauldron(this.sourceBlock)) {
-					GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-				}
-
+				boolean thaw = false;
 				if (TempBlock.isTempBlock(this.sourceBlock)) {
 					final TempBlock tb = TempBlock.get(this.sourceBlock);
 					if (Torrent.getFrozenBlocks().containsKey(tb)) {
 						Torrent.massThaw(tb);
+						thaw = true;
 					}
+				}
+				if (!thaw) {
+					reduceWaterbendingSource(player, this.sourceBlock);
 				}
 				this.addWater(this.sourceBlock);
 			}
@@ -263,7 +278,7 @@ public class SurgeWave extends WaterAbility {
 	public boolean prepare() {
 		this.cancelPrevious();
 		final Block block = BlockSource.getWaterSourceBlock(this.player, this.selectRange, ClickType.SHIFT_DOWN, true, true, this.bPlayer.canPlantbend());
-		if (block != null && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (block != null && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			this.sourceBlock = block;
 			this.focusBlock();
 			return true;
@@ -283,39 +298,30 @@ public class SurgeWave extends WaterAbility {
 
 		if (System.currentTimeMillis() - this.time >= this.interval) {
 			this.time = System.currentTimeMillis();
-			if (!this.progressing && !this.bPlayer.getBoundAbilityName().equals(this.getName())) {
-				this.remove();
-				return;
-			} else if (!this.progressing) {
-				ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
+			if (!this.progressing) {
+				if (!this.bPlayer.getBoundAbilityName().equals(this.getName())
+						|| this.sourceBlock.getLocation().add(0.5, 0.5, 0.5).distance(this.player.getLocation()) > this.selectRange) {
+					this.remove();
+				} else {
+					ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4);
+				}
 				return;
 			}
-
-			if (this.activateFreeze) {
-				if (this.location.distanceSquared(this.player.getLocation()) > this.range * this.range) {
-					this.progressing = false;
-					this.remove();
-					return;
-				}
-			} else {
+			if (!this.activateFreeze) {
 				final Vector direction = this.targetDirection;
 				this.location = this.location.clone().add(direction);
 				final Block blockl = this.location.getBlock();
 				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((isAir(blockl.getType()) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
+				if (!RegionProtection.isRegionProtected(this, this.location) && (((isAir(blockl) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(blockl))))) {
 					for (double i = 0; i <= this.currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
 							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 							final Block block = this.location.clone().add(vec).getBlock();
 
-							if (!blocks.contains(block) && (isAir(block.getType()) || isFire(block.getType())) || this.isWaterbendable(block)) {
+							if (!blocks.contains(block) && (isAir(block) || isFire(block.getType()) || this.isWaterbendable(block))) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
-							}
-
-							if ((new Random()).nextInt(15) == 0) {
-								playWaterbendingSound(this.location);
 							}
 						}
 					}
@@ -344,9 +350,16 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 				}
-				for (final Block block : blocks) {
-					if (!this.waveBlocks.containsKey(block)) {
-						this.addWater(block);
+				{
+					double chance = blocks.size() / 4d;
+					for (final Block block : blocks) {
+						if (!this.waveBlocks.containsKey(block)) {
+							this.addWater(block);
+							if (ThreadLocalRandom.current().nextDouble() < chance / blocks.size()) {
+								playWaterbendingSound(block.getLocation().add(.5, .5, .5));
+								chance /= 2;
+							}
+						}
 					}
 				}
 
@@ -362,7 +375,6 @@ public class SurgeWave extends WaterAbility {
 					for (final Block block : this.waveBlocks.keySet()) {
 						if (entity.getLocation().distanceSquared(block.getLocation()) <= 4) {
 							if (entity instanceof LivingEntity && this.freezing && entity.getEntityId() != this.player.getEntityId()) {
-								this.activateFreeze = true;
 								this.frozenLocation = entity.getLocation();
 								this.freeze();
 								break;
@@ -373,7 +385,7 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
-						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+						if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 							continue;
 						}
 						final Vector dir = direction.clone();
@@ -388,21 +400,21 @@ public class SurgeWave extends WaterAbility {
 						AirAbility.breakBreathbendingHold(entity);
 					}
 				}
-
 				if (!this.progressing) {
 					this.remove();
 					return;
 				}
-
-				if (this.location.distanceSquared(this.targetDestination) < 1) {
+				if (this.location.distance(this.sourceBlock.getLocation().add(.5, .5, .5)) > this.range) {
 					this.progressing = false;
 					this.remove();
-					this.returnWater();
 					return;
 				}
 				if (this.currentRadius < this.maxRadius) {
 					this.currentRadius += 0.5;
 				}
+			} else if (!canFreeze()){
+				this.progressing = false;
+				this.remove();
 			}
 		}
 	}

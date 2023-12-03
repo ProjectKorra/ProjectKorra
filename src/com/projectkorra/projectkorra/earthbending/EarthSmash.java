@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.earthbending;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class EarthSmash extends EarthAbility {
 
@@ -70,6 +71,9 @@ public class EarthSmash extends EarthAbility {
 	private double liftRange;
 	@Attribute(Attribute.SPEED)
 	private double flightSpeed;
+	private boolean allowBounce;
+	private double bounceKnockback;
+	private long bounceCooldown;
 	private double grabbedDistance;
 	private double grabDetectionRadius;
 	private double hitRadius;
@@ -125,7 +129,15 @@ public class EarthSmash extends EarthAbility {
 			this.start();
 		} else if (type == ClickType.LEFT_CLICK && player.isSneaking()) {
 			for (final EarthSmash smash : getAbilities(EarthSmash.class)) {
-				if (smash.state == State.GRABBED && smash.player == player) {
+				if ((smash.state == State.GRABBED || smash.state == State.FLYING) && smash.player == player) {
+					if (smash.state == State.FLYING) {
+						if (!smash.allowBounce)
+							return;
+						if (bPlayer.isOnCooldown("SmashBounce"))
+							return;
+						bPlayer.addCooldown("SmashBounce", smash.bounceCooldown);
+						GeneralMethods.setVelocity(smash, smash.player, smash.player.getLocation().getDirection().multiply(-smash.bounceKnockback));
+					}
 					smash.state = State.SHOT;
 					smash.destination = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().normalize().multiply(smash.shootRange));
 					smash.location.getWorld().playEffect(smash.location, Effect.GHAST_SHOOT, 0, 10);
@@ -169,6 +181,9 @@ public class EarthSmash extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
 		this.flightDuration = getConfig().getLong("Abilities.Earth.EarthSmash.Flight.Duration");
 		this.duration = getConfig().getLong("Abilities.Earth.EarthSmash.Duration");
+		this.allowBounce = getConfig().getBoolean("Abilities.Earth.EarthSmash.Bounce.Enabled");
+		this.bounceKnockback = getConfig().getDouble("Abilities.Earth.EarthSmash.Bounce.Knockback");
+		this.bounceCooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Bounce.Cooldown");
 
 		if (bPlayer.isAvatarState()) {
 			this.selectRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange");
@@ -197,8 +212,17 @@ public class EarthSmash extends EarthAbility {
 				this.remove();
 				return;
 			}
-		} else if (this.state == State.FLYING || this.state == State.GRABBED) {
-			if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
+		} else if (this.state == State.GRABBED) {
+			if (!this.bPlayer.getBoundAbilityName().equalsIgnoreCase(getName())) {
+				this.state = State.LIFTED;
+				return;
+			}
+			if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)){
+				this.remove();
+				return;
+			}
+		} else if (this.state == State.FLYING) {
+			if (!this.bPlayer.canBendIgnoreCooldowns(this)){
 				this.remove();
 				return;
 			}
@@ -242,7 +266,7 @@ public class EarthSmash extends EarthAbility {
 
 				// Check to make sure the new location is available to move to.
 				for (final Block block : this.getBlocks()) {
-					if (!ElementalAbility.isAir(block.getType()) && !this.isTransparent(block)) {
+					if (!ElementalAbility.isAir(block) && !this.isTransparent(block)) {
 						this.location = oldLoc;
 						break;
 					}
@@ -256,7 +280,7 @@ public class EarthSmash extends EarthAbility {
 		} else if (this.state == State.SHOT) {
 			if (System.currentTimeMillis() - this.delay >= this.shootAnimationInterval) {
 				this.delay = System.currentTimeMillis();
-				if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+				if (RegionProtection.isRegionProtected(this, this.location)) {
 					this.remove();
 					return;
 				}
@@ -271,7 +295,7 @@ public class EarthSmash extends EarthAbility {
 				// If an earthsmash runs into too many blocks we should remove it.
 				int badBlocksFound = 0;
 				for (final Block block : this.getBlocks()) {
-					if (!ElementalAbility.isAir(block.getType()) && (!this.isTransparent(block) || block.getType() == Material.WATER)) {
+					if (!ElementalAbility.isAir(block) && (!this.isTransparent(block) || block.getType() == Material.WATER)) {
 						badBlocksFound++;
 					}
 				}
@@ -291,7 +315,7 @@ public class EarthSmash extends EarthAbility {
 				return;
 			} else if (System.currentTimeMillis() - this.delay >= this.flightAnimationInterval) {
 				this.delay = System.currentTimeMillis();
-				if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+				if (RegionProtection.isRegionProtected(this, this.location)) {
 					this.remove();
 					return;
 				}
@@ -305,7 +329,7 @@ public class EarthSmash extends EarthAbility {
 					return;
 				}
 				for (final Entity entity : entities) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+					if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 						continue;
 					}
 					GeneralMethods.setVelocity(this, entity, direction.clone().multiply(this.flightSpeed));
@@ -347,7 +371,7 @@ public class EarthSmash extends EarthAbility {
 					for (int y = -2; y <= -1; y++) {
 						for (int z = -1; z <= 1; z++) {
 							final Block block = this.location.clone().add(x, y, z).getBlock();
-							if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+							if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 								this.remove();
 								return;
 							}
@@ -364,7 +388,7 @@ public class EarthSmash extends EarthAbility {
 				// Make sure there is a clear path upward otherwise remove.
 				for (int y = 0; y <= 3; y++) {
 					final Block tempBlock = this.location.clone().add(0, y, 0).getBlock();
-					if (!this.isTransparent(tempBlock) && !ElementalAbility.isAir(tempBlock.getType())) {
+					if (!this.isTransparent(tempBlock) && !ElementalAbility.isAir(tempBlock)) {
 						this.remove();
 						return;
 					}
@@ -537,12 +561,11 @@ public class EarthSmash extends EarthAbility {
 
 	public Material selectMaterialForRepresenter(final Material mat) {
 		final Material tempMat = selectMaterial(mat);
-		final Random rand = new Random();
 		if (!isEarthbendable(tempMat, true, true, true) && !this.isMetalbendable(tempMat)) {
 			if (this.currentBlocks.size() < 1) {
 				return Material.DIRT;
 			} else {
-				return this.currentBlocks.get(rand.nextInt(this.currentBlocks.size())).getType();
+				return this.currentBlocks.get(ThreadLocalRandom.current().nextInt(this.currentBlocks.size())).getType();
 			}
 		}
 		return tempMat;
@@ -582,7 +605,7 @@ public class EarthSmash extends EarthAbility {
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.location, this.hitRadius);
 		for (final Entity entity : entities) {
 			if (entity instanceof LivingEntity && entity != this.player && !this.affectedEntities.contains(entity)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 					continue;
 				}
 				this.affectedEntities.add(entity);

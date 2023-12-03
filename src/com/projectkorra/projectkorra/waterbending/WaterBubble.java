@@ -131,7 +131,7 @@ public class WaterBubble extends WaterAbility {
 											final Waterlogged logged = (Waterlogged) b.getBlockData();
 											logged.setWaterlogged(false);
 											b.setBlockData(logged);
-										} else if (isWater(b.getType())) {
+										} else if (isWater(b)) {
 											b.setType(Material.AIR);
 										}
 									}
@@ -154,7 +154,7 @@ public class WaterBubble extends WaterAbility {
 					final Waterlogged logged = (Waterlogged) b.getBlockData();
 					logged.setWaterlogged(true);
 					b.setBlockData(logged);
-				} else if (ElementalAbility.isAir(b.getType())) {
+				} else if (ElementalAbility.isAir(b)) {
 					b.setType(this.waterOrigins.get(b).getType());
 					b.setBlockData(this.waterOrigins.get(b).getBlockData());
 				}
@@ -194,7 +194,7 @@ public class WaterBubble extends WaterAbility {
 				final Waterlogged logged = (Waterlogged) b.getBlockData();
 				logged.setWaterlogged(true);
 				b.setBlockData(logged);
-			} else if (ElementalAbility.isAir(b.getType())) {
+			} else if (ElementalAbility.isAir(b)) {
 				b.setType(this.waterOrigins.get(b).getType());
 				b.setBlockData(this.waterOrigins.get(b).getBlockData());
 			}

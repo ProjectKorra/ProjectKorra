@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class FireShield extends FireAbility {
 
@@ -136,7 +137,7 @@ public class FireShield extends FireAbility {
 			}
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.shieldRadius)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 					continue;
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {
@@ -164,7 +165,7 @@ public class FireShield extends FireAbility {
 			}
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.discRadius + 1)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 					continue;
 				} else if (entity instanceof LivingEntity) {
 					if (this.player.getEntityId() != entity.getEntityId() && this.ignite) {

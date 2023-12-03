@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
@@ -54,6 +55,8 @@ public class SurgeWall extends WaterAbility {
 	private double radius;
 	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.SELECT_RANGE)
+	private double selectRange;
 	private Block sourceBlock;
 	private Location location;
 	private Location firstDestination;
@@ -65,21 +68,21 @@ public class SurgeWall extends WaterAbility {
 
 	public SurgeWall(final Player player) {
 		super(player);
-
-		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown"));
-		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Duration"));
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Range"));
-		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Radius"));
-		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
-		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
-		this.locations = new ArrayList<>();
-
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null && !wave.isProgressing() && !this.bPlayer.isOnCooldown("SurgeWave")) {
 			wave.moveWater();
 			return;
 		}
+
+		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
+		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown"));
+		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Duration"));
+		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Range"));
+		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.SelectRange"));
+		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Radius"));
+		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
+		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
+		this.locations = new ArrayList<>();
 
 		if (this.bPlayer.isAvatarState()) {
 			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius");
@@ -139,14 +142,22 @@ public class SurgeWall extends WaterAbility {
 
 	private void freeze() {
 		this.frozen = true;
-
+    
 		tempBlocks.values().forEach(TempBlock::revertBlock);
 		tempBlocks.clear();
-
+    
+		HashSet<Block> wall = new HashSet<>();
 		for (final Block block : WALL_BLOCKS.keySet()) {
 			if (WALL_BLOCKS.get(block) == this.player) {
+				wall.add(block);
 				tempBlocks.put(block, new TempBlock(block, Material.ICE));
-				playIcebendingSound(block.getLocation());
+			}
+		}
+		double chance = wall.size();
+		for (Block block : wall) {
+			if (ThreadLocalRandom.current().nextDouble() <= chance / wall.size()) {
+				playIcebendingSound(block.getLocation().add(.5, .5, .5));
+				chance /= 2;
 			}
 		}
 	}
@@ -166,7 +177,7 @@ public class SurgeWall extends WaterAbility {
 
 	public boolean prepare() {
 		this.cancelPrevious();
-		final Block block = BlockSource.getWaterSourceBlock(this.player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
+		final Block block = BlockSource.getWaterSourceBlock(this.player, this.selectRange, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 
 		if (block != null && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			this.sourceBlock = block;
@@ -177,12 +188,12 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private void cancelPrevious() {
-		final SurgeWall oldWave = getAbility(this.player, SurgeWall.class);
-		if (oldWave != null) {
-			if (oldWave.progressing) {
-				oldWave.removeWater(oldWave.sourceBlock);
+		final SurgeWall oldWall = getAbility(this.player, SurgeWall.class);
+		if (oldWall != null) {
+			if (oldWall.progressing) {
+				oldWall.removeWater(oldWall.sourceBlock);
 			} else {
-				oldWave.remove();
+				oldWall.remove();
 			}
 		}
 	}
@@ -194,7 +205,6 @@ public class SurgeWall extends WaterAbility {
 	public void moveWater() {
 		if (this.sourceBlock != null) {
 			this.targetDestination = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
-
 			if (this.targetDestination.distanceSquared(this.location) <= 1) {
 				this.progressing = false;
 				this.targetDestination = null;
@@ -205,13 +215,7 @@ public class SurgeWall extends WaterAbility {
 				this.firstDestination = this.getToEyeLevel();
 				this.firstDirection = this.getDirection(this.sourceBlock.getLocation(), this.firstDestination);
 				this.targetDirection = this.getDirection(this.firstDestination, this.targetDestination);
-
-				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
-					new PlantRegrowth(this.player, this.sourceBlock);
-					this.sourceBlock.setType(Material.AIR, false);
-				} else if (isCauldron(this.sourceBlock)) {
-					GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-				}
+				reduceWaterbendingSource(player, this.sourceBlock);
 				this.addWater(this.sourceBlock);
 			}
 
@@ -259,7 +263,7 @@ public class SurgeWall extends WaterAbility {
 			this.time = System.currentTimeMillis();
 			final boolean matchesName = this.bPlayer.getBoundAbilityName().equals(this.getName());
 
-			if (!this.progressing && !matchesName) {
+			if (!this.progressing && (!matchesName || hasAbility(player, SurgeWave.class))) {
 				this.remove();
 				return;
 			} else if (this.progressing && (!this.player.isSneaking() || !matchesName)) {
@@ -290,7 +294,7 @@ public class SurgeWall extends WaterAbility {
 							continue;
 						} else if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || FireAbility.isFire(block.getType()) || this.isWaterbendable(block)) && this.isTransparent(block)) {
+						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block) || FireAbility.isFire(block.getType()) || this.isWaterbendable(block)) && this.isTransparent(block)) {
 							WALL_BLOCKS.put(block, this.player);
 							this.addWallBlock(block);
 							blocks.add(block);
@@ -346,7 +350,7 @@ public class SurgeWall extends WaterAbility {
 				block = this.location.getBlock();
 			}
 
-			if (!ElementalAbility.isAir(block.getType())) {
+			if (!ElementalAbility.isAir(block)) {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
@@ -442,7 +446,7 @@ public class SurgeWall extends WaterAbility {
 			return;
 		}
 
-		final double range = WaterAbility.getNightFactor(player.getWorld()) * getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
+		final double wallSelectRange = WaterAbility.getNightFactor(player.getWorld()) * getConfig().getDouble("Abilities.Water.Surge.Wall.SelectRange");
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 
@@ -457,7 +461,7 @@ public class SurgeWall extends WaterAbility {
 		}
 
 		if (wall == null) {
-			final Block source = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
+			final Block source = BlockSource.getWaterSourceBlock(player, wallSelectRange, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
 
 			if (wave == null && source == null && WaterReturn.hasWaterBottle(player)) {
 				if (bPlayer.isOnCooldown("SurgeWall")) {
@@ -492,15 +496,7 @@ public class SurgeWall extends WaterAbility {
 			if (!bPlayer.isOnCooldown("SurgeWave")) {
 				wave = new SurgeWave(player);
 			}
-			return;
 		} else {
-			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, Math.min(1, (int)range)))) {
-				wave = new SurgeWave(player);
-				return;
-			}
-		}
-
-		if (wall != null) {
 			wall.moveWater();
 		}
 	}

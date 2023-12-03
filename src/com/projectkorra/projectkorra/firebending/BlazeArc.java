@@ -6,12 +6,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import com.projectkorra.projectkorra.region.RegionProtection;
 
 public class BlazeArc extends FireAbility {
 
@@ -50,7 +48,7 @@ public class BlazeArc extends FireAbility {
 	}
 
 	private void ignite(final Block block) {
-		if (!isFire(block.getType()) && !isAir(block.getType())) {
+		if (!isFire(block.getType()) && !isAir(block)) {
 			if (canFireGrief()) {
 				if (isPlant(block) || isSnow(block)) {
 					new PlantRegrowth(this.player, block);
@@ -79,7 +77,7 @@ public class BlazeArc extends FireAbility {
 			if (this.location.distanceSquared(this.origin) > this.range * this.range) {
 				this.remove();
 				return;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+			} else if (RegionProtection.isRegionProtected(this, this.location)) {
 				return;
 			}
 

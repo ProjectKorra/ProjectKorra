@@ -49,7 +49,7 @@ public class PlantRegrowth extends PlantAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (ElementalAbility.isAir(this.block.getType())) {
+		if (ElementalAbility.isAir(this.block)) {
 			this.block.setType(this.type);
 			this.block.setBlockData(this.data);
 			if (this.type == Material.TALL_GRASS) {
