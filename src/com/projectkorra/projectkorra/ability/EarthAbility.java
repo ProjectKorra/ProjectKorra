@@ -284,7 +284,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			info.setBlock(block);
 			info.setState(block.getState());
 		}
-		block.setType(Material.AIR, false);
+		block.setType(Material.AIR);
 		info.setTime(System.currentTimeMillis());
 		TEMP_AIR_LOCATIONS.put(info.getID(), info);
 	}
@@ -485,7 +485,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			target.setBlockData(info.getState().getBlockData(), false);
 		}
 
-		source.setType(Material.AIR, false);
+		source.setType(Material.AIR);
 	}
 
 	public static void playEarthbendingSound(final Location loc) {
@@ -569,7 +569,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		if (MOVED_EARTH.containsKey(block)) {
 			final Information info = MOVED_EARTH.get(block);
 			if (block.getType() == Material.SANDSTONE && info.getType() == Material.SAND) {
-				block.setType(Material.SAND, false);
+				block.setType(Material.SAND);
 			}
 			if (RaiseEarth.blockInAllAffectedBlocks(block)) {
 				EarthAbility.revertBlock(block);
@@ -613,7 +613,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			final Information info = MOVED_EARTH.get(block);
 			final Block sourceblock = info.getState().getBlock();
 
-			if (ElementalAbility.isAir(info.getState().getBlock())) {
+			if (ElementalAbility.isAir(info.getState().getBlockData())) {
 				MOVED_EARTH.remove(block);
 				return true;
 			}
@@ -649,7 +649,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				}
 				block.setBlockData(data, false);
 			} else {
-				block.setType(Material.AIR, false);
+				block.setType(Material.AIR);
 			}
 
 			if (RaiseEarth.blockInAllAffectedBlocks(sourceblock)) {
