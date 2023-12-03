@@ -1211,7 +1211,7 @@ public class GeneralMethods {
 			return false;
 		}
 		int sources = 0;
-		final BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
+		final BlockFace[] faces = {BlockFace.UP, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
 		for (final BlockFace face : faces) {
 			final Block blocki = block.getRelative(face);
 			if (lava) {
@@ -1230,6 +1230,9 @@ public class GeneralMethods {
 				final Levelled level = (Levelled) blocki.getBlockData();
 				if (level.getLevel() == 0) {
 					sources++;
+					if (face == BlockFace.UP) {
+						return true;
+					}
 				}
 			} else { //ice
 				sources++;
