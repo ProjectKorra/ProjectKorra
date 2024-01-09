@@ -556,10 +556,17 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamageEvent(final EntityDamageEvent event) {
 		final Entity entity = event.getEntity();
 		double damage = event.getDamage();
+
+		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
+		if (entity instanceof Player && event.getCause() == DamageCause.ENTITY_ATTACK
+				&& event.getDamage(EntityDamageEvent.DamageModifier.BASE) == 0
+				&& event.getFinalDamage() == 0) {
+			return;
+		}
 
 		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
 			return;
