@@ -222,7 +222,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 	public boolean canUsePassive(final CoreAbility ability) {
 		final Element element = ability.getElement();
-		if (!this.isToggled() || !this.isElementToggled(element) || !this.isPassiveToggled(element) || !this.isToggledPassives()) {
+		if ((!this.isToggled() && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) || !this.isElementToggled(element) || !this.isPassiveToggled(element) || !this.isToggledPassives()) {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
@@ -232,7 +232,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
-		if (this.getBoundAbility() != null && this.player.getInventory().getItemInMainHand() != null) {
+		if (this.getBoundAbility() != null) {
 			final boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
 			final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
 

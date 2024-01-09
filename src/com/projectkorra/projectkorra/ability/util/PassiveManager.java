@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -74,7 +75,7 @@ public class PassiveManager {
 			return false;
 		} else if (!bPlayer.canBendPassive(passive)) {
 			return false;
-		} else if (!bPlayer.isToggled()) {
+		} else if (!bPlayer.isToggled() && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
 		} else if (!bPlayer.isElementToggled(element)) {
 			return false;
