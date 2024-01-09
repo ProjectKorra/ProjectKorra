@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -73,6 +74,7 @@ public class MultiAbilityManager {
 				bPlayer.getAbilities().put(i + 1, modes.get(i).getAbilityColor() + modes.get(i).getName());
 			}
 		}
+		BendingBoardManager.updateAllSlots(player);
 		
 		player.getInventory().setHeldItemSlot(0);
 	}
@@ -184,6 +186,7 @@ public class MultiAbilityManager {
 		playerAbilities.compute(player, MultiAbilityManager::resetBinds);
 		playerBoundAbility.remove(player);
 		playerSlot.remove(player);
+		BendingBoardManager.updateAllSlots(player);
 	}
 	
 	private static HashMap<Integer, String> resetBinds(OfflinePlayer player, HashMap<Integer, String> prevBinds) {
