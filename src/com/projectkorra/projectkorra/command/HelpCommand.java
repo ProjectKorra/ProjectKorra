@@ -125,7 +125,7 @@ public class HelpCommand extends PKCommand {
 			final boolean isPassiveAbility = ability instanceof PassiveAbility;
 			
 			
-			sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + (isAddonAbility ? (isPassiveAbility ? " (Addon Passive)" : " (Addon)") : (isPassiveAbility ? " (Passive)" : "")));
+			sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + (isAddonAbility ? (isPassiveAbility ? "(Addon Passive)" : " (Addon)") : (isPassiveAbility ? "(Passive)" : "")));
 			sender.sendMessage(color + ability.getDescription());
 			
 			if (!ability.getInstructions().isEmpty()) {
