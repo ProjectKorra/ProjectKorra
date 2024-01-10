@@ -103,7 +103,7 @@ public class AddCommand extends PKCommand {
 				boolean elementFound = false;
 				for (final Element e : Element.getAllElements()) {
 					if (!bPlayer.hasElement(e) && e != Element.AVATAR) {
-						if (!this.hasPermission(sender, e.getName().toLowerCase())) { // if command sender has permission to add this element
+						if (!sender.hasPermission("bending.command." + this.getName() + "." + e.getName().toLowerCase())) { // if command sender has permission to add this element
 							continue;
 						}
 						
@@ -163,7 +163,7 @@ public class AddCommand extends PKCommand {
 
 				// if it's an element:
 				if (Arrays.asList(Element.getAllElements()).contains(e)) {
-					if (!this.hasPermission(sender, e.getName().toLowerCase())) { // if command sender has permission to add this element
+					if (!sender.hasPermission("bending.command." + this.getName() + "." + e.getName().toLowerCase())) { // if command sender has permission to add this element
 						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPermissionMessage);
 						return;
 					}
@@ -216,7 +216,7 @@ public class AddCommand extends PKCommand {
 				} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
 					final SubElement sub = (SubElement) e;
 
-					if (!this.hasPermission(sender, sub.getName().toLowerCase())) { // if command sender has permission to add this element
+					if (!sender.hasPermission("bending.command." + this.getName() + "." + sub.getName().toLowerCase())) { // if command sender has permission to add this element
 						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPermissionMessage);
 						return;
 					}
