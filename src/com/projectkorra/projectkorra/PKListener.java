@@ -990,12 +990,6 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		// This part prevents a bug with MythicLib
-		// May need to separate this into a plugin if any issues arise
-		if (e.getDamage() == 0) {
-			return;
-		}
-
 		final FireBlastCharged fireball = FireBlastCharged.getFireball(source);
 
 		if (fireball != null) {
