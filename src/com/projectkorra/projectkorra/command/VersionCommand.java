@@ -24,7 +24,7 @@ public class VersionCommand extends PKCommand {
 			return;
 		}
 
-		sender.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + ProjectKorra.plugin.getDescription().getVersion());
+		sender.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + ProjectKorra.plugin.getDescription().getVersion() + " -BMC-Changes");
 		if (GeneralMethods.hasRPG()) {
 			sender.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + GeneralMethods.getRPG().getDescription().getVersion());
 		}
