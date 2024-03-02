@@ -103,6 +103,10 @@ public class AddCommand extends PKCommand {
 				boolean elementFound = false;
 				for (final Element e : Element.getAllElements()) {
 					if (!bPlayer.hasElement(e) && e != Element.AVATAR) {
+						if (!this.hasPermission(sender, e.getName().toLowerCase())) {
+							continue;
+						}
+
 						elementFound = true;
 						bPlayer.addElement(e);
 
@@ -159,6 +163,10 @@ public class AddCommand extends PKCommand {
 
 				// if it's an element:
 				if (Arrays.asList(Element.getAllElements()).contains(e)) {
+					if (!this.hasPermission(sender, e.getName().toLowerCase())) {
+						return;
+					}
+
 					if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to.
 						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
@@ -206,6 +214,11 @@ public class AddCommand extends PKCommand {
 					// if it's a sub element:
 				} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
 					final SubElement sub = (SubElement) e;
+
+					if (!this.hasPermission(sender, sub.getName().toLowerCase())) {
+						return;
+					}
+
 					if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
 						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
