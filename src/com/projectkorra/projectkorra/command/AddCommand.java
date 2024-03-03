@@ -267,29 +267,39 @@ public class AddCommand extends PKCommand {
 		}
 		final List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
+			// add tab completion for elements the player has permission to add
+			List<String> elementNames = Arrays.asList("Air", "Earth", "Fire", "Water", "Chi");
 
-			l.add("Air");
-			l.add("Earth");
-			l.add("Fire");
-			l.add("Water");
-			l.add("Chi");
+			for (final String elementName : elementNames) {
+				final String commandPermission = "bending.command.add." + elementName.toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
+				l.add(elementName);
+			}
+
+			// add tab completion for addon elements the player has permission to add
 			for (final Element e : Element.getAddonElements()) {
+				final String commandPermission = "bending.command.add." + e.getName().toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
 				l.add(e.getName());
 			}
 
-			l.add("Blood");
-			l.add("Combustion");
-			l.add("Flight");
-			l.add("Healing");
-			l.add("Ice");
-			l.add("Lava");
-			l.add("Lightning");
-			l.add("Metal");
-			l.add("Plant");
-			l.add("Sand");
-			l.add("Spiritual");
-			l.add("BlueFire");
+			// add tab completion for sub-elements the player has permission to add
+			List<String> subelementNames = Arrays.asList("Blood", "Combustion", "Flight", "Healing", "Ice", "Lava", "Lightning", "Metal", "Plant", "Sand", "Spiritual", "BlueFire");
+
+			for (final String subelementName : subelementNames) {
+				final String commandPermission = "bending.command.add." + subelementName.toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
+				l.add(subelementName);
+			}
+
+			// add tab completion for addon sub-elements the player has permission to add
 			for (final SubElement e : Element.getAddonSubElements()) {
+				final String commandPermission = "bending.command.add." + e.getName().toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
 				l.add(e.getName());
 			}
 		} else {
