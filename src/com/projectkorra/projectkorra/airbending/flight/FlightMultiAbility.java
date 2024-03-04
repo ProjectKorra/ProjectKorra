@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -46,6 +47,9 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	private static enum FlightMode {
 		SOAR, GLIDE, LEVITATE, ENDING;
 	}
+
+	private Map<FlightMode, Boolean> allowedFlightModes = new HashMap<>();
+	private Optional<FlightMode> firstAvaliableFlightMode;
 
 	private double speed;
 	private double slowSpeed;
@@ -96,6 +100,15 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		if (player.isOnGround()) {
 			return;
 		}
+
+		this.allowedFlightModes.put(FlightMode.SOAR, player.hasPermission("bending.ability.flight.soar"));
+		this.allowedFlightModes.put(FlightMode.GLIDE, player.hasPermission("bending.ability.flight.glide"));
+		this.allowedFlightModes.put(FlightMode.LEVITATE, player.hasPermission("bending.ability.flight.levitate"));
+		this.firstAvaliableFlightMode = this.allowedFlightModes
+			.keySet()
+			.stream()
+			.filter(mode -> this.allowedFlightModes.get(mode)).findFirst();
+		if (!this.firstAvaliableFlightMode.isPresent()) return;
 
 		CoreAbility abil = null;
 		if (hasAbility(player, AirSpout.class)) {
@@ -194,20 +207,22 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 		switch (this.player.getInventory().getHeldItemSlot()) {
 			case 0:
-				if (player.hasPermission("bending.ability.flight.soar")) {
+				if (this.allowedFlightModes.get(FlightMode.SOAR)) {
 					this.mode = FlightMode.SOAR;
 				}
-				else this.cancel("no permission");
+				else {
+					player.getInventory().setHeldItemSlot(this.firstAvaliableFlightMode.get().ordinal());
+				};
 				break;
 			case 1:
-				if (player.hasPermission("bending.ability.flight.glide")) {
+				if (this.allowedFlightModes.get(FlightMode.GLIDE)) {
 					this.mode = FlightMode.GLIDE;
 					this.checkMultiplier();
 				}
 				else this.cancel("no permission");
 				break;
 			case 2:
-				if (player.hasPermission("bending.ability.flight.levitate")) {
+				if (this.allowedFlightModes.get(FlightMode.LEVITATE)) {
 					this.mode = FlightMode.LEVITATE;
 				}
 				else this.cancel("no permission");
