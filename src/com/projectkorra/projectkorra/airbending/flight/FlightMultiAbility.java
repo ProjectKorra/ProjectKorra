@@ -194,14 +194,23 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 		switch (this.player.getInventory().getHeldItemSlot()) {
 			case 0:
-				this.mode = FlightMode.SOAR;
+				if (player.hasPermission("bending.ability.flight.soar")) {
+					this.mode = FlightMode.SOAR;
+				}
+				else this.cancel("no permission");
 				break;
 			case 1:
-				this.mode = FlightMode.GLIDE;
-				this.checkMultiplier();
+				if (player.hasPermission("bending.ability.flight.glide")) {
+					this.mode = FlightMode.GLIDE;
+					this.checkMultiplier();
+				}
+				else this.cancel("no permission");
 				break;
 			case 2:
-				this.mode = FlightMode.LEVITATE;
+				if (player.hasPermission("bending.ability.flight.levitate")) {
+					this.mode = FlightMode.LEVITATE;
+				}
+				else this.cancel("no permission");
 				break;
 			case 3:
 				this.mode = FlightMode.ENDING;
