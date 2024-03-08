@@ -45,7 +45,11 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 		}
 
 		//Don't remove, for SpoutHop - avoids forcing SpoutHop users to re-sneak and recreate FastSwim (Less clunky)
-		if (CoreAbility.hasAbility(this.player, WaterSpout.class)) {
+		WaterSpout spout = CoreAbility.getAbility(player, WaterSpout.class);
+		if (spout != null) {
+			if (!spout.canSpoutHop()) {
+				remove();
+			}
 			return;
 		}
 		

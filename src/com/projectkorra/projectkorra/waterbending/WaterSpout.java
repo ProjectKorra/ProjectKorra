@@ -473,6 +473,10 @@ public class WaterSpout extends WaterAbility {
 		this.baseBlock = baseBlock;
 	}
 
+	public boolean canSpoutHop() {
+		return canSpoutHop;
+	}
+
 	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
