@@ -55,7 +55,7 @@ public class Torrent extends WaterAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DURATION)
-	private long duration;
+	private long chargeTimeout;
 	private long revertTime;
 	private double startAngle;
 	private double angle;
@@ -100,7 +100,7 @@ public class Torrent extends WaterAbility {
 		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Range"));
 		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.SelectRange"));
 		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.Cooldown"));
-		this.duration = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.Duration"));
+		this.chargeTimeout = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.ChargeTimeout"));
 		this.revert = getConfig().getBoolean("Abilities.Water.Torrent.Revert");
 		this.revertTime = getConfig().getLong("Abilities.Water.Torrent.RevertTime");
 		this.blocks = new ArrayList<>();
@@ -177,7 +177,7 @@ public class Torrent extends WaterAbility {
 			return;
 		}
 
-		if (this.duration > 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
+		if (this.chargeTimeout > 0 && System.currentTimeMillis() > this.getStartTime() + this.chargeTimeout) {
 			this.remove();
 			return;
 		}
