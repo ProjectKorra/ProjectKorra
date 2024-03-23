@@ -40,6 +40,7 @@ permissions:
       bending.admin.debug: true
       bending.command.remove: true
       bending.avatar: true
+      bending.command.add.avatar: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.
@@ -195,11 +196,6 @@ permissions:
   bending.avatar:
     default: op
     description: Grants the Avatar Color.
-    children:
-      bending.command.add.water: true
-      bending.command.add.earth: true
-      bending.command.add.fire: true
-      bending.command.add.air: true
   bending.ability.MetalClips.loot:
     default: false
     description: Lets a Metalbender loot a player's inventory of its iron.

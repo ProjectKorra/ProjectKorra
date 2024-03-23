@@ -163,7 +163,9 @@ public class AddCommand extends PKCommand {
 
 				// if it's an element:
 				if (Arrays.asList(Element.getAllElements()).contains(e)) {
-					if (!this.hasPermission(sender, e.getName().toLowerCase())) {
+					boolean hasPermission = sender.hasPermission("bending.command.add." + Element.AVATAR.getName().toLowerCase()) || this.hasPermission(sender, e.getName().toLowerCase());
+
+					if (!hasPermission) {
 						return;
 					}
 
@@ -267,6 +269,11 @@ public class AddCommand extends PKCommand {
 		}
 		final List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
+			// add tab completion for avatar
+			if (sender.hasPermission("bending.command.add." + Element.AVATAR.getName().toLowerCase())) {
+				l.add(Element.AVATAR.getName());
+			}
+
 			// add tab completion for elements the player has permission to add
 			List<String> elementNames = Arrays.asList("Air", "Earth", "Fire", "Water", "Chi");
 
