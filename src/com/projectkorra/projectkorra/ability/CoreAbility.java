@@ -938,8 +938,12 @@ public abstract class CoreAbility implements Ability {
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modification) {
 		return this.addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
 	}
-
+	
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority) {
+	    return this.addAttributeModifier(attribute, value, modificationType, priority, UUID.randomUUID());
+	}
+
+	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority, final UUID uuid) {
 		Validate.notNull(attribute, "attribute cannot be null");
 		Validate.notNull(value, "value cannot be null");
 		Validate.notNull(modificationType, "modifierMethod cannot be null");
@@ -951,7 +955,7 @@ public abstract class CoreAbility implements Ability {
 		if (!this.attributeModifiers.get(attribute).containsKey(priority)) {
 			this.attributeModifiers.get(attribute).put(priority, new HashSet<>());
 		}
-		this.attributeModifiers.get(attribute).get(priority).add(new StoredModifier(modificationType, value));
+		this.attributeModifiers.get(attribute).get(priority).add(new StoredModifier(uuid, modificationType, value));
 		return this;
 	}
 
@@ -1068,12 +1072,28 @@ public abstract class CoreAbility implements Ability {
 
 	public static class StoredModifier {
 	    
+	    private final UUID uuid;
 	    private final AttributeModifier type;
 	    private final Number value;
 	    
-	    private StoredModifier(AttributeModifier type, Number value) {
+	    private StoredModifier(UUID uuid, AttributeModifier type, Number value) {
+	        this.uuid = uuid;
 	        this.type = type;
 	        this.value = value;
+	    }
+	    
+	    @Override
+	    public boolean equals(Object object) {
+	        if (!(object instanceof StoredModifier)) {
+	            return false;
+	        }
+	        
+	        return uuid.equals(((StoredModifier) object).uuid);
+	    }
+	    
+	    @Override
+	    public int hashCode() {
+	        return uuid.hashCode();
 	    }
 	}
 }
