@@ -98,7 +98,7 @@ public abstract class CoreAbility implements Ability {
 	protected BendingPlayer bPlayer;
 	protected FlightHandler flightHandler;
 
-	private final Map<String, Map<AttributePriority, Set<Pair<Number, AttributeModifier>>>> attributeModifiers = new HashMap<>();
+	private final Map<String, Map<AttributePriority, Set<StoredModifier>>> attributeModifiers = new HashMap<>();
 	private final Map<String, Object> attributeValues = new HashMap<>();
 	private boolean started;
 	private boolean removed;
@@ -951,7 +951,7 @@ public abstract class CoreAbility implements Ability {
 		if (!this.attributeModifiers.get(attribute).containsKey(priority)) {
 			this.attributeModifiers.get(attribute).put(priority, new HashSet<>());
 		}
-		this.attributeModifiers.get(attribute).get(priority).add(Pair.of(value, modificationType));
+		this.attributeModifiers.get(attribute).get(priority).add(new StoredModifier(modificationType, value));
 		return this;
 	}
 
@@ -971,11 +971,11 @@ public abstract class CoreAbility implements Ability {
 			try {
 				for (final AttributePriority priority : AttributePriority.values()) {
 					if (this.attributeModifiers.get(attribute).containsKey(priority)) {
-						for (final Pair<Number, AttributeModifier> pair : this.attributeModifiers.get(attribute).get(priority)) {
+						for (final StoredModifier pair : this.attributeModifiers.get(attribute).get(priority)) {
 							final Object get = field.get(this);
 							Validate.isTrue(get instanceof Number, "The field " + field.getName() + " cannot algebraically be modified.");
 							final Number oldValue = (Number) field.get(this);
-							final Number newValue = pair.getRight().performModification(oldValue, pair.getLeft());
+							final Number newValue = pair.type.performModification(oldValue, pair.value);
 							field.set(this, newValue);
 						}
 					}
@@ -1066,4 +1066,14 @@ public abstract class CoreAbility implements Ability {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
+	public static class StoredModifier {
+	    
+	    private final AttributeModifier type;
+	    private final Number value;
+	    
+	    private StoredModifier(AttributeModifier type, Number value) {
+	        this.type = type;
+	        this.value = value;
+	    }
+	}
 }
