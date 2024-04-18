@@ -820,7 +820,7 @@ public class Lightning extends LightningAbility {
 				Lightning.this.locations.add(block.getLocation());
 
 				// Handle Water and Copper electrocution.
-				if ((!Lightning.this.hitWater && isWater(block) || (!Lightning.this.hitCopper && Lightning.this.arcOnCopper && isCopper(block)) || (Lightning.this.arcOnIce && isIce(block)))) {
+				if ((!Lightning.this.hitWater && isWater(block) || (Lightning.this.arcOnIce && isIce(block)))) {
 					if (isWater(block) || isIce(block)) {
 						Lightning.this.hitWater = true;
 						if (isIce(block)) {
@@ -834,15 +834,15 @@ public class Lightning extends LightningAbility {
 							newArc.generatePoints(POINT_GENERATION);
 							Lightning.this.arcs.add(newArc);
 						}
-					} else if (isCopper(block)) {
-						Lightning.this.hitCopper = true;
+					}
+				} else if (!Lightning.this.hitCopper && Lightning.this.arcOnCopper && isCopper(block)) {
+					Lightning.this.hitCopper = true;
 						
-						if (Lightning.this.state != State.CHAIN && Lightning.this.arcOnCopper) {
-							Lightning.this.setupCopperGraph(block);
-							Lightning.this.chainCopperLightning(this.location);
-							Lightning.this.state = State.CHAIN;
-							this.arc.cancel();
-						}
+					if (Lightning.this.state != State.CHAIN && Lightning.this.arcOnCopper) {
+						Lightning.this.setupCopperGraph(block);
+						Lightning.this.chainCopperLightning(this.location);
+						Lightning.this.state = State.CHAIN;
+						this.arc.cancel();
 					}
 				}
 
