@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.configuration;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
 
@@ -100,8 +102,9 @@ public class ConfigManager {
 			config.addDefault("Board.MiscSeparator", "  ----------");
 			
 			if (!config.contains("Board.Extras")) {
-				config.addDefault("Board.Extras.RaiseEarthWall", ChatColor.GREEN.getName());
-				config.addDefault("Board.Extras.SurgeWave", ChatColor.AQUA.getName());
+			    config.addDefault("Board.Extras.RaiseEarthWall", Element.EARTH.getColor().getName());
+			    config.addDefault("Board.Extras.SurgeWave", Element.WATER.getColor().getName());
+			    config.addDefault("Board.Extras.SpoutHop", Element.WATER.getColor().getName());
 			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");
@@ -388,7 +391,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterManipulation.Instructions", "Tap sneak while looking at a water source and left click to send a water manipulation to the point that you clicked. Additionally, you can left click again to change the direction of this move. This includes other players' WaterManipulations.");
 			config.addDefault("Abilities.Water.WaterManipulation.DeathMessage", "{victim} was drowned by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterSpout.Description", "This ability provides a Waterbender with a means of transportation. It's the most useful mobility move that a waterbender possesses and is great for chasing down targets or escaping.");
-			config.addDefault("Abilities.Water.WaterSpout.Instructions", "\n" + "(Spout) Left click to activate a spout beneath you and hold spacebar to go higher. If you wish to go lower, simply hold sneak. To disable this ability, left click once again." + "\n" + "(Wave) Left click a water source and hold sneak until water has formed around you. Then, release sneak to ride a water wave that transports you in the direction you're looking. To cancel this water wave, left click with WaterSpout.");
+			config.addDefault("Abilities.Water.WaterSpout.Instructions", "\n" + "(Spout) Left click to activate a spout beneath you and hold spacebar to go higher. If you wish to go lower, simply hold sneak. To disable this ability, left click once again." + "\n" + "(SpoutHop) While WaterSpout is active, hold sneak and left-click to jump forward!" + "\n" + "(Wave) Left click a water source and hold sneak until water has formed around you. Then, release sneak to ride a water wave that transports you in the direction you're looking. To cancel this water wave, left click with WaterSpout.");
 			config.addDefault("Abilities.Water.Combo.IceBullet.Description", "Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 			config.addDefault("Abilities.Water.Combo.IceBullet.DeathMessage", "{victim}'s heart was frozen by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.Combo.IceBullet.Instructions", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
@@ -1297,6 +1300,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Interval", 50);
 			config.addDefault("Abilities.Water.WaterSpout.BlockSpiral", true);
 			config.addDefault("Abilities.Water.WaterSpout.Particles", false);
+			config.addDefault("Abilities.Water.WaterSpout.SpoutHop.Enabled", true);
+			config.addDefault("Abilities.Water.WaterSpout.SpoutHop.Power", 0.85);
+			config.addDefault("Abilities.Water.WaterSpout.SpoutHop.Cooldown", 0);
+
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Particles", false);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Enabled", true);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.AllowPlantSource", true);
