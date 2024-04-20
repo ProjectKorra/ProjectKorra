@@ -642,7 +642,7 @@ public class PKListener implements Listener {
 	public void onEntityDeath(final EntityDeathEvent event) {
 		if (TempArmor.hasTempArmor(event.getEntity())) {
 			for (final TempArmor tarmor : TempArmor.getTempArmorList(event.getEntity())) {
-				tarmor.revert(event.getDrops());
+				tarmor.revert(event.getDrops(), false);
 			}
 
 			if (MetalClips.isControlled(event.getEntity())) {
@@ -823,7 +823,7 @@ public class PKListener implements Listener {
 
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			for (final TempArmor armor : TempArmor.getTempArmorList((LivingEntity) entity)) {
-				armor.revert(null);
+				armor.revert();
 			}
 		}
 
@@ -1106,7 +1106,7 @@ public class PKListener implements Listener {
 		if (event.getKeepInventory()) {
 			if (TempArmor.hasTempArmor(event.getEntity())) {
 				for (final TempArmor armor : TempArmor.getTempArmorList(event.getEntity())) {
-					armor.revert(event.getDrops());
+					armor.revert(event.getDrops(), event.getKeepInventory());
 				}
 			} // Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath.
 		}
@@ -1446,7 +1446,7 @@ public class PKListener implements Listener {
 
 		if (TempArmor.hasTempArmor(player)) {
 			for (final TempArmor armor : TempArmor.getTempArmorList(player)) {
-				armor.revert(null);
+				armor.revert();
 			}
 		}
 

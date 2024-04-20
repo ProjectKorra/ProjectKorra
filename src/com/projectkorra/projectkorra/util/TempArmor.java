@@ -198,7 +198,7 @@ public class TempArmor {
 	}
 
 	public void revert() {
-		revert(null);
+		revert(null, true);
 	}
 	
 	/**
@@ -209,8 +209,9 @@ public class TempArmor {
 	 * TempArmor instance was started, if the display queue is empty.
 	 * 
 	 * @param drops A list of drops to filter temporary armor from when reverting, null if n/a
+	 * @param keepInv Whether the keepInventory gamerule is on
 	 */
-	public void revert(List<ItemStack> drops) {
+	public void revert(List<ItemStack> drops, boolean keepInv) {
 		final PriorityQueue<TempArmor> queue = INSTANCES.get(this.entity);
 
 		if (queue.contains(this)) {
@@ -235,6 +236,15 @@ public class TempArmor {
 
 		if (queue.isEmpty()) {
 			this.entity.getEquipment().setArmorContents(ORIGINAL.get(this.entity));
+
+			if (drops != null && !keepInv) {
+				for (ItemStack is : ORIGINAL.get(this.entity)) {
+					if (is != null) {
+						drops.add(is);
+					}
+				}
+			}
+
 			INSTANCES.remove(this.entity);
 			ORIGINAL.remove(this.entity);
 		}
@@ -250,7 +260,7 @@ public class TempArmor {
 			while (!queue.isEmpty()) {
 				final TempArmor tarmor = queue.peek();
 				if (System.currentTimeMillis() >= tarmor.getStartTime() + tarmor.getDuration()) {
-					tarmor.revert(null);
+					tarmor.revert();
 				} else {
 					break;
 				}
@@ -266,7 +276,7 @@ public class TempArmor {
 		for (final LivingEntity entity : INSTANCES.keySet()) {
 			while (!INSTANCES.get(entity).isEmpty()) {
 				final TempArmor armor = INSTANCES.get(entity).poll();
-				armor.revert(null);
+				armor.revert();
 			}
 		}
 	}
