@@ -956,6 +956,7 @@ public abstract class CoreAbility implements Ability {
 			this.attributeModifiers.get(attribute).put(priority, new HashSet<>());
 		}
 		this.attributeModifiers.get(attribute).get(priority).add(new StoredModifier(uuid, modificationType, value));
+		this.attributesModified = false;
 		return this;
 	}
 
@@ -964,6 +965,7 @@ public abstract class CoreAbility implements Ability {
 		Validate.notNull(value, "value cannot be null");
 		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + this.getName());
 		this.attributeValues.put(attribute, value);
+		this.attributesModified = false;
 		return this;
 	}
 
