@@ -42,7 +42,7 @@ public class TempBlock {
 	 */
 	@Deprecated
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<>();
-	public static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<>(100, (t1, t2) -> (int) (t1.revertTime - t2.revertTime));
+	private static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<>(128, (t1, t2) -> (int) (t1.revertTime - t2.revertTime));
 	private static boolean REVERT_TASK_RUNNING;
 
 	private final Block block;
@@ -295,13 +295,9 @@ public class TempBlock {
 		if (revertTime <= 0 || state instanceof Container) {
 			return;
 		}
-		
-		if (this.inRevertQueue) {
-			REVERT_QUEUE.remove(this);
-		}
-		this.inRevertQueue = true;
 		this.revertTime = revertTime + System.currentTimeMillis();
-		if (!REVERT_QUEUE.contains(this)) {
+		if (!this.inRevertQueue) {
+			this.inRevertQueue = true;
 			REVERT_QUEUE.add(this);
 		}
 	}
@@ -320,6 +316,15 @@ public class TempBlock {
 	 * This is used to revert the block without removing the instances from memory. Used when multiple tempblocks are to be reverted at once
 	 */
 	private void trueRevertBlock() {
+		this.trueRevertBlock(true);
+	}
+
+	/**
+	 * This is used to revert the block without removing the instances from memory. Used when multiple tempblocks are to be reverted at once
+	 * @param removeFromQueue If the TempBlock should be removed from the queue. Should be false when it has already been removed from the revert queue
+
+	 */
+	private void trueRevertBlock(boolean removeFromQueue) {
 		this.reverted = true;
 		if (instances_.containsKey(this.block)) {
 			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> {
@@ -330,7 +335,9 @@ public class TempBlock {
 			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> revertState());
 		}
 
-		REVERT_QUEUE.remove(this);
+		if (removeFromQueue) { //Remove from the queue if it's in there. We only do this when required because it is an intensive action due to the collection type
+			REVERT_QUEUE.remove(this);
+		}
 		if (this.revertTask != null) {
 			this.revertTask.run();
 		}
@@ -487,5 +494,24 @@ public class TempBlock {
 				", isBendableSource=" + isBendableSource +
 				", suffocate=" + suffocate +
 				'}';
+	}
+
+	public static class TempBlockRevertTask implements Runnable {
+		@Override
+		public void run() {
+			final long currentTime = System.currentTimeMillis();
+			while (!REVERT_QUEUE.isEmpty()) {
+				final TempBlock tempBlock = REVERT_QUEUE.peek(); //Check if the top TempBlock is ready for reverting
+				if (currentTime >= tempBlock.getRevertTime()) {
+					REVERT_QUEUE.poll();
+					if (!tempBlock.reverted) {
+						remove(tempBlock);
+						tempBlock.trueRevertBlock(false); //It's already been removed from the poll(), so don't try remove it again
+					}
+				} else {
+					break;
+				}
+			}
+		}
 	}
 }
