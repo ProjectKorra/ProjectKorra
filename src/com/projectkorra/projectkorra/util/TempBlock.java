@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -185,6 +186,14 @@ public class TempBlock {
 			}
 		}
 		REVERT_QUEUE.clear();
+	}
+
+	public static void removeAllInWorld(World world) {
+		for (final Block block : new HashSet<>(instances_.keySet())) {
+			if (block.getWorld() == world) {
+				revertBlock(block, Material.AIR);
+			}
+		}
 	}
 
 	/**

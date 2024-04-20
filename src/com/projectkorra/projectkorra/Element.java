@@ -135,7 +135,7 @@ public class Element {
 		if (this instanceof SubElement) {
 			name_ = ((SubElement) this).parentElement.name;
 		}
-		return this.getColor() + ChatUtil.color(ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_)) + " ";
+		return this.getColor() + ChatUtil.color(ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_, this.name)) + " ";
 	}
 
 	public ChatColor getColor() {

@@ -197,6 +197,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -2153,6 +2154,11 @@ public class PKListener implements Listener {
 	public void onPluginUnload(PluginDisableEvent event) {
 		RegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
 		BendingPlayer.HOOKS.remove((JavaPlugin) event.getPlugin());
+	}
+
+	@EventHandler
+	public void onWorldUnload(WorldUnloadEvent event) {
+		TempBlock.removeAllInWorld(event.getWorld());
 	}
 
 	public static HashMap<Player, Pair<String, Player>> getBendingPlayerDeath() {
