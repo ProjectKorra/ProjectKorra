@@ -123,10 +123,12 @@ public class DamageHandler {
 
 		if (event.getEntity() instanceof ArmorStand) return; //ArmorStands produce errors when we modify the armor damage, so ignore them.
 
-		if (ignorePercentage == 1) {
-			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+		if (ignorePercentage >= 1) {
+			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0); //Bypass armor points
+			event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0); //Bypass protection enchantments
 		} else {
 			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, event.getDamage(EntityDamageEvent.DamageModifier.ARMOR) * (1d - ignorePercentage));
+			event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, event.getDamage(EntityDamageEvent.DamageModifier.MAGIC) * (1d - ignorePercentage));
 		}
 	}
 

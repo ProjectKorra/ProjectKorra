@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -85,6 +86,7 @@ public class TempBlock {
 		this.block = block;
 		this.newData = newData;
 		this.attachedTempBlocks = new HashSet<>(0);
+		this.suffocate = ability.isPresent() ? !(ability.get() instanceof WaterAbility) : false;
 
 		//Fire griefing will make the state update on its own, so we don't need to update it ourselves
 		if (!FireAbility.canFireGrief() && (newData.getMaterial() == Material.FIRE || newData.getMaterial() == Material.SOUL_FIRE)) {

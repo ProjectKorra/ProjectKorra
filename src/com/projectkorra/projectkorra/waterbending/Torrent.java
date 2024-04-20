@@ -160,7 +160,8 @@ public class Torrent extends WaterAbility {
 						}
 					}
 				}
-				final TempBlock tblock = new TempBlock(block, Material.ICE);
+				final TempBlock tblock = new TempBlock(block, Material.ICE.createBlockData(), this);
+				tblock.setCanSuffocate(false);
 				FROZEN_BLOCKS.put(tblock, Pair.of(this.player, this.getId()));
 				if (this.revert) {
 					tblock.setRevertTime(this.revertTime + (new Random().nextInt((500 + 500) + 1) - 500));

@@ -639,7 +639,11 @@ public class ConfigManager {
 			plantBlocks.add("CRIMSON_FUNGUS");
 			plantBlocks.add("CRIMSON_ROOTS");
 			plantBlocks.add("FERN");
-			plantBlocks.add("GRASS");
+			if (mcVersion < 1203) { //1.20.3 changed GRASS to SHORT_GRASS
+				plantBlocks.add("GRASS");
+			} else {
+				plantBlocks.add("SHORT_GRASS");
+			}
 			plantBlocks.add("LARGE_FERN");
 			plantBlocks.add("LILY_PAD");
 			plantBlocks.add("MELON");

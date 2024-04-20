@@ -304,6 +304,7 @@ public class PhaseChange extends IceAbility {
 		}
 		if (tb == null) {
 			tb = new TempBlock(b, Material.ICE);
+			tb.setCanSuffocate(false);
 		}
 		this.blocks.add(tb);
 		PLAYER_BY_BLOCK.put(tb, this.player);

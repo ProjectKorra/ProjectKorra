@@ -244,6 +244,10 @@ public class IceBlast extends IceAbility {
 			this.remove();
 			return;
 		}
+		if (this.prepared && !isWaterbendable(this.sourceBlock)) {
+			this.remove();
+			return;
+		}
 
 		if (System.currentTimeMillis() < this.time + this.interval) {
 			return;

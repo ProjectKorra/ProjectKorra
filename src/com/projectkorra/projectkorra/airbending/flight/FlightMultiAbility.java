@@ -192,6 +192,8 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			}
 		}
 
+		FlightMode oldMode = this.mode;
+
 		switch (this.player.getInventory().getHeldItemSlot()) {
 			case 0:
 				this.mode = FlightMode.SOAR;
@@ -206,6 +208,10 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			case 3:
 				this.mode = FlightMode.ENDING;
 				break;
+		}
+
+		if (!bPlayer.getPlayer().hasPermission("bending.ability.Flight." + mode.name().toLowerCase())) {
+			this.mode = oldMode;
 		}
 
 		this.speed = this.player.getVelocity().length();

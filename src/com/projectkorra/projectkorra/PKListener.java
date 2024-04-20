@@ -550,7 +550,7 @@ public class PKListener implements Listener {
 					event.setCancelled(true);
 					FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
 				});
-			} else if (!TempBlock.get(block).canSuffocate() && event.getCause() == DamageCause.SUFFOCATION) {
+			} else if (!TempBlock.get(block).canSuffocate()) {
 				event.setCancelled(true);
 			}
 		}
@@ -573,6 +573,26 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			FireDamageTimer.dealFlameDamage(entity, damage);
 		}
+
+		if (event.getCause() == DamageCause.SUFFOCATION) {
+			Block block = event.getEntity().getLocation().getBlock();
+			if (event.getEntity() instanceof LivingEntity) block = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
+
+			if (TempBlock.isTempBlock(block)) {
+				if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
+					event.setCancelled(true);
+				} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
+					TempBlock.get(block).getAbility().ifPresent(ability -> {
+						new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
+						event.setCancelled(true);
+						FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
+					});
+				} else if (!TempBlock.get(block).canSuffocate()) {
+					event.setCancelled(true);
+				}
+			}
+		}
+
 
 		if (entity instanceof Player) {
 			final Player player = (Player) entity;

@@ -145,7 +145,7 @@ public class SurgeWall extends WaterAbility {
 
 		for (final Block block : WALL_BLOCKS.keySet()) {
 			if (WALL_BLOCKS.get(block) == this.player) {
-				tempBlocks.put(block, new TempBlock(block, Material.ICE));
+				tempBlocks.put(block, new TempBlock(block, Material.ICE.createBlockData(), this).setCanSuffocate(false));
 				playIcebendingSound(block.getLocation());
 			}
 		}
@@ -367,9 +367,9 @@ public class SurgeWall extends WaterAbility {
 
 	private void addWallBlock(final Block block) {
 		if (this.frozen) {
-			tempBlocks.put(block, new TempBlock(block, Material.ICE));
+			tempBlocks.put(block, new TempBlock(block, Material.ICE.createBlockData(), this));
 		} else {
-			tempBlocks.put(block, new TempBlock(block, Material.WATER));
+			tempBlocks.put(block, new TempBlock(block, Material.WATER.createBlockData(), this));
 		}
 	}
 

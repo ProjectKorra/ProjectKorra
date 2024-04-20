@@ -423,7 +423,7 @@ public class WaterSpoutWave extends WaterAbility {
 					}
 					if (ElementalAbility.isAir(block.getType()) || block.getType() == Material.ICE || this.isWaterbendable(block)) {
 						if (!FROZEN_BLOCKS.containsKey(block)) {
-							final TempBlock tblock = new TempBlock(block, Material.ICE);
+							final TempBlock tblock = new TempBlock(block, Material.ICE.createBlockData(), this).setCanSuffocate(false);
 							FROZEN_BLOCKS.put(block, tblock);
 							if (this.revertIceSphere) {
 								tblock.setRevertTime(this.revertSphereTime + ThreadLocalRandom.current().nextLong(-500, 500));

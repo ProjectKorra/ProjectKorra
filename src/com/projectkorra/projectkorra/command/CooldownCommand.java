@@ -56,6 +56,10 @@ public class CooldownCommand extends PKCommand {
             return;
         }
 
+        if (!this.hasPermission(sender)) {
+            return;
+        }
+
         OfflinePlayer oPlayer = list.size() == 1 ? (Player)sender : Bukkit.getOfflinePlayer(list.get(1));
         if (!oPlayer.isOnline() && !oPlayer.hasPlayedBefore()) {
             ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidPlayer"));
@@ -64,6 +68,10 @@ public class CooldownCommand extends PKCommand {
 
         BendingPlayer.getOrLoadOfflineAsync(oPlayer).thenAccept(bPlayer -> {
             if (Arrays.asList(new String[] {"view", "v"}).contains(list.get(0).toLowerCase())) {
+                if (!this.hasPermission(sender, "view")) {
+                    return;
+                }
+
                 List<String> cooldowns = bPlayer.getCooldowns().entrySet().stream()
                         .sorted(Comparator.comparingLong(entry -> entry.getValue().getCooldown()))
                         .filter(entry -> entry.getValue().getCooldown() > 0)
@@ -107,6 +115,10 @@ public class CooldownCommand extends PKCommand {
                 cooldown = list.get(2);
 
             if (list.size() > 3 && set) {
+                if (!this.hasPermission(sender, "set")) {
+                    return;
+                }
+
                 long time;
                 try {
                     time = TimeUtil.unformatTime(list.get(3));
@@ -134,8 +146,14 @@ public class CooldownCommand extends PKCommand {
                         oPlayer.getName()).replace("{cooldown}", fixedCooldown).replace("{value}", TimeUtil.formatTime(time));
                 ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + message);
             } else if (set) {
+                if (!this.hasPermission(sender, "set")) {
+                    return;
+                }
                 ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.SetNoValue"));
             } else {
+                if (!this.hasPermission(sender, "reset")) {
+                    return;
+                }
                 if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
                     bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
                     bPlayer.saveCooldowns();

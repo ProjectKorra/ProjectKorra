@@ -181,7 +181,7 @@ public class OctopusForm extends WaterAbility {
 		} else if (isCauldron(this.sourceBlock)) {
 			GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
 		}
-		this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : GeneralMethods.getWaterData(0));
+		this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : GeneralMethods.getWaterData(0), this);
 	}
 
 	private void attack() {
@@ -258,7 +258,7 @@ public class OctopusForm extends WaterAbility {
 					this.sourceLocation = newBlock.getLocation();
 
 					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
+						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0), this);
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
@@ -271,7 +271,7 @@ public class OctopusForm extends WaterAbility {
 					this.sourceLocation = newBlock.getLocation();
 
 					if (!GeneralMethods.isSolid(newBlock)) {
-						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
+						this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0), this);
 						this.sourceBlock = newBlock;
 					} else {
 						this.remove();
@@ -287,7 +287,7 @@ public class OctopusForm extends WaterAbility {
 							this.source.revertBlock();
 						}
 						if (!GeneralMethods.isSolid(newBlock)) {
-							this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0));
+							this.source = new TempBlock(newBlock, GeneralMethods.getWaterData(0), this);
 							this.sourceBlock = newBlock;
 						}
 					}
@@ -440,7 +440,7 @@ public class OctopusForm extends WaterAbility {
 			if (isWater(block) && !TempBlock.isTempBlock(block)) {
 				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(0.5, 0.5, 0.5), 5, Math.random(), Math.random(), Math.random(), 0);
 			}
-			this.newBlocks.add(new TempBlock(block, GeneralMethods.getWaterData(0)));
+			this.newBlocks.add(new TempBlock(block, GeneralMethods.getWaterData(0), this));
 		}
 	}
 

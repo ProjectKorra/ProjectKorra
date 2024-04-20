@@ -155,6 +155,9 @@ public class IceSpikeBlast extends IceAbility {
 		} else if (!this.bPlayer.getBoundAbilityName().equals(this.getName()) && this.prepared) {
 			this.remove();
 			return;
+		} else if (this.prepared && !isWaterbendable(this.sourceBlock)) {
+			this.remove();
+			return;
 		}
 		
 		if (System.currentTimeMillis() < this.time + this.interval) {
@@ -219,7 +222,7 @@ public class IceSpikeBlast extends IceAbility {
 			}
 
 			this.sourceBlock = block;
-			this.source = new TempBlock(this.sourceBlock, this.sourceType);
+			this.source = new TempBlock(this.sourceBlock, this.sourceType.createBlockData(), this);
 			this.source.setRevertTime(130);
 		} else if (this.prepared) {
 			if (this.sourceBlock != null) {

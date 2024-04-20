@@ -234,14 +234,6 @@ public class TempArmor {
 		}
 
 		if (queue.isEmpty()) {
-			if (drops != null) {
-				for (ItemStack is : ORIGINAL.get(this.entity)) {
-					if (is != null) {
-						drops.add(is);
-					}
-				}
-			}
-			
 			this.entity.getEquipment().setArmorContents(ORIGINAL.get(this.entity));
 			INSTANCES.remove(this.entity);
 			ORIGINAL.remove(this.entity);
