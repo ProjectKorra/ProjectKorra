@@ -103,6 +103,10 @@ public class AddCommand extends PKCommand {
 				boolean elementFound = false;
 				for (final Element e : Element.getAllElements()) {
 					if (!bPlayer.hasElement(e) && e != Element.AVATAR) {
+						if (!this.hasPermission(sender, e.getName().toLowerCase())) {
+							continue;
+						}
+
 						elementFound = true;
 						bPlayer.addElement(e);
 
@@ -159,6 +163,12 @@ public class AddCommand extends PKCommand {
 
 				// if it's an element:
 				if (Arrays.asList(Element.getAllElements()).contains(e)) {
+					boolean hasPermission = sender.hasPermission("bending.command.add." + Element.AVATAR.getName().toLowerCase()) || this.hasPermission(sender, e.getName().toLowerCase());
+
+					if (!hasPermission) {
+						return;
+					}
+
 					if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to.
 						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
@@ -206,6 +216,11 @@ public class AddCommand extends PKCommand {
 					// if it's a sub element:
 				} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
 					final SubElement sub = (SubElement) e;
+
+					if (!this.hasPermission(sender, sub.getName().toLowerCase())) {
+						return;
+					}
+
 					if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
 						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
@@ -254,29 +269,44 @@ public class AddCommand extends PKCommand {
 		}
 		final List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
+			// add tab completion for avatar
+			if (sender.hasPermission("bending.command.add." + Element.AVATAR.getName().toLowerCase())) {
+				l.add(Element.AVATAR.getName());
+			}
 
-			l.add("Air");
-			l.add("Earth");
-			l.add("Fire");
-			l.add("Water");
-			l.add("Chi");
+			// add tab completion for elements the player has permission to add
+			List<String> elementNames = Arrays.asList("Air", "Earth", "Fire", "Water", "Chi");
+
+			for (final String elementName : elementNames) {
+				final String commandPermission = "bending.command.add." + elementName.toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
+				l.add(elementName);
+			}
+
+			// add tab completion for addon elements the player has permission to add
 			for (final Element e : Element.getAddonElements()) {
+				final String commandPermission = "bending.command.add." + e.getName().toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
 				l.add(e.getName());
 			}
 
-			l.add("Blood");
-			l.add("Combustion");
-			l.add("Flight");
-			l.add("Healing");
-			l.add("Ice");
-			l.add("Lava");
-			l.add("Lightning");
-			l.add("Metal");
-			l.add("Plant");
-			l.add("Sand");
-			l.add("Spiritual");
-			l.add("BlueFire");
+			// add tab completion for sub-elements the player has permission to add
+			List<String> subelementNames = Arrays.asList("Blood", "Combustion", "Flight", "Healing", "Ice", "Lava", "Lightning", "Metal", "Plant", "Sand", "Spiritual", "BlueFire");
+
+			for (final String subelementName : subelementNames) {
+				final String commandPermission = "bending.command.add." + subelementName.toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
+				l.add(subelementName);
+			}
+
+			// add tab completion for addon sub-elements the player has permission to add
 			for (final SubElement e : Element.getAddonSubElements()) {
+				final String commandPermission = "bending.command.add." + e.getName().toLowerCase();
+				if (!sender.hasPermission(commandPermission)) continue;
+
 				l.add(e.getName());
 			}
 		} else {

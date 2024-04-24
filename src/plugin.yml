@@ -40,6 +40,7 @@ permissions:
       bending.admin.debug: true
       bending.command.remove: true
       bending.avatar: true
+      bending.command.add.avatar: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.
@@ -69,6 +70,8 @@ permissions:
     description: Grants access to all airbending abilities.
     children:
       bending.command.add.air: true
+      bending.command.add.flight: true
+      bending.command.add.spiritual: true
       bending.command.choose.air: true
       bending.ability.AirBlast: true 
       bending.ability.AirBurst: true
@@ -87,6 +90,10 @@ permissions:
     description: Grants access to most waterbending abilities.
     children:
       bending.command.add.water: true
+      bending.command.add.healing: true
+      bending.command.add.ice: true
+      bending.command.add.blood: true
+      bending.command.add.plant: true
       bending.command.choose.water: true
       bending.ability.Bloodbending: true
       bending.ability.HealingWaters: true
@@ -120,6 +127,9 @@ permissions:
     description: Grants access to all Earthbending abilities.
     children:
       bending.command.add.earth: true
+      bending.command.add.metal: true
+      bending.command.add.lava: true
+      bending.command.add.sand: true
       bending.command.choose.earth: true
       bending.ability.Catapult: true
       bending.ability.Collapse: true
@@ -146,6 +156,9 @@ permissions:
     description: Grants access to all firebending abilities.
     children:
       bending.command.add.fire: true
+      bending.command.add.combustion: true
+      bending.command.add.lightning: true
+      bending.command.add.bluefire: true
       bending.command.choose.fire: true
       bending.ability.Blaze: true
       bending.ability.FireBlast: true
