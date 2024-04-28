@@ -247,6 +247,7 @@ public class PKListener implements Listener {
 		final Block block = event.getBlock();
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) return;
 		final String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability;
 
@@ -1175,7 +1176,7 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		//If the world is disabled
-		if (!bPlayer.canBendInWorld()) {
+		if (bPlayer == null || !bPlayer.canBendInWorld()) {
 			return;
 		}
 
@@ -1218,7 +1219,7 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		//If the world is disabled
-		if (!bPlayer.canBendInWorld()) {
+		if (bPlayer == null || !bPlayer.canBendInWorld()) {
 			return;
 		}
 
