@@ -221,7 +221,7 @@ public class Torrent extends WaterAbility {
 					this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : Material.WATER.createBlockData());
 					this.location = this.sourceBlock.getLocation();
 				} else {
-					playFocusWaterEffect(this.sourceBlock);
+					playFocusWaterEffect(this, this.sourceBlock);
 					return;
 				}
 			}

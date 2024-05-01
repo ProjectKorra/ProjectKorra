@@ -100,7 +100,7 @@ public class AirBurst extends AirAbility {
 			}
 		} else if (this.isCharged) {
 			final Location location = this.player.getEyeLocation();
-			playAirbendingParticles(location, this.sneakParticles);
+			playAirbendingParticles(this, location, this.sneakParticles);
 		}
 	}
 

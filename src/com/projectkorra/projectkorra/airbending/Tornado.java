@@ -190,7 +190,7 @@ public class Tornado extends AirAbility {
 
 				final Location effect = new Location(this.origin.getWorld(), x, y, z);
 				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
-					playAirbendingParticles(effect, this.particleCount);
+					playAirbendingParticles(this, effect, this.particleCount);
 					if (this.random.nextInt(20) == 0) {
 						playAirbendingSound(effect);
 					}
