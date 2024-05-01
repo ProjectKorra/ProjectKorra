@@ -77,7 +77,10 @@ public class Illumination extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		//A replacement for the canBendIgnoreBindsCooldowns. Since this is used a passive, it should not turn off when bending is toggled.
+		if (!this.bPlayer.canBind(this) || this.bPlayer.isChiBlocked() || this.bPlayer.isParalyzed()
+				|| this.bPlayer.isBloodbent() || this.bPlayer.isControlledByMetalClips()
+				|| getConfig().getStringList("Properties.DisabledWorlds").contains(player.getLocation().getWorld().getName())) {
 			this.remove();
 			return;
 		}
@@ -174,12 +177,12 @@ public class Illumination extends FireAbility {
 			}
 		} else { //Legacy 1.16 illumination
 			final Block standingBlock = this.player.getLocation().getBlock();
-			final Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
+			final Block bellowBlock = standingBlock.getRelative(BlockFace.DOWN);
 			if (!isIgnitable(standingBlock)) {
 				return;
 			} else if (standingBlock.equals(this.block)) {
 				return;
-			} else if (Tag.LEAVES.isTagged(standBlock.getType())) {
+			} else if (Tag.LEAVES.isTagged(bellowBlock.getType())) {
 				return;
 			} else if (standingBlock.getType().name().endsWith("_FENCE") || standingBlock.getType().name().endsWith("_FENCE_GATE") || standingBlock.getType().name().endsWith("_WALL") || standingBlock.getType() == Material.IRON_BARS || standingBlock.getType().name().endsWith("_PANE")) {
 				return;
@@ -187,7 +190,7 @@ public class Illumination extends FireAbility {
 
 			Material torch = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_TORCH : Material.TORCH;
 
-			if (!standBlock.equals(this.block)) { //On block change
+			if (!standingBlock.equals(this.block)) { //On block change
 				this.revert();
 
 				this.oldLevel = player.getLocation().getBlock().getLightLevel();
@@ -196,7 +199,7 @@ public class Illumination extends FireAbility {
 					return;
 				}
 
-				this.block = standBlock;
+				this.block = standingBlock;
 				this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), torch.createBlockData()));
 			} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
 				//We have to set the block back to the actual one because if they couldn't render the initial block change,

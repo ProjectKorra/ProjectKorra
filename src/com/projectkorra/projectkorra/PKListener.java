@@ -197,6 +197,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -246,6 +247,7 @@ public class PKListener implements Listener {
 		final Block block = event.getBlock();
 		final Player player = event.getPlayer();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) return;
 		final String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability;
 
@@ -550,16 +552,23 @@ public class PKListener implements Listener {
 					event.setCancelled(true);
 					FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
 				});
-			} else if (!TempBlock.get(block).canSuffocate() && event.getCause() == DamageCause.SUFFOCATION) {
+			} else if (!TempBlock.get(block).canSuffocate()) {
 				event.setCancelled(true);
 			}
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamageEvent(final EntityDamageEvent event) {
 		final Entity entity = event.getEntity();
 		double damage = event.getDamage();
+
+		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
+		if (entity instanceof Player && event.getCause() == DamageCause.ENTITY_ATTACK
+				&& event.getDamage(EntityDamageEvent.DamageModifier.BASE) == 0
+				&& event.getFinalDamage() == 0) {
+			return;
+		}
 
 		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
 			return;
@@ -573,6 +582,26 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			FireDamageTimer.dealFlameDamage(entity, damage);
 		}
+
+		if (event.getCause() == DamageCause.SUFFOCATION) {
+			Block block = event.getEntity().getLocation().getBlock();
+			if (event.getEntity() instanceof LivingEntity) block = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
+
+			if (TempBlock.isTempBlock(block)) {
+				if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
+					event.setCancelled(true);
+				} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
+					TempBlock.get(block).getAbility().ifPresent(ability -> {
+						new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
+						event.setCancelled(true);
+						FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
+					});
+				} else if (!TempBlock.get(block).canSuffocate()) {
+					event.setCancelled(true);
+				}
+			}
+		}
+
 
 		if (entity instanceof Player) {
 			final Player player = (Player) entity;
@@ -614,7 +643,7 @@ public class PKListener implements Listener {
 	public void onEntityDeath(final EntityDeathEvent event) {
 		if (TempArmor.hasTempArmor(event.getEntity())) {
 			for (final TempArmor tarmor : TempArmor.getTempArmorList(event.getEntity())) {
-				tarmor.revert(event.getDrops());
+				tarmor.revert(event.getDrops(), false);
 			}
 
 			if (MetalClips.isControlled(event.getEntity())) {
@@ -795,7 +824,7 @@ public class PKListener implements Listener {
 
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			for (final TempArmor armor : TempArmor.getTempArmorList((LivingEntity) entity)) {
-				armor.revert(null);
+				armor.revert();
 			}
 		}
 
@@ -1078,7 +1107,7 @@ public class PKListener implements Listener {
 		if (event.getKeepInventory()) {
 			if (TempArmor.hasTempArmor(event.getEntity())) {
 				for (final TempArmor armor : TempArmor.getTempArmorList(event.getEntity())) {
-					armor.revert(event.getDrops());
+					armor.revert(event.getDrops(), event.getKeepInventory());
 				}
 			} // Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath.
 		}
@@ -1147,7 +1176,7 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		//If the world is disabled
-		if (!bPlayer.canBendInWorld()) {
+		if (bPlayer == null || !bPlayer.canBendInWorld()) {
 			return;
 		}
 
@@ -1190,7 +1219,7 @@ public class PKListener implements Listener {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		//If the world is disabled
-		if (!bPlayer.canBendInWorld()) {
+		if (bPlayer == null || !bPlayer.canBendInWorld()) {
 			return;
 		}
 
@@ -1418,7 +1447,7 @@ public class PKListener implements Listener {
 
 		if (TempArmor.hasTempArmor(player)) {
 			for (final TempArmor armor : TempArmor.getTempArmorList(player)) {
-				armor.revert(null);
+				armor.revert();
 			}
 		}
 
@@ -2126,6 +2155,11 @@ public class PKListener implements Listener {
 	public void onPluginUnload(PluginDisableEvent event) {
 		RegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
 		BendingPlayer.HOOKS.remove((JavaPlugin) event.getPlugin());
+	}
+
+	@EventHandler
+	public void onWorldUnload(WorldUnloadEvent event) {
+		TempBlock.removeAllInWorld(event.getWorld());
 	}
 
 	public static HashMap<Player, Pair<String, Player>> getBendingPlayerDeath() {

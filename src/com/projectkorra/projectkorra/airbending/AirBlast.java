@@ -236,6 +236,10 @@ public class AirBlast extends AirAbility {
 			this.remove();
 			return false;
 		}
+		if (!processBlock(block.getLocation())) {
+			remove();
+			return false;
+		}
 		
 		return true;
 	}
@@ -329,108 +333,9 @@ public class AirBlast extends AirAbility {
 		final Block block = this.location.getBlock();
 
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-				continue;
-			} else if (FireAbility.isFire(testblock.getType())) {
-				testblock.setType(Material.AIR);
-				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-				continue;
-			} else if (this.affectedLevers.contains(testblock)) {
-				continue;
-			}
-
-			if (Arrays.asList(DOORS).contains(testblock.getType())) {
-				if (testblock.getBlockData() instanceof Door) {
-					final Door door = (Door) testblock.getBlockData();
-					final BlockFace face = door.getFacing();
-					final Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
-					final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
-
-					for (int i = 0; i < 3; i++) {
-						if (i == 1) {
-							continue;
-						}
-
-						final BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
-
-						if (bf == face) {
-							if (!door.isOpen()) {
-								this.remove();
-								return;
-							}
-						} else if (bf.getOppositeFace() == face) {
-							if (door.isOpen()) {
-								this.remove();
-								return;
-							}
-						}
-					}
-
-					door.setOpen(!door.isOpen());
-					testblock.setBlockData(door);
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
-					this.affectedLevers.add(testblock);
-				}
-			} else if (Arrays.asList(TDOORS).contains(testblock.getType())) {
-				if (testblock.getBlockData() instanceof TrapDoor) {
-					final TrapDoor tDoor = (TrapDoor) testblock.getBlockData();
-
-					if (this.origin.getY() < block.getY()) {
-						if (!tDoor.isOpen()) {
-							this.remove();
-							return;
-						}
-					} else {
-						if (tDoor.isOpen()) {
-							this.remove();
-							return;
-						}
-					}
-
-					tDoor.setOpen(!tDoor.isOpen());
-					testblock.setBlockData(tDoor);
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
-				}
-			} else if (Arrays.asList(BUTTONS).contains(testblock.getType())) {
-				if (testblock.getBlockData() instanceof Switch) {
-					final Switch button = (Switch) testblock.getBlockData();
-					if (!button.isPowered()) {
-						button.setPowered(true);
-						testblock.setBlockData(button);
-						this.affectedLevers.add(testblock);
-
-						new BukkitRunnable() {
-
-							@Override
-							public void run() {
-								button.setPowered(false);
-								testblock.setBlockData(button);
-								AirBlast.this.affectedLevers.remove(testblock);
-								testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
-							}
-
-						}.runTaskLater(ProjectKorra.plugin, 15);
-					}
-
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
-				}
-			} else if (testblock.getType() == Material.LEVER) {
-				if (testblock.getBlockData() instanceof Switch) {
-					final Switch lever = (Switch) testblock.getBlockData();
-					lever.setPowered(!lever.isPowered());
-					testblock.setBlockData(lever);
-					this.affectedLevers.add(testblock);
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
-				}
-			} else if (testblock.getType().toString().contains("CANDLE") || testblock.getType().toString().contains("CAMPFIRE") || testblock.getType() == Material.REDSTONE_WALL_TORCH) {
-				if (testblock.getBlockData() instanceof Lightable) {
-					final Lightable lightable = (Lightable) testblock.getBlockData();
-					if (lightable.isLit()) {
-						lightable.setLit(false);
-						testblock.setBlockData(lightable);
-						testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-					}
-				}
+			if (!processBlock(testblock.getLocation())) {
+				remove();
+				return;
 			}
 		}
 
@@ -458,6 +363,120 @@ public class AirBlast extends AirAbility {
 
 		this.advanceLocation();
 		return;
+	}
+
+	/**
+	 * Process all blocks that should be modified for the selected location
+	 * @param location The location of the block
+	 * @return False if the ability should be removed
+	 */
+	private boolean processBlock(Location location) {
+		Block testblock = location.getBlock();
+		if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			return false;
+		} else if (FireAbility.isFire(testblock.getType())) {
+			if (TempBlock.isTempBlock(testblock)) {
+				TempBlock.removeBlock(testblock);
+			} else {
+				testblock.setType(Material.AIR);
+			}
+			
+			testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+			return false;
+		} else if (this.affectedLevers.contains(testblock)) {
+			return false;
+		}
+
+		if (Arrays.asList(DOORS).contains(testblock.getType())) {
+			if (testblock.getBlockData() instanceof Door) {
+				final Door door = (Door) testblock.getBlockData();
+				final BlockFace face = door.getFacing();
+				final Vector toPlayer = GeneralMethods.getDirection(testblock.getLocation(), this.player.getLocation().getBlock().getLocation());
+				final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
+
+				for (int i = 0; i < 3; i++) {
+					if (i == 1) {
+						continue;
+					}
+
+					final BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
+
+					if (bf == face) {
+						if (!door.isOpen()) {
+							return false;
+						}
+					} else if (bf.getOppositeFace() == face) {
+						if (door.isOpen()) {
+							return false;
+						}
+					}
+				}
+
+				door.setOpen(!door.isOpen());
+				testblock.setBlockData(door);
+				testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
+				this.affectedLevers.add(testblock);
+			}
+		} else if (Arrays.asList(TDOORS).contains(testblock.getType())) {
+			if (testblock.getBlockData() instanceof TrapDoor) {
+				final TrapDoor tDoor = (TrapDoor) testblock.getBlockData();
+
+				if (this.origin.getY() < testblock.getY()) {
+					if (!tDoor.isOpen()) {
+						return false;
+					}
+				} else {
+					if (tDoor.isOpen()) {
+						return false;
+					}
+				}
+
+				tDoor.setOpen(!tDoor.isOpen());
+				testblock.setBlockData(tDoor);
+				testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
+			}
+		} else if (Arrays.asList(BUTTONS).contains(testblock.getType())) {
+			if (testblock.getBlockData() instanceof Switch) {
+				final Switch button = (Switch) testblock.getBlockData();
+				if (!button.isPowered()) {
+					button.setPowered(true);
+					testblock.setBlockData(button);
+					this.affectedLevers.add(testblock);
+
+					new BukkitRunnable() {
+
+						@Override
+						public void run() {
+							button.setPowered(false);
+							testblock.setBlockData(button);
+							AirBlast.this.affectedLevers.remove(testblock);
+							testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
+						}
+
+					}.runTaskLater(ProjectKorra.plugin, 15);
+				}
+
+				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
+			}
+		} else if (testblock.getType() == Material.LEVER) {
+			if (testblock.getBlockData() instanceof Switch) {
+				final Switch lever = (Switch) testblock.getBlockData();
+				lever.setPowered(!lever.isPowered());
+				testblock.setBlockData(lever);
+				this.affectedLevers.add(testblock);
+				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
+			}
+		} else if (testblock.getType().toString().contains("CANDLE") || testblock.getType().toString().contains("CAMPFIRE") || testblock.getType() == Material.REDSTONE_WALL_TORCH) {
+			if (testblock.getBlockData() instanceof Lightable) {
+				final Lightable lightable = (Lightable) testblock.getBlockData();
+				if (lightable.isLit()) {
+					lightable.setLit(false);
+					testblock.setBlockData(lightable);
+					testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+				}
+			}
+		}
+		return true;
 	}
 
 	/**

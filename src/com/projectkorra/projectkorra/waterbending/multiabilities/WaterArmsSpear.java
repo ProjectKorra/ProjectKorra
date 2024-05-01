@@ -204,7 +204,7 @@ public class WaterArmsSpear extends WaterAbility {
 						getIceBlocks().remove(block);
 					}
 
-					iceBlocks.add(new TempBlock(block, Material.ICE));
+					iceBlocks.add(new TempBlock(block, Material.ICE.createBlockData(), this).setCanSuffocate(false));
 
 					getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 				}
@@ -251,7 +251,7 @@ public class WaterArmsSpear extends WaterAbility {
 					}
 				}
 				playIcebendingSound(block.getLocation());
-				new TempBlock(block, Material.ICE);
+				new TempBlock(block, Material.ICE.createBlockData(), this).setCanSuffocate(false);
 				getIceBlocks().put(block, System.currentTimeMillis() + this.spearDuration + (long) (Math.random() * 500));
 			}
 		}

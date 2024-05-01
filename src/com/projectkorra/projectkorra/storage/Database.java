@@ -68,6 +68,8 @@ public abstract class Database {
 	public void close() {
 		if (this.connection != null) {
 			try {
+				this.connection.setAutoCommit(false);
+				this.connection.commit(); //Force all uncommitted changes to be written before closing
 				this.connection.close();
 			} catch (final SQLException e) {
 				e.printStackTrace();

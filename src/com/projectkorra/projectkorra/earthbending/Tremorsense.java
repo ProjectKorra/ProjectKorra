@@ -162,9 +162,13 @@ public class Tremorsense extends EarthAbility {
 
 	@Override
 	public void progress() {
-		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this) || this.player.getLocation().getBlock().getLightLevel() > this.lightThreshold) {
+		//A replacement for the canBendIgnoreBindsCooldowns. Since this is used a passive, it should not turn off when bending is toggled.
+		if (!this.bPlayer.canBind(this) || this.bPlayer.isChiBlocked() || this.bPlayer.isParalyzed()
+				|| this.bPlayer.isBloodbent() || this.bPlayer.isControlledByMetalClips()
+				|| getConfig().getStringList("Properties.DisabledWorlds").contains(player.getLocation().getWorld().getName())) {
 			this.remove();
-			return;
+		} else if (this.player.getLocation().getBlock().getLightLevel() > this.lightThreshold) {
+			this.remove();
 		} else {
 			this.tryToSetGlowBlock();
 		}
@@ -182,7 +186,9 @@ public class Tremorsense extends EarthAbility {
 	public static boolean canTremorSense(final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-		if (bPlayer != null && bPlayer.canBendIgnoreBindsCooldowns(getAbility("Tremorsense"))) {
+		final Tremorsense this_ = (Tremorsense) getAbility(Tremorsense.class);
+
+		if (bPlayer != null && this_.isEnabled() && bPlayer.canBendPassive(this_) && bPlayer.canUsePassive(this_)) {
 			return true;
 		}
 
