@@ -5,7 +5,7 @@
 
     <groupId>com.projectkorra</groupId>
     <artifactId>projectkorra</artifactId>
-    <version>1.11.3-PRE-2</version>
+    <version>1.11.3</version>
     <name>ProjectKorra</name>
     <packaging>pom</packaging>
 

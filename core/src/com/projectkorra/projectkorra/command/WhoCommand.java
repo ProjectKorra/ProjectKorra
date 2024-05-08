@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -57,7 +58,7 @@ public class WhoCommand extends PKCommand {
 				try {
 
 					// Create a URL for the desired page.
-					final URLConnection url = new URL("https://raw.githubusercontent.com/ProjectKorra/ProjectKorra/master/src/staff.txt").openConnection();
+					final URLConnection url = new URL("https://raw.githubusercontent.com/ProjectKorra/ProjectKorra/master/src/core/staff.txt").openConnection();
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 
 					// Read all the text returned by the server.
@@ -72,7 +73,7 @@ public class WhoCommand extends PKCommand {
 					in.close();
 					WhoCommand.this.staff.clear();
 					WhoCommand.this.staff.putAll(updatedstaff);
-				} catch (final SocketException e) {
+				} catch (final SocketException | FileNotFoundException e) {
 					ProjectKorra.log.info("Could not update staff list.");
 				} catch (final IOException e) {
 					e.printStackTrace();
