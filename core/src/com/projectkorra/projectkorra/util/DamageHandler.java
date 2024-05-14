@@ -23,8 +23,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -186,15 +184,6 @@ public class DamageHandler {
 		if (entity instanceof LivingEntity && !damageEvent.isCancelled()) {
 			LivingEntity lent = (LivingEntity) entity;
 			damage = Math.max(0, damageEvent.getDamage());
-			
-			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_REACH);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_DIRECTION);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_NOSWING);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SPEED);
-				NCPExemptionManager.exemptPermanently(source, CheckType.COMBINED_IMPROBABLE);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SELFHIT);
-			}
 
 			if (lent.getHealth() - damage <= 0 && !entity.isDead()) {
 				final EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, damage, ability);
@@ -227,15 +216,6 @@ public class DamageHandler {
 
 			final double nextHealth = lent.getHealth();
 			entity.setLastDamageCause(finalEvent);
-
-			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_REACH);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_DIRECTION);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_NOSWING);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_SPEED);
-				NCPExemptionManager.unexempt(source, CheckType.COMBINED_IMPROBABLE);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_SELFHIT);
-			}
 
 			if (prevHealth != nextHealth) {
 				if (entity instanceof Player) {

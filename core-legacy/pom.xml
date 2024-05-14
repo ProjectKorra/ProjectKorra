@@ -30,18 +30,6 @@
   </repositories>
 
   <dependencies>
-    <!-- PaperLib -->
-    <dependency>
-      <groupId>io.papermc</groupId>
-      <artifactId>paperlib</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-    <!-- Minecraft Timings -->
-    <dependency>
-      <groupId>co.aikar</groupId>
-      <artifactId>minecraft-timings</artifactId>
-      <version>1.0.4</version>
-    </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>

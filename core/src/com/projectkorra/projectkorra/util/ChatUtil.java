@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -20,11 +21,20 @@ public class ChatUtil {
     /**
      * Send a message prefixed with the ProjectKorra branding to the provided receiver
      * @param receiver The person to send the message to
-     * @param message
+     * @param message The message to send
      */
     public static void sendBrandingMessage(final CommandSender receiver, final String message) {
         if (Strings.isEmpty(ChatColor.stripColor(message))) return;
 
+        sendBrandingMessage(receiver, new TextComponent(color(message)));
+    }
+
+    /**
+     * Send a message prefixed with the ProjectKorra branding to the provided receiver
+     * @param receiver The person to send the message to
+     * @param message The message to send
+     */
+    public static void sendBrandingMessage(final CommandSender receiver, final BaseComponent message) {
         ChatColor color;
         try {
             color = ChatColor.of(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
@@ -51,7 +61,8 @@ public class ChatUtil {
                 }
                 prefixComponent.setClickEvent(new ClickEvent(action, click));
             }
-            final TextComponent messageComponent = new TextComponent(TextComponent.fromLegacyText(message, ChatColor.YELLOW));
+            final TextComponent messageComponent = new TextComponent(message);
+            messageComponent.setColor(ChatColor.YELLOW); //Set the base color to yellow
             ((Player) receiver).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
         }
     }
@@ -63,6 +74,7 @@ public class ChatUtil {
      * @return The colored string
      */
     public static String color(String string) {
+        string = string == null ? "" : string; //Ensure no NullPointers
         return ChatColor.translateAlternateColorCodes('&', string.replaceAll("\\\\n", "\n")
                 .replaceAll("[\u00A7&]#([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})([A-Fa-f\\d]{1})",
                         "\u00A7x\u00A7$1\u00A7$2\u00A7$3\u00A7$4\u00A7$5\u00A7$6")); //Replaces &#RRGGBB to &x&R&R&B&B&G&G (how hex actually works)
