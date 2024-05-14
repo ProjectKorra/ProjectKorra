@@ -19,6 +19,8 @@ permissions:
       bending.command.add.others: true
       bending.command.add: true
       bending.command.rechoose: true
+      bending.command.cooldown: true
+      bending.command.temp: true
       bending.admin.choose: true
       bending.command.choose.ignorecooldown: true
       bending.ability.AvatarState: true

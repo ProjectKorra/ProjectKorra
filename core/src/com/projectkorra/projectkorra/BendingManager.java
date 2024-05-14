@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.event.WorldTimeEvent;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -144,6 +145,23 @@ public class BendingManager implements Runnable {
 
 	public static String getMoonsetMessage() {
 		return ChatUtil.color(ConfigManager.languageConfig.get().getString("Extras.Water.DayMessage"));
+	}
+
+	public static class TempElementsRunnable implements Runnable {
+		@Override
+		public void run() {
+			//Manage Temp elements
+			while (!BendingPlayer.TEMP_ELEMENTS.isEmpty()) { //We use a while loop so if multiple expire in the same tick, all are done together
+				Pair<Player, Long> pair = BendingPlayer.TEMP_ELEMENTS.peek();
+
+				if (System.currentTimeMillis() > pair.getRight()) { //Check if the top temp element has expired
+					BendingPlayer.TEMP_ELEMENTS.poll(); //And if it has, remove from the queue, and recalculate temp elements for that player
+					BendingPlayer.getBendingPlayer(pair.getLeft()).recalculateTempElements(false);
+				} else {
+					break; //Break the loop if the top element hasn't expired, as all elements below it won't have either
+				}
+			}
+		}
 	}
 
 }

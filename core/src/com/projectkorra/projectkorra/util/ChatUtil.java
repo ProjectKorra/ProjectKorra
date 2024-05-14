@@ -26,7 +26,23 @@ public class ChatUtil {
     public static void sendBrandingMessage(final CommandSender receiver, final String message) {
         if (Strings.isEmpty(ChatColor.stripColor(message))) return;
 
-        sendBrandingMessage(receiver, new TextComponent(color(message)));
+        sendBrandingMessage(receiver, TextComponent.fromLegacyText(color(message)));
+    }
+
+    /**
+     * Send a message prefixed with the ProjectKorra branding to the provided receiver
+     * @param receiver The person to send the message to
+     * @param message The message to send
+     */
+    public static void sendBrandingMessage(final CommandSender receiver, final BaseComponent[] message) {
+        if (message == null || message.length == 0) return;
+
+        BaseComponent newComp = new TextComponent();
+
+        for (BaseComponent comp : message) {
+            newComp.addExtra(comp);
+        }
+        sendBrandingMessage(receiver, newComp);
     }
 
     /**

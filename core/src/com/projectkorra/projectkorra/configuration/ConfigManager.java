@@ -156,6 +156,9 @@ public class ConfigManager {
 			config.addDefault("Commands.Remove.InvalidElement", "That element is invalid!");
 			config.addDefault("Commands.Remove.WrongElement", "You do not have that element.");
 			config.addDefault("Commands.Remove.PlayerNotFound", "That player has not played before!");
+			config.addDefault("Commands.Remove.NoElements", "You have no elements to remove!");
+			config.addDefault("Commands.Remove.Other.NoElements", "{target} has no elements to remove!");
+			config.addDefault("Commands.Remove.Other.NoElementsWithTemps", "{target} has no elements to remove, but they have temporary elements! Either specify the temp element to remove or use /b temp remove <player> all");
 
 			config.addDefault("Commands.Reload.Description", "This command will reload the bending config files.");
 			config.addDefault("Commands.Reload.SuccessfullyReloaded", "Bending Config reloaded!");
@@ -308,6 +311,38 @@ public class ConfigManager {
 			config.addDefault("Commands.Add.Other.AlreadyHasElement", "{target} already has that element!");
 			config.addDefault("Commands.Add.Other.AlreadyHasSubElement", "{target} already has that subelement!");
 			config.addDefault("Commands.Add.Other.AlreadyHasAllElements", "{target} already has all elements!");
+
+			config.addDefault("Commands.Temp.Description.Main", "This command will allow the user to add/modify temporary elements to the targeted <Player>. This command is typically reserved for server administrators.");
+			config.addDefault("Commands.Temp.Description.Add", "Adds a temporary element to the specified <Player>. Cannot give elements to players that already have them.");
+			config.addDefault("Commands.Temp.Description.Extend", "Extends a temporary element for the specified <Player> by the specified amount of <Time>. If the player does not have the element, they will be given it.");
+			config.addDefault("Commands.Temp.Description.Reduce", "Reduces the time until the specified temporary element expires. If the time exceeds the expiry, it will be removed.");
+			config.addDefault("Commands.Temp.Description.Remove", "Removes temporary elements from the specified <Player>. Can specify \"all\" to remove all temp elements.");
+			config.addDefault("Commands.Temp.PlayerNotFound", "That player could not be found.");
+			config.addDefault("Commands.Temp.InvalidElement", "You must specify a valid element.");
+			config.addDefault("Commands.Temp.InvalidTime", "{time} is not a valid time period. Valid times are things like 60s, 30m, 4h, 2d");
+			config.addDefault("Commands.Temp.Expired", "Your {element}{bending} &ehas expired.");
+			config.addDefault("Commands.Temp.ExpiredOffline", "Your {element}{bending} &eexpired while you were offline.");
+			config.addDefault("Commands.Temp.ExpiredAvatar", "Your Avatar elements have expired.");
+			config.addDefault("Commands.Temp.ExpiredAvatarOffline", "Your Avatar elements expired while you were offline.");
+			config.addDefault("Commands.Temp.Add.Success", "You have been given {element}{bending} &efor &c{time}&e.");
+			config.addDefault("Commands.Temp.Add.SuccessAvatar", "You are now the Avatar for &c{time}&e.");
+			config.addDefault("Commands.Temp.Add.SuccessOther", "{target} has been given {element}{bending} &efor &c{time}&e.");
+			config.addDefault("Commands.Temp.Add.SuccessAvatarOther", "{target} is now an Avatar for &c{time}&e.");
+			config.addDefault("Commands.Temp.AlreadyHasElement", "{target} already has that element!");
+			config.addDefault("Commands.Temp.AlreadyHasSubElement", "{target} already has that subelement!");
+			config.addDefault("Commands.Temp.AlreadyHasTempElement", "{target} already has that element temporarily! Extend the time with /b temp extend <player> <element> <time>");
+			config.addDefault("Commands.Temp.AlreadyHasTempSubElement", "{target} already has that subelement temporarily! Extend the time with /b temp extend <player> <element> <time>");
+			config.addDefault("Commands.Temp.Extend.SuccessOther", "{target}'s {element}{bending} &ehas been extended and will now expire in &c{time}&e.");
+			config.addDefault("Commands.Temp.Extend.Success", "Your {element} &ehas been extended and will now expire in &c{time}&e.");
+			config.addDefault("Commands.Temp.Reduce.SuccessOther", "{target}'s {element} &eexpiry time has been reduced and will now expire in &c{time}&e.");
+			config.addDefault("Commands.Temp.Reduce.Success", "Your {element}&e's expiry time has been reduced and will now expire in &c{time}&e.");
+			config.addDefault("Commands.Temp.Reduce.SuccessOtherRemove", "{target}'s {element}{bending} &ehas been removed due to the reduce time exceeding the expiry.");
+			config.addDefault("Commands.Temp.Reduce.SuccessRemove", "Your {element}{bending}&e's expiry time has been reduced and has now expired.");
+			config.addDefault("Commands.Temp.Remove.SuccessOther", "{target}'s {element}{bending} &ehas been removed.");
+			config.addDefault("Commands.Temp.Remove.Success", "Your {element}{bending} &ehas been removed.");
+			config.addDefault("Commands.Temp.Remove.ElementNotFound", "{target} does not have {element} &etemporarily.");
+			config.addDefault("Commands.Temp.Remove.NoElements", "{target} does not have any temporary elements.");
+			config.addDefault("Commands.Temp.Remove.SuccessAll", "Your temporary elements has been removed.");
 
 			config.addDefault("DeathMessages.Enabled", true);
 			config.addDefault("DeathMessages.Default", "{victim} was slain by {attacker}'s {ability}");

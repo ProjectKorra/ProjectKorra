@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.Cooldown;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -19,10 +20,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -51,6 +54,11 @@ public class OfflineBendingPlayer {
      */
     protected static final Map<UUID, BendingPlayer> ONLINE_PLAYERS = new ConcurrentHashMap<>();
 
+    /**
+     * Queue of all the temporary elements, sorted by expiry time. Only for online players
+     */
+    protected static final PriorityQueue<Pair<Player, Long>> TEMP_ELEMENTS = new PriorityQueue(Comparator.comparingLong(Pair<Player, Long>::getRight));
+
     protected final OfflinePlayer player;
     protected final UUID uuid;
     protected boolean permaRemoved;
@@ -60,6 +68,8 @@ public class OfflineBendingPlayer {
 
     protected final List<Element> elements = new ArrayList<>();
     protected final List<SubElement> subelements = new ArrayList<>();
+    protected Map<Element, Long> tempElements = new HashMap<>();
+    protected Map<SubElement, Long> tempSubElements = new HashMap<>();
     protected HashMap<Integer, String> abilities = new HashMap<>();
     protected final Map<String, Cooldown> cooldowns = new HashMap<>();
     protected final Set<Element> toggledElements = new HashSet<>();
@@ -208,6 +218,7 @@ public class OfflineBendingPlayer {
                                 }.runTaskTimer(ProjectKorra.plugin, 0, 5);
                             } else func.test(addonClone); //Addon elements should be loaded so
                         }
+
                     }
 
                     //Load subelements
@@ -371,6 +382,26 @@ public class OfflineBendingPlayer {
                         }
                     }
 
+                    //Load tempelements from the database
+                   try (ResultSet rs3 = DBConnection.sql.readQuery("SELECT * FROM pk_temp_elements WHERE uuid = '" + uuid.toString() + "'")) {
+                       Map<Element, Long> elements = new HashMap<>();
+                       Map<SubElement, Long> subElements = new HashMap<>();
+
+                       while (rs3.next()) {
+                            Element element = Element.getElement(rs3.getString("element"));
+                            long time = rs3.getLong("expiry");
+
+                            if (element instanceof SubElement) subElements.put((SubElement) element, time);
+                            else elements.put(element, time);
+                       }
+
+                       bPlayer.tempElements = elements;
+                       bPlayer.tempSubElements = subElements;
+                   } catch (SQLException e) {
+                       e.printStackTrace();
+                   }
+
+
                     bPlayer.loading = false;
                     //Call postLoad() on the main thread and wait for it to complete
                     if (bPlayer instanceof BendingPlayer) {
@@ -497,6 +528,27 @@ public class OfflineBendingPlayer {
     }
 
     /**
+     * Saves all temporary elements to the database
+     */
+    public void saveTempElements() {
+        DBConnection.sql.modifyQuery("DELETE FROM pk_temp_elements WHERE uuid = '" + uuid + "'");
+        try {
+            DBConnection.sql.getConnection().setAutoCommit(false);
+            DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
+            DBConnection.sql.getConnection().setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (Element e : this.tempElements.keySet()) {
+            DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempElements.get(e) + ")");
+        }
+        for (Element e : this.tempSubElements.keySet()) {
+            DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempSubElements.get(e) + ")");
+        }
+    }
+
+    /**
      * Binds an ability to the hotbar slot that the player is on.
      *
      * @param ability The ability name to bind
@@ -507,7 +559,7 @@ public class OfflineBendingPlayer {
     }
 
     /**
-     * Binds a Ability to a specific hotbar slot.
+     * Binds an Ability to a specific hotbar slot.
      *
      * @param ability The ability name to bind
      * @param slot The slot to bind on
@@ -572,6 +624,24 @@ public class OfflineBendingPlayer {
      */
     public List<SubElement> getSubElements() {
         return this.subelements;
+    }
+
+    /**
+     * Get the list of temporary elements & subelements the {@link BendingPlayer} has.
+     *
+     * @return a map of temporary elements & subelements
+     */
+    public Map<Element, Long> getTempElements() {
+        return this.tempElements;
+    }
+
+    /**
+     * Get the list of temporary subelements the {@link BendingPlayer} has.
+     *
+     * @return a map of temporary subelements
+     */
+    public Map<SubElement, Long> getTempSubElements() {
+        return this.tempSubElements;
     }
 
     /**
@@ -821,6 +891,8 @@ public class OfflineBendingPlayer {
             // At the moment we'll allow for both permissions to return true.
             // Later on we can consider deleting the bending.ability.avatarstate option.
             return this.player instanceof Player && ((Player)this.player).hasPermission("bending.avatar");
+        } else if (hasTempElement(element)) {
+            return true;
         } else if (!(element instanceof SubElement)) {
             return this.elements.contains(element);
         } else {
@@ -835,7 +907,39 @@ public class OfflineBendingPlayer {
      * @return true If the player knows the element
      */
     public boolean hasSubElement(@NotNull final SubElement sub) {
-        return this.subelements.contains(sub);
+        return this.subelements.contains(sub) || hasTempSubElement(sub);
+    }
+
+    /**
+     * Checks to see if the {@link BendingPlayer} has a temporary element.
+     * @param element The element to check
+     * @return true If the player has the element
+     */
+    public boolean hasTempElement(@NotNull final Element element) {
+        if (element.isAvatarElement() && hasTempElement(Element.AVATAR)) return true;
+
+        if (element instanceof SubElement) return this.hasTempSubElement((SubElement) element);
+        return this.tempElements.containsKey(element) && this.tempElements.get(element) > System.currentTimeMillis();
+    }
+
+    /**
+     * Checks to see if the {@link BendingPlayer} has a temporary subelement.
+     * @param sub The subelement to check
+     * @return true If the player has the subelement
+     */
+    public boolean hasTempSubElement(@NotNull final SubElement sub) {
+        return this.tempSubElements.containsKey(sub) && (this.tempSubElements.get(sub) == -1 || //-1 means that the time is linked to the parent element
+                this.tempSubElements.get(sub) > System.currentTimeMillis());
+    }
+
+    /**
+     * Checks to see if the {@link BendingPlayer} has any temporary elements that have not expired.
+     * @return true If the player has any temporary elements
+     */
+    public boolean hasTempElements() {
+        Map<Element, Long> tempMap = new HashMap<>(this.tempElements);
+        tempMap.putAll(this.tempSubElements);
+        return tempMap.entrySet().stream().anyMatch(entry -> entry.getValue() > System.currentTimeMillis());
     }
 
     /**
@@ -968,19 +1072,19 @@ public class OfflineBendingPlayer {
      * @return true If player has permission node "bending.earth.bloodbending"
      */
     public boolean canBloodbend() {
-        return this.subelements.contains(Element.BLOOD);
+        return this.subelements.contains(Element.BLOOD) || this.hasTempSubElement(Element.BLOOD); //If they have bloodbending OR temporary bloodbending that hasn't expired
     }
 
     public boolean canBloodbendAtAnytime() {
-        return false;
+        return false; //Offline players can't do it at anytime because OfflinePlayers have no permissions
     }
 
     public boolean canCombustionbend() {
-        return this.subelements.contains(Element.COMBUSTION);
+        return this.subelements.contains(Element.COMBUSTION) || this.hasTempSubElement(Element.COMBUSTION); //If they have combustionbending OR temporary combustionbending that hasn't expired
     }
 
     public boolean canIcebend() {
-        return this.subelements.contains(Element.ICE);
+        return this.subelements.contains(Element.ICE) || this.hasTempSubElement(Element.ICE); //If they have icebending OR temporary icebending that hasn't expired
     }
 
     /**
@@ -989,11 +1093,11 @@ public class OfflineBendingPlayer {
      * @return true If player has permission node "bending.earth.lavabending"
      */
     public boolean canLavabend() {
-        return this.subelements.contains(Element.LAVA);
+        return this.subelements.contains(Element.LAVA) || this.hasTempSubElement(Element.LAVA); //If they have lavabending OR temporary lavabending that hasn't expired
     }
 
     public boolean canLightningbend() {
-        return this.subelements.contains(Element.LIGHTNING);
+        return this.subelements.contains(Element.LIGHTNING) || this.hasTempSubElement(Element.LIGHTNING); //If they have lightningbending OR temporary lightningbending that hasn't expired
     }
 
     /**
@@ -1002,7 +1106,7 @@ public class OfflineBendingPlayer {
      * @return true If player has permission node "bending.earth.metalbending"
      */
     public boolean canMetalbend() {
-        return this.subelements.contains(Element.METAL);
+        return this.subelements.contains(Element.METAL) || this.hasTempSubElement(Element.METAL); //If they have metalbending OR temporary metalbending that hasn't expired
     }
 
     /**
@@ -1011,7 +1115,7 @@ public class OfflineBendingPlayer {
      * @return true If player has permission node "bending.ability.plantbending"
      */
     public boolean canPlantbend() {
-        return this.subelements.contains(Element.PLANT);
+        return this.subelements.contains(Element.PLANT) || this.hasTempSubElement(Element.PLANT); //If they have plantbending OR temporary plantbending that hasn't expired
     }
 
     /**
@@ -1020,7 +1124,7 @@ public class OfflineBendingPlayer {
      * @return true If player has permission node "bending.earth.sandbending"
      */
     public boolean canSandbend() {
-        return this.subelements.contains(Element.SAND);
+        return this.subelements.contains(Element.SAND) || this.hasTempSubElement(Element.SAND); //If they have sandbending OR temporary sandbending that hasn't expired
     }
 
     /**
@@ -1029,7 +1133,7 @@ public class OfflineBendingPlayer {
      * @return true If player has permission node "bending.air.flight"
      */
     public boolean canUseFlight() {
-        return this.subelements.contains(Element.FLIGHT);
+        return this.subelements.contains(Element.FLIGHT) || this.hasTempSubElement(Element.FLIGHT); //If they have flight OR temporary flight that hasn't expired
     }
 
     /**
@@ -1039,7 +1143,7 @@ public class OfflineBendingPlayer {
      *         "bending.air.spiritualprojection"
      */
     public boolean canUseSpiritualProjection() {
-        return this.subelements.contains(Element.SPIRITUAL);
+        return this.subelements.contains(Element.SPIRITUAL) || this.hasTempSubElement(Element.SPIRITUAL); //If they have spiritual projection OR temporary spiritual projection that hasn't expired
     }
 
     /**
@@ -1048,7 +1152,7 @@ public class OfflineBendingPlayer {
      * @return true If player has permission node "bending.water.healing"
      */
     public boolean canWaterHeal() {
-        return this.subelements.contains(Element.HEALING);
+        return this.subelements.contains(Element.HEALING) || this.hasTempSubElement(Element.HEALING); //If they have water healing OR temporary water healing that hasn't expired
     }
 
     public OfflinePlayer getPlayer() {
@@ -1105,6 +1209,8 @@ public class OfflineBendingPlayer {
 
         if (bendingPlayer.getPlayer() == null || !bendingPlayer.getPlayer().isOnline()) ONLINE_PLAYERS.remove(bendingPlayer.getUUID());
         PLAYERS.put(bendingPlayer.getUUID(), offlineBendingPlayer);
+
+        TEMP_ELEMENTS.removeIf(pair -> pair.getLeft().getUniqueId().equals(bendingPlayer.getUUID()));
 
         return offlineBendingPlayer;
     }

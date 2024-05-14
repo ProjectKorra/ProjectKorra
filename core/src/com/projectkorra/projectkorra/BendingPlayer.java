@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -653,6 +655,66 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		PassiveManager.registerPassives(this.player);
 	}
 
+	/**
+	 * Recalculate temporary elements the player has. This will remove any that have expired, as well as send
+	 * the player a message about them
+	 * @param offline Whether the player was previously offline. E.g. they just logged in
+	 */
+	public void recalculateTempElements(boolean offline) {
+		String expired = ConfigManager.languageConfig.get().getString("Commands.Temp.Expired" + (offline ? "Offline" : ""));
+		String expiredAvatar = ConfigManager.languageConfig.get().getString("Commands.Temp.ExpiredAvatar" + (offline ? "Offline" : ""));
+
+		Iterator<SubElement> subIterator = this.tempSubElements.keySet().iterator();
+		SubElement subElement;
+		while (subIterator.hasNext() && (subElement = subIterator.next()) != null) {
+			long time = tempSubElements.get(subElement);
+
+			if (time == -1L) continue; //The subelement expiry is connected to the parent element, so skip it as it is handled bellow
+
+			String message = expired;
+
+			if (System.currentTimeMillis() >= time) {
+				ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + message
+						.replace("{element}", subElement.getColor() + subElement.getName())
+						.replace("{bending}", subElement.getType().getBending())
+						.replace("{bender}", subElement.getType().getBender())
+						.replace("{bend}", subElement.getType().getBend())));
+				subIterator.remove();
+			}
+		}
+
+		Iterator<Element> elementIterator = tempElements.keySet().iterator();
+		Element element;
+		while (elementIterator.hasNext() && (element = elementIterator.next()) != null) {
+			long time = tempElements.get(element);
+
+			String message = expired;
+			if (element == Element.AVATAR) message = expiredAvatar;
+
+			if (System.currentTimeMillis() >= time) {
+				ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + message
+						.replace("{element}", element.getColor() + element.getName())
+						.replace("{bending}", element.getType().getBending())
+						.replace("{bender}", element.getType().getBender())
+						.replace("{bend}", element.getType().getBend())));
+				elementIterator.remove();
+			}
+		}
+
+		if (this.tempElements.size() > 0 || this.tempSubElements.size() > 0) {
+			Map<Element, Long> tempMap = new HashMap<>(this.tempElements);
+			tempMap.putAll(this.tempSubElements);
+			long shortestTime = tempMap.values().stream().filter(l -> l >= System.currentTimeMillis()).min(Comparator.comparingLong(Long::longValue)).get();
+
+			TEMP_ELEMENTS.removeIf(pair -> pair.getLeft().getUniqueId().equals(this.getUUID()));
+			TEMP_ELEMENTS.add(new ImmutablePair<>(player, shortestTime));
+		}
+
+		this.removeUnusableAbilities();
+
+		saveTempElements();
+	}
+
 	public void removeUnusableAbilities() {
 		// Remove all active instances of abilities that will become unusable.
 		// We need to do this prior to filtering binds in case the player has a MultiAbility running.
@@ -728,6 +790,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		this.removeUnusableAbilities();
 		this.fixSubelements(); //Grant all subelements for an element if they have 0 subs for that element (that they are allowed)
 		this.removeOldCooldowns();
+		this.recalculateTempElements(true); //Remove all temp elements that have expired and send messages about them
 		PassiveManager.registerPassives(this.player);
 		FirePassive.handle(player);
 
@@ -775,8 +838,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	public void fixSubelements() {
 		boolean save = false;
 		for (Element element : this.elements) {
-			List<SubElement> currentSubs = this.subelements.stream().filter(sub -> sub.getParentElement() == element).collect(Collectors.toList());
-			if (currentSubs.size() > 0) continue;
+			long currentSubs = this.subelements.stream().filter(sub -> sub.getParentElement() == element).count();
+			if (currentSubs > 0) continue;
 			for (SubElement sub : Element.getSubElements(element)) {
 				if (this.hasSubElementPermission(sub)) {
 					this.addSubElement(sub);
@@ -784,6 +847,34 @@ public class BendingPlayer extends OfflineBendingPlayer {
 				}
 			}
 		}
-		if (save) this.saveSubElements();
+
+		Map<Element, Long> newSubs = new HashMap<>();
+
+		for (Element tempElement : this.tempElements.keySet()) {
+			if (tempElement instanceof SubElement) continue; //Ignore subelements, we are only fixing the parent elements' subs
+			long expireTime = this.tempElements.get(tempElement);
+
+			if (expireTime < System.currentTimeMillis()) { //If it still hasn't expired
+				long currentSubs = this.tempElements.keySet().stream()
+						.filter(element -> element instanceof SubElement)
+						.map(element -> (SubElement)element)
+						.filter(sub -> sub.getParentElement() == tempElement)
+						.count();
+
+				if (currentSubs > 0) continue;
+
+				for (SubElement sub : Element.getSubElements(tempElement)) {
+					if (this.hasSubElementPermission(sub)) {
+						newSubs.put(sub, expireTime);
+						save = true;
+					}
+				}
+			}
+		}
+
+		if (save) {
+			this.tempElements.putAll(newSubs); //Adds the new temp subs that should be assigned
+			this.saveSubElements();
+		}
 	}
 }

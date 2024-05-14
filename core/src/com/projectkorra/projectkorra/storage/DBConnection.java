@@ -75,6 +75,12 @@ public class DBConnection {
 				final String query = "CREATE TABLE `pk_board` (uuid VARCHAR(36) NOT NULL, enabled BOOLEAN NOT NULL, PRIMARY KEY (uuid));";
 				sql.modifyQuery(query, false);
 			}
+			//Table for temp elements
+			if (!sql.tableExists("pk_temp_elements")) {
+				ProjectKorra.log.info("Creating pk_temp_elements table");
+				final String query = "CREATE TABLE `pk_temp_elements` (uuid VARCHAR(36) NOT NULL, element VARCHAR(255) NOT NULL, expiry BIGINT, PRIMARY KEY (uuid, element));";
+				sql.modifyQuery(query, false);
+			}
 		} else {
 			sql = new SQLite(ProjectKorra.log, "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
 			if (((SQLite) sql).open() == null) {
@@ -120,6 +126,12 @@ public class DBConnection {
 			if (!sql.tableExists("pk_board")) {
 				ProjectKorra.log.info("Creating pk_board table");
 				final String query = "CREATE TABLE `pk_board` (uuid TEXT(36) NOT NULL, enabled INTEGER NOT NULL, PRIMARY KEY (uuid));";
+				sql.modifyQuery(query, false);
+			}
+			//Table for temp elements
+			if (!sql.tableExists("pk_temp_elements")) {
+				ProjectKorra.log.info("Creating pk_temp_elements table");
+				final String query = "CREATE TABLE `pk_temp_elements` (uuid TEXT(36) NOT NULL, element TEXT(255) NOT NULL, expiry BIGINT, PRIMARY KEY (uuid, element));";
 				sql.modifyQuery(query, false);
 			}
 		}
