@@ -179,6 +179,13 @@ public class OctopusForm extends WaterAbility {
 			this.sourceBlock.setType(Material.AIR);
 		} else if (isCauldron(this.sourceBlock)) {
 			GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
+		} else if (isMud(this.sourceBlock)) {
+			if (this.sourceBlock.getType() == Material.getMaterial("MUD") || this.sourceBlock.getType() == Material.getMaterial("PACKED_MUD")) {
+				this.sourceBlock.setType(Material.DIRT);
+			} else {
+				this.sourceBlock.setType(Material.getMaterial("MANGROVE_ROOTS"));
+			}
+			playMudbendingSound(this.sourceBlock.getLocation());
 		}
 		this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : GeneralMethods.getWaterData(0), this);
 	}

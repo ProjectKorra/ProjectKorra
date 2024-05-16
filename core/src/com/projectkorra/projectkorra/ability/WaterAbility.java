@@ -130,7 +130,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isWaterbendable(final Material material) {
-		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material) || isCauldron(material);
+		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material) || isCauldron(material) || isMud(material);
 	}
 
 	public static Block getIceSourceBlock(final Player player, final double range) {
@@ -222,7 +222,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block) && !isMud(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
@@ -315,6 +315,26 @@ public abstract class WaterAbility extends ElementalAbility {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
+	}
+
+	public static void playMudbendingSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Water.MudSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.MudSound.Pitch");
+
+			Sound sound = Sound.BLOCK_WET_GRASS_STEP;
+			if (GeneralMethods.getMCVersion() >= 1190) {
+				sound = Sound.valueOf("BLOCK_MUD_STEP");
+			}
+
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Water.MudSound.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Water.MudSound.Sound' is not valid.");
 			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}

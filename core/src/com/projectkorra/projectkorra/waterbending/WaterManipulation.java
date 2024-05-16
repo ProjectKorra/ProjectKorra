@@ -192,10 +192,17 @@ public class WaterManipulation extends WaterAbility {
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
-					} else if (!isIce(this.sourceBlock) && !isCauldron(this.sourceBlock)) {
+					} else if (!isIce(this.sourceBlock) && !isCauldron(this.sourceBlock) && !isMud(this.sourceBlock)) {
 						addWater(this.sourceBlock);
 					} else if (isCauldron(this.sourceBlock)) {
 						GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
+					} else if (isMud(this.sourceBlock)) {
+						if (this.sourceBlock.getType() == Material.getMaterial("MUD") || this.sourceBlock.getType() == Material.getMaterial("PACKED_MUD")) {
+							this.sourceBlock.setType(Material.DIRT);
+						} else {
+							this.sourceBlock.setType(Material.getMaterial("MANGROVE_ROOTS"));
+						}
+						playMudbendingSound(this.sourceBlock.getLocation());
 					}
 				}
 			}
@@ -231,7 +238,7 @@ public class WaterManipulation extends WaterAbility {
 				return;
 			} else {
 				if (!this.progressing) {
-					if (!(isWater(this.sourceBlock.getType()) || isCauldron(this.sourceBlock) || (isIce(this.sourceBlock) && this.bPlayer.canIcebend()) || (isSnow(this.sourceBlock) && this.bPlayer.canIcebend()) || (isPlant(this.sourceBlock) && this.bPlayer.canPlantbend()))) {
+					if (!(isWater(this.sourceBlock.getType()) || isCauldron(this.sourceBlock) || isMud(this.sourceBlock) || (isIce(this.sourceBlock) && this.bPlayer.canIcebend()) || (isSnow(this.sourceBlock) && this.bPlayer.canIcebend()) || (isPlant(this.sourceBlock) && this.bPlayer.canPlantbend()))) {
 						this.remove();
 						return;
 					}
@@ -365,7 +372,7 @@ public class WaterManipulation extends WaterAbility {
 			return;
 		}
 		if (AFFECTED_BLOCKS.containsKey(block)) {
-			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isCauldron(block)) {
+			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isCauldron(block) && !isMud(block)) {
 				block.setType(Material.AIR);
 			}
 			AFFECTED_BLOCKS.remove(block);
@@ -375,7 +382,7 @@ public class WaterManipulation extends WaterAbility {
 	private void removeWater(final Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isCauldron(block)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isCauldron(block) && !isMud(block)) {
 					block.setType(Material.AIR);
 				}
 				AFFECTED_BLOCKS.remove(block);

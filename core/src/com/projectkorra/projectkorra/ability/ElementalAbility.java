@@ -196,6 +196,14 @@ public abstract class ElementalAbility extends CoreAbility {
 		return isMetal(block);
 	}
 
+	public static boolean isMud(final Block block) {
+		return block != null ? isMud(block.getType()) : false;
+	}
+
+	public static boolean isMud(final Material material) {
+		return GeneralMethods.getMCVersion() >= 1190 && (material == Material.getMaterial("MUD") || material == Material.getMaterial("PACKED_MUD") || material == Material.getMaterial("MUDDY_MANGROVE_ROOTS"));
+	}
+
 	public static boolean isNegativeEffect(final PotionEffectType effect) {
 		for (final PotionEffectType effect2 : NEGATIVE_EFFECTS) {
 			if (effect2.equals(effect)) {
