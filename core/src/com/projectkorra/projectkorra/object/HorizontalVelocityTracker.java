@@ -1,9 +1,12 @@
 package com.projectkorra.projectkorra.object;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -18,8 +21,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 
@@ -39,16 +40,18 @@ public class HorizontalVelocityTracker {
 	private Vector thisVelocity;
 	private Location launchLocation;
 	private Location impactLocation;
-	private Ability abil;
+	private CoreAbility abil;
 
 	public static String[] abils = { "AirBlast", "AirBurst", "AirSuction", "Bloodbending" };
 
-	public HorizontalVelocityTracker(final Entity e, final Player instigator, final long delay, final Ability ability) {
+	public HorizontalVelocityTracker(final Entity e, final Player instigator, final long delay, final CoreAbility ability) {
 		if (!ProjectKorra.plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled")) {
 			return;
 		}
 
 		if (!(e instanceof LivingEntity)) {
+			return;
+		} else if (instances.containsKey(e)) {
 			return;
 		}
 
@@ -70,7 +73,9 @@ public class HorizontalVelocityTracker {
 			return;
 		}
 
-		if (this.entity.isOnGround() && System.currentTimeMillis() > this.fireTime + 1000) {
+		// We want to see if the entity actually has applied velocity. It's a bit difficult to assess
+		// this, so the way here is just an approximation, it's not always precise; the tracker won't be removed.
+		if (entity.isOnGround() && (this.thisVelocity.length() < 0.8 || entity.getVelocity().getX() == 0.0 || entity.getVelocity().getZ() == 0.0)) {
 			this.remove();
 			return;
 		}
@@ -86,33 +91,36 @@ public class HorizontalVelocityTracker {
 
 		final Vector diff = this.thisVelocity.subtract(this.lastVelocity);
 
-		final List<Block> blocks = GeneralMethods.getBlocksAroundPoint(this.entity.getLocation(), 1.5);
-
-		for (final Block b : blocks) {
-			if (ElementalAbility.isWater(b)) {
-				this.remove();
-				return;
-			}
-		}
-
 		if (this.thisVelocity.length() < this.lastVelocity.length()) {
-			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
+			if ((diff.getX() > 0 || diff.getX() < 0) || (diff.getZ() > 0 || diff.getZ() < 0)) {
 				this.impactLocation = this.entity.getLocation();
-				for (final Block b : blocks) {
-					if (b.getType() == Material.BARRIER && !this.barrier) {
-						continue;
-					}
-					if (GeneralMethods.isSolid(b) && (this.entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
-						if (!ElementalAbility.isTransparent(this.instigator, b)) {
-							this.hasBeenDamaged = true;
-							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(this.entity, this.instigator, this.lastVelocity, this.thisVelocity, diff, this.launchLocation, this.impactLocation, this.abil));
-							this.remove();
-							return;
-						}
-					}
+
+				if (didHitWall((LivingEntity) this.entity)) {
+					this.hasBeenDamaged = true;
+					ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(this.entity, this.instigator, this.lastVelocity, this.thisVelocity, diff, this.launchLocation, this.impactLocation, this.abil));
+					this.remove();
+					return;
 				}
 			}
 		}
+	}
+
+	private boolean didHitWall(LivingEntity entity) {
+		BlockFace[] faces = { BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH_EAST, BlockFace.NORTH_WEST, BlockFace.SOUTH_EAST, BlockFace.SOUTH_WEST };
+
+		for (int i = 0; i < 2; i++) {
+			for (BlockFace face : faces) {
+				Block block = entity.getLocation().clone().add(0, i, 0).getBlock().getRelative(face, 1);
+
+				if (block.getType() == Material.BARRIER && !barrier) {
+					continue;
+				}
+				if (GeneralMethods.isSolid(block)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public static void updateAll() {
