@@ -70,7 +70,7 @@ public class HorizontalVelocityTracker {
 			return;
 		}
 
-		if (this.entity.isOnGround()) {
+		if (this.entity.isOnGround() && System.currentTimeMillis() > this.fireTime + 1000) {
 			this.remove();
 			return;
 		}
@@ -100,7 +100,7 @@ public class HorizontalVelocityTracker {
 				this.impactLocation = this.entity.getLocation();
 				for (final Block b : blocks) {
 					if (b.getType() == Material.BARRIER && !this.barrier) {
-						return;
+						continue;
 					}
 					if (GeneralMethods.isSolid(b) && (this.entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || this.entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
 						if (!ElementalAbility.isTransparent(this.instigator, b)) {
