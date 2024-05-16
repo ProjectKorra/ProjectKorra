@@ -811,9 +811,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.PowerMultiplier", 2);
 			config.addDefault("Abilities.Avatar.AvatarState.PlaySound", true);
-			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_ANVIL_LAND");
+			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_BEACON_POWER_SELECT");
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Volume", 1);
-			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1);
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
