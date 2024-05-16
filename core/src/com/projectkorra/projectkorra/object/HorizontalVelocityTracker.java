@@ -49,9 +49,7 @@ public class HorizontalVelocityTracker {
 			return;
 		}
 
-		if (!(e instanceof LivingEntity)) {
-			return;
-		} else if (instances.containsKey(e)) {
+		if (instances.containsKey(e)) {
 			return;
 		}
 
