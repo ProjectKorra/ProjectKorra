@@ -401,25 +401,19 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void updateSourceBlock(final Block sourceBlock) {
-		updateSourceBlock(sourceBlock, (block) -> {
-			if (isCauldron(block)) {
-				GeneralMethods.setCauldronData(block, ((Levelled) block.getBlockData()).getLevel() - 1);
-			} else if (isMud(block)) {
-				if (block.getType() == Material.getMaterial("MUD") || block.getType() == Material.getMaterial("PACKED_MUD")) {
-					block.setType(Material.DIRT);
-				} else {
-					block.setType(Material.getMaterial("MANGROVE_ROOTS"));
-				}
-				playMudbendingSound(block.getLocation());
-			} else if (isSponge(block)) {
-				block.setType(Material.SPONGE);
-				block.getWorld().playSound(block.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
+		if (isCauldron(sourceBlock)) {
+			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
+		} else if (isMud(sourceBlock)) {
+			if (sourceBlock.getType() == Material.getMaterial("MUD") || sourceBlock.getType() == Material.getMaterial("PACKED_MUD")) {
+				sourceBlock.setType(Material.DIRT);
+			} else {
+				sourceBlock.setType(Material.getMaterial("MANGROVE_ROOTS"));
 			}
-		});
-	}
-
-	public static void updateSourceBlock(final Block sourceBlock, final Consumer<Block> consumer) {
-		consumer.accept(sourceBlock);
+			playMudbendingSound(sourceBlock.getLocation());
+		} else if (isSponge(sourceBlock)) {
+			sourceBlock.setType(Material.SPONGE);
+			sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
+		}
 	}
 
 	/**
