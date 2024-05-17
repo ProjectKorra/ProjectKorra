@@ -121,6 +121,9 @@ public class FireComboStream extends BukkitRunnable {
 					this.collision((LivingEntity) entity, this.direction, this.coreAbility);
 				}
 			}
+			for (Block b : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
+				FireAbility.dryWetBlocks(b, this.coreAbility);
+			}
 		}
 
 		this.checkCollisionCounter++;

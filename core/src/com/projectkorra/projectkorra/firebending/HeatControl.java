@@ -17,7 +17,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -199,6 +201,10 @@ public class HeatControl extends FireAbility {
 
 					block.setType(Material.AIR);
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
+				} else if (block.getType() == Material.WET_SPONGE) {
+					if (!isWater(block.getRelative(BlockFace.UP)) && !isWater(block.getRelative(BlockFace.DOWN)) && !isWater(block.getRelative(BlockFace.NORTH)) && !isWater(block.getRelative(BlockFace.SOUTH)) && !isWater(block.getRelative(BlockFace.EAST)) && !isWater(block.getRelative(BlockFace.WEST))) {
+						dryWetBlocks(block, this, true);
+					}
 				}
 			}
 
@@ -337,7 +343,7 @@ public class HeatControl extends FireAbility {
 		IceWave.thaw(block);
 
 		if (isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
-			if (block.getType() == Material.SNOW) {
+			if (isSnow(block)) {
 				block.setType(Material.AIR);
 				return;
 			} else {
