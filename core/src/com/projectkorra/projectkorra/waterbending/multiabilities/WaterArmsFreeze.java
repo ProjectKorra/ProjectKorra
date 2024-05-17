@@ -107,6 +107,7 @@ public class WaterArmsFreeze extends IceAbility {
 					this.waterArms.setRightArmCooldown(false);
 				}
 				this.waterArms.setMaxIceBlasts(this.waterArms.getMaxIceBlasts() - 1);
+				ActionBar.sendActionBar(Element.WATER.getSubColor() + "Ice blasts left: " + this.waterArms.getMaxIceBlasts(), this.player);
 			}
 		}
 
@@ -163,6 +164,7 @@ public class WaterArmsFreeze extends IceAbility {
 					this.waterArms.setRightArmCooldown(false);
 				}
 				this.waterArms.setMaxIceBlasts(this.waterArms.getMaxIceBlasts() - 1);
+				ActionBar.sendActionBar(Element.WATER.getSubColor() + "Ice Blasts Left: " + this.waterArms.getMaxIceBlasts(), this.player);
 			}
 		}
 	}
