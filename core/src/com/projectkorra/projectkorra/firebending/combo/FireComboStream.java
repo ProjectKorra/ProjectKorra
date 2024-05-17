@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -117,6 +118,9 @@ public class FireComboStream extends BukkitRunnable {
 				if (entity instanceof LivingEntity && !entity.equals(this.coreAbility.getPlayer()) && !entity.isDead()) {
 					this.collision((LivingEntity) entity, this.direction, this.coreAbility);
 				}
+			}
+			for (Block b : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
+				FireAbility.dryWetBlocks(b, this.coreAbility);
 			}
 		}
 

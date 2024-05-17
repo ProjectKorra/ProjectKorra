@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.firebending;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -147,6 +149,13 @@ public class FireShield extends FireAbility {
 					entity.remove();
 				}
 			}
+			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.shieldRadius)) {
+				if (ThreadLocalRandom.current().nextInt(5) == 0) {
+					dryWetBlocks(block, this, true);
+				} else {
+					dryWetBlocks(block, this);
+				}
+			}
 		} else {
 			this.location = this.player.getEyeLocation().clone();
 			final Vector direction = this.location.getDirection();
@@ -173,6 +182,13 @@ public class FireShield extends FireAbility {
 					}
 				} else if (entity instanceof Projectile) {
 					entity.remove();
+				}
+			}
+			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.discRadius)) {
+				if (ThreadLocalRandom.current().nextInt(5) == 0) {
+					dryWetBlocks(block, this, true);
+				} else {
+					dryWetBlocks(block, this);
 				}
 			}
 		}
