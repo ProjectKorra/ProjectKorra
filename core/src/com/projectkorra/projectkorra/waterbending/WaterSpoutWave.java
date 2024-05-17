@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -209,8 +210,22 @@ public class WaterSpoutWave extends WaterAbility {
 				if (isPlant(this.origin.getBlock()) || isSnow(this.origin.getBlock())) {
 					new PlantRegrowth(this.player, this.origin.getBlock());
 					this.origin.getBlock().setType(Material.AIR);
-				} else if (isCauldron(this.origin.getBlock())) {
-					this.origin.getBlock().setType(Material.CAULDRON);
+				} else if (isCauldron(this.origin.getBlock()) || isMud(this.origin.getBlock()) || isSponge(this.origin.getBlock())) {
+					updateSourceBlock(this.origin.getBlock(), block -> {
+						if (isCauldron(block)) {
+							this.origin.getBlock().setType(Material.CAULDRON);
+						} else if (isMud(block)) {
+							if (block.getType() == Material.getMaterial("MUD") || block.getType() == Material.getMaterial("PACKED_MUD")) {
+								block.setType(Material.DIRT);
+							} else {
+								block.setType(Material.getMaterial("MANGROVE_ROOTS"));
+							}
+							playMudbendingSound(block.getLocation());
+						} else if (isSponge(block)) {
+							block.setType(Material.SPONGE);
+							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
+						}
+					});
 				}
 
 				if (TempBlock.isTempBlock(this.origin.getBlock())) {

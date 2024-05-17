@@ -210,15 +210,8 @@ public class SurgeWall extends WaterAbility {
 				if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 					new PlantRegrowth(this.player, this.sourceBlock);
 					this.sourceBlock.setType(Material.AIR, false);
-				} else if (isCauldron(this.sourceBlock)) {
-					GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
-				} else if (isMud(this.sourceBlock)) {
-					if (this.sourceBlock.getType() == Material.getMaterial("MUD") || this.sourceBlock.getType() == Material.getMaterial("PACKED_MUD")) {
-						this.sourceBlock.setType(Material.DIRT);
-					} else {
-						this.sourceBlock.setType(Material.getMaterial("MANGROVE_ROOTS"));
-					}
-					playMudbendingSound(this.sourceBlock.getLocation());
+				} else if (isCauldron(this.sourceBlock) || isMud(this.sourceBlock) || isSponge(this.sourceBlock)) {
+					updateSourceBlock(this.sourceBlock);
 				}
 				this.addWater(this.sourceBlock);
 			}
