@@ -166,6 +166,11 @@ public class AirPound extends AirAbility {
 				if (GeneralMethods.isSolid(player.getLocation().clone().subtract(0, i, 0).getBlock().getRelative(BlockFace.DOWN))) {
 					foundGround = true;
 				}
+				// In case the player is in the void: causes infinite loop.
+				// There's also no point to keep generating charge after a certain point.
+				if (i > 400) {
+					break;
+				}
 			}
 			y *= 2.5;
 			chargeUp = Math.max(chargeUp, y);
