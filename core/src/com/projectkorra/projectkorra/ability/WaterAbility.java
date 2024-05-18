@@ -1,9 +1,13 @@
 package com.projectkorra.projectkorra.ability;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -33,6 +37,7 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public abstract class WaterAbility extends ElementalAbility {
+	public static final Map<Material, Material> WATER_TRANSFORMABLE_BLOCKS = getWaterTransformableBlocks();
 
 	public WaterAbility(final Player player) {
 		super(player);
@@ -292,6 +297,9 @@ public abstract class WaterAbility extends ElementalAbility {
 		return material == Material.WET_SPONGE;
 	}
 
+	// A "non-transparent source" is a PK supported default non-transparent source block, not one from the config.
+	// I.e, cauldrons, mud and sponges.
+	// Used so that non-transparent sources aren't replaced with AIR.
 	public static boolean isNonTransparentSource(final Block block) {
 		return isNonTransparentSource(block.getType());
 	}
@@ -300,6 +308,8 @@ public abstract class WaterAbility extends ElementalAbility {
 		return isCauldron(material) || isMud(material) || isSponge(material);
 	}
 
+	// A "solid source" is a PK supported default solid source block, not one from the config.
+	// I.e., cauldrons, mud, sponges, ice and solid snow.
 	public static boolean isSolidSource(final Block block) {
 		return isSolidSource(block.getType());
 	}
@@ -323,6 +333,34 @@ public abstract class WaterAbility extends ElementalAbility {
 			return false;
 		}
 		return true;
+	}
+
+	public static Map<Material, Material> getWaterTransformableBlocks() {
+		List<String> transformableBlocks = getConfig().getStringList("Properties.Water.TransformableBlocks");
+		Map<Material, Material> transformables = new HashMap<>();
+
+		for (String block : transformableBlocks) {
+			String[] split = block.split(">");
+			if (split.length != 2) {
+				ProjectKorra.log.warning("Invalid TransformableBlock: " + block);
+				continue;
+			}
+			Material from = Material.getMaterial(split[0]);
+			Material to = Material.getMaterial(split[1]);
+			if (from == null || to == null) {
+				ProjectKorra.log.warning("Invalid TransformableBlock: " + block);
+				continue;
+			}
+			transformables.put(from, to);
+		}
+		return transformables;
+	}
+
+	public static void setupWaterTransformableBlocks() {
+		if (!WATER_TRANSFORMABLE_BLOCKS.isEmpty()) {
+			WATER_TRANSFORMABLE_BLOCKS.clear();
+		}
+		WATER_TRANSFORMABLE_BLOCKS.putAll(getWaterTransformableBlocks());
 	}
 
 	public static void playFocusWaterEffect(final Block block) {
@@ -400,20 +438,22 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 	}
 
-	public static void updateSourceBlock(final Block sourceBlock) {
+	public static boolean updateSourceBlock(final Block sourceBlock) {
 		if (isCauldron(sourceBlock)) {
 			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
-		} else if (isMud(sourceBlock)) {
-			if (sourceBlock.getType() == Material.getMaterial("MUD") || sourceBlock.getType() == Material.getMaterial("PACKED_MUD")) {
-				sourceBlock.setType(Material.DIRT);
-			} else {
-				sourceBlock.setType(Material.getMaterial("MANGROVE_ROOTS"));
+			return true;
+		} else if (isMud(sourceBlock) || isSponge(sourceBlock)) {
+			if (isMud(sourceBlock)) {
+				playMudbendingSound(sourceBlock.getLocation());
+			} else if (isSponge(sourceBlock)) {
+				sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
 			}
-			playMudbendingSound(sourceBlock.getLocation());
-		} else if (isSponge(sourceBlock)) {
-			sourceBlock.setType(Material.SPONGE);
-			sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
+			if (WATER_TRANSFORMABLE_BLOCKS.containsKey(sourceBlock.getType())) {
+				sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
+				return true;
+			}
 		}
+		return false;
 	}
 
 	/**
