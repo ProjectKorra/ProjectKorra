@@ -114,6 +114,7 @@ public class AirPound extends AirAbility {
 			}
 			switch (state) {
 				case BLAST:
+					// Rotate spiral by 20 points. Higher is faster, but looks wonkier.
 					change = change > 360 ? 0 : change + 20;
 
 					playAirbendingParticles(location, 5, 0.25, 0.25, 0.25);
@@ -124,6 +125,7 @@ public class AirPound extends AirAbility {
 					});
 					break;
 				case MEDIUM:
+					// Rotate spiral by 15 points.
 					change = change > 360 ? 0 : change + 15;
 
 					playAirbendingParticles(location, 8, 0.4, 0.4, 0.4);
@@ -132,6 +134,8 @@ public class AirPound extends AirAbility {
 					generateSpirals(location, direction, 2.5, 3, (int) change, false, loc -> playAirbendingParticles(loc, 5, 0, 0, 0));
 					break;
 				case POUND:
+					// Incrementing "change" each tick will make the circle grow and create
+					// the gust looking attack we're looking for.
 					change += 0.3;
 					radius = change;
 
@@ -152,9 +156,11 @@ public class AirPound extends AirAbility {
 	private void chargeUp() {
 		boolean onGround = true;
 
+		// See if player is on ground.
 		if (!GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(BlockFace.DOWN, 4))) {
 			onGround = false;
 		}
+		// If they are in the air, we'll get some charges through height.
 		if (!onGround) {
 			boolean foundGround = false;
 			y = 0;
@@ -179,12 +185,14 @@ public class AirPound extends AirAbility {
 			}
 			playAirbendingSound(player.getLocation());
 		} else {
+			// If the player is on the ground, we'll get charges through momentum/sprinting.
 			if (player.isSprinting()) {
 				if (chargeUp < 150) {
 					chargeUp++;
 				}
 				playAirbendingSound(player.getLocation());
 			} else {
+				// If the player is standing still (even for a second) on the ground, we'll start to lose charges.
 				chargeUp = chargeUp <= 0 ? 0 : chargeUp - 1;
 			}
 		}
@@ -198,6 +206,7 @@ public class AirPound extends AirAbility {
 		this.location = this.origin.clone();
 		this.direction = player.getEyeLocation().getDirection();
 
+		// Some calculated stuff for charges.
 		cooldown = (long) ((maxCooldown - minCooldown) * (chargeUp / 100.0));
 		damage = (chargeUp / 100.0) + minDamage;
 		range = ((chargeUp / 100.0) * (minRange)) + minRange;
@@ -209,7 +218,7 @@ public class AirPound extends AirAbility {
 		if (range > maxRange) {
 			range = maxRange;
 		}
-		if (chargeUp < 50) {
+		if (chargeUp < 50) { // If the charge is less than 50, we'll just do a blast.
 			if (cooldown < minCooldown) {
 				cooldown = minCooldown;
 			}
@@ -217,12 +226,12 @@ public class AirPound extends AirAbility {
 			radius = 1.15;
 
 			state = PoundState.BLAST;
-		} else if (chargeUp > 50 && chargeUp < 100) {
+		} else if (chargeUp > 50 && chargeUp < 100) { // If the charge is between 50 and 100, we'll do a medium blast.
 			speed = maxSpeed;
 			radius = 1.25;
 
 			state = PoundState.MEDIUM;
-		} else if (chargeUp >= 100) {
+		} else if (chargeUp >= 100) { // If the charge is 100, we'll do a full pound.
 			speed = maxSpeed;
 			knockback = maxKnockback;
 
@@ -268,10 +277,12 @@ public class AirPound extends AirAbility {
 				}
 				DamageHandler.damageEntity(entity, damage, this);
 
+				// Only medium blasts and pounds will do knockback. Blasts will just damage.
 				if (state == PoundState.MEDIUM || state == PoundState.POUND) {
 					entity.setVelocity(direction.clone().multiply(knockback));
 					new HorizontalVelocityTracker(entity, player, 0, this);
 
+					// Pounds can apply blindness and slowness; "knocking them out".
 					if (state == PoundState.POUND) {
 						if (doesBlindness) {
 							((LivingEntity) entity).addPotionEffect(PotionEffectType.BLINDNESS.createEffect(blindnessDuration, blindnessAmplifier));
