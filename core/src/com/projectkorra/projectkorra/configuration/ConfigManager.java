@@ -342,6 +342,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. Although it is difficult to perform, it's extremely deadly once the ability starts, making it difficult for enemies to escape.");
 			config.addDefault("Abilities.Air.Suffocate.Instructions", "Hold sneak while looking at a target to begin suffocating them. If the target goes out of range, you get damaged, or you release sneak, the ability will cancel.");
 			config.addDefault("Abilities.Air.Suffocate.DeathMessage", "{victim} was asphyxiated by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.AirPound.Description", "TBA.");
+			config.addDefault("Abilities.Air.AirPound.Instructions", "\n" + "Switch to this ability to activate, then left click to initiate a blast." + "\n(Blast) A relatively quick and simple blast that damages entities." + "\n(Medium Blast) A larger version of the Blast attack that deals knockback, more damage and a larger radius." + "\n(Pound) A gust of wind that will deal knockback to the entity as well as \"knock them out\" for a while.");
+			config.addDefault("Abilities.Air.AirPound.DeathMessage", "{victim} was slammed to death by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.AirPound.HorizontalVelocityDeath", "{victim} experienced a fatal collision by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.Combo.Twister.Description", "Create a cyclone of air that travels along the ground grabbing nearby entities.");
 			config.addDefault("Abilities.Air.Combo.Twister.Instructions", "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
 			config.addDefault("Abilities.Air.Combo.AirStream.Description", "Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
@@ -1053,6 +1057,24 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Tornado.Speed", 1);
 			config.addDefault("Abilities.Air.Tornado.NpcPushFactor", 1);
 			config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
+
+			config.addDefault("Abilities.Air.AirPound.Enabled", true);
+			config.addDefault("Abilities.Air.AirPound.MinCooldown", 1500);
+			config.addDefault("Abilities.Air.AirPound.MaxCooldown", 6000);
+			config.addDefault("Abilities.Air.AirPound.MinRange", 12);
+			config.addDefault("Abilities.Air.AirPound.MaxRange", 25);
+			config.addDefault("Abilities.Air.AirPound.MinDamage", 1.5);
+			config.addDefault("Abilities.Air.AirPound.MaxDamage", 4);
+			config.addDefault("Abilities.Air.AirPound.MinSpeed", 1.2);
+			config.addDefault("Abilities.Air.AirPound.MaxSpeed", 1.8);
+			config.addDefault("Abilities.Air.AirPound.MinKnockback", 1.2);
+			config.addDefault("Abilities.Air.AirPound.MaxKnockback", 1.6);
+			config.addDefault("Abilities.Air.AirPound.PoundBlindness.Enabled", true);
+			config.addDefault("Abilities.Air.AirPound.PoundBlindness.Amplifier", 1);
+			config.addDefault("Abilities.Air.AirPound.PoundBlindness.Duration", 30);
+			config.addDefault("Abilities.Air.AirPound.PoundSlowness.Enabled", true);
+			config.addDefault("Abilities.Air.AirPound.PoundSlowness.Amplifier", 1);
+			config.addDefault("Abilities.Air.AirPound.PoundSlowness.Duration", 30);
 
 			config.addDefault("Abilities.Air.Twister.Enabled", true);
 			config.addDefault("Abilities.Air.Twister.Speed", 0.35);
