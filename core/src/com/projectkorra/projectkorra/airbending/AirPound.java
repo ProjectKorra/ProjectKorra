@@ -108,6 +108,10 @@ public class AirPound extends AirAbility {
 				remove();
 				return;
 			}
+			if (RegionProtection.isRegionProtected(player, location, this)) {
+				remove();
+				return;
+			}
 			switch (state) {
 				case BLAST:
 					change = change > 360 ? 0 : change + 20;
@@ -254,7 +258,7 @@ public class AirPound extends AirAbility {
 	private void affectEntities() {
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
 			if (entity instanceof LivingEntity && entity.getUniqueId() != player.getUniqueId()) {
-				if (Commands.invincible.contains(entity.getName())) {
+				if (Commands.invincible.contains(entity.getName()) || RegionProtection.isRegionProtected((Player) entity, entity.getLocation(), this)) {
 					continue;
 				}
 				DamageHandler.damageEntity(entity, damage, this);
