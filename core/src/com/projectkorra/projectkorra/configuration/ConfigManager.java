@@ -674,6 +674,12 @@ public class ConfigManager {
 			final ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add("#snow"); // added in 1.17
 
+			final ArrayList<String> waterTransformableBlocks = new ArrayList<>();
+			waterTransformableBlocks.add("MUD>DIRT");
+			waterTransformableBlocks.add("PACKED_MUD>DIRT");
+			waterTransformableBlocks.add("MUDDY_MANGROVE_ROOTS>MANGROVE_ROOTS");
+			waterTransformableBlocks.add("WET_SPONGE>SPONGE");
+
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
 			config.addDefault("Properties.DatabaseCooldowns", true);
@@ -726,6 +732,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
 			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
+			config.addDefault("Properties.Water.TransformableBlocks", waterTransformableBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.25);
 			config.addDefault("Properties.Water.PlaySound", true);
 			config.addDefault("Properties.Water.WaterSound.Sound", "BLOCK_WATER_AMBIENT");
