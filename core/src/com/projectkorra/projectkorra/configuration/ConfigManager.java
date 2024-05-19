@@ -1069,6 +1069,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirPound.MaxSpeed", 1.8);
 			config.addDefault("Abilities.Air.AirPound.MinKnockback", 1.2);
 			config.addDefault("Abilities.Air.AirPound.MaxKnockback", 1.6);
+			config.addDefault("Abilities.Air.AirPound.MaxCharge", 150);
+			config.addDefault("Abilities.Air.AirPound.ChargePerBlock", 4);
+			config.addDefault("Abilities.Air.AirPound.ShowChargeNumber", false);
 			config.addDefault("Abilities.Air.AirPound.PoundBlindness.Enabled", true);
 			config.addDefault("Abilities.Air.AirPound.PoundBlindness.Amplifier", 1);
 			config.addDefault("Abilities.Air.AirPound.PoundBlindness.Duration", 30);

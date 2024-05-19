@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -38,10 +39,13 @@ public class AirPound extends AirAbility {
 	private double minSpeed, speed, maxSpeed;
 	@Attribute(Attribute.KNOCKBACK)
 	private double minKnockback, knockback, maxKnockback;
+	private boolean showChargeNumber;
 	private boolean doesBlindness;
 	private boolean doesSlowness;
 	private int blindnessAmplifier, blindnessDuration;
 	private int slownessAmplifier, slownessDuration;
+	private int maxCharge;
+	private int chargePerBlock;
 
 	private enum PoundState {
 		RUNNING, BLAST, MEDIUM, POUND
@@ -55,6 +59,8 @@ public class AirPound extends AirAbility {
 	private double change;
 	private double chargeUp;
 	private int y;
+	private StringBuilder chargeBar = new StringBuilder("⬜ ⬜ ⬜ ⬜ ⬜");
+	private int[] chargePartition = { 0, 0, 0, 0, 0 };
 
 	public AirPound(Player player) {
 		super(player);
@@ -92,7 +98,16 @@ public class AirPound extends AirAbility {
 		this.slownessAmplifier = getConfig().getInt("Abilities.Air.AirPound.PoundSlowness.Amplifier");
 		this.slownessDuration = getConfig().getInt("Abilities.Air.AirPound.PoundSlowness.Duration");
 
+		this.showChargeNumber = getConfig().getBoolean("Abilities.Air.AirPound.ShowChargeNumber");
+		this.maxCharge = getConfig().getInt("Abilities.Air.AirPound.MaxCharge");
+		this.chargePerBlock = getConfig().getInt("Abilities.Air.AirPound.ChargePerBlock");
+
 		this.state = PoundState.RUNNING;
+
+		int partition = maxCharge / 5;
+		for (int i = 1; i <= 5; i++) {
+			chargePartition[i - 1] = partition * i;
+		}
 
 		start();
 	}
@@ -119,10 +134,7 @@ public class AirPound extends AirAbility {
 
 					playAirbendingParticles(location, 5, 0.25, 0.25, 0.25);
 
-					generateSpirals(location, direction, 1, 2, (int) change, true, loc -> {
-						ParticleEffect.CLOUD.display(loc, 5, 0, 0, 0, 0);
-						playAirbendingParticles(loc, 5, 0, 0, 0);
-					});
+					generateSpirals(location, direction, 1, 2, (int) change, true, loc -> playAirbendingParticles(loc, 5, 0, 0, 0));
 					break;
 				case MEDIUM:
 					// Rotate spiral by 15 points.
@@ -148,7 +160,6 @@ public class AirPound extends AirAbility {
 			}
 			affectEntities();
 		} else {
-			ActionBar.sendActionBar(Element.AIR.getColor() + "Charge: " + chargeUp, player);
 			chargeUp();
 		}
 	}
@@ -178,24 +189,65 @@ public class AirPound extends AirAbility {
 					break;
 				}
 			}
-			y *= 2.5;
+			y *= chargePerBlock;
 			chargeUp = Math.max(chargeUp, y);
-			if (chargeUp > 150) {
-				chargeUp = 150;
+			if (chargeUp > maxCharge) {
+				chargeUp = maxCharge;
 			}
 			playAirbendingSound(player.getLocation());
+			chargeActionBar(true);
 		} else {
 			// If the player is on the ground, we'll get charges through momentum/sprinting.
 			if (player.isSprinting()) {
-				if (chargeUp < 150) {
+				if (chargeUp < maxCharge) {
 					chargeUp++;
 				}
 				playAirbendingSound(player.getLocation());
+				chargeActionBar(true);
 			} else {
 				// If the player is standing still (even for a second) on the ground, we'll start to lose charges.
 				chargeUp = chargeUp <= 0 ? 0 : chargeUp - 1;
+				chargeActionBar(false);
 			}
 		}
+	}
+
+	private void chargeActionBar(boolean charging) {
+		switch (getChargeLevel()) {
+			case 0:
+				chargeBar = new StringBuilder("⬜ ⬜ ⬜ ⬜ ⬜");
+				break;
+			case 1:
+				chargeBar = new StringBuilder("⬛ ⬜ ⬜ ⬜ ⬜");
+				break;
+			case 2:
+				chargeBar = new StringBuilder("⬛ ⬛ ⬜ ⬜ ⬜");
+				break;
+			case 3:
+				chargeBar = new StringBuilder("⬛ ⬛ ⬛ ⬜ ⬜");
+				break;
+			case 4:
+				chargeBar = new StringBuilder("⬛ ⬛ ⬛ ⬛ ⬜");
+				break;
+			case 5:
+				chargeBar = new StringBuilder("⬛ ⬛ ⬛ ⬛ ⬛");
+				break;
+		}
+		String chargeNumber = showChargeNumber ? " - " + (int) chargeUp : "";
+		if (charging) {
+			ActionBar.sendActionBar(Element.AIR.getColor() + "Charge: " + ChatColor.GREEN + chargeBar + chargeNumber, player);
+		} else {
+			ActionBar.sendActionBar(Element.AIR.getColor() + "Charge: " + ChatColor.RED + chargeBar + chargeNumber, player);
+		}
+	}
+
+	private int getChargeLevel() {
+		for (int i = 0; i < 5; i++) {
+			if (chargeUp < chargePartition[i]) {
+				return i;
+			}
+		}
+		return 5;
 	}
 
 	public void pound() {
@@ -218,7 +270,7 @@ public class AirPound extends AirAbility {
 		if (range > maxRange) {
 			range = maxRange;
 		}
-		if (chargeUp < 50) { // If the charge is less than 50, we'll just do a blast.
+		if (chargeUp < (maxCharge / 3)) { // If the charge is less than 1/3 of max charge, we'll just do a blast.
 			if (cooldown < minCooldown) {
 				cooldown = minCooldown;
 			}
@@ -226,12 +278,12 @@ public class AirPound extends AirAbility {
 			radius = 1.15;
 
 			state = PoundState.BLAST;
-		} else if (chargeUp > 50 && chargeUp < 100) { // If the charge is between 50 and 100, we'll do a medium blast.
+		} else if (chargeUp > (maxCharge / 3) && chargeUp < ((maxCharge) / 3) * 2) { // If the charge is between 1/3 and 2/3 of max charge, we'll do a medium blast.
 			speed = maxSpeed;
 			radius = 1.25;
 
 			state = PoundState.MEDIUM;
-		} else if (chargeUp >= 100) { // If the charge is 100, we'll do a full pound.
+		} else if (chargeUp >= ((maxCharge / 3) * 2)) { // If the charge is above 2/3 of max charge, we'll do a full pound.
 			speed = maxSpeed;
 			knockback = maxKnockback;
 
@@ -272,7 +324,7 @@ public class AirPound extends AirAbility {
 	private void affectEntities() {
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
 			if (entity instanceof LivingEntity && entity.getUniqueId() != player.getUniqueId()) {
-				if (Commands.invincible.contains(entity.getName()) || RegionProtection.isRegionProtected((Player) entity, entity.getLocation(), this)) {
+				if (Commands.invincible.contains(entity.getName()) || (entity instanceof Player && RegionProtection.isRegionProtected((Player) entity, entity.getLocation(), this))) {
 					continue;
 				}
 				DamageHandler.damageEntity(entity, damage, this);

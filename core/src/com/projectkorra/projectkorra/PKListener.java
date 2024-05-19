@@ -1678,7 +1678,8 @@ public class PKListener implements Listener {
 
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null) {
-			if (bPlayer.getAbilities().get(slot).equalsIgnoreCase("AirPound")) {
+			String ability = bPlayer.getAbilities().get(slot);
+			if (ability != null && ability.equalsIgnoreCase("AirPound")) {
 				if (!CoreAbility.hasAbility(player, AirPound.class)) {
 					new AirPound(player);
 				}
@@ -1809,6 +1810,8 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("AirPound")) {
 						if (CoreAbility.hasAbility(player, AirPound.class)) {
 							AirPound.pound(player);
+						} else {
+							new AirPound(player);
 						}
 					} else if (abil.equalsIgnoreCase("Flight")) {
 						new FlightMultiAbility(player);
