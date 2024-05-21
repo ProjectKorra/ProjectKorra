@@ -106,7 +106,34 @@ public abstract class ElementalAbility extends CoreAbility {
 			return true;
 		}
 
-		return time >= 23500 || time <= 12500;
+		return time >= 23750 || time <= 12250;
+	}
+
+	public static boolean isDawn(final World world) {
+		final long time = world.getTime();
+		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
+			return false;
+		}
+
+		return time > 23250 && time < 23750;
+	}
+
+	public static boolean isDusk(final World world) {
+		final long time = world.getTime();
+		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
+			return false;
+		}
+
+		return time > 12250 && time < 12750;
+	}
+
+	public static boolean isNight(final World world) {
+		final long time = world.getTime();
+		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
+			return false;
+		}
+
+		return time >= 12750 && time <= 23250;
 	}
 
 	public static boolean isEarth(final Block block) {
@@ -189,14 +216,7 @@ public abstract class ElementalAbility extends CoreAbility {
 		return false;
 	}
 
-	public static boolean isNight(final World world) {
-		final long time = world.getTime();
-		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
-			return false;
-		}
 
-		return time >= 12950 && time <= 23050;
-	}
 
 	public static boolean isPlant(final Block block) {
 		return block != null && isPlant(block.getType());

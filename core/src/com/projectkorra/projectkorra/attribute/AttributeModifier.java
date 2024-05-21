@@ -46,11 +46,11 @@ public enum AttributeModifier {
 			return oldValue.intValue() / modifier.intValue();
 		}
 		return 0;
-	});
+	}), SET((oldValue, modifier) -> modifier);
 
 	private AttributeModifierMethod modifier;
 
-	private AttributeModifier(final AttributeModifierMethod modifier) {
+	AttributeModifier(final AttributeModifierMethod modifier) {
 		this.modifier = modifier;
 	}
 

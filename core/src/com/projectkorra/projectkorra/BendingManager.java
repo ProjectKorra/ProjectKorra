@@ -62,7 +62,9 @@ public class BendingManager implements Runnable {
 
 			WorldTimeEvent.Time from = this.times.get(world);
 
-			WorldTimeEvent.Time to = ElementalAbility.isDay(world) ? WorldTimeEvent.Time.DAY : WorldTimeEvent.Time.NIGHT;
+			WorldTimeEvent.Time to = ElementalAbility.isDay(world) ? WorldTimeEvent.Time.DAY :
+					(ElementalAbility.isNight(world) ? WorldTimeEvent.Time.NIGHT :
+							(ElementalAbility.isDusk(world) ? WorldTimeEvent.Time.DUSK : WorldTimeEvent.Time.DAWN));
 
 			if (from == null) {
 				this.times.put(world, to);

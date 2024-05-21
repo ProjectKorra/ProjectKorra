@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class WorldTimeEvent extends WorldEvent {
 
     public enum Time {
-        DAY, NIGHT
+        DAY, NIGHT, DAWN, DUSK
     }
 
     private static final HandlerList HANDLERS = new HandlerList();

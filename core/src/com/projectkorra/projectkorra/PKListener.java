@@ -35,6 +35,9 @@ import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
+import com.projectkorra.projectkorra.attribute.AttributeModification;
+import com.projectkorra.projectkorra.attribute.AttributeModifier;
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.board.BendingBoardManager;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
@@ -2047,6 +2050,42 @@ public class PKListener implements Listener {
 		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
 			if (metalClips.getTrackedIngots().contains(event.getItem())) {
 				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler
+	public void onTimeChange(WorldTimeEvent event) {
+		for (CoreAbility abil : CoreAbility.getAbilitiesByInstances()) {
+			if (abil instanceof WaterAbility || abil instanceof FireAbility) {
+				abil.recalculateAttributes();
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void onAttributeRecalc(AbilityRecalculateAttributeEvent event) {
+		if (event.hasMarker(DayNightFactor.class)) {
+			boolean day = FireAbility.isDay(event.getAbility().getLocation().getWorld());
+			boolean night = WaterAbility.isNight(event.getAbility().getLocation().getWorld());
+			if (event.getAbility() instanceof WaterAbility && night) {
+				double factor = WaterAbility.getNightFactor();
+
+				DayNightFactor dayNightFactor = event.getMarker(DayNightFactor.class);
+				if (dayNightFactor.factor() != -1) factor = dayNightFactor.factor(); //If the factor isn't the default, use the one in the annotation
+
+				AttributeModifier modifier = dayNightFactor.invert() ? AttributeModifier.DIVISION : AttributeModifier.MULTIPLICATION;
+				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL, AttributeModification.NIGHT_FACTOR);
+				event.getModifications().add(mod);
+			} else if (event.getAbility() instanceof FireAbility && day) {
+				double factor = FireAbility.getDayFactor();
+
+				DayNightFactor dayNightFactor = event.getMarker(DayNightFactor.class);
+				if (dayNightFactor.factor() != -1) factor = dayNightFactor.factor(); //If the factor isn't the default, use the one in the annotation
+
+				AttributeModifier modifier = dayNightFactor.invert() ? AttributeModifier.DIVISION : AttributeModifier.MULTIPLICATION;
+				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL, AttributeModification.DAY_FACTOR);
+				event.getModifications().add(mod);
 			}
 		}
 	}
