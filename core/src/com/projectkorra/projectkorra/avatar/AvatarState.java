@@ -2,7 +2,14 @@ package com.projectkorra.projectkorra.avatar;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -22,6 +29,7 @@ public class AvatarState extends AvatarAbility {
 	private int speedPower;
 	private int resistancePower;
 	private int fireResistancePower;
+	private BossBar bar;
 	@Attribute(Attribute.DURATION)
 	private long duration;
 	@Attribute(Attribute.COOLDOWN)
@@ -54,10 +62,22 @@ public class AvatarState extends AvatarAbility {
 		playAvatarSound(player.getLocation());
 
 		this.start();
+		String title = Element.AVATAR.getColor() + "Energy: " + ChatColor.WHITE + "100%";
+		this.bar = Bukkit.createBossBar(title, BarColor.PURPLE, BarStyle.SOLID);
+		this.bar.setProgress(1);
+		this.bar.addPlayer(player);
 		if (this.duration != 0) {
 			START_TIMES.put(player.getName(), System.currentTimeMillis());
 			player.getUniqueId();
 		}
+
+	}
+
+	private void progressBossBar() {
+		double dur1 = 1 - ((double) (System.currentTimeMillis() - this.getStartTime()) / duration);
+		this.bar.setProgress(dur1);
+		String title = Element.AVATAR.getColor() + "Energy: " + ChatColor.WHITE + (int) (dur1*100) + "%";
+		this.bar.setTitle(title);
 	}
 
 	@Override
@@ -70,17 +90,19 @@ public class AvatarState extends AvatarAbility {
 		if (START_TIMES.containsKey(this.player.getName())) {
 			if (START_TIMES.get(this.player.getName()) + this.duration < System.currentTimeMillis()) {
 				START_TIMES.remove(this.player.getName());
+				this.bar.removeAll();
 				this.remove();
 				return;
 			}
 		}
-
+		progressBossBar();
 		this.addPotionEffects();
 	}
 
 	@Override
 	public void remove() {
 		this.bPlayer.addCooldown(this, true);
+		this.bar.removeAll();
 		super.remove();
 	}
 
