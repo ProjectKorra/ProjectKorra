@@ -230,6 +230,10 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
 		GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
+		if (ThreadLocalRandom.current().nextDouble() < 0.01)
+			ParticleEffect.FLASH.display(loc, 1, xOffset, yOffset, zOffset);
+		if (ThreadLocalRandom.current().nextDouble() < 0.3)
+			ParticleEffect.SCRAPE.display(loc, 2, xOffset, yOffset, zOffset, 0.05);
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
