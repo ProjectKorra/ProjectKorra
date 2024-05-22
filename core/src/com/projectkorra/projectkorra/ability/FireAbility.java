@@ -202,9 +202,11 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
-			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset, 0.03);
+			ParticleEffect.SMOKE_NORMAL.display(loc, amount, xOffset, yOffset+0.2, zOffset, 0.01);
 		} else {
-			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset, 0.05);
+			ParticleEffect.SMOKE_NORMAL.display(loc, amount, xOffset, yOffset+0.2, zOffset, 0.03);
 		}
 	}
 
