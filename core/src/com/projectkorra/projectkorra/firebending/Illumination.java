@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -27,9 +28,9 @@ public class Illumination extends FireAbility {
 
 	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<>();
 
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	private int lightThreshold;
 	private int lightLevel;

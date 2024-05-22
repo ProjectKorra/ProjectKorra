@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,16 +25,16 @@ public class TorrentWave extends WaterAbility {
 
 	private long time;
 	private long interval;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private double radius;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double maxRadius;
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	@Attribute(Attribute.HEIGHT)
 	private double maxHeight;
-	@Attribute("Grow" + Attribute.SPEED)
+	@Attribute("Grow" + Attribute.SPEED) @DayNightFactor
 	private double growSpeed;
 	private Location origin;
 	private ArrayList<TempBlock> blocks;
@@ -53,11 +54,11 @@ public class TorrentWave extends WaterAbility {
 
 		this.radius = radius;
 		this.interval = getConfig().getLong("Abilities.Water.Torrent.Wave.Interval");
-		this.maxHeight = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Height"));
-		this.maxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius"));
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.Wave.Cooldown"));
-		this.growSpeed = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed"));
+		this.maxHeight = getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
+		this.maxRadius = getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius");
+		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback");
+		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Wave.Cooldown");
+		this.growSpeed = getConfig().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed");
 		this.origin = location.clone();
 		this.time = System.currentTimeMillis();
 		this.heights = new ConcurrentHashMap<>();

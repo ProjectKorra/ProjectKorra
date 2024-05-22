@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -25,22 +26,22 @@ public class WallOfFire extends FireAbility {
 
 	private int damageTick;
 	private int intervalTick;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.HEIGHT)
+	@Attribute(Attribute.HEIGHT) @DayNightFactor
 	private double height;
-	@Attribute(Attribute.WIDTH)
+	@Attribute(Attribute.WIDTH) @DayNightFactor
 	private double width;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long damageInterval;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
 	private long time;
 	private long interval;
-	@Attribute(Attribute.FIRE_TICK)
+	@Attribute(Attribute.FIRE_TICK) @DayNightFactor
 	private double fireTicks;
 	private double maxAngle;
 	private Random random;
@@ -52,11 +53,11 @@ public class WallOfFire extends FireAbility {
 
 		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
 		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.WallOfFire.Range"));
-		this.height = applyModifiers(getConfig().getDouble("Abilities.Fire.WallOfFire.Height"));
-		this.width = applyModifiers(getConfig().getDouble("Abilities.Fire.WallOfFire.Width"));
-		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.WallOfFire.Damage"));
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown"));
+		this.range = getConfig().getDouble("Abilities.Fire.WallOfFire.Range");
+		this.height = getConfig().getDouble("Abilities.Fire.WallOfFire.Height");
+		this.width = getConfig().getDouble("Abilities.Fire.WallOfFire.Width");
+		this.damage = getConfig().getDouble("Abilities.Fire.WallOfFire.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown");
 		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
 		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.WallOfFire.FireTicks");

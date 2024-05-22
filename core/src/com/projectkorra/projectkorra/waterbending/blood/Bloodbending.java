@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creature;
@@ -40,14 +41,14 @@ public class Bloodbending extends BloodAbility {
 	private boolean onlyUsableDuringMoon;
 	@Attribute("CanBloodbendOtherBloodbenders")
 	private boolean canBloodbendOtherBloodbenders;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	private long time;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.KNOCKBACK)
+	@Attribute(Attribute.KNOCKBACK) @DayNightFactor
 	private double knockback;
 	private Entity target;
 	private Vector vector;
@@ -65,10 +66,10 @@ public class Bloodbending extends BloodAbility {
 		this.canBeUsedOnUndeadMobs = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
 		this.onlyUsableDuringMoon = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
 		this.canBloodbendOtherBloodbenders = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Bloodbending.Range"));
+		this.range = getConfig().getDouble("Abilities.Water.Bloodbending.Range");
 		this.duration = getConfig().getInt("Abilities.Water.Bloodbending.Duration");
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Bloodbending.Cooldown"));
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Bloodbending.Knockback"));
+		this.cooldown = getConfig().getLong("Abilities.Water.Bloodbending.Cooldown");
+		this.knockback = getConfig().getDouble("Abilities.Water.Bloodbending.Knockback");
 		this.vector = new Vector(0, 0, 0);
 
 		if (this.canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !this.bPlayer.canBloodbendAtAnytime()) {

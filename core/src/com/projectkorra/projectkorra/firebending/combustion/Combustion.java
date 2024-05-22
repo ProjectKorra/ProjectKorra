@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combustion;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -25,17 +26,17 @@ public class Combustion extends CombustionAbility {
 
 	private boolean breakBlocks;
 	private int ticks;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute("ExplosivePower")
+	@Attribute("ExplosivePower") @DayNightFactor
 	private float explosivePower;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double radius;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	private double speedFactor;
 	private Location location;
@@ -53,12 +54,12 @@ public class Combustion extends CombustionAbility {
 
 		this.ticks = 0;
 		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-		this.explosivePower = (float) applyModifiers(getConfig().getDouble("Abilities.Fire.Combustion.ExplosivePower"));
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Combustion.Cooldown"));
-		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.Combustion.Damage"));
-		this.radius = applyModifiers(getConfig().getDouble("Abilities.Fire.Combustion.Radius"));
+		this.explosivePower = (float) getConfig().getDouble("Abilities.Fire.Combustion.ExplosivePower");
+		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
+		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
+		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
 		this.speed = getConfig().getDouble("Abilities.Fire.Combustion.Speed");
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Combustion.Range"));
+		this.range = getConfig().getDouble("Abilities.Fire.Combustion.Range");
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = this.origin.clone();

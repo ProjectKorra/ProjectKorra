@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,20 +50,20 @@ public class WaterManipulation extends WaterAbility {
 	private boolean prepared;
 	private int dispelRange;
 	private long time;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long interval;
 	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
 	@Attribute(Attribute.SPEED)
 	private double speed;
-	@Attribute("Deflect" + Attribute.RANGE)
+	@Attribute("Deflect" + Attribute.RANGE) @DayNightFactor
 	private double deflectRange;
 	private double collisionRadius;
 	private Block sourceBlock;
@@ -85,13 +86,13 @@ public class WaterManipulation extends WaterAbility {
 		this.settingUp = false;
 		this.displacing = false;
 		this.collisionRadius = getConfig().getDouble("Abilities.Water.WaterManipulation.CollisionRadius");
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown"));
-		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange"));
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.Range"));
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.Knockback"));
-		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.Damage"));
+		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
+		this.selectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
+		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
+		this.knockback = getConfig().getDouble("Abilities.Water.WaterManipulation.Knockback");
+		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
-		this.deflectRange = applyModifiers(getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange"));
+		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
 
 		this.interval = (long) (1000. / this.speed);
 

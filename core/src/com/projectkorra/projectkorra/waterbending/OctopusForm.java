@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,26 +38,27 @@ public class OctopusForm extends WaterAbility {
 	private boolean settingUp;
 	private boolean forming;
 	private boolean formed;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
 	private int currentAnimationStep;
 	private int stepCounter;
 	private int totalStepCount;
 	private long time;
+	@Attribute("FormInterval") @DayNightFactor(invert = true)
 	private long interval;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
 	@Attribute("Attack" + Attribute.RANGE)
 	private double attackRange;
-	@Attribute("Usage" + Attribute.COOLDOWN)
+	@Attribute("Usage" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long usageCooldown;
-	@Attribute(Attribute.KNOCKBACK)
+	@Attribute(Attribute.KNOCKBACK) @DayNightFactor
 	private double knockback;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double radius;
 	private double startAngle;
 	private double angle;
@@ -96,15 +98,15 @@ public class OctopusForm extends WaterAbility {
 		this.currentAnimationStep = 1;
 		this.stepCounter = 1;
 		this.totalStepCount = 3;
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Range"));
-		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Damage"));
-		this.interval = applyInverseModifiers(getConfig().getLong("Abilities.Water.OctopusForm.FormDelay"));
-		this.attackRange = applyModifiers(getConfig().getInt("Abilities.Water.OctopusForm.AttackRange")); // ------------->    //Although this benefits from being smaller, it's better
-		this.usageCooldown = applyInverseModifiers(getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown")); 	//to scale it up with the radius as well
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Knockback"));
-		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.OctopusForm.Radius"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.OctopusForm.Cooldown"));
-		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.OctopusForm.Duration"));
+		this.range = getConfig().getDouble("Abilities.Water.OctopusForm.Range");
+		this.damage = getConfig().getDouble("Abilities.Water.OctopusForm.Damage");
+		this.interval = getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
+		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange"); // ------------->    //Although this benefits from being smaller, it's better
+		this.usageCooldown = getConfig().getInt("Abilities.Water.OctopusForm.UsageCooldown"); 	//to scale it up with the radius as well
+		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
+		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
+		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Water.OctopusForm.Duration");
 		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();

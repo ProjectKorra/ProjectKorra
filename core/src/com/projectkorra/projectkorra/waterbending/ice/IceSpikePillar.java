@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,27 +32,27 @@ public class IceSpikePillar extends IceAbility {
 	/** The list of blocks IceSpike uses */
 	private final Map<Block, TempBlock> ice_blocks = new HashMap<Block, TempBlock>();
 
-	@Attribute(Attribute.HEIGHT)
+	@Attribute(Attribute.HEIGHT) @DayNightFactor
 	private int height;
 	private int progress;
 	@Attribute("SlowPotency")
 	private int slowPower;
 	@Attribute("Slow" + Attribute.DURATION)
 	private int slowDuration;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long time;
 	private long removeTimestamp;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
 	private long interval;
-	@Attribute("Slow" + Attribute.COOLDOWN)
+	@Attribute("Slow" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long slowCooldown;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
 	private Block source_block; // The block clicked on.
 	private Block base_block; // The block at the bottom of the pillar.

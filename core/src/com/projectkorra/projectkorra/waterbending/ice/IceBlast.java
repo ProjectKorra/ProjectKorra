@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.ice;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -35,15 +36,15 @@ public class IceBlast extends IceAbility {
 	private boolean progressing;
 	private byte data;
 	private long time;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long interval;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
 	private double collisionRadius;
-	@Attribute("Deflect" + Attribute.RANGE)
+	@Attribute("Deflect" + Attribute.RANGE) @DayNightFactor
 	private double deflectRange;
 	private Block sourceBlock;
 	private Location location;
@@ -58,10 +59,10 @@ public class IceBlast extends IceAbility {
 		this.data = 0;
 		this.interval = getConfig().getLong("Abilities.Water.IceBlast.Interval");
 		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceBlast.CollisionRadius");
-		this.deflectRange = applyModifiers(getConfig().getDouble("Abilities.Water.IceBlast.DeflectRange"));
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.IceBlast.Range"));
-		this.damage = applyModifiers(getConfig().getInt("Abilities.Water.IceBlast.Damage"));
-		this.cooldown = applyInverseModifiers(getConfig().getInt("Abilities.Water.IceBlast.Cooldown"));
+		this.deflectRange = getConfig().getDouble("Abilities.Water.IceBlast.DeflectRange");
+		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
+		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
+		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
 		this.allowSnow = getConfig().getBoolean("Abilities.Water.IceBlast.AllowSnow");
 
 		if (!this.bPlayer.canBend(this) || !this.bPlayer.canIcebend()) {

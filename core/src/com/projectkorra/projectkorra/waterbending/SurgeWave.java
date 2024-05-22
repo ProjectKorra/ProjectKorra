@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,16 +41,16 @@ public class SurgeWave extends WaterAbility {
 	private boolean canHitSelf;
 	private boolean solidifyLava;
 	private long time;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long interval;
 	@Attribute("IceRevertTime")
 	private long iceRevertTime;
 	private long obsidianDuration;
 	private double currentRadius;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double maxRadius;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
@@ -57,7 +58,7 @@ public class SurgeWave extends WaterAbility {
 	private double knockback;
 	@Attribute(Attribute.KNOCKUP)
 	private double knockup;
-	@Attribute("Freeze" + Attribute.RADIUS)
+	@Attribute("Freeze" + Attribute.RADIUS) @DayNightFactor
 	private double maxFreezeRadius;
 	private Block sourceBlock;
 	private Location location;
@@ -80,15 +81,15 @@ public class SurgeWave extends WaterAbility {
 
 		this.canHitSelf = true;
 		this.currentRadius = 1;
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown"));
+		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
-		this.maxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Radius"));
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback"));
-		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup"));
-		this.maxFreezeRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius"));
+		this.maxRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
+		this.knockback = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback");
+		this.knockup = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup");
+		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
 		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Range"));
-		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange"));
+		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
+		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wave.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wave.SolidifyLava.Duration");
 		this.waveBlocks = new ConcurrentHashMap<>();

@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -9,9 +10,9 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class BlazeRing extends FireAbility {
 
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private double angleIncrement;
 	private Location location;
@@ -19,9 +20,9 @@ public class BlazeRing extends FireAbility {
 	public BlazeRing(final Player player) {
 		super(player);
 
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Blaze.Ring.Range"));
+		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Range");
 		this.angleIncrement = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Angle");
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown"));
+		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
 		this.location = player.getLocation();
 
 		if (this.bPlayer.isAvatarState()) {

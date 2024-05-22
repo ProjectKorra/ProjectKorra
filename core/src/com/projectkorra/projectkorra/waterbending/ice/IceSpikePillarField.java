@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,15 +23,15 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class IceSpikePillarField extends IceAbility {
 
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double radius;
 	@Attribute("NumberOfSpikes")
 	private int numberOfSpikes;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.KNOCKUP)
+	@Attribute(Attribute.KNOCKUP) @DayNightFactor
 	private double knockup;
 	private Vector thrownForce;
 
@@ -41,10 +42,10 @@ public class IceSpikePillarField extends IceAbility {
 			return;
 		}
 
-		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage"));
-		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown"));
-		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup"));
+		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
+		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
+		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
+		this.knockup = getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup");
 
 		if (this.bPlayer.isAvatarState()) {
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage");

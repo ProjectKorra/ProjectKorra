@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,14 +46,14 @@ public class SurgeWall extends WaterAbility {
 	private boolean solidifyLava;
 	private long time;
 	private long interval;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
 	private long obsidianDuration;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double radius;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	private Block sourceBlock;
 	private Location location;
@@ -67,10 +68,10 @@ public class SurgeWall extends WaterAbility {
 		super(player);
 
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown"));
-		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Duration"));
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Range"));
-		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Radius"));
+		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Water.Surge.Wall.Duration");
+		this.range = getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
+		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
 		this.locations = new ArrayList<>();

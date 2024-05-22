@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -10,13 +11,13 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class Blaze extends FireAbility {
 
-	@Attribute("Arc")
+	@Attribute("Arc") @DayNightFactor
 	private int arc;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
 
 	public Blaze(final Player player) {

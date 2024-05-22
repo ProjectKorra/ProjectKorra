@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -34,24 +35,24 @@ public class FireBlastCharged extends FireAbility {
 	private boolean canDamageBlocks;
 	private boolean dissipate;
 	private long time;
-	@Attribute(Attribute.CHARGE_DURATION)
+	@Attribute(Attribute.CHARGE_DURATION) @DayNightFactor(invert = true)
 	private long chargeTime;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long interval;
-	@Attribute("Min" + Attribute.DAMAGE)
+	@Attribute("Min" + Attribute.DAMAGE) @DayNightFactor
 	private double minDamage;
-	@Attribute("Max" + Attribute.DAMAGE)
+	@Attribute("Max" + Attribute.DAMAGE) @DayNightFactor
 	private double maxDamage;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	private double collisionRadius;
-	@Attribute(Attribute.DAMAGE + Attribute.RANGE)
+	@Attribute(Attribute.DAMAGE + Attribute.RANGE) @DayNightFactor
 	private double damageRadius;
-	@Attribute("Explosion" + Attribute.RANGE)
+	@Attribute("Explosion" + Attribute.RANGE) @DayNightFactor
 	private double explosionRadius;
 	private double innerRadius;
-	@Attribute(Attribute.FIRE_TICK)
+	@Attribute(Attribute.FIRE_TICK) @DayNightFactor
 	private double fireTicks;
 	private TNTPrimed explosion;
 	private Location origin;
@@ -69,17 +70,17 @@ public class FireBlastCharged extends FireAbility {
 		this.launched = false;
 		this.canDamageBlocks = getConfig().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");
 		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.chargeTime = (long) applyInverseModifiers(getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime"));
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireBlast.Charged.Cooldown"));
+		this.chargeTime = (long) getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Charged.Cooldown");
 		this.time = System.currentTimeMillis();
 		this.interval = 25;
-		this.collisionRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius"));
-		this.minDamage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireBlast.Charged.MinimumDamage"));
-		this.maxDamage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireBlast.Charged.MaximumDamage"));
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range"));
-		this.damageRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius"));
-		this.explosionRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.Charged.ExplosionRadius"));
-		this.fireTicks = applyModifiers(getConfig().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks"));
+		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius");
+		this.minDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.MinimumDamage");
+		this.maxDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.MaximumDamage");
+		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range");
+		this.damageRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
+		this.explosionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.ExplosionRadius");
+		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
 		this.innerRadius = this.damageRadius / 2;
 
 

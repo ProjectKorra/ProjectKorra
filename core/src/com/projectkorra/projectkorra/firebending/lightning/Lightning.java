@@ -6,7 +6,9 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Sets;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,7 +39,7 @@ import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class Lightning extends LightningAbility {
 
-	public static enum State {
+	public enum State {
 		START, STRIKE, MAINBOLT, CHAIN
 	}
 
@@ -65,21 +67,21 @@ public class Lightning extends LightningAbility {
 	private int maxCopperArcs;
 	private int copperArcs;
 	private int copperChains;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.CHARGE_DURATION)
+	@Attribute(Attribute.CHARGE_DURATION) @DayNightFactor(invert = true)
 	private double chargeTime;
 	@Attribute("SubArcChance")
 	private double subArcChance;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
 	@Attribute("MaxChainArcs")
 	private double maxChainArcs;
-	@Attribute("Chain" + Attribute.RANGE)
+	@Attribute("Chain" + Attribute.RANGE) @DayNightFactor
 	private double chainRange;
-	@Attribute("WaterArc" + Attribute.RANGE)
+	@Attribute("WaterArc" + Attribute.RANGE) @DayNightFactor
 	private double waterArcRange;
-	@Attribute("Conductivity" + Attribute.RANGE)
+	@Attribute("Conductivity" + Attribute.RANGE) @DayNightFactor
 	private double conductivityRange;
 	@Attribute("ChainArcChance")
 	private double chainArcChance;
@@ -90,7 +92,7 @@ public class Lightning extends LightningAbility {
 	@Attribute("MaxArcAngle")
 	private double maxArcAngle;
 	private double particleRotation;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private State state;
 	private Location origin;
@@ -102,7 +104,7 @@ public class Lightning extends LightningAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<Location> locations;
 	private Block[] chargedCopperBlocks;
-	private static final Set<EntityType> LIGHTNING_AFFECTED = Set.of(EntityType.CREEPER, EntityType.VILLAGER,
+	private static final Set<EntityType> LIGHTNING_AFFECTED = Sets.newHashSet(EntityType.CREEPER, EntityType.VILLAGER,
 			EntityType.PIG, EntityType.MUSHROOM_COW, EntityType.TURTLE, EntityType.SKELETON_HORSE
 	);
 
@@ -132,20 +134,20 @@ public class Lightning extends LightningAbility {
 		this.selfHitClose = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
 		this.arcOnIce = getConfig().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
 		this.arcOnCopper = getConfig().getBoolean("Abilities.Fire.Lightning.ArcOnCopper");
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Lightning.Range"));
-		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.Lightning.Damage"));
+		this.range = getConfig().getDouble("Abilities.Fire.Lightning.Range");
+		this.damage = getConfig().getDouble("Abilities.Fire.Lightning.Damage");
 		this.maxArcAngle = getConfig().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
 		this.subArcChance = getConfig().getDouble("Abilities.Fire.Lightning.SubArcChance");
-		this.chainRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Lightning.ChainArcRange"));
-		this.chainArcChance = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.ChainArcChance"));
-		this.waterArcRange = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.WaterArcRange"));
+		this.chainRange = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcRange");
+		this.chainArcChance = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcChance");
+		this.waterArcRange = getConfig().getDouble("Abilities.Fire.Lightning.WaterArcRange");
 		this.conductivityRange = getConfig().getDouble("Abilities.Fire.Lightning.ConductivityRange");
-		this.stunChance = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.StunChance"));
-		this.stunDuration = applyModifiers(getConfig().getDouble("Abilities.Fire.Lightning.StunDuration"));
-		this.maxChainArcs = applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs"));
-		this.waterArcs = (int) applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.WaterArcs"));
-		this.maxCopperArcs = (int) applyModifiers(getConfig().getInt("Abilities.Fire.Lightning.MaxCopperArcs"));
-		this.chargeTime = applyInverseModifiers(getConfig().getLong("Abilities.Fire.Lightning.ChargeTime"));
+		this.stunChance = getConfig().getDouble("Abilities.Fire.Lightning.StunChance");
+		this.stunDuration = getConfig().getDouble("Abilities.Fire.Lightning.StunDuration");
+		this.maxChainArcs = getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs");
+		this.waterArcs = getConfig().getInt("Abilities.Fire.Lightning.WaterArcs");
+		this.maxCopperArcs = getConfig().getInt("Abilities.Fire.Lightning.MaxCopperArcs");
+		this.chargeTime = getConfig().getLong("Abilities.Fire.Lightning.ChargeTime");
 		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Lightning.Cooldown"));
 		this.allowOnFireJet = getConfig().getBoolean("Abilities.Fire.Lightning.AllowOnFireJet");
 		this.transformMobs = getConfig().getBoolean("Abilities.Fire.Lightning.TransformMobs");

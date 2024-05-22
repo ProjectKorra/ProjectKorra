@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -34,22 +35,22 @@ public class WaterArmsSpear extends WaterAbility {
 	private boolean spearDamageEnabled;
 	@Attribute("Length")
 	private int spearLength;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double spearRange;
 	private int spearRangeNight;
 	private int spearRangeFullMoon;
-	@Attribute("SphereRadius")
+	@Attribute("SphereRadius") @DayNightFactor
 	private int spearSphereRadius;
 	private int spearSphereNight;
 	private int spearSphereFullMoon;
 	private int distanceTravelled;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long spearDuration;
 	private long spearDurationNight;
 	private long spearDurationFullMoon;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long usageCooldown;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double spearDamage;
 	private Arm arm;
 	private Location location;
@@ -65,7 +66,7 @@ public class WaterArmsSpear extends WaterAbility {
 
 		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
 		this.spearDamageEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
-		this.spearLength = (int) applyModifiers(getConfig().getInt("Abilities.Water.WaterArms.Spear.Length"));
+		this.spearLength = getConfig().getInt("Abilities.Water.WaterArms.Spear.Length");
 		this.spearRange = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Range");
 		this.spearRangeNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
 		this.spearRangeFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
@@ -75,8 +76,8 @@ public class WaterArmsSpear extends WaterAbility {
 		this.spearDuration = getConfig().getLong("Abilities.Water.WaterArms.Spear.Duration");
 		this.spearDurationNight = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
 		this.spearDurationFullMoon = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
-		this.usageCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Spear"));
-		this.spearDamage = applyModifiers(getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage"));
+		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Spear");
+		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
 		this.spearLocations = new ArrayList<>();
 
 		this.getNightAugments();
