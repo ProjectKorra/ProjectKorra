@@ -389,6 +389,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @return The modified value
 	 */
 	@Override
+	@Deprecated
 	public double applyModifiers(double value) {
 		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
 	}
@@ -398,6 +399,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @param value The value to modify
 	 * @return The modified value
 	 */
+	@Deprecated
 	public long applyModifiers(long value) {
 		return GeneralMethods.applyModifiers(value, getNightFactor(1.0));
 	}
@@ -407,6 +409,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @param value The value to modify
 	 * @return The modified value
 	 */
+	@Deprecated
 	public double applyInverseModifiers(double value) {
 		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
 	}
@@ -416,6 +419,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	 * @param value The value to modify
 	 * @return The modified value
 	 */
+	@Deprecated
 	public long applyInverseModifiers(long value) {
 		return GeneralMethods.applyInverseModifiers(value, getNightFactor(1.0));
 	}

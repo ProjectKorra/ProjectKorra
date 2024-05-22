@@ -109,9 +109,9 @@
     </dependency>
     <!-- GriefPrevention -->
     <dependency>
-      <groupId>com.github.TechFortress</groupId>
+      <groupId>com.github.GriefPrevention</groupId>
       <artifactId>GriefPrevention</artifactId>
-      <version>16.18</version>
+      <version>16.18.2</version>
       <scope>provided</scope>
     </dependency>
     <!-- LWC -->

@@ -286,6 +286,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @return The modified value
 	 */
 	@Override
+	@Deprecated
 	public double applyModifiers(double value) {
 		return GeneralMethods.applyModifiers(value, getDayFactor(1.0));
 	}
@@ -295,6 +296,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @param value The value to modify
 	 * @return The modified value
 	 */
+	@Deprecated
 	public double applyInverseModifiers(double value) {
 		return GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0));
 	}
@@ -304,6 +306,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @param value The value to modify
 	 * @return The modified value
 	 */
+	@Deprecated
 	public double applyModifiersDamage(double value) {
 		return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.DamageFactor", 1.1) : 1);
 	}
@@ -313,6 +316,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @param value The value to modify
 	 * @return The modified value
 	 */
+	@Deprecated
 	public double applyModifiersRange(double value) {
 		return GeneralMethods.applyModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? getConfig().getDouble("Properties.Fire.BlueFire.RangeFactor", 1.2) : 1);
 	}
@@ -322,6 +326,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @param value The value to modify
 	 * @return The modified value
 	 */
+	@Deprecated
 	public long applyModifiersCooldown(long value) {
 		return (long) GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? 1 / getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor", 0.9) : 1);
 	}

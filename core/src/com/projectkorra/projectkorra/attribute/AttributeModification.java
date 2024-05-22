@@ -6,11 +6,14 @@ import org.bukkit.NamespacedKey;
 
 public class AttributeModification {
 
-    public static final NamespacedKey DAY_FACTOR = new NamespacedKey(ProjectKorra.plugin, "PROJECTKORRA_DAY_FACTOR");
-    public static final NamespacedKey NIGHT_FACTOR = new NamespacedKey(ProjectKorra.plugin, "PROJECTKORRA_NIGHT_FACTOR");
-    public static final NamespacedKey FULL_MOON_FACTOR = new NamespacedKey(ProjectKorra.plugin, "PROJECTKORRA_FULL_MOON"); //For RPG
-    public static final NamespacedKey SOZINS_COMET_FACTOR = new NamespacedKey(ProjectKorra.plugin, "PROJECTKORRA_SOZINS_COMET"); //For RPG
-    public static final NamespacedKey AVATAR_STATE_FACTOR = new NamespacedKey(ProjectKorra.plugin, "PROJECTKORRA_AVATAR_STATE");
+    public static final NamespacedKey DAY_FACTOR = new NamespacedKey(ProjectKorra.plugin, "DAY_FACTOR");
+    public static final NamespacedKey NIGHT_FACTOR = new NamespacedKey(ProjectKorra.plugin, "NIGHT_FACTOR");
+    public static final NamespacedKey FULL_MOON_FACTOR = new NamespacedKey(ProjectKorra.plugin, "FULL_MOON"); //For RPG
+    public static final NamespacedKey SOZINS_COMET_FACTOR = new NamespacedKey(ProjectKorra.plugin, "SOZINS_COMET"); //For RPG
+    public static final NamespacedKey AVATAR_STATE_FACTOR = new NamespacedKey(ProjectKorra.plugin, "AVATAR_STATE");
+    public static final NamespacedKey BLUE_FIRE_DAMAGE = new NamespacedKey(ProjectKorra.plugin, "BLUE_FIRE_DAMAGE");
+    public static final NamespacedKey BLUE_FIRE_RANGE = new NamespacedKey(ProjectKorra.plugin, "BLUE_FIRE_RANGE");
+    public static final NamespacedKey BLUE_FIRE_COOLDOWN = new NamespacedKey(ProjectKorra.plugin, "BLUE_FIRE_COOLDOWN");
 
     public static final int PRIORITY_LOW = 1000;
     public static final int PRIORITY_NORMAL = 0;

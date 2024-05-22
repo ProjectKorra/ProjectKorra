@@ -66,9 +66,10 @@ public class BendingManager implements Runnable {
 					(ElementalAbility.isNight(world) ? WorldTimeEvent.Time.NIGHT :
 							(ElementalAbility.isDusk(world) ? WorldTimeEvent.Time.DUSK : WorldTimeEvent.Time.DAWN));
 
-			if (from == null) {
-				this.times.put(world, to);
-				continue;
+			if (from == null) { //If the time is null, the server/plugin probably just started, so set the previous time to the previous one
+				int ord = to.ordinal() - 1;
+				if (ord < 0) ord = WorldTimeEvent.Time.values().length - 1;
+				from = WorldTimeEvent.Time.values()[ord];
 			}
 
 			if (from != to) {
@@ -83,7 +84,7 @@ public class BendingManager implements Runnable {
 						final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 						if (bPlayer == null) continue;
 
-						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
+						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to != WorldTimeEvent.Time.NIGHT && from == WorldTimeEvent.Time.NIGHT) {
 							String s = getMoonsetMessage();
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
@@ -92,7 +93,7 @@ public class BendingManager implements Runnable {
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
 
-						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
+						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.nightmessage") && to != WorldTimeEvent.Time.DAY && from == WorldTimeEvent.Time.DAY) {
 							String s = getSunsetMessage();
 							player.sendMessage(Element.FIRE.getColor() + s);
 						}

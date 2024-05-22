@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
+import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
@@ -35,6 +36,7 @@ import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.AttributeModification;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
@@ -74,6 +76,7 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
+import com.projectkorra.projectkorra.event.AbilityRecalculateAttributeEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
@@ -82,6 +85,7 @@ import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerSwingEvent;
+import com.projectkorra.projectkorra.event.WorldTimeEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -2076,7 +2080,7 @@ public class PKListener implements Listener {
 
 				AttributeModifier modifier = dayNightFactor.invert() ? AttributeModifier.DIVISION : AttributeModifier.MULTIPLICATION;
 				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL, AttributeModification.NIGHT_FACTOR);
-				event.getModifications().add(mod);
+				event.addModification(mod);
 			} else if (event.getAbility() instanceof FireAbility && day) {
 				double factor = FireAbility.getDayFactor();
 
@@ -2085,7 +2089,21 @@ public class PKListener implements Listener {
 
 				AttributeModifier modifier = dayNightFactor.invert() ? AttributeModifier.DIVISION : AttributeModifier.MULTIPLICATION;
 				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL, AttributeModification.DAY_FACTOR);
-				event.getModifications().add(mod);
+				event.addModification(mod);
+			}
+		}
+
+		//Blue fire has factors for a few attributes. But only do it for pure fire abilities and not combustion/lightning
+		if ((event.getAbility().getElement() == Element.FIRE || event.getAbility().getElement() == Element.BLUE_FIRE) && event.getAbility().getBendingPlayer().hasElement(Element.BLUE_FIRE)) {
+			if (event.getAttribute().equals(Attribute.DAMAGE)) {
+				double factor = BlueFireAbility.getDamageFactor();
+				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_DAMAGE));
+			} else if (event.getAttribute().equals(Attribute.COOLDOWN)) {
+				double factor = BlueFireAbility.getCooldownFactor();
+				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_COOLDOWN));
+			} else if (event.getAttribute().equals(Attribute.RANGE)) {
+				double factor = BlueFireAbility.getRangeFactor();
+				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_RANGE));
 			}
 		}
 	}
