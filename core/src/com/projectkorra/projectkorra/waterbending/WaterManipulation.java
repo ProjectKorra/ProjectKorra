@@ -174,9 +174,9 @@ public class WaterManipulation extends WaterAbility {
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
-					} else if (!isIce(this.sourceBlock) && !isNonTransparentSource(this.sourceBlock)) {
+					} else if (!isIce(this.sourceBlock) && !isTransformableBlock(this.sourceBlock)) {
 						addWater(this.sourceBlock);
-					} else if (isCauldron(this.sourceBlock) || isMud(this.sourceBlock) || isSponge(this.sourceBlock)) {
+					} else if (isTransformableBlock(this.sourceBlock)) {
 						updateSourceBlock(this.sourceBlock);
 					}
 				}
@@ -348,7 +348,7 @@ public class WaterManipulation extends WaterAbility {
 			return;
 		}
 		if (AFFECTED_BLOCKS.containsKey(block)) {
-			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isNonTransparentSource(block)) {
+			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isTransformableBlock(block)) {
 				block.setType(Material.AIR);
 			}
 			AFFECTED_BLOCKS.remove(block);
@@ -358,7 +358,7 @@ public class WaterManipulation extends WaterAbility {
 	private void removeWater(final Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isNonTransparentSource(block)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block) && !isTransformableBlock(block)) {
 					block.setType(Material.AIR);
 				}
 				AFFECTED_BLOCKS.remove(block);
