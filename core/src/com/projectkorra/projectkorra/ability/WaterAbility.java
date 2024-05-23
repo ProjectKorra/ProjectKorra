@@ -306,9 +306,9 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isTransformableBlock(final Material material) {
-		// TODO: If we decide that users have complete freedom to change transformable blocks, we can just do a map check.
-		// return WATER_TRANSFORMABLE_BLOCKS.containsKey(material);
-		return isCauldron(material) || isMud(material) || isSponge(material);
+		// TODO: If we decide that users have complete freedom to change transformable blocks, we can just do a simple map check.
+		// return isCauldron(material) || WATER_TRANSFORMABLE_BLOCKS.containsKey(material);
+		return isCauldron(material) || (WATER_TRANSFORMABLE_BLOCKS.containsKey(material) && (isMud(material) || isSponge(material)));
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
@@ -435,20 +435,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (isCauldron(sourceBlock)) {
 			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
 			return true;
-		} else if (isMud(sourceBlock) || isSponge(sourceBlock)) {
-			if (WATER_TRANSFORMABLE_BLOCKS.containsKey(sourceBlock.getType())) {
-				if (isMud(sourceBlock)) {
-					playMudbendingSound(sourceBlock.getLocation());
-				} else if (isSponge(sourceBlock)) {
-					sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
-				}
-				sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
-				return true;
-			}
-		}
-		// TODO: If we decide that users have complete freedom to change transformable blocks, we can change the above check to this one.
-		/*
-		else if (WATER_TRANSFORMABLE_BLOCKS.containsKey(sourceBlock.getType())) {
+		} else if (isTransformableBlock(sourceBlock) && !isCauldron(sourceBlock)) {
 			if (isMud(sourceBlock)) {
 				playMudbendingSound(sourceBlock.getLocation());
 			} else if (isSponge(sourceBlock)) {
@@ -457,7 +444,6 @@ public abstract class WaterAbility extends ElementalAbility {
 			sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
 			return true;
 		}
-		 */
 		return false;
 	}
 
