@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -202,7 +203,7 @@ public class HeatControl extends FireAbility {
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 				} else if (block.getType() == Material.WET_SPONGE) {
 					if (!isWater(block.getRelative(BlockFace.UP)) && !isWater(block.getRelative(BlockFace.DOWN)) && !isWater(block.getRelative(BlockFace.NORTH)) && !isWater(block.getRelative(BlockFace.SOUTH)) && !isWater(block.getRelative(BlockFace.EAST)) && !isWater(block.getRelative(BlockFace.WEST))) {
-						dryWetBlocks(block, this, true);
+						dryWetBlocks(block, this, ThreadLocalRandom.current().nextInt(5) == 0);
 					}
 				}
 			}

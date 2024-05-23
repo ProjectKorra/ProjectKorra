@@ -155,11 +155,7 @@ public class FireBlast extends FireAbility {
 		for (Block b : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 1.4)) {
 			if (!isSnow(b)) continue;
 
-			if (ThreadLocalRandom.current().nextInt(4) == 0) {
-				dryWetBlocks(b, this, true);
-			} else {
-				dryWetBlocks(b, this);
-			}
+			dryWetBlocks(b, this, ThreadLocalRandom.current().nextInt(4) == 0);
 		}
 		if (!block.isPassable()) {
 			if (block.getType() == Material.FURNACE && this.powerFurnace) {

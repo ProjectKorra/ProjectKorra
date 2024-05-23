@@ -25,6 +25,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 /***
  * Is only here for legacy purposes. All fire combos used to use a form of this
  * stream for all their progress methods. If someone else was reliant on that,
@@ -122,7 +134,7 @@ public class FireComboStream extends BukkitRunnable {
 				}
 			}
 			for (Block b : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
-				FireAbility.dryWetBlocks(b, this.coreAbility);
+				FireAbility.dryWetBlocks(b, this.coreAbility, ThreadLocalRandom.current().nextInt(5) == 0);
 			}
 		}
 
