@@ -295,25 +295,20 @@ public abstract class WaterAbility extends ElementalAbility {
 		return material == Material.WET_SPONGE;
 	}
 
-	// A "non-transparent source" is a PK supported default non-transparent source block, not one from the config.
-	// I.e, cauldrons, mud and sponges.
-	// Used so that non-transparent sources aren't replaced with AIR.
-	public static boolean isNonTransparentSource(final Block block) {
-		return isNonTransparentSource(block.getType());
+	/**
+	 * Checks if a source block is a transformable source.
+	 *
+	 * @param block
+	 * @return True if the block is a non-transparent source, False otherwise.
+	 */
+	public static boolean isTransformableBlock(final Block block) {
+		return isTransformableBlock(block.getType());
 	}
 
-	public static boolean isNonTransparentSource(final Material material) {
+	public static boolean isTransformableBlock(final Material material) {
+		// TODO: If we decide that users have complete freedom to change transformable blocks, we can just do a map check.
+		// return WATER_TRANSFORMABLE_BLOCKS.containsKey(material);
 		return isCauldron(material) || isMud(material) || isSponge(material);
-	}
-
-	// A "solid source" is a PK supported default solid source block, not one from the config.
-	// I.e., cauldrons, mud, sponges, ice and solid snow.
-	public static boolean isSolidSource(final Block block) {
-		return isSolidSource(block.getType());
-	}
-
-	public static boolean isSolidSource(final Material material) {
-		return isNonTransparentSource(material) || isIce(material) || isSnow(material);
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
@@ -441,16 +436,28 @@ public abstract class WaterAbility extends ElementalAbility {
 			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
 			return true;
 		} else if (isMud(sourceBlock) || isSponge(sourceBlock)) {
+			if (WATER_TRANSFORMABLE_BLOCKS.containsKey(sourceBlock.getType())) {
+				if (isMud(sourceBlock)) {
+					playMudbendingSound(sourceBlock.getLocation());
+				} else if (isSponge(sourceBlock)) {
+					sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
+				}
+				sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
+				return true;
+			}
+		}
+		// TODO: If we decide that users have complete freedom to change transformable blocks, we can change the above check to this one.
+		/*
+		else if (WATER_TRANSFORMABLE_BLOCKS.containsKey(sourceBlock.getType())) {
 			if (isMud(sourceBlock)) {
 				playMudbendingSound(sourceBlock.getLocation());
 			} else if (isSponge(sourceBlock)) {
 				sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
 			}
-			if (WATER_TRANSFORMABLE_BLOCKS.containsKey(sourceBlock.getType())) {
-				sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
-				return true;
-			}
+			sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
+			return true;
 		}
+		 */
 		return false;
 	}
 
