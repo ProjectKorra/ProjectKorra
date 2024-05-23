@@ -26,6 +26,8 @@ import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /***
  * Is only here for legacy purposes. All fire combos used to use a form of this
  * stream for all their progress methods. If someone else was reliant on that,
@@ -120,7 +122,7 @@ public class FireComboStream extends BukkitRunnable {
 				}
 			}
 			for (Block b : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
-				FireAbility.dryWetBlocks(b, this.coreAbility);
+				FireAbility.dryWetBlocks(b, this.coreAbility, ThreadLocalRandom.current().nextInt(5) == 0);
 			}
 		}
 

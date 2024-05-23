@@ -150,11 +150,7 @@ public class FireShield extends FireAbility {
 				}
 			}
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.shieldRadius)) {
-				if (ThreadLocalRandom.current().nextInt(5) == 0) {
-					dryWetBlocks(block, this, true);
-				} else {
-					dryWetBlocks(block, this);
-				}
+				dryWetBlocks(block, this, ThreadLocalRandom.current().nextInt(5) == 0);
 			}
 		} else {
 			this.location = this.player.getEyeLocation().clone();
@@ -185,11 +181,7 @@ public class FireShield extends FireAbility {
 				}
 			}
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.discRadius)) {
-				if (ThreadLocalRandom.current().nextInt(5) == 0) {
-					dryWetBlocks(block, this, true);
-				} else {
-					dryWetBlocks(block, this);
-				}
+				dryWetBlocks(block, this, ThreadLocalRandom.current().nextInt(5) == 0);
 			}
 		}
 	}
