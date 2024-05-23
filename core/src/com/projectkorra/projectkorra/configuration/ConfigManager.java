@@ -1212,6 +1212,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.Knockup", 0.2);
 			config.addDefault("Abilities.Water.Torrent.Interval", 30);
 			config.addDefault("Abilities.Water.Torrent.Cooldown", 0);
+			config.addDefault("Abilities.Water.Torrent.ChargeTimeout", 0);
 			config.addDefault("Abilities.Water.Torrent.Revert", true);
 			config.addDefault("Abilities.Water.Torrent.RevertTime", 60000);
 			config.addDefault("Abilities.Water.Torrent.Wave.Radius", 12);
