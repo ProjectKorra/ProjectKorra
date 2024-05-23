@@ -312,6 +312,7 @@ public class ConfigManager {
 			config.addDefault("DeathMessages.Enabled", true);
 			config.addDefault("DeathMessages.Default", "{victim} was slain by {attacker}'s {ability}");
 
+			config.addDefault("Abilities.Avatar.AvatarState.AvatarStateBossbar", "Energy:");
 			config.addDefault("Abilities.Avatar.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Left click to activate to become " + "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from " + "all sources, regenerates health rapidly, and is granted extreme speed. Nearly all abilities " + "are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able " + "abilities and last until you deactivate them or the Avatar State. Left click again with the Avatar " + "State selected to deactivate it.");
 
 			config.addDefault("Commands.Help.Elements.Air", "Air is the element of freedom. Airbenders are natural pacifists and great explorers. There is nothing stopping them from scaling the tallest mountains and walls easily. They specialize in redirection, from blasting things away with gusts of winds, to forming a shield around them to prevent damage. Easy to get across flat terrains, such as oceans, there is practically no terrain off limits to Airbenders. They lack much raw damage output, but make up for it with with their ridiculous amounts of utility and speed.\nEnter /b display Air for a list of the available air abilities.");
@@ -793,6 +794,7 @@ public class ConfigManager {
 			config.addDefault("Properties.DisabledWorlds", disabledWorlds);
 
 			config.addDefault("Abilities.Avatar.AvatarState.Enabled", true);
+			config.addDefault("Abilities.Avatar.AvatarState.Bossbar", true);
 			config.addDefault("Abilities.Avatar.AvatarState.Cooldown", 7200000);
 			config.addDefault("Abilities.Avatar.AvatarState.Duration", 480000);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled", true);
@@ -1210,7 +1212,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.Knockup", 0.2);
 			config.addDefault("Abilities.Water.Torrent.Interval", 30);
 			config.addDefault("Abilities.Water.Torrent.Cooldown", 0);
-			config.addDefault("Abilities.Water.Torrent.ChargeTimeout", 0);
 			config.addDefault("Abilities.Water.Torrent.Revert", true);
 			config.addDefault("Abilities.Water.Torrent.RevertTime", 60000);
 			config.addDefault("Abilities.Water.Torrent.Wave.Radius", 12);
