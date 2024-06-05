@@ -1492,6 +1492,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.MetalClips.Range", 10);
 			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 6000);
 			config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
+			config.addDefault("Abilities.Earth.MetalClips.Shoot.Cooldown", 600);
+			config.addDefault("Abilities.Earth.MetalClips.Shoot.Speed", 1.2);
 			config.addDefault("Abilities.Earth.MetalClips.Magnet.Range", 20);
 			config.addDefault("Abilities.Earth.MetalClips.Magnet.Speed", 0.6);
 			config.addDefault("Abilities.Earth.MetalClips.Magnet.Cooldown", 1000);
