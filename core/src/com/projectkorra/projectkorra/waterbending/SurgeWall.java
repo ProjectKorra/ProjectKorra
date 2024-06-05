@@ -55,6 +55,8 @@ public class SurgeWall extends WaterAbility {
 	private double radius;
 	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.SELECT_RANGE)
+	private double selectRange;
 	private Block sourceBlock;
 	private Location location;
 	private Location firstDestination;
@@ -71,6 +73,7 @@ public class SurgeWall extends WaterAbility {
 		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown"));
 		this.duration = applyModifiers(getConfig().getLong("Abilities.Water.Surge.Wall.Duration"));
 		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Range"));
+		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wall.SelectRange");
 		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wall.Radius"));
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
@@ -167,7 +170,7 @@ public class SurgeWall extends WaterAbility {
 
 	public boolean prepare() {
 		this.cancelPrevious();
-		final Block block = BlockSource.getWaterSourceBlock(this.player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
+		final Block block = BlockSource.getWaterSourceBlock(this.player, this.selectRange, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 
 		if (block != null && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			this.sourceBlock = block;

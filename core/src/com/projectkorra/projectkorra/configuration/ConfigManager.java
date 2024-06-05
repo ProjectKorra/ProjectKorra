@@ -1188,6 +1188,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Duration", 36000);
 			config.addDefault("Abilities.Water.Surge.Wall.Range", 5);
+			config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 5);
 			config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
 			config.addDefault("Abilities.Water.Surge.Wall.Cooldown", 0);
 			config.addDefault("Abilities.Water.Surge.Wall.Duration", 0);
