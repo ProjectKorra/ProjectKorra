@@ -1438,6 +1438,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Extraction.Cooldown", 500);
 			config.addDefault("Abilities.Earth.Extraction.TripleLootChance", 10);
 			config.addDefault("Abilities.Earth.Extraction.DoubleLootChance", 30);
+			config.addDefault("Abilities.Earth.Extraction.IronGolem.Drops", 1);
+			config.addDefault("Abilities.Earth.Extraction.IronGolem.Damage", 4);
+			config.addDefault("Abilities.Earth.Extraction.IronGolem.DropMaterial", "IRON_NUGGET");
 
 			config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 20000);
