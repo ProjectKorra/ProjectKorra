@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.object;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -61,6 +62,11 @@ public class HorizontalVelocityTracker {
 		this.abil = ability;
 		this.update();
 		instances.put(this.entity, this);
+	}
+
+	@Deprecated
+	public HorizontalVelocityTracker(final Entity e, final Player instigator, final long delay, final Ability ability) {
+		this(e, instigator, delay, (CoreAbility) ability);
 	}
 
 	public void update() {
