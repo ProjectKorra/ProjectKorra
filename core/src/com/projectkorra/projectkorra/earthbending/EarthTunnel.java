@@ -73,9 +73,6 @@ public class EarthTunnel extends EarthAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
 			return;
 		}
-		if (this.bPlayer.isAvatarState()) {
-			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
-		}
 
 		this.radiusIncrement = this.radius;
 

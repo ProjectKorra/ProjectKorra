@@ -35,11 +35,6 @@ public class RaiseEarthWall extends EarthAbility {
 			return;
 		}
 
-		if (this.bPlayer.isAvatarState()) {
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
-			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
-		}
-
 		this.start();
 	}
 

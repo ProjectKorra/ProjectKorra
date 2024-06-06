@@ -25,9 +25,6 @@ public class BlazeRing extends FireAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
 		this.location = player.getLocation();
 
-		if (this.bPlayer.isAvatarState()) {
-			this.range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
-		}
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("BlazeRing")) {
 			return;
 		}

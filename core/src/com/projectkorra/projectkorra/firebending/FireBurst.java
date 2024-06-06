@@ -51,22 +51,6 @@ public class FireBurst extends FireAbility {
 			return;
 		}
 
-		long chargeTimeMod = 0;
-
-		if (isDay(player.getWorld())) {
-			chargeTimeMod = (long) (this.getDayFactor(chargeTime) - chargeTime);
-		}
-
-		chargeTimeMod = (long) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (chargeTime / BlueFireAbility.getCooldownFactor() - chargeTime) + chargeTimeMod : chargeTimeMod);
-
-		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown");
-		}
-
-		this.chargeTime += chargeTimeMod;
-
 		this.start();
 	}
 

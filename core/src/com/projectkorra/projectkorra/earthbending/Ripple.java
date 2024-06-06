@@ -68,12 +68,6 @@ public class Ripple extends EarthAbility {
 		this.locations = new ArrayList<>();
 		this.entities = new ArrayList<>();
 
-		if (this.bPlayer.isAvatarState()) {
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback");
-		}
-
 		this.initializeLocations();
 		this.maxStep = this.locations.size();
 
@@ -286,7 +280,7 @@ public class Ripple extends EarthAbility {
 
 		final Vector vector = this.direction.clone();
 		vector.setY(.5);
-		final double knock = this.bPlayer.isAvatarState() ? AvatarState.getValue(this.knockback) : this.knockback;
+		final double knock = this.knockback;
 		GeneralMethods.setVelocity(this, entity, vector.clone().normalize().multiply(knock));
 		AirAbility.breakBreathbendingHold(entity);
 	}

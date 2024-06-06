@@ -58,6 +58,7 @@ public class IceSpikePillar extends IceAbility {
 	private Block base_block; // The block at the bottom of the pillar.
 	private Location origin;
 	private Location location;
+	@Attribute(Attribute.KNOCKBACK)
 	private Vector thrownForce;
 	private Vector direction;
 	private ArrayList<LivingEntity> damaged;
@@ -145,15 +146,6 @@ public class IceSpikePillar extends IceAbility {
 		this.damaged = new ArrayList<>();
 
 		this.interval = (long) (1000. / this.speed);
-
-		if (this.bPlayer.isAvatarState()) {
-			this.slowPower = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowPower");
-			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowDuration");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Range");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Height");
-			this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Push"), 0);
-		}
 	}
 
 	/**

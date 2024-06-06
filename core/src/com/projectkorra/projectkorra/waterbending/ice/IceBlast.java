@@ -69,12 +69,6 @@ public class IceBlast extends IceAbility {
 			return;
 		}
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Water.IceBlast.Cooldown");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceBlast.Range");
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceBlast.Damage");
-		}
-
 		block(player);
 		final Block sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.SHIFT_DOWN, false, true, false, this.allowSnow, false);
 		final IceBlast oldAbil = getAbility(player, IceBlast.class);

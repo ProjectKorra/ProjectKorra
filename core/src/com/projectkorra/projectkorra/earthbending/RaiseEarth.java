@@ -44,9 +44,6 @@ public class RaiseEarth extends EarthAbility {
 		}
 
 		try {
-			if (this.bPlayer.isAvatarState()) {
-				this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height");
-			}
 			this.block = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK);
 			if (this.block == null) {
 				return;

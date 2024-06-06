@@ -54,12 +54,6 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.JetBlaze.FireTicks");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.Damage");
-			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.FireTicks");
-		}
-
 		this.fireJet.setSpeed(speed);
 		this.fireJet.setDuration(duration);
 		this.start();

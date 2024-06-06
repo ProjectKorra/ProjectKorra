@@ -72,36 +72,6 @@ public class WallOfFire extends FireAbility {
 
 		this.origin = GeneralMethods.getTargetedLocation(player, this.range);
 
-		double widthMod = 0;
-		double heightMod = 0;
-		long durationMod = 0;
-		double damageMod = 0;
-
-		if (isDay(player.getWorld())) {
-			widthMod = this.getDayFactor(this.width) - this.width;
-			heightMod = this.getDayFactor(this.height) - this.height;
-			durationMod = ((long) this.getDayFactor(this.duration) - this.duration);
-			damageMod = this.getDayFactor(this.damage) - this.damage;
-		}
-
-		widthMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * width - width) + widthMod : widthMod);
-		heightMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * height - height) + heightMod : heightMod);
-		durationMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (duration / BlueFireAbility.getCooldownFactor() - duration) + durationMod : durationMod);
-		damageMod = (int) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * damage - damage) + damageMod : damageMod);
-
-		if (this.bPlayer.isAvatarState()) {
-			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Width");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Height");
-			this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.WallOfFire.Duration");
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Damage");
-			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.WallOfFire.FireTicks");
-		}
-
-		this.width += widthMod;
-		this.height += heightMod;
-		this.duration += durationMod;
-		this.damage += damageMod;
-
 		this.time = System.currentTimeMillis();
 		final Block block = this.origin.getBlock();
 		if (block.isLiquid() || GeneralMethods.isSolid(block)) {

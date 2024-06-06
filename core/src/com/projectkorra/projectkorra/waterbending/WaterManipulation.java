@@ -75,12 +75,37 @@ public class WaterManipulation extends WaterAbility {
 	private Vector targetDirection;
 
 	public WaterManipulation(final Player player) {
-		this(player, prepare(player, getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange")));
+		super(player);
+
+		this.setFields();
+		this.recalculateAttributes(); // So the select range is updated at night or in AvatarState
+
+		Block block = prepare(player, this.selectRange);
+
+		if (block != null) {
+			this.sourceBlock = block;
+			this.focusBlock();
+			this.prepared = true;
+			this.start();
+			this.time = System.currentTimeMillis();
+		}
 	}
 
 	public WaterManipulation(final Player player, final Block source) {
 		super(player);
 
+		this.setFields();
+
+		if (source != null) {
+			this.sourceBlock = source;
+			this.focusBlock();
+			this.prepared = true;
+			this.start();
+			this.time = System.currentTimeMillis();
+		}
+	}
+
+	private void setFields() {
 		this.progressing = false;
 		this.falling = false;
 		this.settingUp = false;
@@ -95,14 +120,6 @@ public class WaterManipulation extends WaterAbility {
 		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
 
 		this.interval = (long) (1000. / this.speed);
-
-		if (source != null) {
-			this.sourceBlock = source;
-			this.focusBlock();
-			this.prepared = true;
-			this.start();
-			this.time = System.currentTimeMillis();
-		}
 	}
 
 	private static void cancelPrevious(final Player player) {

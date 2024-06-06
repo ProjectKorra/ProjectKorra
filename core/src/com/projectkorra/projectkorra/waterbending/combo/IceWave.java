@@ -45,10 +45,6 @@ public class IceWave extends IceAbility implements ComboAbility {
 
 		this.cooldown = getConfig().getLong("Abilities.Water.IceWave.Cooldown");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-		}
-
 		this.start();
 	}
 

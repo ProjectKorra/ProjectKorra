@@ -71,11 +71,6 @@ public class EarthArmor extends EarthAbility {
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
 		this.maxGoldHearts = getConfig().getInt("Abilities.Earth.EarthArmor.GoldHearts");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown");
-			this.maxGoldHearts = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.EarthArmor.GoldHearts");
-		}
-
 		if (COLORS.isEmpty()) defineColors();
 
 		this.headBlock = this.getTargetEarthBlock((int) this.selectRange);

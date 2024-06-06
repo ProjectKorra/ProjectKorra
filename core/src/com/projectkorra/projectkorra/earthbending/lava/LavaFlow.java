@@ -130,15 +130,6 @@ public class LavaFlow extends LavaAbility {
 		this.downwardFlow = getConfig().getInt("Abilities.Earth.LavaFlow.DownwardFlow");
 		this.allowNaturalFlow = getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.shiftCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown");
-			this.clickLavaCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown");
-			this.clickLandCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
-			this.shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
-			this.clickLavaRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
-			this.shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius");
-		}
-
 		if (type == AbilityType.SHIFT) {
 			// Update the shift counter for all the player's LavaFlows.
 			final ArrayList<LavaFlow> shiftFlows = LavaFlow.getLavaFlow(player, LavaFlow.AbilityType.SHIFT);

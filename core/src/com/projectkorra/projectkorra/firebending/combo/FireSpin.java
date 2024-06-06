@@ -59,13 +59,6 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		this.knockback = getConfig().getDouble("Abilities.Fire.FireSpin.Knockback");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireSpin.Speed");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Range");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback");
-		}
-
 		this.start();
 	}
 

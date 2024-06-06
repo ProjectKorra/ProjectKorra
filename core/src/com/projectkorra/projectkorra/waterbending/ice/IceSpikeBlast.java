@@ -78,15 +78,6 @@ public class IceSpikeBlast extends IceAbility {
 			return;
 		}
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.slowCooldown = 0;
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Range");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Damage");
-			this.slowPotency = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPotency");
-			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowDuration");
-		}
-
 		block(player);
 		this.sourceBlock = getWaterSourceBlock(player, this.range, this.bPlayer.canPlantbend());
 		if (this.sourceBlock == null) {

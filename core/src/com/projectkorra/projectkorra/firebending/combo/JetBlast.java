@@ -45,10 +45,6 @@ public class JetBlast extends FireAbility implements ComboAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlast.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Fire.JetBlast.Duration");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-		}
-
 		this.fireJet.setSpeed(speed);
 		this.fireJet.setDuration(duration);
 		this.start();

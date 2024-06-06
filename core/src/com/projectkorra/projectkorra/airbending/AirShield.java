@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -23,6 +24,7 @@ import com.projectkorra.projectkorra.command.Commands;
 
 public class AirShield extends AirAbility {
 
+	@Attribute(Attribute.AVATAR_STATE_TOGGLE)
 	private boolean isToggledByAvatarState;
 	@Attribute("Max" + Attribute.RADIUS)
 	private double maxRadius;
@@ -46,7 +48,7 @@ public class AirShield extends AirAbility {
 
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.MaxRadius");
 		this.initialRadius = getConfig().getDouble("Abilities.Air.AirShield.InitialRadius");
-		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
+		this.isToggledByAvatarState = ConfigManager.avatarStateConfig.get().getBoolean("Abilities.Air.AirShield.IsToggle");
 		this.radius = this.initialRadius;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirShield.Duration");

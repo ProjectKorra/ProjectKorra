@@ -95,10 +95,6 @@ public class SurgeWave extends WaterAbility {
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
 
-		if (this.bPlayer.isAvatarState()) {
-			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
-		}
-
 		if (this.prepare()) {
 			wave = getAbility(player, SurgeWave.class);
 			if (wave != null) {

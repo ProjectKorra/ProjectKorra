@@ -38,8 +38,8 @@ public class OctopusForm extends WaterAbility {
 	private boolean settingUp;
 	private boolean forming;
 	private boolean formed;
-	@Attribute(Attribute.RANGE) @DayNightFactor
-	private double range;
+	@Attribute(Attribute.SELECT_RANGE) @DayNightFactor
+	private double selectRange;
 	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
 	private int currentAnimationStep;
@@ -52,7 +52,7 @@ public class OctopusForm extends WaterAbility {
 	private long cooldown;
 	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
-	@Attribute("Attack" + Attribute.RANGE)
+	@Attribute(Attribute.RANGE)
 	private double attackRange;
 	@Attribute("Usage" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long usageCooldown;
@@ -98,7 +98,7 @@ public class OctopusForm extends WaterAbility {
 		this.currentAnimationStep = 1;
 		this.stepCounter = 1;
 		this.totalStepCount = 3;
-		this.range = getConfig().getDouble("Abilities.Water.OctopusForm.Range");
+		this.selectRange = getConfig().getDouble("Abilities.Water.OctopusForm.Range");
 		this.damage = getConfig().getDouble("Abilities.Water.OctopusForm.Damage");
 		this.interval = getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
 		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange"); // ------------->    //Although this benefits from being smaller, it's better
@@ -117,15 +117,11 @@ public class OctopusForm extends WaterAbility {
 			this.pc = new PhaseChange(player, PhaseChangeType.CUSTOM);
 		}
 
-		if (this.bPlayer.isAvatarState()) {
-			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.Damage");
-			this.attackRange = getConfig().getInt("Abilities.Avatar.AvatarState.Water.OctopusForm.AttackRange");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Knockback");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius");
-		}
 		this.time = System.currentTimeMillis();
+
 		if (!player.isSneaking()) {
-			this.sourceBlock = BlockSource.getWaterSourceBlock(player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
+			recalculateAttributes(); //Apply night and avatarstate factors before checking the select range
+			this.sourceBlock = BlockSource.getWaterSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 		}
 
 		if (this.sourceBlock != null) {
@@ -232,7 +228,7 @@ public class OctopusForm extends WaterAbility {
 		} else if (!this.player.isSneaking() && !this.sourceSelected) {
 			this.remove();
 			return;
-		} else if (this.sourceBlock.getLocation().distanceSquared(this.player.getLocation()) > this.range * this.range && this.sourceSelected) {
+		} else if (this.sourceBlock.getLocation().distanceSquared(this.player.getLocation()) > this.selectRange * this.selectRange && this.sourceSelected) {
 			this.remove();
 			return;
 		} else if (this.duration != 0 && System.currentTimeMillis() > this.getStartTime() + this.duration) {
@@ -571,12 +567,12 @@ public class OctopusForm extends WaterAbility {
 		this.formed = formed;
 	}
 
-	public double getRange() {
-		return this.range;
+	public double getSelectRange() {
+		return this.selectRange;
 	}
 
-	public void setRange(final double range) {
-		this.range = range;
+	public void setSelectRange(final double selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public double getDamage() {

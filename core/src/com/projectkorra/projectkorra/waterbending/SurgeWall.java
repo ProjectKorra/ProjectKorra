@@ -82,10 +82,6 @@ public class SurgeWall extends WaterAbility {
 			return;
 		}
 
-		if (this.bPlayer.isAvatarState()) {
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius");
-		}
-
 		final SurgeWall wall = getAbility(player, SurgeWall.class);
 		if (wall != null) {
 			if (wall.progressing) {

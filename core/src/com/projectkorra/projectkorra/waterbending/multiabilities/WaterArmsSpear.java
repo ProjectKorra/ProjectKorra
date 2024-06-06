@@ -80,23 +80,7 @@ public class WaterArmsSpear extends WaterAbility {
 		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
 		this.spearLocations = new ArrayList<>();
 
-		this.getNightAugments();
 		this.createInstance();
-	}
-
-	private void getNightAugments() {
-		final World world = this.player.getWorld();
-		if (isNight(world)) {
-			if (isFullMoon(world) && !GeneralMethods.hasRPG()) {
-				this.spearRange = this.spearRangeFullMoon;
-				this.spearSphereRadius = this.spearSphereFullMoon;
-				this.spearDuration = this.spearDurationFullMoon;
-			} else {
-				this.spearRange = this.spearRangeNight;
-				this.spearSphereRadius = this.spearSphereNight;
-				this.spearDuration = this.spearDurationNight;
-			}
-		}
 	}
 
 	private void createInstance() {

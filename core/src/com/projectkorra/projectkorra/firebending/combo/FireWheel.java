@@ -73,15 +73,6 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		this.direction = this.location.getDirection().clone().normalize();
 		this.direction.setY(0);
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Range");
-			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
-			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
-		}
-
 		this.radius = this.height / 2;
 		this.origin = player.getLocation().clone().add(0, this.radius, 0);
 

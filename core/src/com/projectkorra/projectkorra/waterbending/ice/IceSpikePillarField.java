@@ -47,11 +47,6 @@ public class IceSpikePillarField extends IceAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
 		this.knockup = getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius");
-		}
-
 		this.numberOfSpikes = (int) (((this.radius) * (this.radius)) / 4);
 		this.start();
 	}

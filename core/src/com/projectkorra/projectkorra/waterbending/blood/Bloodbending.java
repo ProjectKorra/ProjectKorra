@@ -43,7 +43,6 @@ public class Bloodbending extends BloodAbility {
 	private boolean canBloodbendOtherBloodbenders;
 	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	private long time;
 	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
 	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
@@ -81,7 +80,8 @@ public class Bloodbending extends BloodAbility {
 		}
 
 		if (this.bPlayer.isAvatarState()) {
-			this.range += AvatarState.getValue(1.5);
+			this.recalculateAttributes(); //We call this so the range is updated based on the modifiers
+
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), this.range)) {
 				if (entity instanceof LivingEntity) {
 					if (BLOODLESS_ENTITIES.contains(entity.getType())) {
@@ -139,8 +139,6 @@ public class Bloodbending extends BloodAbility {
 			AirAbility.breakBreathbendingHold(this.target);
 			TARGETED_ENTITIES.put(this.target, player);
 		}
-
-		this.time = System.currentTimeMillis();
 		this.start();
 	}
 
@@ -185,7 +183,7 @@ public class Bloodbending extends BloodAbility {
 			bPlayer.addCooldown(this);
 			this.remove();
 			return;
-		} else if (this.duration > 0 && System.currentTimeMillis() - this.time > this.duration) {
+		} else if (this.duration > 0 && System.currentTimeMillis() - this.getStartTime() > this.duration) {
 			this.remove();
 			this.bPlayer.addCooldown(this);
 			return;
@@ -456,14 +454,6 @@ public class Bloodbending extends BloodAbility {
 
 	public void setRange(final double range) {
 		this.range = range;
-	}
-
-	public long getTime() {
-		return this.time;
-	}
-
-	public void setTime(final long time) {
-		this.time = time;
 	}
 
 	public long getDuration() {

@@ -60,7 +60,7 @@ public class EarthSmash extends EarthAbility {
 	private double shootRange;
 	@Attribute("Min" + Attribute.DAMAGE)
 	private double minDamage;
-	@Attribute("Max" + Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE)
 	private double maxDamage;
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
@@ -169,19 +169,6 @@ public class EarthSmash extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
 		this.flightDuration = getConfig().getLong("Abilities.Earth.EarthSmash.Flight.Duration");
 		this.duration = getConfig().getLong("Abilities.Earth.EarthSmash.Duration");
-
-		if (bPlayer.isAvatarState()) {
-			this.selectRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange");
-			this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange");
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown");
-			this.minDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.MinimumDamage");
-			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.MaximumDamage");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback");
-			this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed");
-			this.flightDuration = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer");
-			this.shootRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange");
-		}
 	}
 
 	@Override

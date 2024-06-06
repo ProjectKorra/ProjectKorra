@@ -89,12 +89,6 @@ public class MetalClips extends MetalAbility {
 		this.canThrow = (getConfig().getBoolean("Abilities.Earth.MetalClips.ThrowEnabled") && player.hasPermission("bending.ability.metalclips.throw"));
 		this.trackedIngots = new ArrayList<>();
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.MetalClips.Cooldown");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.MetalClips.Range");
-			this.crushDamage = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage");
-		}
-
 		if (abilityType == 0) {
 			if (!this.bPlayer.canBend(this)) {
 				return;

@@ -166,12 +166,6 @@ public class Lightning extends LightningAbility {
 		this.stunChance = this.getDayFactor(this.stunChance);
 		this.stunDuration = this.getDayFactor(this.stunDuration);*/
 
-		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.ChargeTime");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.Lightning.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.Lightning.Damage");
-		}
-
 		this.start();
 	}
 

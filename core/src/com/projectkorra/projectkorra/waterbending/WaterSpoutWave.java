@@ -114,13 +114,6 @@ public class WaterSpoutWave extends WaterAbility {
 			return;
 		}
 
-		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = 0;
-			this.flightDuration = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterWave.FlightDuration");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceWave.Damage");
-			this.cooldown = 0;
-		}
-
 		this.time = System.currentTimeMillis();
 		this.type = type;
 
