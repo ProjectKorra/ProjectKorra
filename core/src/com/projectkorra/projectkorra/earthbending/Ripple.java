@@ -45,6 +45,7 @@ public class Ripple extends EarthAbility {
 
 	public Ripple(final Player player, final Vector direction) {
 		super(player);
+		this.setNoiseReduction(3);
 		this.initialize(player, this.getInitialLocation(player, direction), direction);
 	}
 
@@ -111,6 +112,7 @@ public class Ripple extends EarthAbility {
 			final Location newlocation = this.locations.get(this.step);
 			final Block block = this.location.getBlock();
 			this.location = newlocation.clone();
+			this.setNoiseReduction(3 + (this.step * 2));
 
 			if (!newlocation.getBlock().equals(block)) {
 				this.block1 = this.block2;
