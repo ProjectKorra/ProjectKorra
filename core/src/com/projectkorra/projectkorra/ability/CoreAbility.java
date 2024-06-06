@@ -100,6 +100,7 @@ public abstract class CoreAbility implements Ability {
 	@Deprecated
 	private boolean attributesModified;
 	private boolean recalculatingAttributes;
+	private boolean attributeValuesCached;
 
 	/**
 	 * The default constructor is needed to create a fake instance of each
@@ -128,6 +129,7 @@ public abstract class CoreAbility implements Ability {
 					}
 				}
 
+				cache.calculateAvatarStateModifier(this); //Pull values from the AvatarState config
 				ATTRIBUTE_FIELDS.get(this.getClass()).put(attribute.value(), cache); //Store a cache value for the field and the attribute
 			}
 		}
@@ -187,14 +189,6 @@ public abstract class CoreAbility implements Ability {
 		}
 		if (!INSTANCES_BY_CLASS.containsKey(clazz)) {
 			INSTANCES_BY_CLASS.put(clazz, Collections.newSetFromMap(new ConcurrentHashMap<CoreAbility, Boolean>()));
-		}
-
-		try {
-			for (AttributeCache cache : ATTRIBUTE_FIELDS.get(clazz).values()) { //Get all attributes for this ability and cache initial values
-				cache.getInitialValues().put(this, cache.getField().get(this));
-			}
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
 		}
 
 		this.recalculateAttributes();
@@ -977,6 +971,17 @@ public abstract class CoreAbility implements Ability {
 		if (recalculatingAttributes) return; //Stop recursion if an addon does something wrong, e.g. calls recalculateAttributes inside the event
 
 		recalculatingAttributes = true;
+
+		if (!attributeValuesCached) { //Cache initial values
+			try {
+				for (AttributeCache cache : ATTRIBUTE_FIELDS.get(this.getClass()).values()) { //Get all attributes for this ability and cache initial values
+					cache.getInitialValues().put(this, cache.getField().get(this));
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			attributeValuesCached = true;
+		}
 
 		attribute_loop:
 		for (AttributeCache cache : ATTRIBUTE_FIELDS.get(this.getClass()).values()) {

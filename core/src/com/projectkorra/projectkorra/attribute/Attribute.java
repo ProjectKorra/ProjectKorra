@@ -23,5 +23,7 @@ public @interface Attribute {
 	public static final String HEIGHT = "Height";
 	public static final String KNOCKBACK = "Knockback";
 	public static final String KNOCKUP = "Knockup";
+	public static final String SELF_PUSH = "SelfPush";
 	public static final String FIRE_TICK = "FireTicks";
+	public static final String AVATAR_STATE_TOGGLE = "AvatarStateToggle";
 }

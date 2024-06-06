@@ -1,32 +1,41 @@
 package com.projectkorra.projectkorra.configuration;
 
+import com.google.common.collect.Sets;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ConfigManager {
 
 	public static Config presetConfig;
 	public static Config defaultConfig;
 	public static Config languageConfig;
+	public static Config avatarStateConfig;
 
 	public ConfigManager() {
 		presetConfig = new Config(new File("presets.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		languageConfig = new Config(new File("language.yml"));
+		avatarStateConfig = new Config(new File("avatarstate.yml"));
+
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.LANGUAGE);
 		configCheck(ConfigType.PRESETS);
+		configCheck(ConfigType.AVATAR_STATE);
 	}
 
 	public static void configCheck(final ConfigType type) {
@@ -830,147 +839,16 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Enabled", true);
 			config.addDefault("Abilities.Avatar.AvatarState.Cooldown", 7200000);
 			config.addDefault("Abilities.Avatar.AvatarState.Duration", 480000);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled", true);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Power", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled", true);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.Speed.Power", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Enabled", true);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled", true);
-			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.PowerMultiplier", 2);
 			config.addDefault("Abilities.Avatar.AvatarState.PlaySound", true);
+			config.addDefault("Abilities.Avatar.AvatarState.ShowParticles", true);
+			config.addDefault("Abilities.Avatar.AvatarState.GlowEnabled", false);
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_ANVIL_LAND");
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Volume", 1);
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1.5);
 
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSpout.Height", 26);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSuction.Push", 3.5);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown", 1000);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Range", 24);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Radius", 0.25);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime", 1000);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.Damage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle", true);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime", 1000);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Damage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Range", 16);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.Range", 60);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Height", 21);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirStream.EntityCarry.Duration", 20000);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Damage", 6);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Range", 21);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSweep.Knockback", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.Twister.Range", 24);
-			config.addDefault("Abilities.Avatar.AvatarState.Air.Twister.Height", 12);
-
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.MaxDistance", 80);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius", 2);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius", 10);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius", 12);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Cooldown", 2000);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Range", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height", 8);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height", 8);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width", 8);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height", 12);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height", 12);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown", 2000);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthArmor.GoldHearts", 6);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown", 500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height", 6);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Radius", 6);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Range", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback", 2);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange", 16);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange", 16);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.MinimumDamage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.MaximumDamage", 7);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback", 4.5);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed", 1.0);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer", 10000);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange", 30);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius", 0.5);
-
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range", 14);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle", true);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.Lightning.ChargeTime", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.Lightning.Damage", 6);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.Lightning.Cooldown", 1000);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBurst.ChargeTime", 1);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBurst.Damage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBurst.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MinimumDamage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MaximumDamage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireKick.Damage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireKick.Range", 9);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireSpin.Range", 9);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Damage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Range", 35);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Height", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed", 0.75);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.Height", 6);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.Width", 6);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.Duration", 8000);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.Damage", 2);
-			config.addDefault("Abilities.Avatar.AvatarState.Fire.WallOfFire.FireTicks", 2);
-
-			config.addDefault("Abilities.Avatar.AvatarState.Water.OctopusForm.AttackRange", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.OctopusForm.Radius", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.OctopusForm.Damage", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.OctopusForm.Knockback", 2);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.Torrent.InitialDamage", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.Torrent.SuccessiveDamage", 1.5);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.Torrent.MaxHits", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.Torrent.Push", 1.5);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage", 5);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Damage", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Range", 30);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBlast.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Damage", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Range", 30);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Push", 0.9);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Height", 7);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.SlowPotency", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.SlowDuration", 90);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius", 8);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Push", 1.2);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Range", 30);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Damage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPotency", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowDuration", 90);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.Damage", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.Range", 16);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.MaxShots", 45);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceBullet.ShootTime", 12000);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.IceWave.Damage", 4);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterSpout.Height", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterSpout.Wave.FlightDuration", 5000);
+			if (config.contains("Abilities.Avatar.AvatarState.PowerMultiplier")) { //If old values exist from the old config, migrate to the new system
+				migrateAvatarState();
+			}
 
 			config.addDefault("Abilities.Air.Passive.Factor", 0.3);
 			config.addDefault("Abilities.Air.Passive.AirAgility.Enabled", true);
@@ -1813,7 +1691,185 @@ public class ConfigManager {
 			config.addDefault("debug", false);
 
 			defaultConfig.save();
+		} else if (type == ConfigType.AVATAR_STATE) {
+			config = avatarStateConfig.get();
+
+			config.addDefault("PotionEffects.Regeneration", 4);
+			config.addDefault("PotionEffects.Speed", 3);
+			config.addDefault("PotionEffects.Resistance", 3);
+			config.addDefault("PotionEffects.Fire_Resistance", 3);
+
+			config.addDefault("Abilities._All.Damage", "x2.0");
+			config.addDefault("Abilities._All.Cooldown", "x0.5");
+			config.addDefault("Abilities._All.ChargeTime", "x0.5");
+			config.addDefault("Abilities._All.Duration", "x2.0");
+			config.addDefault("Abilities._All.Range", "x2.0");
+			config.addDefault("Abilities._All.SelectRange", "x3.0");
+
+			config.addDefault("Abilities.Air._All.Knockback", "x1.5");
+			config.addDefault("Abilities.Air._All.Range", "x1.5");
+			config.addDefault("Abilities.Air._All.Speed", "x1.2");
+			config.addDefault("Abilities.Air._All.Cooldown", "x0.5");
+			config.addDefault("Abilities.Air._All.SelectRange", "x3.0");
+			config.addDefault("Abilities.Air.AirBlast.Knockback", "x2.5");
+			config.addDefault("Abilities.Air.AirBlast.SelfPush", "x2.0");
+			config.addDefault("Abilities.Air.AirBlast.Cooldown", 200);
+			config.addDefault("Abilities.Air.AirSpout.Height", 26);
+			config.addDefault("Abilities.Air.AirSuction.Push", 3.5);
+			config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1000);
+			config.addDefault("Abilities.Air.AirSwipe.Damage", "x2.0");
+			config.addDefault("Abilities.Air.AirSwipe.Knockback", "x2.0");
+			config.addDefault("Abilities.Air.AirSwipe.Range", "x1.6");
+			config.addDefault("Abilities.Air.AirSwipe.Radius", "x0.5");
+			config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1000);
+			config.addDefault("Abilities.Air.AirBurst.Damage", 3);
+			config.addDefault("Abilities.Air.AirShield.IsToggle", true);
+			config.addDefault("Abilities.Air.Suffocate.Cooldown", 0);
+			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 1000);
+			config.addDefault("Abilities.Air.Suffocate.Damage", 3);
+			config.addDefault("Abilities.Air.Suffocate.Range", 16);
+			config.addDefault("Abilities.Air.AirStream.Range", 60);
+			config.addDefault("Abilities.Air.AirStream.EntityCarryHeight", "x1.5");
+			config.addDefault("Abilities.Air.AirStream.EntityCarryDuration", 20000);
+			config.addDefault("Abilities.Air.AirStream.Cooldown", 0);
+			config.addDefault("Abilities.Air.AirSweep.Damage", "x2.0");
+			config.addDefault("Abilities.Air.AirSweep.Cooldown", 0);
+			config.addDefault("Abilities.Air.AirSweep.Range", 21);
+			config.addDefault("Abilities.Air.AirSweep.Knockback", 4);
+			config.addDefault("Abilities.Air.Twister.Range", "x1.5");
+			config.addDefault("Abilities.Air.Twister.Height", "+6");
+			config.addDefault("Abilities.Air.Twister.Cooldown", 0);
+
+			config.addDefault("Abilities.Earth._All.Width", "x4.0");
+			config.addDefault("Abilities.Earth._All.Height", "x2.0");
+			config.addDefault("Abilities.Earth._All.SelectRange", "x5.0");
+			config.addDefault("Abilities.Earth._All.Damage", "x2.0");
+			config.addDefault("Abilities.Earth._All.Speed", "x1.5");
+			config.addDefault("Abilities.Earth._All.Range", "x1.5");
+			config.addDefault("Abilities.Earth.Catapult.MaxDistance", 80);
+			config.addDefault("Abilities.Earth.Catapult.Cooldown", 0);
+			config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 1500);
+			config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCooldown", 1500);
+			config.addDefault("Abilities.Earth.LavaFlow.ClickLandCooldown", 1500);
+			config.addDefault("Abilities.Earth.LavaFlow.ShiftPlatformRadius", 2);
+			config.addDefault("Abilities.Earth.LavaFlow.ClickRadius", 14);
+			config.addDefault("Abilities.Earth.LavaFlow.ShiftRadius", 20);
+			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 2000);
+			config.addDefault("Abilities.Earth.MetalClips.Range", "x3.0");
+			config.addDefault("Abilities.Earth.MetalClips.CrushDamage", "x2.5");
+			config.addDefault("Abilities.Earth.RaiseEarth.Height", "x2.0");
+			config.addDefault("Abilities.Earth.RaiseEarth.Width", "x4.0");
+			config.addDefault("Abilities.Earth.RaiseEarth.Speed", "x0.8");
+			config.addDefault("Abilities.Earth.Collapse.Height", "x2.0");
+			config.addDefault("Abilities.Earth.Collapse.Speed", "x0.8");
+			config.addDefault("Abilities.Earth.Collapse.Radius", 15);
+			config.addDefault("Abilities.Earth.EarthArmor.Cooldown", 2000);
+			config.addDefault("Abilities.Earth.EarthArmor.GoldHearts", 6);
+			config.addDefault("Abilities.Earth.EarthBlast.Cooldown", 200);
+			config.addDefault("Abilities.Earth.EarthBlast.Damage", 6);
+			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 0);
+			config.addDefault("Abilities.Earth.EarthGrab.Height", 6);
+			config.addDefault("Abilities.Earth.EarthGrab.Radius", 6);
+			config.addDefault("Abilities.Earth.Shockwave.Range", 20);
+			config.addDefault("Abilities.Earth.Shockwave.Cooldown", 0);
+			config.addDefault("Abilities.Earth.Shockwave.ChargeTime", 1500);
+			config.addDefault("Abilities.Earth.Shockwave.Damage", 5);
+			config.addDefault("Abilities.Earth.Shockwave.Knockback", 2);
+			config.addDefault("Abilities.Earth.EarthSmash.SelectRange", 16);
+			config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 16);
+			config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1500);
+			config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 0);
+			config.addDefault("Abilities.Earth.EarthSmash.MinimumDamage", 3);
+			config.addDefault("Abilities.Earth.EarthSmash.MaximumDamage", 7);
+			config.addDefault("Abilities.Earth.EarthSmash.Knockback", 4.5);
+			config.addDefault("Abilities.Earth.EarthSmash.FlightSpeed", 1.0);
+			config.addDefault("Abilities.Earth.EarthSmash.FlightTimer", 10000);
+			config.addDefault("Abilities.Earth.EarthSmash.ShootRange", 30);
+			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.5);
+
+			config.addDefault("Abilities.Fire._All.Damage", "x2.0");
+			config.addDefault("Abilities.Fire._All.Cooldown", "x0.5");
+			config.addDefault("Abilities.Fire._All.ChargeTime", "x0.5");
+			config.addDefault("Abilities.Fire._All.Duration", "x2.0");
+			config.addDefault("Abilities.Fire._All.Range", "x2.0");
+			config.addDefault("Abilities.Fire._All.Speed", "x1.5");
+			config.addDefault("Abilities.Fire.FireJet.IsToggle", true);
+			config.addDefault("Abilities.Fire.JetBlast.Cooldown", 0);
+			config.addDefault("Abilities.Fire.JetBlast.Speed", "x1.5");
+			config.addDefault("Abilities.Fire.JetBlaze.Cooldown", 0);
+			config.addDefault("Abilities.Fire.JetBlaze.Speed", "x1.5");
+			config.addDefault("Abilities.Fire.Lightning.ChargeTime", 500);
+			config.addDefault("Abilities.Fire.Lightning.Damage", "x2.0");
+			config.addDefault("Abilities.Fire.Lightning.MaxChainArcs", "x4");
+			config.addDefault("Abilities.Fire.Lightning.Cooldown", 0);
+			config.addDefault("Abilities.Fire.Lightning.Range", 60);
+			config.addDefault("Abilities.Fire.FireBurst.ChargeTime", 100);
+			config.addDefault("Abilities.Fire.FireBurst.Damage", "x1.5");
+			config.addDefault("Abilities.Fire.FireBurst.Cooldown", 0);
+			config.addDefault("Abilities.Fire.FireBlast.ChargeTime", "x0.25");
+			config.addDefault("Abilities.Fire.FireBlast.Speed", "x2.0");
+			config.addDefault("Abilities.Fire.FireKick.Damage", "x2.0");
+			config.addDefault("Abilities.Fire.FireKick.Range", "x2.0");
+			config.addDefault("Abilities.Fire.FireSpin.Cooldown", 0);
+			config.addDefault("Abilities.Fire.FireSpin.Damage", "x1.8");
+			config.addDefault("Abilities.Fire.FireSpin.Range", 12);
+			config.addDefault("Abilities.Fire.FireSpin.Knockback", "x1.0");
+			config.addDefault("Abilities.Fire.FireWheel.Damage", 6);
+			config.addDefault("Abilities.Fire.FireWheel.Range", "x2.5");
+			config.addDefault("Abilities.Fire.FireWheel.Height", 3);
+			config.addDefault("Abilities.Fire.FireWheel.Speed", "x1.2");
+			config.addDefault("Abilities.Fire.FireWheel.FireTicks", 4);
+			config.addDefault("Abilities.Fire.WallOfFire.Height", "x1.6");
+			config.addDefault("Abilities.Fire.WallOfFire.Width", "x2.5");
+			config.addDefault("Abilities.Fire.WallOfFire.Duration", "x1.5");
+			config.addDefault("Abilities.Fire.WallOfFire.FireTicks", 2);
+
+			config.addDefault("Abilities.Water._All.Damage", "x1.5");
+			config.addDefault("Abilities.Water._All.Cooldown", "x0.1");
+			config.addDefault("Abilities.Water._All.ChargeTime", "x0.5");
+			config.addDefault("Abilities.Water._All.Duration", "x2.0");
+			config.addDefault("Abilities.Water._All.Range", "x2.0");
+			config.addDefault("Abilities.Water._All.SelectRange", "x3.0");
+			config.addDefault("Abilities.Water.OctopusForm.AttackRange", 3);
+			config.addDefault("Abilities.Water.OctopusForm.Radius", 4);
+			config.addDefault("Abilities.Water.OctopusForm.Damage", 4);
+			config.addDefault("Abilities.Water.OctopusForm.Knockback", 2);
+			config.addDefault("Abilities.Water.Surge.Wall.Radius", 4);
+			config.addDefault("Abilities.Water.Surge.Wave.Radius", 20);
+			config.addDefault("Abilities.Water.Torrent.InitialDamage", 5);
+			config.addDefault("Abilities.Water.Torrent.SuccessiveDamage", "x1.5");
+			config.addDefault("Abilities.Water.Torrent.MaxHits", "x1.5");
+			config.addDefault("Abilities.Water.Torrent.Knockback", "x1.5");
+			config.addDefault("Abilities.Water.WaterManipulation.Damage", 5);
+			config.addDefault("Abilities.Water.IceBlast.Damage", 4);
+			config.addDefault("Abilities.Water.IceBlast.Range", 45);
+			config.addDefault("Abilities.Water.IceBlast.Cooldown", 0);
+			config.addDefault("Abilities.Water.IceBullet.Cooldown", 0);
+			config.addDefault("Abilities.Water.IceSpike.Damage", "x1.5");
+			config.addDefault("Abilities.Water.IceSpike.Range", "x1.5");
+			config.addDefault("Abilities.Water.IceSpike.Knockback", "+0.3");
+			config.addDefault("Abilities.Water.IceSpike.Height", "+3");
+			config.addDefault("Abilities.Water.IceSpike.SlowPotency", 3);
+			config.addDefault("Abilities.Water.IceSpike.SlowCooldown", 0);
+			config.addDefault("Abilities.Water.IceSpike.Cooldown", 0);
+			config.addDefault("Abilities.Water.IceSpike.SlowDuration", 90);
+			config.addDefault("Abilities.Water.IceSpike.Radius", "x1.4");
+			config.addDefault("Abilities.Water.IceBullet.Damage", 5);
+			config.addDefault("Abilities.Water.IceBullet.Range", 45);
+			config.addDefault("Abilities.Water.IceBullet.MaxShots", 45);
+			config.addDefault("Abilities.Water.IceBullet.ShotCooldown", 100);
+			config.addDefault("Abilities.Water.IceBullet.ShootTime", 15000);
+			config.addDefault("Abilities.Water.IceWave.Damage", 6);
+			config.addDefault("Abilities.Water.IceWave.Cooldown", 0);
+			config.addDefault("Abilities.Water.WaterSpout.Height", 32);
+			config.addDefault("Abilities.Water.WaterSpout.Cooldown", 0);
+			config.addDefault("Abilities.Water.WaterSpout.ChargeTime", 0);
+			config.addDefault("Abilities.Water.WaterSpout.FlightDuration", "x2.0");
+
+
+			avatarStateConfig.save();
 		}
+
 	}
 
 	public static FileConfiguration getConfig() {
@@ -1824,5 +1880,68 @@ public class ConfigManager {
 		List<String> plugins = Arrays.asList("EssentialsChat", "VentureChat", "LPC", "ChatManager", "ChatControl", "DeluxeChat");
 
 		return Arrays.stream(Bukkit.getPluginManager().getPlugins()).anyMatch(pl -> plugins.contains(pl.getName()));
+	}
+
+	private static void migrateAvatarState() {
+		FileConfiguration config = ConfigManager.defaultConfig.get();
+		FileConfiguration avatarState = ConfigManager.avatarStateConfig.get();
+
+		if (avatarState.getKeys(false).isEmpty()) { //Don't migrate if they have an AvatarState config file already
+			return;
+		}
+
+		//Keys to leave in the original config
+		Set<String> fineKeys = Sets.newHashSet("Abilities.Avatar.AvatarState.Enabled",
+				"Abilities.Avatar.AvatarState.Duration",
+				"Abilities.Avatar.AvatarState.PlaySound",
+				"Abilities.Avatar.AvatarState.Sound.Sound",
+				"Abilities.Avatar.AvatarState.Sound.Volume",
+				"Abilities.Avatar.AvatarState.Sound.Pitch"
+		);
+
+		Map<String, String> translations = new HashMap<>();
+		translations.put("IsAvatarStateToggle", "IsToggle");
+		translations.put("AirBlast.Push.Entities", "AirBlast.Knockback");
+		translations.put("AirBlast.Push.Self", "AirBlast.SelfPush");
+		translations.put("Push", "Knockback");
+
+		//Migrate potion effects.
+		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled")) {
+			avatarState.set("PotionEffects.regeneration", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Power"));
+		}
+		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled")) {
+			avatarState.set("PotionEffects.speed", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.Speed.Power"));
+		}
+		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Enabled")) {
+			avatarState.set("PotionEffects.resistance", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power"));
+		}
+		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled")) {
+			avatarState.set("PotionEffects.fire_resistance", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power"));
+		}
+
+		//Migrate all other ability keys
+		for (String key : config.getConfigurationSection("Abilities.Avatar.AvatarState").getKeys(true)) {
+			String newkey = key;
+			if (!fineKeys.contains("Abilities.AvatarState." + key)) {
+				if (!key.startsWith("PotionEffects") && !key.startsWith("PowerMultiplier")) { //Dont migrate these two keys
+					//Go through all translations and check the key doesn't need to be translated to something new
+					for (String translation : translations.keySet()) {
+						if (key.endsWith(translation)) {
+							newkey = key.substring(0, key.length() - translation.length()) + translations.get(translation); //Replace the old part with the new part
+							break;
+						}
+					}
+
+					avatarState.set("Abilities." + newkey, config.get("Abilities.Avatar.AvatarState." + key)); //Migrate all other keys
+					continue;
+				}
+
+				config.set("Abilities.AvatarState." + key, null); //Remove the old key from the original config
+			}
+		}
+
+		//Save both configs
+		ConfigManager.defaultConfig.save();
+		ConfigManager.avatarStateConfig.save();
 	}
 }

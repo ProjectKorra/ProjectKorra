@@ -37,6 +37,7 @@ import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.FlightMultiAbility;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.attribute.AttributeCache;
 import com.projectkorra.projectkorra.attribute.AttributeModification;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
@@ -2079,7 +2080,8 @@ public class PKListener implements Listener {
 				if (dayNightFactor.factor() != -1) factor = dayNightFactor.factor(); //If the factor isn't the default, use the one in the annotation
 
 				AttributeModifier modifier = dayNightFactor.invert() ? AttributeModifier.DIVISION : AttributeModifier.MULTIPLICATION;
-				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL, AttributeModification.NIGHT_FACTOR);
+				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL,
+						AttributeModification.NIGHT_FACTOR);
 				event.addModification(mod);
 			} else if (event.getAbility() instanceof FireAbility && day) {
 				double factor = FireAbility.getDayFactor();
@@ -2104,6 +2106,15 @@ public class PKListener implements Listener {
 			} else if (event.getAttribute().equals(Attribute.RANGE)) {
 				double factor = BlueFireAbility.getRangeFactor();
 				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_RANGE));
+			}
+		}
+
+		//AvatarState factors if the avatarstate is active
+		if (event.getAbility().getBendingPlayer().isAvatarState()) {
+			AttributeCache cache = CoreAbility.getAttributeCache(event.getAbility()).get(event.getAttribute());
+
+			if (cache != null && cache.getAvatarStateModifier().isPresent()) { //Check if there is a cached avatarstate modifier for this attribute
+				event.addModification(cache.getAvatarStateModifier().get());
 			}
 		}
 	}
