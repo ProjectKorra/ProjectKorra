@@ -48,10 +48,7 @@ public class Extraction extends MetalAbility {
 		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
 		this.ironGolemDrops = getConfig().getInt("Abilities.Earth.Extraction.IronGolem.Drops");
 		this.ironGolemDamage = getConfig().getDouble("Abilities.Earth.Extraction.IronGolem.Damage");
-		this.ironGolemDropMaterial = Material.getMaterial(getConfig().getString("Abilities.Earth.Extraction.IronGolem.DropMaterial"));
-		if (this.ironGolemDropMaterial == null) {
-			this.ironGolemDropMaterial = Material.IRON_INGOT;
-		}
+		this.ironGolemDropMaterial = Material.IRON_NUGGET;
 
 		this.is117 = GeneralMethods.getMCVersion() >= 1170;
 		this.iron = is117 ? Material.getMaterial("RAW_IRON") : Material.IRON_INGOT;
@@ -106,6 +103,7 @@ public class Extraction extends MetalAbility {
 		case "IRON_ORE":
 			type = Material.STONE;
 			item = new ItemStack(iron, this.getAmount(is117 ? 2 : 1 ));
+			break;
 		case "DEEPSLATE_IRON_ORE":
 			type = deepslate;
 			item = new ItemStack(iron, this.getAmount(2));
