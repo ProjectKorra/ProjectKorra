@@ -130,6 +130,7 @@ public class Extraction extends MetalAbility {
 		case "COPPER_ORE":
 			type = Material.STONE;
 			item = new ItemStack(copper, this.getAmount(2));
+			break;
 		case "DEEPSLATE_COPPER_ORE":
 			type = deepslate;
 			item = new ItemStack(copper, this.getAmount(2));
