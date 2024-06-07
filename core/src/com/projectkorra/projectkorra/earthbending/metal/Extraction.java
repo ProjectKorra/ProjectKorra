@@ -111,6 +111,7 @@ public class Extraction extends MetalAbility {
 		case "GOLD_ORE":
 			type = Material.STONE;
 			item = new ItemStack(gold, this.getAmount( is117 ? 2 : 1 ));
+			break;
 		case "DEEPSLATE_GOLD_ORE":
 			type = deepslate;
 			item = new ItemStack(gold, this.getAmount(2));
