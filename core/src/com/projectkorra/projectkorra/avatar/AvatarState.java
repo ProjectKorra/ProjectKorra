@@ -61,11 +61,11 @@ public class AvatarState extends AvatarAbility {
 			this.potionEffects.put(type, power);
 		}
 
-		this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Duration");
-		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");
-		this.showParticles = getConfig().getBoolean("Abilities.Avatar.AvatarState.ShowParticles");
-		this.playSound = getConfig().getBoolean("Abilities.Avatar.AvatarState.PlaySound");
-		this.glow = getConfig().getBoolean("Abilities.Avatar.AvatarState.GlowEnabled");
+		this.duration = ConfigManager.avatarStateConfig.get().getLong("AvatarState.Duration");
+		this.cooldown = ConfigManager.avatarStateConfig.get().getLong("AvatarState.Cooldown");
+		this.showParticles = ConfigManager.avatarStateConfig.get().getBoolean("AvatarState.ShowParticles");
+		this.playSound = ConfigManager.avatarStateConfig.get().getBoolean("AvatarState.PlaySound");
+		this.glow = ConfigManager.avatarStateConfig.get().getBoolean("AvatarState.GlowEnabled");
 
 		if (playSound) playAvatarSound(player.getLocation());
 		if (showParticles) {
@@ -258,6 +258,11 @@ public class AvatarState extends AvatarAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return ConfigManager.avatarStateConfig.get().getBoolean("AvatarState.Enabled");
 	}
 
 	public Map<PotionEffectType, Integer> getPotionEffects() {
