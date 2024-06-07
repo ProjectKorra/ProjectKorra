@@ -35,11 +35,6 @@
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
-    <!-- Aikars Repo -->
-    <repository>
-      <id>aikar</id>
-      <url>https://repo.aikar.co/nexus/content/groups/aikar/</url>
-    </repository>
     <!-- Paper Repo -->
     <repository>
       <id>papermc</id>

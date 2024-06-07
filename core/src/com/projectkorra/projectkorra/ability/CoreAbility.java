@@ -22,17 +22,10 @@ import java.util.jar.JarFile;
 
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import org.bukkit.permissions.Permission;
-import sun.reflect.ReflectionFactory;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.reflect.ClassPath;
-import com.google.common.reflect.ClassPath.ClassInfo;
-
-import co.aikar.timings.lib.MCTiming;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
