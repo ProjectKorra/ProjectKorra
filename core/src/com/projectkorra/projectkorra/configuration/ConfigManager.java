@@ -836,16 +836,6 @@ public class ConfigManager {
 			disabledWorlds.add("TestWorld2");
 			config.addDefault("Properties.DisabledWorlds", disabledWorlds);
 
-			config.addDefault("Abilities.Avatar.AvatarState.Enabled", true);
-			config.addDefault("Abilities.Avatar.AvatarState.Cooldown", 7200000);
-			config.addDefault("Abilities.Avatar.AvatarState.Duration", 480000);
-			config.addDefault("Abilities.Avatar.AvatarState.PlaySound", true);
-			config.addDefault("Abilities.Avatar.AvatarState.ShowParticles", true);
-			config.addDefault("Abilities.Avatar.AvatarState.GlowEnabled", false);
-			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_ANVIL_LAND");
-			config.addDefault("Abilities.Avatar.AvatarState.Sound.Volume", 1);
-			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1.5);
-
 			if (config.contains("Abilities.Avatar.AvatarState.PowerMultiplier")) { //If old values exist from the old config, migrate to the new system
 				migrateAvatarState();
 			}
@@ -1367,7 +1357,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftFlowSpeed", 0.01);
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftRemoveSpeed", 3.0);
 			config.addDefault("Abilities.Earth.LavaFlow.ClickLavaStartDelay", 1500);
-			config.addDefault("Abilities.Earth.LavaFlow.ClickLandStartDelay", 0);
 			config.addDefault("Abilities.Earth.LavaFlow.UpwardFlow", 2);
 			config.addDefault("Abilities.Earth.LavaFlow.DownwardFlow", 4);
 			config.addDefault("Abilities.Earth.LavaFlow.AllowNaturalFlow", false);
@@ -1694,6 +1683,24 @@ public class ConfigManager {
 		} else if (type == ConfigType.AVATAR_STATE) {
 			config = avatarStateConfig.get();
 
+			config.addDefault("AvatarState.Enabled", true);
+			config.addDefault("AvatarState.Cooldown", 7200000);
+			config.addDefault("AvatarState.Duration", 480000);
+			config.addDefault("AvatarState.PlaySound", true);
+			config.addDefault("AvatarState.ShowParticles", true);
+			config.addDefault("AvatarState.GlowEnabled", false);
+			config.addDefault("AvatarState.Sound.Sound", "BLOCK_BEACON_ACTIVATE");
+			config.addDefault("AvatarState.Sound.Volume", 1);
+			config.addDefault("AvatarState.Sound.Pitch", 1.5);
+			config.addDefault("AvatarState.CanBeChiblocked", false);
+
+			config.addDefault("LowHealth.Enabled", true);
+			config.addDefault("LowHealth.Threshold", 4);
+			config.addDefault("LowHealth.BoostHealth.Enabled", true);
+			config.addDefault("LowHealth.BoostHealth.Amount", 2);
+			config.addDefault("LowHealth.BoostHealth.YellowHearts", false);
+			config.addDefault("LowHealth.PreventDeath", false);
+
 			config.addDefault("PotionEffects.Regeneration", 4);
 			config.addDefault("PotionEffects.Speed", 3);
 			config.addDefault("PotionEffects.Resistance", 3);
@@ -1750,9 +1757,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Catapult.Cooldown", 0);
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 1500);
 			config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCooldown", 1500);
-			config.addDefault("Abilities.Earth.LavaFlow.ClickLandCooldown", 1500);
+			config.addDefault("Abilities.Earth.LavaFlow.ClickSpeed", "x2.5");
+			config.addDefault("Abilities.Earth.LavaFlow.ShiftSpeed", "x2.0");
+			config.addDefault("Abilities.Earth.LavaFlow.ClickLavaStartDelay", 500);
+			config.addDefault("Abilities.Earth.LavaFlow.ClickRange", "x2.0");
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftPlatformRadius", 2);
-			config.addDefault("Abilities.Earth.LavaFlow.ClickRadius", 14);
+			config.addDefault("Abilities.Earth.LavaFlow.ClickRadius", 12);
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftRadius", 20);
 			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 2000);
 			config.addDefault("Abilities.Earth.MetalClips.Range", "x3.0");
@@ -1890,15 +1900,6 @@ public class ConfigManager {
 			return;
 		}
 
-		//Keys to leave in the original config
-		Set<String> fineKeys = Sets.newHashSet("Abilities.Avatar.AvatarState.Enabled",
-				"Abilities.Avatar.AvatarState.Duration",
-				"Abilities.Avatar.AvatarState.PlaySound",
-				"Abilities.Avatar.AvatarState.Sound.Sound",
-				"Abilities.Avatar.AvatarState.Sound.Volume",
-				"Abilities.Avatar.AvatarState.Sound.Pitch"
-		);
-
 		Map<String, String> translations = new HashMap<>();
 		translations.put("IsAvatarStateToggle", "IsToggle");
 		translations.put("AirBlast.Push.Entities", "AirBlast.Knockback");
@@ -1922,22 +1923,22 @@ public class ConfigManager {
 		//Migrate all other ability keys
 		for (String key : config.getConfigurationSection("Abilities.Avatar.AvatarState").getKeys(true)) {
 			String newkey = key;
-			if (!fineKeys.contains("Abilities.AvatarState." + key)) {
-				if (!key.startsWith("PotionEffects") && !key.startsWith("PowerMultiplier")) { //Dont migrate these two keys
-					//Go through all translations and check the key doesn't need to be translated to something new
-					for (String translation : translations.keySet()) {
-						if (key.endsWith(translation)) {
-							newkey = key.substring(0, key.length() - translation.length()) + translations.get(translation); //Replace the old part with the new part
-							break;
-						}
-					}
 
-					avatarState.set("Abilities." + newkey, config.get("Abilities.Avatar.AvatarState." + key)); //Migrate all other keys
-					continue;
+			if (!key.startsWith("PotionEffects") && !key.startsWith("PowerMultiplier")) { //Dont migrate these two keys
+				//Go through all translations and check the key doesn't need to be translated to something new
+				for (String translation : translations.keySet()) {
+					if (key.endsWith(translation)) {
+						newkey = key.substring(0, key.length() - translation.length()) + translations.get(translation); //Replace the old part with the new part
+						break;
+					}
 				}
 
-				config.set("Abilities.AvatarState." + key, null); //Remove the old key from the original config
+				avatarState.set("Abilities." + newkey, config.get("Abilities.Avatar.AvatarState." + key)); //Migrate all other keys
+				continue;
 			}
+
+			config.set("Abilities.AvatarState." + key, null); //Remove the old key from the original config
+
 		}
 
 		//Save both configs

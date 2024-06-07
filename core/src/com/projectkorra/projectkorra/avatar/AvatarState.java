@@ -2,13 +2,17 @@ package com.projectkorra.projectkorra.avatar;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.AttributeCache;
 import com.projectkorra.projectkorra.attribute.AttributeModification;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -20,6 +24,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import org.bukkit.potion.PotionEffectTypeWrapper;
+import org.jetbrains.annotations.NotNull;
 
 public class AvatarState extends AvatarAbility {
 
@@ -63,6 +68,17 @@ public class AvatarState extends AvatarAbility {
 		this.glow = getConfig().getBoolean("Abilities.Avatar.AvatarState.GlowEnabled");
 
 		if (playSound) playAvatarSound(player.getLocation());
+		if (showParticles) {
+			player.getWorld().spawnParticle(Particle.FLASH, player.getLocation().add(0, 0.8, 0), 1, 0, 0, 0);
+
+
+			Random rand = new Random();
+			for (int i = 0; i < 40; i++) {
+				Particle particle = i % 2 == 0 ? Particle.END_ROD : Particle.FIREWORKS_SPARK;
+
+				player.getWorld().spawnParticle(particle, player.getLocation().add(0, 1, 0), 0, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, 0.3);
+			}
+		}
 
 		this.start();
 	}
@@ -101,6 +117,44 @@ public class AvatarState extends AvatarAbility {
 		}
 	}
 
+	public static boolean activateLowHealth(@NotNull BendingPlayer player, double damage, boolean willDie) {
+		if (!player.getAbilities().containsValue("AvatarState")) return false;
+		if (player.isOnCooldown("AvatarState")) return false;
+
+		if (ConfigManager.avatarStateConfig.get().getBoolean("LowHealth.Enabled")) {
+			boolean preventDeath = ConfigManager.avatarStateConfig.get().getBoolean("LowHealth.PreventDeath", false);
+			final double healthThreshold = ConfigManager.avatarStateConfig.get().getDouble("LowHealth.Threshold", 4);
+			final boolean boostHealth = ConfigManager.avatarStateConfig.get().getBoolean("LowHealth.BoostHealth.Enabled");
+			final int amount = ConfigManager.avatarStateConfig.get().getInt("LowHealth.BoostHealth.Amount", 2);
+			boolean yellowHearts = ConfigManager.avatarStateConfig.get().getBoolean("LowHealth.BoostHealth.YellowHearts");
+			final double currentHealth = player.getPlayer().getHealth() - damage;
+
+			if (currentHealth <= healthThreshold) {
+
+				if (willDie && !preventDeath) {
+					return false;
+				}
+
+				if (boostHealth) {
+					//Delay by 1 tick so the event doesn't override our changes
+					Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+						if (yellowHearts) {
+							if (willDie) player.getPlayer().setHealth(0.5);
+							player.getPlayer().setAbsorptionAmount(amount);
+						} else {
+							if (willDie) player.getPlayer().setHealth(amount);
+							else player.getPlayer().setHealth(Math.min(currentHealth + amount, player.getPlayer().getMaxHealth()));
+						}
+					}, 1L);
+				}
+
+				new AvatarState(player.getPlayer());
+				return preventDeath && willDie;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public void remove() {
 		this.bPlayer.addCooldown(this, true);
@@ -112,14 +166,16 @@ public class AvatarState extends AvatarAbility {
 		for (PotionEffectType type : this.potionEffects.keySet()) {
 			final int power = this.potionEffects.get(type);
 
-			if (!this.player.hasPotionEffect(type) || this.player.getPotionEffect(type).getAmplifier() < power || (this.player.getPotionEffect(type).getAmplifier() == power && this.player.getPotionEffect(type).getDuration() == 1)) {
+			if (!this.player.hasPotionEffect(type) || this.player.getPotionEffect(type).getAmplifier() < power
+					|| (this.player.getPotionEffect(type).getAmplifier() == power && this.player.getPotionEffect(type).getDuration() == 1)) {
 				addProgressPotionEffect(type, power);
 			}
 		}
 	}
 
 	private void addProgressPotionEffect(final PotionEffectType effect, final int power) {
-		if (!this.player.hasPotionEffect(effect) || this.player.getPotionEffect(effect).getAmplifier() < power || (this.player.getPotionEffect(effect).getAmplifier() == power && this.player.getPotionEffect(effect).getDuration() == 1)) {
+		if (!this.player.hasPotionEffect(effect) || this.player.getPotionEffect(effect).getAmplifier() < power
+				|| (this.player.getPotionEffect(effect).getAmplifier() == power && this.player.getPotionEffect(effect).getDuration() == 1)) {
 			this.player.addPotionEffect(new PotionEffect(effect, 30, power, true, false), true);
 		}
 	}

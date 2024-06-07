@@ -520,6 +520,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * Sets chiBlocked to true.
 	 */
 	public void blockChi() {
+		if (this.isAvatarState() && !ConfigManager.avatarStateConfig.get().getBoolean("AvatarState.CanBeChiblocked")) return;
+
 		this.chiBlocked = true;
 	}
 

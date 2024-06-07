@@ -996,6 +996,12 @@ public class PKListener implements Listener {
 				final EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
 			}
+
+			//Check if AvatarState will save them from death, or if AvatarState should activate due to low health
+			if (AvatarState.activateLowHealth(bPlayer, event.getFinalDamage(), ((Player) event.getEntity()).getHealth() - event.getFinalDamage() < 0)) {
+				event.setDamage(0D);
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -1423,11 +1429,6 @@ public class PKListener implements Listener {
 		if (ProjectKorra.isStatisticsEnabled()) {
 			Manager.getManager(StatisticsManager.class).store(player.getUniqueId());
 		}
-		if (bPlayer != null) {
-			if (ProjectKorra.isDatabaseCooldownsEnabled()) {
-				bPlayer.saveCooldowns();
-			}
-		}
 
 		Commands.invincible.remove(player.getName());
 
@@ -1454,6 +1455,9 @@ public class PKListener implements Listener {
 
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
 				() -> {
+					if (ProjectKorra.isDatabaseCooldownsEnabled()) {
+						bPlayer.saveCooldowns();
+					}
 					OfflineBendingPlayer converted = OfflineBendingPlayer.convertToOffline(bPlayer);
 					if (!converted.isOnline()) { //We test if they are still offline. If they relog by joining on a different client, they will be online now, and an error will be thrown otherwise.
 						converted.uncacheAfter(ConfigManager.defaultConfig.get().getLong("Properties.PlayerDataUnloadTime", 5 * 60 * 1000));
