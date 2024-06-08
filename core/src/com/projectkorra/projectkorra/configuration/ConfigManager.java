@@ -1188,6 +1188,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wave.SolidifyLava.Duration", 36000);
 			config.addDefault("Abilities.Water.Surge.Wall.Range", 5);
+			config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 5);
 			config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
 			config.addDefault("Abilities.Water.Surge.Wall.Cooldown", 0);
 			config.addDefault("Abilities.Water.Surge.Wall.Duration", 0);
@@ -1437,6 +1438,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Extraction.Cooldown", 500);
 			config.addDefault("Abilities.Earth.Extraction.TripleLootChance", 10);
 			config.addDefault("Abilities.Earth.Extraction.DoubleLootChance", 30);
+			config.addDefault("Abilities.Earth.Extraction.IronGolem.Drops", 1);
+			config.addDefault("Abilities.Earth.Extraction.IronGolem.Damage", 4);
 
 			config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 20000);
@@ -1492,6 +1495,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.MetalClips.Range", 10);
 			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 6000);
 			config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
+			config.addDefault("Abilities.Earth.MetalClips.Shoot.Cooldown", 600);
+			config.addDefault("Abilities.Earth.MetalClips.Shoot.Speed", 1.2);
 			config.addDefault("Abilities.Earth.MetalClips.Magnet.Range", 20);
 			config.addDefault("Abilities.Earth.MetalClips.Magnet.Speed", 0.6);
 			config.addDefault("Abilities.Earth.MetalClips.Magnet.Cooldown", 1000);
