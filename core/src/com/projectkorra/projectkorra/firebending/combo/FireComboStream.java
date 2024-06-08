@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -24,6 +25,8 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /***
  * Is only here for legacy purposes. All fire combos used to use a form of this
@@ -117,6 +120,9 @@ public class FireComboStream extends BukkitRunnable {
 				if (entity instanceof LivingEntity && !entity.equals(this.coreAbility.getPlayer()) && !entity.isDead()) {
 					this.collision((LivingEntity) entity, this.direction, this.coreAbility);
 				}
+			}
+			for (Block b : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
+				FireAbility.dryWetBlocks(b, this.coreAbility, ThreadLocalRandom.current().nextInt(5) == 0);
 			}
 		}
 

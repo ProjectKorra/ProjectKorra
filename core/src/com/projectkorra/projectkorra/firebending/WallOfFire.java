@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -159,6 +160,7 @@ public class WallOfFire extends FireAbility {
 	private void display() {
 		for (final Block block : this.blocks) {
 			if (!this.isTransparent(block)) {
+				dryWetBlocks(block, this, ThreadLocalRandom.current().nextInt(5) == 0);
 				continue;
 			}
 			playFirebendingParticles(block.getLocation(), 3, 0.6, 0.6, 0.6);
