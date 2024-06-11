@@ -145,6 +145,7 @@ public class LavaFlow extends LavaAbility {
 			}
 			this.start();
 		} else if (type == AbilityType.CLICK) {
+			this.recalculateAttributes(); // Recalculate attributes for the click range
 			final Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, this.clickRange, ClickType.LEFT_CLICK);
 			if (sourceBlock == null) {
 				this.removeSlowly();

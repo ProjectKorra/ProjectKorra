@@ -51,9 +51,9 @@ public class SurgeWall extends WaterAbility {
 	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
 	private long obsidianDuration;
-	@Attribute(Attribute.RADIUS) @DayNightFactor
+	@Attribute("Wall" + Attribute.RADIUS) @DayNightFactor
 	private double radius;
-	@Attribute(Attribute.RANGE) @DayNightFactor
+	@Attribute("Wall" + Attribute.RANGE) @DayNightFactor
 	private double range;
 	private Block sourceBlock;
 	private Location location;

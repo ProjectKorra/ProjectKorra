@@ -21,6 +21,7 @@ public class EarthTunnel extends EarthAbility {
 	private static final Set<String> IGNORED_BLOCKS = new HashSet<String>();
 	
 	private long interval;
+	@Attribute(Attribute.SPEED)
 	private int blocksPerInterval;
 	private long time;
 	@Attribute("Depth")

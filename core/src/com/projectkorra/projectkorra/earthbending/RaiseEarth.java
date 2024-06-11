@@ -51,6 +51,7 @@ public class RaiseEarth extends EarthAbility {
 
 			this.origin = this.block.getLocation();
 			this.location = this.origin.clone();
+			this.recalculateAttributes();
 			this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), this.height);
 		} catch (final IllegalStateException e) {
 			return;
@@ -66,7 +67,21 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	public RaiseEarth(final Player player, final Location origin) {
-		this(player, origin, ConfigManager.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height"));
+		super(player);
+		this.setFields();
+
+		this.origin = origin;
+		this.location = origin.clone();
+		this.block = this.location.getBlock();
+		this.recalculateAttributes(); // Recalculate attributes to get the correct height
+		this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), height);
+
+		this.loadAffectedBlocks();
+
+		if (this.distance != 0 && this.canInstantiate()) {
+			this.time = System.currentTimeMillis() - this.interval;
+			this.start();
+		}
 	}
 
 	public RaiseEarth(final Player player, final Location origin, final int height) {
@@ -77,6 +92,7 @@ public class RaiseEarth extends EarthAbility {
 		this.origin = origin;
 		this.location = origin.clone();
 		this.block = this.location.getBlock();
+		this.recalculateAttributes(); // Recalculate attributes to get the correct height
 		this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), height);
 
 		this.loadAffectedBlocks();

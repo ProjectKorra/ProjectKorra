@@ -48,6 +48,7 @@ public class Torrent extends WaterAbility {
 	private boolean freeze;
 	private boolean revert;
 	private int layer;
+	@Attribute("FreezeRadius")
 	private int maxLayer;
 	private int maxHits;
 	private int hits = 1;

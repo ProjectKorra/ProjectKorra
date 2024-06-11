@@ -68,15 +68,15 @@ public class AttributeCache {
         String configName = attribute;
 
         if (attribute.equals(Attribute.AVATAR_STATE_TOGGLE)) configName = "IsToggle";
-        String configPath = "Abilities." + ability.getElement().getName() + "." + ability.getName() + "." + configName;
+        String elementName = ability.getElement().getName();
+        if (ability.getElement() instanceof Element.SubElement) {
+            elementName = ((Element.SubElement) ability.getElement()).getParentElement().getName();
+        }
+        String configPath = "Abilities." + elementName + "." + ability.getName() + "." + configName;
         Object configObject = ConfigManager.avatarStateConfig.get().get(configPath);
 
         if (configObject == null) { //If the attribute doesn't exist for the ability in the config, check the _All section (for the element)
             configPath = "Abilities." + ability.getElement().getName() + "._All." + attribute;
-
-            if (ability.getElement() instanceof Element.SubElement) { //If it is a subelement, check the parent element instead
-                configPath = "Abilities." + ((Element.SubElement) ability.getElement()).getParentElement().getName() + "._All." + attribute;
-            }
 
             configObject = ConfigManager.avatarStateConfig.get().get(configPath);
 
