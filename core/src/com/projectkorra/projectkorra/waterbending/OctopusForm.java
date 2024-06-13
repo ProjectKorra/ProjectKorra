@@ -63,6 +63,7 @@ public class OctopusForm extends WaterAbility {
 	private double startAngle;
 	private double angle;
 	private double currentFormHeight;
+	@Attribute("AngleIncrement")
 	private double angleIncrement;
 	private Block sourceBlock;
 	private TempBlock source;

@@ -169,6 +169,7 @@ public class PhaseChange extends IceAbility {
 				this.freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
 				this.freezeRadius = getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
 
+				this.recalculateAttributes();
 				this.freezeArea(GeneralMethods.getTargetedLocation(this.player, this.sourceRange));
 				return;
 			case MELT:

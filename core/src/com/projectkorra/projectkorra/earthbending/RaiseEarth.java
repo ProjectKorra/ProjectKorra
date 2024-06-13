@@ -44,6 +44,7 @@ public class RaiseEarth extends EarthAbility {
 		}
 
 		try {
+			this.recalculateAttributes();
 			this.block = BlockSource.getEarthSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK);
 			if (this.block == null) {
 				return;
@@ -51,7 +52,6 @@ public class RaiseEarth extends EarthAbility {
 
 			this.origin = this.block.getLocation();
 			this.location = this.origin.clone();
-			this.recalculateAttributes();
 			this.distance = this.getEarthbendableBlocksLength(this.block, this.direction.clone().multiply(-1), this.height);
 		} catch (final IllegalStateException e) {
 			return;

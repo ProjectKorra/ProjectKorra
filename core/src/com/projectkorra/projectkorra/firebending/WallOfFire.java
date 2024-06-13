@@ -140,6 +140,8 @@ public class WallOfFire extends FireAbility {
 	}
 
 	private void initializeBlocks() {
+		this.recalculateAttributes();
+
 		Vector direction = this.player.getEyeLocation().getDirection();
 		direction = direction.normalize();
 

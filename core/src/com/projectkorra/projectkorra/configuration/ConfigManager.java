@@ -1806,6 +1806,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire._All.Range", "x2.0");
 			config.addDefault("Abilities.Fire._All.Speed", "x1.5");
 			config.addDefault("Abilities.Fire.FireJet.IsToggle", true);
+			config.addDefault("Abilities.Fire.Blaze.Arc", "x1.8");
+			config.addDefault("Abilities.Fire.FireShield.ShieldRadius", "x3.0");
+			config.addDefault("Abilities.Fire.FireShield.DiscRadius", "x3.0");
+			config.addDefault("Abilities.Fire.FireShield.ShieldCooldown", 0);
+			config.addDefault("Abilities.Fire.FireShield.DiscCooldown", 500);
+			config.addDefault("Abilities.Fire.FireShield.ShieldDuration", "x2.5");
+			config.addDefault("Abilities.Fire.FireShield.DiscDuration", "x2.5");
 			config.addDefault("Abilities.Fire.JetBlast.Cooldown", 0);
 			config.addDefault("Abilities.Fire.JetBlast.Speed", "x1.5");
 			config.addDefault("Abilities.Fire.JetBlaze.Cooldown", 0);
@@ -1835,6 +1842,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.WallOfFire.Width", "x2.5");
 			config.addDefault("Abilities.Fire.WallOfFire.Duration", "x1.5");
 			config.addDefault("Abilities.Fire.WallOfFire.FireTicks", 2);
+			config.addDefault("Abilities.Fire.WallOfFire.Cooldown", "x1.0");
 
 			config.addDefault("Abilities.Water._All.Damage", "x1.5");
 			config.addDefault("Abilities.Water._All.Cooldown", "x0.1");
@@ -1843,9 +1851,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water._All.Range", "x2.0");
 			config.addDefault("Abilities.Water._All.SelectRange", "x3.0");
 			config.addDefault("Abilities.Water.OctopusForm.AttackRange", 3);
-			config.addDefault("Abilities.Water.OctopusForm.Radius", 4);
-			config.addDefault("Abilities.Water.OctopusForm.Damage", 4);
-			config.addDefault("Abilities.Water.OctopusForm.Knockback", 2);
+			config.addDefault("Abilities.Water.OctopusForm.Radius", "x2.0");
+			config.addDefault("Abilities.Water.OctopusForm.Damage", "x2.0");
+			config.addDefault("Abilities.Water.OctopusForm.Knockback", "x3.0");
 			config.addDefault("Abilities.Water.Surge.WallRadius", "x2.0");
 			config.addDefault("Abilities.Water.Surge.Radius", "x2.0");
 			config.addDefault("Abilities.Water.Surge.WallRange", 8);
@@ -1855,19 +1863,27 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.MaxHits", "x1.5");
 			config.addDefault("Abilities.Water.Torrent.Knockback", "x1.5");
 			config.addDefault("Abilities.Water.WaterManipulation.Damage", 5);
+			config.addDefault("Abilities.Water.PhaseChange.FreezeRadius", "x3.0");
+			config.addDefault("Abilities.Water.PhaseChange.FreezeDepth", 2);
+			config.addDefault("Abilities.Water.PhaseChange.MeltCooldown", 500);
+			config.addDefault("Abilities.Water.PhaseChange.MeltRadius", "x3.0");
+			config.addDefault("Abilities.Water.PhaseChange.MeltSpeed", "x5.0");
+			config.addDefault("Abilities.Water.PhaseChange.SelectRange", "x3.0");
+			config.addDefault("Abilities.Water.PhaseChange.ControlRadius", "x3.0");
 			config.addDefault("Abilities.Water.IceBlast.Damage", 4);
 			config.addDefault("Abilities.Water.IceBlast.Range", 45);
 			config.addDefault("Abilities.Water.IceBlast.Cooldown", 0);
 			config.addDefault("Abilities.Water.IceBullet.Cooldown", 0);
 			config.addDefault("Abilities.Water.IceSpike.Damage", "x1.5");
 			config.addDefault("Abilities.Water.IceSpike.Range", "x1.5");
-			config.addDefault("Abilities.Water.IceSpike.Knockback", "+0.3");
-			config.addDefault("Abilities.Water.IceSpike.Height", "+3");
+			config.addDefault("Abilities.Water.IceSpike.Knockup", "+0.3");
+			config.addDefault("Abilities.Water.IceSpike.Height", "+2");
+			config.addDefault("Abilities.Water.IceSpike.NumberOfSpikes", "x5.0");
 			config.addDefault("Abilities.Water.IceSpike.SlowPotency", 3);
 			config.addDefault("Abilities.Water.IceSpike.SlowCooldown", 0);
 			config.addDefault("Abilities.Water.IceSpike.Cooldown", 0);
 			config.addDefault("Abilities.Water.IceSpike.SlowDuration", 90);
-			config.addDefault("Abilities.Water.IceSpike.Radius", "x1.4");
+			config.addDefault("Abilities.Water.IceSpike.Radius", "x2.5");
 			config.addDefault("Abilities.Water.IceBullet.Damage", 5);
 			config.addDefault("Abilities.Water.IceBullet.Range", 45);
 			config.addDefault("Abilities.Water.IceBullet.MaxShots", 45);
@@ -1879,8 +1895,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Cooldown", 0);
 			config.addDefault("Abilities.Water.WaterSpout.ChargeTime", 0);
 			config.addDefault("Abilities.Water.WaterSpout.FlightDuration", "x2.0");
-
-
+			config.addDefault("Abilities.Water.WaterBubble.Radius", "x1.5");
+			config.addDefault("Abilities.Water.WaterBubble.ClickDuration", "x10.0");
+			config.addDefault("Abilities.Water.WaterBubble.Speed", "x1.5");
 
 			avatarStateConfig.save();
 		}

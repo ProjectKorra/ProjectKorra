@@ -24,9 +24,9 @@ public class Blaze extends FireAbility {
 		super(player);
 
 		this.speed = 2;
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Blaze.Cooldown"));
-		this.arc = (int) applyModifiers(getConfig().getInt("Abilities.Fire.Blaze.Arc"));
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.Blaze.Range"));
+		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Cooldown");
+		this.arc = getConfig().getInt("Abilities.Fire.Blaze.Arc");
+		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Range");
 
 		if (!this.bPlayer.canBend(this) || this.bPlayer.isOnCooldown("BlazeArc")) {
 			return;

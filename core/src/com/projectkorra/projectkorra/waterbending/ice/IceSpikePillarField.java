@@ -33,7 +33,6 @@ public class IceSpikePillarField extends IceAbility {
 	private long cooldown;
 	@Attribute(Attribute.KNOCKUP) @DayNightFactor
 	private double knockup;
-	private Vector thrownForce;
 
 	public IceSpikePillarField(final Player player) {
 		super(player);
@@ -47,6 +46,8 @@ public class IceSpikePillarField extends IceAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
 		this.knockup = getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup");
 
+		this.recalculateAttributes();
+
 		this.numberOfSpikes = (int) (((this.radius) * (this.radius)) / 4);
 		this.start();
 	}
@@ -58,7 +59,6 @@ public class IceSpikePillarField extends IceAbility {
 
 	@Override
 	public void progress() {
-		this.thrownForce = new Vector(0, this.knockup, 0);
 		final Random random = new Random();
 		final int locX = this.player.getLocation().getBlockX();
 		final int locY = this.player.getLocation().getBlockY();
@@ -114,7 +114,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-				final IceSpikePillar pillar = new IceSpikePillar(this.player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
+				final IceSpikePillar pillar = new IceSpikePillar(this.player, targetBlock.getLocation(), (int) this.damage, this.knockup, this.cooldown);
 				pillar.inField = true;
 				iceBlocks.remove(targetBlock);
 			} else {
@@ -170,14 +170,6 @@ public class IceSpikePillarField extends IceAbility {
 
 	public void setNumberOfSpikes(final int numberOfSpikes) {
 		this.numberOfSpikes = numberOfSpikes;
-	}
-
-	public Vector getThrownForce() {
-		return this.thrownForce;
-	}
-
-	public void setThrownForce(final Vector thrownForce) {
-		this.thrownForce = thrownForce;
 	}
 
 	public void setCooldown(final long cooldown) {

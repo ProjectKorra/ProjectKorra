@@ -73,7 +73,7 @@ public class AvatarState extends AvatarAbility {
 
 
 			Random rand = new Random();
-			for (int i = 0; i < 40; i++) {
+			for (int i = 0; i < 60; i++) {
 				Particle particle = i % 2 == 0 ? Particle.END_ROD : Particle.FIREWORKS_SPARK;
 
 				player.getWorld().spawnParticle(particle, player.getLocation().add(0, 1, 0), 0, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, 0.3);
