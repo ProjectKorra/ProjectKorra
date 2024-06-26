@@ -402,6 +402,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.Instructions", "\n" + "(Control) Hold sneak while looking at an entity to bloodbend them. You will then be controlling the entity, making them move wherever you look." + "\n" + "(Throw) While bloodbending an entity, left click to throw that entity in the direction you're looking.");
 			config.addDefault("Abilities.Water.Bloodbending.DeathMessage", "{victim} was destroyed by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.Bloodbending.HorizontalVelocityDeath", "{victim} experienced a fatal collision from {attacker}'s {ability}");
+			config.addDefault("Abilities.Water.Bloodbending.ActionBarMessage", "* Bloodbent *");
 			config.addDefault("Abilities.Water.HealingWaters.Description", "HealingWaters is an advanced waterbender skill that allows the player to heal themselves or others from the damage they've taken. If healing another player, you must continue to look at them to channel the ability.");
 			config.addDefault("Abilities.Water.HealingWaters.Instructions", "Hold sneak to begin healing yourself or right click while sneaking to begin healing another player. You or the player must be in water and damaged for this ability to work, or you need to have water bottles in your inventory.");
 			config.addDefault("Abilities.Water.IceBlast.Description", "IceBlast is a powerful ability that deals damage to entities it comes into contact with. Because IceBlast's travel time is pretty quick, it's incredibly useful for finishing off low health targets.");
@@ -471,6 +472,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips is an advanced metalbending ability that allows you to take control of a fight. It gives the metalbender the ability to control an entity, create space between them and a player and even added utility.");
 			config.addDefault("Abilities.Earth.MetalClips.Instructions", "\n" + "(Clips) This ability requires iron ingots in your inventory. Left click to throw an ingot at an entity, dealing damage to them. This ingot will form into armor, wrapping itself around the entity. Once enough armor pieces are around the entity, you can then control them. To control them, hold sneak while looking at them and then they will be moved in the direction you look. Additionally, you can release sneak to throw them in the direction you're looking." + "\n" + "(Magnet) Hold sneak with this ability to pull iron ingots towards you.");
 			config.addDefault("Abilities.Earth.MetalClips.DeathMessage", "{victim} was too slow for {attacker}'s {ability}");
+			config.addDefault("Abilities.Earth.MetalClips.ActionBarMessage", "* MetalClipped *");
 			config.addDefault("Abilities.Earth.RaiseEarth.Description", "RaiseEarth is a basic yet useful utility move. It has the potential to allow the earthbender to create great escape routes by raising earth underneath them to propel themselves upwards. It also offers synergy with other moves, such as shockwave. RaiseEarth is often used to block incoming abilities.");
 			config.addDefault("Abilities.Earth.RaiseEarth.Instructions", "\n" + "(Pillar) To raise a pillar of earth, left click on an earthbendable block." + "\n" + "(Wall) To raise a wall of earth, tap sneak on an earthbendable block.");
 			config.addDefault("Abilities.Earth.Shockwave.Description", "Shockwave is one of the most powerful earthbending abilities. It allows the earthbender to deal mass damage to everyone around them and knock them back. It's extremely useful when fighting more than one target or if you're surrounded by mobs.");
@@ -1229,6 +1231,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceWave.Cooldown", 6000);
 			config.addDefault("Abilities.Water.IceWave.ThawRadius", 10);
 			config.addDefault("Abilities.Water.IceWave.RevertSphere", true);
+			config.addDefault("Abilities.Water.IceWave.IceSphereRadius", 2.5);
 			config.addDefault("Abilities.Water.IceWave.RevertSphereTime", 30000L);
 			config.addDefault("Abilities.Water.IceWave.Combination", Arrays.asList("WaterSpout:SHIFT_UP", "PhaseChange:LEFT_CLICK"));
 

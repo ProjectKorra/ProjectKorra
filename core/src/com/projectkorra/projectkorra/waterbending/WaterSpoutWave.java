@@ -59,7 +59,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private long revertSphereTime;
 	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
-	@Attribute(Attribute.SPEED) @DayNightFactor
+	@Attribute(Attribute.SPEED) @DayNightFactor(factor = 1.35F)
 	private double speed;
 	@Attribute(Attribute.CHARGE_DURATION) @DayNightFactor(invert = true)
 	private double chargeTime;
@@ -67,6 +67,8 @@ public class WaterSpoutWave extends WaterAbility {
 	private double flightDuration;
 	@Attribute("Wave" + Attribute.RADIUS)
 	private double waveRadius;
+	@Attribute("IceSphere" + Attribute.RADIUS) @DayNightFactor
+	private double iceSphereRadius;
 	@Attribute("Thaw" + Attribute.RADIUS)
 	private double thawRadius;
 	@Attribute(Attribute.DAMAGE) @DayNightFactor
@@ -103,12 +105,11 @@ public class WaterSpoutWave extends WaterAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
 		this.revertSphereTime = getConfig().getLong("Abilities.Water.IceWave.RevertSphereTime");
 		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.IceWave.RevertSphere");
+		this.iceSphereRadius = getConfig().getDouble("Abilities.Water.IceWave.IceSphereRadius");
 		this.trailRevertTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.TrailRevertTime");
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
-
-		this.damage = this.getNightFactor(this.damage);
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
@@ -292,11 +293,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 				this.player.setFallDistance(0f);
 				double currentSpeed = this.speed - (this.speed * (System.currentTimeMillis() - this.time) / this.flightDuration);
-				final double nightSpeed = this.getNightFactor(currentSpeed * 0.9);
-				currentSpeed = nightSpeed > currentSpeed ? nightSpeed : currentSpeed;
-				if (this.bPlayer.isAvatarState()) {
-					currentSpeed = this.getNightFactor(this.speed);
-				}
+
 				GeneralMethods.setVelocity(this, this.player, this.player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
 				for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius)) {
 					if (ElementalAbility.isAir(block.getType()) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
@@ -312,7 +309,6 @@ public class WaterSpoutWave extends WaterAbility {
 					for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.player.getLocation().add(0, -1, 0), this.waveRadius * 1.5)) {
 						if (entity != this.player && entity instanceof LivingEntity && !this.affectedEntities.contains(entity)) {
 							this.affectedEntities.add(entity);
-							final double augment = getNightFactor(this.player.getWorld());
 							DamageHandler.damageEntity(entity, this.damage, CoreAbility.getAbility(this.player, IceWave.class));
 							final Player fplayer = this.player;
 							final Entity fent = entity;
@@ -320,7 +316,7 @@ public class WaterSpoutWave extends WaterAbility {
 							new BukkitRunnable() {
 								@Override
 								public void run() {
-									WaterSpoutWave.this.createIceSphere(fplayer, fent, augment * 2.5);
+									WaterSpoutWave.this.createIceSphere(fplayer, fent, iceSphereRadius);
 								}
 							}.runTaskLater(ProjectKorra.plugin, 6);
 						}

@@ -121,14 +121,6 @@ public class BendingManager implements Runnable {
 		this.handleCooldowns();
 		TempArmor.cleanup();
 
-		for (final Player player : Bukkit.getOnlinePlayers()) { //TODO remove this and put it in their respective ability classes
-			if (Bloodbending.isBloodbent(player)) {
-				ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
-			} else if (MetalClips.isControlled(player)) {
-				ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
-			}
-		}
-
 		TempFallingBlock.manage();
 
 		tempBlockRevertTask.run();
