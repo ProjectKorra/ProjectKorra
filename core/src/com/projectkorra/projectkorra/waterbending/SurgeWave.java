@@ -52,9 +52,9 @@ public class SurgeWave extends WaterAbility {
 	private double maxRadius;
 	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.SELECT_RANGE)
+	@Attribute(Attribute.SELECT_RANGE) @DayNightFactor
 	private double selectRange;
-	@Attribute(Attribute.KNOCKBACK)
+	@Attribute(Attribute.KNOCKBACK) @DayNightFactor
 	private double knockback;
 	@Attribute(Attribute.KNOCKUP)
 	private double knockup;
@@ -219,11 +219,6 @@ public class SurgeWave extends WaterAbility {
 				return;
 			}
 
-			this.range = this.getNightFactor(this.range);
-			if (this.bPlayer.isAvatarState()) {
-				this.knockback = AvatarState.getValue(this.knockback);
-			}
-
 			final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
 			if (target == null) {
 				this.targetDestination = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
@@ -375,7 +370,7 @@ public class SurgeWave extends WaterAbility {
 						}
 						final Vector dir = direction.clone();
 						dir.setY(dir.getY() * this.knockup);
-						GeneralMethods.setVelocity(this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.knockback))));
+						GeneralMethods.setVelocity(this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.knockback)));
 
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {

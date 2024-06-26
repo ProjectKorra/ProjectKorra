@@ -603,8 +603,7 @@ public class Torrent extends WaterAbility {
 		GeneralMethods.setVelocity(this, entity, velocity);
 		entity.setFallDistance(0);
 		if (entity instanceof LivingEntity) {
-			final double damageDealt = this.getNightFactor(this.deflectDamage);
-			DamageHandler.damageEntity(entity, damageDealt, this);
+			DamageHandler.damageEntity(entity, this.deflectDamage, this);
 			AirAbility.breakBreathbendingHold(entity);
 		}
 	}
@@ -623,9 +622,9 @@ public class Torrent extends WaterAbility {
 			GeneralMethods.setVelocity(this, entity, direction.multiply(this.knockback));
 		}
 		if (entity instanceof LivingEntity && !this.hurtEntities.contains(entity)) {
-			double damageDealt = this.getNightFactor(this.damage);
+			double damageDealt = this.damage;
 			if (this.hits > 1 && this.hits <= this.maxHits) {
-				damageDealt = this.getNightFactor(this.successiveDamage);
+				damageDealt = this.successiveDamage;
 			}
 			if (this.hits == this.maxHits) {
 				this.hits = this.maxHits + 1;

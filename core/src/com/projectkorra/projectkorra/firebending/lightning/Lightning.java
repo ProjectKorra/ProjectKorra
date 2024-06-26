@@ -148,23 +148,13 @@ public class Lightning extends LightningAbility {
 		this.waterArcs = getConfig().getInt("Abilities.Fire.Lightning.WaterArcs");
 		this.maxCopperArcs = getConfig().getInt("Abilities.Fire.Lightning.MaxCopperArcs");
 		this.chargeTime = getConfig().getLong("Abilities.Fire.Lightning.ChargeTime");
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.Lightning.Cooldown"));
+		this.cooldown = getConfig().getLong("Abilities.Fire.Lightning.Cooldown");
 		this.allowOnFireJet = getConfig().getBoolean("Abilities.Fire.Lightning.AllowOnFireJet");
 		this.transformMobs = getConfig().getBoolean("Abilities.Fire.Lightning.TransformMobs");
 		this.chargeCreeper = getConfig().getBoolean("Abilities.Fire.Lightning.ChargeCreeper");
 		this.chainLightningRods = getConfig().getBoolean("Abilities.Fire.Lightning.ChainLightningRods");
 		
 		this.chargedCopperBlocks = new Block[this.maxCopperArcs];
-
-		/*this.range = this.getDayFactor(this.range);
-		this.subArcChance = this.getDayFactor(this.subArcChance);
-		this.damage = this.getDayFactor(this.damage);
-		this.maxChainArcs = this.getDayFactor(this.maxChainArcs);
-		this.chainArcChance = this.getDayFactor(this.chainArcChance);
-		this.chainRange = this.getDayFactor(this.chainRange);
-		this.waterArcRange = this.getDayFactor(this.waterArcRange);
-		this.stunChance = this.getDayFactor(this.stunChance);
-		this.stunDuration = this.getDayFactor(this.stunDuration);*/
 
 		this.start();
 	}

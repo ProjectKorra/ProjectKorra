@@ -53,8 +53,9 @@ public class FireJet extends FireAbility {
 		this.showGliding = getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding");
 		this.random = new Random();
 
-		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
+
+		this.recalculateAttributes();
 
 		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || Tag.SLABS.isTagged(block.getType()) || this.bPlayer.isAvatarState()) {
 			GeneralMethods.setVelocity(this, player, player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));

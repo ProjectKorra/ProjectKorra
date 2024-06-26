@@ -278,7 +278,7 @@ public class SurgeWall extends WaterAbility {
 				final Vector eyeDir = this.player.getEyeLocation().getDirection();
 				Vector vector;
 				Block block;
-				for (double i = 0; i <= this.getNightFactor(this.radius); i += 0.5) {
+				for (double i = 0; i <= this.radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						vector = GeneralMethods.getOrthogonalVector(eyeDir.clone(), angle, i);
 						block = targetLoc.clone().add(vector).getBlock();
@@ -433,6 +433,7 @@ public class SurgeWall extends WaterAbility {
 		return false;
 	}
 
+	//TODO Remove this method and use instance based methods instead of static ones
 	public static void form(final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {

@@ -314,7 +314,6 @@ public class WaterManipulation extends WaterAbility {
 							if (this.bPlayer.isAvatarState()) {
 								this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
 							}
-							this.damage = this.getNightFactor(this.damage);
 							DamageHandler.damageEntity(entity, this.damage, this);
 							AirAbility.breakBreathbendingHold(entity);
 							this.progressing = false;

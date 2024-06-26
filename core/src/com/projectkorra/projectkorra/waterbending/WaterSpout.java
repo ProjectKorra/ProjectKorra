@@ -40,8 +40,8 @@ public class WaterSpout extends WaterAbility {
 	private long duration;
 	private long startTime;
 	private double rotation;
-	private double height;
 	@Attribute(Attribute.HEIGHT) @DayNightFactor(factor = 1.3F)
+	private double height;
 	private double maxHeight;
 	private Block base;
 	private TempBlock baseBlock;
@@ -74,12 +74,13 @@ public class WaterSpout extends WaterAbility {
 		this.spoutHopCooldown = getConfig().getLong("Abilities.Water.WaterSpout.SpoutHop.Cooldown");
 
 		this.maxHeight = this.height;
+		this.recalculateAttributes();
 		final WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
 		if (spoutWave.isStarted() && !spoutWave.isRemoved()) {
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), (int) -this.getNightFactor(this.height), (int) -this.getNightFactor(this.height));
+		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), (int) -this.height, (int) -this.height);
 		if (topBlock == null) {
 			topBlock = player.getLocation().getBlock();
 		}
@@ -268,9 +269,6 @@ public class WaterSpout extends WaterAbility {
 
 	private double spoutableWaterHeight(final Location location) {
 		double newHeight = this.height;
-		if (isNight(this.player.getWorld())) {
-			newHeight = this.getNightFactor(newHeight);
-		}
 
 		this.maxHeight = newHeight + 5;
 		Block blocki;

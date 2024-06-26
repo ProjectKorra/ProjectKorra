@@ -47,9 +47,9 @@ public class FireBlastCharged extends FireAbility {
 	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	private double collisionRadius;
-	@Attribute(Attribute.DAMAGE + Attribute.RANGE) @DayNightFactor
+	@Attribute(Attribute.DAMAGE + Attribute.RADIUS) @DayNightFactor
 	private double damageRadius;
-	@Attribute("Explosion" + Attribute.RANGE) @DayNightFactor
+	@Attribute("Explosion" + Attribute.RADIUS) @DayNightFactor
 	private double explosionRadius;
 	private double innerRadius;
 	@Attribute(Attribute.FIRE_TICK) @DayNightFactor
@@ -89,37 +89,6 @@ public class FireBlastCharged extends FireAbility {
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			this.start();
 		}
-	}
-
-	@Deprecated
-	private void applyModifiers() {
-		long chargeTimeMod = 0;
-		double minDamageMod = 0;
-		double maxDamageMod = 0;
-		double rangeMod = 0;
-
-		if (isDay(player.getWorld())) {
-			chargeTimeMod = (long) (this.chargeTime / getDayFactor() - this.chargeTime);
-			minDamageMod = this.getDayFactor(this.minDamage) - this.minDamage;
-			maxDamageMod = this.getDayFactor(this.maxDamage) - this.maxDamage;
-			rangeMod = this.getDayFactor(this.range) - this.range;
-		}
-
-		chargeTimeMod = (long) (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (chargeTime / BlueFireAbility.getCooldownFactor() - chargeTime) + chargeTimeMod : chargeTimeMod);
-		minDamageMod = (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * minDamage - minDamage) + minDamageMod : minDamageMod);
-		maxDamageMod = (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getDamageFactor() * maxDamage - maxDamage) + maxDamageMod : maxDamageMod);
-		rangeMod =  (bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? (BlueFireAbility.getRangeFactor() * range - range) + rangeMod : rangeMod);
-
-		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");
-			this.minDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MinimumDamage");
-			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.MaximumDamage");
-		}
-
-		this.chargeTime += chargeTimeMod;
-		this.minDamage += minDamageMod;
-		this.maxDamage += maxDamageMod;
-		this.range += rangeMod;
 	}
 
 	public static boolean annihilateBlasts(final Location location, final double radius, final Player source) {
@@ -207,12 +176,6 @@ public class FireBlastCharged extends FireAbility {
 				this.explosion = this.player.getWorld().spawn(this.location, TNTPrimed.class);
 				this.explosion.setFuseTicks(0);
 				double yield = this.explosionRadius;
-
-				if (!this.bPlayer.isAvatarState()) {
-					yield = getDayFactor(yield, this.player.getWorld());
-				} else {
-					yield = AvatarState.getValue(yield);
-				}
 
 				this.explosion.setYield((float) yield);
 				EXPLOSIONS.put(this.explosion, this);

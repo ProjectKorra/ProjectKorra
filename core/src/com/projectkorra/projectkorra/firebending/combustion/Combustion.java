@@ -65,10 +65,7 @@ public class Combustion extends CombustionAbility {
 		this.location = this.origin.clone();
 		this.explosionCount = 0;
 
-		/*else if (isDay(player.getWorld())) {
-			this.range = this.getDayFactor(this.range);
-			this.damage = this.getDayFactor(this.damage);
-		}*/
+		this.recalculateAttributes();
 
 		if (RegionProtection.isRegionProtected(this, GeneralMethods.getTargetedLocation(player, this.range))) {
 			return;
