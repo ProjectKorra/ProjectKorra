@@ -422,8 +422,7 @@ public class OfflineBendingPlayer {
             }
         };
 
-        if (!Bukkit.isPrimaryThread()) runnable.run();
-        else Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, runnable);
+        Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, runnable);
 
         return future;
     }
@@ -432,99 +431,103 @@ public class OfflineBendingPlayer {
      * Saves the subelements of a BendingPlayer to the database.
      */
     public void saveSubElements() {
-        final StringBuilder subs = new StringBuilder();
-        if (this.hasSubElement(Element.METAL)) {
-            subs.append("m");
-        }
-        if (this.hasSubElement(Element.LAVA)) {
-            subs.append("v");
-        }
-        if (this.hasSubElement(Element.SAND)) {
-            subs.append("s");
-        }
-        if (this.hasSubElement(Element.COMBUSTION)) {
-            subs.append("c");
-        }
-        if (this.hasSubElement(Element.LIGHTNING)) {
-            subs.append("l");
-        }
-        if (this.hasSubElement(Element.SPIRITUAL)) {
-            subs.append("t");
-        }
-        if (this.hasSubElement(Element.FLIGHT)) {
-            subs.append("f");
-        }
-        if (this.hasSubElement(Element.ICE)) {
-            subs.append("i");
-        }
-        if (this.hasSubElement(Element.HEALING)) {
-            subs.append("h");
-        }
-        if (this.hasSubElement(Element.BLOOD)) {
-            subs.append("b");
-        }
-        if (this.hasSubElement(Element.PLANT)) {
-            subs.append("p");
-        }
-        if (this.hasSubElement(Element.BLUE_FIRE)) {
-            subs.append("r");
-        }
-        boolean hasAddon = false;
-        List<SubElement> addonSubs = Arrays.asList(Element.getAddonSubElements());
-        for (final Element element : this.getSubElements()) {
-            if (addonSubs.contains(element)) {
-                if (!hasAddon) {
-                    hasAddon = true;
-                    subs.append(";");
-                }
-                subs.append(element.getName() + ",");
+        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+            final StringBuilder subs = new StringBuilder();
+            if (this.hasSubElement(Element.METAL)) {
+                subs.append("m");
             }
-        }
+            if (this.hasSubElement(Element.LAVA)) {
+                subs.append("v");
+            }
+            if (this.hasSubElement(Element.SAND)) {
+                subs.append("s");
+            }
+            if (this.hasSubElement(Element.COMBUSTION)) {
+                subs.append("c");
+            }
+            if (this.hasSubElement(Element.LIGHTNING)) {
+                subs.append("l");
+            }
+            if (this.hasSubElement(Element.SPIRITUAL)) {
+                subs.append("t");
+            }
+            if (this.hasSubElement(Element.FLIGHT)) {
+                subs.append("f");
+            }
+            if (this.hasSubElement(Element.ICE)) {
+                subs.append("i");
+            }
+            if (this.hasSubElement(Element.HEALING)) {
+                subs.append("h");
+            }
+            if (this.hasSubElement(Element.BLOOD)) {
+                subs.append("b");
+            }
+            if (this.hasSubElement(Element.PLANT)) {
+                subs.append("p");
+            }
+            if (this.hasSubElement(Element.BLUE_FIRE)) {
+                subs.append("r");
+            }
+            boolean hasAddon = false;
+            List<SubElement> addonSubs = Arrays.asList(Element.getAddonSubElements());
+            for (final Element element : this.getSubElements()) {
+                if (addonSubs.contains(element)) {
+                    if (!hasAddon) {
+                        hasAddon = true;
+                        subs.append(";");
+                    }
+                    subs.append(element.getName() + ",");
+                }
+            }
 
-        if (subs.length() == 0) {
-            subs.append("NULL");
-        }
+            if (subs.length() == 0) {
+                subs.append("NULL");
+            }
 
-        DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
+            DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
+        }, 1L);
     }
 
     /**
      * Saves the elements of a BendingPlayer to the database.
      */
     public void saveElements() {
-        final StringBuilder elements = new StringBuilder();
-        if (this.hasElement(Element.AIR)) {
-            elements.append("a");
-        }
-        if (this.hasElement(Element.WATER)) {
-            elements.append("w");
-        }
-        if (this.hasElement(Element.EARTH)) {
-            elements.append("e");
-        }
-        if (this.hasElement(Element.FIRE)) {
-            elements.append("f");
-        }
-        if (this.hasElement(Element.CHI)) {
-            elements.append("c");
-        }
-        boolean hasAddon = false;
-        List<Element> addonElements = Arrays.asList(Element.getAddonElements());
-        for (final Element element : this.getElements()) {
-            if (addonElements.contains(element)) {
-                if (!hasAddon) {
-                    hasAddon = true;
-                    elements.append(";");
-                }
-                elements.append(element.getName() + ",");
+        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+            final StringBuilder elements = new StringBuilder();
+            if (this.hasElement(Element.AIR)) {
+                elements.append("a");
             }
-        }
+            if (this.hasElement(Element.WATER)) {
+                elements.append("w");
+            }
+            if (this.hasElement(Element.EARTH)) {
+                elements.append("e");
+            }
+            if (this.hasElement(Element.FIRE)) {
+                elements.append("f");
+            }
+            if (this.hasElement(Element.CHI)) {
+                elements.append("c");
+            }
+            boolean hasAddon = false;
+            List<Element> addonElements = Arrays.asList(Element.getAddonElements());
+            for (final Element element : this.getElements()) {
+                if (addonElements.contains(element)) {
+                    if (!hasAddon) {
+                        hasAddon = true;
+                        elements.append(";");
+                    }
+                    elements.append(element.getName() + ",");
+                }
+            }
 
-        if (elements.length() == 0) {
-            elements.append("NULL");
-        }
+            if (elements.length() == 0) {
+                elements.append("NULL");
+            }
 
-        DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
+            DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
+        }, 1L);
     }
 
     /**
@@ -1173,6 +1176,8 @@ public class OfflineBendingPlayer {
         bendingPlayer.abilities = offlineBendingPlayer.abilities;
         bendingPlayer.elements.addAll(offlineBendingPlayer.elements);
         bendingPlayer.subelements.addAll(offlineBendingPlayer.subelements);
+        bendingPlayer.tempElements.putAll(offlineBendingPlayer.tempElements);
+        bendingPlayer.tempSubElements.putAll(offlineBendingPlayer.tempSubElements);
         bendingPlayer.toggledElements.addAll(offlineBendingPlayer.toggledElements);
         bendingPlayer.toggledPassives.addAll(offlineBendingPlayer.toggledPassives);
         bendingPlayer.toggled = offlineBendingPlayer.toggled;
@@ -1198,6 +1203,8 @@ public class OfflineBendingPlayer {
         offlineBendingPlayer.abilities = bendingPlayer.abilities;
         offlineBendingPlayer.elements.addAll(bendingPlayer.elements);
         offlineBendingPlayer.subelements.addAll(bendingPlayer.subelements);
+        offlineBendingPlayer.tempElements.putAll(bendingPlayer.tempElements);
+        offlineBendingPlayer.tempSubElements.putAll(bendingPlayer.tempSubElements);
         offlineBendingPlayer.toggledElements.addAll(bendingPlayer.toggledElements);
         offlineBendingPlayer.toggledPassives.addAll(bendingPlayer.toggledPassives);
         offlineBendingPlayer.toggled = bendingPlayer.toggled;

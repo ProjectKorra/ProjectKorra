@@ -2206,7 +2206,8 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPluginUnload(PluginDisableEvent event) {
 		RegionProtection.unloadPlugin((JavaPlugin) event.getPlugin());
-		BendingPlayer.HOOKS.remove((JavaPlugin) event.getPlugin());
+		BendingPlayer.BEND_HOOKS.remove((JavaPlugin) event.getPlugin());
+		BendingPlayer.BIND_HOOKS.remove((JavaPlugin) event.getPlugin());
 	}
 
 	@EventHandler

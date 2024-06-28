@@ -36,7 +36,7 @@ public class DamageHandler {
 	private static final String IGNORE_ARMOR_PREFIX = "Properties.IgnoreArmorPercentage.";
 	private static final Set<LivingEntity> BEING_DAMAGED = new HashSet<>();
 
-	private static final IDamageEventPasser DAMAGE_EVENT_PASSER = GeneralMethods.getMCVersion() >= 1204 ? new ModernDamageEventPasser() : new LegacyDamageEventPasser();
+	private static final IDamageEventPasser DAMAGE_EVENT_PASSER = GeneralMethods.getMCVersion() >= 1205 ? new ModernDamageEventPasser() : new LegacyDamageEventPasser();
 
 	private static boolean checkTicks(LivingEntity entity, double damage) {
 		return entity.getNoDamageTicks() > entity.getMaximumNoDamageTicks() / 2.0f && damage <= entity.getLastDamage();

@@ -78,7 +78,7 @@ public class DBConnection {
 			//Table for temp elements
 			if (!sql.tableExists("pk_temp_elements")) {
 				ProjectKorra.log.info("Creating pk_temp_elements table");
-				final String query = "CREATE TABLE `pk_temp_elements` (uuid VARCHAR(36) NOT NULL, element VARCHAR(255) NOT NULL, expiry BIGINT, PRIMARY KEY (uuid, element));";
+				final String query = "CREATE TABLE `pk_temp_elements` (uuid VARCHAR(36) NOT NULL, element VARCHAR(255) NOT NULL, expiry BIGINT);";
 				sql.modifyQuery(query, false);
 			}
 		} else {

@@ -77,7 +77,7 @@ public abstract class ElementalAbility extends CoreAbility {
 		ListIterator<String> iterator = new ArrayList<String>(configList).listIterator();
 		iterator.forEachRemaining(next -> {
 			if (next.startsWith("#")) {
-				NamespacedKey key = NamespacedKey.minecraft(next.replaceFirst("#", ""));
+				NamespacedKey key = NamespacedKey.fromString(next.replaceFirst("#", ""));
 				for (Material material : Bukkit.getTag(Tag.REGISTRY_BLOCKS, key, Material.class).getValues()) {
 					outputSet.add(material.toString());
 				}
