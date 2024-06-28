@@ -334,9 +334,9 @@ public class ConfigManager {
 			config.addDefault("Commands.Temp.ExpiredAvatar", "Your Avatar elements have expired.");
 			config.addDefault("Commands.Temp.ExpiredAvatarOffline", "Your Avatar elements expired while you were offline.");
 			config.addDefault("Commands.Temp.Add.Success", "You have been given {element}{bending} &efor &c{time}&e.");
-			config.addDefault("Commands.Temp.Add.SuccessAvatar", "You are now the Avatar for &c{time}&e.");
+			config.addDefault("Commands.Temp.Add.SuccessAvatar", "You are now the {element} for &c{time}&e.");
 			config.addDefault("Commands.Temp.Add.SuccessOther", "{target} has been given {element}{bending} &efor &c{time}&e.");
-			config.addDefault("Commands.Temp.Add.SuccessAvatarOther", "{target} is now an Avatar for &c{time}&e.");
+			config.addDefault("Commands.Temp.Add.SuccessAvatarOther", "{target} is now an {element} for &c{time}&e.");
 			config.addDefault("Commands.Temp.AlreadyHasElement", "{target} already has that element!");
 			config.addDefault("Commands.Temp.AlreadyHasSubElement", "{target} already has that subelement!");
 			config.addDefault("Commands.Temp.AlreadyHasTempElement", "{target} already has that element temporarily! Extend the time with /b temp extend <player> <element> <time>");

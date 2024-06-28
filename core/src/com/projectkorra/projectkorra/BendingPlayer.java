@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -728,16 +729,53 @@ public class BendingPlayer extends OfflineBendingPlayer {
 						.replace("{bender}", element.getType().getBender())
 						.replace("{bend}", element.getType().getBend())));
 				elementIterator.remove();
+
+				if (element == Element.AVATAR) {
+					//Remove all subelements if the player loses Avatar
+
+					Iterator<SubElement> subIterator1 = this.tempSubElements.keySet().iterator();
+					SubElement s1;
+					while (subIterator1.hasNext() && (s1 = subIterator1.next()) != null) {
+						//Only remove if the subelement is connected to the parent element's time
+						if (this.tempSubElements.get(s1) != -1L || !s1.getParentElement().isAvatarElement()) continue;
+
+						if (!this.hasTempElement(s1.getParentElement())) {
+							subIterator1.remove();
+						}
+					}
+
+				} else {
+					//Remove all subelements if the player loses the element
+					Iterator<SubElement> subIterator1 = this.tempSubElements.keySet().iterator();
+					SubElement s1;
+					while (subIterator1.hasNext() && (s1 = subIterator1.next()) != null) {
+						if (this.tempSubElements.get(s1) != -1L) continue; //Only remove if the subelement is connected to the parent element's time
+
+						if (!this.hasElement(s1.getParentElement())) {
+							subIterator1.remove();
+						}
+					}
+				}
 			}
 		}
 
 		if (this.tempElements.size() > 0 || this.tempSubElements.size() > 0) {
 			Map<Element, Long> tempMap = new HashMap<>(this.tempElements);
 			tempMap.putAll(this.tempSubElements);
-			long shortestTime = tempMap.values().stream().filter(l -> l >= System.currentTimeMillis()).min(Comparator.comparingLong(Long::longValue)).get();
+			Optional<Long> shortestTime = tempMap.values().stream().filter(l -> l >= System.currentTimeMillis()).min(Comparator.comparingLong(Long::longValue));
+
+			if (!shortestTime.isPresent()) {
+				ProjectKorra.log.severe("Failed to find the shortest time for " + this.player.getName() + "'s temp elements!");
+				this.removeUnusableAbilities();
+
+				saveTempElements();
+				return;
+			}
+
+			long shortestTimeLong = shortestTime.get();
 
 			TEMP_ELEMENTS.removeIf(pair -> pair.getLeft().getUniqueId().equals(this.getUUID()));
-			TEMP_ELEMENTS.add(new ImmutablePair<>(player, shortestTime));
+			TEMP_ELEMENTS.add(new ImmutablePair<>(player, shortestTimeLong));
 		}
 
 		this.removeUnusableAbilities();
@@ -861,10 +899,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	/**
-	 * Gives all subelements a player doesn't have when they log in. Deprecated
-	 * because subelements being a list will be phased out eventually
+	 * Gives all subelements a player doesn't have when they log in.
 	 */
-	@Deprecated
 	public void fixSubelements() {
 		boolean save = false;
 		for (Element element : this.elements) {
@@ -893,9 +929,24 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 				if (currentSubs > 0) continue;
 
+				if (tempElement == Element.AVATAR) { //If they are avatar, add all subs to tempelements
+					Set<Element> tempElements = Arrays.stream(Element.getAllElements()).filter(Element::isAvatarElement).collect(Collectors.toSet());
+
+					for (Element element : tempElements) {
+						for (SubElement sub : Element.getSubElements(element)) {
+							if (this.hasSubElementPermission(sub) && !this.getSubElements().contains(sub)) {
+								newSubs.put(sub, -1L); //Set the expiry to -1 to indicate that the time is linked to the parent element
+								save = true;
+							}
+						}
+					}
+
+					continue;
+				}
+
 				for (SubElement sub : Element.getSubElements(tempElement)) {
-					if (this.hasSubElementPermission(sub)) {
-						newSubs.put(sub, expireTime);
+					if (this.hasSubElementPermission(sub) && !this.hasSubElement(sub)) {
+						newSubs.put(sub, -1L); //Set the expiry to -1 to indicate that the time is linked to the parent element
 						save = true;
 					}
 				}

@@ -99,7 +99,7 @@ public class RemoveCommand extends PKCommand {
 
 				//If it is a temp element, let the TempCommand handle it
 				if (senderBPlayer.hasTempElement(e)) {
-					TempCommand.TEMP_COMMAND.removeElement(e, senderBPlayer, sender);
+					TempCommand.TEMP_COMMAND.removeElement(e, senderBPlayer, sender, false);
 					return;
 				}
 
@@ -169,7 +169,7 @@ public class RemoveCommand extends PKCommand {
 
 			//If the element is a temp element that hasn't expired, remove it via the temp command (just saves repeating the same code)
 			if (bPlayer.hasTempElement(element)) {
-				TempCommand.TEMP_COMMAND.removeElement(element, bPlayer, sender);
+				TempCommand.TEMP_COMMAND.removeElement(element, bPlayer, sender, false);
 				return;
 			}
 
