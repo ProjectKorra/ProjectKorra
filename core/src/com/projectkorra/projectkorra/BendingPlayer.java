@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.hooks.CanBendHook;
+import com.projectkorra.projectkorra.hooks.CanBindHook;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
@@ -63,7 +64,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BendingPlayer extends OfflineBendingPlayer {
 
-	protected static Map<JavaPlugin, CanBendHook> HOOKS = new HashMap<>();
+	protected static Map<JavaPlugin, CanBendHook> BEND_HOOKS = new HashMap<>();
+	protected static Map<JavaPlugin, CanBindHook> BIND_HOOKS = new HashMap<>();
 	static Set<String> DISABLED_WORLDS = new HashSet<>();
 
 	private long slowTime;
@@ -140,8 +142,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		final Location playerLoc = this.player.getLocation();
 
 		//Loop through all hooks and test them
-		for (JavaPlugin plugin : HOOKS.keySet()) {
-			CanBendHook hook = HOOKS.get(plugin);
+		for (JavaPlugin plugin : BEND_HOOKS.keySet()) {
+			CanBendHook hook = BEND_HOOKS.get(plugin);
 			try {
 				Optional<Boolean> bool = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
 				if (bool.isPresent()) return bool.get(); //If the hook didn't return
@@ -268,6 +270,18 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * @return True if they can bind it
 	 */
 	public boolean canBind(final CoreAbility ability) {
+		//Loop through all hooks and test them
+		for (JavaPlugin plugin : BIND_HOOKS.keySet()) {
+			CanBindHook hook = BIND_HOOKS.get(plugin);
+			try {
+				Optional<Boolean> bool = hook.canBind(this, ability);
+				if (bool.isPresent()) return bool.get(); //If the hook didn't return
+			} catch (Exception e) {
+				ProjectKorra.log.severe("An error occurred while running CanBindHook registered by " + plugin.getName() + ".");
+				e.printStackTrace();
+			}
+		}
+
 		if (ability == null || !this.player.isOnline() || !ability.isEnabled()) {
 			return false;
 		} else if (!this.player.hasPermission("bending.ability." + ability.getName())) {
@@ -436,8 +450,22 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		return OfflineBendingPlayer.PLAYERS;
 	}
 
+	/**
+	 * Registers a new {@link CanBendHook} for the specified plugin. The hook changes the {@link #canBend(CoreAbility)} method
+	 * @param plugin The plugin registering the hook
+	 * @param hook The hook to register
+	 */
 	public static void registerCanBendHook(@NotNull JavaPlugin plugin, @NotNull CanBendHook hook) {
-		HOOKS.put(plugin, hook);
+		BEND_HOOKS.put(plugin, hook);
+	}
+
+	/**
+	 * Registers a new {@link CanBindHook} for the specified plugin. The hook changes the {@link #canBind(CoreAbility)} method
+	 * @param plugin The plugin registering the hook
+	 * @param hook The hook to register
+	 */
+	public static void registerCanBindHook(@NotNull JavaPlugin plugin, @NotNull CanBindHook hook) {
+		BIND_HOOKS.put(plugin, hook);
 	}
 
 	/**
@@ -660,11 +688,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	/**
 	 * Recalculate temporary elements the player has. This will remove any that have expired, as well as send
 	 * the player a message about them
-	 * @param offline Whether the player was previously offline. E.g. they just logged in
+	 * @param wasOffline Whether the player was previously offline. E.g. they just logged in
 	 */
-	public void recalculateTempElements(boolean offline) {
-		String expired = ConfigManager.languageConfig.get().getString("Commands.Temp.Expired" + (offline ? "Offline" : ""));
-		String expiredAvatar = ConfigManager.languageConfig.get().getString("Commands.Temp.ExpiredAvatar" + (offline ? "Offline" : ""));
+	public void recalculateTempElements(boolean wasOffline) {
+		String expired = ConfigManager.languageConfig.get().getString("Commands.Temp.Expired" + (wasOffline ? "Offline" : ""));
+		String expiredAvatar = ConfigManager.languageConfig.get().getString("Commands.Temp.ExpiredAvatar" + (wasOffline ? "Offline" : ""));
 
 		Iterator<SubElement> subIterator = this.tempSubElements.keySet().iterator();
 		SubElement subElement;
