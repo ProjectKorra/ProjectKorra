@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -295,20 +296,24 @@ public class SurgeWave extends WaterAbility {
 				final Block blockl = this.location.getBlock();
 				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((isAir(blockl.getType()) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
+				if (!RegionProtection.isRegionProtected(this, this.location) && (((isAir(blockl.getType()) || isFire(blockl) || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
 					for (double i = 0; i <= this.currentRadius; i += .5) {
+						int index = 0;
 						for (double angle = 0; angle < 360; angle += 10) {
+
 							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 							final Block block = this.location.clone().add(vec).getBlock();
 
 							if (!blocks.contains(block) && (isAir(block.getType()) || isFire(block.getType())) || this.isWaterbendable(block)) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
+
+								if ((this.getStartTick() + index + this.getRunningTicks()) % (int)(((this.currentRadius * this.currentRadius) + 3) * 3) == 0) {
+									playWaterbendingSound(block.getLocation());
+								}
 							}
 
-							if ((new Random()).nextInt(15) == 0) {
-								playWaterbendingSound(this.location);
-							}
+							index++;
 						}
 					}
 				}
@@ -365,7 +370,7 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
-						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+						if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 							continue;
 						}
 						final Vector dir = direction.clone();

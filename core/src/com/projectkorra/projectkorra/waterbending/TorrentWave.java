@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -149,10 +150,14 @@ public class TorrentWave extends WaterAbility {
 					continue;
 				}
 
+				if ((index + id + this.getStartTick()) % (int)(this.radius * this.radius) == 0) {
+					playWaterbendingSound(location);
+				}
+
 				for (final Entity entity : indexList) {
 					if (!this.affectedEntities.contains(entity)) {
 						if (entity.getLocation().distanceSquared(location) <= 4) {
-							if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+							if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 								continue;
 							}
 							this.affectedEntities.add(entity);
@@ -161,12 +166,6 @@ public class TorrentWave extends WaterAbility {
 					}
 				}
 
-				final Random random = new Random();
-				for (final Block sound : torrentBlocks) {
-					if (random.nextInt(50) == 0) {
-						playWaterbendingSound(sound.getLocation());
-					}
-				}
 			}
 			if (angles.isEmpty()) {
 				this.heights.remove(id);
