@@ -140,6 +140,7 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -2141,6 +2142,22 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onWorldUnload(WorldUnloadEvent event) {
 		TempBlock.removeAllInWorld(event.getWorld());
+	}
+
+	@EventHandler
+	private void preventArmorSwap(PlayerInteractEvent event) {
+		//Prevents swapping armor pieces using right click while having TempArmor active, this will prevent Armor pieces from being duped/deleted.
+		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) return;
+		Player player = event.getPlayer();
+
+		if (!EnchantmentTarget.WEARABLE.includes(player.getInventory().getItemInMainHand())
+				&& !EnchantmentTarget.ARMOR.includes(player.getInventory().getItemInMainHand())){
+			return;
+		}
+
+		if (TempArmor.hasTempArmor(player)){
+			event.setCancelled(true);
+		}
 	}
 
 	public static HashMap<Player, Pair<String, Player>> getBendingPlayerDeath() {
