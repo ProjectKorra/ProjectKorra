@@ -641,6 +641,10 @@ public class OfflineBendingPlayer {
     /**
      * Get the list of temporary subelements the {@link BendingPlayer} has.
      *
+     * Temporary subelements are a bit more confusing than elements. If a subelement's expirary
+     * is set to -1, it means it is linked with the temporary parent element. When that parent
+     * element is removed, the sub should be removed as well.
+     *
      * @return a map of temporary subelements
      */
     public Map<SubElement, Long> getTempSubElements() {

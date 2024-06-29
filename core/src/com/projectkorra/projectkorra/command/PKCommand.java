@@ -273,10 +273,10 @@ public abstract class PKCommand implements SubCommand {
 	}
 
 	public List<Player> getOnlinePlayers(final CommandSender sender) {
-		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || ((Player) sender).canSee(p)).collect(Collectors.toList());
 	}
 
 	public List<String> getOnlinePlayerNames(final CommandSender sender) {
-		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).map(Player::getName).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || ((Player) sender).canSee(p)).map(Player::getName).collect(Collectors.toList());
 	}
 }

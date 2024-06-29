@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Executor for /bending add. Extends {@link PKCommand}.
+ * Executor for /bending temp. Extends {@link PKCommand}.
+ *
  */
 public class TempCommand extends PKCommand {
 
