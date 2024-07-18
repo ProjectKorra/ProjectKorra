@@ -37,6 +37,7 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
@@ -94,7 +95,7 @@ public class WhoCommand extends PKCommand {
 		if (!this.hasPermission(sender) || !this.correctLength(sender, args.size(), 0, 1)) {
 			return;
 		} else if (args.size() == 1 && args.get(0).length() > 2) {
-			this.whoPlayer(sender, args.get(0));
+			this.getPlayer(args.get(0)).thenAccept(player -> this.whoPlayer(sender, player));
 		} else if (args.size() == 0 || args.size() == 1) {
 			int page = 1;
 			if (args.size() == 1 && this.isNumeric(args.get(0))) {
@@ -164,19 +165,18 @@ public class WhoCommand extends PKCommand {
 	 * Sends information on the given player to the CommandSender.
 	 *
 	 * @param sender The CommandSender to display the information to
-	 * @param playerName The Player to look up
+	 * @param player The Player to look up
 	 */
-	private void whoPlayer(final CommandSender sender, final String playerName) {
-		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+	private void whoPlayer(final CommandSender sender, OfflinePlayer player) {
 		if (!player.isOnline() && !player.hasPlayedBefore()) {
-			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerUnknown.replace("{target}", playerName));
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerUnknown.replace("{target}", player.getName()));
 			return;
 		}
 
 		//If they are actually offline OR they are vanished
 		boolean offline = !player.isOnline() || (sender instanceof Player && player instanceof Player && !((Player) sender).canSee((Player) player));
 		if (offline) {
-			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerOffline.replace("{target}", playerName));
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerOffline.replace("{target}", player.getName()));
 		}
 
 		BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
@@ -336,7 +336,10 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(this.staff.get(uuid.toString()));
 				}
 			}, 1L);
-		});
+		}).exceptionally(e -> {
+			e.printStackTrace();
+			return null;
+		});;
 	}
 
 	/**

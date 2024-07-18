@@ -414,7 +414,8 @@ public class OfflineBendingPlayer {
                         bPlayer.uncacheAfter(30_000);
                     }
 
-                    future.complete(bPlayer);
+                    OfflineBendingPlayer finalBPlayer4 = bPlayer;
+                    Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> future.complete(finalBPlayer4));
                 }
             } catch (final SQLException | ExecutionException | InterruptedException ex) {
                 ex.printStackTrace();

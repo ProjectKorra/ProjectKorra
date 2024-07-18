@@ -109,7 +109,11 @@ public class TempCommand extends PKCommand {
 			return;
 		}
 
-		OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(1));
+		getPlayer(args.get(1)).thenAccept(p -> _execute(p, sender, args));
+
+	}
+
+	public void _execute(OfflinePlayer player, final CommandSender sender, final List<String> args) {
 
 		if (!player.hasPlayedBefore() && !player.isOnline()) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
@@ -229,18 +233,18 @@ public class TempCommand extends PKCommand {
 
 		ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + messageOther
 				.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW)
-				.replace("{bending}", element.getType().getBending())
-				.replace("{bender}", element.getType().getBender())
-				.replace("{bend}", element.getType().getBend())
+				.replace("{bending}", element.getColor() + element.getType().getBending()+ ChatColor.YELLOW)
+				.replace("{bender}", element.getColor() + element.getType().getBender()+ ChatColor.YELLOW)
+				.replace("{bend}", element.getColor() + element.getType().getBend() + ChatColor.YELLOW)
 				.replace("{target}", bPlayer.getName())
 				.replace("{time}", newExpiryString));
 
 		if (bPlayer.isOnline() && (!(sender instanceof Player) || !((Player)sender).getUniqueId().equals(bPlayer.getUUID()))) {
 			ChatUtil.sendBrandingMessage(bPlayer.getPlayer().getPlayer(), ChatColor.YELLOW + message
 					.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW)
-					.replace("{bending}", element.getType().getBending())
-					.replace("{bender}", element.getType().getBender())
-					.replace("{bend}", element.getType().getBend())
+					.replace("{bending}", element.getColor() + element.getType().getBending() + ChatColor.YELLOW)
+					.replace("{bender}", element.getColor() + element.getType().getBender() + ChatColor.YELLOW)
+					.replace("{bend}", element.getColor() + element.getType().getBend() + ChatColor.YELLOW)
 					.replace("{time}", newExpiryString));
 		}
 

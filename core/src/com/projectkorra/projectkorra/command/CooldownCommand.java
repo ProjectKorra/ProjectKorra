@@ -60,11 +60,24 @@ public class CooldownCommand extends PKCommand {
             return;
         }
 
-        OfflinePlayer oPlayer = list.size() == 1 ? (Player)sender : Bukkit.getOfflinePlayer(list.get(1));
-        if (!oPlayer.isOnline() && !oPlayer.hasPlayedBefore()) {
-            ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidPlayer"));
+        if (list.size() == 1) {
+            _execute(sender, list, (Player) sender);
             return;
         }
+
+        this.getPlayer(list.get(1)).thenAccept(oPlayer -> {
+            if (oPlayer == null || (!oPlayer.isOnline() && !oPlayer.hasPlayedBefore())) {
+                ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.InvalidPlayer"));
+                return;
+            }
+            _execute(sender, list, oPlayer);
+        }).exceptionally(e -> {
+            e.printStackTrace();
+            return null;
+        });;
+    }
+
+    public void _execute(CommandSender sender, List<String> list, OfflinePlayer oPlayer) {
 
         BendingPlayer.getOrLoadOfflineAsync(oPlayer).thenAccept(bPlayer -> {
             if (Arrays.asList(new String[] {"view", "v"}).contains(list.get(0).toLowerCase())) {
@@ -170,6 +183,9 @@ public class CooldownCommand extends PKCommand {
                         oPlayer.getName()).replace("{cooldown}", fixedCooldown);
                 ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + message);
             }
+        }).exceptionally(e -> {
+            e.printStackTrace();
+            return null;
         });
     }
 
