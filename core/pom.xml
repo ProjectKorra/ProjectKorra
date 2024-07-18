@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.projectkorra</groupId>
     <artifactId>projectkorra</artifactId>
-    <version>1.12.0-BETA-7</version>
+    <version>1.12.0-BETA-10</version>
   </parent>
 
   <artifactId>core</artifactId>
@@ -60,6 +60,11 @@
       <id>redprotect-repo</id>
       <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>
     </repository>
+    <repository>
+      <id>phoenix</id>
+      <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
+    </repository>
+
   </repositories>
 
   <dependencies>
@@ -199,6 +204,13 @@
       <groupId>com.github.plan-player-analytics</groupId>
       <artifactId>Plan</artifactId>
       <version>5.6.2816</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- MMOLib/Mythic Lib - For mythic mobs bug bypass -->
+    <dependency>
+      <groupId>io.lumine</groupId>
+      <artifactId>MythicLib-dist</artifactId>
+      <version>1.6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

@@ -34,6 +34,7 @@ import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+import io.lumine.mythic.lib.UtilityMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
@@ -54,7 +55,9 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
@@ -1259,6 +1262,13 @@ public class GeneralMethods {
 
 	public static boolean isTransparent(final Material material) {
 		return !material.isOccluding() && !material.isSolid();
+	}
+
+	public static boolean isFakeEvent(final EntityDamageEvent event) {
+		if (Bukkit.getPluginManager().isPluginEnabled("MythicLib")) {
+			return UtilityMethods.isFakeEvent(event);
+		}
+		return false;
 	}
 
 	/** Checks if an entity is Undead **/

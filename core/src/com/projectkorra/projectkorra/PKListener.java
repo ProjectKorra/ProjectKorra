@@ -525,9 +525,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
 		final Block block = event.getDamager();
-		if (block == null) {
-			return;
-		} else if (BendingPlayer.isWorldDisabled(block.getWorld())) {
+
+		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
+		if (block == null || BendingPlayer.isWorldDisabled(block.getWorld()) || GeneralMethods.isFakeEvent(event)) {
 			return;
 		}
 
@@ -552,6 +552,8 @@ public class PKListener implements Listener {
 		double damage = event.getDamage();
 
 		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
+		if (GeneralMethods.isFakeEvent(event)) return;
+
 		if (entity instanceof Player && event.getCause() == DamageCause.ENTITY_ATTACK
 				&& event.getDamage(EntityDamageEvent.DamageModifier.BASE) == 0
 				&& event.getFinalDamage() == 0) {
@@ -622,7 +624,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityDamageEventArmorIgnore(final EntityDamageEvent event) {
-		if (DamageHandler.ignoreArmor(event.getEntity())) {
+		if (DamageHandler.ignoreArmor(event.getEntity()) && !GeneralMethods.isFakeEvent(event)) {
 			DamageHandler.entityDamageCallback(event);
 		}
 	}
@@ -919,7 +921,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDamage(final EntityDamageEvent event) {
-		if (BendingPlayer.isWorldDisabled(event.getEntity().getWorld())) {
+		if (BendingPlayer.isWorldDisabled(event.getEntity().getWorld()) || GeneralMethods.isFakeEvent(event)) {
 			return;
 		}
 		if (event.getEntity() instanceof Player) {
@@ -1009,7 +1011,7 @@ public class PKListener implements Listener {
 	public void onPlayerDamageByPlayer(final EntityDamageByEntityEvent e) {
 		final Entity source = e.getDamager();
 		final Entity entity = e.getEntity();
-		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
+		if (BendingPlayer.isWorldDisabled(entity.getWorld()) || GeneralMethods.isFakeEvent(e)) {
 			return;
 		}
 
@@ -1310,6 +1312,12 @@ public class PKListener implements Listener {
 	public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
 		PassiveManager.registerPassives(event.getPlayer());
 		BendingBoardManager.changeWorld(event.getPlayer());
+
+		//Revert TempArmor when swapping worlds due to some worlds having different inventories (Multiverse Inventories)
+		TempArmor armor = TempArmor.getVisibleTempArmor(event.getPlayer());
+		if (armor != null) {
+			armor.revert();
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
