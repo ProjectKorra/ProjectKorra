@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -156,6 +157,8 @@ public class DamageHandler {
 		if (ability == null) {
 			return;
 		}
+
+		if (entity.hasMetadata("BendingImmunity")) return;
 		
 		if (entity instanceof LivingEntity) {
 			if (checkTicks((LivingEntity) entity, damage)) {
@@ -241,5 +244,15 @@ public class DamageHandler {
 
 	public static void damageEntity(final Entity entity, final double damage, final Ability ability) {
 		damageEntity(entity, ability.getPlayer(), damage, ability);
+	}
+
+	/**
+	 * Sets the immunity of an entity towards bending. If immune, it won't be affected by abilities
+	 * @param entity The entity to set the immunity of
+	 * @param immunity If the entity should be immune
+	 */
+	public static void setImmunity(final Entity entity, boolean immunity) {
+		if (immunity) entity.setMetadata("BendingImmunity", new FixedMetadataValue(ProjectKorra.plugin, true));
+		else entity.removeMetadata("BendingImmunity", ProjectKorra.plugin);
 	}
 }

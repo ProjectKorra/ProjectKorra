@@ -730,7 +730,16 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius) {
-		return getEntitiesAroundPoint(location, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker());
+		return getEntitiesAroundPoint(location, radius, getEntityFilter());
+	}
+
+	/**
+	 * Get the filter used to filter out dead entities, immune entities, marker armorstands and spectators
+	 * @return The filter
+	 */
+	public static Predicate<Entity> getEntityFilter() {
+		return entity -> !(entity.isDead() || entity.hasMetadata ("BendingImmunity")
+				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker();
 	}
 
 	public static long getGlobalCooldown() {
