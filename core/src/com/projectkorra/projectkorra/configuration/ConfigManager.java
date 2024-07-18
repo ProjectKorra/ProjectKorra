@@ -1679,6 +1679,7 @@ public class ConfigManager {
 			config.addDefault("Storage.MySQL.pass", "");
 			config.addDefault("Storage.MySQL.db", "minecraft");
 			config.addDefault("Storage.MySQL.user", "root");
+			config.addDefault("Storage.MySQL.properties", "autoReconnect=true");
 
 			config.addDefault("debug", false);
 

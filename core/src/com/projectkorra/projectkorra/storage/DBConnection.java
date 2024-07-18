@@ -19,6 +19,7 @@ public class DBConnection {
 	private static String db;
 	private static String user;
 	private static String pass;
+	private static String properties;
 	private static boolean isOpen = false;
 
 	public static void init() {
@@ -27,9 +28,10 @@ public class DBConnection {
 		DBConnection.pass = ConfigManager.getConfig().getString("Storage.MySQL.pass");
 		DBConnection.db = ConfigManager.getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = ConfigManager.getConfig().getString("Storage.MySQL.user");
+		DBConnection.properties = ConfigManager.getConfig().getString("Storage.MySQL.properties");
 
 		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
-			sql = new MySQL(ProjectKorra.log, host, port, user, pass, db);
+			sql = new MySQL(ProjectKorra.log, host, port, user, pass, db, properties);
 			if (((MySQL) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
 				GeneralMethods.stopPlugin();
@@ -131,7 +133,7 @@ public class DBConnection {
 			//Table for temp elements
 			if (!sql.tableExists("pk_temp_elements")) {
 				ProjectKorra.log.info("Creating pk_temp_elements table");
-				final String query = "CREATE TABLE `pk_temp_elements` (uuid TEXT(36) NOT NULL, element TEXT(255) NOT NULL, expiry BIGINT, PRIMARY KEY (uuid, element));";
+				final String query = "CREATE TABLE `pk_temp_elements` (uuid TEXT(36) NOT NULL, element TEXT(255) NOT NULL, expiry BIGINT);";
 				sql.modifyQuery(query, false);
 			}
 		}
