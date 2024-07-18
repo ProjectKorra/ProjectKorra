@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
+import com.djrapitops.plan.extension.DataExtension;
+import com.djrapitops.plan.extension.ExtensionService;
+import com.projectkorra.projectkorra.hooks.PlanExtension;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
@@ -124,6 +127,11 @@ public class ProjectKorra extends JavaPlugin {
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			papiHook = new PlaceholderAPIHook(this);
 			papiHook.register();
+		}
+
+		if (Bukkit.getPluginManager().isPluginEnabled("Plan")) {
+			DataExtension yourExtension = new PlanExtension();
+			ExtensionService.getInstance().register(yourExtension);
 		}
 	}
 
