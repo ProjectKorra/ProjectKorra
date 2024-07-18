@@ -111,7 +111,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		if (!this.bPlayer.canBend(this)) {
+		if (!this.bPlayer.canBend(this) || bPlayer.isOnCooldown("WaterSpoutWave")) {
 			return;
 		}
 
@@ -352,7 +352,7 @@ public class WaterSpoutWave extends WaterAbility {
 	public void remove() {
 		super.remove();
 		if (this.moving) {
-			this.bPlayer.addCooldown(this);
+			this.bPlayer.addCooldown("WaterSpoutWave", getCooldown());
 		}
 		this.revertBlocks();
 		for (final BukkitRunnable task : this.tasks) {
