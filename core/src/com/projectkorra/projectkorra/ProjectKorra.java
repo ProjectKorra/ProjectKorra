@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import com.djrapitops.plan.extension.DataExtension;
 import com.djrapitops.plan.extension.ExtensionService;
 import com.projectkorra.projectkorra.hooks.PlanExtension;
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -130,8 +129,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		if (Bukkit.getPluginManager().isPluginEnabled("Plan")) {
-			DataExtension yourExtension = new PlanExtension();
-			ExtensionService.getInstance().register(yourExtension);
+			new PlanExtension();
 		}
 	}
 

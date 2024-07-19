@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.hooks;
 import com.djrapitops.plan.extension.CallEvents;
 import com.djrapitops.plan.extension.Caller;
 import com.djrapitops.plan.extension.DataExtension;
+import com.djrapitops.plan.extension.ExtensionService;
 import com.djrapitops.plan.extension.NotReadyException;
 import com.djrapitops.plan.extension.annotation.BooleanProvider;
 import com.djrapitops.plan.extension.annotation.Conditional;
@@ -30,6 +31,10 @@ import java.util.UUID;
 
 @PluginInfo(name = "ProjectKorra", iconName = "circle-arrow-down", iconFamily = Family.SOLID, color = Color.DEEP_PURPLE)
 public class PlanExtension implements DataExtension {
+
+    public PlanExtension() {
+        ExtensionService.getInstance().register(this);
+    }
 
     @Override
     public CallEvents[] callExtensionMethodsOn() {
