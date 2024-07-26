@@ -32,6 +32,7 @@ import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import com.projectkorra.projectkorra.util.light.LightManager;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
 import net.md_5.bungee.api.ChatColor;
@@ -1341,6 +1342,7 @@ public class GeneralMethods {
 			DBConnection.sql.close();
 		}
 		GeneralMethods.stopBending();
+		LightManager.get().removeAllLights();
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();

@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.util.light.LightManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -206,6 +207,7 @@ public abstract class FireAbility extends ElementalAbility {
 		} else {
 			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
 		}
+		LightManager.get().addLight(loc, 13, 300, null, null);
 	}
 
 	public static void playFirebendingSound(final Location loc) {
@@ -230,6 +232,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
 		GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
+		LightManager.get().addLight(loc, 15, 100L, null, null);
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
