@@ -232,7 +232,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
 		GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
-		LightManager.get().addLight(loc, 15, 100L, null, null);
+		LightManager.get().addLight(loc, 15, 250L, null, null);
 	}
 
 	public static void playLightningbendingSound(final Location loc) {

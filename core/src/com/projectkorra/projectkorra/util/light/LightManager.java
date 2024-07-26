@@ -8,6 +8,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,22 +20,27 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LightManager {
 
-    private static final LightManager INSTANCE = new LightManager();
+    private static LightManager INSTANCE = new LightManager();
 
     private final DelayQueue<LightData> lightQueue = new DelayQueue<>();
     private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
     private final BlockData defaultLightData;
     private final BlockData defaultWaterloggedLightData;
     private final Runnable reverterTask;
+    private final Plugin plugin;
 
     public LightManager() {
         this.defaultLightData = Bukkit.createBlockData(Material.valueOf("LIGHT"));
         this.defaultWaterloggedLightData = createDefaultWaterloggedLightData();
         this.reverterTask = this::revertExpiredLights;
+        this.plugin = ProjectKorra.plugin;
         startLightReverter();
     }
 
     public static LightManager get() {
+        if (INSTANCE == null || INSTANCE.plugin == null) {
+            INSTANCE = new LightManager();
+        }
         return INSTANCE;
     }
 
