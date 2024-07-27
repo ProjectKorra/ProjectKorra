@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.light.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -136,6 +137,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			tempLoc.add(newDir);
 			tempLoc.setY(tempLoc.getY() + (this.radius * Math.sin(Math.toRadians(i))));
 			playFirebendingParticles(tempLoc, 0, 0, 0, 0);
+			LightManager.get().addLight(this.player.getLocation().clone().add(0, 1, 0), 13, 350, null, null);
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius + 0.5)) {

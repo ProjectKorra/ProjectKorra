@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.util.light.LightManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -148,6 +149,7 @@ public class FireBurst extends FireAbility {
 			final Location location = this.player.getEyeLocation();
 			location.add(location.getDirection());
 			playFirebendingParticles(location, 1, .01, .01, .01);
+			LightManager.get().addLight(location, 13, 350, null, null);
 		}
 	}
 

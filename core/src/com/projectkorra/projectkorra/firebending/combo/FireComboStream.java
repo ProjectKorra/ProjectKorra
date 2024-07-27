@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.light.LightManager;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -94,6 +95,8 @@ public class FireComboStream extends BukkitRunnable {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
 		}
+
+		LightManager.get().addLight(this.location, 13, 350, null, null);
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();

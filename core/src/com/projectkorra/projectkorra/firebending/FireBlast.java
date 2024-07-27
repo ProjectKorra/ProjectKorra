@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.light.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlastFurnace;
@@ -131,6 +132,8 @@ public class FireBlast extends FireAbility {
 		if (this.showParticles) {
 			playFirebendingParticles(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
 		}
+
+		LightManager.get().addLight(this.location, 13, 350, null, null);
 
 		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
 

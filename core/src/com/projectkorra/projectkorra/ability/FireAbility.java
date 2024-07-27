@@ -207,7 +207,10 @@ public abstract class FireAbility extends ElementalAbility {
 		} else {
 			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
 		}
-		LightManager.get().addLight(loc, 13, 300, null, null);
+		if (loc.getBlock().getType() == Material.WATER) {
+			ParticleEffect.BUBBLE_POP.display(loc, amount, Math.random(), Math.random(), Math.random());
+			ParticleEffect.WATER_BUBBLE.display(loc, amount, Math.random(), Math.random(), Math.random());
+		}
 	}
 
 	public static void playFirebendingSound(final Location loc) {
@@ -232,7 +235,6 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playLightningbendingParticle(final Location loc, final double xOffset, final double yOffset, final double zOffset) {
 		GeneralMethods.displayColoredParticle("#01E1FF", loc, 1, xOffset, yOffset, zOffset);
-		LightManager.get().addLight(loc, 15, 250L, null, null);
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
