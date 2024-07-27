@@ -11,7 +11,7 @@ import java.util.Random;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.light.LightManager;
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -290,7 +290,7 @@ public class HeatControl extends FireAbility {
 
 	public void displayCookParticles() {
 		playFirebendingParticles(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
-		LightManager.get().addLight(this.player.getLocation().clone().add(0, 1, 0), 13, 350, null, null);
+		LightManager.get().addLight(this.player.getLocation().clone().add(0, 1, 0), 13, 600, null, null);
 		ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation().clone().add(0, 1, 0), 2, 0.5, 0.5, 0.5);
 	}
 

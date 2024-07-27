@@ -7,21 +7,18 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.light.LightManager;
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.inventory.ItemStack;
 
 public class Illumination extends FireAbility {
@@ -122,7 +119,7 @@ public class Illumination extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		this.revert();
+		if (!MODERN) this.revert();
 	}
 
 	private void revert() {
@@ -135,12 +132,12 @@ public class Illumination extends FireAbility {
 	private void set() {
 		if (MODERN) { //Light block implementation
 			this.block = this.player.getEyeLocation().getBlock();
-			LightManager.get().addLight(this.player.getEyeLocation(), lightLevel, 350, null, null);
 			this.oldLevel = player.getLocation().getBlock().getLightLevel();
 			if (this.oldLevel > this.lightThreshold) {
 				remove();
 				return;
 			}
+			LightManager.get().addLight(this.player.getEyeLocation(), lightLevel, 600, null, null);
 		} else { //Legacy 1.16 illumination
 			final Block standingBlock = this.player.getLocation().getBlock();
 			final Block bellowBlock = standingBlock.getRelative(BlockFace.DOWN);
