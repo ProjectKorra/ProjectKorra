@@ -121,14 +121,18 @@ public class LightManager {
         BlockData lightData = brightness > 0 ? getLightData(location) : getCurrentBlockData(location);
         lightData = modifyLightLevel(lightData, brightness);
 
+        int viewDistance = Bukkit.getServer().getViewDistance();
+
         if (ephemeral != null && ephemeral) {
             Player player = Bukkit.getPlayer(uuid);
-            if (player != null) {
+            if (player != null && player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) <= viewDistance * 16) {
                 player.sendBlockChange(location, lightData);
             }
         } else {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendBlockChange(location, lightData);
+                if (player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) <= viewDistance * 16) {
+                    player.sendBlockChange(location, lightData);
+                }
             }
         }
     }
