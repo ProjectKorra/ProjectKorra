@@ -9,7 +9,6 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,9 +21,8 @@ public class LightManager {
     // If this version is pre-LIGHT, this class basically does nothing.
     private static final boolean MODERN = GeneralMethods.getMCVersion() >= 1170;
 
-    // Map of all LightData, keyed by *Block* Locations.
-    // LightManager#addLight will automatically get the provided locations block location for you.
-    private final Map<Location, LightData> lightMap = new ConcurrentHashMap<>();
+    // A map containing all active lights
+    private final ConcurrentHashMap<Location, Set<LightData>> lightMap = new ConcurrentHashMap<>();
 
     // Default LIGHT BlockData
     private final BlockData defaultLightData;
@@ -64,28 +62,49 @@ public class LightManager {
     }
 
     /**
-     * Adds a light at the specified location with the given brightness, delay, UUID, and ephemeral flag.
+     * Adds a light at the specified location with the given brightness and delay. Visible for the specified players.
      * Subsequent calls to a location with an active light replaces the expiration time with the new delay.
-     * This can keep a light on for a location indefinitely with no flickering.
+     * This can keep a light on for a location indefinitely.
      *
      * @param location   the location where the light should be added
      * @param brightness  the brightness of the light, 1-15
      * @param delay       the delay, or expiry, in milliseconds before the light fades out
-     * @param uuid        the UUID of the player associated with the light
-     * @param ephemeral   a flag indicating whether the light is visible only to the player referenced before
+     * @param observers   the list of players who can see the light
      */
-    public void addLight(Location location, int brightness, long delay, @Nullable UUID uuid, @Nullable Boolean ephemeral) {
+    public void addLight(Location location, int brightness, long delay, Collection<? extends Player> observers) {
         if (!MODERN) return;
 
         location = location.getBlock().getLocation();
         long expiryTime = System.currentTimeMillis() + delay;
 
-        if (location.getBlock().getLightLevel() >= brightness || (!location.getBlock().isEmpty() && !location.getBlock().getType().equals(Material.WATER))) return;
+        if (location.getBlock().getLightLevel() >= brightness ||
+                (!location.getBlock().isEmpty() && !location.getBlock().getType().equals(Material.WATER))) return;
 
-        LightData newLightData = new LightData(location, brightness, uuid, ephemeral, expiryTime);
-        lightMap.put(location, newLightData);
+        LightData newLightData = new LightData(location, brightness, observers, expiryTime);
 
-        sendLightChange(location, brightness, uuid, ephemeral);
+        lightMap.compute(location, (loc, existingSet) -> {
+            if (existingSet == null) {
+                existingSet = new ConcurrentSkipListSet<>();
+            }
+            existingSet.removeIf(lightData -> lightData.observers.equals(observers));
+            existingSet.add(newLightData);
+            return existingSet;
+        });
+
+        sendLightChange(location, brightness, observers);
+    }
+
+    /**
+     * Adds a light at the specified location with the given brightness and delay. Visible for everyone.
+     * Subsequent calls to a location with an active light replaces the expiration time with the new delay.
+     * This can keep a light on for a location indefinitely.
+     *
+     * @param location   the location where the light should be added, will be visible for everyone
+     * @param brightness  the brightness of the light, 1-15
+     * @param delay       the delay, or expiry, in milliseconds before the light fades out
+     */
+    public void addLight(Location location, int brightness, long delay) {
+        addLight(location, brightness, delay, Bukkit.getOnlinePlayers());
     }
 
     /**
@@ -107,8 +126,9 @@ public class LightManager {
     public void removeAllLights() {
         if (!MODERN) return;
 
-        lightMap.values().forEach(this::revertLight);
+        lightMap.values().forEach(set -> set.forEach(this::revertLight));
         lightMap.clear();
+
         scheduler.shutdown();
 
         try {
@@ -131,13 +151,35 @@ public class LightManager {
         if (!MODERN) return;
 
         long currentTime = System.currentTimeMillis();
-        lightMap.values().removeIf(lightData -> {
-            if (currentTime >= lightData.expiryTime) {
-                fadeLight(lightData);
-                return true;
+        List<LightData> lightsToRevert = new ArrayList<>();
+
+        synchronized (lightMap) {
+            Iterator<Map.Entry<Location, Set<LightData>>> mapIterator = lightMap.entrySet().iterator();
+            while (mapIterator.hasNext()) {
+                Map.Entry<Location, Set<LightData>> entry = mapIterator.next();
+                Set<LightData> lightDataSet = entry.getValue();
+
+                synchronized (lightDataSet) {
+                    Iterator<LightData> iterator = lightDataSet.iterator();
+                    while (iterator.hasNext()) {
+                        LightData lightData = iterator.next();
+
+                        if (currentTime >= lightData.expiryTime) {
+                            lightsToRevert.add(lightData);
+                            iterator.remove();
+                        }
+                    }
+                }
+
+                if (lightDataSet.isEmpty()) {
+                    mapIterator.remove();
+                }
             }
-            return false;
-        });
+        }
+
+        for (LightData lightData : lightsToRevert) {
+            fadeLight(lightData);
+        }
     }
 
     /**
@@ -153,7 +195,7 @@ public class LightManager {
         Runnable task = () -> {
             int brightness = currentBrightness.decrementAndGet();
             if (brightness > 0) {
-                sendLightChange(lightData.location, brightness, lightData.uuid, lightData.ephemeral);
+                sendLightChange(lightData.location, brightness, lightData.observers);
             } else {
                 revertLight(lightData);
                 futureRef.get().cancel(false);
@@ -169,25 +211,18 @@ public class LightManager {
      *
      * @param  location   the location where the light change is to be sent
      * @param  brightness the brightness level of the light
-     * @param  uuid       the UUID of the player associated with the light
-     * @param  ephemeral  a flag indicating whether the light is visible only to the player referenced before
+     * @param observers   the list of players who can see the light
      */
-    private void sendLightChange(Location location, int brightness, UUID uuid, Boolean ephemeral) {
+    private void sendLightChange(Location location, int brightness, Collection<? extends Player> observers) {
         BlockData lightData = brightness > 0 ? getLightData(location) : getCurrentBlockData(location);
         lightData = modifyLightLevel(lightData, brightness);
 
         int viewDistance = Bukkit.getServer().getViewDistance();
 
-        if (ephemeral != null && ephemeral) {
-            Player player = Bukkit.getPlayer(uuid);
-            if (player != null && player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) <= viewDistance * 16) {
+        for (Player player : observers) {
+            if (player == null || player.isDead() || !player.isOnline()) continue;
+            if (player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) <= viewDistance * 16) {
                 player.sendBlockChange(location, lightData);
-            }
-        } else {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) <= viewDistance * 16) {
-                    player.sendBlockChange(location, lightData);
-                }
             }
         }
     }
@@ -236,22 +271,56 @@ public class LightManager {
      * @param  lightData  the LightData object containing the location, brightness, UUID, and ephemeral flag of the light to be reverted
      */
     private void revertLight(LightData lightData) {
-        sendLightChange(lightData.location, 0, lightData.uuid, lightData.ephemeral);
+        sendLightChange(lightData.location, 0, lightData.observers);
     }
 
-    private static class LightData {
-        final Location location;
-        final int brightness;
-        final UUID uuid;
-        final Boolean ephemeral;
-        long expiryTime;
+    public static class LightData implements Comparable<LightData> {
+        private final Location location;
+        private final int brightness;
+        private final Collection<? extends Player> observers;
+        private final long expiryTime;
 
-        LightData(Location location, int brightness, UUID uuid, Boolean ephemeral, long expiryTime) {
+        public LightData(Location location, int brightness, Collection<? extends Player> observers, long expiryTime) {
             this.location = location;
             this.brightness = brightness;
-            this.uuid = uuid;
-            this.ephemeral = ephemeral;
+            this.observers = observers;
             this.expiryTime = expiryTime;
+        }
+
+        public Location getLocation() { return location; }
+        public int getBrightness() { return brightness; }
+        public Collection<? extends Player> getObservers() { return observers; }
+        public long getExpiryTime() { return expiryTime; }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            LightData that = (LightData) obj;
+            return brightness == that.brightness &&
+                    expiryTime == that.expiryTime &&
+                    location.equals(that.location) &&
+                    observers.equals(that.observers);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(location, brightness, observers, expiryTime);
+        }
+
+        @Override
+        public String toString() {
+            return "LightData{" +
+                    "location=" + location +
+                    ", brightness=" + brightness +
+                    ", observers=" + observers +
+                    ", expiryTime=" + expiryTime +
+                    '}';
+        }
+
+        @Override
+        public int compareTo(LightData other) {
+            return Long.compare(this.expiryTime, other.expiryTime);
         }
     }
 }

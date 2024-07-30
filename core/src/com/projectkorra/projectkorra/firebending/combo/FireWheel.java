@@ -136,7 +136,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			tempLoc.add(newDir);
 			tempLoc.setY(tempLoc.getY() + (this.radius * Math.sin(Math.toRadians(i))));
 			playFirebendingParticles(tempLoc, 0, 0, 0, 0);
-			LightManager.get().addLight(tempLoc, 13, 600, null, null);
+			LightManager.get().addLight(tempLoc, 13, 600);
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius + 0.5)) {

@@ -290,7 +290,7 @@ public class HeatControl extends FireAbility {
 
 	public void displayCookParticles() {
 		playFirebendingParticles(this.player.getLocation().clone().add(0, 1, 0), 3, 0.5, 0.5, 0.5);
-		LightManager.get().addLight(this.player.getLocation().clone().add(0, 1, 0), 13, 600, null, null);
+		LightManager.get().addLight(this.player.getLocation().clone().add(0, 1, 0), 13, 600);
 		ParticleEffect.SMOKE_NORMAL.display(this.player.getLocation().clone().add(0, 1, 0), 2, 0.5, 0.5, 0.5);
 	}
 

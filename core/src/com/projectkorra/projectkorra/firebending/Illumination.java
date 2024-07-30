@@ -137,7 +137,7 @@ public class Illumination extends FireAbility {
 				remove();
 				return;
 			}
-			LightManager.get().addLight(this.player.getEyeLocation(), lightLevel, 600, null, null);
+			LightManager.get().addLight(this.player.getEyeLocation(), lightLevel, 600);
 		} else { //Legacy 1.16 illumination
 			final Block standingBlock = this.player.getLocation().getBlock();
 			final Block bellowBlock = standingBlock.getRelative(BlockFace.DOWN);

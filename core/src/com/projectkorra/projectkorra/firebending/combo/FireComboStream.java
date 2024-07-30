@@ -96,7 +96,7 @@ public class FireComboStream extends BukkitRunnable {
 			}
 		}
 
-		LightManager.get().addLight(this.location, 13, 600, null, null);
+		LightManager.get().addLight(this.location, 13, 600);
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();

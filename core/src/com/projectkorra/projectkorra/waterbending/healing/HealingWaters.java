@@ -129,7 +129,7 @@ public class HealingWaters extends HealingAbility {
 			}
 		} else {
 			GeneralMethods.displayColoredParticle(this.hex, this.origin);
-			LightManager.get().addLight(this.origin, 9, 350, null,  null);
+			LightManager.get().addLight(this.origin, 9, 350);
 		}
 
 		// If the ability is charged, try healing.
@@ -246,7 +246,7 @@ public class HealingWaters extends HealingAbility {
 			final double x = centre.getX() + (0.75 * Math.cos(angle));
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
 			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
-			LightManager.get().addLight(new Location(centre.getWorld(), x, centre.getY(), z), 9, 350, null,  null);
+			LightManager.get().addLight(new Location(centre.getWorld(), x, centre.getY(), z), 9, 350);
 
 			if (this.pstage >= 36) {
 				this.pstage = 0;
@@ -270,8 +270,8 @@ public class HealingWaters extends HealingAbility {
 				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1));
 				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2));
 
-				LightManager.get().addLight(new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1), 9, 350, null,  null);
-				LightManager.get().addLight(new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2), 9, 350, null,  null);
+				LightManager.get().addLight(new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1), 9, 350);
+				LightManager.get().addLight(new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2), 9, 350);
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;
@@ -307,7 +307,7 @@ public class HealingWaters extends HealingAbility {
 		}
 
 		GeneralMethods.displayColoredParticle(this.hex, this.location);
-		LightManager.get().addLight(this.location, 9, 350, null,  null);
+		LightManager.get().addLight(this.location, 9, 350);
 	}
 
 	private void fillBottle() {
