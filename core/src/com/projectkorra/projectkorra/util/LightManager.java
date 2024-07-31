@@ -212,7 +212,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with an expiry of 50ms and max brightness.
      * Visible for everyone.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light updates the expiration time for the active light.
      *
      * @param location   the location where the light should be added
      */
@@ -223,7 +223,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with an expiry of 50ms and max brightness.
      * Visible for the specified observers.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light updates the expiration time for the active light.
      *
      * @param location   the location where the light should be added
      * @param observers  the list of players who can see the light
@@ -235,7 +235,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with the given expiry and max brightness.
      * Visible for everyone.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
      *
      * @param location   the location where the light should be added
      * @param expiry      the time in milliseconds before the light fades out
@@ -247,7 +247,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with the given expiry and max brightness.
      * Visible for the specified observers.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
      *
      * @param location   the location where the light should be added
      * @param expiry      the time in milliseconds before the light fades out
@@ -260,7 +260,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with the given brightness and an expiry of 50ms.
      * Visible for everyone.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
      *
      * @param location   the location where the light should be added
      * @param brightness the brightness of the light, 1-15
@@ -272,7 +272,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with the given brightness and an expiry of 50ms.
      * Visible for the specified observers.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
      *
      * @param location   the location where the light should be added
      * @param brightness the brightness of the light, 1-15
@@ -285,7 +285,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with the given brightness and expiry.
      * Visible for everyone.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
      *
      * @param location   the location where the light should be added
      * @param brightness the brightness of the light, 1-15
@@ -298,7 +298,7 @@ public class LightManager {
     /**
      * Adds a light at the specified location with the given brightness and expiry.
      * Visible for the specified observers.
-     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
      *
      * @param location   the location where the light should be added
      * @param brightness the brightness of the light, 1-15
