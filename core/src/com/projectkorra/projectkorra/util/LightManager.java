@@ -16,13 +16,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LightManager {
 
+    private static final int NUM_LOCKS = 16;
+    private final Object[] locks = new Object[NUM_LOCKS];
+
     private static final LightManager INSTANCE = new LightManager();
 
     // If this version is pre-LIGHT, this class basically does nothing.
     private static final boolean MODERN = GeneralMethods.getMCVersion() >= 1170;
 
     // A map containing all active lights
-    private final ConcurrentHashMap<Location, Set<LightData>> lightMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Location, ConcurrentSkipListSet<LightData>> lightMap = new ConcurrentHashMap<>();
 
     // Default LIGHT BlockData
     private final BlockData defaultLightData;
@@ -36,6 +39,9 @@ public class LightManager {
         this.defaultLightData = Bukkit.createBlockData(Material.valueOf("LIGHT"));
         this.defaultWaterloggedLightData = createDefaultWaterloggedLightData();
         this.reverterTask = this::revertExpiredLights;
+        for (int i = 0; i < NUM_LOCKS; i++) {
+            locks[i] = new Object();
+        }
         startLightReverter();
     }
 
@@ -61,6 +67,10 @@ public class LightManager {
         return data;
     }
 
+    private Object getLockForLocation(Location location) {
+        return locks[(location.hashCode() & 0x7FFFFFFF) % NUM_LOCKS];
+    }
+
     /**
      * Adds a light at the specified location with the given brightness and delay. Visible for the specified players.
      * Subsequent calls to a location with an active light replaces the expiration time with the new delay.
@@ -82,14 +92,12 @@ public class LightManager {
 
         LightData newLightData = new LightData(location, brightness, observers, expiryTime);
 
-        lightMap.compute(location, (loc, existingSet) -> {
-            if (existingSet == null) {
-                existingSet = new ConcurrentSkipListSet<>();
-            }
+        Object lock = getLockForLocation(location);
+        synchronized (lock) {
+            ConcurrentSkipListSet<LightData> existingSet = lightMap.computeIfAbsent(location, loc -> new ConcurrentSkipListSet<>());
             existingSet.removeIf(lightData -> lightData.observers.equals(observers));
             existingSet.add(newLightData);
-            return existingSet;
-        });
+        }
 
         sendLightChange(location, brightness, observers);
     }
@@ -153,34 +161,25 @@ public class LightManager {
         long currentTime = System.currentTimeMillis();
         List<LightData> lightsToRevert = new ArrayList<>();
 
-        synchronized (lightMap) {
-            Iterator<Map.Entry<Location, Set<LightData>>> mapIterator = lightMap.entrySet().iterator();
-            while (mapIterator.hasNext()) {
-                Map.Entry<Location, Set<LightData>> entry = mapIterator.next();
-                Set<LightData> lightDataSet = entry.getValue();
-
-                synchronized (lightDataSet) {
-                    Iterator<LightData> iterator = lightDataSet.iterator();
-                    while (iterator.hasNext()) {
-                        LightData lightData = iterator.next();
-
-                        if (currentTime >= lightData.expiryTime) {
-                            lightsToRevert.add(lightData);
-                            iterator.remove();
-                        }
-                    }
-                }
-
-                if (lightDataSet.isEmpty()) {
-                    mapIterator.remove();
+        lightMap.forEach((location, lightDataSet) -> {
+            Iterator<LightData> iterator = lightDataSet.iterator();
+            while (iterator.hasNext()) {
+                LightData lightData = iterator.next();
+                if (currentTime >= lightData.expiryTime) {
+                    lightsToRevert.add(lightData);
+                    iterator.remove();
                 }
             }
-        }
+            if (lightDataSet.isEmpty()) {
+                lightMap.remove(location);
+            }
+        });
 
         for (LightData lightData : lightsToRevert) {
             fadeLight(lightData);
         }
     }
+
 
     /**
      * Fades out a light by decrementing its brightness by 1. The light will stop fading when its brightness
