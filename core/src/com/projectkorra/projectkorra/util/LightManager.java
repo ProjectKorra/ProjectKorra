@@ -210,33 +210,106 @@ public class LightManager {
     }
 
     /**
-     * Adds a light at the specified location with the given brightness and delay. Visible for everyone.
-     * Subsequent calls to a location with an active light replaces the expiration time with the new delay.
-     * This can keep a light on for a location indefinitely.
+     * Adds a light at the specified location with an expiry of 50ms and max brightness.
+     * Visible for everyone.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
      *
-     * @param location   the location where the light should be added, will be visible for everyone
-     * @param brightness the brightness of the light, 1-15
-     * @param delay      the delay, or expiry, in milliseconds before the light fades out
+     * @param location   the location where the light should be added
      */
-    public void addLight(Location location, int brightness, long delay) {
-        addLight(location, brightness, delay, Bukkit.getOnlinePlayers());
+    public void addLight(Location location) {
+        addLight(location, 15, 50, Bukkit.getOnlinePlayers());
     }
 
     /**
-     * Adds a light at the specified location with the given brightness and delay. Visible for the specified players.
-     * Subsequent calls to a location with an active light replaces the expiration time with the new delay.
-     * This can keep a light on for a location indefinitely.
+     * Adds a light at the specified location with an expiry of 50ms and max brightness.
+     * Visible for the specified observers.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     *
+     * @param location   the location where the light should be added
+     * @param observers  the list of players who can see the light
+     */
+    public void addLight(Location location, Collection<? extends Player> observers) {
+        addLight(location, 15, 50, observers);
+    }
+
+    /**
+     * Adds a light at the specified location with the given expiry and max brightness.
+     * Visible for everyone.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     *
+     * @param location   the location where the light should be added
+     * @param expiry      the time in milliseconds before the light fades out
+     */
+    public void addLight(Location location, long expiry) {
+        addLight(location, 15, expiry, Bukkit.getOnlinePlayers());
+    }
+
+    /**
+     * Adds a light at the specified location with the given expiry and max brightness.
+     * Visible for the specified observers.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     *
+     * @param location   the location where the light should be added
+     * @param expiry      the time in milliseconds before the light fades out
+     * @param observers  the list of players who can see the light
+     */
+    public void addLight(Location location, long expiry, Collection<? extends Player> observers) {
+        addLight(location, 15, expiry, observers);
+    }
+
+    /**
+     * Adds a light at the specified location with the given brightness and an expiry of 50ms.
+     * Visible for everyone.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
      *
      * @param location   the location where the light should be added
      * @param brightness the brightness of the light, 1-15
-     * @param delay      the delay, or expiry, in milliseconds before the light fades out
+     */
+    public void addLight(Location location, int brightness) {
+        addLight(location, brightness, 50, Bukkit.getOnlinePlayers());
+    }
+
+    /**
+     * Adds a light at the specified location with the given brightness and an expiry of 50ms.
+     * Visible for the specified observers.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     *
+     * @param location   the location where the light should be added
+     * @param brightness the brightness of the light, 1-15
      * @param observers  the list of players who can see the light
      */
-    public void addLight(Location location, int brightness, long delay, Collection<? extends Player> observers) {
+    public void addLight(Location location, int brightness, Collection<? extends Player> observers) {
+        addLight(location, brightness, 50, observers);
+    }
+
+    /**
+     * Adds a light at the specified location with the given brightness and expiry.
+     * Visible for everyone.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     *
+     * @param location   the location where the light should be added
+     * @param brightness the brightness of the light, 1-15
+     * @param expiry      the time in milliseconds before the light fades out
+     */
+    public void addLight(Location location, int brightness, long expiry) {
+        addLight(location, brightness, expiry, Bukkit.getOnlinePlayers());
+    }
+
+    /**
+     * Adds a light at the specified location with the given brightness and expiry.
+     * Visible for the specified observers.
+     * Subsequent calls to a location with an active light extends the expiration time for the active light.
+     *
+     * @param location   the location where the light should be added
+     * @param brightness the brightness of the light, 1-15
+     * @param expiry      the time in milliseconds before the light fades out
+     * @param observers  the list of players who can see the light
+     */
+    public void addLight(Location location, int brightness, long expiry, Collection<? extends Player> observers) {
         if (!modern) return;
 
         location = location.getBlock().getLocation();
-        long expiryTime = System.currentTimeMillis() + delay;
+        long expiryTime = System.currentTimeMillis() + expiry;
 
         if (location.getBlock().getLightLevel() >= brightness ||
                 (!location.getBlock().isEmpty() && !location.getBlock().getType().equals(Material.WATER))) return;
