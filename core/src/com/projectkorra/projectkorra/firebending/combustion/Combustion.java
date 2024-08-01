@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combustion;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -111,6 +112,7 @@ public class Combustion extends CombustionAbility {
 		if(explosionCount % 5 == 0) 
 			ParticleEffect.EXPLOSION_LARGE.display(this.location, 1, .001, .001, .001, 0);
 		playCombustionSound(this.location);
+		LightManager.createLight(this.location).emit();
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 		this.explosionCount++;
 	}

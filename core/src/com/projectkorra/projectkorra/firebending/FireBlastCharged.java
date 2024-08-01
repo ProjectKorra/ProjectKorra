@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -248,10 +249,11 @@ public class FireBlastCharged extends FireAbility {
 	private void executeFireball() {
 		for (final Block block : GeneralMethods.getBlocksAroundPoint(this.location, this.collisionRadius)) {
 			playFirebendingParticles(block.getLocation(), 5, 0.5, 0.5, 0.5);
+			LightManager.createLight(block.getLocation()).brightness(13).timeUntilFadeout(600).emit();
+
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
 			}
-
 		}
 
 		boolean exploded = false;
@@ -314,7 +316,9 @@ public class FireBlastCharged extends FireAbility {
 			if (!this.launched && !this.charged) {
 				return;
 			} else if (!this.launched) {
-				playFirebendingParticles(this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().clone()), 3, .001, .001, .001);
+				Location eye = this.player.getEyeLocation().clone().add(this.player.getEyeLocation().getDirection().clone());
+				playFirebendingParticles(eye, 3, .001, .001, .001);
+				LightManager.createLight(eye).brightness(13).timeUntilFadeout(600).emit();
 				return;
 			}
 

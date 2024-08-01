@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.healing;
 import java.util.HashMap;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -128,6 +129,7 @@ public class HealingWaters extends HealingAbility {
 			}
 		} else {
 			GeneralMethods.displayColoredParticle(this.hex, this.origin);
+			LightManager.createLight(this.origin).brightness(9).timeUntilFadeout(350).emit();
 		}
 
 		// If the ability is charged, try healing.
@@ -243,7 +245,9 @@ public class HealingWaters extends HealingAbility {
 			final double angle = this.pstage * increment;
 			final double x = centre.getX() + (0.75 * Math.cos(angle));
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
-			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
+			Location loc = new Location(centre.getWorld(), x, centre.getY(), z);
+			GeneralMethods.displayColoredParticle(this.hex, loc);
+			LightManager.createLight(loc).brightness(9).timeUntilFadeout(350).emit();
 
 			if (this.pstage >= 36) {
 				this.pstage = 0;
@@ -264,8 +268,14 @@ public class HealingWaters extends HealingAbility {
 				final double x2 = centre.getX() + (0.75 * Math.cos(angle2));
 				final double z2 = centre.getZ() + (0.75 * Math.sin(angle2));
 
-				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1));
-				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2));
+				Location point1 = new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1);
+				Location point2 = new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2);
+
+				GeneralMethods.displayColoredParticle(this.hex, point1);
+				GeneralMethods.displayColoredParticle(this.hex, point2);
+
+				LightManager.createLight(point1).brightness(9).timeUntilFadeout(350).emit();
+				LightManager.createLight(point2).brightness(9).timeUntilFadeout(350).emit();
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;
@@ -301,6 +311,7 @@ public class HealingWaters extends HealingAbility {
 		}
 
 		GeneralMethods.displayColoredParticle(this.hex, this.location);
+		LightManager.createLight(this.location).brightness(9).timeUntilFadeout(350).emit();
 	}
 
 	private void fillBottle() {

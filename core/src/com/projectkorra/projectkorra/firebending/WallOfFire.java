@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -161,7 +162,10 @@ public class WallOfFire extends FireAbility {
 			if (!this.isTransparent(block)) {
 				continue;
 			}
+
 			playFirebendingParticles(block.getLocation(), 3, 0.6, 0.6, 0.6);
+			LightManager.createLight(block.getLocation()).brightness(13).timeUntilFadeout(600).emit();
+
 			if (this.random.nextInt(7) == 0) {
 				playFirebendingSound(block.getLocation());
 			}

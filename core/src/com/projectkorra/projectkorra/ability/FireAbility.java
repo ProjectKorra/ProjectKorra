@@ -16,13 +16,9 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Fire;
 import org.bukkit.entity.Player;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import java.util.Random;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -92,6 +93,8 @@ public class FireJet extends FireAbility {
 			}
 
 			playFirebendingParticles(this.player.getLocation(), 10, 0.3, 0.3, 0.3);
+			LightManager.createLight(this.player.getLocation()).brightness(13).timeUntilFadeout(600).emit();
+
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

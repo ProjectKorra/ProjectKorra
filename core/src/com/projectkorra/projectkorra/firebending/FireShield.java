@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import java.util.Random;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -121,6 +122,8 @@ public class FireShield extends FireAbility {
 					final double rtheta = Math.toRadians(theta);
 
 					final Location display = this.location.clone().add(this.shieldRadius / 1.5 * Math.cos(rphi) * Math.sin(rtheta), this.shieldRadius / 1.5 * Math.cos(rtheta), this.shieldRadius / 1.5 * Math.sin(rphi) * Math.sin(rtheta));
+					LightManager.createLight(display).brightness(13).timeUntilFadeout(600).emit();
+
 					if (this.random.nextInt(4) == 0) {
 						playFirebendingParticles(display, 1, 0.1, 0.1, 0.1);
 					}
@@ -151,12 +154,17 @@ public class FireShield extends FireAbility {
 			this.location = this.player.getEyeLocation().clone();
 			final Vector direction = this.location.getDirection();
 			this.location.add(direction.multiply(this.shieldRadius));
+
 			playFirebendingParticles(this.location, 3, 0.2, 0.2, 0.2);
+			LightManager.createLight(this.location).brightness(13).timeUntilFadeout(600).emit();
 
 			for (double theta = 0; theta < 360; theta += 20) {
 				final Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, this.discRadius / 1.5);
 				final Location display = this.location.add(vector);
+
 				playFirebendingParticles(display, 2, 0.3, 0.2, 0.3);
+				LightManager.createLight(display).brightness(13).timeUntilFadeout(600).emit();
+
 				if (this.random.nextInt(4) == 0) {
 					playFirebendingSound(display);
 				}
