@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LightManager {
 
@@ -25,6 +23,8 @@ public class LightManager {
     private final Object[] locks;
     // A map containing all active lights
     private final ConcurrentHashMap<Location, ConcurrentSkipListSet<LightData>> lightMap = new ConcurrentHashMap<>();
+    // A queue for handling individual reversions
+    private final ConcurrentLinkedQueue<BlockChange> blockChangeQueue = new ConcurrentLinkedQueue<>();
 
     // Default LIGHT BlockData
     private final Map<Integer, BlockData> lightDataMap = new HashMap<>();
@@ -114,6 +114,7 @@ public class LightManager {
         }
 
         scheduler.scheduleAtFixedRate(reverterTask, 0, 50, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::processBlockChanges, 0, 10, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -156,18 +157,25 @@ public class LightManager {
      * @param observers  the list of players who can see the light
      */
     private void sendLightChange(Location location, int brightness, Collection<? extends Player> observers) {
-        final BlockData lightData = brightness > 0 ? getLightData(location, brightness) : getCurrentBlockData(location);
-
+        BlockData lightData = brightness > 0 ? getLightData(location, brightness) : getCurrentBlockData(location);
         int viewDistance = Bukkit.getServer().getViewDistance();
 
         for (Player player : observers) {
             if (player == null || player.isDead() || !player.isOnline()) continue;
             if (player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) <= viewDistance * 16) {
-                // Send the block change to observers asynchronously
-                Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
-                    player.sendBlockChange(location, lightData);
-                });
+                blockChangeQueue.add(new BlockChange(player, location, lightData));
             }
+        }
+    }
+
+    private void processBlockChanges() {
+        BlockChange blockChange;
+        while ((blockChange = blockChangeQueue.poll()) != null) {
+            Player player = blockChange.getPlayer();
+            BlockChange finalBlockChange = blockChange;
+            Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+                player.sendBlockChange(finalBlockChange.getLocation(), finalBlockChange.getBlockData());
+            });
         }
     }
 
@@ -409,6 +417,30 @@ public class LightManager {
          */
         public void emit() {
             LightManager.get().addLight(location, brightness, timeUntilFade, observers);
+        }
+    }
+
+    private static class BlockChange {
+        private final Player player;
+        private final Location location;
+        private final BlockData blockData;
+
+        public BlockChange(Player player, Location location, BlockData blockData) {
+            this.player = player;
+            this.location = location;
+            this.blockData = blockData;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public BlockData getBlockData() {
+            return blockData;
         }
     }
 }
