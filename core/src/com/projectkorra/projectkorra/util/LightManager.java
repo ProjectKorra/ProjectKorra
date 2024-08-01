@@ -123,21 +123,29 @@ public class LightManager {
      * @param lightData the LightData object containing the light's brightness, location, UUID, and ephemeral flag
      */
     private void fadeLight(LightData lightData) {
-        AtomicInteger currentBrightness = new AtomicInteger(lightData.brightness);
-        AtomicReference<ScheduledFuture<?>> futureRef = new AtomicReference<>();
+        int brightness = lightData.brightness;
 
-        Runnable task = () -> {
-            int brightness = currentBrightness.decrementAndGet();
-            if (brightness > 0) {
-                sendLightChange(lightData.location, brightness, lightData.observers);
-            } else {
-                revertLight(lightData);
-                futureRef.get().cancel(false);
+        class TaskHolder {
+            ScheduledFuture<?> future;
+        }
+        TaskHolder taskHolder = new TaskHolder();
+
+        Runnable task = new Runnable() {
+            private int currentBrightness = brightness;
+
+            @Override
+            public void run() {
+                currentBrightness--;
+                if (currentBrightness > 0) {
+                    sendLightChange(lightData.location, currentBrightness, lightData.observers);
+                } else {
+                    revertLight(lightData);
+                    taskHolder.future.cancel(false);
+                }
             }
         };
 
-        ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(task, 0, 50, TimeUnit.MILLISECONDS);
-        futureRef.set(future);
+        taskHolder.future = scheduler.scheduleAtFixedRate(task, 0, 50, TimeUnit.MILLISECONDS);
     }
 
     /**
