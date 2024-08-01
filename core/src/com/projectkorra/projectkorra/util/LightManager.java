@@ -180,8 +180,6 @@ public class LightManager {
      * @return the BlockData for the given Location
      */
     private BlockData getLightData(Location location, int lightLevel) {
-        lightLevel = Math.max(1, Math.min(15, lightLevel));
-
         if (location.getBlock().getType() == Material.WATER) {
             return waterloggedLightDataMap.get(lightLevel);
         } else {
@@ -200,99 +198,18 @@ public class LightManager {
         return location.getBlock().getBlockData();
     }
 
-    /**
-     * Returns the singleton instance of the LightManager class.
-     *
-     * @return the singleton instance of the LightManager class
-     */
     public static LightManager get() {
         return INSTANCE;
     }
 
     /**
-     * Adds a light at the specified location with an expiry of 50ms and max brightness.
-     * Visible for everyone.
-     * Subsequent calls to a location with an active light updates the expiration time for the active light.
+     * Creates a new LightBuilder instance with the given location.
      *
-     * @param location   the location where the light should be added
+     * @param location the location where the light will be created
+     * @return a new LightBuilder instance
      */
-    public void addLight(Location location) {
-        addLight(location, 15, 50, Bukkit.getOnlinePlayers());
-    }
-
-    /**
-     * Adds a light at the specified location with an expiry of 50ms and max brightness.
-     * Visible for the specified observers.
-     * Subsequent calls to a location with an active light updates the expiration time for the active light.
-     *
-     * @param location   the location where the light should be added
-     * @param observers  the list of players who can see the light
-     */
-    public void addLight(Location location, Collection<? extends Player> observers) {
-        addLight(location, 15, 50, observers);
-    }
-
-    /**
-     * Adds a light at the specified location with the given expiry and max brightness.
-     * Visible for everyone.
-     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
-     *
-     * @param location   the location where the light should be added
-     * @param expiry      the time in milliseconds before the light fades out
-     */
-    public void addLight(Location location, long expiry) {
-        addLight(location, 15, expiry, Bukkit.getOnlinePlayers());
-    }
-
-    /**
-     * Adds a light at the specified location with the given expiry and max brightness.
-     * Visible for the specified observers.
-     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
-     *
-     * @param location   the location where the light should be added
-     * @param expiry      the time in milliseconds before the light fades out
-     * @param observers  the list of players who can see the light
-     */
-    public void addLight(Location location, long expiry, Collection<? extends Player> observers) {
-        addLight(location, 15, expiry, observers);
-    }
-
-    /**
-     * Adds a light at the specified location with the given brightness and an expiry of 50ms.
-     * Visible for everyone.
-     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
-     *
-     * @param location   the location where the light should be added
-     * @param brightness the brightness of the light, 1-15
-     */
-    public void addLight(Location location, int brightness) {
-        addLight(location, brightness, 50, Bukkit.getOnlinePlayers());
-    }
-
-    /**
-     * Adds a light at the specified location with the given brightness and an expiry of 50ms.
-     * Visible for the specified observers.
-     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
-     *
-     * @param location   the location where the light should be added
-     * @param brightness the brightness of the light, 1-15
-     * @param observers  the list of players who can see the light
-     */
-    public void addLight(Location location, int brightness, Collection<? extends Player> observers) {
-        addLight(location, brightness, 50, observers);
-    }
-
-    /**
-     * Adds a light at the specified location with the given brightness and expiry.
-     * Visible for everyone.
-     * Subsequent calls to a location with an active light extends the expiration time for the relevant observers.
-     *
-     * @param location   the location where the light should be added
-     * @param brightness the brightness of the light, 1-15
-     * @param expiry      the time in milliseconds before the light fades out
-     */
-    public void addLight(Location location, int brightness, long expiry) {
-        addLight(location, brightness, expiry, Bukkit.getOnlinePlayers());
+    public static LightBuilder createLight(Location location) {
+        return new LightBuilder(location);
     }
 
     /**
@@ -302,10 +219,10 @@ public class LightManager {
      *
      * @param location   the location where the light should be added
      * @param brightness the brightness of the light, 1-15
-     * @param expiry      the time in milliseconds before the light fades out
+     * @param expiry     the time in milliseconds before the light fades out
      * @param observers  the list of players who can see the light
      */
-    public void addLight(Location location, int brightness, long expiry, Collection<? extends Player> observers) {
+    private void addLight(Location location, int brightness, long expiry, Collection<? extends Player> observers) {
         if (!modern) return;
 
         location = location.getBlock().getLocation();
@@ -345,7 +262,7 @@ public class LightManager {
      * Reverts all active lights immediately with no fade-out, then restarts the revert scheduler.
      * This does not normally need to be used as it's already called when ProjectKorra is reloaded.
      */
-    public void removeAllLights() {
+    public void restart() {
         if (!modern) return;
 
         lightMap.values().forEach(set -> set.forEach(this::revertLight));
@@ -433,6 +350,57 @@ public class LightManager {
         @Override
         public int compareTo(LightData other) {
             return Long.compare(this.expiryTime, other.expiryTime);
+        }
+    }
+
+    public static class LightBuilder {
+        private final Location location;
+        private int brightness = 15; // default brightness
+        private long timeUntilFade = 50; // default expiry time in ms
+        private Collection<? extends Player> observers = Bukkit.getOnlinePlayers(); // default to all players
+
+        public LightBuilder(Location location) {
+            this.location = location;
+        }
+
+        /**
+         * Sets the brightness value, 1-15, for this light.
+         *
+         * @param brightness the new brightness value, a value 1-15.
+         * @return the current instance of the LightBuilder
+         */
+        public LightBuilder brightness(int brightness) {
+            this.brightness = Math.max(1, Math.min(15, brightness));
+            return this;
+        }
+
+        /**
+         * Sets the expiry time in ms for this light, defaults to 50ms.
+         *
+         * @param expiry the new expiry time in milliseconds
+         * @return the current instance of the LightBuilder
+         */
+        public LightBuilder timeUntilFadeout(long expiry) {
+            this.timeUntilFade = expiry;
+            return this;
+        }
+
+        /**
+         * Sets the collection of observers for this light, defaults to everybody.
+         *
+         * @param observers the collection of observers to set
+         * @return the current instance of the LightBuilder
+         */
+        public LightBuilder observers(Collection<? extends Player> observers) {
+            this.observers = observers;
+            return this;
+        }
+
+        /**
+         * Emits this light at the specified location with the given brightness, expiry time, and observers.
+         */
+        public void emit() {
+            LightManager.get().addLight(location, brightness, timeUntilFade, observers);
         }
     }
 }

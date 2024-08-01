@@ -112,7 +112,7 @@ public class Combustion extends CombustionAbility {
 		if(explosionCount % 5 == 0) 
 			ParticleEffect.EXPLOSION_LARGE.display(this.location, 1, .001, .001, .001, 0);
 		playCombustionSound(this.location);
-		LightManager.get().addLight(this.location, 15, 150);
+		LightManager.createLight(this.location).emit();
 		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
 		this.explosionCount++;
 	}

@@ -1344,7 +1344,7 @@ public class GeneralMethods {
 		GeneralMethods.stopBending();
 
 		// Reverts all active lights, then restarts the light revert scheduler
-		LightManager.get().removeAllLights();
+		LightManager.get().restart();
 
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
