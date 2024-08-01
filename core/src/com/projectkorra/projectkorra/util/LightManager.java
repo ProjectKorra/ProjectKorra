@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
@@ -29,8 +30,7 @@ public class LightManager {
     // Default LIGHT BlockData
     private final Map<Integer, BlockData> lightDataMap = new HashMap<>();
     private final Map<Integer, BlockData> waterloggedLightDataMap = new HashMap<>();
-    // Repeating function reverting lights back to their original states
-    private final Runnable reverterTask;
+
     // Scheduler with threads equal to the number of available processors, this handles reverting expired lights
     private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
 
@@ -47,8 +47,6 @@ public class LightManager {
         for (int i = 0; i < numLocks; i++) {
             locks[i] = new Object();
         }
-
-        reverterTask = this::revertExpiredLights;
 
         if (modern) {
             precomputeLightData();
@@ -113,8 +111,8 @@ public class LightManager {
             scheduler = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
         }
 
-        scheduler.scheduleAtFixedRate(reverterTask, 0, 50, TimeUnit.MILLISECONDS);
-        scheduler.scheduleAtFixedRate(this::processBlockChanges, 0, 10, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::revertExpiredLights, 0, 50, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::processBlockChanges, 0, 50, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -158,14 +156,13 @@ public class LightManager {
      */
     private void sendLightChange(Location location, int brightness, Collection<? extends Player> observers) {
         BlockData lightData = brightness > 0 ? getLightData(location, brightness) : getCurrentBlockData(location);
-        int viewDistance = Bukkit.getServer().getViewDistance();
+        World targetWorld = location.getWorld();
+        double maxDistanceSquared = Math.pow(Bukkit.getServer().getViewDistance() * 16, 2);
 
-        for (Player player : observers) {
-            if (player == null || player.isDead() || !player.isOnline()) continue;
-            if (player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) <= viewDistance * 16) {
-                blockChangeQueue.add(new BlockChange(player, location, lightData));
-            }
-        }
+        observers.stream()
+                .filter(player -> player != null && player.isOnline() && !player.isDead() && player.getWorld().equals(targetWorld))
+                .filter(player -> player.getLocation().distanceSquared(location) <= maxDistanceSquared)
+                .forEach(player -> blockChangeQueue.add(new BlockChange(player, location, lightData)));
     }
 
     private void processBlockChanges() {
