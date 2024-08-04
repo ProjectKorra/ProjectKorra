@@ -674,6 +674,12 @@ public class ConfigManager {
 			final ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add("#snow"); // added in 1.17
 
+			final ArrayList<String> waterTransformableBlocks = new ArrayList<>();
+			waterTransformableBlocks.add("MUD>DIRT");
+			waterTransformableBlocks.add("PACKED_MUD>DIRT");
+			waterTransformableBlocks.add("MUDDY_MANGROVE_ROOTS>MANGROVE_ROOTS");
+			waterTransformableBlocks.add("WET_SPONGE>SPONGE");
+
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
 			config.addDefault("Properties.DatabaseCooldowns", true);
@@ -726,6 +732,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
 			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
+			config.addDefault("Properties.Water.TransformableBlocks", waterTransformableBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.25);
 			config.addDefault("Properties.Water.PlaySound", true);
 			config.addDefault("Properties.Water.WaterSound.Sound", "BLOCK_WATER_AMBIENT");
@@ -737,6 +744,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.PlantSound.Sound", "BLOCK_GRASS_STEP");
 			config.addDefault("Properties.Water.IceSound.Volume", 1);
 			config.addDefault("Properties.Water.IceSound.Pitch", 1);
+			config.addDefault("Properties.Water.MudSound.Sound", "BLOCK_MUD_STEP");
+			config.addDefault("Properties.Water.MudSound.Volume", 1);
+			config.addDefault("Properties.Water.MudSound.Pitch", 1);
 
 			config.addDefault("Properties.Earth.DynamicSourcing", true);
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
@@ -760,6 +770,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.LavaSound.Sound", "BLOCK_LAVA_AMBIENT");
 			config.addDefault("Properties.Earth.LavaSound.Volume", 1);
 			config.addDefault("Properties.Earth.LavaSound.Pitch", 1);
+			config.addDefault("Properties.Earth.MudSound.Sound", "BLOCK_MUD_PLACE");
+			config.addDefault("Properties.Earth.MudSound.Volume", 1);
+			config.addDefault("Properties.Earth.MudSound.Pitch", 1);
 
 			config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 			config.addDefault("Properties.Fire.DayFactor", 1.25);
@@ -805,9 +818,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.PowerMultiplier", 2);
 			config.addDefault("Abilities.Avatar.AvatarState.PlaySound", true);
-			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_ANVIL_LAND");
+			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_BEACON_POWER_SELECT");
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Volume", 1);
-			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1);
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);

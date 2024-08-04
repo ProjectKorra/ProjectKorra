@@ -1,6 +1,9 @@
 package com.projectkorra.projectkorra.ability;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -32,6 +35,7 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public abstract class WaterAbility extends ElementalAbility {
+	public static final Map<Material, Material> WATER_TRANSFORMABLE_BLOCKS = getWaterTransformableBlocks();
 
 	public WaterAbility(final Player player) {
 		super(player);
@@ -129,7 +133,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isWaterbendable(final Material material) {
-		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material) || isCauldron(material);
+		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material) || isCauldron(material) || isMud(material) || isSponge(material);
 	}
 
 	public static Block getIceSourceBlock(final Player player, final double range) {
@@ -221,7 +225,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block) && !isMud(block) && isSponge(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
@@ -282,6 +286,30 @@ public abstract class WaterAbility extends ElementalAbility {
 		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
 	}
 
+	public static boolean isSponge(final Block block) {
+		return block != null ? isSponge(block.getType()) : false;
+	}
+
+	public static boolean isSponge(final Material material) {
+		return material == Material.WET_SPONGE;
+	}
+
+	/**
+	 * Checks if a source block is a transformable source.
+	 *
+	 * @param block
+	 * @return True if the block is a non-transparent source, False otherwise.
+	 */
+	public static boolean isTransformableBlock(final Block block) {
+		return isTransformableBlock(block.getType());
+	}
+
+	public static boolean isTransformableBlock(final Material material) {
+		// TODO: If we decide that users have complete freedom to change transformable blocks, we can just do a simple map check.
+		// return isCauldron(material) || WATER_TRANSFORMABLE_BLOCKS.containsKey(material);
+		return isCauldron(material) || (WATER_TRANSFORMABLE_BLOCKS.containsKey(material) && (isMud(material) || isSponge(material)));
+	}
+
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || !isWaterbendable(block.getType())) {
@@ -299,6 +327,34 @@ public abstract class WaterAbility extends ElementalAbility {
 		return true;
 	}
 
+	public static Map<Material, Material> getWaterTransformableBlocks() {
+		List<String> transformableBlocks = getConfig().getStringList("Properties.Water.TransformableBlocks");
+		Map<Material, Material> transformables = new HashMap<>();
+
+		for (String block : transformableBlocks) {
+			String[] split = block.split(">");
+			if (split.length != 2) {
+				ProjectKorra.log.warning("Invalid TransformableBlock: " + block);
+				continue;
+			}
+			Material from = Material.getMaterial(split[0]);
+			Material to = Material.getMaterial(split[1]);
+			if (from == null || to == null) {
+				ProjectKorra.log.warning("Invalid TransformableBlock: " + block);
+				continue;
+			}
+			transformables.put(from, to);
+		}
+		return transformables;
+	}
+
+	public static void setupWaterTransformableBlocks() {
+		if (!WATER_TRANSFORMABLE_BLOCKS.isEmpty()) {
+			WATER_TRANSFORMABLE_BLOCKS.clear();
+		}
+		WATER_TRANSFORMABLE_BLOCKS.putAll(getWaterTransformableBlocks());
+	}
+
 	public static void playFocusWaterEffect(final Block block) {
 		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
 	}
@@ -314,6 +370,26 @@ public abstract class WaterAbility extends ElementalAbility {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
+	}
+
+	public static void playMudbendingSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Water.MudSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Water.MudSound.Pitch");
+
+			Sound sound = Sound.BLOCK_WET_GRASS_STEP;
+			if (GeneralMethods.getMCVersion() >= 1190) {
+				sound = Sound.valueOf("BLOCK_MUD_STEP");
+			}
+
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Water.MudSound.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Water.MudSound.Sound' is not valid.");
 			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
@@ -352,6 +428,22 @@ public abstract class WaterAbility extends ElementalAbility {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
 		}
+	}
+
+	public static boolean updateSourceBlock(final Block sourceBlock) {
+		if (isCauldron(sourceBlock)) {
+			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
+			return true;
+		} else if (isTransformableBlock(sourceBlock) && !isCauldron(sourceBlock)) {
+			if (isMud(sourceBlock)) {
+				playMudbendingSound(sourceBlock.getLocation());
+			} else if (isSponge(sourceBlock)) {
+				sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
+			}
+			sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
+			return true;
+		}
+		return false;
 	}
 
 	/**

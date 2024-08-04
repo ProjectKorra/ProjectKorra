@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -118,6 +120,9 @@ public class FireManipulation extends FireAbility {
 						DamageHandler.damageEntity(entity, this.shieldDamage, this);
 					}
 				}
+				for (Block block : GeneralMethods.getBlocksAroundPoint(point, 1.2D)) {
+					dryWetBlocks(block, this);
+				}
 				if (new Random().nextInt(this.points.keySet().size()) == 0) {
 					playFirebendingSound(point);
 				}
@@ -176,6 +181,9 @@ public class FireManipulation extends FireAbility {
 				if (entity instanceof LivingEntity && entity.getUniqueId() != this.player.getUniqueId()) {
 					DamageHandler.damageEntity(entity, this.streamDamage, this);
 				}
+			}
+			for (Block block : GeneralMethods.getBlocksAroundPoint(this.shotPoint, 2)) {
+				dryWetBlocks(block, this);
 			}
 			if (new Random().nextInt(5) == 0) {
 				playFirebendingSound(this.shotPoint);
