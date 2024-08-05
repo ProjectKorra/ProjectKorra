@@ -126,6 +126,8 @@ public abstract class AirAbility extends ElementalAbility {
 	 */
 	public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		getAirbendingParticles().display(loc, amount, xOffset, yOffset, zOffset);
+		if (ThreadLocalRandom.current().nextDouble() < 0.3)
+			ParticleEffect.CLOUD.display(loc, 1, xOffset, yOffset, zOffset);
 	}
 
 	/**

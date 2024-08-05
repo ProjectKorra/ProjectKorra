@@ -2,7 +2,14 @@ package com.projectkorra.projectkorra.avatar;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -10,10 +17,13 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 
+import static com.projectkorra.projectkorra.configuration.ConfigManager.languageConfig;
+
 public class AvatarState extends AvatarAbility {
 
 	private static final HashMap<String, Long> START_TIMES = new HashMap<>();
 
+	private boolean bossbarEnabled;
 	private boolean regenEnabled;
 	private boolean speedEnabled;
 	private boolean resistanceEnabled;
@@ -22,6 +32,8 @@ public class AvatarState extends AvatarAbility {
 	private int speedPower;
 	private int resistancePower;
 	private int fireResistancePower;
+	private BossBar bar;
+	private String bossbarText;
 	@Attribute(Attribute.DURATION)
 	private long duration;
 	@Attribute(Attribute.COOLDOWN)
@@ -39,6 +51,8 @@ public class AvatarState extends AvatarAbility {
 			return;
 		}
 
+		this.bossbarText = languageConfig.get().getString("Abilities.Avatar.AvatarState.AvatarStateBossbar");
+		this.bossbarEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.Bossbar");
 		this.regenEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled");
 		this.speedEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled");
 		this.resistanceEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Enabled");
@@ -54,10 +68,24 @@ public class AvatarState extends AvatarAbility {
 		playAvatarSound(player.getLocation());
 
 		this.start();
+		if (this.bossbarEnabled) {
+			String title = Element.AVATAR.getColor() + this.bossbarText + " " + ChatColor.WHITE + "100%";
+			this.bar = Bukkit.createBossBar(title, BarColor.PURPLE, BarStyle.SOLID);
+			this.bar.setProgress(1);
+			this.bar.addPlayer(player);
+		}
 		if (this.duration != 0) {
 			START_TIMES.put(player.getName(), System.currentTimeMillis());
 			player.getUniqueId();
 		}
+
+	}
+
+	private void progressBossBar() {
+		double dur1 = 1 - ((double) (System.currentTimeMillis() - this.getStartTime()) / duration);
+		this.bar.setProgress(dur1);
+		String title = Element.AVATAR.getColor() + this.bossbarText + " " + ChatColor.WHITE + (int) (dur1*100) + "%";
+		this.bar.setTitle(title);
 	}
 
 	@Override
@@ -70,17 +98,25 @@ public class AvatarState extends AvatarAbility {
 		if (START_TIMES.containsKey(this.player.getName())) {
 			if (START_TIMES.get(this.player.getName()) + this.duration < System.currentTimeMillis()) {
 				START_TIMES.remove(this.player.getName());
+				if (this.bossbarEnabled) {
+					this.bar.removeAll();
+				}
 				this.remove();
 				return;
 			}
 		}
-
+		if (this.bossbarEnabled) {
+			progressBossBar();
+		}
 		this.addPotionEffects();
 	}
 
 	@Override
 	public void remove() {
 		this.bPlayer.addCooldown(this, true);
+		if (this.bossbarEnabled) {
+			this.bar.removeAll();
+			}
 		super.remove();
 	}
 
