@@ -30,9 +30,9 @@ public enum AttributeModifier {
 		} else if (oldValue instanceof Float) {
 			return oldValue.floatValue() * modifier.floatValue();
 		} else if (oldValue instanceof Long) {
-			return oldValue.longValue() * modifier.longValue();
+			return (long) (oldValue.longValue() * modifier.doubleValue());
 		} else if (oldValue instanceof Integer) {
-			return oldValue.intValue() * modifier.intValue();
+			return (int) (oldValue.intValue() * modifier.doubleValue());
 		}
 		return 0;
 	}), DIVISION((oldValue, modifier) -> {
@@ -41,9 +41,9 @@ public enum AttributeModifier {
 		} else if (oldValue instanceof Float) {
 			return oldValue.floatValue() / modifier.floatValue();
 		} else if (oldValue instanceof Long) {
-			return oldValue.longValue() / modifier.longValue();
+			return (long) (oldValue.longValue() / modifier.doubleValue());
 		} else if (oldValue instanceof Integer) {
-			return oldValue.intValue() / modifier.intValue();
+			return (int) (oldValue.intValue() / modifier.doubleValue());
 		}
 		return 0;
 	}), SET((oldValue, modifier) -> modifier);

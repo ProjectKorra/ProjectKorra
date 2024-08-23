@@ -286,7 +286,7 @@ public class WaterSpoutWave extends WaterAbility {
 			} else {
 				this.moving = true;
 				this.collidable = true;
-				if ((System.currentTimeMillis() - this.time > this.flightDuration && !this.bPlayer.isAvatarState()) || this.player.isSneaking()) {
+				if ((System.currentTimeMillis() - this.time > this.flightDuration) || this.player.isSneaking()) {
 					this.remove();
 					return;
 				}

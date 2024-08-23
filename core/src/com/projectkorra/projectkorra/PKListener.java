@@ -993,7 +993,14 @@ public class PKListener implements Listener {
 				event.setDamage(0D);
 				event.setCancelled(true);
 			}
+		}
+	}
 
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerDamageFinal(EntityDamageEvent event) {
+		if (event.getEntity() instanceof Player && !event.isCancelled()) {
+			final Player player = (Player) event.getEntity();
+			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
 				final EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
