@@ -891,6 +891,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirShield.InitialRadius", 1);
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
+			config.addDefault("Abilities.Air.AirShield.Push", 0.5);
 			config.addDefault("Abilities.Air.AirShield.Particles", 5);
 			config.addDefault("Abilities.Air.AirShield.DynamicCooldown", false);
 
@@ -1735,6 +1736,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1000);
 			config.addDefault("Abilities.Air.AirBurst.Damage", 3);
 			config.addDefault("Abilities.Air.AirShield.IsToggle", true);
+			config.addDefault("Abilities.Air.AirShield.Knockback", 2.5);
 			config.addDefault("Abilities.Air.Suffocate.Cooldown", 0);
 			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 1000);
 			config.addDefault("Abilities.Air.Suffocate.Damage", 3);

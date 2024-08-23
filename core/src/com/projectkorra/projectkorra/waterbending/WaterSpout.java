@@ -107,6 +107,7 @@ public class WaterSpout extends WaterAbility {
 			GeneralMethods.setVelocity(this, player, push);
 			bPlayer.addCooldown("SpoutHop", spoutHopCooldown);
 		}
+		this.bPlayer.addCooldown(this);
 	}
 
 	private void displayWaterSpiral(final Location location) {
