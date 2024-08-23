@@ -7,9 +7,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -172,6 +174,8 @@ public class Lightning extends LightningAbility {
 		DamageHandler.damageEntity(lent, this.damage, this);
 		if (ThreadLocalRandom.current().nextDouble() <= this.stunChance) {
 			final MovementHandler mh = new MovementHandler(lent, this);
+			if (lent instanceof Player && BendingPlayer.getBendingPlayer((Player) lent).isAvatarState()) //Skip players in the AvatarState
+				return;
 			mh.stopWithDuration((long) this.stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *");
 		}
 	}
@@ -186,7 +190,7 @@ public class Lightning extends LightningAbility {
 	 */
 	private boolean isTransparentForLightning(final Player player, final Block block) {
 		if (this.isTransparent(block)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (RegionProtection.isRegionProtected(this, block.getLocation())) {
 				return false;
 			} else if (isIce(block)) {
 				return this.arcOnIce;

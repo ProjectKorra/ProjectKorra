@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -41,7 +42,9 @@ public class Immobilize extends ChiAbility implements ComboAbility {
 			this.remove();
 			return;
 		} else {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, this.target.getLocation()) || ((this.target instanceof Player) && Commands.invincible.contains(((Player) this.target).getName()))) {
+			if (RegionProtection.isRegionProtected(this, this.target.getLocation()) ||
+					((this.target instanceof Player) && Commands.invincible.contains(((Player) this.target).getName())) ||
+					!this.bPlayer.canBeChiblocked()) {
 				return;
 			}
 			paralyze(this.target, this.duration);

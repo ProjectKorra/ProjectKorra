@@ -1341,8 +1341,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Extraction.Enabled", true);
 			config.addDefault("Abilities.Earth.Extraction.SelectRange", 5);
 			config.addDefault("Abilities.Earth.Extraction.Cooldown", 500);
-			config.addDefault("Abilities.Earth.Extraction.TripleLootChance", 10);
-			config.addDefault("Abilities.Earth.Extraction.DoubleLootChance", 30);
+			config.addDefault("Abilities.Earth.Extraction.TripleLootChance", 10.0);
+			config.addDefault("Abilities.Earth.Extraction.DoubleLootChance", 30.0);
 
 			config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
 			config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 20000);

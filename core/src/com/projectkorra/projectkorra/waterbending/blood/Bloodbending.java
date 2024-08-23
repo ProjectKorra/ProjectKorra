@@ -226,14 +226,14 @@ public class Bloodbending extends BloodAbility {
 				} else if (entity instanceof Player) {
 					final BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) entity);
 					if (targetBPlayer != null) {
-						if (!targetBPlayer.canBeBloodbent() || entity.getEntityId() == this.player.getEntityId()) {
+						if (!targetBPlayer.canBeBloodbent() || entity.getEntityId() == this.player.getEntityId() || targetBPlayer.isAvatarState()) {
 							continue;
 						}
 					}
 				}
 
 				entities.add(entity);
-				if (!TARGETED_ENTITIES.containsKey(entity) && entity instanceof LivingEntity && !BLOODLESS_ENTITIES.contains(entity.getType())) {
+				if (!TARGETED_ENTITIES.containsKey(entity) && !BLOODLESS_ENTITIES.contains(entity.getType())) {
 					DamageHandler.damageEntity(entity, 0, this);
 					TARGETED_ENTITIES.put(entity, this.player);
 				}
@@ -242,19 +242,17 @@ public class Bloodbending extends BloodAbility {
 					TARGETED_ENTITIES.remove(entity);
 					continue;
 				}
-				if (entity instanceof LivingEntity) {
-					GeneralMethods.setVelocity(this, entity, this.vector);
-					new TempPotionEffect((LivingEntity) entity, effect);
-					entity.setFallDistance(0);
-					if (entity instanceof Creature) {
-						((Creature) entity).setTarget(null);
-					}
-					if (entity instanceof Player) {
-						ActionBar.sendActionBar(Element.BLOOD.getColor() + this.actionBarMessage, (Player) entity);
-					}
-					AirAbility.breakBreathbendingHold(entity);
-				}
-			}
+                GeneralMethods.setVelocity(this, entity, this.vector);
+                new TempPotionEffect((LivingEntity) entity, effect);
+                entity.setFallDistance(0);
+                if (entity instanceof Creature) {
+                    ((Creature) entity).setTarget(null);
+                }
+                if (entity instanceof Player) {
+                    ActionBar.sendActionBar(Element.BLOOD.getColor() + this.actionBarMessage, (Player) entity);
+                }
+                AirAbility.breakBreathbendingHold(entity);
+            }
 
 			for (final Entity entity : TARGETED_ENTITIES.keySet()) {
 				if (!entities.contains(entity) && TARGETED_ENTITIES.get(entity) == this.player) {

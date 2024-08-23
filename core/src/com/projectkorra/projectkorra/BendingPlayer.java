@@ -555,6 +555,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	/**
+	 * Checks if the {@link BendingPlayer} can be chiblocked. Will return false if they are already chiblocked
+	 */
+	public boolean canBeChiblocked() {
+		return (!this.isAvatarState() || ConfigManager.avatarStateConfig.get().getBoolean("AvatarState.CanBeChiblocked")) && !this.isChiBlocked();
+	}
+
+	/**
 	 * Checks if the {@link BendingPlayer} is tremor sensing.
 	 *
 	 * @return true if player is tremor sensing

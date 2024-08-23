@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.earthbending.metal;
 
 import java.util.Random;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -52,7 +53,7 @@ public class Extraction extends MetalAbility {
 
 		this.originBlock = player.getTargetBlock(null, this.selectRange);
 
-		if (!GeneralMethods.isRegionProtectedFromBuild(this, this.originBlock.getLocation()) && !TempBlock.isTempBlock(this.originBlock)) {
+		if (!RegionProtection.isRegionProtected(this, this.originBlock.getLocation()) && !TempBlock.isTempBlock(this.originBlock)) {
 			this.start();
 		}
 	}
@@ -63,8 +64,9 @@ public class Extraction extends MetalAbility {
 
 	private int getAmount(int max) {
 		final Random rand = new Random();
-		int randMax = max * (rand.nextDouble() * 100 <= this.tripleChance ? 3 : rand.nextDouble() * 100 <= this.doubleChance ? 2 : 1);
-		return rand.nextInt(randMax) + 1;
+		int chanceMultiplier = rand.nextDouble() * 100 <= this.tripleChance ? 2 : (rand.nextDouble() * 100 <= this.doubleChance ? 1 : 0);
+		int min = chanceMultiplier * max + 1;
+		return rand.nextInt(max) + min;
 	}
 
 	@Override
