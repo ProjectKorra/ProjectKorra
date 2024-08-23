@@ -2092,7 +2092,7 @@ public class PKListener implements Listener {
 		if (event.hasMarker(DayNightFactor.class) && event.getAbility().getLocation() != null) {
 			boolean day = FireAbility.isDay(event.getAbility().getLocation().getWorld());
 			boolean night = WaterAbility.isNight(event.getAbility().getLocation().getWorld());
-			if (event.getAbility() instanceof WaterAbility && night) {
+			if (event.getAbility() instanceof WaterAbility && night && event.getAbility().getPlayer().hasPermission("bending.water.nightfactor")) {
 				double factor = WaterAbility.getNightFactor();
 
 				DayNightFactor dayNightFactor = event.getMarker(DayNightFactor.class);
@@ -2102,7 +2102,7 @@ public class PKListener implements Listener {
 				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL,
 						AttributeModification.NIGHT_FACTOR);
 				event.addModification(mod);
-			} else if (event.getAbility() instanceof FireAbility && day) {
+			} else if (event.getAbility() instanceof FireAbility && day && event.getAbility().getPlayer().hasPermission("bending.fire.dayfactor")) {
 				double factor = FireAbility.getDayFactor();
 
 				DayNightFactor dayNightFactor = event.getMarker(DayNightFactor.class);
@@ -2115,7 +2115,7 @@ public class PKListener implements Listener {
 		}
 
 		//Blue fire has factors for a few attributes. But only do it for pure fire abilities and not combustion/lightning
-		if ((event.getAbility().getElement() == Element.FIRE || event.getAbility().getElement() == Element.BLUE_FIRE) && event.getAbility().getBendingPlayer().hasElement(Element.BLUE_FIRE)) {
+		if ((event.getAbility().getElement() == Element.FIRE || event.getAbility().getElement() == Element.BLUE_FIRE) && event.getAbility().getBendingPlayer().hasElement(Element.BLUE_FIRE) && event.getAbility().getPlayer().hasPermission("bending.fire.bluefirefactor")) {
 			if (event.getAttribute().equals(Attribute.DAMAGE)) {
 				double factor = BlueFireAbility.getDamageFactor();
 				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_DAMAGE));
