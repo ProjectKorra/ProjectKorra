@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -219,7 +220,7 @@ public class IceSpikePillar extends IceAbility {
 		final Block affectedBlock = this.location.clone().add(this.direction).getBlock();
 		this.location = this.location.add(this.direction);
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		if (RegionProtection.isRegionProtected(this, this.location)) {
 			return false;
 		}
 

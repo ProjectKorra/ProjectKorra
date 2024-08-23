@@ -124,7 +124,7 @@ public abstract class CoreAbility implements Ability {
 				field.setAccessible(true);
 
 				for (Annotation annotation : field.getDeclaredAnnotations()) { //Get all annotations on the field, and check if they are attribute markers
-					if (annotation.getClass().isAnnotationPresent(AttributeMarker.class)) {
+					if (annotation.annotationType().isAnnotationPresent(AttributeMarker.class)) {
 						cache.addMaker(annotation);
 					}
 				}

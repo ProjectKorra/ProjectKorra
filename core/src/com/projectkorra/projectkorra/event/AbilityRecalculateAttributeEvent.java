@@ -48,11 +48,11 @@ public class AbilityRecalculateAttributeEvent extends Event {
     }
 
     public <T extends Annotation> T getMarker(Class<T> markerClass) {
-        return (T) CoreAbility.getAttributeCache(ability).get(markerClass);
+        return (T) CoreAbility.getAttributeCache(ability).get(attribute).getMarker(markerClass);
     }
 
     public boolean hasMarker(Class<? extends Annotation> markerClass) {
-        return CoreAbility.getAttributeCache(ability).containsKey(markerClass);
+        return CoreAbility.getAttributeCache(ability).get(attribute).hasMarker(markerClass);
     }
 
     public void addModification(final AttributeModification modification) {

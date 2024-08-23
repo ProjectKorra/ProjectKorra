@@ -114,6 +114,7 @@ public class ConfigManager {
 			    config.addDefault("Board.Extras.RaiseEarthWall", Element.EARTH.getColor().getName());
 			    config.addDefault("Board.Extras.SurgeWave", Element.WATER.getColor().getName());
 			    config.addDefault("Board.Extras.SpoutHop", Element.WATER.getColor().getName());
+				config.addDefault("Board.Extras.IceSpikeField", Element.ICE.getColor().getName());
 			}
 
 			config.addDefault("Extras.Water.NightMessage", "Your waterbending has become empowered due to the moon rising.");

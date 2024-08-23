@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -67,7 +68,7 @@ public class Illumination extends FireAbility {
 			return;
 		}
 
-		if (player.getLocation().getBlock().getLightLevel() < this.lightThreshold && (!MODERN || slotsFree(player))) {
+		if (player.getLocation().getBlock().getLightLevel() < this.lightThreshold && (!MODERN || slotsFree(player)) && !isTremorsensing()) {
 			this.oldLevel = player.getLocation().getBlock().getLightLevel();
 			this.bPlayer.addCooldown(this);
 			this.set();
@@ -91,7 +92,7 @@ public class Illumination extends FireAbility {
 			return;
 		}
 
-		if (this.bPlayer.hasElement(Element.EARTH) && this.bPlayer.isTremorSensing()) {
+		if (isTremorsensing()) {
 			this.remove();
 			return;
 		}
@@ -122,6 +123,11 @@ public class Illumination extends FireAbility {
 		}
 
 		this.set();
+	}
+
+	public boolean isTremorsensing() {
+		return this.bPlayer.hasElement(Element.EARTH) && this.bPlayer.isTremorSensing()
+				&& CoreAbility.getAbility(this.player, Tremorsense.class) != null && CoreAbility.getAbility(this.player, Tremorsense.class).isGlowing();
 	}
 
 	@Override

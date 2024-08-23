@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.ice;
 import java.util.Random;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -86,7 +87,7 @@ public class IceSpikeBlast extends IceAbility {
 
 		if (this.sourceBlock == null) {
 			new IceSpikePillarField(player);
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.sourceBlock.getLocation())) {
+		} else if (RegionProtection.isRegionProtected(this, this.sourceBlock.getLocation())) {
 			return;
 		} else {
 			this.prepare(this.sourceBlock);

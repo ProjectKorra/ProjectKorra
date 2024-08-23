@@ -2089,7 +2089,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onAttributeRecalc(AbilityRecalculateAttributeEvent event) {
-		if (event.hasMarker(DayNightFactor.class)) {
+		if (event.hasMarker(DayNightFactor.class) && event.getAbility().getLocation() != null) {
 			boolean day = FireAbility.isDay(event.getAbility().getLocation().getWorld());
 			boolean night = WaterAbility.isNight(event.getAbility().getLocation().getWorld());
 			if (event.getAbility() instanceof WaterAbility && night) {
