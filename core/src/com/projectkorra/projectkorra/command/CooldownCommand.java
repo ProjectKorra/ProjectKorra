@@ -141,7 +141,8 @@ public class CooldownCommand extends PKCommand {
                 }
                 if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
                     if (time == 0) {
-                        bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
+                        Set<String> cooldownKeys = new HashSet<>(bPlayer.getCooldowns().keySet()); //Clone the list to prevent concurrentmodifications
+                        cooldownKeys.forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
                         bPlayer.saveCooldowns();
                         ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
                         return;
@@ -168,7 +169,8 @@ public class CooldownCommand extends PKCommand {
                     return;
                 }
                 if (cooldown.equals("*") || cooldown.equalsIgnoreCase("ALL")) {
-                    bPlayer.getCooldowns().keySet().forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
+                    Set<String> cooldownKeys = new HashSet<>(bPlayer.getCooldowns().keySet()); //Clone the list to prevent concurrentmodifications
+                    cooldownKeys.forEach(bPlayer::removeCooldown); //We do this instead of clear() because we need to call the event
                     bPlayer.saveCooldowns();
                     ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Cooldown.ResetAll").replace("{player}", oPlayer.getName()));
                     return;
