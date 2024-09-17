@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combustion;
 
-import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;

@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.LightManager;

@@ -11,7 +11,6 @@ import java.util.Random;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;

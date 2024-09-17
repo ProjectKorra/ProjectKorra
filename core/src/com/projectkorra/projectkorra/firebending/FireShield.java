@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.firebending;
 
 import java.util.Random;
 
-import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;

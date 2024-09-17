@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.firebending.FireJet;
-import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
