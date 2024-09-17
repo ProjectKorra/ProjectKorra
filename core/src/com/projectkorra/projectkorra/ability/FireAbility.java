@@ -213,10 +213,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @throws IllegalArgumentException if the brightness is outside the valid range (1-15)
 	 */
 	public void emitFirebendingLight(final Location location) {
-		Bukkit.getLogger().info("Emitting light spam 1");
 		if (getConfig().getBoolean("Properties.Fire.DynamicLight.Enabled")) {
-			Bukkit.getLogger().info("Emitting light spam 2");
-
 			int brightness = getConfig().getInt("Properties.Fire.DynamicLight.Brightness");
 			long keepAlive = getConfig().getLong("Properties.Fire.DynamicLight.KeepAlive");
 
