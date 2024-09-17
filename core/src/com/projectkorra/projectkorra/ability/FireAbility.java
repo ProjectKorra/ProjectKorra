@@ -10,11 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.util.LightManager;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -217,16 +213,19 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @throws IllegalArgumentException if the brightness is outside the valid range (1-15)
 	 */
 	public void emitFirebendingLight(final Location location) {
-		if (!getConfig().getBoolean("Properties.Fire.DynamicLight.Enabled")) return;
+		Bukkit.getLogger().info("Emitting light spam 1");
+		if (getConfig().getBoolean("Properties.Fire.DynamicLight.Enabled")) {
+			Bukkit.getLogger().info("Emitting light spam 2");
 
-		int brightness = getConfig().getInt("Properties.Fire.DynamicLight.Brightness");
-		long keepAlive = getConfig().getInt("Properties.Fire.DynamicLight.KeepAlive");
+			int brightness = getConfig().getInt("Properties.Fire.DynamicLight.Brightness");
+			long keepAlive = getConfig().getLong("Properties.Fire.DynamicLight.KeepAlive");
 
-		if (brightness < 1 || brightness > 15) {
-			throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
+			if (brightness < 1 || brightness > 15) {
+				throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
+			}
+
+			LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive).emit();
 		}
-
-		LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive);
 	}
 
 	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {

@@ -342,7 +342,7 @@ public class HealingWaters extends HealingAbility {
 	}
 
 	private void emitLight(Location loc) {
-		LightManager.createLight(loc).brightness(this.brightness).timeUntilFadeout(this.keepAlive);
+		LightManager.createLight(loc).brightness(this.brightness).timeUntilFadeout(this.keepAlive).emit();
 	}
 
 	@Override

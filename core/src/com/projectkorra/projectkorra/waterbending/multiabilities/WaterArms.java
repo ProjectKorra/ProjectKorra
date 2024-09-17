@@ -764,12 +764,12 @@ public class WaterArms extends WaterAbility {
 		if (!getConfig().getBoolean("Properties.Fire.DynamicLight.Enabled")) return;
 
 		int brightness = getConfig().getInt("Properties.Fire.DynamicLight.Brightness");
-		long keepAlive = getConfig().getInt("Properties.Fire.DynamicLight.KeepAlive");
+		long keepAlive = getConfig().getLong("Properties.Fire.DynamicLight.KeepAlive");
 
 		if (brightness < 1 || brightness > 15) {
 			throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
 		}
 
-		LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive);
+		LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive).emit();
 	}
 }

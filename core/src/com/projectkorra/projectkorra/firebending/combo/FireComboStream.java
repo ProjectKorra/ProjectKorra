@@ -253,13 +253,13 @@ public class FireComboStream extends BukkitRunnable {
 		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.DynamicLight.Enabled")) return;
 
 		int brightness = ConfigManager.defaultConfig.get().getInt("Properties.Fire.DynamicLight.Brightness");
-		long keepAlive = ConfigManager.defaultConfig.get().getInt("Properties.Fire.DynamicLight.KeepAlive");
+		long keepAlive = ConfigManager.defaultConfig.get().getLong("Properties.Fire.DynamicLight.KeepAlive");
 
 		if (brightness < 1 || brightness > 15) {
 			throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
 		}
 
-		LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive);
+		LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive).emit();
 	}
 
 	@Override
