@@ -40,6 +40,9 @@ public class HealingWaters extends HealingAbility {
 	@Attribute(Attribute.DURATION)
 	private long duration;
 	private boolean enableParticles;
+	private boolean dynamicLighting;
+	private int brightness;
+	private long keepAlive;
 
 	// Instance related and predefined variables.
 	private Player player;
@@ -86,6 +89,9 @@ public class HealingWaters extends HealingAbility {
 		this.potionPotency = getConfig().getInt("Abilities.Water.HealingWaters.PotionPotency");
 		this.duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
 		this.enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
+		this.dynamicLighting = getConfig().getBoolean("Abilities.Water.HealingWaters.DynamicLight.Enabled");
+		this.brightness = getConfig().getInt("Abilities.Water.HealingWaters.DynamicLight.Brightness");
+		this.keepAlive = getConfig().getLong("Abilities.Water.HealingWaters.DynamicLight.KeepAlive");
 		this.hex = "00ffff";
 	}
 
@@ -129,7 +135,7 @@ public class HealingWaters extends HealingAbility {
 			}
 		} else {
 			GeneralMethods.displayColoredParticle(this.hex, this.origin);
-			LightManager.createLight(this.origin).brightness(9).timeUntilFadeout(350).emit();
+			emitLight(this.origin);
 		}
 
 		// If the ability is charged, try healing.
@@ -247,7 +253,7 @@ public class HealingWaters extends HealingAbility {
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
 			Location loc = new Location(centre.getWorld(), x, centre.getY(), z);
 			GeneralMethods.displayColoredParticle(this.hex, loc);
-			LightManager.createLight(loc).brightness(9).timeUntilFadeout(350).emit();
+			emitLight(loc);
 
 			if (this.pstage >= 36) {
 				this.pstage = 0;
@@ -274,8 +280,8 @@ public class HealingWaters extends HealingAbility {
 				GeneralMethods.displayColoredParticle(this.hex, point1);
 				GeneralMethods.displayColoredParticle(this.hex, point2);
 
-				LightManager.createLight(point1).brightness(9).timeUntilFadeout(350).emit();
-				LightManager.createLight(point2).brightness(9).timeUntilFadeout(350).emit();
+				emitLight(point1);
+				emitLight(point2);
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;
@@ -311,7 +317,7 @@ public class HealingWaters extends HealingAbility {
 		}
 
 		GeneralMethods.displayColoredParticle(this.hex, this.location);
-		LightManager.createLight(this.location).brightness(9).timeUntilFadeout(350).emit();
+		emitLight(this.location);
 	}
 
 	private void fillBottle() {
@@ -333,6 +339,10 @@ public class HealingWaters extends HealingAbility {
 				}
 			}
 		}
+	}
+
+	private void emitLight(Location loc) {
+		LightManager.createLight(loc).brightness(this.brightness).timeUntilFadeout(this.keepAlive);
 	}
 
 	@Override

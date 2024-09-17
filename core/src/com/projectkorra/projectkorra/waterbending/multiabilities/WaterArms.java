@@ -401,7 +401,7 @@ public class WaterArms extends WaterAbility {
 						if (arm.getLocation().getWorld().equals(loc.getWorld()) && loc.distance(arm.getLocation()) <= 2.5) {
 							for (final Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
 								FireAbility.playLightningbendingParticle(l1);
-								LightManager.createLight(l1).emit();
+								emitLight(l1);
 							}
 							if (this.lightningKill) {
 								DamageHandler.damageEntity(this.player, 60D, lightning);
@@ -758,5 +758,18 @@ public class WaterArms extends WaterAbility {
 		} else {
 			this.right.add(block);
 		}
+	}
+
+	public void emitLight(final Location location) {
+		if (!getConfig().getBoolean("Properties.Fire.DynamicLight.Enabled")) return;
+
+		int brightness = getConfig().getInt("Properties.Fire.DynamicLight.Brightness");
+		long keepAlive = getConfig().getInt("Properties.Fire.DynamicLight.KeepAlive");
+
+		if (brightness < 1 || brightness > 15) {
+			throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
+		}
+
+		LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive);
 	}
 }

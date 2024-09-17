@@ -131,7 +131,7 @@ public class FireBlast extends FireAbility {
 			playFirebendingParticles(this.location, 6, this.flameRadius, this.flameRadius, this.flameRadius);
 		}
 
-		LightManager.createLight(this.location).brightness(13).timeUntilFadeout(600).emit();
+		emitFirebendingLight(this.location);
 
 		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
 

@@ -93,7 +93,7 @@ public class FireJet extends FireAbility {
 			}
 
 			playFirebendingParticles(this.player.getLocation(), 10, 0.3, 0.3, 0.3);
-			LightManager.createLight(this.player.getLocation()).brightness(13).timeUntilFadeout(600).emit();
+			emitFirebendingLight(this.player.getLocation());
 
 			double timefactor;
 

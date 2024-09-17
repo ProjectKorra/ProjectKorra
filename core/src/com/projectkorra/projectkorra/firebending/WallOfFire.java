@@ -164,8 +164,7 @@ public class WallOfFire extends FireAbility {
 			}
 
 			playFirebendingParticles(block.getLocation(), 3, 0.6, 0.6, 0.6);
-			LightManager.createLight(block.getLocation()).brightness(13).timeUntilFadeout(600).emit();
-
+			emitFirebendingLight(block.getLocation());
 			if (this.random.nextInt(7) == 0) {
 				playFirebendingSound(block.getLocation());
 			}

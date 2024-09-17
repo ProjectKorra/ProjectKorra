@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.LightManager;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -88,6 +90,7 @@ public class FireComboStream extends BukkitRunnable {
 			this.remove();
 			return;
 		}
+
 		for (int i = 0; i < this.density; i++) {
 			if (this.useNewParticles) {
 				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
@@ -96,7 +99,7 @@ public class FireComboStream extends BukkitRunnable {
 			}
 		}
 
-		LightManager.createLight(this.location).brightness(13).timeUntilFadeout(600).emit();
+		emitFirebendingLight(this.location);
 
 		if (GeneralMethods.checkDiagonalWall(this.location, this.direction)) {
 			this.remove();
@@ -244,6 +247,19 @@ public class FireComboStream extends BukkitRunnable {
 
 	public void setUseNewParticles(final boolean b) {
 		this.useNewParticles = b;
+	}
+
+	public void emitFirebendingLight(final Location location) {
+		if (!ConfigManager.defaultConfig.get().getBoolean("Properties.Fire.DynamicLight.Enabled")) return;
+
+		int brightness = ConfigManager.defaultConfig.get().getInt("Properties.Fire.DynamicLight.Brightness");
+		long keepAlive = ConfigManager.defaultConfig.get().getInt("Properties.Fire.DynamicLight.KeepAlive");
+
+		if (brightness < 1 || brightness > 15) {
+			throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
+		}
+
+		LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive);
 	}
 
 	@Override
