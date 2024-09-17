@@ -7,18 +7,20 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.inventory.ItemStack;
 
 public class Illumination extends FireAbility {
@@ -35,6 +37,7 @@ public class Illumination extends FireAbility {
 	private int oldLevel;
 
 	private static boolean MODERN = GeneralMethods.getMCVersion() >= 1170;
+	private static Material LIGHT;
 
 	public Illumination(final Player player) {
 		super(player);
@@ -47,6 +50,10 @@ public class Illumination extends FireAbility {
 
 		if (MODERN) { //If we are in 1.17 and can use light blocks instead of torches
 			this.lightLevel = getConfig().getInt("Abilities.Fire.Illumination.LightLevel");
+
+			if (LIGHT == null) {
+				LIGHT = Material.getMaterial("LIGHT");
+			}
 		}
 
 		final Illumination oldIllumination = getAbility(player, Illumination.class);
@@ -119,7 +126,7 @@ public class Illumination extends FireAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (!MODERN) this.revert();
+		this.revert();
 	}
 
 	private void revert() {
@@ -131,13 +138,43 @@ public class Illumination extends FireAbility {
 
 	private void set() {
 		if (MODERN) { //Light block implementation
-			this.block = this.player.getEyeLocation().getBlock();
-			this.oldLevel = player.getLocation().getBlock().getLightLevel();
-			if (this.oldLevel > this.lightThreshold) {
-				remove();
-				return;
+			Block eyeBlock = this.player.getEyeLocation().getBlock();
+			int level = lightLevel;
+			if (!eyeBlock.getType().isAir() && (this.block == null || !this.block.equals(eyeBlock))) {
+				for (BlockFace face : new BlockFace[] {BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
+					if (eyeBlock.getRelative(face).getType().isAir() || (this.block != null && this.block.equals(eyeBlock.getRelative(face)))) {
+						eyeBlock = eyeBlock.getRelative(face);
+						level = lightLevel - 1; //Make the light level 1 less
+						break;
+					}
+				}
+
+				if (!eyeBlock.getType().isAir()) return; //Could not find suitable block
 			}
-			LightManager.createLight(this.player.getEyeLocation()).brightness(13).timeUntilFadeout(600).emit();
+
+			BlockData clonedData = LIGHT.createBlockData();
+			((Levelled)clonedData).setLevel(level);
+
+			if ((!eyeBlock.equals(this.block))) { //On block change
+				this.revert();
+
+				this.oldLevel = player.getLocation().getBlock().getLightLevel();
+
+				if (this.oldLevel > this.lightThreshold) {
+					remove();
+					return;
+				}
+
+				this.block = eyeBlock;
+				this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), clonedData));
+			} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
+				//We have to set the block back to the actual one because if they couldn't render the initial block change,
+				//(due to it not being in render distance) then no further packets will modify the block either.
+				this.block.getWorld().getPlayers().forEach(p -> {
+					p.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
+					p.sendBlockChange(this.block.getLocation(), clonedData);
+				});
+			}
 		} else { //Legacy 1.16 illumination
 			final Block standingBlock = this.player.getLocation().getBlock();
 			final Block bellowBlock = standingBlock.getRelative(BlockFace.DOWN);
