@@ -434,7 +434,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (isCauldron(sourceBlock)) {
 			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
 			return true;
-		} else if (isTransformableBlock(sourceBlock) && !isCauldron(sourceBlock)) {
+		} else if (isTransformableBlock(sourceBlock)) {
 			if (isMud(sourceBlock)) {
 				playMudbendingSound(sourceBlock.getLocation());
 			} else if (isSponge(sourceBlock)) {
