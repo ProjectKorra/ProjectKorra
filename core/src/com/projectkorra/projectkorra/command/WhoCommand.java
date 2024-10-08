@@ -98,7 +98,7 @@ public class WhoCommand extends PKCommand {
 				if (sender instanceof Player && !((Player) sender).canSee(player)) {
 					continue;
 				}
-				
+
 				final String playerName = player.getName();
 				String result = "";
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);

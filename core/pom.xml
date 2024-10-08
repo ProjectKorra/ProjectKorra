@@ -13,7 +13,7 @@
     <repository>
       <id>project.local</id>
       <name>project</name>
-      <url>file://${project.basedir}/localrepo/</url>
+      <url>file://${project.basedir}/../localrepo/</url>
     </repository>
     <!-- WorldGuard and WorldEdit Repo -->
     <repository>
@@ -34,11 +34,6 @@
     <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-    </repository>
-    <!-- Aikars Repo -->
-    <repository>
-      <id>aikar</id>
-      <url>https://repo.aikar.co/nexus/content/groups/aikar/</url>
     </repository>
     <!-- Paper Repo -->
     <repository>

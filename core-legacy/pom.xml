@@ -15,7 +15,6 @@
       <name>project</name>
       <url>file://${project.basedir}/localrepo/</url>
     </repository>
-    <!-- WorldGuard and WorldEdit Repo -->
     <!-- Spigot Repo -->
     <repository>
       <id>spigot-repo</id>
@@ -26,7 +25,6 @@
       <id>papermc</id>
       <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
-    <!-- Placeholder API Repo -->
   </repositories>
 
   <dependencies>
@@ -35,12 +33,6 @@
       <groupId>io.papermc</groupId>
       <artifactId>paperlib</artifactId>
       <version>1.0.1</version>
-    </dependency>
-    <!-- Minecraft Timings -->
-    <dependency>
-      <groupId>co.aikar</groupId>
-      <artifactId>minecraft-timings</artifactId>
-      <version>1.0.4</version>
     </dependency>
     <!-- Spigot API -->
     <dependency>
