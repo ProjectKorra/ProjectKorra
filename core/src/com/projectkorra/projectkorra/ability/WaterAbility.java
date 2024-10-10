@@ -306,9 +306,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isTransformableBlock(final Material material) {
-		// TODO: If we decide that users have complete freedom to change transformable blocks, we can just do a simple map check.
-		// return isCauldron(material) || WATER_TRANSFORMABLE_BLOCKS.containsKey(material);
-		return isCauldron(material) || (WATER_TRANSFORMABLE_BLOCKS.containsKey(material) && (isMud(material) || isSponge(material)));
+		return WATER_TRANSFORMABLE_BLOCKS.containsKey(material);
 	}
 
 	public static boolean isWaterbendable(final Player player, final String abilityName, final Block block) {
@@ -329,6 +327,9 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static Map<Material, Material> getWaterTransformableBlocks() {
+		// If we want to revisit this configurably in the future, we can reuse this code.
+
+		/*
 		List<String> transformableBlocks = getConfig().getStringList("Properties.Water.TransformableBlocks");
 		Map<Material, Material> transformables = new HashMap<>();
 
@@ -346,15 +347,27 @@ public abstract class WaterAbility extends ElementalAbility {
 			}
 			transformables.put(from, to);
 		}
+		 */
+		Map<Material, Material> transformables = new HashMap<>();
+		if (GeneralMethods.getMCVersion() >= 1170) {
+			transformables.put(Material.getMaterial("MUD"), Material.DIRT);
+			transformables.put(Material.getMaterial("PACKED_MUD"), Material.DIRT);
+		}
+		if (GeneralMethods.getMCVersion() >= 1190) {
+			transformables.put(Material.getMaterial("MUDDY_MANGROVE_ROOTS"), Material.getMaterial("MANGROVE_ROOTS"));
+		}
+		transformables.put(Material.WET_SPONGE, Material.SPONGE);
 		return transformables;
 	}
 
+	/*
 	public static void setupWaterTransformableBlocks() {
 		if (!WATER_TRANSFORMABLE_BLOCKS.isEmpty()) {
 			WATER_TRANSFORMABLE_BLOCKS.clear();
 		}
 		WATER_TRANSFORMABLE_BLOCKS.putAll(getWaterTransformableBlocks());
 	}
+	 */
 
 	public static void playFocusWaterEffect(final Block block) {
 		ParticleEffect.SMOKE_NORMAL.display(block.getLocation().add(0.5, 0.5, 0.5), 4);
@@ -435,7 +448,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (isCauldron(sourceBlock)) {
 			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
 			return true;
-		} else if (isTransformableBlock(sourceBlock) && !isCauldron(sourceBlock)) {
+		} else if (isTransformableBlock(sourceBlock)) {
 			if (isMud(sourceBlock)) {
 				playMudbendingSound(sourceBlock.getLocation());
 			} else if (isSponge(sourceBlock)) {

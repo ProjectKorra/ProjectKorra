@@ -923,7 +923,7 @@ public class GeneralMethods {
 	}
 	
 	public static BlockData getCauldronData(final Material material, final int level) {
-		if (!material.name().contains("_CAULDRON")) {
+		if (!material.name().contains("CAULDRON")) {
 			return null;
 		}
 		return material.createBlockData(d -> ((Levelled) d).setLevel((level > 3 || level > ((Levelled) d).getMaximumLevel()) ? 3 : level < 1 ? 1 : level));
@@ -1371,7 +1371,7 @@ public class GeneralMethods {
 		Arrays.stream(Element.getSubElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Same for subs
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
-		WaterAbility.setupWaterTransformableBlocks();
+		// WaterAbility.setupWaterTransformableBlocks();
 		EarthTunnel.clearBendableMaterials();
 
 		Bukkit.getScheduler().cancelTasks(ProjectKorra.plugin);

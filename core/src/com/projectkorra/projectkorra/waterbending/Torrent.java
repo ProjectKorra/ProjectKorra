@@ -211,10 +211,10 @@ public class Torrent extends WaterAbility {
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
-					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock) && !isTransformableBlock(this.sourceBlock)) {
-						this.sourceBlock.setType(Material.AIR);
-					} else if (isTransformableBlock(this.sourceBlock)) {
+					} else if (isCauldron(this.sourceBlock) || isTransformableBlock(this.sourceBlock)) {
 						updateSourceBlock(this.sourceBlock);
+					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
+						this.sourceBlock.setType(Material.AIR);
 					}
 					
 					this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : Material.WATER.createBlockData());

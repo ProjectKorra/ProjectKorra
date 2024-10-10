@@ -210,7 +210,7 @@ public class WaterSpoutWave extends WaterAbility {
 				if (isPlant(this.origin.getBlock()) || isSnow(this.origin.getBlock())) {
 					new PlantRegrowth(this.player, this.origin.getBlock());
 					this.origin.getBlock().setType(Material.AIR);
-				} else if (isTransformableBlock(this.origin.getBlock())) {
+				} else if (isCauldron(this.origin.getBlock()) || isTransformableBlock(this.origin.getBlock())) {
 					updateSourceBlock(this.origin.getBlock());
 				}
 

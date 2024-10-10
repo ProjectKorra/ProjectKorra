@@ -169,7 +169,7 @@ public class WaterArms extends WaterAbility {
 				new PlantRegrowth(this.player, sourceBlock);
 				sourceBlock.setType(Material.AIR);
 				this.fullSource = false;
-			} else if (isTransformableBlock(sourceBlock)) {
+			} else if (isCauldron(sourceBlock) || isTransformableBlock(sourceBlock)) {
 				updateSourceBlock(sourceBlock);
 			}
 
