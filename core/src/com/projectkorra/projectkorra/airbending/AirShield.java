@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.bukkit.Bukkit;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
@@ -125,8 +126,25 @@ public class AirShield extends AirAbility {
 			this.remove();
 			return;
 		}
+		this.extinguishBlocks();
 		this.rotateShield();
 	}
+
+	private void extinguishBlocks() {
+		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
+			if (FireAbility.isFire(testblock.getType())) {
+				testblock.setType(Material.AIR);
+				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+			} else if (testblock.getBlockData().getAsString().contains("candle") && testblock.getBlockData().getAsString().contains("lit=true")) {
+			   testblock.setBlockData(
+			               Bukkit.getServer().createBlockData( 
+			                  testblock.getBlockData().getAsString().replace("lit=true", "lit=false")
+			            )
+			         );
+				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+         }
+		}
+   }
 
 	private void rotateShield() {
 		final Location origin = this.player.getLocation();
@@ -168,12 +186,6 @@ public class AirShield extends AirAbility {
 			}
 		}
 
-		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
-			if (FireAbility.isFire(testblock.getType())) {
-				testblock.setType(Material.AIR);
-				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-			}
-		}
 
 		final Set<Integer> keys = this.angles.keySet();
 		for (final int i : keys) {
