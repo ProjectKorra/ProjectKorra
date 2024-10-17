@@ -9,6 +9,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -21,6 +22,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class AirShield extends AirAbility {
 
@@ -131,19 +133,29 @@ public class AirShield extends AirAbility {
 	}
 
 	private void extinguishBlocks() {
+
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
 			if (FireAbility.isFire(testblock.getType())) {
-				testblock.setType(Material.AIR);
-				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-			} else if (testblock.getBlockData().getAsString().contains("candle") && testblock.getBlockData().getAsString().contains("lit=true")) {
-			   testblock.setBlockData(
-			               Bukkit.getServer().createBlockData( 
-			                  testblock.getBlockData().getAsString().replace("lit=true", "lit=false")
-			            )
-			         );
-				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+			   if (TempBlock.isTempBlock(testblock)) {
+			      TempBlock.removeBlock(testblock);
+            } else {
+               testblock.setType(Material.AIR);
+            }
+            testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+			} else if (testblock.getType().toString().contains("CANDLE")
+			            && testblock.getBlockData() instanceof Lightable)
+			{
+			      
+			      Lightable lightable = ((Lightable) testblock.getBlockData());
+			      if (lightable.isLit()) {
+                  lightable.setLit(false);
+                  testblock.setBlockData(lightable);
+
+                  testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+               }
          }
 		}
+
    }
 
 	private void rotateShield() {

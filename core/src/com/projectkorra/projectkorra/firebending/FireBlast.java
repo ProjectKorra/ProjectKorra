@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.bukkit.Bukkit;
+import org.bukkit.block.data.Lightable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -169,11 +170,10 @@ public class FireBlast extends FireAbility {
 						campfire.setLit(true);
 					}
 				}
-			} else if (block.getBlockData().getAsString().contains("lit=") && !block.getBlockData().getAsString().contains("powered=")) {
-			   block.setBlockData(Bukkit.getServer().createBlockData( 
-			            block.getBlockData().getAsString().replace("lit=false", "lit=true")
-			            )
-			         );
+			} else if (block.getType().toString().contains("CANDLE") && block.getBlockData() instanceof Lightable) {
+			      final Lightable lightable = (Lightable) block.getBlockData();
+			      lightable.setLit(true);
+			      block.setBlockData(lightable);
          } else if (isIgnitable(this.location.getBlock())) {
 				if (!this.isFireBurst || this.fireBurstIgnite) {
 					this.ignite(this.location);
