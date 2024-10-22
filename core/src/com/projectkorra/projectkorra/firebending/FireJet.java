@@ -92,6 +92,8 @@ public class FireJet extends FireAbility {
 			}
 
 			playFirebendingParticles(this.player.getLocation(), 10, 0.3, 0.3, 0.3);
+			emitFirebendingLight(this.player.getLocation());
+
 			double timefactor;
 
 			if (this.bPlayer.isAvatarState() && this.avatarStateToggled) {

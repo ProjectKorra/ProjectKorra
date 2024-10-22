@@ -113,6 +113,7 @@ public class FireManipulation extends FireAbility {
 					return;
 				}
 				playFirebendingParticles(point, 12, 0.25, 0.25, 0.25);
+				emitFirebendingLight(point);
 				for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(point, 1.2D)) {
 					if (entity instanceof LivingEntity && entity.getUniqueId() != this.player.getUniqueId()) {
 						DamageHandler.damageEntity(entity, this.shieldDamage, this);
@@ -143,6 +144,7 @@ public class FireManipulation extends FireAbility {
 				final Vector direction = this.focalPoint.toVector().subtract(point.toVector());
 				point.add(direction.clone().multiply(this.streamSpeed / 5));
 				playFirebendingParticles(point, this.shieldParticles, 0.25, 0.25, 0.25);
+				emitFirebendingLight(point);
 			}
 		} else {
 			Vector direction = this.player.getLocation().getDirection().clone();
@@ -172,6 +174,8 @@ public class FireManipulation extends FireAbility {
 			}
 
 			playFirebendingParticles(this.shotPoint, this.streamParticles, 0.5, 0.5, 0.5);
+			emitFirebendingLight(this.shotPoint);
+
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.shotPoint, 2)) {
 				if (entity instanceof LivingEntity && entity.getUniqueId() != this.player.getUniqueId()) {
 					DamageHandler.damageEntity(entity, this.streamDamage, this);
