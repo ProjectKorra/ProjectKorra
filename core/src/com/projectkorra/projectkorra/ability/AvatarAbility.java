@@ -33,7 +33,7 @@ public abstract class AvatarAbility extends ElementalAbility {
 			final float volume = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Volume");
 			final float pitch = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Pitch");
 
-			Sound sound = Sound.BLOCK_ANVIL_LAND;
+			Sound sound = Sound.BLOCK_BEACON_POWER_SELECT;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Abilities.Avatar.AvatarState.Sound.Sound"));

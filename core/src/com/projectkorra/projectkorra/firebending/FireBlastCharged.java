@@ -250,8 +250,10 @@ public class FireBlastCharged extends FireAbility {
 			playFirebendingParticles(block.getLocation(), 5, 0.5, 0.5, 0.5);
 			if ((new Random()).nextInt(4) == 0) {
 				playFirebendingSound(this.location);
+				dryWetBlocks(block, this, true);
+			} else {
+				dryWetBlocks(block, this);
 			}
-
 		}
 
 		boolean exploded = false;

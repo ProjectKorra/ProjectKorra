@@ -33,7 +33,7 @@ public class BlockSource {
 	 * @author kingbirdy
 	 */
 	public static enum BlockSourceType {
-		WATER, ICE, PLANT, EARTH, METAL, LAVA, SNOW
+		WATER, ICE, PLANT, EARTH, METAL, LAVA, SNOW, MUD
 	}
 
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
@@ -72,6 +72,9 @@ public class BlockSource {
 				if (WaterAbility.isSnow(waterBlock) || (WaterAbility.isCauldron(waterBlock.getType()) && waterBlock.getType() == Material.getMaterial("POWDER_SNOW_CAULDRON"))) {
 					putSource(player, waterBlock, BlockSourceType.SNOW, clickType);
 				}
+				if (ElementalAbility.isMud(waterBlock)) {
+					putSource(player, waterBlock, BlockSourceType.MUD, clickType);
+				}
 			}
 		} else if (coreAbil instanceof EarthAbility) {
 			final Block earthBlock = EarthAbility.getEarthSourceBlock(player, null, MAX_RANGE);
@@ -79,6 +82,9 @@ public class BlockSource {
 				putSource(player, earthBlock, BlockSourceType.EARTH, clickType);
 				if (ElementalAbility.isMetal(earthBlock)) {
 					putSource(player, earthBlock, BlockSourceType.METAL, clickType);
+				}
+				if (ElementalAbility.isMud(earthBlock)) {
+					putSource(player, earthBlock, BlockSourceType.MUD, clickType);
 				}
 			}
 
@@ -270,7 +276,7 @@ public class BlockSource {
 		} else {
 			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
 		}
-		if (sourceBlock != null && !ElementalAbility.isAir(sourceBlock.getType()) && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock) || WaterAbility.isCauldron(sourceBlock))) {
+		if (sourceBlock != null && !ElementalAbility.isAir(sourceBlock.getType()) && (ElementalAbility.isWater(sourceBlock) || ElementalAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || ElementalAbility.isIce(sourceBlock) || WaterAbility.isCauldron(sourceBlock) || WaterAbility.isMud(sourceBlock) || WaterAbility.isSponge(sourceBlock))) {
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {
 				return null;
 			}
@@ -400,6 +406,8 @@ public class BlockSource {
 		} else if (info.getSourceType() == BlockSourceType.METAL && (!ElementalAbility.isMetal(info.getBlock()) || !EarthAbility.isEarthbendable(info.getPlayer(), info.getBlock()))) {
 			return false;
 		} else if (info.getSourceType() == BlockSourceType.LAVA && (!ElementalAbility.isLava(info.getBlock()) || !EarthAbility.isLavabendable(info.getPlayer(), info.getBlock()))) {
+			return false;
+		} else if (info.getSourceType() == BlockSourceType.MUD && (!ElementalAbility.isMud(info.getBlock()) || (!EarthAbility.isEarthbendable(info.getPlayer(), info.getBlock())) || !WaterAbility.isWaterbendable(info.getPlayer(), null, info.getBlock()))) {
 			return false;
 		}
 		return true;
