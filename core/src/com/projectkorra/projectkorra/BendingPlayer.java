@@ -98,7 +98,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
-			this.cooldowns.put(ability, new Cooldown(cooldown + System.currentTimeMillis(), database));
+			this.cooldowns.put(ability, new Cooldown(event.getCooldown() + System.currentTimeMillis(), database));
 
 			if (this.getBoundAbilityName() != null && this.getBoundAbilityName().equalsIgnoreCase(ability)) {
 				ChatUtil.displayMovePreview(this.player);
