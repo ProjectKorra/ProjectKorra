@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.chiblocking;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -60,11 +61,18 @@ public class AcrobatStance extends ChiAbility {
 			return;
 		}
 
+		// Check if the player is wearing any armor
+		boolean isWearingArmor = GeneralMethods.isPlayerWearingArmor(player);
+
+		// Set jump and speed values based on armor status
+		int adjustedJumpPower = isWearingArmor ? 0 : this.jump;
+		int adjustedSpeedPower = isWearingArmor ? 0 : this.speed;
+
 		if (!this.player.hasPotionEffect(PotionEffectType.SPEED) || this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() < this.speed || (this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() == this.speed && this.player.getPotionEffect(PotionEffectType.SPEED).getDuration() == 1)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, this.speed, true, false), true);
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, adjustedSpeedPower, true, false), true);
 		}
 		if (!this.player.hasPotionEffect(PotionEffectType.JUMP) || this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() < this.jump || (this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() == this.jump && this.player.getPotionEffect(PotionEffectType.JUMP).getDuration() == 1)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, this.jump, true, false), true);
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, adjustedJumpPower, true, false), true);
 		}
 	}
 

@@ -609,6 +609,11 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 
+			if (CoreAbility.getAbility(player, AirScooter.class) != null) {
+				final AirScooter abil = CoreAbility.getAbility(player, AirScooter.class);
+				abil.remove();
+			}
+
 			if (bPlayer.isElementToggled(Element.FIRE)) {
 				return;
 			}
@@ -1527,6 +1532,7 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
+		AirScooter.check(player);
 		final CoreAbility coreAbil = bPlayer.getBoundAbility();
 		final String abil = bPlayer.getBoundAbilityName();
 
@@ -1800,6 +1806,8 @@ public class PKListener implements Listener {
 		if (coreAbil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) {
 			return;
 		} else if (bPlayer.canBendIgnoreCooldowns(coreAbil)) {
+			AirScooter.check(player);
+
 			if (coreAbil instanceof AddonAbility) {
 				return;
 			}

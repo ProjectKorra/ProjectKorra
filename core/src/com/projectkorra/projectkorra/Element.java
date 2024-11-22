@@ -58,6 +58,7 @@ public class Element {
 	public static final SubElement HEALING = new SubElement("Healing", WATER, ElementType.NO_SUFFIX);
 	public static final SubElement ICE = new SubElement("Ice", WATER);
 	public static final SubElement PLANT = new SubElement("Plant", WATER);
+	//public static final SubElement SNOW = new SubElement("Snow", WATER);
 	public static final SubElement LAVA = new SubElement("Lava", EARTH);
 	public static final SubElement METAL = new SubElement("Metal", EARTH);
 	public static final SubElement SAND = new SubElement("Sand", EARTH);

@@ -1154,6 +1154,18 @@ public class GeneralMethods {
 		}
 	}
 
+	/**
+	 * Checks if the player is wearing any piece of armor.
+	 *
+	 * @return true if the player is wearing armor, false otherwise
+	 */
+	public static boolean isPlayerWearingArmor(Player player) {
+		return (player.getInventory().getHelmet() != null && GeneralMethods.isArmor(player.getInventory().getHelmet().getType())) ||
+				(player.getInventory().getChestplate() != null && GeneralMethods.isArmor(player.getInventory().getChestplate().getType())) ||
+				(player.getInventory().getLeggings() != null && GeneralMethods.isArmor(player.getInventory().getLeggings().getType())) ||
+				(player.getInventory().getBoots() != null && GeneralMethods.isArmor(player.getInventory().getBoots().getType()));
+	}
+
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
 		return isAdjacentToThreeOrMoreSources(block, false);
 	}
