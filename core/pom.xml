@@ -13,7 +13,7 @@
     <repository>
       <id>project.local</id>
       <name>project</name>
-      <url>file://${project.basedir}/localrepo/</url>
+      <url>file://${project.basedir}/../localrepo/</url>
     </repository>
     <!-- WorldGuard and WorldEdit Repo -->
     <repository>

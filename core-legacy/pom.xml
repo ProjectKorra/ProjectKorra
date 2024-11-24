@@ -15,7 +15,6 @@
       <name>project</name>
       <url>file://${project.basedir}/localrepo/</url>
     </repository>
-    <!-- WorldGuard and WorldEdit Repo -->
     <!-- Spigot Repo -->
     <repository>
       <id>spigot-repo</id>
@@ -26,10 +25,15 @@
       <id>papermc</id>
       <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
-    <!-- Placeholder API Repo -->
   </repositories>
 
   <dependencies>
+    <!-- PaperLib -->
+    <dependency>
+      <groupId>io.papermc</groupId>
+      <artifactId>paperlib</artifactId>
+      <version>1.0.1</version>
+    </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>

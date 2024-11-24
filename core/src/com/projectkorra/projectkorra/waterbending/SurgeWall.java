@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -55,6 +56,8 @@ public class SurgeWall extends WaterAbility {
 	private double radius;
 	@Attribute("Wall" + Attribute.RANGE) @DayNightFactor
 	private double range;
+	@Attribute(Attribute.SELECT_RANGE)
+	private double selectRange;
 	private Block sourceBlock;
 	private Location location;
 	private Location firstDestination;
@@ -72,6 +75,7 @@ public class SurgeWall extends WaterAbility {
 		this.duration = getConfig().getLong("Abilities.Water.Surge.Wall.Duration");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wall.SelectRange");
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wall.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wall.SolidifyLava.Duration");
 		this.locations = new ArrayList<>();
@@ -163,7 +167,7 @@ public class SurgeWall extends WaterAbility {
 
 	public boolean prepare() {
 		this.cancelPrevious();
-		final Block block = BlockSource.getWaterSourceBlock(this.player, this.range, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
+		final Block block = BlockSource.getWaterSourceBlock(this.player, this.selectRange, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 
 		if (block != null && !RegionProtection.isRegionProtected(this, block.getLocation())) {
 			this.sourceBlock = block;
@@ -288,8 +292,12 @@ public class SurgeWall extends WaterAbility {
 						} else if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
 						} else if (!blocks.contains(block) && (ElementalAbility.isAir(block.getType()) || FireAbility.isFire(block.getType()) || this.isWaterbendable(block)) && this.isTransparent(block)) {
-							WALL_BLOCKS.put(block, this.player);
-							this.addWallBlock(block);
+							if (!isWater(block) || frozen) {
+								WALL_BLOCKS.put(block, this.player);
+								this.addWallBlock(block);
+							} else if (isWater(block) && !frozen) {
+								ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 1, ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), 0);
+							}
 							blocks.add(block);
 							this.locations.add(block.getLocation());
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
