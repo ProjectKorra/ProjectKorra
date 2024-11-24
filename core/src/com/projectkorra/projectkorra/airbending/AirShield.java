@@ -133,30 +133,27 @@ public class AirShield extends AirAbility {
 	}
 
 	private void extinguishBlocks() {
-
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
 			if (FireAbility.isFire(testblock.getType())) {
-			   if (TempBlock.isTempBlock(testblock)) {
-			      TempBlock.removeBlock(testblock);
-            } else {
-               testblock.setType(Material.AIR);
-            }
-            testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+				if (TempBlock.isTempBlock(testblock)) {
+					TempBlock.removeBlock(testblock);
+				} else {
+					testblock.setType(Material.AIR);
+				}
+
+				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			} else if (testblock.getType().toString().contains("CANDLE")
 			            && testblock.getBlockData() instanceof Lightable)
 			{
-			      
-			      Lightable lightable = ((Lightable) testblock.getBlockData());
-			      if (lightable.isLit()) {
-                  lightable.setLit(false);
-                  testblock.setBlockData(lightable);
-
-                  testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-               }
-         }
+				Lightable lightable = ((Lightable) testblock.getBlockData());
+				if (lightable.isLit()) {
+					lightable.setLit(false);
+					testblock.setBlockData(lightable);
+					testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+				}
+			}
 		}
-
-   }
+	}
 
 	private void rotateShield() {
 		final Location origin = this.player.getLocation();
