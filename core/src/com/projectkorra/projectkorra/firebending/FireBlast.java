@@ -171,10 +171,10 @@ public class FireBlast extends FireAbility {
 					}
 				}
 			} else if (block.getType().toString().contains("CANDLE") && block.getBlockData() instanceof Lightable) {
-			      final Lightable lightable = (Lightable) block.getBlockData();
-			      lightable.setLit(true);
-			      block.setBlockData(lightable);
-         } else if (isIgnitable(this.location.getBlock())) {
+				final Lightable lightable = (Lightable) block.getBlockData();
+				lightable.setLit(true);
+				block.setBlockData(lightable);
+			} else if (isIgnitable(this.location.getBlock())) {
 				if (!this.isFireBurst || this.fireBurstIgnite) {
 					this.ignite(this.location);
 				}
