@@ -206,8 +206,10 @@ public class IceBlast extends IceAbility {
 		this.progressing = true;
 		this.settingUp = true;
 		this.prepared = false;
-
-		if (TempBlock.isTempBlock(this.sourceBlock)) {
+		if (isWater(this.sourceBlock)) {
+			// Don't modify water blocks.
+			this.source = null;
+		} else if (TempBlock.isTempBlock(this.sourceBlock)) {
 			TempBlock.get(this.sourceBlock).setType(Material.PACKED_ICE);
 			this.source = TempBlock.get(this.sourceBlock);
 		} else {
@@ -272,18 +274,24 @@ public class IceBlast extends IceAbility {
 			if (block.equals(this.sourceBlock)) {
 				return;
 			}
+			if (this.source!=null) {
+				this.source.revertBlock();
+				this.source = null;
+			}
 
-			this.source.revertBlock();
-			this.source = null;
 
 			if (isTransparent(this.player, block) && !block.isLiquid()) {
 				GeneralMethods.breakBlock(block);
-			} else if (!isWater(block)) {
+			} else if (isWater(block)) {
+				// Allow ice blast to pass through water without removing it.
+				// Do nothing for water blocks.
+			} else {
 				this.breakParticles(20);
 				this.remove();
 				this.returnWater();
 				return;
 			}
+
 
 			if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
 				this.remove();
