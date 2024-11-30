@@ -236,8 +236,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		} else return !this.isOnCooldown(ability);
 	}
 
+	private static final Set<String> excludedAbilities = Set.of("AirShield", "AirBurst", "AirSweep", "Twister");
+
 	public boolean canCurrentlyBendWithWeapons() {
 		if (this.getBoundAbility() != null) {
+			if (excludedAbilities.contains(this.getBoundAbility().getName())) {
+				return true;
+			}
 			final boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
 			final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
 
