@@ -62,11 +62,13 @@ public class AcrobatStance extends ChiAbility {
 		}
 
 		// Check if the player is wearing any armor
-		boolean isWearingArmor = GeneralMethods.isPlayerWearingArmor(player);
+		int armorPoints = GeneralMethods.getArmorPoints(player);
+
+		boolean shouldApplyNerf = armorPoints > 6;
 
 		// Set jump and speed values based on armor status
-		int adjustedJumpPower = isWearingArmor ? 0 : this.jump;
-		int adjustedSpeedPower = isWearingArmor ? 0 : this.speed;
+		int adjustedJumpPower = shouldApplyNerf ? 0 : this.jump;
+		int adjustedSpeedPower = shouldApplyNerf ? 0 : this.speed;
 
 		if (!this.player.hasPotionEffect(PotionEffectType.SPEED) || this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() < this.speed || (this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() == this.speed && this.player.getPotionEffect(PotionEffectType.SPEED).getDuration() == 1)) {
 			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, adjustedSpeedPower, true, false), true);

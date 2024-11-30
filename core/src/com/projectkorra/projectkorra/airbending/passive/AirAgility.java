@@ -36,11 +36,13 @@ public class AirAgility extends AirAbility implements PassiveAbility {
 		}
 
 		// Check if the player is wearing any armor
-		boolean isWearingArmor = GeneralMethods.isPlayerWearingArmor(player);
+		int armorPoints = GeneralMethods.getArmorPoints(player);
+
+		boolean shouldApplyNerf = armorPoints > 6;
 
 		// Set jump and speed values based on armor status
-		int adjustedJumpPower = isWearingArmor ? 0 : this.jumpPower;
-		int adjustedSpeedPower = isWearingArmor ? 0 : this.speedPower;
+		int adjustedJumpPower = shouldApplyNerf ? 0 : this.jumpPower;
+		int adjustedSpeedPower = shouldApplyNerf ? 0 : this.speedPower;
 
 		// Jump Buff.
 		if (!this.player.hasPotionEffect(PotionEffectType.JUMP) || this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() < this.jumpPower || (this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() == this.jumpPower && this.player.getPotionEffect(PotionEffectType.JUMP).getDuration() == 1)) {
