@@ -17,6 +17,9 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -40,6 +43,9 @@ public class AvatarState extends AvatarAbility {
 	@Attribute("GlowEnabled")
 	private boolean glow;
 
+	// BossBar for tracking duration
+	private BossBar bossBar;
+
 	public AvatarState(final Player player) {
 		super(player);
 
@@ -50,6 +56,10 @@ public class AvatarState extends AvatarAbility {
 		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
+
+		// Initialize BossBar
+		this.bossBar = Bukkit.createBossBar("Avatar State Active", BarColor.BLUE, BarStyle.SOLID);
+		this.bossBar.addPlayer(player);
 
 		for (String key : ConfigManager.avatarStateConfig.get().getConfigurationSection("PotionEffects").getKeys(false)) {
 			final PotionEffectType type = PotionEffectTypeWrapper.getByName(key);
@@ -90,12 +100,17 @@ public class AvatarState extends AvatarAbility {
 			return;
 		}
 
-		//Check the duration of the ability
-		if (System.currentTimeMillis() - this.getStartTime() > this.duration) {
+		// Check the duration of the ability
+		long elapsed = System.currentTimeMillis() - this.getStartTime();
+		if (elapsed > this.duration) {
 			player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.5F, 0.1F);
 			this.remove();
 			return;
 		}
+
+		// Update BossBar progress
+		double progress = 1.0 - ((double) elapsed / (double) this.duration);
+		this.bossBar.setProgress(progress);
 
 		if (this.glow && !this.player.isGlowing()) this.player.setGlowing(true);
 
@@ -159,6 +174,12 @@ public class AvatarState extends AvatarAbility {
 	public void remove() {
 		this.bPlayer.addCooldown(this, true);
 		this.player.setGlowing(false);
+
+		// Remove BossBar
+		if (this.bossBar != null) {
+			this.bossBar.removeAll();
+		}
+
 		super.remove();
 	}
 
