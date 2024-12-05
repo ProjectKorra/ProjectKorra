@@ -33,22 +33,14 @@ public abstract class RegionProtectionBase implements RegionProtectionHook {
     @Override
     public final boolean isRegionProtected(@NotNull Player player, @NotNull Location location, @Nullable CoreAbility ability) {
         if (ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection." + path)) {
-
-            final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
-
             boolean isIgnite = false;
             boolean isExplosive = false;
-            boolean isHarmless = false;
 
             if (ability != null) {
                 isIgnite = ability.isIgniteAbility();
                 isExplosive = ability.isExplosiveAbility();
-                isHarmless = ability.isHarmlessAbility();
             }
 
-            if ((ability == null || isHarmless) && allowHarmless) {
-                return false;
-            }
             return isRegionProtectedReal(player, location, ability, isIgnite, isExplosive);
         }
         return false;
