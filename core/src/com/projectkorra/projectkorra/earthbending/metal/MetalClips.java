@@ -57,6 +57,8 @@ public class MetalClips extends MetalAbility {
 	private long cooldown;
 	@Attribute("Shoot" + Attribute.COOLDOWN)
 	private long shootCooldown;
+	@Attribute("Shoot" + Attribute.SPEED)
+	private double shootSpeed;
 	@Attribute("Crush" + Attribute.COOLDOWN)
 	private long crushCooldown;
 	@Attribute("Magnet" + Attribute.COOLDOWN)
@@ -85,7 +87,8 @@ public class MetalClips extends MetalAbility {
 		this.armorTime = getConfig().getInt("Abilities.Earth.MetalClips.Duration");
 		this.range = getConfig().getDouble("Abilities.Earth.MetalClips.Range");
 		this.cooldown = getConfig().getLong("Abilities.Earth.MetalClips.Cooldown");
-		this.shootCooldown = 600;
+		this.shootCooldown = getConfig().getLong("Abilities.Earth.MetalClips.Shoot.Cooldown");
+		this.shootSpeed = getConfig().getDouble("Abilities.Earth.MetalClips.Shoot.Speed");
 		this.crushCooldown = getConfig().getLong("Abilities.Earth.MetalClips.Crush.Cooldown");
 		this.magnetCooldown = getConfig().getLong("Abilities.Earth.MetalClips.Magnet.Cooldown");
 		this.magnetRange = getConfig().getInt("Abilities.Earth.MetalClips.Magnet.Range");
@@ -135,7 +138,7 @@ public class MetalClips extends MetalAbility {
 			vector = GeneralMethods.getDirection(this.player.getLocation(), GeneralMethods.getTargetedLocation(this.player, this.range));
 		}
 
-		GeneralMethods.setVelocity(this, item, vector.normalize().add(new Vector(0, 0.1, 0).multiply(1.2)));
+		GeneralMethods.setVelocity(this, item, vector.normalize().multiply(this.shootSpeed));
 		this.trackedIngots.add(item);
 		this.player.getInventory().removeItem(is);
 	}

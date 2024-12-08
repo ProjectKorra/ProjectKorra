@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -305,6 +306,11 @@ public class SurgeWave extends WaterAbility {
 							final Block block = this.location.clone().add(vec).getBlock();
 
 							if (!blocks.contains(block) && (isAir(block.getType()) || isFire(block.getType())) || this.isWaterbendable(block)) {
+								if (isWater(block)) {
+									if (ThreadLocalRandom.current().nextInt(8) == 0) {
+										ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 1, ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), 0);
+									}
+								}
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 
