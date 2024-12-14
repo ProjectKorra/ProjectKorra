@@ -159,6 +159,9 @@ public class PresetCommand extends PKCommand {
 				} else {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.databaseError.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.RED));
 				}
+			}).exceptionally(e -> {
+				e.printStackTrace();
+				return null;
 			});
 		} else if (Arrays.asList(bindaliases).contains(args.get(0)) && this.hasPermission(sender, "bind")) { // bending preset bind name.
 			if (args.size() < 3) {

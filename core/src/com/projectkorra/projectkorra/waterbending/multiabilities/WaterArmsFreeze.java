@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.waterbending.multiabilities;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,12 +26,12 @@ public class WaterArmsFreeze extends IceAbility {
 
 	private boolean cancelled;
 	private boolean usageCooldownEnabled;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double iceRange;
 	private int distanceTravelled;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double iceDamage;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long usageCooldown;
 	private Arm arm;
 	private Location location;
@@ -41,9 +42,9 @@ public class WaterArmsFreeze extends IceAbility {
 		super(player);
 
 		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled");
-		this.iceRange = applyModifiers(getConfig().getDouble("Abilities.Water.WaterArms.Freeze.Range"));
-		this.iceDamage = applyModifiers(getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage"));
-		this.usageCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Freeze"));
+		this.iceRange = getConfig().getDouble("Abilities.Water.WaterArms.Freeze.Range");
+		this.iceDamage = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage");
+		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Freeze");
 		this.direction = player.getEyeLocation().getDirection();
 
 		this.createInstance();

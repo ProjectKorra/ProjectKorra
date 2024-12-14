@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,7 +26,7 @@ public class WaterBubble extends WaterAbility {
 
 	@Attribute("Click" + Attribute.DURATION)
 	private long clickDuration;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double maxRadius;
 	@Attribute(Attribute.SPEED)
 	private double speed;
@@ -78,7 +79,7 @@ public class WaterBubble extends WaterAbility {
 
 	public void setFields() {
 		this.clickDuration = ConfigManager.defaultConfig.get().getLong("Abilities.Water.WaterBubble.ClickDuration");
-		this.maxRadius = applyModifiers(ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius"));
+		this.maxRadius = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius");
 		this.speed = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Speed");
 		this.requireAir = ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterBubble.MustStartAboveWater");
 	}
@@ -94,7 +95,7 @@ public class WaterBubble extends WaterAbility {
 			this.removing = true;
 		}
 
-		if (System.currentTimeMillis() - this.lastActivation > this.clickDuration && !this.isShift) {
+		if (System.currentTimeMillis() - this.lastActivation > this.clickDuration && !this.isShift || this.maxRadius < this.radius) {
 			this.removing = true;
 		}
 

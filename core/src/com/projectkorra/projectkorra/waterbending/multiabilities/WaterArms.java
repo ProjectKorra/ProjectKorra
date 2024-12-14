@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -35,7 +36,7 @@ public class WaterArms extends WaterAbility {
 	/**
 	 * Arm Enum value for deciding which arm is being used.
 	 */
-	public static enum Arm {
+	public enum Arm {
 		RIGHT, LEFT;
 	}
 
@@ -59,11 +60,11 @@ public class WaterArms extends WaterAbility {
 	private int maxPunches;
 	@Attribute("MaxIceBlasts")
 	private int maxIceBlasts;
-	@Attribute("MaxUses")
+	@Attribute("MaxUses") @DayNightFactor
 	private int maxUses;
 	private int selectedSlot;
 	private int freezeSlot;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long lastClickTime;
 	@Attribute("LightningDamage")
@@ -87,8 +88,8 @@ public class WaterArms extends WaterAbility {
 		this.sourceGrabRange = getConfig().getInt("Abilities.Water.WaterArms.Arms.SourceGrabRange");
 		this.maxPunches = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAttacks");
 		this.maxIceBlasts = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxIceShots");
-		this.maxUses = (int) applyModifiers(getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldown"));
+		this.maxUses = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
+		this.cooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldown");
 		this.lightningDamage = getConfig().getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
 		this.sneakMsg = ConfigManager.languageConfig.get().getString("Abilities.Water.WaterArms.SneakMessage");
 		this.lengthReduction = 0;
@@ -322,20 +323,7 @@ public class WaterArms extends WaterAbility {
 	}
 
 	public void addBlock(final Block b, final BlockData data, final long revertTime) {
-		if (TempBlock.isTempBlock(b)) {
-			final TempBlock tb = TempBlock.get(b);
-
-			if (!external.contains(tb)) {
-				if (this.right.contains(b) || this.left.contains(b)) {
-					tb.setType(data);
-					tb.setRevertTime(revertTime);
-				} else {
-					this.external.add(tb);
-				}
-			}
-		} else {
-			new TempBlock(b, data, revertTime);
-		}
+		new TempBlock(b, data, revertTime, this);
 	}
 
 	/**

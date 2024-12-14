@@ -48,23 +48,30 @@ public class CopyCommand extends PKCommand {
 				return;
 			}
 
-			final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(0));
+			getPlayer(args.get(0)).thenAccept(player -> {
 
-			if (!player.isOnline() && !player.hasPlayedBefore()) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
-				return;
-			}
-
-			if (player instanceof Player && MultiAbilityManager.hasMultiAbilityBound((Player) player)) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
-				return;
-			}
-
-			this.assignAbilities(sender, player, (Player) sender, true).thenAccept(boundAll -> {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + player.getName() + ChatColor.GREEN));
-				if (!boundAll) {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+				if (!player.isOnline() && !player.hasPlayedBefore()) {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
+					return;
 				}
+
+				if (player instanceof Player && MultiAbilityManager.hasMultiAbilityBound((Player) player)) {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.cantEditBinds);
+					return;
+				}
+
+				this.assignAbilities(sender, player, (Player) sender, true).thenAccept(boundAll -> {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.copied.replace("{target}", ChatColor.YELLOW + player.getName() + ChatColor.GREEN));
+					if (!boundAll) {
+						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+					}
+				}).exceptionally(ex -> {
+					ex.printStackTrace();
+					return null;
+				});
+			}).exceptionally(ex -> {
+				ex.printStackTrace();
+				return null;
 			});
 		} else if (args.size() == 2) {
 			if (!this.hasPermission(sender, "assign")) {

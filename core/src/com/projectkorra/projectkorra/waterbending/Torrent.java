@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.apache.commons.lang3.tuple.Pair;
 
 import org.bukkit.Location;
@@ -47,31 +48,32 @@ public class Torrent extends WaterAbility {
 	private boolean freeze;
 	private boolean revert;
 	private int layer;
+	@Attribute("FreezeRadius")
 	private int maxLayer;
 	private int maxHits;
 	private int hits = 1;
 	private long time;
 	private long interval;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	@Attribute(Attribute.DURATION)
 	private long chargeTimeout;
 	private long revertTime;
 	private double startAngle;
 	private double angle;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double radius;
 	@Attribute(Attribute.KNOCKBACK)
 	private double knockback;
 	@Attribute(Attribute.KNOCKUP)
 	private double knockup;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute("Successive" + Attribute.DAMAGE)
+	@Attribute("Successive" + Attribute.DAMAGE) @DayNightFactor
 	private double successiveDamage;
-	@Attribute("Deflect" + Attribute.DAMAGE)
+	@Attribute("Deflect" + Attribute.DAMAGE) @DayNightFactor
 	private double deflectDamage;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
 	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
@@ -88,19 +90,19 @@ public class Torrent extends WaterAbility {
 		this.layer = 0;
 		this.startAngle = 0;
 		this.maxLayer = getConfig().getInt("Abilities.Water.Torrent.MaxLayer");
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Knockback"));
+		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Knockback");
 		this.angle = getConfig().getDouble("Abilities.Water.Torrent.Angle");
-		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Radius"));
-		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Knockup"));
+		this.radius = getConfig().getDouble("Abilities.Water.Torrent.Radius");
+		this.knockup = getConfig().getDouble("Abilities.Water.Torrent.Knockup");
 		this.interval = getConfig().getLong("Abilities.Water.Torrent.Interval");
-		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.InitialDamage"));
-		this.successiveDamage = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.SuccessiveDamage"));
+		this.damage = getConfig().getDouble("Abilities.Water.Torrent.InitialDamage");
+		this.successiveDamage = getConfig().getDouble("Abilities.Water.Torrent.SuccessiveDamage");
 		this.maxHits = getConfig().getInt("Abilities.Water.Torrent.MaxHits");
-		this.deflectDamage = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.DeflectDamage"));
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.Range"));
-		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.Torrent.SelectRange"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.Cooldown"));
-		this.chargeTimeout = applyInverseModifiers(getConfig().getLong("Abilities.Water.Torrent.ChargeTimeout"));
+		this.deflectDamage = getConfig().getDouble("Abilities.Water.Torrent.DeflectDamage");
+		this.range = getConfig().getDouble("Abilities.Water.Torrent.Range");
+		this.selectRange = getConfig().getDouble("Abilities.Water.Torrent.SelectRange");
+		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Cooldown");
+		this.chargeTimeout = getConfig().getLong("Abilities.Water.Torrent.ChargeTimeout");
 		this.revert = getConfig().getBoolean("Abilities.Water.Torrent.Revert");
 		this.revertTime = getConfig().getLong("Abilities.Water.Torrent.RevertTime");
 		this.blocks = new ArrayList<>();
@@ -122,14 +124,9 @@ public class Torrent extends WaterAbility {
 			return;
 		}
 
-		if (this.bPlayer.isAvatarState()) {
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.Push");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.InitialDamage");
-			this.successiveDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.SuccessiveDamage");
-			this.maxHits = getConfig().getInt("Abilities.Avatar.AvatarState.Water.Torrent.MaxHits");
-		}
 
 		this.time = System.currentTimeMillis();
+		this.recalculateAttributes(); // Recalculate attributes to account for night factor
 		this.sourceBlock = BlockSource.getWaterSourceBlock(player, this.selectRange, ClickType.LEFT_CLICK, true, true, this.bPlayer.canPlantbend());
 		if (this.sourceBlock != null && !GeneralMethods.isRegionProtectedFromBuild(this, this.sourceBlock.getLocation())) {
 			this.sourceSelected = true;
@@ -606,8 +603,7 @@ public class Torrent extends WaterAbility {
 		GeneralMethods.setVelocity(this, entity, velocity);
 		entity.setFallDistance(0);
 		if (entity instanceof LivingEntity) {
-			final double damageDealt = this.getNightFactor(this.deflectDamage);
-			DamageHandler.damageEntity(entity, damageDealt, this);
+			DamageHandler.damageEntity(entity, this.deflectDamage, this);
 			AirAbility.breakBreathbendingHold(entity);
 		}
 	}
@@ -626,9 +622,9 @@ public class Torrent extends WaterAbility {
 			GeneralMethods.setVelocity(this, entity, direction.multiply(this.knockback));
 		}
 		if (entity instanceof LivingEntity && !this.hurtEntities.contains(entity)) {
-			double damageDealt = this.getNightFactor(this.damage);
+			double damageDealt = this.damage;
 			if (this.hits > 1 && this.hits <= this.maxHits) {
-				damageDealt = this.getNightFactor(this.successiveDamage);
+				damageDealt = this.successiveDamage;
 			}
 			if (this.hits == this.maxHits) {
 				this.hits = this.maxHits + 1;

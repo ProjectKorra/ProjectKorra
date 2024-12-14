@@ -11,6 +11,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -42,9 +43,9 @@ public class AirBlast extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
-	public static final Material[] DOORS = { Material.ACACIA_DOOR, Material.BIRCH_DOOR, Material.DARK_OAK_DOOR, Material.JUNGLE_DOOR, Material.OAK_DOOR, Material.SPRUCE_DOOR };
-	public static final Material[] TDOORS = { Material.ACACIA_TRAPDOOR, Material.BIRCH_TRAPDOOR, Material.DARK_OAK_TRAPDOOR, Material.JUNGLE_TRAPDOOR, Material.OAK_TRAPDOOR, Material.SPRUCE_TRAPDOOR };
-	public static final Material[] BUTTONS = { Material.ACACIA_BUTTON, Material.BIRCH_BUTTON, Material.DARK_OAK_BUTTON, Material.JUNGLE_BUTTON, Material.OAK_BUTTON, Material.SPRUCE_BUTTON, Material.STONE_BUTTON };
+	public static final Material[] DOORS = Tag.WOODEN_DOORS.getValues().toArray(new Material[0]);
+	public static final Material[] TDOORS = Tag.WOODEN_TRAPDOORS.getValues().toArray(new Material[0]);
+	public static final Material[] BUTTONS = Tag.BUTTONS.getValues().toArray(new Material[0]);
 
 	private boolean canFlickLevers;
 	private boolean canOpenDoors;
@@ -59,9 +60,9 @@ public class AirBlast extends AirAbility {
 	private double speedFactor;
 	@Attribute(Attribute.RANGE)
 	private double range;
-	@Attribute(Attribute.KNOCKBACK)
+	@Attribute(Attribute.SELF_PUSH)
 	private double pushFactor;
-	@Attribute(Attribute.KNOCKBACK + "Others")
+	@Attribute(Attribute.KNOCKBACK)
 	private double pushFactorForOthers;
 	@Attribute(Attribute.DAMAGE)
 	private double damage;

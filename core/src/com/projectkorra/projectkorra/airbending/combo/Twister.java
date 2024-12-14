@@ -69,12 +69,6 @@ public class Twister extends AirAbility implements ComboAbility {
 		this.twisterHeightParticles = getConfig().getDouble("Abilities.Air.Twister.HeightPerParticle");
 		this.twisterRemoveDelay = getConfig().getLong("Abilities.Air.Twister.RemoveDelay");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Twister.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Twister.Range");
-		}
-
 		this.bPlayer.addCooldown(this);
 		this.start();
 	}

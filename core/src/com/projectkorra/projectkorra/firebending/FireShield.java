@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -20,21 +21,21 @@ public class FireShield extends FireAbility {
 	private boolean shield;
 	@Attribute("IgniteEntities")
 	private boolean ignite;
-	@Attribute("Disc" + Attribute.DURATION)
+	@Attribute("Disc" + Attribute.DURATION) @DayNightFactor
 	private long discDuration;
-	@Attribute("Shield" + Attribute.DURATION)
+	@Attribute("Shield" + Attribute.DURATION) @DayNightFactor
 	private long shieldDuration;
-	@Attribute("Disc" + Attribute.COOLDOWN)
+	@Attribute("Disc" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long discCooldown;
-	@Attribute("Shield" + Attribute.COOLDOWN)
+	@Attribute("Shield" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long shieldCooldown;
-	@Attribute("Shield" + Attribute.RADIUS)
+	@Attribute("Shield" + Attribute.RADIUS) @DayNightFactor
 	private double shieldRadius;
-	@Attribute("Disc" + Attribute.RADIUS)
+	@Attribute("Disc" + Attribute.RADIUS) @DayNightFactor
 	private double discRadius;
-	@Attribute("Disc" + Attribute.FIRE_TICK)
+	@Attribute("Disc" + Attribute.FIRE_TICK) @DayNightFactor
 	private double discFireTicks;
-	@Attribute("Shield" + Attribute.FIRE_TICK)
+	@Attribute("Shield" + Attribute.FIRE_TICK) @DayNightFactor
 	private double shieldFireTicks;
 	private Location location;
 	private Random random;
@@ -49,13 +50,13 @@ public class FireShield extends FireAbility {
 
 		this.shield = shield;
 		this.ignite = true;
-		this.discCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown"));
+		this.discCooldown = getConfig().getLong("Abilities.Fire.FireShield.Disc.Cooldown");
 		this.discDuration = getConfig().getLong("Abilities.Fire.FireShield.Disc.Duration");
-		this.discRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius"));
+		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.Disc.Radius");
 		this.discFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Disc.FireTicks");
-		this.shieldCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown"));
+		this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireShield.Shield.Cooldown");
 		this.shieldDuration = getConfig().getLong("Abilities.Fire.FireShield.Shield.Duration");
-		this.shieldRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius"));
+		this.shieldRadius = getConfig().getDouble("Abilities.Fire.FireShield.Shield.Radius");
 		this.shieldFireTicks = getConfig().getDouble("Abilities.Fire.FireShield.Shield.FireTicks");
 		this.random = new Random();
 

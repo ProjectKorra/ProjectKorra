@@ -71,12 +71,17 @@ public class AddCommand extends PKCommand {
 			if (!this.hasPermission(sender, "others")) {
 				return;
 			}
-			final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(1));
-			if (!player.isOnline() && !player.hasPlayedBefore()) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
-				return;
-			}
-			this.add(sender, player, args.get(0).toLowerCase());
+
+			this.getPlayer(args.get(1)).thenAccept(player -> {
+				if (player == null || (!player.isOnline() && !player.hasPlayedBefore())) {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
+					return;
+				}
+				this.add(sender, player, args.get(0).toLowerCase());
+			}).exceptionally(e -> {
+				e.printStackTrace();
+				return null;
+			});
 		}
 	}
 
@@ -254,6 +259,9 @@ public class AddCommand extends PKCommand {
 					sender.sendMessage(ChatColor.RED + this.invalidElement);
 				}
 			}
+		}).exceptionally(e -> {
+			e.printStackTrace();
+			return null;
 		});
 
 	}

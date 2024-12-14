@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.event.WorldTimeEvent;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -61,11 +62,14 @@ public class BendingManager implements Runnable {
 
 			WorldTimeEvent.Time from = this.times.get(world);
 
-			WorldTimeEvent.Time to = ElementalAbility.isDay(world) ? WorldTimeEvent.Time.DAY : WorldTimeEvent.Time.NIGHT;
+			WorldTimeEvent.Time to = ElementalAbility.isDay(world) ? WorldTimeEvent.Time.DAY :
+					(ElementalAbility.isNight(world) ? WorldTimeEvent.Time.NIGHT :
+							(ElementalAbility.isDusk(world) ? WorldTimeEvent.Time.DUSK : WorldTimeEvent.Time.DAWN));
 
-			if (from == null) {
-				this.times.put(world, to);
-				continue;
+			if (from == null) { //If the time is null, the server/plugin probably just started, so set the previous time to the previous one
+				int ord = to.ordinal() - 1;
+				if (ord < 0) ord = WorldTimeEvent.Time.values().length - 1;
+				from = WorldTimeEvent.Time.values()[ord];
 			}
 
 			if (from != to) {
@@ -80,7 +84,7 @@ public class BendingManager implements Runnable {
 						final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 						if (bPlayer == null) continue;
 
-						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
+						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to != WorldTimeEvent.Time.NIGHT && from == WorldTimeEvent.Time.NIGHT) {
 							String s = getMoonsetMessage();
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
@@ -89,7 +93,7 @@ public class BendingManager implements Runnable {
 							player.sendMessage(Element.WATER.getColor() + s);
 						}
 
-						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
+						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.nightmessage") && to != WorldTimeEvent.Time.DAY && from == WorldTimeEvent.Time.DAY) {
 							String s = getSunsetMessage();
 							player.sendMessage(Element.FIRE.getColor() + s);
 						}
@@ -109,49 +113,17 @@ public class BendingManager implements Runnable {
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
 
-		//try (MCTiming timing = this.CORE_ABILITY_TIMING.startTiming()) {
 		CoreAbility.progressAll();
-		//}
-
-		//try (MCTiming timing = this.TEMP_POTION_TIMING.startTiming()) {
 		TempPotionEffect.progressAll();
-		//}
-
-		//try (MCTiming timing = this.DAY_NIGHT_TIMING.startTiming()) {
 		this.handleDayNight();
-		//}
-
 		RevertChecker.revertAirBlocks();
-
-		//try (MCTiming timing = this.HORIZONTAL_VELOCITY_TRACKER_TIMING.startTiming()) {
 		HorizontalVelocityTracker.updateAll();
-		//}
-
-		//try (MCTiming timing = this.COOLDOWN_TIMING.startTiming()) {
 		this.handleCooldowns();
-		//}
-
-		//try (MCTiming timing = this.TEMP_ARMOR_TIMING.startTiming()) {
 		TempArmor.cleanup();
-		//}
 
-		//try (MCTiming timing = this.ACTIONBAR_STATUS_TIMING.startTiming()) {
-		for (final Player player : Bukkit.getOnlinePlayers()) {
-			if (Bloodbending.isBloodbent(player)) {
-				ActionBar.sendActionBar(Element.BLOOD.getColor() + "* Bloodbent *", player);
-			} else if (MetalClips.isControlled(player)) {
-				ActionBar.sendActionBar(Element.METAL.getColor() + "* MetalClipped *", player);
-			}
-		}
-		//}
-
-		//try (MCTiming timing = this.TEMP_FALLING_BLOCK_TIMING.startTiming()) {
 		TempFallingBlock.manage();
-		//}
 
-		//try (MCTiming timing = this.TEMP_BLOCK_TIMING.startTiming()) {
 		tempBlockRevertTask.run();
-		//}
 	}
 
 	public static String getSunriseMessage() {
@@ -168,6 +140,23 @@ public class BendingManager implements Runnable {
 
 	public static String getMoonsetMessage() {
 		return ChatUtil.color(ConfigManager.languageConfig.get().getString("Extras.Water.DayMessage"));
+	}
+
+	public static class TempElementsRunnable implements Runnable {
+		@Override
+		public void run() {
+			//Manage Temp elements
+			while (!BendingPlayer.TEMP_ELEMENTS.isEmpty()) { //We use a while loop so if multiple expire in the same tick, all are done together
+				Pair<Player, Long> pair = BendingPlayer.TEMP_ELEMENTS.peek();
+
+				if (System.currentTimeMillis() > pair.getRight()) { //Check if the top temp element has expired
+					BendingPlayer.TEMP_ELEMENTS.poll(); //And if it has, remove from the queue, and recalculate temp elements for that player
+					BendingPlayer.getBendingPlayer(pair.getLeft()).recalculateTempElements(false);
+				} else {
+					break; //Break the loop if the top element hasn't expired, as all elements below it won't have either
+				}
+			}
+		}
 	}
 
 }

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -20,7 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
+import com.projectkorra.projectkorra.attribute.*;
 import com.projectkorra.projectkorra.command.CooldownCommand;
+import com.projectkorra.projectkorra.event.AbilityRecalculateAttributeEvent;
 import org.bukkit.permissions.Permission;
 
 import org.apache.commons.lang3.Validate;
@@ -47,9 +50,6 @@ import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.attribute.AttributeModifier;
-import com.projectkorra.projectkorra.attribute.AttributePriority;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
@@ -82,7 +82,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<Class<? extends CoreAbility>, CoreAbility> ABILITIES_BY_CLASS = new ConcurrentHashMap<>();
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
 	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
-	private static final Map<Class<? extends CoreAbility>, Map<String, Field>> ATTRIBUTE_FIELDS = new HashMap<>();
+	private static final Map<Class<? extends CoreAbility>, Map<String, AttributeCache>> ATTRIBUTE_FIELDS = new HashMap<>();
 
 	private static int idCounter;
 	private static long currentTick;
@@ -91,19 +91,16 @@ public abstract class CoreAbility implements Ability {
 	protected BendingPlayer bPlayer;
 	protected FlightHandler flightHandler;
 
-	private final Map<String, Map<AttributePriority, Set<StoredModifier>>> attributeModifiers = new HashMap<>();
-	private final Map<String, Object> attributeValues = new HashMap<>();
 	private boolean started;
 	private boolean removed;
 	private boolean hidden;
 	private int id;
 	private long startTime;
 	private long startTick;
+	@Deprecated
 	private boolean attributesModified;
-
-	static {
-		idCounter = Integer.MIN_VALUE;
-	}
+	private boolean recalculatingAttributes;
+	private boolean attributeValuesCached;
 
 	/**
 	 * The default constructor is needed to create a fake instance of each
@@ -117,13 +114,23 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public CoreAbility() {
-		for (final Field field : this.getClass().getDeclaredFields()) {
-			if (field.isAnnotationPresent(Attribute.class)) {
+		if (!ATTRIBUTE_FIELDS.containsKey(this.getClass())) {
+			ATTRIBUTE_FIELDS.put(this.getClass(), new HashMap<>());
+		}
+		for (final Field field : this.getClass().getDeclaredFields()) { //Iterate over all fields in the class
+			if (field.isAnnotationPresent(Attribute.class)) { //Check if they are marked with an attribute annotation
 				final Attribute attribute = field.getAnnotation(Attribute.class);
-				if (!ATTRIBUTE_FIELDS.containsKey(this.getClass())) {
-					ATTRIBUTE_FIELDS.put(this.getClass(), new HashMap<>());
+				AttributeCache cache = new AttributeCache(field, attribute.value());
+				field.setAccessible(true);
+
+				for (Annotation annotation : field.getDeclaredAnnotations()) { //Get all annotations on the field, and check if they are attribute markers
+					if (annotation.annotationType().isAnnotationPresent(AttributeMarker.class)) {
+						cache.addMaker(annotation);
+					}
 				}
-				ATTRIBUTE_FIELDS.get(this.getClass()).put(attribute.value(), field);
+
+				cache.calculateAvatarStateModifier(this); //Pull values from the AvatarState config
+				ATTRIBUTE_FIELDS.get(this.getClass()).put(attribute.value(), cache); //Store a cache value for the field and the attribute
 			}
 		}
 	}
@@ -144,13 +151,7 @@ public abstract class CoreAbility implements Ability {
 		this.flightHandler = Manager.getManager(FlightHandler.class);
 		this.startTime = System.currentTimeMillis();
 		this.started = false;
-		this.id = CoreAbility.idCounter;
-
-		if (idCounter == Integer.MAX_VALUE) {
-			idCounter = Integer.MIN_VALUE;
-		} else {
-			idCounter++;
-		}
+		this.id = idCounter++;
 	}
 
 	/**
@@ -190,6 +191,8 @@ public abstract class CoreAbility implements Ability {
 			INSTANCES_BY_CLASS.put(clazz, Collections.newSetFromMap(new ConcurrentHashMap<CoreAbility, Boolean>()));
 		}
 
+		this.recalculateAttributes();
+
 		INSTANCES_BY_PLAYER.get(clazz).get(uuid).put(this.id, this);
 		INSTANCES_BY_CLASS.get(clazz).add(this);
 		INSTANCES.add(this);
@@ -228,9 +231,15 @@ public abstract class CoreAbility implements Ability {
 			}
 		}
 
+		for (AttributeCache cache : ATTRIBUTE_FIELDS.get(this.getClass()).values()) {
+			cache.getInitialValues().remove(this);
+		}
+
 		if (INSTANCES_BY_CLASS.containsKey(this.getClass())) {
 			INSTANCES_BY_CLASS.get(this.getClass()).remove(this);
 		}
+
+
 		INSTANCES.remove(this);
 	}
 
@@ -261,10 +270,10 @@ public abstract class CoreAbility implements Ability {
 				}
 
 				try {
-					if (!abil.attributesModified) {
+					/*if (!abil.attributesModified) {
 						abil.modifyAttributes();
 						abil.attributesModified = true;
-					}
+					}*/
 
 					//try (MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
 						abil.progress();
@@ -928,43 +937,92 @@ public abstract class CoreAbility implements Ability {
 		return locations;
 	}
 
+	/**
+	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * attributes and call {@link #recalculateAttributes()} to call the event.
+	 */
+	@Deprecated
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modification) {
-		return this.addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
+		return this;//.addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
 	}
-	
+
+	@Deprecated
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority) {
-	    return this.addAttributeModifier(attribute, value, modificationType, priority, UUID.randomUUID());
+	    return this;//.addAttributeModifier(attribute, value, modificationType, priority, UUID.randomUUID());
 	}
 
+	@Deprecated
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority, final UUID uuid) {
-		Validate.notNull(attribute, "attribute cannot be null");
-		Validate.notNull(value, "value cannot be null");
-		Validate.notNull(modificationType, "modifierMethod cannot be null");
-		Validate.notNull(priority, "priority cannot be null");
-		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + this.getName());
-		if (!this.attributeModifiers.containsKey(attribute)) {
-			this.attributeModifiers.put(attribute, new HashMap<>());
-		}
-		if (!this.attributeModifiers.get(attribute).containsKey(priority)) {
-			this.attributeModifiers.get(attribute).put(priority, new HashSet<>());
-		}
-		this.attributeModifiers.get(attribute).get(priority).add(new StoredModifier(uuid, modificationType, value));
-		this.attributesModified = false;
 		return this;
 	}
 
+	@Deprecated
 	public CoreAbility setAttribute(final String attribute, final Object value) {
-		Validate.notNull(attribute, "attribute cannot be null");
-		Validate.notNull(value, "value cannot be null");
-		Validate.isTrue(ATTRIBUTE_FIELDS.containsKey(this.getClass()) && ATTRIBUTE_FIELDS.get(this.getClass()).containsKey(attribute), "Attribute " + attribute + " is not a defined Attribute for " + this.getName());
-		this.attributeValues.put(attribute, value);
-		this.attributesModified = false;
 		return this;
 	}
 
+	/**
+	 * Recalculate what the ability's attributes should be. This is called
+	 * whenever an ability is created, but should be called whenever you want an
+	 * ability to recalculate some of it's values. E.g. day turns to night, AvatarState
+	 * gets toggled, etc.
+	 */
+	public void recalculateAttributes() {
+		if (recalculatingAttributes) return; //Stop recursion if an addon does something wrong, e.g. calls recalculateAttributes inside the event
+
+		recalculatingAttributes = true;
+
+		if (!attributeValuesCached) { //Cache initial values
+			try {
+				for (AttributeCache cache : ATTRIBUTE_FIELDS.get(this.getClass()).values()) { //Get all attributes for this ability and cache initial values
+					cache.getInitialValues().put(this, cache.getField().get(this));
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			attributeValuesCached = true;
+		}
+
+		attribute_loop:
+		for (AttributeCache cache : ATTRIBUTE_FIELDS.get(this.getClass()).values()) {
+			String attribute = cache.getAttribute();
+			Object initialValue = cache.getInitialValues().get(this);
+
+			if (initialValue == null) {
+				ProjectKorra.log.severe("Initial value for " + attribute + " is null for " + this.getName() + "! Please report this to PK!");
+				continue;
+			}
+
+			AbilityRecalculateAttributeEvent event = new AbilityRecalculateAttributeEvent(this, attribute, initialValue);
+			Bukkit.getServer().getPluginManager().callEvent(event);
+
+			try {
+				for (AttributeModification mod : event.getModifications()) {
+					if (mod.getModifier() == AttributeModifier.SET) {
+						cache.getField().set(this, mod.getModification());
+						continue attribute_loop;
+					} else {
+						Number number = (Number) initialValue;
+						Number newValue = mod.getModifier().performModification(number, (Number) mod.getModification());
+						initialValue = newValue;
+					}
+				}
+
+				cache.getField().set(this, initialValue);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				ProjectKorra.log.severe("Failed to recalculate attribute " + attribute + " for " + this.getName() + "!");
+				e.printStackTrace();
+			}
+		}
+
+		recalculatingAttributes = false;
+	}
+
+	@Deprecated
 	private void modifyAttributes() {
-		for (final String attribute : this.attributeModifiers.keySet()) {
+		/*for (final String attribute : this.attributeModifiers.keySet()) {
 			final Field field = ATTRIBUTE_FIELDS.get(this.getClass()).get(attribute);
+			Attribute attr = field.getAnnotation(Attribute.class);
 			final boolean accessibility = field.isAccessible();
 			field.setAccessible(true);
 			try {
@@ -996,7 +1054,7 @@ public abstract class CoreAbility implements Ability {
 			} finally {
 				field.setAccessible(accessibility);
 			}
-		});
+		});*/
 	}
 
 	/**
@@ -1058,6 +1116,10 @@ public abstract class CoreAbility implements Ability {
 
 	public static double getDefaultCollisionRadius() {
 		return DEFAULT_COLLISION_RADIUS;
+	}
+
+	public static Map<String, AttributeCache> getAttributeCache(CoreAbility ability) {
+		return ATTRIBUTE_FIELDS.get(ability.getClass());
 	}
 
 	@Override

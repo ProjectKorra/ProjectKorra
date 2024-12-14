@@ -19,6 +19,7 @@ public class DBConnection {
 	private static String db;
 	private static String user;
 	private static String pass;
+	private static String properties;
 	private static boolean isOpen = false;
 
 	public static void init() {
@@ -27,9 +28,10 @@ public class DBConnection {
 		DBConnection.pass = ConfigManager.getConfig().getString("Storage.MySQL.pass");
 		DBConnection.db = ConfigManager.getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = ConfigManager.getConfig().getString("Storage.MySQL.user");
+		DBConnection.properties = ConfigManager.getConfig().getString("Storage.MySQL.properties");
 
 		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
-			sql = new MySQL(ProjectKorra.log, host, port, user, pass, db);
+			sql = new MySQL(ProjectKorra.log, host, port, user, pass, db, properties);
 			if (((MySQL) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
 				GeneralMethods.stopPlugin();
@@ -73,6 +75,12 @@ public class DBConnection {
 			if (!sql.tableExists("pk_board")) {
 				ProjectKorra.log.info("Creating pk_board table");
 				final String query = "CREATE TABLE `pk_board` (uuid VARCHAR(36) NOT NULL, enabled BOOLEAN NOT NULL, PRIMARY KEY (uuid));";
+				sql.modifyQuery(query, false);
+			}
+			//Table for temp elements
+			if (!sql.tableExists("pk_temp_elements")) {
+				ProjectKorra.log.info("Creating pk_temp_elements table");
+				final String query = "CREATE TABLE `pk_temp_elements` (uuid VARCHAR(36) NOT NULL, element VARCHAR(255) NOT NULL, expiry BIGINT);";
 				sql.modifyQuery(query, false);
 			}
 		} else {
@@ -120,6 +128,12 @@ public class DBConnection {
 			if (!sql.tableExists("pk_board")) {
 				ProjectKorra.log.info("Creating pk_board table");
 				final String query = "CREATE TABLE `pk_board` (uuid TEXT(36) NOT NULL, enabled INTEGER NOT NULL, PRIMARY KEY (uuid));";
+				sql.modifyQuery(query, false);
+			}
+			//Table for temp elements
+			if (!sql.tableExists("pk_temp_elements")) {
+				ProjectKorra.log.info("Creating pk_temp_elements table");
+				final String query = "CREATE TABLE `pk_temp_elements` (uuid TEXT(36) NOT NULL, element TEXT(255) NOT NULL, expiry BIGINT);";
 				sql.modifyQuery(query, false);
 			}
 		}

@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.plant;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.PlantAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import org.bukkit.Location;
@@ -17,7 +18,7 @@ public class PlantTether extends PlantAbility {
 	private Location originLoc;
 	@Attribute(Attribute.SELECT_RANGE)
 	private double selectRange;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private double timeOut;
 	private Entity target;
@@ -42,7 +43,7 @@ public class PlantTether extends PlantAbility {
 	}
 
 	private void setFields() {
-		this.selectRange = this.applyModifiers(getConfig().getDouble("Abilities.Water.PlantTether.SelectRange"));
+		this.selectRange = getConfig().getDouble("Abilities.Water.PlantTether.SelectRange");
 		this.cooldown = getConfig().getLong("Abilities.Water.PlantTether.Cooldown");
 	}
 

@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,6 +28,10 @@ public class Tremorsense extends EarthAbility {
 	private Block block;
 	@Attribute(Attribute.RANGE)
 	private int stickyRange;
+
+	private boolean canBreak = false;
+	private Block breakBlock;
+	private boolean glowing;
 
 	public Tremorsense(final Player player, final boolean clicked) {
 		super(player);
@@ -65,7 +70,7 @@ public class Tremorsense extends EarthAbility {
 
 				for (int k = 0; k <= this.maxDepth; k++) {
 					final Block blocki = block.getRelative(BlockFace.EAST, i).getRelative(BlockFace.NORTH, j).getRelative(BlockFace.DOWN, k);
-					if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
+					if (RegionProtection.isRegionProtected(this, blocki.getLocation())) {
 						continue;
 					}
 					if (this.isEarthbendable(blocki) && !earth) {
@@ -125,9 +130,6 @@ public class Tremorsense extends EarthAbility {
 		}
 	}
 
-	private boolean canBreak = false;
-	private Block breakBlock;
-
 	public boolean canBreak() {
 		return canBreak;
 	}
@@ -141,6 +143,7 @@ public class Tremorsense extends EarthAbility {
 	public void revertGlowBlock() {
 		if (this.block != null) {
 			this.player.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
+			this.glowing = false;
 		}
 	}
 
@@ -151,7 +154,15 @@ public class Tremorsense extends EarthAbility {
 			}
 			this.canBreak = false;
 			this.player.sendBlockChange(this.block.getLocation(), Material.GLOWSTONE.createBlockData());
+			this.glowing = true;
 		}
+	}
+
+	/**
+	 * @return True if Tremorsense has a light right now
+	 */
+	public boolean isGlowing() {
+		return this.glowing;
 	}
 
 	@Override

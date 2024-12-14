@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -37,6 +39,8 @@ public final class BendingBoardManager {
 	private static final Map<String, ChatColor> trackedCooldowns = new ConcurrentHashMap<>();
 	private static final Set<UUID> disabledPlayers = Collections.synchronizedSet(new HashSet<>());
 	private static final Map<Player, BendingBoard> scoreboardPlayers = new ConcurrentHashMap<>();
+
+	public static Function<BendingPlayer, BendingBoard> boardSupplier = BendingBoard::new;
 
 	private static boolean enabled;
 
@@ -128,7 +132,7 @@ public final class BendingBoardManager {
 				return Optional.empty();
 			}
 			
-			scoreboardPlayers.put(player, new BendingBoard(bPlayer));
+			scoreboardPlayers.put(player, boardSupplier.apply(bPlayer));
 		}
 
 		return Optional.of(scoreboardPlayers.get(player));

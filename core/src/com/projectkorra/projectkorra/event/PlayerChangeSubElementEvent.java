@@ -72,8 +72,8 @@ public class PlayerChangeSubElementEvent extends Event {
 		return this.result;
 	}
 
-	public static enum Result {
-		CHOOSE, REMOVE, ADD, PERMAREMOVE;
-		private Result() {}
+	public enum Result {
+		CHOOSE, REMOVE, ADD, PERMAREMOVE,
+		TEMP_ADD, TEMP_REMOVE, TEMP_EXPIRE;
 	}
 }

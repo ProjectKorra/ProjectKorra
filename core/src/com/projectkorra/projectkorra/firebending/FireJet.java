@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -19,11 +20,11 @@ public class FireJet extends FireAbility {
 	@Attribute("AvatarStateToggle")
 	private boolean avatarStateToggled;
 	private long time;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
 	private Random random;
 	private Boolean previousGlidingState;
@@ -46,14 +47,15 @@ public class FireJet extends FireAbility {
 		}
 
 		this.avatarStateToggled = getConfig().getBoolean("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle");
-		this.duration = (long) applyModifiers(getConfig().getLong("Abilities.Fire.FireJet.Duration"));
-		this.speed = applyModifiers(getConfig().getDouble("Abilities.Fire.FireJet.Speed"));
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireJet.Cooldown"));
+		this.duration = (long) getConfig().getLong("Abilities.Fire.FireJet.Duration");
+		this.speed = getConfig().getDouble("Abilities.Fire.FireJet.Speed");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");
 		this.showGliding = getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding");
 		this.random = new Random();
 
-		this.speed = this.getDayFactor(this.speed);
 		final Block block = player.getLocation().getBlock();
+
+		this.recalculateAttributes();
 
 		if (isIgnitable(block) || ElementalAbility.isAir(block.getType()) || Tag.SLABS.isTagged(block.getType()) || this.bPlayer.isAvatarState()) {
 			GeneralMethods.setVelocity(this, player, player.getEyeLocation().getDirection().clone().normalize().multiply(this.speed));

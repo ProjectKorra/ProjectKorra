@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,17 +23,16 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class IceSpikePillarField extends IceAbility {
 
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double radius;
 	@Attribute("NumberOfSpikes")
 	private int numberOfSpikes;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.KNOCKUP)
+	@Attribute(Attribute.KNOCKUP) @DayNightFactor
 	private double knockup;
-	private Vector thrownForce;
 
 	public IceSpikePillarField(final Player player) {
 		super(player);
@@ -41,15 +41,14 @@ public class IceSpikePillarField extends IceAbility {
 			return;
 		}
 
-		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage"));
-		this.radius = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown"));
-		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup"));
+		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
+		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
+		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
+		this.knockup = getConfig().getDouble("Abilities.Water.IceSpike.Field.Knockup");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage");
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius");
-		}
+		this.numberOfSpikes = (int) (((this.radius) * (this.radius)) / 4);
+
+		this.recalculateAttributes();
 
 		this.numberOfSpikes = (int) (((this.radius) * (this.radius)) / 4);
 		this.start();
@@ -62,7 +61,6 @@ public class IceSpikePillarField extends IceAbility {
 
 	@Override
 	public void progress() {
-		this.thrownForce = new Vector(0, this.knockup, 0);
 		final Random random = new Random();
 		final int locX = this.player.getLocation().getBlockX();
 		final int locY = this.player.getLocation().getBlockY();
@@ -70,18 +68,18 @@ public class IceSpikePillarField extends IceAbility {
 		final List<Block> iceBlocks = new ArrayList<Block>();
 
 		for (int x = (int) -(this.radius - 1); x <= (this.radius - 1); x++) {
+			z_loop:
 			for (int z = (int) -(this.radius - 1); z <= (this.radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
 					final Block testBlock = this.player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
+					final Location dummyPlayerLoc = this.player.getLocation().add(0, y, 0);
 
-					if (((WaterAbility.isIcebendable(this.player, testBlock.getType(), false) && !TempBlock.isTempBlock(testBlock)) || (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) && ElementalAbility.isAir(testBlock.getRelative(BlockFace.UP).getType()) && !(testBlock.getX() == this.player.getEyeLocation().getBlock().getX() && testBlock.getZ() == this.player.getEyeLocation().getBlock().getZ())) {
+					if ((WaterAbility.isIcebendable(this.player, testBlock.getType(), false) &&
+							(!TempBlock.isTempBlock(testBlock) || (TempBlock.isTempBlock(testBlock) && (WaterAbility.isBendableWaterTempBlock(testBlock) || TempBlock.get(testBlock).isBendableSource())))
+							&& ElementalAbility.isAir(testBlock.getRelative(BlockFace.UP).getType())
+							&& dummyPlayerLoc.distance(testBlock.getLocation()) > 1.5)) { // Prevents the player from bending the block they are standing on
 						iceBlocks.add(testBlock);
-						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
-							final Random rand = new Random();
-							if (rand.nextInt(5) == 0) {
-								playIcebendingSound(iceBlocks.get(i).getLocation());
-							}
-						}
+						continue z_loop; //No need to keep iterating through y if we've already found a block
 					}
 				}
 			}
@@ -97,17 +95,17 @@ public class IceSpikePillarField extends IceAbility {
 
 			Entity target = null;
 			Block targetBlock = null;
+			entity_loop:
 			for (final Entity entity : entities) {
 				if (entity instanceof LivingEntity && entity.getEntityId() != this.player.getEntityId()) {
 					for (final Block block : iceBlocks) {
 						if (block.getX() == entity.getLocation().getBlockX() && block.getZ() == entity.getLocation().getBlockZ()) {
 							target = entity;
 							targetBlock = block;
-							break;
+							playIcebendingSound(targetBlock.getLocation());
+							break entity_loop;
 						}
 					}
-				} else {
-					continue;
 				}
 			}
 
@@ -118,7 +116,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-				final IceSpikePillar pillar = new IceSpikePillar(this.player, targetBlock.getLocation(), (int) this.damage, this.thrownForce, this.cooldown);
+				final IceSpikePillar pillar = new IceSpikePillar(this.player, targetBlock.getLocation(), (int) this.damage, this.knockup, this.cooldown);
 				pillar.inField = true;
 				iceBlocks.remove(targetBlock);
 			} else {
@@ -174,14 +172,6 @@ public class IceSpikePillarField extends IceAbility {
 
 	public void setNumberOfSpikes(final int numberOfSpikes) {
 		this.numberOfSpikes = numberOfSpikes;
-	}
-
-	public Vector getThrownForce() {
-		return this.thrownForce;
-	}
-
-	public void setThrownForce(final Vector thrownForce) {
-		this.thrownForce = thrownForce;
 	}
 
 	public void setCooldown(final long cooldown) {

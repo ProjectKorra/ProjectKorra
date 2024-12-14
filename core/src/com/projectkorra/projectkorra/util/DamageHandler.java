@@ -23,8 +23,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -38,7 +37,7 @@ public class DamageHandler {
 	private static final String IGNORE_ARMOR_PREFIX = "Properties.IgnoreArmorPercentage.";
 	private static final Set<LivingEntity> BEING_DAMAGED = new HashSet<>();
 
-	private static final IDamageEventPasser DAMAGE_EVENT_PASSER = GeneralMethods.getMCVersion() >= 1204 ? new ModernDamageEventPasser() : new LegacyDamageEventPasser();
+	private static final IDamageEventPasser DAMAGE_EVENT_PASSER = GeneralMethods.getMCVersion() >= 1205 ? new ModernDamageEventPasser() : new LegacyDamageEventPasser();
 
 	private static boolean checkTicks(LivingEntity entity, double damage) {
 		return entity.getNoDamageTicks() > entity.getMaximumNoDamageTicks() / 2.0f && damage <= entity.getLastDamage();
@@ -158,6 +157,8 @@ public class DamageHandler {
 		if (ability == null) {
 			return;
 		}
+
+		if (entity.hasMetadata("BendingImmunity")) return;
 		
 		if (entity instanceof LivingEntity) {
 			if (checkTicks((LivingEntity) entity, damage)) {
@@ -186,15 +187,6 @@ public class DamageHandler {
 		if (entity instanceof LivingEntity && !damageEvent.isCancelled()) {
 			LivingEntity lent = (LivingEntity) entity;
 			damage = Math.max(0, damageEvent.getDamage());
-			
-			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_REACH);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_DIRECTION);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_NOSWING);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SPEED);
-				NCPExemptionManager.exemptPermanently(source, CheckType.COMBINED_IMPROBABLE);
-				NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SELFHIT);
-			}
 
 			if (lent.getHealth() - damage <= 0 && !entity.isDead()) {
 				final EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, damage, ability);
@@ -228,15 +220,6 @@ public class DamageHandler {
 			final double nextHealth = lent.getHealth();
 			entity.setLastDamageCause(finalEvent);
 
-			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_REACH);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_DIRECTION);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_NOSWING);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_SPEED);
-				NCPExemptionManager.unexempt(source, CheckType.COMBINED_IMPROBABLE);
-				NCPExemptionManager.unexempt(source, CheckType.FIGHT_SELFHIT);
-			}
-
 			if (prevHealth != nextHealth) {
 				if (entity instanceof Player) {
 					StatisticsMethods.addStatisticAbility(source.getUniqueId(), CoreAbility.getAbility(ability.getName()), Statistic.PLAYER_DAMAGE, (long) damage);
@@ -261,5 +244,15 @@ public class DamageHandler {
 
 	public static void damageEntity(final Entity entity, final double damage, final Ability ability) {
 		damageEntity(entity, ability.getPlayer(), damage, ability);
+	}
+
+	/**
+	 * Sets the immunity of an entity towards bending. If immune, it won't be affected by abilities
+	 * @param entity The entity to set the immunity of
+	 * @param immunity If the entity should be immune
+	 */
+	public static void setImmunity(final Entity entity, boolean immunity) {
+		if (immunity) entity.setMetadata("BendingImmunity", new FixedMetadataValue(ProjectKorra.plugin, true));
+		else entity.removeMetadata("BendingImmunity", ProjectKorra.plugin);
 	}
 }

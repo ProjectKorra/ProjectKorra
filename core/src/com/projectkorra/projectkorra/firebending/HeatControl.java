@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -50,20 +51,21 @@ public class HeatControl extends FireAbility {
 	private HeatControlType heatControlType;
 
 	// HeatControl Cook variables.
-	@Attribute("CookTime")
+
 	private long cookTime;
+	@Attribute("CookDuration") @DayNightFactor(invert = true)
 	private long cookInterval;
 
 	// HeatControl Extinguish variables.
-	@Attribute("Extinguish" + Attribute.COOLDOWN)
+	@Attribute("Extinguish" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long extinguishCooldown;
-	@Attribute("Extinguish" + Attribute.RADIUS)
+	@Attribute("Extinguish" + Attribute.RADIUS) @DayNightFactor
 	private double extinguishRadius;
 
 	// HeatControl Melt variables.
-	@Attribute("Melt" + Attribute.RANGE)
+	@Attribute("Melt" + Attribute.RANGE) @DayNightFactor
 	private double meltRange;
-	@Attribute("Melt" + Attribute.RADIUS)
+	@Attribute("Melt" + Attribute.RADIUS) @DayNightFactor
 	private double meltRadius;
 	private Location meltLocation;
 	private static final Map<Block, TempBlock> MELTED_BLOCKS = new HashMap<>();
@@ -73,9 +75,9 @@ public class HeatControl extends FireAbility {
 	private long solidifyDelay;
 	private long solidifyLastBlockTime;
 	private long solidifyRevertTime;
-	@Attribute("Solidify" + Attribute.RADIUS)
+	@Attribute("Solidify" + Attribute.RADIUS) @DayNightFactor
 	private double solidifyMaxRadius;
-	@Attribute("Solidify" + Attribute.RANGE)
+	@Attribute("Solidify" + Attribute.RANGE) @DayNightFactor
 	private double solidifyRange;
 	private boolean solidifyRevert;
 	private boolean solidifying;
@@ -131,19 +133,19 @@ public class HeatControl extends FireAbility {
 	public void setFields() {
 		if (this.heatControlType == HeatControlType.COOK) {
 			this.cookTime = System.currentTimeMillis();
-			this.cookInterval = (long) applyInverseModifiers(getConfig().getLong("Abilities.Fire.HeatControl.Cook.Interval"));
+			this.cookInterval = getConfig().getLong("Abilities.Fire.HeatControl.Cook.Interval");
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
-			this.extinguishCooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown"));
-			this.extinguishRadius = applyModifiers(getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius"));
+			this.extinguishCooldown = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
+			this.extinguishRadius = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius");
 		} else if (this.heatControlType == HeatControlType.MELT) {
-			this.meltRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Range"));
-			this.meltRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Radius"));
+			this.meltRange = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Range");
+			this.meltRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Radius");
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			this.solidifyRadius = 1;
 			this.solidifyDelay = 50;
 			this.solidifyLastBlockTime = 0;
-			this.solidifyMaxRadius = applyModifiers(getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius"));
-			this.solidifyRange = applyModifiersRange(getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range"));
+			this.solidifyMaxRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
+			this.solidifyRange = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
 			this.solidifyRevert = getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert");
 			this.solidifyRevertTime = getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
 			this.randy = new Random();

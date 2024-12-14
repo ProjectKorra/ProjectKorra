@@ -89,7 +89,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.whipSpeed = 1;
 		this.grabDuration = getConfig().getLong("Abilities.Water.WaterArms.Whip.Grab.Duration");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
-		this.punchDamage = applyModifiers(getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage"));
+		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.Damage");
 
 		switch (ability) {
 			case PULL:
@@ -108,7 +108,6 @@ public class WaterArmsWhip extends WaterAbility {
 				this.usageCooldown = 200;
 
 		}
-		this.usageCooldown = applyInverseModifiers(this.usageCooldown);
 		final WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
 		if (waw != null) {
 			if (waw.grabbed) {
@@ -124,30 +123,10 @@ public class WaterArmsWhip extends WaterAbility {
 			}
 		}
 
-		this.getAugments();
-		this.createInstance();
-	}
-
-	private void getAugments() {
 		if (this.ability.equals(Whip.PUNCH)) {
 			this.whipLength = this.punchLength;
 		}
-		final World world = this.player.getWorld();
-		if (isNight(world)) {
-			if (this.ability.equals(Whip.PUNCH)) {
-				if (isFullMoon(world) && !GeneralMethods.hasRPG()) {
-					this.whipLength = this.punchLengthFullMoon;
-				} else {
-					this.whipLength = this.punchLengthNight;
-				}
-			} else {
-				if (isFullMoon(world) && !GeneralMethods.hasRPG()) {
-					this.whipLength = this.whipLengthFullMoon;
-				} else {
-					this.whipLength = this.whipLengthNight;
-				}
-			}
-		}
+		this.createInstance();
 	}
 
 	private void createInstance() {

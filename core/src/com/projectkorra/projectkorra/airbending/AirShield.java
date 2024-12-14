@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -23,6 +24,7 @@ import com.projectkorra.projectkorra.command.Commands;
 
 public class AirShield extends AirAbility {
 
+	@Attribute(Attribute.AVATAR_STATE_TOGGLE)
 	private boolean isToggledByAvatarState;
 	@Attribute("Max" + Attribute.RADIUS)
 	private double maxRadius;
@@ -31,6 +33,8 @@ public class AirShield extends AirAbility {
 	private double radius;
 	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.KNOCKBACK)
+	private double pushFactor;
 	private int streams;
 	private int particles;
 	@Attribute(Attribute.COOLDOWN)
@@ -46,11 +50,12 @@ public class AirShield extends AirAbility {
 
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.MaxRadius");
 		this.initialRadius = getConfig().getDouble("Abilities.Air.AirShield.InitialRadius");
-		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
+		this.isToggledByAvatarState = ConfigManager.avatarStateConfig.get().getBoolean("Abilities.Air.AirShield.IsToggle");
 		this.radius = this.initialRadius;
 		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirShield.Duration");
 		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
+		this.pushFactor = getConfig().getDouble("Abilities.Air.AirShield.Push");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
 		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
 		this.dynamicCooldown = getConfig().getBoolean("Abilities.Air.AirShield.DynamicCooldown"); //any unused duration from shield is removed from the cooldown
@@ -148,13 +153,9 @@ public class AirShield extends AirAbility {
 				vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
 				final Vector velocity = entity.getVelocity().clone();
-				if (this.bPlayer.isAvatarState()) {
-					velocity.setX(AvatarState.getValue(vx));
-					velocity.setZ(AvatarState.getValue(vz));
-				} else {
-					velocity.setX(vx);
-					velocity.setZ(vz);
-				}
+
+				velocity.setX(vx);
+				velocity.setZ(vz);
 
 				if (entity instanceof Player) {
 					if (Commands.invincible.contains(((Player) entity).getName())) {
@@ -162,7 +163,7 @@ public class AirShield extends AirAbility {
 					}
 				}
 
-				velocity.multiply(0.5);
+				velocity.multiply(this.pushFactor);
 				GeneralMethods.setVelocity(this, entity, velocity);
 				entity.setFallDistance(0);
 			}

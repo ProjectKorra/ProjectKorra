@@ -56,10 +56,6 @@ public class AirSpout extends AirAbility {
 
 		this.flightHandler.createInstance(player, this.getName());
 
-		if (this.bPlayer.isAvatarState()) {
-			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
-		}
-
 		this.start();
 	}
 
@@ -155,7 +151,8 @@ public class AirSpout extends AirAbility {
 		}
 
 		this.player.setFallDistance(0);
-		this.player.setSprinting(false);
+		if (!this.bPlayer.isAvatarState()) //Enforce this only when they aren't in the avatarstate
+			this.player.setSprinting(false);
 		if ((new Random()).nextInt(4) == 0) {
 			playAirbendingSound(this.player.getLocation());
 		}

@@ -40,6 +40,7 @@ public class Config {
 			try {
 				this.file.getParentFile().mkdir();
 				this.plugin.getLogger().info("Generating new directory for " + this.file.getName() + "!");
+				save();
 			} catch (final Exception e) {
 				this.plugin.getLogger().info("Failed to generate directory!");
 				e.printStackTrace();

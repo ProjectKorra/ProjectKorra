@@ -61,10 +61,6 @@ public class AirBurst extends AirAbility {
 		this.blasts = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 
-		if (this.bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBurst.Damage");
-		}
 		this.start();
 	}
 

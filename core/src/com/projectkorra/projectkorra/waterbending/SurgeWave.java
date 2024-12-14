@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,24 +43,24 @@ public class SurgeWave extends WaterAbility {
 	private boolean canHitSelf;
 	private boolean solidifyLava;
 	private long time;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long interval;
 	@Attribute("IceRevertTime")
 	private long iceRevertTime;
 	private long obsidianDuration;
 	private double currentRadius;
-	@Attribute(Attribute.RADIUS)
+	@Attribute(Attribute.RADIUS) @DayNightFactor
 	private double maxRadius;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.SELECT_RANGE)
+	@Attribute(Attribute.SELECT_RANGE) @DayNightFactor
 	private double selectRange;
-	@Attribute(Attribute.KNOCKBACK)
+	@Attribute(Attribute.KNOCKBACK) @DayNightFactor
 	private double knockback;
 	@Attribute(Attribute.KNOCKUP)
 	private double knockup;
-	@Attribute("Freeze" + Attribute.RADIUS)
+	@Attribute("Freeze" + Attribute.RADIUS) @DayNightFactor
 	private double maxFreezeRadius;
 	private Block sourceBlock;
 	private Location location;
@@ -81,23 +83,19 @@ public class SurgeWave extends WaterAbility {
 
 		this.canHitSelf = true;
 		this.currentRadius = 1;
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown"));
+		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
 		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
-		this.maxRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Radius"));
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback"));
-		this.knockup = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup"));
-		this.maxFreezeRadius = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius"));
+		this.maxRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
+		this.knockback = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockback");
+		this.knockup = getConfig().getDouble("Abilities.Water.Surge.Wave.Knockup");
+		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
 		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.Range"));
-		this.selectRange = applyModifiers(getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange"));
+		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
+		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
 		this.solidifyLava = getConfig().getBoolean("Abilities.Water.Surge.Wave.SolidifyLava.Enabled");
 		this.obsidianDuration = getConfig().getLong("Abilities.Water.Surge.Wave.SolidifyLava.Duration");
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
-
-		if (this.bPlayer.isAvatarState()) {
-			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
-		}
 
 		if (this.prepare()) {
 			wave = getAbility(player, SurgeWave.class);
@@ -223,11 +221,6 @@ public class SurgeWave extends WaterAbility {
 				return;
 			}
 
-			this.range = this.getNightFactor(this.range);
-			if (this.bPlayer.isAvatarState()) {
-				this.knockback = AvatarState.getValue(this.knockback);
-			}
-
 			final Entity target = GeneralMethods.getTargetedEntity(this.player, this.range);
 			if (target == null) {
 				this.targetDestination = this.player.getTargetBlock(getTransparentMaterialSet(), (int) this.range).getLocation();
@@ -304,9 +297,11 @@ public class SurgeWave extends WaterAbility {
 				final Block blockl = this.location.getBlock();
 				final ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, this.location) && (((isAir(blockl.getType()) || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
+				if (!RegionProtection.isRegionProtected(this, this.location) && (((isAir(blockl.getType()) || isFire(blockl) || isPlant(blockl) || isWater(blockl) || this.isWaterbendable(this.player, blockl))))) {
 					for (double i = 0; i <= this.currentRadius; i += .5) {
+						int index = 0;
 						for (double angle = 0; angle < 360; angle += 10) {
+
 							final Vector vec = GeneralMethods.getOrthogonalVector(this.targetDirection, angle, i);
 							final Block block = this.location.clone().add(vec).getBlock();
 
@@ -318,11 +313,13 @@ public class SurgeWave extends WaterAbility {
 								}
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
+
+								if ((this.getStartTick() + index + this.getRunningTicks()) % (int)(((this.currentRadius * this.currentRadius) + 3) * 3) == 0) {
+									playWaterbendingSound(block.getLocation());
+								}
 							}
 
-							if ((new Random()).nextInt(15) == 0) {
-								playWaterbendingSound(this.location);
-							}
+							index++;
 						}
 					}
 				}
@@ -379,12 +376,12 @@ public class SurgeWave extends WaterAbility {
 						}
 					}
 					if (knockback) {
-						if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+						if (RegionProtection.isRegionProtected(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
 							continue;
 						}
 						final Vector dir = direction.clone();
 						dir.setY(dir.getY() * this.knockup);
-						GeneralMethods.setVelocity(this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.getNightFactor(this.knockback))));
+						GeneralMethods.setVelocity(this, entity, entity.getVelocity().clone().add(dir.clone().multiply(this.knockback)));
 
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {

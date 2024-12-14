@@ -12,14 +12,16 @@ public class MySQL extends Database {
 	private final String user;
 	private String pass = "";
 	private final String database;
+	private String properties = "autoReconnect=true";
 
-	public MySQL(final Logger log, final String host, final int port, final String user, final String pass, final String database) {
+	public MySQL(final Logger log, final String host, final int port, final String user, final String pass, final String database, final String properties) {
 		super(log, "[MySQL] ");
 		this.host = host;
 		this.port = port;
 		this.user = user;
 		this.pass = pass;
 		this.database = database;
+		this.properties = properties;
 	}
 
 	public MySQL(final Logger log, final String user, final String pass, final String database) {
@@ -35,7 +37,12 @@ public class MySQL extends Database {
 			this.log.info("Establishing MySQL Connection...");
 
 			Class.forName("com.mysql.jdbc.Driver");
-			final String url = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database;
+
+			if (this.properties != null && !this.properties.isEmpty()) {
+				this.properties = "?" + this.properties;
+			}
+
+			final String url = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + this.properties;
 
 			this.connection = DriverManager.getConnection(url, this.user, this.pass);
 			this.printInfo("Connection established!");
