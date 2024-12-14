@@ -1,8 +1,15 @@
 package com.projectkorra.projectkorra.waterbending.healing;
 
-import java.util.HashMap;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.HealingAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.LightManager;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,14 +22,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.HealingAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.chiblocking.Smokescreen;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.HashMap;
 
 public class HealingWaters extends HealingAbility {
 
@@ -39,6 +39,9 @@ public class HealingWaters extends HealingAbility {
 	@Attribute(Attribute.DURATION)
 	private long duration;
 	private boolean enableParticles;
+	private boolean dynamicLighting;
+	private int brightness;
+	private long keepAlive;
 
 	// Instance related and predefined variables.
 	private Player player;
@@ -85,6 +88,9 @@ public class HealingWaters extends HealingAbility {
 		this.potionPotency = getConfig().getInt("Abilities.Water.HealingWaters.PotionPotency");
 		this.duration = getConfig().getLong("Abilities.Water.HealingWaters.Duration");
 		this.enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
+		this.dynamicLighting = getConfig().getBoolean("Abilities.Water.HealingWaters.DynamicLight.Enabled");
+		this.brightness = getConfig().getInt("Abilities.Water.HealingWaters.DynamicLight.Brightness");
+		this.keepAlive = getConfig().getLong("Abilities.Water.HealingWaters.DynamicLight.KeepAlive");
 		this.hex = "00ffff";
 	}
 
@@ -128,6 +134,7 @@ public class HealingWaters extends HealingAbility {
 			}
 		} else {
 			GeneralMethods.displayColoredParticle(this.hex, this.origin);
+			emitLight(this.origin);
 		}
 
 		// If the ability is charged, try healing.
@@ -243,7 +250,9 @@ public class HealingWaters extends HealingAbility {
 			final double angle = this.pstage * increment;
 			final double x = centre.getX() + (0.75 * Math.cos(angle));
 			final double z = centre.getZ() + (0.75 * Math.sin(angle));
-			GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x, centre.getY(), z));
+			Location loc = new Location(centre.getWorld(), x, centre.getY(), z);
+			GeneralMethods.displayColoredParticle(this.hex, loc);
+			emitLight(loc);
 
 			if (this.pstage >= 36) {
 				this.pstage = 0;
@@ -264,8 +273,14 @@ public class HealingWaters extends HealingAbility {
 				final double x2 = centre.getX() + (0.75 * Math.cos(angle2));
 				final double z2 = centre.getZ() + (0.75 * Math.sin(angle2));
 
-				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1));
-				GeneralMethods.displayColoredParticle(this.hex, new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2));
+				Location point1 = new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1);
+				Location point2 = new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2);
+
+				GeneralMethods.displayColoredParticle(this.hex, point1);
+				GeneralMethods.displayColoredParticle(this.hex, point2);
+
+				emitLight(point1);
+				emitLight(point2);
 
 				if (this.tstage1 >= 36) {
 					this.tstage1 = 0;
@@ -301,6 +316,7 @@ public class HealingWaters extends HealingAbility {
 		}
 
 		GeneralMethods.displayColoredParticle(this.hex, this.location);
+		emitLight(this.location);
 	}
 
 	private void fillBottle() {
@@ -322,6 +338,10 @@ public class HealingWaters extends HealingAbility {
 				}
 			}
 		}
+	}
+
+	private void emitLight(Location loc) {
+		LightManager.createLight(loc).brightness(this.brightness).timeUntilFadeout(this.keepAlive).emit();
 	}
 
 	@Override
