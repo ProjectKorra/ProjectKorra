@@ -612,7 +612,16 @@ public class PKListener implements Listener {
 
 			if (CoreAbility.getAbility(player, AirScooter.class) != null) {
 				final AirScooter abil = CoreAbility.getAbility(player, AirScooter.class);
-				abil.remove();
+				if (abil == null) {
+					return;
+				}
+
+				abil.addDamageTaken(event.getFinalDamage());
+
+				// Check if total damage taken exceeds the threshold
+				if (abil.getTotalDamageTaken() >= abil.getDamageThreshold()) {
+					abil.remove();
+				}
 			}
 
 			if (bPlayer.isElementToggled(Element.FIRE)) {

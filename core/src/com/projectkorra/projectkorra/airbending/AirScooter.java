@@ -41,6 +41,11 @@ public class AirScooter extends AirAbility {
 
 	private double phi = 0;
 
+	@Attribute("DamageThreshold")
+    private double damageThreshold;
+
+	private double totalDamageTaken;
+
 	public AirScooter(final Player player) {
 		super(player);
 
@@ -60,6 +65,8 @@ public class AirScooter extends AirAbility {
 		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirScooter.Duration");
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
+		this.damageThreshold = getConfig().getDouble("Abilities.Air.AirScooter.DamageThreshold");
+		this.totalDamageTaken = 0;
 		this.useslime = getConfig().getBoolean("Abilities.Air.AirScooter.ShowSitting");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
@@ -334,5 +341,21 @@ public class AirScooter extends AirAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+
+	public double getTotalDamageTaken() {
+		return this.totalDamageTaken;
+	}
+
+	public void addDamageTaken(double damage) {
+		this.totalDamageTaken += damage;
+	}
+
+	public double getDamageThreshold() {
+		return this.damageThreshold;
+	}
+
+	public void setDamageThreshold(double damageThreshold) {
+		this.damageThreshold = damageThreshold;
 	}
 }
