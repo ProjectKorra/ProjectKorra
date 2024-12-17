@@ -811,6 +811,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_ANVIL_LAND");
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Volume", 1);
 			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1.5);
+			config.addDefault("Abilities.Avatar.AvatarState.BossBarEnabled", true);
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
@@ -1026,6 +1027,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Flight.Cooldown", 0);
 			config.addDefault("Abilities.Air.Flight.BaseSpeed", 1.2);
 			config.addDefault("Abilities.Air.Flight.Duration", 0);
+			config.addDefault("Abilities.Air.Flight.BossBarEnabled", true);
 
 			config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 500);
