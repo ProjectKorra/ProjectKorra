@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Creature;
@@ -16,7 +17,12 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.MovementHandler;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Paralyze extends ChiAbility {
+
+	private static final Map<LivingEntity, Pair<MovementHandler, Double>> paralyzedEntities = new ConcurrentHashMap<>();
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -24,7 +30,10 @@ public class Paralyze extends ChiAbility {
 	private long duration;
 	private Entity target;
 
-	public Paralyze(final Player sourceplayer, final Entity targetentity) {
+	@Attribute("EntityDamageThreshold")
+	private double entityDamageThreshold;
+
+    public Paralyze(final Player sourceplayer, final Entity targetentity) {
 		super(sourceplayer);
 		if (!this.bPlayer.canBend(this)) {
 			return;
@@ -35,6 +44,8 @@ public class Paralyze extends ChiAbility {
 		}
 		this.cooldown = getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Chi.Paralyze.Duration");
+		this.entityDamageThreshold = getConfig().getDouble("Abilities.Chi.Paralyze.EntityDamageThreshold");
+
 		this.start();
 	}
 
@@ -63,8 +74,9 @@ public class Paralyze extends ChiAbility {
 				Suffocate.remove((Player) entity);
 			}
 		}
-		final MovementHandler mh = new MovementHandler((LivingEntity) entity, CoreAbility.getAbility(Paralyze.class));
-		mh.stopWithDuration(this.duration / 1000 * 20, Element.CHI.getColor() + "* Paralyzed *");
+        MovementHandler movementHandler = new MovementHandler((LivingEntity) entity, CoreAbility.getAbility(Paralyze.class));
+		paralyzedEntities.put((LivingEntity) entity, new Pair<>(movementHandler, this.entityDamageThreshold)); // Initialize damage at threshold
+		movementHandler.stopWithDuration(this.duration / 1000 * 20, Element.CHI.getColor() + "* Paralyzed *");
 		entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 2, 0);
 	}
 
@@ -103,5 +115,58 @@ public class Paralyze extends ChiAbility {
 
 	public long getDuration() {
 		return this.duration;
+	}
+
+	public double getEntityDamageThreshold() {
+		return entityDamageThreshold;
+	}
+
+	public static void addDamage(LivingEntity entity, double damage) {
+		Pair<MovementHandler, Double> entry = paralyzedEntities.get(entity);
+		if (entry != null) {
+			double newDamage = entry.getSecond() - damage; // Increment accumulated damage
+
+			// Check if damage threshold is exceeded
+			if (newDamage <= 0) {
+				entity.sendMessage(NamedTextColor.RED + "You have taken too much damage and are no longer paralyzed!");
+
+				// Reset movement and remove the handler
+				entry.getFirst().reset();
+				paralyzedEntities.remove(entity);
+			} else {
+				// Update the accumulated damage
+				paralyzedEntities.put(entity, new Pair<>(entry.getFirst(), newDamage));
+			}
+		}
+	}
+
+	public static Map<LivingEntity, Pair<MovementHandler, Double>> getParalyzedEntities() {
+		return paralyzedEntities;
+	}
+
+	public static class Pair<F, S> {
+		private F first; // first member of pair.
+		private S second; // second member of pair.
+
+		public Pair(final F first, final S second) {
+			this.first = first;
+			this.second = second;
+		}
+
+		public void setFirst(final F first) {
+			this.first = first;
+		}
+
+		public void setSecond(final S second) {
+			this.second = second;
+		}
+
+		public F getFirst() {
+			return this.first;
+		}
+
+		public S getSecond() {
+			return this.second;
+		}
 	}
 }

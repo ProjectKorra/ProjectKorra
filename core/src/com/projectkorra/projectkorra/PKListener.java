@@ -624,6 +624,12 @@ public class PKListener implements Listener {
 				}
 			}
 
+			// Check if the entity is paralyzed
+			Paralyze.Pair<MovementHandler, Double> entry = Paralyze.getParalyzedEntities().get(player);
+			if (entry != null) {
+				Paralyze.addDamage(player, event.getDamage());
+			}
+
 			if (bPlayer.isElementToggled(Element.FIRE)) {
 				return;
 			}
@@ -1570,7 +1576,7 @@ public class PKListener implements Listener {
 					if (abil.equalsIgnoreCase("Tornado")) {
 						new Tornado(player);
 					} else if (abil.equalsIgnoreCase("AirBlast")) {
-						AirBlast.setOrigin(player);
+						AirBlast.setOrigin(bPlayer);
 					} else if (abil.equalsIgnoreCase("AirBurst")) {
 						new AirBurst(player, false);
 					} else if (abil.equalsIgnoreCase("AirSuction")) {

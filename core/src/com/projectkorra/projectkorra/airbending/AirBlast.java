@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -113,9 +114,8 @@ public class AirBlast extends AirAbility {
 
 		// Enforce max chains limit
 		if (data.chainCount >= this.maxChains) {
-			this.bPlayer.addCooldown(this, this.longCooldown); // Apply long cooldown
+			// this.bPlayer.addCooldown(this, this.longCooldown); // Apply long cooldown
 			data.chainCount = 0; // Reset chain count for future use
-			return;
 		}
 
 		if (ORIGINS.containsKey(player)) {
@@ -147,7 +147,6 @@ public class AirBlast extends AirAbility {
 
 		if (data.chainCount >= this.maxChains) {
 			this.bPlayer.addCooldown(this, this.longCooldown); // Apply long cooldown
-			data.chainCount = 0; // Reset chain count for future use
 		} else {
 			this.bPlayer.addCooldown(this);
 		}
@@ -238,15 +237,18 @@ public class AirBlast extends AirAbility {
 		}
 	}
 
-	public static void setOrigin(final Player player) {
-		final Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), getTransparentMaterials());
+	public static void setOrigin(final BendingPlayer player) {
+		if (player.isOnCooldown("AirBlast")) {
+			return;
+		}
+		final Location location = GeneralMethods.getTargetedLocation(player.getPlayer(), getSelectRange(), getTransparentMaterials());
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
-		} else if (RegionProtection.isRegionProtected(player, location, "AirBlast")) {
+		} else if (RegionProtection.isRegionProtected(player.getPlayer(), location, "AirBlast")) {
 			return;
 		}
 
-		ORIGINS.put(player, location);
+		ORIGINS.put(player.getPlayer(), location);
 
 	}
 
