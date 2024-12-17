@@ -831,6 +831,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
 			config.addDefault("Properties.Fire.BlueFire.CooldownFactor", .9);
 			config.addDefault("Properties.Fire.BlueFire.RangeFactor", 1.2);
+			config.addDefault("Properties.Fire.DynamicLight.Enabled", true);
+			config.addDefault("Properties.Fire.DynamicLight.Brightness", 13);
+			config.addDefault("Properties.Fire.DynamicLight.KeepAlive", 600);
 
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
@@ -1026,6 +1029,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.HealingWaters.PotionPotency", 1);
 			config.addDefault("Abilities.Water.HealingWaters.Duration", 0);
 			config.addDefault("Abilities.Water.HealingWaters.EnableParticles", true);
+			config.addDefault("Abilities.Water.HealingWaters.DynamicLight.Enabled", true);
+			config.addDefault("Abilities.Water.HealingWaters.DynamicLight.Brightness", 10);
+			config.addDefault("Abilities.Water.HealingWaters.DynamicLight.KeepAlive", 350);
 
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 			config.addDefault("Abilities.Water.IceBlast.Damage", 3);
