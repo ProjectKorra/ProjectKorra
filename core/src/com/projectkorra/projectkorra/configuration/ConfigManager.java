@@ -867,6 +867,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.CanOpenDoors", true);
 			config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
 			config.addDefault("Abilities.Air.AirBlast.CanCoolLava", true);
+			config.addDefault("Abilities.Air.AirBlast.MaxChains", 5);
+			config.addDefault("Abilities.Air.AirBlast.LongCooldown", 5000);
 
 			config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 			config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
@@ -915,6 +917,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSuction.Cooldown", 500);
 			config.addDefault("Abilities.Air.AirSuction.Particles", 6);
 			config.addDefault("Abilities.Air.AirSuction.SelectParticles", 6);
+			config.addDefault("Abilities.Air.AirSuction.MaxChains", 5);
+			config.addDefault("Abilities.Air.AirSuction.LongCooldown", 5000);
 
 			config.addDefault("Abilities.Air.AirSwipe.Enabled", true);
 			config.addDefault("Abilities.Air.AirSwipe.Damage", 2);

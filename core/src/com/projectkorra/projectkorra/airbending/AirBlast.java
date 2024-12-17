@@ -1,9 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -40,6 +37,17 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class AirBlast extends AirAbility {
+
+	private static final Map<UUID, AirBlastData> playerBlastData = new ConcurrentHashMap<>();
+	static class AirBlastData {
+		private int chainCount;
+		private long lastBlastTime;
+
+		public AirBlastData() {
+			this.chainCount = 0;
+			this.lastBlastTime = 0;
+		}
+	}
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
@@ -78,6 +86,11 @@ public class AirBlast extends AirAbility {
 	private ArrayList<Block> affectedLevers;
 	private ArrayList<Entity> affectedEntities;
 
+	@Attribute("MaxChains")
+	private int maxChains;
+	@Attribute("LongCooldown")
+	private long longCooldown;
+
 	public AirBlast(final Player player) {
 		super(player);
 		if (this.bPlayer.isOnCooldown(this)) {
@@ -87,6 +100,23 @@ public class AirBlast extends AirAbility {
 		}
 
 		this.setFields();
+
+		// Retrieve or create player's AirBlast data
+		AirBlastData data = playerBlastData.computeIfAbsent(player.getUniqueId(), p -> new AirBlastData());
+
+		long currentTime = System.currentTimeMillis();
+
+		// Reset chain count if the time since last blast exceeds the long cooldown
+		if (currentTime - data.lastBlastTime > this.longCooldown) {
+			data.chainCount = 0;
+		}
+
+		// Enforce max chains limit
+		if (data.chainCount >= this.maxChains) {
+			this.bPlayer.addCooldown(this, this.longCooldown); // Apply long cooldown
+			data.chainCount = 0; // Reset chain count for future use
+			return;
+		}
 
 		if (ORIGINS.containsKey(player)) {
 			final Entity entity = GeneralMethods.getTargetedEntity(player, this.range);
@@ -107,7 +137,21 @@ public class AirBlast extends AirAbility {
 			return;
 		}
 		this.location = this.origin.clone();
-		this.bPlayer.addCooldown(this);
+
+		// Update chain count and last blast time
+		data.chainCount++;
+		data.lastBlastTime = currentTime;
+
+		// Update the map
+		playerBlastData.put(player.getUniqueId(), data);
+
+		if (data.chainCount >= this.maxChains) {
+			this.bPlayer.addCooldown(this, this.longCooldown); // Apply long cooldown
+			data.chainCount = 0; // Reset chain count for future use
+		} else {
+			this.bPlayer.addCooldown(this);
+		}
+
 		this.start();
 	}
 
@@ -160,6 +204,9 @@ public class AirBlast extends AirAbility {
 		this.random = new Random();
 		this.affectedLevers = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
+
+		this.maxChains = getConfig().getInt("Abilities.Air.AirBlast.MaxChains");
+		this.longCooldown = getConfig().getLong("Abilities.Air.AirBlast.LongCooldown");
 	}
 
 	private static void playOriginEffect(final Player player) {
@@ -363,8 +410,7 @@ public class AirBlast extends AirAbility {
 		}
 
 		this.advanceLocation();
-		return;
-	}
+    }
 
 	/**
 	 * Process all blocks that should be modified for the selected location
