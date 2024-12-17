@@ -2,7 +2,11 @@ package com.projectkorra.projectkorra.avatar;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -28,6 +32,9 @@ public class AvatarState extends AvatarAbility {
 	private long cooldown;
 	private double factor;
 
+	private BossBar bossBar;
+	private boolean enableBossBar;
+
 	public AvatarState(final Player player) {
 		super(player);
 
@@ -50,6 +57,12 @@ public class AvatarState extends AvatarAbility {
 		this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Duration");
 		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");
 		this.factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
+		this.enableBossBar = getConfig().getBoolean("Abilities.Avatar.AvatarState.BossBarEnabled");
+
+		if (enableBossBar) {
+			this.bossBar = Bukkit.createBossBar("Avatar State Active", BarColor.BLUE, BarStyle.SOLID);
+			this.bossBar.addPlayer(player);
+		}
 
 		playAvatarSound(player.getLocation());
 
@@ -75,12 +88,24 @@ public class AvatarState extends AvatarAbility {
 			}
 		}
 
+		if (enableBossBar) {
+			long elapsed = System.currentTimeMillis() - this.getStartTime();
+			double progress = 1.0 - ((double) elapsed / (double) this.duration);
+			this.bossBar.setProgress(progress);
+		}
+
 		this.addPotionEffects();
 	}
 
 	@Override
 	public void remove() {
 		this.bPlayer.addCooldown(this, true);
+
+		// Remove BossBar
+		if (enableBossBar && this.bossBar != null) {
+			this.bossBar.removeAll();
+		}
+
 		super.remove();
 	}
 
