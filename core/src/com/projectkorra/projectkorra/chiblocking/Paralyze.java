@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Creature;
@@ -128,7 +130,7 @@ public class Paralyze extends ChiAbility {
 
 			// Check if damage threshold is exceeded
 			if (newDamage <= 0) {
-				entity.sendMessage(NamedTextColor.RED + "You have taken too much damage and are no longer paralyzed!");
+				entity.sendMessage(ChatColor.RED + "You have taken too much damage and are no longer paralyzed!");
 
 				// Reset movement and remove the handler
 				entry.getFirst().reset();
