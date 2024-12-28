@@ -138,15 +138,15 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		if (this.destination == null) {
 			this.destination = GeneralMethods.getMainHandLocation(player).add(GeneralMethods.getMainHandLocation(player).getDirection().normalize().multiply(10));
 			final Vector origToDest = GeneralMethods.getDirection(this.origin, this.destination);
-			final Location hand = GeneralMethods.getMainHandLocation(player);
+			final Location feet = player.getLocation();
 			for (double i = 0; i < 30; i++) {
 				final Location endLoc = this.origin.clone().add(origToDest.clone().multiply(i / 30));
-				if (GeneralMethods.locationEqualsIgnoreDirection(hand, endLoc)) {
+				if (GeneralMethods.locationEqualsIgnoreDirection(feet, endLoc)) {
 					continue;
 				}
-				final Vector vec = GeneralMethods.getDirection(hand, endLoc);
+				final Vector vec = GeneralMethods.getDirection(feet, endLoc);
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, hand, this.range, this.speed);
+				final FireComboStream fs = new FireComboStream(this.player, this, vec, feet, this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
