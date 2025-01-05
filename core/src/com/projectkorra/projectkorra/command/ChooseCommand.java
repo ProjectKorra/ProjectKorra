@@ -145,7 +145,7 @@ public class ChooseCommand extends PKCommand {
 			}).exceptionally(e -> {
 				e.printStackTrace();
 				return null;
-			});;
+			});
 
 		}
 	}
@@ -227,7 +227,7 @@ public class ChooseCommand extends PKCommand {
 		}).exceptionally(e -> {
 			e.printStackTrace();
 			return null;
-		});;
+		});
 	}
 
 	public static boolean isVowel(final char c) {
