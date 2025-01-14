@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,33 +33,34 @@ public class IceSpikePillar extends IceAbility {
 	/** The list of blocks IceSpike uses */
 	private final Map<Block, TempBlock> ice_blocks = new HashMap<Block, TempBlock>();
 
-	@Attribute(Attribute.HEIGHT)
+	@Attribute(Attribute.HEIGHT) @DayNightFactor
 	private int height;
 	private int progress;
 	@Attribute("SlowPotency")
 	private int slowPower;
 	@Attribute("Slow" + Attribute.DURATION)
 	private int slowDuration;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
 	private long time;
 	private long removeTimestamp;
-	@Attribute(Attribute.DURATION)
+	@Attribute(Attribute.DURATION) @DayNightFactor
 	private long duration;
 	private long interval;
-	@Attribute("Slow" + Attribute.COOLDOWN)
+	@Attribute("Slow" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long slowCooldown;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
 	private Block source_block; // The block clicked on.
 	private Block base_block; // The block at the bottom of the pillar.
 	private Location origin;
 	private Location location;
-	private Vector thrownForce;
+	@Attribute(Attribute.KNOCKUP)
+	private double thrownForce;
 	private Vector direction;
 	private ArrayList<LivingEntity> damaged;
 	protected boolean inField = false; // If it's part of a field or not.
@@ -69,6 +72,8 @@ public class IceSpikePillar extends IceAbility {
 		if (this.bPlayer.isOnCooldown("IceSpikePillar")) {
 			return;
 		}
+
+		this.recalculateAttributes();
 
 		try {
 			double lowestDistance = this.range + 1;
@@ -110,7 +115,7 @@ public class IceSpikePillar extends IceAbility {
 		}
 	}
 
-	public IceSpikePillar(final Player player, final Location origin, final int damage, final Vector throwing, final long aoecooldown) {
+	public IceSpikePillar(final Player player, final Location origin, final int damage, final double throwing, final long aoecooldown) {
 		super(player);
 		this.setFields();
 
@@ -133,26 +138,17 @@ public class IceSpikePillar extends IceAbility {
 	private void setFields() {
 		this.direction = new Vector(0, 1, 0);
 		this.speed = getConfig().getDouble("Abilities.Water.IceSpike.Speed");
-		this.slowCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceSpike.SlowCooldown"));
+		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.SlowCooldown");
 		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.SlowPower");
 		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.SlowDuration");
-		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Damage"));
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Range"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceSpike.Cooldown"));
-		this.height = (int) applyModifiers(getConfig().getInt("Abilities.Water.IceSpike.Height"));
-		this.thrownForce = new Vector(0, applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Push")), 0);
+		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Damage");
+		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Range");
+		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
+		this.height = getConfig().getInt("Abilities.Water.IceSpike.Height");
+		this.thrownForce = getConfig().getDouble("Abilities.Water.IceSpike.Push");
 		this.damaged = new ArrayList<>();
 
 		this.interval = (long) (1000. / this.speed);
-
-		if (this.bPlayer.isAvatarState()) {
-			this.slowPower = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowPower");
-			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.SlowDuration");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Range");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Height");
-			this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Push"), 0);
-		}
 	}
 
 	/**
@@ -224,7 +220,7 @@ public class IceSpikePillar extends IceAbility {
 		final Block affectedBlock = this.location.clone().add(this.direction).getBlock();
 		this.location = this.location.add(this.direction);
 
-		if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
+		if (RegionProtection.isRegionProtected(this, this.location)) {
 			return false;
 		}
 
@@ -246,7 +242,7 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	private void affect(final LivingEntity entity) {
-		GeneralMethods.setVelocity(this, entity, this.thrownForce);
+		GeneralMethods.setVelocity(this, entity, new Vector(0, this.thrownForce, 0));
 		DamageHandler.damageEntity(entity, this.damage, this);
 		this.damaged.add(entity);
 
@@ -427,11 +423,11 @@ public class IceSpikePillar extends IceAbility {
 		this.location = location;
 	}
 
-	public Vector getThrownForce() {
+	public double getThrownForce() {
 		return this.thrownForce;
 	}
 
-	public void setThrownForce(final Vector thrownForce) {
+	public void setThrownForce(final double thrownForce) {
 		this.thrownForce = thrownForce;
 	}
 

@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -19,9 +20,9 @@ public class BlazeArc extends FireAbility {
 
 	private long time;
 	private long interval;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
 	private Location origin;
 	private Location location;
@@ -29,7 +30,7 @@ public class BlazeArc extends FireAbility {
 
 	public BlazeArc(final Player player, final Location location, final Vector direction, final double range) {
 		super(player);
-		this.range = applyModifiersRange(range);
+		this.range = range;
 		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
 		this.interval = (long) (1000.0 / this.speed);
 

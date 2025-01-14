@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.util;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
@@ -11,6 +12,17 @@ public class TimeUtil {
 	 * @return Formatted time
 	 */
 	public static String formatTime(long time) {
+		return formatTime(time, false);
+	}
+
+	/**
+	 * Get the given time in a formatted String.
+	 *
+	 * @param time Time to be formatting (milliseconds)
+	 * @param longFormat Whether to use long format (days, hours, minutes, seconds) or short format (d, h, m, s)
+	 * @return Formatted time
+	 */
+	public static String formatTime(long time, boolean longFormat) {
 		String sign = "";
 		if (time < 0) {
 			sign = "-";
@@ -23,22 +35,22 @@ public class TimeUtil {
 		final long ms = time % 1000;
 		String formatted = sign;
 		if (days > 0) {
-			formatted += String.valueOf(days) + "d ";
+			formatted += String.valueOf(days) + (longFormat ? " day(s) " : "d ");
 		}
 		if (hours > 0) {
-			formatted += String.valueOf(hours) + "h ";
+			formatted += String.valueOf(hours) + (longFormat ? " hour(s) " : "h ");
 		}
 		if (minutes > 0) {
-			formatted += String.valueOf(minutes) + "m ";
+			formatted += String.valueOf(minutes) + (longFormat ? " minute(s) " : "m ");
 		}
 		if (seconds > 0) {
-			formatted += String.valueOf(seconds) + "s";
+			formatted += String.valueOf(seconds) + (longFormat ? " second(s) " : "s");
 		}
 		if (ms > 0 && (formatted.equals("") || formatted.equals("-"))) {
-			formatted += "0." + String.valueOf(ms / 100) + "s";
+			formatted += "0." + String.valueOf(ms / 100) + (longFormat ? " second(s) " : "s");;
 		}
-		if (formatted.length() == 0) return "0s";
-		return formatted;
+		if (formatted.isEmpty()) return longFormat ? "0 seconds" : "0s";
+		return formatted.trim();
 	}
 
 	/**

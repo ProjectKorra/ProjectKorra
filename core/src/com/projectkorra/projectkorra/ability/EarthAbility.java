@@ -41,6 +41,8 @@ public abstract class EarthAbility extends ElementalAbility {
 	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
 
+	protected int noiseReduction = 0;
+
 	public EarthAbility(final Player player) {
 		super(player);
 	}
@@ -204,7 +206,10 @@ public abstract class EarthAbility extends ElementalAbility {
 				}
 
 				moveEarthBlock(block, affectedblock);
-				playEarthbendingSound(block.getLocation());
+
+				// Play sound every other tick, but also alternate on the tick that it should occur on for each different ability
+				if ((CoreAbility.getCurrentTick() + this.getId()) % (2 + this.noiseReduction) == 0)
+					playEarthbendingSound(block.getLocation());
 
 				for (double i = 1; i < chainlength; i++) {
 					affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
@@ -655,6 +660,24 @@ public abstract class EarthAbility extends ElementalAbility {
 			MOVED_EARTH.remove(block);
 		}
 		return true;
+	}
+
+	/**
+	 * Gets the noise reduction amount for this ability. This is used to reduce the noise
+	 * produced by {@link #moveEarth}. Higher values mean less noise
+	 * @return the amount of noise reduction
+	 */
+	public int getNoiseReduction() {
+		return noiseReduction;
+	}
+
+	/**
+	 * Sets the noise reduction amount for this ability. This is used to reduce the noise
+	 * produced by {@link #moveEarth}. Higher values mean less noise
+	 * @param reduceEarthNoise the amount of noise reduction
+	 */
+	public void setNoiseReduction(int reduceEarthNoise) {
+		this.noiseReduction = Math.max(0, reduceEarthNoise); //Don't let it be less than 0
 	}
 
 	public double applyMetalPowerFactor(double value, Block source) {

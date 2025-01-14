@@ -28,16 +28,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BendingBoard {
 
-	private static final char[] CHAT_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+	protected static final char[] CHAT_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	
 	public static class BoardSlot {
 		
-		private Scoreboard board;
-		private Objective obj;
-		private int slot;
-		private Team team;
-		private String entry;
-		private Optional<BoardSlot> next = Optional.empty(), prev = Optional.empty();
+		protected Scoreboard board;
+		protected Objective obj;
+		public int slot;
+		protected Team team;
+		protected String entry;
+		public Optional<BoardSlot> next = Optional.empty(), prev = Optional.empty();
 
 		public BoardSlot(Scoreboard board, Objective obj, int slot) {
 			this.board = board;
@@ -46,7 +46,7 @@ public class BendingBoard {
 			this.formTeam();
 		}
 
-		private void formTeam() {
+		public void formTeam() {
 			this.team = board.getTeam("slot" + this.slot) == null
 					? board.registerNewTeam("slot" + this.slot)
 					: board.getTeam("slot" + this.slot);
@@ -54,8 +54,8 @@ public class BendingBoard {
 			
 			team.addEntry(entry);
 		}
-		
-		private void set() {
+
+		public void set() {
 			int s = Math.min(slot, 11);
 			obj.getScore(entry).setScore(-s);
 		}
@@ -83,30 +83,30 @@ public class BendingBoard {
 			}
 			board.resetScores(entry);
 		}
-		
-		private void setNext(BoardSlot slot) {
+
+		public void setNext(BoardSlot slot) {
 			this.next = Optional.of(slot);
 		}
 
-		private void setPrev(BoardSlot slot) {
+		public void setPrev(BoardSlot slot) {
 			this.prev = Optional.of(slot);
 		}
 	}
-	
-	private final BoardSlot[] slots = new BoardSlot[9];
-	private final Map<String, BoardSlot> misc = new HashMap<>();
-	private final Queue<Integer> miscSlotIds = new LinkedList<>();
-	private BoardSlot miscTail = null;
 
-	private final Player player;
-	private final BendingPlayer bendingPlayer;
+	protected final BoardSlot[] slots = new BoardSlot[9];
+	protected final Map<String, BoardSlot> misc = new HashMap<>();
+	protected final Queue<Integer> miscSlotIds = new LinkedList<>();
+	protected BoardSlot miscTail = null;
 
-	private final Scoreboard bendingBoard;
-	private final Objective bendingSlots;
-	private int selectedSlot;
-	
-	private String prefix, emptySlot, miscSeparator;
-	private ChatColor selectedColor, altColor;
+	protected final Player player;
+	protected final BendingPlayer bendingPlayer;
+
+	protected final Scoreboard bendingBoard;
+	protected final Objective bendingSlots;
+	protected int selectedSlot;
+
+	protected String prefix, emptySlot, miscSeparator;
+	protected ChatColor selectedColor, altColor;
 
 	public BendingBoard(final BendingPlayer bPlayer) {
 		bendingPlayer = bPlayer;

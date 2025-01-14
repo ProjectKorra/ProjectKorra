@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.waterbending.ice;
 
 import java.util.Random;
 
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,20 +35,20 @@ public class IceSpikeBlast extends IceAbility {
 	private byte data;
 	@Attribute("SlowPotency")
 	private int slowPotency;
-	@Attribute("Slow" + Attribute.DURATION)
+	@Attribute("Slow" + Attribute.DURATION) @DayNightFactor
 	private int slowDuration;
 	private long time;
 	private long interval;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute("Slow" + Attribute.COOLDOWN)
+	@Attribute("Slow" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long slowCooldown;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
 	private double collisionRadius;
-	@Attribute("Deflect" + Attribute.RANGE)
+	@Attribute("Deflect" + Attribute.RANGE) @DayNightFactor
 	private double deflectRange;
 	private Block sourceBlock;
 	private Location location;
@@ -64,26 +66,17 @@ public class IceSpikeBlast extends IceAbility {
 
 		this.data = 0;
 		this.interval = getConfig().getLong("Abilities.Water.IceSpike.Blast.Interval");
-		this.slowCooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceSpike.Blast.SlowCooldown"));
+		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.SlowCooldown");
 		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceSpike.Blast.CollisionRadius");
-		this.deflectRange = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Blast.DeflectRange"));
-		this.range = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Blast.Range"));
-		this.damage = applyModifiers(getConfig().getDouble("Abilities.Water.IceSpike.Blast.Damage"));
-		this.cooldown = applyInverseModifiers(getConfig().getLong("Abilities.Water.IceSpike.Blast.Cooldown"));
+		this.deflectRange = getConfig().getDouble("Abilities.Water.IceSpike.Blast.DeflectRange");
+		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Range");
+		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.Cooldown");
 		this.slowPotency = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPotency");
 		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowDuration");
 
 		if (!this.bPlayer.canBend(this) || !this.bPlayer.canIcebend()) {
 			return;
-		}
-
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.slowCooldown = 0;
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Range");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Damage");
-			this.slowPotency = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPotency");
-			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowDuration");
 		}
 
 		block(player);
@@ -94,7 +87,7 @@ public class IceSpikeBlast extends IceAbility {
 
 		if (this.sourceBlock == null) {
 			new IceSpikePillarField(player);
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.sourceBlock.getLocation())) {
+		} else if (RegionProtection.isRegionProtected(this, this.sourceBlock.getLocation())) {
 			return;
 		} else {
 			this.prepare(this.sourceBlock);

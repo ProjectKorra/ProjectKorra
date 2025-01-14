@@ -21,6 +21,7 @@ public class EarthTunnel extends EarthAbility {
 	private static final Set<String> IGNORED_BLOCKS = new HashSet<String>();
 	
 	private long interval;
+	@Attribute(Attribute.SPEED)
 	private int blocksPerInterval;
 	private long time;
 	@Attribute("Depth")
@@ -72,9 +73,6 @@ public class EarthTunnel extends EarthAbility {
 		}
 		if (GeneralMethods.isRegionProtectedFromBuild(this, this.block.getLocation())) {
 			return;
-		}
-		if (this.bPlayer.isAvatarState()) {
-			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
 		}
 
 		this.radiusIncrement = this.radius;

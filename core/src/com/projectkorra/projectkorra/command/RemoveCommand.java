@@ -23,7 +23,9 @@ import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
  */
 public class RemoveCommand extends PKCommand {
 
-	private final String succesfullyRemovedElementSelf, wrongElementSelf, invalidElement, playerNotFound, wrongElementTarget, succesfullyRemovedElementTarget, succesfullyRemovedElementTargetConfirm, succesfullyRemovedAllElementsTarget, succesfullyRemovedAllElementsTargetConfirm;
+	private final String succesfullyRemovedElementSelf, wrongElementSelf, invalidElement, playerNotFound, wrongElementTarget,
+			succesfullyRemovedElementTarget, succesfullyRemovedElementTargetConfirm, succesfullyRemovedAllElementsTarget,
+			succesfullyRemovedAllElementsTargetConfirm, noElements, noElementsTarget, noElementsTargetTemps;
 
 	public RemoveCommand() {
 		super("remove", "/bending remove <Player> [Element]", ConfigManager.languageConfig.get().getString("Commands.Remove.Description"), new String[] { "remove", "rm" });
@@ -37,6 +39,9 @@ public class RemoveCommand extends PKCommand {
 		this.wrongElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.WrongElement");
 		this.wrongElementTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.WrongElement");
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Remove.PlayerNotFound");
+		this.noElements = ConfigManager.languageConfig.get().getString("Commands.Remove.NoElements");
+		this.noElementsTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.NoElements");
+		this.noElementsTargetTemps = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.NoElementsWithTemps");
 	}
 
 	@Override
@@ -48,27 +53,48 @@ public class RemoveCommand extends PKCommand {
 		if (args.size() == 1) {
 			final Element e = Element.fromString(args.get(0));
 			if (e == null) { //The first argument must be a playername instead
-				final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(0));
-				if (!player.isOnline() && !player.hasPlayedBefore()) { //Player not found
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
-					return;
-				}
-
-				BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
-					boolean online = bPlayer instanceof BendingPlayer;
-					bPlayer.getElements().clear();
-					bPlayer.getSubElements().clear();
-					bPlayer.saveElements();
-					bPlayer.saveSubElements();
-					if (online) ((BendingPlayer)bPlayer).removeUnusableAbilities();
-					if (!player.getName().equalsIgnoreCase(sender.getName())) {
-						ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
+				getPlayer(args.get(0)).thenAccept(player -> {
+					if (!player.isOnline() && !player.hasPlayedBefore()) { //Player not found
+						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
+						return;
 					}
 
-					if (online) {
-						ChatUtil.sendBrandingMessage((Player) player, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
-						Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) player, null, Result.REMOVE));
-					}
+					BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
+						boolean online = bPlayer instanceof BendingPlayer;
+
+						//If they have no elements
+						if (bPlayer.getElements().size() == 0) {
+							//If they still have temp elements
+							if (bPlayer.hasTempElements()) {
+								ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noElementsTargetTemps.replace("{target}", player.getName()));
+							} else { //Tell them they have no elements
+								if (player != sender)
+									ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noElementsTarget.replace("{target}", player.getName()));
+								else ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noElements);
+							}
+							return;
+						}
+
+						bPlayer.getElements().clear();
+						bPlayer.getSubElements().clear();
+						bPlayer.saveElements();
+						bPlayer.saveSubElements();
+						if (online) ((BendingPlayer) bPlayer).removeUnusableAbilities();
+						if (!player.getName().equalsIgnoreCase(sender.getName())) {
+							ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
+						}
+
+						if (online) {
+							ChatUtil.sendBrandingMessage((Player) player, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) player, null, Result.REMOVE));
+						}
+					}).exceptionally(ex -> {
+						ex.printStackTrace();
+						return null;
+					});
+				}).exceptionally(ex -> {
+					ex.printStackTrace();
+					return null;
 				});
 			} else { //The first argument is an element
 				if (!(sender instanceof Player)) { //Make sure the sender is a player
@@ -78,6 +104,12 @@ public class RemoveCommand extends PKCommand {
 
 				BendingPlayer senderBPlayer = BendingPlayer.getBendingPlayer((Player) sender);
 				Player player = (Player) sender;
+
+				//If it is a temp element, let the TempCommand handle it
+				if (senderBPlayer.hasTempElement(e)) {
+					TempCommand.TEMP_COMMAND.removeElement(e, senderBPlayer, sender, false);
+					return;
+				}
 
 				if (e instanceof SubElement) { //If it's a subelement
 					if (senderBPlayer.hasElement(e)) {
@@ -124,151 +156,68 @@ public class RemoveCommand extends PKCommand {
 		}
 
 		//2 arguments
-		final OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(0));
-		if (!player.isOnline() && !player.hasPlayedBefore()) { //Player not found
-			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
-			return;
-		}
-
-		Element element = Element.fromString(args.get(1));
-		if (element == null) {
-			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.invalidElement);
-			return;
-		}
-
-		BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
-			boolean online = bPlayer instanceof BendingPlayer;
-			if (!bPlayer.hasElement(element)) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.DARK_RED + this.wrongElementTarget.replace("{target}", player.getName()));
+		getPlayer(args.get(0)).thenAccept(player -> {
+			if (!player.isOnline() && !player.hasPlayedBefore()) { //Player not found
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 				return;
 			}
 
-			if (element instanceof SubElement) {
-				bPlayer.getSubElements().remove(element);
-				bPlayer.saveSubElements();
-			} else {
-				bPlayer.getElements().remove(element);
-				for (final SubElement sub : Element.getSubElements(element)) {
-					if (!(sub instanceof Element.MultiSubElement)) bPlayer.getSubElements().remove(sub);
-					else {
-						Element.MultiSubElement multiSubElement = (Element.MultiSubElement) sub;
-						boolean keep = false;
-						for (Element parent : multiSubElement.getParentElements()) {
-							if (bPlayer.hasElement(parent)) {
-								keep = true;
-								break;
-							}
-						}
-						if (!keep) bPlayer.getSubElements().remove(sub);
-					}
-				}
-				bPlayer.saveElements();
-				bPlayer.saveSubElements();
-			}
-			if (player != sender) ChatUtil.sendBrandingMessage(sender, element.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", element.toString() + element.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + element.getColor()));
-
-			if (online) {
-				((BendingPlayer)bPlayer).removeUnusableAbilities();
-				ChatUtil.sendBrandingMessage((Player)player, element.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", element.toString() + element.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + element.getColor()));
-				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) player, element, Result.REMOVE));
-			}
-		});
-
-		//---------------
-
-		/*if (player == null) {
-			if (args.size() == 1) {
-
-				final BendingPlayer senderBPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-
-				if (senderBPlayer != null && sender instanceof Player) {
-					if (e != null) {
-						if (e instanceof SubElement) {
-							if (senderBPlayer.hasElement(e)) {
-								senderBPlayer.getSubElements().remove(e);
-								senderBPlayer.saveSubElements();
-								senderBPlayer.removeUnusableAbilities();
-								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.toString() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
-								Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, player, (SubElement) e, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.REMOVE));
-							} else {
-								GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElementSelf);
-							}
-							return;
-						} else if (e instanceof Element) {
-							if (senderBPlayer.hasElement(e)) {
-								senderBPlayer.getElements().remove(e);
-								for (final SubElement sub : Element.getSubElements(e)) {
-									senderBPlayer.getSubElements().remove(sub);
-								}
-								senderBPlayer.saveElements();
-								senderBPlayer.saveSubElements();
-								senderBPlayer.removeUnusableAbilities();
-
-								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.toString() + e.getType().getBending()));
-								Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
-								return;
-							} else {
-								GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.wrongElementSelf);
-							}
-							{
-								return;
-							}
-						}
-					} else {
-						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.invalidElement);
-					}
-					{
-						return;
-					}
-				}
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
-				return;
-			} else {
-				this.help(sender, false);
+			Element element = Element.fromString(args.get(1));
+			if (element == null) {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.invalidElement);
 				return;
 			}
-		}
 
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (args.size() == 2) {
-			final Element e = Element.fromString(args.get(1));
-			if (e != null) {
-				if (!bPlayer.hasElement(e)) {
-					GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + this.wrongElementTarget.replace("{target}", player.getName()));
+			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
+				boolean online = bPlayer instanceof BendingPlayer;
+				if (!bPlayer.hasElement(element)) {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.DARK_RED + this.wrongElementTarget.replace("{target}", player.getName()));
 					return;
 				}
-				if (e instanceof SubElement) {
-					bPlayer.getSubElements().remove(e);
+
+				//If the element is a temp element that hasn't expired, remove it via the temp command (just saves repeating the same code)
+				if (bPlayer.hasTempElement(element)) {
+					TempCommand.TEMP_COMMAND.removeElement(element, bPlayer, sender, false);
+					return;
+				}
+
+				if (element instanceof SubElement) {
+					bPlayer.getSubElements().remove(element);
 					bPlayer.saveSubElements();
 				} else {
-					bPlayer.getElements().remove(e);
-					for (final SubElement sub : Element.getSubElements(e)) {
-						bPlayer.getSubElements().remove(sub);
+					bPlayer.getElements().remove(element);
+					for (final SubElement sub : Element.getSubElements(element)) {
+						if (!(sub instanceof Element.MultiSubElement)) bPlayer.getSubElements().remove(sub);
+						else {
+							Element.MultiSubElement multiSubElement = (Element.MultiSubElement) sub;
+							boolean keep = false;
+							for (Element parent : multiSubElement.getParentElements()) {
+								if (bPlayer.hasElement(parent)) {
+									keep = true;
+									break;
+								}
+							}
+							if (!keep) bPlayer.getSubElements().remove(sub);
+						}
 					}
 					bPlayer.saveElements();
 					bPlayer.saveSubElements();
 				}
+				if (player != sender) ChatUtil.sendBrandingMessage(sender, element.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", element.toString() + element.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + element.getColor()));
 
-				bPlayer.removeUnusableAbilities();
-				GeneralMethods.sendBrandingMessage(player, e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", e.toString() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
-				GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.toString() + e.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
-				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
-				return;
-			}
-		} else if (args.size() == 1) {
-			bPlayer.getElements().clear();
-			bPlayer.getSubElements().clear();
-			bPlayer.saveElements();
-			bPlayer.saveSubElements();
-			bPlayer.removeUnusableAbilities();
-			if (!player.getName().equalsIgnoreCase(sender.getName())) {
-				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
-			}
-
-			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.REMOVE));
-		}*/
+				if (online) {
+					((BendingPlayer)bPlayer).removeUnusableAbilities();
+					ChatUtil.sendBrandingMessage((Player)player, element.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", element.toString() + element.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + element.getColor()));
+					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) player, element, Result.REMOVE));
+				}
+			}).exceptionally(ex -> {
+				ex.printStackTrace();
+				return null;
+			});
+		}).exceptionally(ex -> {
+			ex.printStackTrace();
+			return null;
+		});
 	}
 
 	@Override

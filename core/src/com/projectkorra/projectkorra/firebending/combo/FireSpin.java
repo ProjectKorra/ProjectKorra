@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,15 +25,15 @@ import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireSpin extends FireAbility implements ComboAbility {
 
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.KNOCKBACK)
+	@Attribute(Attribute.KNOCKBACK) @DayNightFactor
 	private double knockback;
 	private Location destination;
 	private ArrayList<LivingEntity> affectedEntities;
@@ -52,18 +53,11 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireSpin.Damage"));
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireSpin.Range"));
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireSpin.Cooldown"));
-		this.knockback = applyModifiers(getConfig().getDouble("Abilities.Fire.FireSpin.Knockback"));
+		this.damage = getConfig().getDouble("Abilities.Fire.FireSpin.Damage");
+		this.range = getConfig().getDouble("Abilities.Fire.FireSpin.Range");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireSpin.Cooldown");
+		this.knockback = getConfig().getDouble("Abilities.Fire.FireSpin.Knockback");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireSpin.Speed");
-
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Range");
-			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback");
-		}
 
 		this.start();
 	}

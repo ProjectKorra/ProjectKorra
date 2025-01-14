@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
+import com.djrapitops.plan.extension.ExtensionService;
+import com.projectkorra.projectkorra.hooks.PlanExtension;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
@@ -82,6 +84,7 @@ public class ProjectKorra extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
+		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new BendingManager.TempElementsRunnable(), 20, 20);
 		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
@@ -123,6 +126,10 @@ public class ProjectKorra extends JavaPlugin {
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			papiHook = new PlaceholderAPIHook(this);
 			papiHook.register();
+		}
+
+		if (Bukkit.getPluginManager().isPluginEnabled("Plan")) {
+			new PlanExtension();
 		}
 	}
 

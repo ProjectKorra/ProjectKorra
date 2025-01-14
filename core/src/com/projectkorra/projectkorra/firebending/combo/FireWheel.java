@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending.combo;
 import java.util.ArrayList;
 
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
+import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,18 +29,18 @@ public class FireWheel extends FireAbility implements ComboAbility {
 	private Location origin;
 	private Location location;
 	private Vector direction;
-	@Attribute(Attribute.COOLDOWN)
+	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
-	@Attribute(Attribute.RANGE)
+	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
-	@Attribute(Attribute.HEIGHT)
+	@Attribute(Attribute.HEIGHT) @DayNightFactor
 	private double height;
 	private double radius;
-	@Attribute(Attribute.SPEED)
+	@Attribute(Attribute.SPEED) @DayNightFactor
 	private double speed;
-	@Attribute(Attribute.FIRE_TICK)
+	@Attribute(Attribute.FIRE_TICK) @DayNightFactor
 	private double fireTicks;
-	@Attribute(Attribute.DAMAGE)
+	@Attribute(Attribute.DAMAGE) @DayNightFactor
 	private double damage;
 	private ArrayList<LivingEntity> affectedEntities;
 
@@ -51,12 +52,12 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		this.damage = applyModifiersDamage(getConfig().getDouble("Abilities.Fire.FireWheel.Damage"));
-		this.range = applyModifiersRange(getConfig().getDouble("Abilities.Fire.FireWheel.Range"));
+		this.damage = getConfig().getDouble("Abilities.Fire.FireWheel.Damage");
+		this.range = getConfig().getDouble("Abilities.Fire.FireWheel.Range");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireWheel.Speed");
-		this.cooldown = applyModifiersCooldown(getConfig().getLong("Abilities.Fire.FireWheel.Cooldown"));
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
-		this.height = applyModifiers(getConfig().getInt("Abilities.Fire.FireWheel.Height"));
+		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
 
 		this.bPlayer.addCooldown(this);
 		this.affectedEntities = new ArrayList<LivingEntity>();
@@ -70,15 +71,6 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		this.location.setPitch(0);
 		this.direction = this.location.getDirection().clone().normalize();
 		this.direction.setY(0);
-
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = 0;
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Range");
-			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
-			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
-		}
 
 		this.radius = this.height / 2;
 		this.origin = player.getLocation().clone().add(0, this.radius, 0);

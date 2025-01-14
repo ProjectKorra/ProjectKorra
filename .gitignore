@@ -240,3 +240,5 @@ classes/
 out/
 projectkorra.iml
 .vscode/settings.json
+
+*.iml

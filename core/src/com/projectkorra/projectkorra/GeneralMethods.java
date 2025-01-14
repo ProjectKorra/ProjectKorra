@@ -53,6 +53,7 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+import io.lumine.mythic.lib.UtilityMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -72,7 +73,9 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
@@ -726,7 +729,16 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(final Location location, final double radius) {
-		return getEntitiesAroundPoint(location, radius, entity -> !(entity.isDead() || (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker());
+		return getEntitiesAroundPoint(location, radius, getEntityFilter());
+	}
+
+	/**
+	 * Get the filter used to filter out dead entities, immune entities, marker armorstands and spectators
+	 * @return The filter
+	 */
+	public static Predicate<Entity> getEntityFilter() {
+		return entity -> !(entity.isDead() || entity.hasMetadata ("BendingImmunity")
+				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker();
 	}
 
 	public static long getGlobalCooldown() {
@@ -1260,6 +1272,13 @@ public class GeneralMethods {
 		return !material.isOccluding() && !material.isSolid();
 	}
 
+	public static boolean isFakeEvent(final EntityDamageEvent event) {
+		if (Bukkit.getPluginManager().isPluginEnabled("MythicLib")) {
+			return UtilityMethods.isFakeEvent(event);
+		}
+		return false;
+	}
+
 	/** Checks if an entity is Undead **/
 	public static boolean isUndead(final Entity entity) {
 		if (entity == null) {
@@ -1347,6 +1366,7 @@ public class GeneralMethods {
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
+		ConfigManager.avatarStateConfig.reload();
 		Arrays.stream(Element.getElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Load colors from config again
 		Arrays.stream(Element.getSubElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Same for subs
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
@@ -1360,6 +1380,7 @@ public class GeneralMethods {
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new EarthbendingManager(ProjectKorra.plugin), 0, 1);
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
+		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new BendingManager.TempElementsRunnable(), 20, 20);
 		ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
 
 		EarthTunnel.setupBendableMaterials();
@@ -1387,6 +1408,7 @@ public class GeneralMethods {
 		}
 		BendingPlayer.getOfflinePlayers().clear();
 		BendingPlayer.getPlayers().clear();
+		OfflineBendingPlayer.TEMP_ELEMENTS.clear();
 		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 		BendingBoardManager.reload();
 		for (final Player player : Bukkit.getOnlinePlayers()) {

@@ -93,13 +93,6 @@ public class Suffocate extends AirAbility {
 		this.targets = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		if (this.bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown");
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
-		}
-
 		if (this.particleCount < 1) {
 			this.particleCount = 1;
 		} else if (this.particleCount > 2) {

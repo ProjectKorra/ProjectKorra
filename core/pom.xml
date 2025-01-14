@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.projectkorra</groupId>
     <artifactId>projectkorra</artifactId>
-    <version>1.11.3</version>
+    <version>1.12.0-BETA-10</version>
   </parent>
 
   <artifactId>core</artifactId>
@@ -60,6 +60,11 @@
       <id>redprotect-repo</id>
       <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>
     </repository>
+    <repository>
+      <id>phoenix</id>
+      <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
+    </repository>
+
   </repositories>
 
   <dependencies>
@@ -109,9 +114,9 @@
     </dependency>
     <!-- GriefPrevention -->
     <dependency>
-      <groupId>com.github.TechFortress</groupId>
+      <groupId>com.github.GriefPrevention</groupId>
       <artifactId>GriefPrevention</artifactId>
-      <version>16.18</version>
+      <version>16.18.2</version>
       <scope>provided</scope>
     </dependency>
     <!-- LWC -->
@@ -119,13 +124,6 @@
       <groupId>com.griefcraft</groupId>
       <artifactId>lwc</artifactId>
       <version>2.2.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- NoCheatPlus -->
-    <dependency>
-      <groupId>fr.neatmonster</groupId>
-      <artifactId>nocheatplus</artifactId>
-      <version>3.16.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Lands -->
@@ -153,19 +151,19 @@
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.2.15-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldguard</groupId>
       <artifactId>worldguard-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.0.5-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-bukkit</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.2.15-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -187,13 +185,6 @@
       <version>7.7.2</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Kingdoms -->
-    <dependency>
-      <groupId>com.github.cryptomorin</groupId>
-      <artifactId>kingdoms</artifactId>
-      <version>1.13.9</version>
-      <scope>provided</scope>
-    </dependency>
     <!-- PlaceholderAPI -->
     <dependency>
       <groupId>me.clip</groupId>
@@ -206,6 +197,20 @@
       <groupId>com.griefdefender</groupId>
       <artifactId>api</artifactId>
       <version>2.1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Plan -->
+    <dependency>
+      <groupId>com.github.plan-player-analytics</groupId>
+      <artifactId>Plan</artifactId>
+      <version>5.6.2816</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- MMOLib/Mythic Lib - For mythic mobs bug bypass -->
+    <dependency>
+      <groupId>io.lumine</groupId>
+      <artifactId>MythicLib-dist</artifactId>
+      <version>1.6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

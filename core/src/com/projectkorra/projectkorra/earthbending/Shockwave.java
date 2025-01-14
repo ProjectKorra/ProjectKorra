@@ -29,12 +29,6 @@ public class Shockwave extends EarthAbility {
 		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
 		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
 
-		if (this.bPlayer.isAvatarState()) {
-			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
-		}
-
 		if (!this.bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
 			return;
 		}

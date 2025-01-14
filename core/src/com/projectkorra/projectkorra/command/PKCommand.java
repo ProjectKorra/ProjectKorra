@@ -8,15 +8,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Abstract representation of a command executor. Implements {@link SubCommand}.
@@ -272,11 +276,45 @@ public abstract class PKCommand implements SubCommand {
 		Commands.initializeCommands();
 	}
 
+	/**
+	 * Get a list of online players that the sender can see
+	 * @param sender Who is sending the command
+	 * @return A list of online players that the sender can see
+	 */
 	public List<Player> getOnlinePlayers(final CommandSender sender) {
-		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || ((Player) sender).canSee(p)).collect(Collectors.toList());
 	}
 
+	/**
+	 * Get a list of online player names that the sender can see
+	 * @param sender Who is sending the command
+	 * @return A list of online player names that the sender can see
+	 */
 	public List<String> getOnlinePlayerNames(final CommandSender sender) {
-		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || p.canSee((Player) sender)).map(Player::getName).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || ((Player) sender).canSee(p)).map(Player::getName).collect(Collectors.toList());
+	}
+
+	/**
+	 * Get an offline player by name. Runs in an async thread so the main thread doesn't stall.
+	 * @param name The name of the player to get
+	 * @return A CompletableFuture that will complete with the player
+	 */
+	@NotNull
+	public CompletableFuture<OfflinePlayer> getPlayer(String name) {
+		CompletableFuture<OfflinePlayer> future = new CompletableFuture<OfflinePlayer>().whenComplete((o, e) -> {
+			if (e != null) {
+				e.printStackTrace();
+			}
+		});
+
+		//If the player is online, return them instantly so it doesn't happen next tick
+		if (Bukkit.getPlayer(name) != null) return CompletableFuture.completedFuture(Bukkit.getPlayer(name));
+
+		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+			OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+			Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> future.complete(player)); //Complete in a sync thread
+		});
+
+		return future;
 	}
 }
