@@ -19,7 +19,9 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 public class Element {
 
 	public enum ElementType {
-		BENDING("bending", "bender", "bend"), BLOCKING("blocking", "blocker", "block"), NO_SUFFIX("", "", "");
+		BENDING("bending", "bender", "bend"),
+		BLOCKING("blocking", "blocker", "block"),
+		NO_SUFFIX("", "", "");
 
 		private String bending;
 		private String bender;
@@ -291,7 +293,7 @@ public class Element {
 	/**
 	 * Return all subelements belonging to a parent element.
 	 *
-	 * @param element
+	 * @param element Parent element.
 	 * @return Array of all subelements belonging to a parent element.
 	 */
 	public static SubElement[] getSubElements(final Element element) {
@@ -322,7 +324,7 @@ public class Element {
 	/**
 	 * Returns array of addon subelements belonging to a parent element.
 	 *
-	 * @param element
+	 * @param element Parent element.
 	 * @return Array of addon subelements belonging to a parent element.
 	 */
 	public static SubElement[] getAddonSubElements(final Element element) {

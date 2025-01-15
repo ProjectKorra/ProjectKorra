@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.StanceAbility;
 import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
@@ -71,7 +72,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 	private long slowTime;
 	private final Player player;
-	private ChiAbility stance;
+	private StanceAbility stance;
 
 	protected boolean tremorSense;
 	protected boolean illumination;
@@ -474,7 +475,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 *
 	 * @return The player's stance object
 	 */
-	public ChiAbility getStance() {
+	public StanceAbility getStance() {
 		return this.stance;
 	}
 
@@ -643,18 +644,21 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	/**
-	 * Sets the player's {@link ChiAbility Chi stance}
+	 * Sets the player's {@link StanceAbility stance}
 	 * Also update any previews
 	 *
 	 * @param stance The player's new stance object
 	 */
-	public void setStance(final ChiAbility stance) {
-		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
-		final String newStance = (stance == null) ? "" : stance.getName();
-		this.stance = stance;
-		ChatUtil.displayMovePreview(this.player);
-		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(Bukkit.getPlayer(this.uuid), oldStance, newStance);
+	public void setStance(final StanceAbility stance) {
+		final String oldStance = (this.stance == null) ? "" : this.stance.getStanceName();
+		final String newStance = (stance == null) ? "" : stance.getStanceName();
+		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(this.player, oldStance, newStance);
 		Bukkit.getServer().getPluginManager().callEvent(event);
+
+		if (!event.isCancelled()) {
+			this.stance = stance;
+			ChatUtil.displayMovePreview(this.player);
+		}
 	}
 
 	/**

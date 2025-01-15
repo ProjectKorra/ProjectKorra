@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * Called when an ability is successfully loaded.
+ * @param <T> The type of class that was loaded
  */
 public class AbilityLoadEvent<T> extends Event {
 
