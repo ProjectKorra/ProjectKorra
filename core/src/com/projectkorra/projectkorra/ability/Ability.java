@@ -34,7 +34,7 @@ public interface Ability {
 
 	/**
 	 * Determines if this ability uses the {@link PlayerToggleSneakEvent} as a
-	 * controlling mechanism. Currently {@link WaterPassive} will not work while
+	 * controlling mechanism. Currently {@link com.projectkorra.projectkorra.waterbending.passive.FastSwim} will not work while
 	 * the player has a sneak ability bound.
 	 *
 	 * @return true if the ability uses sneak as a controlling mechanism
@@ -54,12 +54,14 @@ public interface Ability {
 	/**
 	 * Determines if this ability can ignite blocks. For example: {@link Blaze},
 	 * {@link FireBlast}, and {@link FireBurst}.
+	 * @return true if the ability can ignite blocks
 	 */
 	public boolean isIgniteAbility();
 
 	/**
 	 * Determines if this ability can cause explosions. For example:
 	 * {@link FireBlastCharged}
+	 * @return true if the ability can cause explosions
 	 */
 	public boolean isExplosiveAbility();
 
@@ -74,12 +76,13 @@ public interface Ability {
 
 	/**
 	 * Returns true if the ability is enabled through the config.yml. Usually
-	 * the Enabled option follows the format
-	 * Abilities.ElementName.AbilityName.Enabled.
+	 * the Enabled option follows the format of <code>Abilities.ElementName.AbilityName.Enabled</code>
+	 * @return true if the ability is enabled
 	 */
 	public boolean isEnabled();
 
 	/**
+	 * The default cooldown for this ability
 	 * @return the cooldown for the ability
 	 */
 	public long getCooldown();

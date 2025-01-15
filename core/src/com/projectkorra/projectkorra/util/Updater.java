@@ -22,8 +22,6 @@ import org.bukkit.plugin.Plugin;
  * <li>{@link #getUpdateVersion()} to get the update version</li>
  * <li>{@link #updateAvailable()} to check if theres an update</li>
  * </ul>
- * </p>
- *
  * @author Jacklin213, updated by StrangeOne101
  */
 public class Updater {

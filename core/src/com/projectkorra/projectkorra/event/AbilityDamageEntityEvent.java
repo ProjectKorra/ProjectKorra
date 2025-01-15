@@ -74,6 +74,11 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 		return this.ability;
 	}
 
+	/**
+	 * Returns whether the ability ignores armor
+	 *
+	 * @return true if the ability ignores armor
+	 */
 	public boolean doesIgnoreArmor() {
 		return this.ignoreArmor;
 	}

@@ -138,7 +138,7 @@ public abstract class PKCommand implements SubCommand {
 	 * @param size The length of the arguments list
 	 * @param min The minimum acceptable number of arguments
 	 * @param max The maximum acceptable number of arguments
-	 * @return True if min < size < max, false otherwise
+	 * @return True if min &lt; size &lt; max, false otherwise
 	 */
 	protected boolean correctLength(final CommandSender sender, final int size, final int min, final int max) {
 		if (size < min || size > max) {
@@ -213,9 +213,8 @@ public abstract class PKCommand implements SubCommand {
 
 	/**
 	 * Returns a boolean if the string provided is numerical.
-	 *
-	 * @param id
-	 * @return boolean
+	 * @param id The string to check
+	 * @return boolean if the string is numerical
 	 */
 	protected boolean isNumeric(final String id) {
 		final NumberFormat formatter = NumberFormat.getInstance();
@@ -226,11 +225,10 @@ public abstract class PKCommand implements SubCommand {
 
 	/**
 	 * Returns a list for of commands for a page.
-	 *
-	 * @param entries
-	 * @param title
-	 * @param page
-	 * @return
+	 * @param entries The list of entries to paginate
+	 * @param title The title of the paginated list
+	 * @param page The page number to get
+	 * @return A list of strings for the page
 	 */
 	protected List<String> getPage(final List<String> entries, final String title, int page, final boolean sort) {
 		final List<String> strings = new ArrayList<String>();
@@ -262,7 +260,10 @@ public abstract class PKCommand implements SubCommand {
 		return strings;
 	}
 
-	/** Gets a list of valid arguments that can be used in tabbing. */
+	/**
+	 * Gets a list of valid arguments that can be used in tabbing.
+	 * @param sender The sender of the command
+	 * */
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		return new ArrayList<String>();
 	}

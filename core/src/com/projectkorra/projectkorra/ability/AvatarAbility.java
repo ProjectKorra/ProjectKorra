@@ -48,7 +48,7 @@ public abstract class AvatarAbility extends ElementalAbility {
 
 	/**
 	 * Determines whether the ability requires the user to be an avatar in order
-	 * to be able to use it. Set this to <tt>false</tt> for moves that should be
+	 * to be able to use it. Set this to <code>false</code> for moves that should be
 	 * able to be used without players needing to have the avatar element
 	 */
 	public boolean requireAvatar() {

@@ -4,8 +4,13 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * @deprecated Marked for removal. Use {@link org.bukkit.World#spawnParticle} instead
+ */
+@Deprecated
 public enum ParticleEffect {
 	
 	ASH (Particle.ASH),

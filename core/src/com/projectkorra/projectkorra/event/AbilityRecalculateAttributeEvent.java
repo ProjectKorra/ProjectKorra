@@ -20,7 +20,8 @@ import java.util.function.Supplier;
 
 
 public class AbilityRecalculateAttributeEvent extends Event {
-        private static final HandlerList handlers = new HandlerList();
+
+    private static final HandlerList handlers = new HandlerList();
 
     CoreAbility ability;
     String attribute;

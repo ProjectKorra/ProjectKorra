@@ -176,7 +176,7 @@ public class ComboManager {
 	 * @param player The player to get recent abilities for
 	 * @param amount The amount of recent abilities to get, starting from most
 	 *            recent and getting older
-	 * @return An ArrayList<{@link AbilityInformation}> of the player's recently
+	 * @return An ArrayList of the player's recently
 	 *         used abilities
 	 */
 	public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(final Player player, final int amount) {

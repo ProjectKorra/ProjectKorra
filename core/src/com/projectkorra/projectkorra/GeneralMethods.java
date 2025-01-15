@@ -73,7 +73,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -340,7 +339,7 @@ public class GeneralMethods {
 	/**
 	 * Gets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to get the absorption hearts of.
-	 * @deprecated Use {@link Player#getAbsorptionAmount()}.
+	 * @deprecated Use Player#getAbsorptionAmount instead.
 	 */
 	@Deprecated
 	public static float getAbsorbationHealth(final Player player) {
@@ -351,7 +350,7 @@ public class GeneralMethods {
 	 * Sets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to set the absorption hearts of.
 	 * @param hearts a float representing the number of hearts to set.
-	 * @deprecated Use {@link Player#setAbsorptionAmount(double)}
+	 * @deprecated Use Player#setAbsorbationHealth instead.
 	 */
 	@Deprecated
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
@@ -737,8 +736,9 @@ public class GeneralMethods {
 	 * @return The filter
 	 */
 	public static Predicate<Entity> getEntityFilter() {
-		return entity -> !(entity.isDead() || entity.hasMetadata ("BendingImmunity")
-				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker();
+		return entity -> !(entity.isValid() || entity.hasMetadata ("BendingImmunity")
+				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))
+				|| (entity instanceof ArmorStand && ((ArmorStand) entity).isMarker()));
 	}
 
 	public static long getGlobalCooldown() {

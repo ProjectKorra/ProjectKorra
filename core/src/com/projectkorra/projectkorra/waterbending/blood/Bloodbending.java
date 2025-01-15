@@ -12,7 +12,6 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -30,7 +29,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -249,7 +247,7 @@ public class Bloodbending extends BloodAbility {
                     ((Creature) entity).setTarget(null);
                 }
                 if (entity instanceof Player) {
-                    ActionBar.sendActionBar(Element.BLOOD.getColor() + this.actionBarMessage, (Player) entity);
+                    ChatUtil.sendActionBar(Element.BLOOD.getColor() + this.actionBarMessage, (Player) entity);
                 }
                 AirAbility.breakBreathbendingHold(entity);
             }
@@ -313,7 +311,7 @@ public class Bloodbending extends BloodAbility {
 				((Creature) this.target).setTarget(null);
 			}
 			if (this.target instanceof Player) {
-				ActionBar.sendActionBar(Element.BLOOD.getColor() + this.actionBarMessage, (Player) target);
+				ChatUtil.sendActionBar(Element.BLOOD.getColor() + this.actionBarMessage, (Player) target);
 			}
 			AirAbility.breakBreathbendingHold(this.target);
 		}
