@@ -562,6 +562,8 @@ public class ConfigManager {
 			earthBlocks.add("MYCELIUM");
 			earthBlocks.add("PODZOL");
 			earthBlocks.add("STONE_SLAB");
+			earthBlocks.add("BLOCK_OF_COAL");
+			earthBlocks.add("LAPIS_BLOCK");
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
 
