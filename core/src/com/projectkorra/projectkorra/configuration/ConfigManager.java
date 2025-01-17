@@ -524,11 +524,13 @@ public class ConfigManager {
 
 			earthBlocks.add("#base_stone_nether"); // added in 1.16.2
 			earthBlocks.add("#base_stone_overworld"); // added in 1.16.2
-			earthBlocks.add("#terracotta");
 
 			if (mcVersion >= 1190) { //1.19
 				earthBlocks.add("MUD");
 				earthBlocks.add("MUDDY_MANGROVE_ROOTS");
+			}
+			if (mcVersion >= 1180) {
+				earthBlocks.add("#terracotta");
 			}
 			if (mcVersion >= 1170) { //1.17
 				earthBlocks.add("#coal_ores"); //These tags were only added in 1.17 and above
