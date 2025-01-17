@@ -524,6 +524,7 @@ public class ConfigManager {
 
 			earthBlocks.add("#base_stone_nether"); // added in 1.16.2
 			earthBlocks.add("#base_stone_overworld"); // added in 1.16.2
+			earthBlocks.add("#terracotta");
 
 			if (mcVersion >= 1190) { //1.19
 				earthBlocks.add("MUD");
@@ -554,6 +555,7 @@ public class ConfigManager {
 			earthBlocks.add("ANCIENT_DEBRIS");
 			earthBlocks.add("CLAY");
 			earthBlocks.add("COARSE_DIRT");
+			earthBlocks.add("COAL_BLOCK");
 			earthBlocks.add("COBBLESTONE");
 			earthBlocks.add("COBBLESTONE_SLAB");
 			earthBlocks.add("DIRT");
@@ -562,8 +564,6 @@ public class ConfigManager {
 			earthBlocks.add("MYCELIUM");
 			earthBlocks.add("PODZOL");
 			earthBlocks.add("STONE_SLAB");
-			earthBlocks.add("COAL_BLOCK");
-			earthBlocks.add("LAPIS_BLOCK");
 
 			final ArrayList<String> metalBlocks = new ArrayList<String>();
 
@@ -637,6 +637,8 @@ public class ConfigManager {
 
 			plantBlocks.add("BROWN_MUSHROOM");
 			plantBlocks.add("BROWN_MUSHROOM_BLOCK");
+			plantBlocks.add("BAMBOO");
+			plantBlocks.add("BAMBOO_SAPLING");
 			plantBlocks.add("CACTUS");
 			plantBlocks.add("CRIMSON_FUNGUS");
 			plantBlocks.add("CRIMSON_ROOTS");
