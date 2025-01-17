@@ -529,7 +529,7 @@ public class ConfigManager {
 				earthBlocks.add("MUD");
 				earthBlocks.add("MUDDY_MANGROVE_ROOTS");
 			}
-			if (mcVersion >= 1180) {
+			if (mcVersion >= 1180) { //1.18
 				earthBlocks.add("#terracotta");
 			}
 			if (mcVersion >= 1170) { //1.17
