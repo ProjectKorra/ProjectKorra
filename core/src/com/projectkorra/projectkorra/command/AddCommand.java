@@ -112,6 +112,10 @@ public class AddCommand extends PKCommand {
 							continue;
 						}
 
+						PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, e, Result.ADD);
+						Bukkit.getServer().getPluginManager().callEvent(event);
+						if (event.isCancelled()) continue; // if the event is cancelled, don't add the element.
+
 						elementFound = true;
 						bPlayer.addElement(e);
 
@@ -124,6 +128,10 @@ public class AddCommand extends PKCommand {
 						if (online) {
 							for (final SubElement sub : Element.getAllSubElements()) {
 								if (bPlayer.hasElement(sub.getParentElement()) && ((BendingPlayer)bPlayer).hasSubElementPermission(sub)) {
+									PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD);
+									Bukkit.getServer().getPluginManager().callEvent(subEvent);
+									if (subEvent.isCancelled()) continue; // if the event is cancelled, don't add the subelement.
+
 									bPlayer.addSubElement(sub);
 								}
 							}
@@ -131,8 +139,6 @@ public class AddCommand extends PKCommand {
 						}
 
 						bPlayer.saveElements();
-
-						if (online) Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) target, e, Result.ADD));
 					}
 				}
 				if (elementFound) {
@@ -183,17 +189,23 @@ public class AddCommand extends PKCommand {
 						return;
 					}
 
-					// add all allowed subelements.
+					PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, e, Result.ADD);
+					Bukkit.getServer().getPluginManager().callEvent(event);
+					if (event.isCancelled()) return; // if the event is cancelled, don't add the element.
+
 					bPlayer.addElement(e);
 					bPlayer.getSubElements().clear();
-					if (online) {
+					if (online) { //Add all subs they have permission for
 						for (final SubElement sub : Element.getAllSubElements()) {
 							if (bPlayer.hasElement(sub.getParentElement()) && ((BendingPlayer)bPlayer).hasSubElementPermission(sub)) {
+								PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD);
+								Bukkit.getServer().getPluginManager().callEvent(subEvent);
+								if (subEvent.isCancelled()) continue; // if the event is cancelled, don't add the subelement.
+
 								bPlayer.addSubElement(sub);
 							}
 						}
 					}
-
 
 					// send the message.
 					final ChatColor color = e.getColor();
@@ -215,7 +227,6 @@ public class AddCommand extends PKCommand {
 					}
 					bPlayer.saveElements();
 					bPlayer.saveSubElements();
-					if (online) Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) target, e, Result.ADD));
 					return;
 
 					// if it's a sub element:
@@ -234,6 +245,11 @@ public class AddCommand extends PKCommand {
 						}
 						return;
 					}
+
+					PlayerChangeSubElementEvent event = new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD);
+					Bukkit.getServer().getPluginManager().callEvent(event);
+					if (event.isCancelled()) return; // if the event is cancelled, don't add the subelement.
+
 					bPlayer.addSubElement(sub);
 					final ChatColor color = e.getColor();
 
@@ -252,7 +268,6 @@ public class AddCommand extends PKCommand {
 						}
 					}
 					bPlayer.saveSubElements();
-					if (online) Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, (Player) target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
 					return;
 
 				} else { // bad element.

@@ -71,6 +71,8 @@ public class PermaremoveCommand extends PKCommand {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 				}
 			} else {
+				PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, player, null, Result.PERMAREMOVE);
+
 				bPlayer.getElements().clear();
 				bPlayer.saveElements();
 				bPlayer.setPermaRemoved(true);

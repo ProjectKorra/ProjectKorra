@@ -198,12 +198,10 @@ public class CooldownCommand extends PKCommand {
             return null;
         }
 
-        boolean cancelled = false;
-        if (bPlayer.getPlayer().isOnline()) {
-            final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(((BendingPlayer)bPlayer).getPlayer(), cooldown, time, time <= 0 ? PlayerCooldownChangeEvent.Result.REMOVED : PlayerCooldownChangeEvent.Result.SET);
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            cancelled = event.isCancelled();
-        }
+        final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent((bPlayer).getPlayer(), cooldown, time, time <= 0 ? PlayerCooldownChangeEvent.Result.REMOVED : PlayerCooldownChangeEvent.Result.SET);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        boolean cancelled = event.isCancelled();
+
 
         if (!cancelled) {
             if (time <= 0) {
