@@ -340,7 +340,7 @@ public class GeneralMethods {
 	/**
 	 * Gets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to get the absorption hearts of.
-	 * @deprecated Use {@link Player#getAbsorptionAmount()}.
+	 * @deprecated Use Player#getAbsorptionAmount instead.
 	 */
 	@Deprecated
 	public static float getAbsorbationHealth(final Player player) {
@@ -351,7 +351,7 @@ public class GeneralMethods {
 	 * Sets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to set the absorption hearts of.
 	 * @param hearts a float representing the number of hearts to set.
-	 * @deprecated Use {@link Player#setAbsorptionAmount(double)}
+	 * @deprecated Use Player#setAbsorbationHealth instead.
 	 */
 	@Deprecated
 	public static void setAbsorbationHealth(final Player player, final float hearts) {

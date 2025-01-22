@@ -333,6 +333,7 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * @param player the player that created the CoreAbility instance
 	 * @param clazz the class of the type of CoreAbility
+	 * @param <T> the ability type
 	 * @return a CoreAbility instance or null
 	 */
 	public static <T extends CoreAbility> T getAbility(final Player player, final Class<T> clazz) {
@@ -357,7 +358,7 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * <p>
 	 * CoreAbility coreAbil = getAbility(someString); <br>
-	 * if (coreAbil instanceof FireAbility && coreAbil.isSneakAbility())
+	 * if (coreAbil instanceof FireAbility &amp;&amp; coreAbil.isSneakAbility())
 	 *
 	 * @param abilityName the name of a loaded CoreAbility
 	 * @return a "fake" CoreAbility instance, or null if no such ability exists
@@ -377,6 +378,8 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
+	 * Gets a list of all "fake" instances of CoreAbilities that have been loaded. May return double ups if abilities
+	 * have the same name.
 	 * @return a list of "fake" instances for each ability that was loaded by
 	 *         {@link #registerAbilities()}
 	 */
@@ -385,6 +388,7 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
+	 * Gets a list of all "fake" instances of CoreAbilities that have been loaded.
 	 * @return a list of "fake" instances for each ability that was loaded by
 	 *         {@link #registerAbilities()}
 	 */
@@ -397,6 +401,7 @@ public abstract class CoreAbility implements Ability {
 	 * specific type of CoreAbility.
 	 *
 	 * @param clazz the class for the type of CoreAbilities
+	 * @param <T> the ability type
 	 * @return a Collection of real instances
 	 */
 	public static <T extends CoreAbility> Collection<T> getAbilities(final Class<T> clazz) {
@@ -412,6 +417,7 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * @param player the player that created the instances
 	 * @param clazz the class for the type of CoreAbilities
+	 * @param <T> the ability type
 	 * @return a Collection of real instances
 	 */
 	public static <T extends CoreAbility> Collection<T> getAbilities(final Player player, final Class<T> clazz) {
@@ -422,6 +428,7 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
+	 * Returns a Collection of all of the CoreAbilities that are currently active.
 	 * @return a Collection of all of the CoreAbilities that are currently
 	 *         alive. Do not modify this Collection.
 	 */
@@ -470,6 +477,8 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * @param player the player that created the T instance
 	 * @param clazz the class for the type of CoreAbility
+	 * @param <T> the ability type
+	 * @return true if the player has an active instance of T
 	 */
 	public static <T extends CoreAbility> boolean hasAbility(final Player player, final Class<T> clazz) {
 		return getAbility(player, clazz) != null;
@@ -500,6 +509,7 @@ public abstract class CoreAbility implements Ability {
 	 * instance of clazz.
 	 *
 	 * @param clazz the clazz for the type of CoreAbility
+	 * @return a Set of players that have an active instance of clazz
 	 */
 	public static Set<Player> getPlayers(final Class<? extends CoreAbility> clazz) {
 		final HashSet<Player> players = new HashSet<>();

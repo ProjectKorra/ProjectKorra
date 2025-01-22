@@ -84,7 +84,7 @@ public class ChatUtil {
     }
 
     /**
-     * Colors a string with color codes and hex color codes. This also does &#RRGGBB codes which are not
+     * Colors a string with color codes and hex color codes. This also does &amp;#RRGGBB codes which are not
      * done by ChatColor's methods
      * @param string The string to color
      * @return The colored string
