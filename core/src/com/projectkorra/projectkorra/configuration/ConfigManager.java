@@ -576,6 +576,9 @@ public class ConfigManager {
 				earthBlocks.add("MUD");
 				earthBlocks.add("MUDDY_MANGROVE_ROOTS");
 			}
+			if (mcVersion >= 1180) { //1.18
+				earthBlocks.add("#terracotta");
+			}
 			if (mcVersion >= 1170) { //1.17
 				earthBlocks.add("#coal_ores"); //These tags were only added in 1.17 and above
 				earthBlocks.add("#diamond_ores");
@@ -601,6 +604,7 @@ public class ConfigManager {
 			earthBlocks.add("ANCIENT_DEBRIS");
 			earthBlocks.add("CLAY");
 			earthBlocks.add("COARSE_DIRT");
+			earthBlocks.add("COAL_BLOCK");
 			earthBlocks.add("COBBLESTONE");
 			earthBlocks.add("COBBLESTONE_SLAB");
 			earthBlocks.add("DIRT");
@@ -682,6 +686,8 @@ public class ConfigManager {
 
 			plantBlocks.add("BROWN_MUSHROOM");
 			plantBlocks.add("BROWN_MUSHROOM_BLOCK");
+			plantBlocks.add("BAMBOO");
+			plantBlocks.add("BAMBOO_SAPLING");
 			plantBlocks.add("CACTUS");
 			plantBlocks.add("CRIMSON_FUNGUS");
 			plantBlocks.add("CRIMSON_ROOTS");
