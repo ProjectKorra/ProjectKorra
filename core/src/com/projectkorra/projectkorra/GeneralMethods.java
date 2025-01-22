@@ -73,7 +73,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -737,8 +736,9 @@ public class GeneralMethods {
 	 * @return The filter
 	 */
 	public static Predicate<Entity> getEntityFilter() {
-		return entity -> !(entity.isDead() || entity.hasMetadata ("BendingImmunity")
-				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))) || entity instanceof ArmorStand && ((ArmorStand) entity).isMarker();
+		return entity -> !(entity.isValid() || entity.hasMetadata ("BendingImmunity")
+				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))
+				|| (entity instanceof ArmorStand && ((ArmorStand) entity).isMarker()));
 	}
 
 	public static long getGlobalCooldown() {

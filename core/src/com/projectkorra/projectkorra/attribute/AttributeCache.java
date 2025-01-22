@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class AttributeCache {
 
@@ -23,6 +24,7 @@ public class AttributeCache {
     private String attribute;
     private Map<Class<? extends Annotation>, Annotation> markers = new HashMap<>();
     private Map<CoreAbility, Object> initialValues = new HashMap<>();
+    private Map<CoreAbility, Set<AttributeModification>> currentModifications = new HashMap<>();
     private Optional<AttributeModification> avatarStateModifier = Optional.empty();
 
     public AttributeCache(Field field, String attribute) {
@@ -60,6 +62,10 @@ public class AttributeCache {
 
     public Map<CoreAbility, Object> getInitialValues() {
         return initialValues;
+    }
+
+    public Map<CoreAbility, Set<AttributeModification>> getCurrentModifications() {
+        return currentModifications;
     }
 
     /**

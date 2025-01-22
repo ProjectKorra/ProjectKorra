@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -393,7 +392,7 @@ public class MetalClips extends MetalAbility {
 			}
 
 			if (this.targetEntity instanceof Player && !actionBarMessage.isEmpty()) {
-				ActionBar.sendActionBar(Element.METAL.getColor() + actionBarMessage, (Player) this.targetEntity);
+				ChatUtil.sendActionBar(Element.METAL.getColor() + actionBarMessage, (Player) this.targetEntity);
 			}
 		}
 
