@@ -631,9 +631,9 @@ public class OfflineBendingPlayer {
     }
 
     /**
-     * Get the list of temporary elements & subelements the {@link BendingPlayer} has.
+     * Get the list of temporary elements and subelements the {@link BendingPlayer} has.
      *
-     * @return a map of temporary elements & subelements
+     * @return a map of temporary elements and subelements
      */
     public Map<Element, Long> getTempElements() {
         return this.tempElements;
@@ -882,7 +882,8 @@ public class OfflineBendingPlayer {
     }
 
     /**
-     * @return Returns true if this BendingPlayer is fully loaded
+     * Returns true if this BendingPlayer is fully loaded
+     * @return True if the player is fully loaded
      */
     public boolean isLoaded() {
         return !this.loading;
@@ -960,7 +961,8 @@ public class OfflineBendingPlayer {
     }
 
     /**
-     * @return Is the player online?
+     * Checks to see if this {@link OfflineBendingPlayer} is an instanceof {@link BendingPlayer}.
+     * @return Is the player online
      */
     public boolean isOnline() {
         return this instanceof BendingPlayer;

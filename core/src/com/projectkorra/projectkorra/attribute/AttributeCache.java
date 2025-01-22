@@ -40,6 +40,11 @@ public class AttributeCache {
         return attribute;
     }
 
+    /**
+     * Check if the cache has a marker of the given class
+     * @param markerClass The class of the marker to check for
+     * @return True if the cache has a marker of the given class
+     */
     public boolean hasMarker(Class<? extends Annotation> markerClass) {
         return markers.containsKey(markerClass);
     }

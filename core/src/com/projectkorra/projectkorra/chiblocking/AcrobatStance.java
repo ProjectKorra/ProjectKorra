@@ -103,44 +103,83 @@ public class AcrobatStance extends ChiAbility {
 		return true;
 	}
 
+	/**
+	 * Gets the speed boost of the stance
+	 * @return the speed
+	 */
 	public int getSpeed() {
 		return this.speed;
 	}
 
+	/**
+	 * Sets the speed boost of the stance
+	 * @param speed the speed to set
+	 */
 	public void setSpeed(final int speed) {
 		this.speed = speed;
 	}
 
+	/**
+	 * Gets the jump boost of the stance
+	 * @return the jump
+	 */
 	public int getJump() {
 		return this.jump;
 	}
 
+	/**
+	 * Sets the jump boost of the stance
+	 * @param jump the jump to set
+	 */
 	public void setJump(final int jump) {
 		this.jump = jump;
 	}
 
+	/**
+	 * Gets the duration of the stance
+	 * @return the duration
+	 */
 	public long getDuration() {
 		return this.duration;
 	}
 
+	/**
+	 * Sets the duration of the stance
+	 * @param duration the duration to set
+	 */
 	public void setDuration(final long duration) {
 		this.duration = duration;
 	}
 
+	/**
+	 * Gets the chi block boost of the stance
+	 * @return the chiBlockBoost
+	 */
 	public double getChiBlockBoost() {
 		return this.chiBlockBoost;
 	}
 
+	/**
+	 * Sets the chi block boost of the stance
+	 * @param chiBlockBoost the chiBlockBoost to set
+	 */
 	public void setChiBlockBoost(final double chiBlockBoost) {
 		this.chiBlockBoost = chiBlockBoost;
 	}
 
+	/**
+	 * Gets the paralyze dodge boost of the stance
+	 * @return the paralyzeDodgeBoost
+	 */
 	public double getParalyzeDodgeBoost() {
 		return this.paralyzeDodgeBoost;
 	}
 
+	/**
+	 * Sets the paralyze dodge boost of the stance
+	 * @param paralyzeDodgeBoost the paralyzeDodgeBoost to set
+	 */
 	public void setParalyzeDodgeBoost(final double paralyzeDodgeBoost) {
 		this.paralyzeDodgeBoost = paralyzeDodgeBoost;
 	}
-
 }
