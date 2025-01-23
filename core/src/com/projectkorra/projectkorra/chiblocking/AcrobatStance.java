@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.chiblocking;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.StanceAbility;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -10,7 +12,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 
-public class AcrobatStance extends ChiAbility {
+public class AcrobatStance extends ChiAbility implements StanceAbility {
 
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
@@ -37,9 +39,9 @@ public class AcrobatStance extends ChiAbility {
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 
-		final ChiAbility stance = this.bPlayer.getStance();
-		if (stance != null) {
-			stance.remove();
+		final StanceAbility stance = this.bPlayer.getStance();
+		if (stance instanceof CoreAbility) {
+			((CoreAbility)stance).remove();
 			if (stance instanceof AcrobatStance) {
 				this.bPlayer.setStance(null);
 				return;
@@ -101,6 +103,11 @@ public class AcrobatStance extends ChiAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return true;
+	}
+
+	@Override
+	public String getStanceName() {
+		return this.getName();
 	}
 
 	/**

@@ -4,6 +4,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * An event that is called when a player jumps. ProjectKorra tracks the jump statistic and fires this
+ * event when it increments. This event is useful for addon abilities that need to know when a player
+ * jumps.
+ * @author Simplicitee
+ */
 public class PlayerJumpEvent extends Event {
 
 	private static final HandlerList HANDLERS = new HandlerList();
