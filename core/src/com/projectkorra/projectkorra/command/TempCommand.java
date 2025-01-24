@@ -6,6 +6,8 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import net.md_5.bungee.api.ChatColor;
@@ -14,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -231,6 +235,12 @@ public class TempCommand extends PKCommand {
 		String message = element == Element.AVATAR ? this.addedSuccessAvatar : this.addedSuccess;
 		String messageOther = element == Element.AVATAR ? this.addedSuccessOtherAvatar : this.addedSuccessOther;
 
+		//Check the event isn't cancelled
+		Cancellable event = sub ? new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), (SubElement) element, PlayerChangeSubElementEvent.Result.TEMP_ADD) :
+				new PlayerChangeElementEvent(sender, bPlayer.getPlayer(), element, PlayerChangeElementEvent.Result.TEMP_ADD);
+		Bukkit.getPluginManager().callEvent((Event) event);
+		if (!event.isCancelled()) return;
+
 		ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + messageOther
 				.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW)
 				.replace("{bending}", element.getColor() + element.getType().getBending()+ ChatColor.YELLOW)
@@ -259,6 +269,10 @@ public class TempCommand extends PKCommand {
 				} else { //Not the avatar element
 					for (final SubElement subElement : Element.getSubElements(element)) {
 						if (((BendingPlayer)bPlayer).hasSubElementPermission(subElement) && !bPlayer.getSubElements().contains(subElement)) {
+							PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), subElement, PlayerChangeSubElementEvent.Result.TEMP_PARENT_ADD);
+							Bukkit.getPluginManager().callEvent(subEvent);
+							if (subEvent.isCancelled()) continue; //Continue for subs which shouldn't be added due to the event cancelling
+
 							bPlayer.getTempSubElements().put(subElement, -1L); //Set the expiry to -1 to indicate that the time is linked to the parent element
 						}
 					}
@@ -302,6 +316,12 @@ public class TempCommand extends PKCommand {
 		String message = add ? (element == Element.AVATAR ? this.addedSuccessAvatar : this.addedSuccess) : this.extendSuccess;
 		String messageOther = add ? (element == Element.AVATAR ? this.addedSuccessOtherAvatar : this.addedSuccessOther) : this.extendSuccessOther;
 
+		//Check the event isn't cancelled
+		Cancellable event = element instanceof SubElement ? new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), (SubElement) element, PlayerChangeSubElementEvent.Result.TEMP_ADD) :
+				new PlayerChangeElementEvent(sender, bPlayer.getPlayer(), element, PlayerChangeElementEvent.Result.TEMP_ADD);
+		Bukkit.getPluginManager().callEvent((Event) event);
+		if (!event.isCancelled()) return;
+
 		ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + messageOther
 				.replace("{element}", element.getColor() + element.getName())
 				.replace("{bending}", element.getType().getBending())
@@ -332,6 +352,10 @@ public class TempCommand extends PKCommand {
 					} else {
 						for (final SubElement sub : Element.getSubElements(element)) {
 							if (((BendingPlayer) bPlayer).hasSubElementPermission(sub) && !bPlayer.getSubElements().contains(sub)) {
+								PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), sub, PlayerChangeSubElementEvent.Result.TEMP_PARENT_ADD);
+								Bukkit.getPluginManager().callEvent(subEvent);
+								if (subEvent.isCancelled()) continue; //Continue for subs which shouldn't be added due to the event cancelling
+
 								bPlayer.getTempSubElements().put(sub, -1L); //Set the expiry to -1 to indicate that the time is linked to the parent element
 							}
 						}
@@ -392,6 +416,14 @@ public class TempCommand extends PKCommand {
 		String message = remove ? this.reduceSuccessRemove : this.reduceSuccess;
 		String messageOther = remove ? this.reduceSuccessOtherRemove : this.reduceSuccessOther;
 
+		if (remove) {
+			//Check the event isn't cancelled
+			Cancellable event = element instanceof SubElement ? new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), (SubElement) element, PlayerChangeSubElementEvent.Result.TEMP_REMOVE) :
+					new PlayerChangeElementEvent(sender, bPlayer.getPlayer(), element, PlayerChangeElementEvent.Result.TEMP_REMOVE);
+			Bukkit.getPluginManager().callEvent((Event) event);
+			if (!event.isCancelled()) return;
+		}
+
 		ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + messageOther
 				.replace("{element}", element.getColor() + element.getName())
 				.replace("{bending}", element.getType().getBending())
@@ -422,6 +454,10 @@ public class TempCommand extends PKCommand {
 					for (SubElement tempSub : bPlayer.getTempSubElements().keySet()) {
 						long expiry = bPlayer.getTempSubElements().get(tempSub);
 						if (tempSub.getParentElement().equals(element) && expiry == -1L) { //If the sub expiry is linked to the parent element
+							PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), tempSub, PlayerChangeSubElementEvent.Result.TEMP_PARENT_REMOVE);
+							Bukkit.getPluginManager().callEvent(subEvent);
+							if (subEvent.isCancelled()) continue; //Continue for subs which shouldn't be added due to the event cancelling
+
 							bPlayer.getTempSubElements().remove(tempSub);
 						}
 					}
@@ -456,6 +492,12 @@ public class TempCommand extends PKCommand {
 			return false;
 		}
 
+		//Check the event isn't cancelled
+		Cancellable event = element instanceof SubElement ? new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), (SubElement) element, PlayerChangeSubElementEvent.Result.TEMP_REMOVE) :
+				new PlayerChangeElementEvent(sender, bPlayer.getPlayer(), element, PlayerChangeElementEvent.Result.TEMP_REMOVE);
+		Bukkit.getPluginManager().callEvent((Event) event);
+		if (!event.isCancelled()) return false;
+
 		if (element instanceof SubElement) {
 			if (bPlayer.isOnline()) {
 				bPlayer.getTempSubElements().remove(element);
@@ -477,6 +519,10 @@ public class TempCommand extends PKCommand {
 					long expiry = bPlayer.getTempSubElements().get(tempSub);
 
 					if (tempSub.getParentElement().equals(element) && expiry == -1L) { //If the sub expiry is linked to the parent element
+						PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), tempSub, PlayerChangeSubElementEvent.Result.TEMP_PARENT_REMOVE);
+						Bukkit.getPluginManager().callEvent(subEvent);
+						if (subEvent.isCancelled()) continue; //Continue for subs which shouldn't be added due to the event cancelling
+
 						bPlayer.getTempSubElements().remove(tempSub);
 					}
 				}
@@ -540,6 +586,10 @@ public class TempCommand extends PKCommand {
 
 			for (final SubElement subElement : Element.getSubElements(e)) {
 				if ((bPlayer).hasSubElementPermission(subElement) && !bPlayer.getSubElements().contains(subElement)) {
+					PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, bPlayer.getPlayer(), subElement, PlayerChangeSubElementEvent.Result.TEMP_PARENT_ADD);
+					Bukkit.getPluginManager().callEvent(subEvent);
+					if (subEvent.isCancelled()) continue; //Continue for subs which shouldn't be added due to the event cancelling
+
 					bPlayer.getTempSubElements().put(subElement, -1L); //Set the expiry to -1 to indicate that the time is linked to the parent element
 				}
 			}

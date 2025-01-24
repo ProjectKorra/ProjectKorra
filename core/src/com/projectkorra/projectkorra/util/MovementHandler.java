@@ -53,7 +53,7 @@ public class MovementHandler {
 
 				@Override
 				public void run() {
-					ActionBar.sendActionBar(message, player);
+					ChatUtil.sendActionBar(message, player);
 					if (System.currentTimeMillis() >= start + duration / 20 * 1000) {
 						MovementHandler.this.reset();
 					}
@@ -100,7 +100,7 @@ public class MovementHandler {
 
 				@Override
 				public void run() {
-					ActionBar.sendActionBar(message, player);
+					ChatUtil.sendActionBar(message, player);
 				}
 
 			};

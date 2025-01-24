@@ -19,7 +19,9 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 public class Element {
 
 	public enum ElementType {
-		BENDING("bending", "bender", "bend"), BLOCKING("blocking", "blocker", "block"), NO_SUFFIX("", "", "");
+		BENDING("bending", "bender", "bend"),
+		BLOCKING("blocking", "blocker", "block"),
+		NO_SUFFIX("", "", "");
 
 		private String bending;
 		private String bender;

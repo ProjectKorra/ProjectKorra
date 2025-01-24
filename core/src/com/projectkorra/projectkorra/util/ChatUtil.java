@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -150,7 +151,7 @@ public class ChatUtil {
             displayedMessage = "";
         }
 
-        ActionBar.sendActionBar(displayedMessage, player);
+        sendActionBar(displayedMessage, player);
     }
 
     /**
@@ -159,5 +160,17 @@ public class ChatUtil {
      */
     public static void displayMovePreview(final Player player) {
         displayMovePreview(player, player.getInventory().getHeldItemSlot() + 1);
+    }
+
+    /**
+     * Sends an action bar message to the player
+     *
+     * @param message the message to send
+     * @param player the player to send the message to
+     */
+    public static void sendActionBar(final String message, final Player... player) {
+        for (Player e : player) {
+            e.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(TextComponent.fromLegacyText(message)));
+        }
     }
 }

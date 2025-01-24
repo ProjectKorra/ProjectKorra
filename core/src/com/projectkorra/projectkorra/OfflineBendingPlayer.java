@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.event.BendingPlayerLoadEvent;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ChatUtil;
@@ -139,6 +140,7 @@ public class OfflineBendingPlayer {
                         newPlayer = new OfflineBendingPlayer(offlinePlayer);
                     }
                     PLAYERS.put(uuid, newPlayer);
+                    Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(newPlayer));
                     future.complete(newPlayer);
                 } else {
                     // The player has at least played before.
@@ -415,7 +417,10 @@ public class OfflineBendingPlayer {
                     }
 
                     OfflineBendingPlayer finalBPlayer4 = bPlayer;
-                    Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> future.complete(finalBPlayer4));
+                    Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> {
+                        Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(finalBPlayer4));
+                        future.complete(finalBPlayer4);
+                    });
                 }
             } catch (final SQLException | ExecutionException | InterruptedException ex) {
                 ex.printStackTrace();
@@ -580,14 +585,11 @@ public class OfflineBendingPlayer {
         if (coreAbil == null) return;
         final String fixedName = coreAbil.getName();
 
-        if (realPlayer) {
-            PlayerBindChangeEvent event = new PlayerBindChangeEvent((Player)this.getPlayer(), fixedName, slot, ability != null, false);
-            ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return;
-            }
+        PlayerBindChangeEvent event = new PlayerBindChangeEvent(this.getPlayer(), fixedName, slot, ability != null, false);
+        ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
         }
-
 
         this.getAbilities().put(slot, fixedName);
 

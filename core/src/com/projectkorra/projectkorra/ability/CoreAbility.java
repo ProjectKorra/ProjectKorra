@@ -233,6 +233,7 @@ public abstract class CoreAbility implements Ability {
 
 		for (AttributeCache cache : ATTRIBUTE_FIELDS.get(this.getClass()).values()) {
 			cache.getInitialValues().remove(this);
+			cache.getCurrentModifications().remove(this);
 		}
 
 		if (INSTANCES_BY_CLASS.containsKey(this.getClass())) {
@@ -807,7 +808,7 @@ public abstract class CoreAbility implements Ability {
 		if (forceCooldown || bPlayer.isOnCooldown(this)) {
 			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName();
 		} else {
-			boolean isActiveStance = bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName());
+			boolean isActiveStance = bPlayer.getStance() != null && bPlayer.getStance().getStanceName().equals(this.getName());
 			boolean isActiveAvatarState = bPlayer.isAvatarState() && this.getName().equals("AvatarState");
 			boolean isActiveIllumination = bPlayer.isIlluminating() && this.getName().equals("Illumination");
 			boolean isActiveTremorSense = bPlayer.isTremorSensing() && this.getName().equals("Tremorsense");
@@ -1006,11 +1007,17 @@ public abstract class CoreAbility implements Ability {
 			AbilityRecalculateAttributeEvent event = new AbilityRecalculateAttributeEvent(this, attribute, initialValue);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 
+			cache.getCurrentModifications().put(this, event.getModifications());
+
 			try {
 				for (AttributeModification mod : event.getModifications()) {
 					if (mod.getModifier() == AttributeModifier.SET) {
-						cache.getField().set(this, mod.getModification());
-						continue attribute_loop;
+						if (initialValue instanceof Number) { //For numbers, we continue to loop through the remainder modifiers like normal
+							initialValue = mod.getModification();
+						} else { //For booleans, set it and then continue to the next attribute
+							cache.getField().set(this, mod.getModification());
+							continue attribute_loop;
+						}
 					} else {
 						Number number = (Number) initialValue;
 						Number newValue = mod.getModifier().performModification(number, (Number) mod.getModification());
@@ -1026,45 +1033,6 @@ public abstract class CoreAbility implements Ability {
 		}
 
 		recalculatingAttributes = false;
-	}
-
-	@Deprecated
-	private void modifyAttributes() {
-		/*for (final String attribute : this.attributeModifiers.keySet()) {
-			final Field field = ATTRIBUTE_FIELDS.get(this.getClass()).get(attribute);
-			Attribute attr = field.getAnnotation(Attribute.class);
-			final boolean accessibility = field.isAccessible();
-			field.setAccessible(true);
-			try {
-				for (final AttributePriority priority : AttributePriority.values()) {
-					if (this.attributeModifiers.get(attribute).containsKey(priority)) {
-						for (final StoredModifier pair : this.attributeModifiers.get(attribute).get(priority)) {
-							final Object get = field.get(this);
-							Validate.isTrue(get instanceof Number, "The field " + field.getName() + " cannot algebraically be modified.");
-							final Number oldValue = (Number) field.get(this);
-							final Number newValue = pair.type.performModification(oldValue, pair.value);
-							field.set(this, newValue);
-						}
-					}
-				}
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			} finally {
-				field.setAccessible(accessibility);
-			}
-		}
-		this.attributeValues.forEach((attribute, value) -> {
-			final Field field = ATTRIBUTE_FIELDS.get(this.getClass()).get(attribute);
-			final boolean accessibility = field.isAccessible();
-			field.setAccessible(true);
-			try {
-				field.set(this, value);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			} finally {
-				field.setAccessible(accessibility);
-			}
-		});*/
 	}
 
 	/**
