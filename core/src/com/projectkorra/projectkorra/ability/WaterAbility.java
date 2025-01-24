@@ -226,7 +226,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block) && !isMud(block) && isSponge(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block) && !isMud(block) && !isSponge(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
