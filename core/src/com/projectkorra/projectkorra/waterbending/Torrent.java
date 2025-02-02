@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
@@ -210,10 +211,10 @@ public class Torrent extends WaterAbility {
 					if (isPlant(this.sourceBlock) || isSnow(this.sourceBlock)) {
 						new PlantRegrowth(this.player, this.sourceBlock);
 						this.sourceBlock.setType(Material.AIR);
-					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock) && !isCauldron(this.sourceBlock)) {
+					} else if (isCauldron(this.sourceBlock) || isTransformableBlock(this.sourceBlock)) {
+						updateSourceBlock(this.sourceBlock);
+					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(this.sourceBlock)) {
 						this.sourceBlock.setType(Material.AIR);
-					} else if (isCauldron(this.sourceBlock)) {
-						GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
 					}
 					
 					this.source = new TempBlock(this.sourceBlock, isCauldron(this.sourceBlock) ? this.sourceBlock.getBlockData() : Material.WATER.createBlockData());

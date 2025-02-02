@@ -286,8 +286,8 @@ public class IceSpikeBlast extends IceAbility {
 			if (isBendableWaterTempBlock(tb)) {
 				tb.revertBlock();
 			}
-		} else if (isCauldron(this.sourceBlock)) {
-			GeneralMethods.setCauldronData(this.sourceBlock, ((Levelled) this.sourceBlock.getBlockData()).getLevel() - 1);
+		} else if (isCauldron(this.sourceBlock) || isTransformableBlock(this.sourceBlock)) {
+			updateSourceBlock(this.sourceBlock);
 		}
 	}
 

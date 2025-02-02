@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -162,6 +163,30 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 
 		return fire;
+	}
+
+	public static void dryWetBlocks(final Block block, final CoreAbility ability, boolean playSound) {
+		if (GeneralMethods.isRegionProtectedFromBuild(ability, block.getLocation())) {
+			return;
+		}
+		if (block.getType() == Material.WET_SPONGE) {
+			block.setType(Material.SPONGE);
+
+			if (playSound) {
+				block.getWorld().playSound(block.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+			}
+		} else if (isSnow(block)) {
+			block.getWorld().spawnParticle(Particle.BLOCK_DUST, block.getLocation().add(0.5, 0.5, 0.5), 2, 0.5, 0.5, 0.5, 0.1, Material.SNOW_BLOCK.createBlockData());
+			block.setType(Material.AIR);
+
+			if (playSound) {
+				block.getWorld().playSound(block.getLocation(), Sound.BLOCK_SNOW_BREAK, 1, 1);
+			}
+		}
+	}
+
+	public static void dryWetBlocks(final Block block, final CoreAbility ability) {
+		dryWetBlocks(block, ability, false);
 	}
 
 	/**

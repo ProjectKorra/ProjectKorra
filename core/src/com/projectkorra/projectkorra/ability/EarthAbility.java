@@ -102,8 +102,12 @@ public abstract class EarthAbility extends ElementalAbility {
 		return DensityShift.getSandBlocks().contains(tempBlock);
 	}
 
+	public static boolean isEarthbendable(final Material material, final boolean metal, final boolean sand, final boolean lava, final boolean mud) {
+		return isEarth(material) || (metal && isMetal(material)) || (sand && isSand(material)) || (lava && isLava(material)) || (mud && isMud(material));
+	}
+
 	public static boolean isEarthbendable(final Material material, final boolean metal, final boolean sand, final boolean lava) {
-		return isEarth(material) || (metal && isMetal(material)) || (sand && isSand(material)) || (lava && isLava(material));
+		return isEarthbendable(material, metal, sand, lava, true);
 	}
 
 	public boolean isEarthbendable(final Block block) {
@@ -515,6 +519,26 @@ public abstract class EarthAbility extends ElementalAbility {
 				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound"));
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MetalSound.Sound' is not valid.");
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
+		}
+	}
+
+	public static void playMudbendingSound(final Location loc) {
+		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
+			final float volume = (float) getConfig().getDouble("Properties.Earth.MudSound.Volume");
+			final float pitch = (float) getConfig().getDouble("Properties.Earth.MudSound.Pitch");
+
+			Sound sound = Sound.BLOCK_GRAVEL_BREAK;
+			if (GeneralMethods.getMCVersion() >= 1190) {
+				sound = Sound.valueOf("BLOCK_MUD_PLACE");
+			}
+
+			try {
+				sound = Sound.valueOf(getConfig().getString("Properties.Earth.MudSound.Sound"));
+			} catch (final IllegalArgumentException exception) {
+				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MudSound.Sound' is not valid.");
 			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}

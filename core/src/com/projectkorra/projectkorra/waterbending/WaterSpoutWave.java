@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -209,8 +210,8 @@ public class WaterSpoutWave extends WaterAbility {
 				if (isPlant(this.origin.getBlock()) || isSnow(this.origin.getBlock())) {
 					new PlantRegrowth(this.player, this.origin.getBlock());
 					this.origin.getBlock().setType(Material.AIR);
-				} else if (isCauldron(this.origin.getBlock())) {
-					this.origin.getBlock().setType(Material.CAULDRON);
+				} else if (isCauldron(this.origin.getBlock()) || isTransformableBlock(this.origin.getBlock())) {
+					updateSourceBlock(this.origin.getBlock());
 				}
 
 				if (TempBlock.isTempBlock(this.origin.getBlock())) {

@@ -646,50 +646,45 @@ public class PKListener implements Listener {
 			}
 		}
 
-		final CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
+		// final CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
 
 		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
-			final CoreAbility coreAbility = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
-			for (final CoreAbility fireCombo : cookingFireCombos) {
-				if (fireCombo == null) {
-					continue;
-				}
-				if (coreAbility.getName().equalsIgnoreCase(fireCombo.getName())) {
-					final List<ItemStack> drops = event.getDrops();
-					final List<ItemStack> newDrops = new ArrayList<>();
-					for (ItemStack cooked : drops) {
-						final Material material = cooked.getType();
-						switch (material) {
-							case BEEF:
-								cooked = new ItemStack(Material.COOKED_BEEF);
-								break;
-							case SALMON:
-								cooked = new ItemStack(Material.COOKED_SALMON);
-								break;
-							case CHICKEN:
-								cooked = new ItemStack(Material.COOKED_CHICKEN);
-								break;
-							case PORKCHOP:
-								cooked = new ItemStack(Material.COOKED_PORKCHOP);
-								break;
-							case MUTTON:
-								cooked = new ItemStack(Material.COOKED_MUTTON);
-								break;
-							case RABBIT:
-								cooked = new ItemStack(Material.COOKED_RABBIT);
-								break;
-							case COD:
-								cooked = new ItemStack(Material.COOKED_COD);
-								break;
-							default:
-								break;
-						}
-						newDrops.add(cooked);
+			final CoreAbility ability = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
+
+			if (FireDamageTimer.isEnflamed(event.getEntity()) || (ability != null && ability instanceof FireAbility)) {
+				final List<ItemStack> drops = event.getDrops();
+				final List<ItemStack> newDrops = new ArrayList<>();
+				for (ItemStack cooked : drops) {
+					final Material material = cooked.getType();
+					switch (material) {
+						case BEEF:
+							cooked = new ItemStack(Material.COOKED_BEEF);
+							break;
+						case SALMON:
+							cooked = new ItemStack(Material.COOKED_SALMON);
+							break;
+						case CHICKEN:
+							cooked = new ItemStack(Material.COOKED_CHICKEN);
+							break;
+						case PORKCHOP:
+							cooked = new ItemStack(Material.COOKED_PORKCHOP);
+							break;
+						case MUTTON:
+							cooked = new ItemStack(Material.COOKED_MUTTON);
+							break;
+						case RABBIT:
+							cooked = new ItemStack(Material.COOKED_RABBIT);
+							break;
+						case COD:
+							cooked = new ItemStack(Material.COOKED_COD);
+							break;
+						default:
+							break;
 					}
-					event.getDrops().clear();
-					event.getDrops().addAll(newDrops);
-					break;
+					newDrops.add(cooked);
 				}
+				event.getDrops().clear();
+				event.getDrops().addAll(newDrops);
 			}
 		}
 	}

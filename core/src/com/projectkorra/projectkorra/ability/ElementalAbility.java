@@ -41,6 +41,18 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final Set<String> SAND_BLOCKS = new HashSet<String>();
 	private static final Set<String> SNOW_BLOCKS = new HashSet<String>();
 
+	// Once 1.16.5 no longer becomes LTS, this becomes obsolete and
+	// we can remove the version check and reference these materials directly instead of doing standard lookups.
+	protected static final Material LIGHT = Material.getMaterial("LIGHT");
+	protected static final Set<Material> MUD_BLOCKS = getMudBlocks();
+	private static Set<Material> getMudBlocks() {
+		Set<Material> mudBlocks = new HashSet<>();
+		mudBlocks.add(Material.getMaterial("MUD"));
+		mudBlocks.add(Material.getMaterial("PACKED_MUD"));
+		mudBlocks.add(Material.getMaterial("MUDDY_MANGROVE_ROOTS"));
+		return mudBlocks;
+	}
+
 	static {
 		TRANSPARENT.clear();
 		for (final Material mat : Material.values()) {
@@ -97,7 +109,7 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isAir(final Material material) {
 		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR ||
-				(GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT"));
+				(GeneralMethods.getMCVersion() >= 1170 && material == LIGHT);
 	}
 
 	public static boolean isDay(final World world) {
@@ -194,6 +206,14 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isMetalBlock(final Block block) {
 		return isMetal(block);
+	}
+
+	public static boolean isMud(final Block block) {
+		return block != null ? isMud(block.getType()) : false;
+	}
+
+	public static boolean isMud(final Material material) {
+		return GeneralMethods.getMCVersion() >= 1190 && MUD_BLOCKS.contains(material);
 	}
 
 	public static boolean isNegativeEffect(final PotionEffectType effect) {
