@@ -904,8 +904,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			//Hide the board if they spawn in a world with bending disabled
 			BendingBoardManager.changeWorld(this.player);
 		}, 1L);
-
-		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerLoadEvent(this));
 	}
 
 
