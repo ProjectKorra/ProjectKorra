@@ -140,7 +140,8 @@ public class OfflineBendingPlayer {
                         newPlayer = new OfflineBendingPlayer(offlinePlayer);
                     }
                     PLAYERS.put(uuid, newPlayer);
-                    Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(newPlayer));
+                    Bukkit.getScheduler().callSyncMethod(ProjectKorra.plugin, ()
+                            -> Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(newPlayer)));
                     future.complete(newPlayer);
                 } else {
                     // The player has at least played before.

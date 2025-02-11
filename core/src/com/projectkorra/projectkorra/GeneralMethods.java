@@ -736,7 +736,7 @@ public class GeneralMethods {
 	 * @return The filter
 	 */
 	public static Predicate<Entity> getEntityFilter() {
-		return entity -> !(entity.isValid() || entity.hasMetadata ("BendingImmunity")
+		return entity -> !(!entity.isValid() || entity.hasMetadata ("BendingImmunity")
 				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))
 				|| (entity instanceof ArmorStand && ((ArmorStand) entity).isMarker()));
 	}
