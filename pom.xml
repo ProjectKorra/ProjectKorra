@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.projectkorra</groupId>
-    <artifactId>projectkorra</artifactId>
-    <version>1.12.0-BETA-10</version>
-    <name>ProjectKorra</name>
+    <artifactId>projectkorra-parent</artifactId>
+    <version>1.12.0</version>
+    <name>ProjectKorra-Parent</name>
     <packaging>pom</packaging>
 
     <modules>
@@ -28,51 +28,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <!--<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.1</version>
-                <configuration>
-                    <outputDirectory>${project.basedir}/target/</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-                    <filters>
-
-                    </filters>
-                    <relocations>
-                        <relocation>
-                            <pattern>co.aikar.timings.lib</pattern>
-                            <shadedPattern>timingslib.projectkorra</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>paperlib.projectkorra</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.apache.commons</pattern>
-                            <shadedPattern>commonslang3.projectkorra</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <outputFile>${project.basedir}/target/${project.name}-${project.version}.jar</outputFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
         </plugins>
     </build>
     <properties>
