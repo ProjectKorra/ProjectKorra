@@ -145,6 +145,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -460,31 +461,34 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onElementChange(final PlayerChangeElementEvent event) {
-		final Player player = event.getTarget();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		PassiveManager.registerPassives(player);
-		final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-		if (chatEnabled) {
-			final Element element = event.getElement();
-			String prefix = "";
+		OfflinePlayer oPlayer = event.getTarget();
+		if (oPlayer.isOnline()) {
+			final Player player = (Player) oPlayer;
+			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			PassiveManager.registerPassives(player);
+			final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
+			if (chatEnabled) {
+				final Element element = event.getElement();
+				String prefix = "";
 
-			if (bPlayer == null) {
-				return;
+				if (bPlayer == null) {
+					return;
+				}
+
+				if (bPlayer.getElements().size() > 1) {
+					prefix = Element.AVATAR.getPrefix();
+				} else if (element != null) {
+					prefix = element.getPrefix();
+				} else {
+					prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+				}
+
+				player.setDisplayName(player.getName());
+				player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 			}
-
-			if (bPlayer.getElements().size() > 1) {
-				prefix = Element.AVATAR.getPrefix();
-			} else if (element != null) {
-				prefix = element.getPrefix();
-			} else {
-				prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
-			}
-
-			player.setDisplayName(player.getName());
-			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
+			BendingBoardManager.updateAllSlots(player);
+			FirePassive.handle(player);
 		}
-		BendingBoardManager.updateAllSlots(player);
-		FirePassive.handle(player);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -662,50 +666,45 @@ public class PKListener implements Listener {
 			}
 		}
 
-		final CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
+		// final CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
 
 		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
-			final CoreAbility coreAbility = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
-			for (final CoreAbility fireCombo : cookingFireCombos) {
-				if (fireCombo == null) {
-					continue;
-				}
-				if (coreAbility.getName().equalsIgnoreCase(fireCombo.getName())) {
-					final List<ItemStack> drops = event.getDrops();
-					final List<ItemStack> newDrops = new ArrayList<>();
-					for (ItemStack cooked : drops) {
-						final Material material = cooked.getType();
-						switch (material) {
-							case BEEF:
-								cooked = new ItemStack(Material.COOKED_BEEF);
-								break;
-							case SALMON:
-								cooked = new ItemStack(Material.COOKED_SALMON);
-								break;
-							case CHICKEN:
-								cooked = new ItemStack(Material.COOKED_CHICKEN);
-								break;
-							case PORKCHOP:
-								cooked = new ItemStack(Material.COOKED_PORKCHOP);
-								break;
-							case MUTTON:
-								cooked = new ItemStack(Material.COOKED_MUTTON);
-								break;
-							case RABBIT:
-								cooked = new ItemStack(Material.COOKED_RABBIT);
-								break;
-							case COD:
-								cooked = new ItemStack(Material.COOKED_COD);
-								break;
-							default:
-								break;
-						}
-						newDrops.add(cooked);
+			final CoreAbility ability = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
+
+			if (FireDamageTimer.isEnflamed(event.getEntity()) || (ability != null && ability instanceof FireAbility)) {
+				final List<ItemStack> drops = event.getDrops();
+				final List<ItemStack> newDrops = new ArrayList<>();
+				for (ItemStack cooked : drops) {
+					final Material material = cooked.getType();
+					switch (material) {
+						case BEEF:
+							cooked = new ItemStack(Material.COOKED_BEEF);
+							break;
+						case SALMON:
+							cooked = new ItemStack(Material.COOKED_SALMON);
+							break;
+						case CHICKEN:
+							cooked = new ItemStack(Material.COOKED_CHICKEN);
+							break;
+						case PORKCHOP:
+							cooked = new ItemStack(Material.COOKED_PORKCHOP);
+							break;
+						case MUTTON:
+							cooked = new ItemStack(Material.COOKED_MUTTON);
+							break;
+						case RABBIT:
+							cooked = new ItemStack(Material.COOKED_RABBIT);
+							break;
+						case COD:
+							cooked = new ItemStack(Material.COOKED_COD);
+							break;
+						default:
+							break;
 					}
-					event.getDrops().clear();
-					event.getDrops().addAll(newDrops);
-					break;
+					newDrops.add(cooked);
 				}
+				event.getDrops().clear();
+				event.getDrops().addAll(newDrops);
 			}
 		}
 	}
@@ -2202,7 +2201,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBendingSubElementChange(final PlayerChangeSubElementEvent event) {
-		final Player player = event.getTarget();
+		if (!event.isTargetOnline()) return;
+		final Player player = (Player) event.getTarget();
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) return;
 		BendingBoardManager.updateAllSlots(player);
@@ -2210,7 +2210,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBindChange(final PlayerBindChangeEvent event) {
-		final Player player = event.getPlayer();
+		if (!event.isOnline()) return;
+		final Player player = (Player) event.getPlayer();
 		if (player == null) return;
 		if (event.isMultiAbility()) {
 			new BukkitRunnable() {

@@ -339,7 +339,7 @@ public class WhoCommand extends PKCommand {
 		}).exceptionally(e -> {
 			e.printStackTrace();
 			return null;
-		});;
+		});
 	}
 
 	/**

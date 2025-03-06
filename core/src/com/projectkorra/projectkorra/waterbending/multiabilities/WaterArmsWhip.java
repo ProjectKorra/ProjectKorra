@@ -2,9 +2,10 @@ package com.projectkorra.projectkorra.waterbending.multiabilities;
 
 import java.util.HashMap;
 
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.util.ActionBar;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -392,6 +393,9 @@ public class WaterArmsWhip extends WaterAbility {
 			}
 			if (this.hasDamaged) {
 				this.waterArms.setMaxPunches(this.waterArms.getMaxPunches() - 1);
+				ActionBar.sendActionBar(Element.WATER.getSubColor() + "Punches Left: " + this.waterArms.getMaxPunches(), this.player);
+			} else {
+				ActionBar.sendActionBar(Element.WATER.getSubColor() + "Uses Left: " + this.waterArms.getMaxUses(), this.player);
 			}
 
 			this.waterArms.setMaxUses(this.waterArms.getMaxUses() - 1);

@@ -34,7 +34,7 @@ public abstract class AvatarAbility extends ElementalAbility {
 			final float volume = (float) ConfigManager.avatarStateConfig.get().getDouble("AvatarState.Sound.Volume");
 			final float pitch = (float) ConfigManager.avatarStateConfig.get().getDouble("AvatarState.Sound.Pitch");
 
-			Sound sound = Sound.BLOCK_BEACON_ACTIVATE;
+			Sound sound = Sound.BLOCK_BEACON_POWER_SELECT;
 
 			try {
 				sound = Sound.valueOf(ConfigManager.avatarStateConfig.get().getString("AvatarState.Sound.Sound"));
@@ -48,7 +48,7 @@ public abstract class AvatarAbility extends ElementalAbility {
 
 	/**
 	 * Determines whether the ability requires the user to be an avatar in order
-	 * to be able to use it. Set this to <tt>false</tt> for moves that should be
+	 * to be able to use it. Set this to <code>false</code> for moves that should be
 	 * able to be used without players needing to have the avatar element
 	 */
 	public boolean requireAvatar() {

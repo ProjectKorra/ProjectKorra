@@ -145,7 +145,7 @@ public class ChooseCommand extends PKCommand {
 			}).exceptionally(e -> {
 				e.printStackTrace();
 				return null;
-			});;
+			});
 
 		}
 	}
@@ -172,11 +172,16 @@ public class ChooseCommand extends PKCommand {
 				}
 				bPlayer.saveSubElements();
 				if (online) {
-					((BendingPlayer)bPlayer).removeUnusableAbilities();
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, (Player) target, sub, PlayerChangeSubElementEvent.Result.CHOOSE));
+					((BendingPlayer) bPlayer).removeUnusableAbilities();
 				}
+				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE));
 			} else {
 				if (element == Element.AVATAR) {
+
+					PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE);
+					Bukkit.getServer().getPluginManager().callEvent(event);
+					if (event.isCancelled()) return; //Do nothing if cancelled
+
 					bPlayer.getElements().clear();
 					for (Element e : new Element[] {Element.AIR, Element.EARTH, Element.FIRE, Element.WATER}) {
 						bPlayer.addElement(e);
@@ -184,18 +189,32 @@ public class ChooseCommand extends PKCommand {
 						if (online) {
 							for (final SubElement sub : Element.getSubElements(element)) {
 								if (((BendingPlayer) bPlayer).hasSubElementPermission(sub)) {
+									PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE);
+
+									Bukkit.getServer().getPluginManager().callEvent(subEvent);
+									if (subEvent.isCancelled()) continue; //Do nothing if cancelled
+
 									bPlayer.addSubElement(sub);
 								}
 							}
 						}
 					}
 				} else {
+					PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE);
+					Bukkit.getServer().getPluginManager().callEvent(event);
+					if (event.isCancelled()) return; //Do nothing if cancelled
+
 					bPlayer.setElement(element);
 					bPlayer.getSubElements().clear();
 
 					if (online) {
 						for (final SubElement sub : Element.getSubElements(element)) {
 							if (((BendingPlayer) bPlayer).hasSubElementPermission(sub)) {
+								PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE);
+
+								Bukkit.getServer().getPluginManager().callEvent(subEvent);
+								if (subEvent.isCancelled()) continue; //Do nothing if cancelled
+
 								bPlayer.addSubElement(sub);
 							}
 						}
@@ -220,14 +239,13 @@ public class ChooseCommand extends PKCommand {
 				bPlayer.saveSubElements();
 				if (online) {
 					((BendingPlayer)bPlayer).removeUnusableAbilities();
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) target, element, Result.CHOOSE));
 				}
 
 			}
 		}).exceptionally(e -> {
 			e.printStackTrace();
 			return null;
-		});;
+		});
 	}
 
 	public static boolean isVowel(final char c) {

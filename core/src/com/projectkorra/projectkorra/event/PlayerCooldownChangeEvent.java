@@ -1,5 +1,8 @@
 package com.projectkorra.projectkorra.event;
 
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -13,13 +16,13 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 
 	private static final HandlerList HANDLERS = new HandlerList();
 
-	private final Player player;
+	private final OfflinePlayer player;
 	private final String ability;
 	private final Result eventresult;
 	private boolean cancelled;
 	private long cooldown;
 
-	public PlayerCooldownChangeEvent(final Player player, final String abilityname, final long cooldown, final Result result) {
+	public PlayerCooldownChangeEvent(final OfflinePlayer player, final String abilityname, final long cooldown, final Result result) {
 		this.player = player;
 		this.ability = abilityname;
 		this.eventresult = result;
@@ -27,7 +30,7 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 		this.cooldown = cooldown;
 	}
 
-	public Player getPlayer() {
+	public OfflinePlayer getPlayer() {
 		return this.player;
 	}
 
@@ -41,6 +44,22 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 
 	public long getCooldown() {
 		return this.cooldown;
+	}
+
+	/**
+	 * Get the {@link BendingPlayer} that was affected
+	 * @return the {@link BendingPlayer} that was affected
+	 */
+	public OfflineBendingPlayer getBendingPlayer() {
+		return BendingPlayer.getBendingPlayer(this.player);
+	}
+
+	/**
+	 * Get whether the player is online
+	 * @return true if the player is online
+	 */
+	public boolean isOnline() {
+		return this.player.isOnline();
 	}
 
 	@Override

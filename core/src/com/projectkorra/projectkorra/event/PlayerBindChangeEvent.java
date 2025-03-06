@@ -1,12 +1,15 @@
 package com.projectkorra.projectkorra.event;
 
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when a player binds or unbinds an ability
+ * An event called when a player binds or unbinds an ability
  */
 public class PlayerBindChangeEvent extends Event implements Cancellable {
 
@@ -14,12 +17,12 @@ public class PlayerBindChangeEvent extends Event implements Cancellable {
 	
 	private boolean cancelled = false;
 	
-	private final Player player;
+	private final OfflinePlayer player;
 	private final String ability;
 	private final int slot; 
 	private final boolean isBinding, isMultiAbility; 
 
-	public PlayerBindChangeEvent(Player player, String ability, int slot, boolean isBinding, boolean isMultiAbility) {
+	public PlayerBindChangeEvent(OfflinePlayer player, String ability, int slot, boolean isBinding, boolean isMultiAbility) {
 		this.player = player;
 		this.ability = ability;
 		this.slot = slot;
@@ -31,10 +34,30 @@ public class PlayerBindChangeEvent extends Event implements Cancellable {
 		this(player, ability, player.getInventory().getHeldItemSlot(), isBinding, isMultiAbility);
 	}
 
-	public Player getPlayer() {
+	public OfflinePlayer getPlayer() {
 		return this.player;
 	}
 
+	/**
+	 * Get the {@link BendingPlayer} that was affected
+	 * @return the {@link BendingPlayer} that was affected
+	 */
+	public OfflineBendingPlayer getBendingPlayer() {
+		return BendingPlayer.getBendingPlayer(this.player);
+	}
+
+	/**
+	 * Get whether the player is online
+	 * @return true if the player is online
+	 */
+	public boolean isOnline() {
+		return this.player.isOnline();
+	}
+
+	/**
+	 * Get the ability being bound or unbound
+	 * @return affected ability
+	 */
 	public String getAbility() {
 		return this.ability;
 	}

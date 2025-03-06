@@ -17,9 +17,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.ability.StanceAbility;
 import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.command.CooldownCommand;
-import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.firebending.passive.FirePassive;
 import com.projectkorra.projectkorra.hooks.CanBendHook;
@@ -71,7 +73,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 	private long slowTime;
 	private final Player player;
-	private ChiAbility stance;
+	private StanceAbility stance;
 
 	protected boolean tremorSense;
 	protected boolean illumination;
@@ -479,7 +481,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 *
 	 * @return The player's stance object
 	 */
-	public ChiAbility getStance() {
+	public StanceAbility getStance() {
 		return this.stance;
 	}
 
@@ -648,18 +650,21 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	/**
-	 * Sets the player's {@link ChiAbility Chi stance}
+	 * Sets the player's {@link StanceAbility stance}
 	 * Also update any previews
 	 *
 	 * @param stance The player's new stance object
 	 */
-	public void setStance(final ChiAbility stance) {
-		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
-		final String newStance = (stance == null) ? "" : stance.getName();
-		this.stance = stance;
-		ChatUtil.displayMovePreview(this.player);
-		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(Bukkit.getPlayer(this.uuid), oldStance, newStance);
+	public void setStance(final StanceAbility stance) {
+		final String oldStance = (this.stance == null) ? "" : this.stance.getStanceName();
+		final String newStance = (stance == null) ? "" : stance.getStanceName();
+		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(this.player, oldStance, newStance);
 		Bukkit.getServer().getPluginManager().callEvent(event);
+
+		if (!event.isCancelled()) {
+			this.stance = stance;
+			ChatUtil.displayMovePreview(this.player);
+		}
 	}
 
 	/**
@@ -717,6 +722,12 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			String message = expired;
 
 			if (System.currentTimeMillis() >= time) {
+				PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, subElement, PlayerChangeSubElementEvent.Result.TEMP_EXPIRE);
+				Bukkit.getServer().getPluginManager().callEvent(subEvent);
+				if (subEvent.isCancelled()) {
+					continue;
+				}
+
 				ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + message
 						.replace("{element}", subElement.getColor() + subElement.getName())
 						.replace("{bending}", subElement.getType().getBending())
@@ -735,6 +746,12 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			if (element == Element.AVATAR) message = expiredAvatar;
 
 			if (System.currentTimeMillis() >= time) {
+				PlayerChangeElementEvent event = new PlayerChangeElementEvent(null, this.player, element, PlayerChangeElementEvent.Result.TEMP_EXPIRE);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if (event.isCancelled()) {
+					continue;
+				}
+
 				ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + message
 						.replace("{element}", element.getColor() + element.getName())
 						.replace("{bending}", element.getType().getBending())
@@ -752,6 +769,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 						if (this.tempSubElements.get(s1) != -1L || !s1.getParentElement().isAvatarElement()) continue;
 
 						if (!this.hasTempElement(s1.getParentElement())) {
+							PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, s1, PlayerChangeSubElementEvent.Result.TEMP_PARENT_EXPIRE);
+							Bukkit.getServer().getPluginManager().callEvent(subEvent);
+							if (subEvent.isCancelled()) {
+								continue;
+							}
 							subIterator1.remove();
 						}
 					}
@@ -764,6 +786,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 						if (this.tempSubElements.get(s1) != -1L) continue; //Only remove if the subelement is connected to the parent element's time
 
 						if (!this.hasElement(s1.getParentElement())) {
+							PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, s1, PlayerChangeSubElementEvent.Result.TEMP_PARENT_EXPIRE);
+							Bukkit.getServer().getPluginManager().callEvent(subEvent);
+							if (subEvent.isCancelled()) {
+								continue;
+							}
 							subIterator1.remove();
 						}
 					}
@@ -881,8 +908,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			//Hide the board if they spawn in a world with bending disabled
 			BendingBoardManager.changeWorld(this.player);
 		}, 1L);
-
-		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(this));
 	}
 
 

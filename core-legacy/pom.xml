@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.projectkorra</groupId>
-    <artifactId>projectkorra</artifactId>
-    <version>1.12.0-BETA-10</version>
+    <artifactId>projectkorra-parent</artifactId>
+    <version>1.12.0</version>
   </parent>
 
   <artifactId>core-legacy</artifactId>
@@ -23,17 +23,11 @@
     <!-- Paper Repo -->
     <repository>
       <id>papermc</id>
-      <url>https://papermc.io/repo/repository/maven-public/</url>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
   </repositories>
 
   <dependencies>
-    <!-- PaperLib -->
-    <dependency>
-      <groupId>io.papermc</groupId>
-      <artifactId>paperlib</artifactId>
-      <version>1.0.1</version>
-    </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>

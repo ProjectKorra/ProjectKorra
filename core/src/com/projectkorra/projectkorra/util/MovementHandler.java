@@ -43,7 +43,6 @@ public class MovementHandler {
 	 *            ticks)</b>.
 	 * @param message the message to send to the stopped entity if they are a
 	 *            player
-	 * @param ability ability which is stopping the player
 	 */
 	public void stopWithDuration(final long duration, final String message) {
 		this.entity.setMetadata("movement:stop", new FixedMetadataValue(ProjectKorra.plugin, this.ability));
@@ -54,7 +53,7 @@ public class MovementHandler {
 
 				@Override
 				public void run() {
-					ActionBar.sendActionBar(message, player);
+					ChatUtil.sendActionBar(message, player);
 					if (System.currentTimeMillis() >= start + duration / 20 * 1000) {
 						MovementHandler.this.reset();
 					}
@@ -92,7 +91,6 @@ public class MovementHandler {
 	 *
 	 * @param message the message to send to the stopped entity if they are a
 	 *            player
-	 * @param ability ability which is stopping the player
 	 */
 	public void stop(final String message) {
 		this.entity.setMetadata("movement:stop", new FixedMetadataValue(ProjectKorra.plugin, this.ability));
@@ -102,7 +100,7 @@ public class MovementHandler {
 
 				@Override
 				public void run() {
-					ActionBar.sendActionBar(message, player);
+					ChatUtil.sendActionBar(message, player);
 				}
 
 			};

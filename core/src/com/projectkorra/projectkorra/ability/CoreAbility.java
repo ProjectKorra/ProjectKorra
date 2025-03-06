@@ -233,6 +233,7 @@ public abstract class CoreAbility implements Ability {
 
 		for (AttributeCache cache : ATTRIBUTE_FIELDS.get(this.getClass()).values()) {
 			cache.getInitialValues().remove(this);
+			cache.getCurrentModifications().remove(this);
 		}
 
 		if (INSTANCES_BY_CLASS.containsKey(this.getClass())) {
@@ -333,6 +334,7 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * @param player the player that created the CoreAbility instance
 	 * @param clazz the class of the type of CoreAbility
+	 * @param <T> the ability type
 	 * @return a CoreAbility instance or null
 	 */
 	public static <T extends CoreAbility> T getAbility(final Player player, final Class<T> clazz) {
@@ -357,7 +359,7 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * <p>
 	 * CoreAbility coreAbil = getAbility(someString); <br>
-	 * if (coreAbil instanceof FireAbility && coreAbil.isSneakAbility())
+	 * if (coreAbil instanceof FireAbility &amp;&amp; coreAbil.isSneakAbility())
 	 *
 	 * @param abilityName the name of a loaded CoreAbility
 	 * @return a "fake" CoreAbility instance, or null if no such ability exists
@@ -377,6 +379,8 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
+	 * Gets a list of all "fake" instances of CoreAbilities that have been loaded. May return double ups if abilities
+	 * have the same name.
 	 * @return a list of "fake" instances for each ability that was loaded by
 	 *         {@link #registerAbilities()}
 	 */
@@ -385,6 +389,7 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
+	 * Gets a list of all "fake" instances of CoreAbilities that have been loaded.
 	 * @return a list of "fake" instances for each ability that was loaded by
 	 *         {@link #registerAbilities()}
 	 */
@@ -397,6 +402,7 @@ public abstract class CoreAbility implements Ability {
 	 * specific type of CoreAbility.
 	 *
 	 * @param clazz the class for the type of CoreAbilities
+	 * @param <T> the ability type
 	 * @return a Collection of real instances
 	 */
 	public static <T extends CoreAbility> Collection<T> getAbilities(final Class<T> clazz) {
@@ -412,6 +418,7 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * @param player the player that created the instances
 	 * @param clazz the class for the type of CoreAbilities
+	 * @param <T> the ability type
 	 * @return a Collection of real instances
 	 */
 	public static <T extends CoreAbility> Collection<T> getAbilities(final Player player, final Class<T> clazz) {
@@ -422,6 +429,7 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
+	 * Returns a Collection of all of the CoreAbilities that are currently active.
 	 * @return a Collection of all of the CoreAbilities that are currently
 	 *         alive. Do not modify this Collection.
 	 */
@@ -470,6 +478,8 @@ public abstract class CoreAbility implements Ability {
 	 *
 	 * @param player the player that created the T instance
 	 * @param clazz the class for the type of CoreAbility
+	 * @param <T> the ability type
+	 * @return true if the player has an active instance of T
 	 */
 	public static <T extends CoreAbility> boolean hasAbility(final Player player, final Class<T> clazz) {
 		return getAbility(player, clazz) != null;
@@ -500,6 +510,7 @@ public abstract class CoreAbility implements Ability {
 	 * instance of clazz.
 	 *
 	 * @param clazz the clazz for the type of CoreAbility
+	 * @return a Set of players that have an active instance of clazz
 	 */
 	public static Set<Player> getPlayers(final Class<? extends CoreAbility> clazz) {
 		final HashSet<Player> players = new HashSet<>();
@@ -797,7 +808,7 @@ public abstract class CoreAbility implements Ability {
 		if (forceCooldown || bPlayer.isOnCooldown(this)) {
 			displayedMessage = this.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + this.getName();
 		} else {
-			boolean isActiveStance = bPlayer.getStance() != null && bPlayer.getStance().getName().equals(this.getName());
+			boolean isActiveStance = bPlayer.getStance() != null && bPlayer.getStance().getStanceName().equals(this.getName());
 			boolean isActiveAvatarState = bPlayer.isAvatarState() && this.getName().equals("AvatarState");
 			boolean isActiveIllumination = bPlayer.isIlluminating() && this.getName().equals("Illumination");
 			boolean isActiveTremorSense = bPlayer.isTremorSensing() && this.getName().equals("Tremorsense");
@@ -996,11 +1007,17 @@ public abstract class CoreAbility implements Ability {
 			AbilityRecalculateAttributeEvent event = new AbilityRecalculateAttributeEvent(this, attribute, initialValue);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 
+			cache.getCurrentModifications().put(this, event.getModifications());
+
 			try {
 				for (AttributeModification mod : event.getModifications()) {
 					if (mod.getModifier() == AttributeModifier.SET) {
-						cache.getField().set(this, mod.getModification());
-						continue attribute_loop;
+						if (initialValue instanceof Number) { //For numbers, we continue to loop through the remainder modifiers like normal
+							initialValue = mod.getModification();
+						} else { //For booleans, set it and then continue to the next attribute
+							cache.getField().set(this, mod.getModification());
+							continue attribute_loop;
+						}
 					} else {
 						Number number = (Number) initialValue;
 						Number newValue = mod.getModifier().performModification(number, (Number) mod.getModification());
@@ -1016,45 +1033,6 @@ public abstract class CoreAbility implements Ability {
 		}
 
 		recalculatingAttributes = false;
-	}
-
-	@Deprecated
-	private void modifyAttributes() {
-		/*for (final String attribute : this.attributeModifiers.keySet()) {
-			final Field field = ATTRIBUTE_FIELDS.get(this.getClass()).get(attribute);
-			Attribute attr = field.getAnnotation(Attribute.class);
-			final boolean accessibility = field.isAccessible();
-			field.setAccessible(true);
-			try {
-				for (final AttributePriority priority : AttributePriority.values()) {
-					if (this.attributeModifiers.get(attribute).containsKey(priority)) {
-						for (final StoredModifier pair : this.attributeModifiers.get(attribute).get(priority)) {
-							final Object get = field.get(this);
-							Validate.isTrue(get instanceof Number, "The field " + field.getName() + " cannot algebraically be modified.");
-							final Number oldValue = (Number) field.get(this);
-							final Number newValue = pair.type.performModification(oldValue, pair.value);
-							field.set(this, newValue);
-						}
-					}
-				}
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			} finally {
-				field.setAccessible(accessibility);
-			}
-		}
-		this.attributeValues.forEach((attribute, value) -> {
-			final Field field = ATTRIBUTE_FIELDS.get(this.getClass()).get(attribute);
-			final boolean accessibility = field.isAccessible();
-			field.setAccessible(true);
-			try {
-				field.set(this, value);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			} finally {
-				field.setAccessible(accessibility);
-			}
-		});*/
 	}
 
 	/**

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
@@ -17,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -199,6 +201,10 @@ public class HeatControl extends FireAbility {
 
 					block.setType(Material.AIR);
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
+				} else if (block.getType() == Material.WET_SPONGE) {
+					if (!isWater(block.getRelative(BlockFace.UP)) && !isWater(block.getRelative(BlockFace.DOWN)) && !isWater(block.getRelative(BlockFace.NORTH)) && !isWater(block.getRelative(BlockFace.SOUTH)) && !isWater(block.getRelative(BlockFace.EAST)) && !isWater(block.getRelative(BlockFace.WEST))) {
+						dryWetBlocks(block, this, ThreadLocalRandom.current().nextInt(5) == 0);
+					}
 				}
 			}
 
@@ -337,7 +343,7 @@ public class HeatControl extends FireAbility {
 		IceWave.thaw(block);
 
 		if (isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
-			if (block.getType() == Material.SNOW) {
+			if (isSnow(block)) {
 				block.setType(Material.AIR);
 				return;
 			} else {

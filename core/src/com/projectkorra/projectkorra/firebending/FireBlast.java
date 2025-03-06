@@ -3,11 +3,13 @@ package com.projectkorra.projectkorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Campfire;
@@ -150,6 +152,11 @@ public class FireBlast extends FireAbility {
 			this.remove();
 			return false;
 		}
+		for (Block b : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 1.4)) {
+			if (!isSnow(b)) continue;
+
+			dryWetBlocks(b, this, ThreadLocalRandom.current().nextInt(4) == 0);
+		}
 		if (!block.isPassable()) {
 			if (block.getType() == Material.FURNACE && this.powerFurnace) {
 				final Furnace furnace = (Furnace) block.getState();
@@ -174,6 +181,8 @@ public class FireBlast extends FireAbility {
 				if (!this.isFireBurst || this.fireBurstIgnite) {
 					this.ignite(this.location);
 				}
+			} else if (block.getType() == Material.WET_SPONGE) {
+				dryWetBlocks(block, this, true);
 			}
 			this.remove();
 			return false;

@@ -142,6 +142,11 @@ public class BendingManager implements Runnable {
 		return ChatUtil.color(ConfigManager.languageConfig.get().getString("Extras.Water.DayMessage"));
 	}
 
+	/**
+	 * A runnable that manages temp elements for players.
+	 * It runs for online players and only polls the next element that is due to expire.
+	 * This runnable runs every 20 ticks (1 second).
+	 */
 	public static class TempElementsRunnable implements Runnable {
 		@Override
 		public void run() {

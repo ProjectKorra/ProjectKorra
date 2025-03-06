@@ -576,6 +576,9 @@ public class ConfigManager {
 				earthBlocks.add("MUD");
 				earthBlocks.add("MUDDY_MANGROVE_ROOTS");
 			}
+			if (mcVersion >= 1180) { //1.18
+				earthBlocks.add("#terracotta");
+			}
 			if (mcVersion >= 1170) { //1.17
 				earthBlocks.add("#coal_ores"); //These tags were only added in 1.17 and above
 				earthBlocks.add("#diamond_ores");
@@ -601,6 +604,7 @@ public class ConfigManager {
 			earthBlocks.add("ANCIENT_DEBRIS");
 			earthBlocks.add("CLAY");
 			earthBlocks.add("COARSE_DIRT");
+			earthBlocks.add("COAL_BLOCK");
 			earthBlocks.add("COBBLESTONE");
 			earthBlocks.add("COBBLESTONE_SLAB");
 			earthBlocks.add("DIRT");
@@ -682,6 +686,8 @@ public class ConfigManager {
 
 			plantBlocks.add("BROWN_MUSHROOM");
 			plantBlocks.add("BROWN_MUSHROOM_BLOCK");
+			plantBlocks.add("BAMBOO");
+			plantBlocks.add("BAMBOO_SAPLING");
 			plantBlocks.add("CACTUS");
 			plantBlocks.add("CRIMSON_FUNGUS");
 			plantBlocks.add("CRIMSON_ROOTS");
@@ -720,6 +726,14 @@ public class ConfigManager {
 
 			final ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add("#snow"); // added in 1.17
+
+			/*
+			final ArrayList<String> waterTransformableBlocks = new ArrayList<>();
+			waterTransformableBlocks.add("MUD>DIRT");
+			waterTransformableBlocks.add("PACKED_MUD>DIRT");
+			waterTransformableBlocks.add("MUDDY_MANGROVE_ROOTS>MANGROVE_ROOTS");
+			waterTransformableBlocks.add("WET_SPONGE>SPONGE");
+			 */
 
 			config.addDefault("Properties.UpdateChecker", true);
 			config.addDefault("Properties.Statistics", true);
@@ -773,6 +787,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
 			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
+			// config.addDefault("Properties.Water.TransformableBlocks", waterTransformableBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.25);
 			config.addDefault("Properties.Water.PlaySound", true);
 			config.addDefault("Properties.Water.WaterSound.Sound", "BLOCK_WATER_AMBIENT");
@@ -784,6 +799,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.PlantSound.Sound", "BLOCK_GRASS_STEP");
 			config.addDefault("Properties.Water.IceSound.Volume", 1);
 			config.addDefault("Properties.Water.IceSound.Pitch", 1);
+			config.addDefault("Properties.Water.MudSound.Sound", "BLOCK_MUD_STEP");
+			config.addDefault("Properties.Water.MudSound.Volume", 1);
+			config.addDefault("Properties.Water.MudSound.Pitch", 1);
 
 			config.addDefault("Properties.Earth.DynamicSourcing", true);
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
@@ -807,6 +825,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.LavaSound.Sound", "BLOCK_LAVA_AMBIENT");
 			config.addDefault("Properties.Earth.LavaSound.Volume", 1);
 			config.addDefault("Properties.Earth.LavaSound.Pitch", 1);
+			config.addDefault("Properties.Earth.MudSound.Sound", "BLOCK_MUD_PLACE");
+			config.addDefault("Properties.Earth.MudSound.Volume", 1);
+			config.addDefault("Properties.Earth.MudSound.Pitch", 1);
 
 			config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 			config.addDefault("Properties.Fire.DayFactor", 1.25);
