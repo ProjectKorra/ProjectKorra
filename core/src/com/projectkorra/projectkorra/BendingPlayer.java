@@ -355,23 +355,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	/**
-	 * Gets a BendingPlayer instance for the provided player
-	 * @param player The player
-	 * @return The BendingPlayer instance
-	 */
-	public static BendingPlayer getBendingPlayer(@NotNull final Player player) {
-		return getBendingPlayer((OfflinePlayer)player);
-	}
-
-
-	/**
 	 * Attempts to get a {@link BendingPlayer} from specified player name. this
 	 * method tries to get a {@link Player} object and gets the uuid and then
 	 * calls {@link #getBendingPlayer(OfflinePlayer)}
 	 *
 	 * @param playerName The name of the Player
 	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS}
-	 *         contains the player name
+	 *         contains the player name, <b>NOTE: This will always return null for offline players</b>
 	 *
 	 * @see #getBendingPlayer(OfflinePlayer)
 	 */
@@ -379,11 +369,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		if (playerName == null) {
 			return null;
 		}
-
-		final Player player = Bukkit.getPlayer(playerName);
-		final OfflinePlayer oPlayer = player != null ? Bukkit.getOfflinePlayer(player.getUniqueId()) : null;
-
-		return getBendingPlayer(oPlayer);
+		Player player = Bukkit.getPlayer(playerName);
+		return player == null ? null : getBendingPlayer(player);
 	}
 
 	/**
@@ -401,9 +388,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		if (playerName == null) {
 			return null;
 		}
-
 		final OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(playerName);
-
 		return getBendingPlayer(oPlayer);
 	}
 

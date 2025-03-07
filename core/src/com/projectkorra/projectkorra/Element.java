@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
@@ -23,11 +24,11 @@ public class Element {
 		BLOCKING("blocking", "blocker", "block"),
 		NO_SUFFIX("", "", "");
 
-		private String bending;
-		private String bender;
-		private String bend;
+		private final String bending;
+		private final String bender;
+		private final String bend;
 
-		ElementType(final String bending, final String bender, final String bend) {
+		ElementType(String bending, String bender, String bend) {
 			this.bending = bending;
 			this.bender = bender;
 			this.bend = bend;
@@ -76,7 +77,7 @@ public class Element {
 	protected final Plugin plugin;
 	protected ChatColor color;
 	protected ChatColor subColor;
-	protected boolean isAvatarElement = false;
+	protected boolean isAvatarElement;
 
 	/**
 	 * To be used when creating a new Element. Do not use for comparing
@@ -118,21 +119,21 @@ public class Element {
 	}
 
 	public String getPrefix() {
-		String name_ = this.name;
-		if (this instanceof SubElement) {
-			name_ = ((SubElement) this).parentElement.name;
+		String configKey = this.name;
+		if (this instanceof SubElement subElement) {
+			configKey = subElement.parentElement.name;
 		}
-		return this.getColor() + ChatUtil.color(ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_, this.name)) + " ";
+		return getColor() + ChatUtil.color(ConfigManager.languageConfig.get().getString("Chat.Prefixes." + configKey, this.name)) + " ";
 	}
 
 	public ChatColor getColor() {
 		if (this.color == null) {
-			FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
+			FileConfiguration config = this.plugin == ProjectKorra.plugin ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
 			String key = "Chat.Colors." + this.name;
 			String value = config.getString(key);
 
-			if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
-				this.color = ((SubElement) this).parentElement.getSubColor();
+			if (value == null && this instanceof SubElement subElement && !(this instanceof MultiSubElement)) {
+				this.color = subElement.parentElement.getSubColor();
 				return this.color;
 			} else if (value == null) value = "WHITE";
 
@@ -148,31 +149,30 @@ public class Element {
 	}
 
 	public ChatColor getSubColor() {
-		if (this.subColor == null) {
-			FileConfiguration config = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
-			String key = "Chat.Colors." + this.name + "Sub";
-			String value = config.getString(key);
+		if (this.subColor != null) {
+			return this.subColor;
+		}
 
-			if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
-				this.color = ((SubElement) this).parentElement.getSubColor();
-				return this.color;
-			} else if (value == null) value = getColor().getName();
+		FileConfiguration config = this.plugin == ProjectKorra.plugin ? ConfigManager.languageConfig.get() : this.plugin.getConfig();
+		String key = "Chat.Colors." + this.name + "Sub";
+		String value = config.getString(key);
 
-			try {
-				this.subColor = ChatColor.of(value);
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			}
+		if (value == null && this instanceof SubElement && !(this instanceof MultiSubElement)) {
+			this.color = ((SubElement) this).parentElement.getSubColor();
+			return this.color;
+		} else if (value == null) value = getColor().getName();
+
+		try {
+			this.subColor = ChatColor.of(value);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 		}
 		return this.subColor != null ? this.subColor : ChatColor.WHITE;
 	}
 
-	void setColor(ChatColor color) {
-		this.color = color;
-	}
-
-	void setSubColor(ChatColor color) {
-		this.subColor = color;
+	void resetColors() {
+		this.color = null;
+		this.subColor = null;
 	}
 
 	public String getName() {
@@ -184,10 +184,7 @@ public class Element {
 	}
 
 	public ElementType getType() {
-		if (this.type == null) {
-			return ElementType.NO_SUFFIX;
-		}
-		return this.type;
+		return this.type == null ? ElementType.NO_SUFFIX : this.type;
 	}
 
 	/**
@@ -198,8 +195,7 @@ public class Element {
 	 */
 	@Experimental
 	public boolean isAvatarElement() {
-		if (this instanceof SubElement) return false;
-		return isAvatarElement;
+		return isAvatarElement && !(this instanceof SubElement);
 	}
 
 	@Override
@@ -207,11 +203,8 @@ public class Element {
 		return (this == Element.BLUE_FIRE) ? this.getColor() + "Blue Fire": this.getColor() + this.getName();
 	}
 
-	public static Element getElement(final String name) {
-		if (name == null) {
-			return null;
-		}
-		return ALL_ELEMENTS.get(name.toLowerCase());
+	public static Element getElement(String name) {
+		return name == null ? null : ALL_ELEMENTS.get(name.toLowerCase());
 	}
 
 	/**
@@ -221,14 +214,13 @@ public class Element {
 	 * @return Array of all official and addon elements.
 	 */
 	public static Element[] getAllElements() {
-		final List<Element> ae = new ArrayList<Element>();
-		ae.addAll(Arrays.asList(getMainElements()));
-		for (final Element e : ALL_ELEMENTS.values()) {
-			if (!ae.contains(e) && !(e instanceof SubElement)) {
-				ae.add(e);
+        final List<Element> elements = new ArrayList<>(Arrays.asList(getMainElements()));
+		for (Element element : ALL_ELEMENTS.values()) {
+			if (!elements.contains(element) && !(element instanceof SubElement)) {
+				elements.add(element);
 			}
 		}
-		return ae.toArray(new Element[ae.size()]);
+		return elements.toArray(new Element[0]);
 	}
 
 	/**
@@ -255,14 +247,9 @@ public class Element {
 	 * @return Array of all addon elements.
 	 */
 	public static Element[] getAddonElements() {
-		final List<Element> ae = new ArrayList<Element>();
-		for (final Element e : getAllElements()) {
-			if (!Arrays.asList(getMainElements()).contains(e)) {
-				ae.add(e);
-			}
-		}
-		ae.remove(Element.AVATAR);
-		return ae.toArray(new Element[ae.size()]);
+		final List<Element> elements = new ArrayList<>(Arrays.asList(getAllElements()));
+		elements.removeAll(Arrays.asList(MAIN_ELEMENTS));
+		return elements.toArray(new Element[0]);
 	}
 
 	/**
@@ -271,14 +258,13 @@ public class Element {
 	 * @return Array of all the subelements.
 	 */
 	public static SubElement[] getAllSubElements() {
-		final List<SubElement> se = new ArrayList<SubElement>();
-		se.addAll(Arrays.asList(getSubElements()));
-		for (final Element e : ALL_ELEMENTS.values()) {
-			if (!se.contains(e) && e instanceof SubElement) {
-				se.add((SubElement) e);
+        final List<SubElement> subElements = new ArrayList<>();
+		for (Element element : ALL_ELEMENTS.values()) {
+			if (element instanceof SubElement subElement) {
+				subElements.add(subElement);
 			}
 		}
-		return se.toArray(new SubElement[se.size()]);
+		return subElements.toArray(new SubElement[0]);
 	}
 
 	/**
@@ -296,14 +282,14 @@ public class Element {
 	 * @param element Parent element.
 	 * @return Array of all subelements belonging to a parent element.
 	 */
-	public static SubElement[] getSubElements(final Element element) {
-		final List<SubElement> se = new ArrayList<SubElement>();
-		for (final SubElement sub : getAllSubElements()) {
-			if (sub.getParentElement().equals(element) || (sub instanceof MultiSubElement && ((MultiSubElement) sub).isParentElement(element))) {
-				se.add(sub);
+	public static SubElement[] getSubElements(Element element) {
+		final List<SubElement> subElements = new ArrayList<>();
+		for (SubElement sub : getAllSubElements()) {
+			if (sub.getParentElement() == element || (sub instanceof MultiSubElement multi && multi.isParentElement(element))) {
+				subElements.add(sub);
 			}
 		}
-		return se.toArray(new SubElement[se.size()]);
+		return subElements.toArray(new SubElement[0]);
 	}
 
 	/**
@@ -312,13 +298,9 @@ public class Element {
 	 * @return Array of all addon subelements.
 	 */
 	public static SubElement[] getAddonSubElements() {
-		final List<SubElement> ae = new ArrayList<SubElement>();
-		for (final SubElement e : getAllSubElements()) {
-			if (!Arrays.asList(getSubElements()).contains(e)) {
-				ae.add(e);
-			}
-		}
-		return ae.toArray(new SubElement[ae.size()]);
+		List<SubElement> subElements = new ArrayList<>(Arrays.asList(getAllSubElements()));
+		subElements.removeAll(Arrays.asList(getSubElements()));
+		return subElements.toArray(new SubElement[0]);
 	}
 
 	/**
@@ -327,30 +309,35 @@ public class Element {
 	 * @param element Parent element.
 	 * @return Array of addon subelements belonging to a parent element.
 	 */
-	public static SubElement[] getAddonSubElements(final Element element) {
-		final List<SubElement> se = new ArrayList<SubElement>();
-		for (final SubElement sub : getAllSubElements()) {
-			if ((sub.getParentElement().equals(element) || (sub instanceof MultiSubElement && ((MultiSubElement) sub).isParentElement(element))) && !Arrays.asList(getSubElements()).contains(sub)) {
-				se.add(sub);
+	public static SubElement[] getAddonSubElements(Element element) {
+		List<SubElement> subElements = new ArrayList<>();
+		for (SubElement sub : getAddonSubElements()) {
+			if (sub.getParentElement() == element || (sub instanceof MultiSubElement  multi && multi.isParentElement(element))) {
+				subElements.add(sub);
 			}
 		}
-		return se.toArray(new SubElement[se.size()]);
+		return subElements.toArray(new SubElement[0]);
 	}
 
-	public static Element fromString(final String element) {
-		if (element == null || element.equals("")) {
+	public static Element fromString(final String name) {
+		if (name == null || name.isBlank()) {
 			return null;
 		}
-		if (getElement(element) != null) {
-			return getElement(element);
+
+		Element element = getElement(name);
+		if (element != null) {
+			return element;
 		}
-		for (final String s : ALL_ELEMENTS.keySet()) {
-			if (element.length() <= 1 && getElement(s) instanceof SubElement) {
+
+		for (Map.Entry<String, Element> entry : ALL_ELEMENTS.entrySet()) {
+			Element other = entry.getValue();
+			if (name.length() <= 1 && other instanceof SubElement) {
 				continue;
 			}
-			if (s.length() >= element.length()) {
-				if (s.substring(0, element.length()).equalsIgnoreCase(element)) {
-					return getElement(s);
+			String otherName = entry.getKey();
+			if (otherName.length() >= name.length()) {
+				if (otherName.substring(0, name.length()).equalsIgnoreCase(name)) {
+					return other;
 				}
 			}
 		}
