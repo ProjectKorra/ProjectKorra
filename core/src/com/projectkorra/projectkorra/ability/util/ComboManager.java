@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,14 +17,12 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.combo.EarthDomeOthers;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
 
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 20 * 60;
-	private static final Map<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
+	private static final Map<String, List<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
 	private static final HashMap<String, ComboAbilityInfo> COMBO_ABILITIES = new HashMap<>();
 	private static final HashMap<String, String> AUTHORS = new HashMap<>();
 	private static final HashMap<String, String> DESCRIPTIONS = new HashMap<>();
@@ -69,9 +68,8 @@ public class ComboManager {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				if (comboAbil.getComboType() instanceof Class) {
-					final Class<?> clazz = (Class<?>) comboAbil.getComboType();
-					try {
+				if (comboAbil.getComboType() instanceof Class<?> clazz) {
+                    try {
 						ReflectionHandler.instantiateObject(clazz, player);
 					} catch (final Exception e) {
 						e.printStackTrace();
@@ -79,8 +77,7 @@ public class ComboManager {
 				} else {
 					if (comboAbil.getComboType() instanceof ComboAbility) {
 						((ComboAbility) comboAbil.getComboType()).createNewComboInstance(player);
-						return;
-					}
+                    }
 				}
 			}
 
@@ -95,12 +92,12 @@ public class ComboManager {
 	 * @param info The AbilityInformation to add
 	 */
 	public static void addRecentAbility(final Player player, final AbilityInformation info) {
-		ArrayList<AbilityInformation> list;
+		List<AbilityInformation> list;
 		final String name = player.getName();
 		if (RECENTLY_USED.containsKey(name)) {
 			list = RECENTLY_USED.get(name);
 		} else {
-			list = new ArrayList<AbilityInformation>();
+			list = new ArrayList<>();
 		}
 
 		list.add(info);
@@ -114,10 +111,10 @@ public class ComboManager {
 	 */
 	public static void removeRecentType(final Player player, ClickType type) {
 		if (RECENTLY_USED.containsKey(player.getName())) {
-			ArrayList<AbilityInformation> list = RECENTLY_USED.get(player.getName());
+			List<AbilityInformation> list = RECENTLY_USED.get(player.getName());
 
-			if (list.size() > 0) {
-				AbilityInformation last = list.get(list.size() - 1);
+			if (!list.isEmpty()) {
+				AbilityInformation last = list.getLast();
 				if (last.getTime() > System.currentTimeMillis() - 50 && last.getClickType() == type) { //If the ability was within the last tick
 					list.remove(last);
 				}
@@ -136,7 +133,7 @@ public class ComboManager {
 	 *         no valid combo was found
 	 */
 	public static ComboAbilityInfo checkForValidCombo(final Player player) {
-		final ArrayList<AbilityInformation> playerCombo = getRecentlyUsedAbilities(player, 8);
+		final List<AbilityInformation> playerCombo = getRecentlyUsedAbilities(player, 8);
 		for (final String ability : COMBO_ABILITIES.keySet()) {
 			final ComboAbilityInfo customAbility = COMBO_ABILITIES.get(ability);
 			final ArrayList<AbilityInformation> abilityCombo = customAbility.getAbilities();
@@ -179,33 +176,33 @@ public class ComboManager {
 	 * @return An ArrayList of the player's recently
 	 *         used abilities
 	 */
-	public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(final Player player, final int amount) {
+	public static List<AbilityInformation> getRecentlyUsedAbilities(final Player player, final int amount) {
 		final String name = player.getName();
 		if (!RECENTLY_USED.containsKey(name)) {
-			return new ArrayList<AbilityInformation>();
+			return new ArrayList<>();
 		}
 
-		final ArrayList<AbilityInformation> list = RECENTLY_USED.get(name);
+		final List<AbilityInformation> list = RECENTLY_USED.get(name);
 		if (list.size() < amount) {
-			return new ArrayList<AbilityInformation>(list);
+			return new ArrayList<>(list);
 		}
 
-		final ArrayList<AbilityInformation> tempList = new ArrayList<AbilityInformation>();
+		final List<AbilityInformation> tempList = new ArrayList<>();
 		for (int i = 0; i < amount; i++) {
-			tempList.add(0, list.get(list.size() - 1 - i));
+			tempList.addFirst(list.get(list.size() - 1 - i));
 		}
 
 		return tempList;
 	}
 
 	/**
-	 * Gets all of the combos for a given element.
+	 * Gets all the combos for a given element.
 	 *
 	 * @param element The element to get combos for
 	 * @return An ArrayList of the combos for that element
 	 */
-	public static ArrayList<String> getCombosForElement(final Element element) {
-		final ArrayList<String> list = new ArrayList<String>();
+	public static List<String> getCombosForElement(final Element element) {
+		final List<String> list = new ArrayList<>();
 		for (final String comboab : COMBO_ABILITIES.keySet()) {
 			final CoreAbility coreAbil = CoreAbility.getAbility(comboab);
 			if (coreAbil == null) {
@@ -257,8 +254,7 @@ public class ComboManager {
 
 	private static void registerCombos() {
 		for (CoreAbility ability : CoreAbility.getAbilities()) {
-			if (ability instanceof ComboAbility && ability.isEnabled()) {
-				final ComboAbility combo = (ComboAbility) ability;
+			if (ability instanceof ComboAbility combo && ability.isEnabled()) {
 				try { //Using a try catch here because we can run addon code. And that may crash/stop the loop
 					ArrayList<AbilityInformation> combination = combo.getCombination();
 					if (combination != null) {
@@ -277,7 +273,6 @@ public class ComboManager {
 	 * Contains information on an ability used in a combo.
 	 *
 	 * @author kingbirdy
-	 *
 	 */
 	public static class AbilityInformation {
 		private String abilityName;
