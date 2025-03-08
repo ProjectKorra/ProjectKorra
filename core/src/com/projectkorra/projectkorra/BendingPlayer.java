@@ -20,7 +20,6 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.StanceAbility;
 import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.command.CooldownCommand;
-import com.projectkorra.projectkorra.event.BendingPlayerLoadEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
@@ -904,8 +903,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			//Hide the board if they spawn in a world with bending disabled
 			BendingBoardManager.changeWorld(this.player);
 		}, 1L);
-
-		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerLoadEvent(this));
 	}
 
 

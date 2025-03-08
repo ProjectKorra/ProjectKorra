@@ -5,17 +5,14 @@ import java.util.Map;
 import java.util.Random;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.AttributeCache;
 import com.projectkorra.projectkorra.attribute.AttributeModification;
-import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -39,6 +36,8 @@ public class AvatarState extends AvatarAbility {
 	private boolean playSound;
 	@Attribute("GlowEnabled")
 	private boolean glow;
+	@Attribute("DarkAvatar")
+	private boolean darkAvatar = false;
 
 	public AvatarState(final Player player) {
 		super(player);
@@ -68,13 +67,16 @@ public class AvatarState extends AvatarAbility {
 		this.glow = ConfigManager.avatarStateConfig.get().getBoolean("AvatarState.GlowEnabled");
 
 		if (playSound) playAvatarSound(player.getLocation());
+
+		this.recalculateAttributes();
+
 		if (showParticles) {
 			player.getWorld().spawnParticle(Particle.FLASH, player.getLocation().add(0, 0.8, 0), 1, 0, 0, 0);
 
 
 			Random rand = new Random();
 			for (int i = 0; i < 60; i++) {
-				Particle particle = i % 2 == 0 ? Particle.END_ROD : Particle.FIREWORKS_SPARK;
+				Particle particle = i % 2 == 0 ? Particle.END_ROD : (darkAvatar ? Particle.SPELL_WITCH : Particle.FIREWORKS_SPARK);
 
 				player.getWorld().spawnParticle(particle, player.getLocation().add(0, 1, 0), 0, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, 0.3);
 			}
@@ -111,7 +113,7 @@ public class AvatarState extends AvatarAbility {
 			}
 			if (this.getRunningTicks() % 6 == 0) {
 				final Location loc = this.player.getEyeLocation();
-				loc.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, loc, 1, 0.3, 0.3, 0.3, 0);
+				loc.getWorld().spawnParticle((darkAvatar ? Particle.SPELL_WITCH : Particle.FIREWORKS_SPARK), loc, 1, 0.3, 0.3, 0.3, 0);
 			}
 
 		}

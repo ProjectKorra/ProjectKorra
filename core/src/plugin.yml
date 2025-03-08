@@ -28,7 +28,7 @@ permissions:
       bending.water.bloodbending: true
       bending.fire.bluefire: true
       bending.fire.bluefirefactor: true
-      bending.ability.Flight: true
+      bending.air.flight: true
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true
       bending.ability.MetalClips.throw: true
@@ -87,7 +87,7 @@ permissions:
       bending.ability.Tornado: true
       bending.ability.AirCombo: true
       bending.air.passive: true
-      bending.air.flight: true
+      bending.ability.Flight: true
   bending.water:
     default: true
     description: Grants access to most waterbending abilities.
