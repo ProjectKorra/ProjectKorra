@@ -75,6 +75,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.plugin.Plugin;
@@ -565,7 +566,7 @@ public class GeneralMethods {
 	 * @param block The single block
 	 * @param type The Material type to change the block into
 	 * @param data The block data to change the block into
-	 * @return The item drops fromt the specified block
+	 * @return The item drops from the specified block
 	 */
 	public static Collection<ItemStack> getDrops(final Block block, final Material type, final BlockData data) {
 		final BlockState original = block.getState();
@@ -577,7 +578,7 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Gets a {@link List<>} of {@link Entity entities} around a specified radius from
+	 * Gets a {@link List} of {@link Entity entities} around a specified radius from
 	 * the specified area
 	 *
 	 * @param location The base location
@@ -703,12 +704,10 @@ public class GeneralMethods {
 	}
 
 	public static Collection<Player> getPlayersAroundPoint(final Location location, final double distance) {
-		final Collection<Player> players = new HashSet<Player>();
+		final Collection<Player> players = new HashSet<>();
 		for (final Player player : Bukkit.getOnlinePlayers()) {
-			if (player.getLocation().getWorld().equals(location.getWorld())) {
-				if (player.getLocation().distanceSquared(location) <= distance * distance) {
-					players.add(player);
-				}
+			if (Objects.equals(player.getWorld(), location.getWorld()) && player.getLocation().distanceSquared(location) <= distance * distance) {
+				players.add(player);
 			}
 		}
 		return players;
@@ -732,23 +731,21 @@ public class GeneralMethods {
 	}
 
 	public static Location getMainHandLocation(final Player player) {
-		double y = 1.2 - (player.isSneaking() ? 0.4 : 0);
-		if (player.getMainHand() == MainHand.LEFT) {
-			return GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, y, 0)
-					.add(player.getLocation().getDirection().multiply(0.8));
-		} else {
-			return GeneralMethods.getRightSide(player.getLocation(), .55).add(0, y, 0)
-					.add(player.getLocation().getDirection().multiply(0.8));
-		}
+		return getHandLocation(player, true);
 	}
 
 	public static Location getOffHandLocation(final Player player) {
+		return getHandLocation(player, false);
+	}
+
+	public static Location getHandLocation(Player player, boolean mainHand) {
 		double y = 1.2 - (player.isSneaking() ? 0.4 : 0);
-		if (player.getMainHand() == MainHand.RIGHT) {
-			return GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, y, 0)
+		boolean rightHanded = player.getMainHand() == MainHand.RIGHT;
+		if (rightHanded == mainHand) {
+			return getRightSide(player.getLocation(), .55).add(0, y, 0)
 					.add(player.getLocation().getDirection().multiply(0.8));
 		} else {
-			return GeneralMethods.getRightSide(player.getLocation(), .55).add(0, y, 0)
+			return getLeftSide(player.getLocation(), .55).add(0, y, 0)
 					.add(player.getLocation().getDirection().multiply(0.8));
 		}
 	}
@@ -775,32 +772,41 @@ public class GeneralMethods {
 	}
 
 	public static BlockData getLavaData(final int level) {
-		return Material.LAVA.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
+		return Material.LAVA.createBlockData(data -> {
+			Levelled levelled = (Levelled) data;
+			levelled.setLevel((level < 0 || level > levelled.getMaximumLevel()) ? 0 : level);
+		});
 	}
 
 	public static BlockData getWaterData(final int level) {
-		return Material.WATER.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
+		return Material.WATER.createBlockData(data -> {
+			Levelled levelled = (Levelled) data;
+			levelled.setLevel((level < 0 || level > levelled.getMaximumLevel()) ? 0 : level);
+		});
 	}
 	
 	public static BlockData getCauldronData(final Material material, final int level) {
 		if (!material.name().contains("CAULDRON")) {
 			return null;
 		}
-		return material.createBlockData(d -> ((Levelled) d).setLevel((level > 3 || level > ((Levelled) d).getMaximumLevel()) ? 3 : level < 1 ? 1 : level));
+		return material.createBlockData(data -> {
+			Levelled levelled = (Levelled) data;
+			levelled.setLevel(Math.clamp(level, 1, Math.min(levelled.getMaximumLevel(), 3)));
+		});
 	}
 	
 	public static void setCauldronData(final Block block, final int level) {
-		if (block.getBlockData() instanceof Levelled) {
-			Levelled levelled = (Levelled) block.getBlockData();
-			if (level >= 1 && level < 3) {
-				levelled.setLevel(level);
-				block.setBlockData(levelled);
-			} else if (level < 1) {
-				block.setType(Material.CAULDRON);
-			}
-		}
-		return;
-	}
+        if (!(block.getBlockData() instanceof Levelled levelled)) {
+            return;
+        }
+
+        if (level >= 1 && level < 3) {
+            levelled.setLevel(level);
+            block.setBlockData(levelled);
+        } else if (level < 1) {
+            block.setType(Material.CAULDRON);
+        }
+    }
 
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
 		double longestr = range + 1;
@@ -824,7 +830,7 @@ public class GeneralMethods {
 			}
 		}
 		if (target != null) {
-			if (GeneralMethods.isObstructed(origin, target.getLocation())) {
+			if (isObstructed(origin, target.getLocation())) {
 				target = null;
 			}
 		}
@@ -832,7 +838,7 @@ public class GeneralMethods {
 	}
 
 	public static Entity getTargetedEntity(final Player player, final double range) {
-		return getTargetedEntity(player, range, new ArrayList<Entity>());
+		return getTargetedEntity(player, range, new ArrayList<>());
 	}
 
 	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... nonOpaque2) {
@@ -1138,7 +1144,7 @@ public class GeneralMethods {
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
 		}
-		GeneralMethods.stopBending();
+		stopBending();
 
 		// Reverts all active lights, then restarts the light revert scheduler
 		LightManager.get().restart();
