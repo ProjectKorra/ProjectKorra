@@ -94,19 +94,11 @@ public class ProjectKorra extends JavaPlugin {
 			Manager.getManager(StatisticsManager.class).load(player.getUniqueId());
 		}
 
-		final Metrics metrics = new Metrics(this);
-		metrics.addCustomChart(new Metrics.AdvancedPie("Elements") {
+		final Metrics metrics = new Metrics(this, 909);
+		metrics.addCustomChart(new Metrics.AdvancedPie("Elements", () -> {
 
-			@Override
-			public HashMap<String, Integer> getValues(final HashMap<String, Integer> valueMap) {
-				for (final Element element : Element.getMainElements()) {
-					valueMap.put(element.getName(), this.getPlayersWithElement(element));
-				}
-
-				return valueMap;
-			}
-
-			private int getPlayersWithElement(final Element element) {
+			final HashMap<String, Integer> valueMap = new HashMap<>();
+			for (final Element element : Element.getMainElements()) {
 				int counter = 0;
 				for (final Player player : Bukkit.getOnlinePlayers()) {
 					final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -114,10 +106,11 @@ public class ProjectKorra extends JavaPlugin {
 						counter++;
 					}
 				}
-
-				return counter;
+				valueMap.put(element.getName(), counter);
 			}
-		});
+
+			return valueMap;
+		}));
 
 		final double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
 
