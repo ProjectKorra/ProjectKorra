@@ -131,12 +131,7 @@ public class TempCommand extends PKCommand {
 					});
 				} else {
 					BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
-						if (removeElement(element, bPlayer, sender, false)) {
-							if (bPlayer.isOnline())
-								((BendingPlayer)bPlayer).recalculateTempElements(false);
-							else
-								bPlayer.saveTempElements();
-						}
+						removeElement(element, bPlayer, sender, false);
 					});
 				}
 			} else {
@@ -253,22 +248,22 @@ public class TempCommand extends PKCommand {
 		}
 
 		boolean add;
-		long oldExpiry;
+		long oldTime;
 
 		if (element instanceof SubElement) {
 			//If they don't have it, or they do but it has already expired
 			add = !bPlayer.getTempSubElements().containsKey(element) || (bPlayer.getTempSubElements().get(element) != -1 && bPlayer.getTempSubElements().get(element) < System.currentTimeMillis());
 
-			oldExpiry = bPlayer.getTempSubElements().getOrDefault(element, System.currentTimeMillis());
+			oldTime = bPlayer.getTempSubElementRelativeTime((SubElement) element);
 		} else {
 			//If they don't have it, or they do but it has already expired
 			add = !bPlayer.getTempElements().containsKey(element) || bPlayer.getTempElements().get(element) < System.currentTimeMillis();
 
-			oldExpiry = bPlayer.getTempElements().getOrDefault(element, System.currentTimeMillis());
+			oldTime = bPlayer.getTempElementRelativeTime(element);
 		}
 
-		long newExpiry = time + oldExpiry;
-		String newExpiryString = TimeUtil.formatTime(newExpiry - System.currentTimeMillis());
+		long newExpiry = time + oldTime;
+		String newExpiryString = TimeUtil.formatTime(newExpiry);
 
 		String message = add ? (element == Element.AVATAR ? this.addedSuccessAvatar : this.addedSuccess) : this.extendSuccess;
 		String messageOther = add ? (element == Element.AVATAR ? this.addedSuccessOtherAvatar : this.addedSuccessOther) : this.extendSuccessOther;
@@ -331,13 +326,13 @@ public class TempCommand extends PKCommand {
 
 		if (element instanceof SubElement) {
 			remove = bPlayer.getTempSubElements().get(element) - time < System.currentTimeMillis() && bPlayer.getTempSubElements().get(element) != -1L;
-			newExpiry = remove ? 0 : bPlayer.getTempSubElements().get(element) - time;
+			newExpiry = remove ? 0 : bPlayer.getTempSubElementRelativeTime((SubElement) element) - time;
 		} else {
 			remove = bPlayer.getTempElements().get(element) - time < System.currentTimeMillis();
-			newExpiry = remove ? 0 : bPlayer.getTempElements().get(element) - time;
+			newExpiry = remove ? 0 : bPlayer.getTempElementRelativeTime(element) - time;
 		}
 
-		String newExpiraryString = TimeUtil.formatTime(newExpiry - System.currentTimeMillis());
+		String newExpiraryString = TimeUtil.formatTime(newExpiry);
 
 		String message = remove ? this.reduceSuccessRemove : this.reduceSuccess;
 		String messageOther = remove ? this.reduceSuccessOtherRemove : this.reduceSuccessOther;
@@ -365,10 +360,7 @@ public class TempCommand extends PKCommand {
 	public boolean removeElement(Element element, OfflineBendingPlayer bPlayer, CommandSender sender, boolean all) {
 		//If they don't have it, or they do but it has already expired
 
-		boolean elementCheck = !bPlayer.getTempElements().containsKey(element) || bPlayer.getTempElements().get(element) < System.currentTimeMillis();
-		boolean subElementCheck = !bPlayer.getTempSubElements().containsKey(element) || (bPlayer.getTempSubElements().get(element) < System.currentTimeMillis() && bPlayer.getTempSubElements().get(element) != -1L);
-
-		if (element instanceof SubElement ? subElementCheck : elementCheck) { //or it has already expired
+		if (!bPlayer.hasTempElement(element)) { //or it has already expired
 			if (!all) { //Don't bother the player if we are doing it for all elements
 				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.removeElementNotFound
 						.replace("{element}", element.getColor() + element.getName())
