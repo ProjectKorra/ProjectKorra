@@ -201,10 +201,10 @@ public class TempCommand extends PKCommand {
 		} else if (sub && bPlayer.getSubElements().contains(element)) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElement.replace("{target}", bPlayer.getName()));
 			return;
-		} else if (!sub && bPlayer.getTempElements().containsKey(element)) {
+		} else if (!sub && bPlayer.getTempElements().containsKey(element) && bPlayer.getTempElementTime(element) > 0) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasTempElement.replace("{target}", bPlayer.getName()));
 			return;
-		} else if (sub && bPlayer.getTempElements().containsKey(element)) {
+		} else if (sub && bPlayer.getTempSubElements().containsKey(element) && bPlayer.getTempElementTime(element) > 0) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasTempSubElement.replace("{target}", bPlayer.getName()));
 			return;
 		}

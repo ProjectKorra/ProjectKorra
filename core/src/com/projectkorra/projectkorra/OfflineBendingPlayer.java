@@ -444,11 +444,13 @@ public class OfflineBendingPlayer {
                     OfflineBendingPlayer finalBPlayer4 = bPlayer;
                     Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> {
                         Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(finalBPlayer4));
+                        LOADING.remove(uuid);
                         future.complete(finalBPlayer4);
                     });
                 }
             } catch (final SQLException | ExecutionException | InterruptedException ex) {
                 ex.printStackTrace();
+                LOADING.remove(uuid);
                 future.cancel(true);
             }
         };
@@ -994,6 +996,7 @@ public class OfflineBendingPlayer {
 
     /**
      * Gets the time that a temporary element expires. If the element is not temporary, it will return -1.
+     * If the element has already expired but the user isn't online, it will return 0.
      * @param element The element to check
      * @return The time the element expires, or -1 if it is not temporary
      */
@@ -1004,6 +1007,7 @@ public class OfflineBendingPlayer {
 
     /**
      * Gets the time that a temporary subelement expires. If the subelement is not temporary, it will return -1.
+     * If the subelement has already expired but the user isn't online, it will return 0.
      * @param sub The subelement to check
      * @return The time the subelement expires, or -1 if it is not temporary
      */
@@ -1334,6 +1338,7 @@ public class OfflineBendingPlayer {
 
         PLAYERS.remove(this.player.getUniqueId());
         ONLINE_PLAYERS.remove(this.player.getUniqueId());
+        LOADING.remove(this.player.getUniqueId());
     }
 
     /**
