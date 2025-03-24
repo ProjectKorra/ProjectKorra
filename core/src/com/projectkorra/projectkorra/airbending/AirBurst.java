@@ -129,8 +129,11 @@ public class AirBurst extends AirAbility {
 	public static void coneBurst(final Player player) {
 		if (hasAbility(player, AirBurst.class)) {
 			final AirBurst airBurst = getAbility(player, AirBurst.class);
-			airBurst.startConeBurst();
-			airBurst.remove();
+			if (airBurst.isCharged) {
+				airBurst.bPlayer.addCooldown(airBurst);
+				airBurst.startConeBurst();
+				airBurst.remove();
+			}
 		}
 	}
 

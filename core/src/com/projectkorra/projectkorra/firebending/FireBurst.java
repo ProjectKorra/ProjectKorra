@@ -56,7 +56,7 @@ public class FireBurst extends FireAbility {
 
 	public static void coneBurst(final Player player) {
 		final FireBurst burst = getAbility(player, FireBurst.class);
-		if (burst != null) {
+		if (burst != null && burst.charged) {
 			burst.coneBurst();
 		}
 	}
