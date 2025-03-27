@@ -125,8 +125,9 @@ public class TempBlock {
 	 * @return The topmost TempBlock
 	 */
 	public static TempBlock get(final Block block) {
-		if (isTempBlock(block)) {
-			return instances_.get(block).getLast();
+		if (block != null) {
+			LinkedList<TempBlock> tempBlocks = instances_.get(block);
+			return tempBlocks != null ? tempBlocks.getLast() : null;
 		}
 		return null;
 	}
@@ -137,7 +138,7 @@ public class TempBlock {
 	 * @return The list of TempBlocks
 	 */
 	public static LinkedList<TempBlock> getAll(Block block) {
-		return instances_.get(block);
+		return block == null ? null : instances_.get(block);
 	}
 
 	/**
@@ -153,7 +154,7 @@ public class TempBlock {
 	}
 
 	public static boolean isTempBlock(final Block block) {
-		return block != null && instances_.containsKey(block);
+		return block != null && instances_.get(block) != null;
 	}
 
 	/**

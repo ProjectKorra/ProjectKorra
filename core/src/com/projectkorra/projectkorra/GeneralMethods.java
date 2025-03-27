@@ -102,6 +102,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.projectkorra.projectkorra.ProjectKorra.plugin;
@@ -230,8 +231,8 @@ public class GeneralMethods {
 		}
 		final boolean xz = xyzSolid[0] && xyzSolid[2];
 		final boolean xy = xyzSolid[0] && xyzSolid[1];
-		final boolean zy = xyzSolid[1] && xyzSolid[2];
-		return xz || xy || zy;
+		final boolean yz = xyzSolid[1] && xyzSolid[2];
+		return xz || xy || yz;
 	}
 
 	public static int compareArmor(Material first, Material second) {
@@ -301,7 +302,7 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Drops a {@code Collection<ItemStack>} of items on a specified block.
+	 * Drops a {@link Collection} of {@link ItemStack ItemStacks} on a specified block.
 	 *
 	 * @param block The block to drop items on.
 	 * @param items The items to drop.
@@ -333,7 +334,7 @@ public class GeneralMethods {
 	/**
 	 * Gets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to get the absorption hearts of.
-	 * @deprecated Use Player#getAbsorptionAmount instead.
+	 * @deprecated Use {@link Player#getAbsorptionAmount} instead.
 	 */
 	@Deprecated
 	public static float getAbsorbationHealth(final Player player) {
@@ -344,7 +345,7 @@ public class GeneralMethods {
 	 * Sets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to set the absorption hearts of.
 	 * @param hearts a float representing the number of hearts to set.
-	 * @deprecated Use Player#setAbsorbationHealth instead.
+	 * @deprecated Use {@link Player#setAbsorptionAmount} instead.
 	 */
 	@Deprecated
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
@@ -522,8 +523,8 @@ public class GeneralMethods {
 		for (Entity entity : getEntitiesAroundPoint(center, radius)) {
 			double check = center.distanceSquared(entity.getLocation());
 
-			if (entity instanceof LivingEntity && (distance == null || check < distance)) {
-				le = (LivingEntity) entity;
+			if (entity instanceof LivingEntity living && (distance == null || check < distance)) {
+				le = living;
 				distance = check;
 			}
 		}
@@ -608,8 +609,8 @@ public class GeneralMethods {
 	 */
 	public static Predicate<Entity> getEntityFilter() {
 		return entity -> !(!entity.isValid() || entity.hasMetadata ("BendingImmunity")
-				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))
-				|| (entity instanceof ArmorStand && ((ArmorStand) entity).isMarker()));
+				|| (entity instanceof Player player && player.getGameMode() == GameMode.SPECTATOR)
+				|| (entity instanceof ArmorStand stand && stand.isMarker()));
 	}
 
 	public static long getGlobalCooldown() {
@@ -809,53 +810,39 @@ public class GeneralMethods {
     }
 
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
-		double longestr = range + 1;
 		Entity target = null;
+		double targetDistanceSquared = Math.pow(range + 1, 2);
 		final Location origin = player.getEyeLocation();
-		final Vector direction = player.getEyeLocation().getDirection().normalize();
-		for (final Entity entity : getEntitiesAroundPoint(origin, range)) {
-			if (entity instanceof Player) {
-				if (((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
-					continue;
-				}
-			}
-			if (avoid.contains(entity)) {
-				continue;
-			}
-			if (entity.getWorld().equals(origin.getWorld())) {
-				if (entity.getLocation().distanceSquared(origin) < longestr * longestr && getDistanceFromLine(direction, origin, entity.getLocation()) < 2 && (entity instanceof LivingEntity) && entity.getEntityId() != player.getEntityId() && entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
-					target = entity;
-					longestr = entity.getLocation().distance(origin);
-				}
-			}
-		}
-		if (target != null) {
-			if (isObstructed(origin, target.getLocation())) {
-				target = null;
+		final Vector direction = player.getEyeLocation().getDirection();
+		final Location forward = origin.clone().add(direction);
+		final Location backwards = origin.clone().add(direction.clone().multiply(-1));
+		final Predicate<Entity> filter = getEntityFilter().and(entity -> !avoid.contains(entity)
+				&& entity.getWorld().equals(origin.getWorld())
+				&& entity instanceof LivingEntity);
+		avoid.add(player);
+
+		for (Entity entity : getEntitiesAroundPoint(origin, range, filter)) {
+			Location location = entity.getLocation();
+			double distanceSquared = location.distanceSquared(origin);
+			if (distanceSquared < targetDistanceSquared && getDistanceFromLine(direction, origin, location) < 2 && location.distanceSquared(forward) < location.distanceSquared(backwards)) {
+				target = entity;
+				targetDistanceSquared = distanceSquared;
 			}
 		}
-		return target;
+
+		return target != null && isObstructed(origin, target.getLocation()) ? null : target;
 	}
 
 	public static Entity getTargetedEntity(final Player player, final double range) {
 		return getTargetedEntity(player, range, new ArrayList<>());
 	}
 
-	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... nonOpaque2) {
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... toIgnore) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
-
-		final HashSet<Material> trans = new HashSet<Material>();
-		trans.add(Material.AIR);
-		trans.add(Material.CAVE_AIR);
-		trans.add(Material.VOID_AIR);
-
-		if (nonOpaque2 != null) {
-			Collections.addAll(trans, nonOpaque2);
-		}
-
 		final Location location = origin.clone();
 		final Vector vec = direction.normalize().multiply(0.2);
+		final Set<Material> ignore = toIgnore == null ? Set.of() : Set.of(toIgnore);
 
 		for (double i = 0; i < range; i += 0.2) {
 			location.add(vec);
@@ -865,13 +852,10 @@ public class GeneralMethods {
 				break;
 			}
 
-			final Block block = location.getBlock();
-
-			if (trans.contains(block.getType())) {
-				continue;
-			} else if (ignoreTempBlocks && (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block) && !EarthAbility.isBendableEarthTempBlock(block))) {
-				continue;
-			} else {
+			Block block = location.getBlock();
+			Material type = block.getType();
+			TempBlock temp = TempBlock.get(block);
+			if (!type.isAir() && !ignore.contains(type) && (!ignoreTempBlocks || (temp == null || WaterAbility.isBendableWaterTempBlock(temp) || EarthAbility.isBendableEarthTempBlock(temp)))) {
 				location.subtract(vec);
 				break;
 			}
@@ -880,12 +864,12 @@ public class GeneralMethods {
 		return location;
 	}
 
-	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
-		return getTargetedLocation(player, range, ignoreTempBlocks, true, nonOpaque2);
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... toIgnore) {
+		return getTargetedLocation(player, range, ignoreTempBlocks, true, toIgnore);
 	}
 
-	public static Location getTargetedLocation(final Player player, final double range, final Material... nonOpaque2) {
-		return getTargetedLocation(player, range, false, nonOpaque2);
+	public static Location getTargetedLocation(final Player player, final double range, final Material... toIgnore) {
+		return getTargetedLocation(player, range, false, toIgnore);
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
@@ -995,27 +979,24 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block, final boolean lava) {
-		if (block == null || (TempBlock.isTempBlock(block) && (!lava && !WaterAbility.isBendableWaterTempBlock(block)))) {
+		TempBlock tempBlock = TempBlock.get(block);
+		if (block == null || (tempBlock != null && (!lava && !WaterAbility.isBendableWaterTempBlock(tempBlock)))) {
 			return false;
 		}
+
 		int sources = 0;
 		final BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
 		for (final BlockFace face : faces) {
-			final Block blocki = block.getRelative(face);
-			if (lava) {
-				if (!(blocki.getType() == Material.LAVA && EarthPassive.canPhysicsChange(blocki))) {
-					continue;
-				}
-			} else {
-				if (!((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && WaterManipulation.canPhysicsChange(blocki))) {
-					continue;
-				}
+			final Block relative = block.getRelative(face);
+			if (lava && (relative.getType() != Material.LAVA || !EarthPassive.canPhysicsChange(relative))) {
+				continue;
+			} else if (!(ElementalAbility.isWater(relative) || ElementalAbility.isIce(relative)) || !WaterManipulation.canPhysicsChange(relative)) {
+				continue;
 			}
 
 			//At this point it should either be water or lava
-			if (blocki.getBlockData() instanceof Levelled) {
-				final Levelled level = (Levelled) blocki.getBlockData();
-				if (level.getLevel() == 0) {
+			if (relative.getBlockData() instanceof Levelled level) {
+                if (level.getLevel() == 0) {
 					sources++;
 				}
 			} else { //ice
@@ -1040,17 +1021,18 @@ public class GeneralMethods {
 		final Vector direction = loc2.subtract(loc1);
 		direction.normalize();
 
-		Location loc;
 
 		double max = 0;
-		if (location1.getWorld().equals(location2.getWorld())) {
+		final World world = location1.getWorld();
+		if (world != null && world.equals(location2.getWorld())) {
 			max = location1.distance(location2);
 		}
 
 		for (double i = 0; i <= max; i++) {
-			loc = location1.clone().add(direction.clone().multiply(i));
-			final Material type = loc.getBlock().getType();
-			if (type != Material.AIR && !(ElementalAbility.getTransparentMaterialSet().contains(type) || ElementalAbility.isWater(loc.getBlock()))) {
+			Location step = location1.clone().add(direction.clone().multiply(i));
+			final Block block = step.getBlock();
+			final Material type = block.getType();
+			if (!type.isAir() && !(ElementalAbility.getTransparentMaterialSet().contains(type) || ElementalAbility.isWater(block))) {
 				return true;
 			}
 		}
@@ -1493,13 +1475,12 @@ public class GeneralMethods {
 	}
 
 	public static boolean playerHeadIsInBlock(final Player player, final Block block, final boolean exact) {
-		double checkDistance;
-		if (exact) {
-			checkDistance = 0.5;
-		} else {
-			checkDistance = 0.75;
-		}
-		return (player.getEyeLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getEyeLocation().getX() - block.getLocation().add(0.5, 0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getEyeLocation().getZ() - block.getLocation().add(0.5, 0.0, 0.5).getZ()) < checkDistance));
+		double checkDistance = exact ? 0.5 : 0.75;
+		Location eyeLocation = player.getEyeLocation();
+		Location adjusted = block.getLocation().add(0.5, 0.0, 0.5);
+		return eyeLocation.getBlockY() == block.getY()
+				&& (Math.abs(eyeLocation.getX() - adjusted.getX()) < checkDistance)
+				&& (Math.abs(eyeLocation.getZ() - adjusted.getZ()) < checkDistance);
 	}
 
 	public static boolean playerFeetIsInBlock(final Player player, final Block block) {
@@ -1507,17 +1488,16 @@ public class GeneralMethods {
 	}
 
 	public static boolean playerFeetIsInBlock(final Player player, final Block block, final boolean exact) {
-		double checkDistance;
-		if (exact) {
-			checkDistance = 0.5;
-		} else {
-			checkDistance = 0.75;
-		}
-		return (player.getLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getLocation().getX() - block.getLocation().add(0.5, 0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getLocation().getZ() - block.getLocation().add(0.5, 0.0, 0.5).getZ()) < checkDistance));
+		double checkDistance = exact ? 0.5 : 0.75;
+		Location location = player.getLocation();
+		Location adjusted = block.getLocation().add(0.5, 0.0, 0.5);
+		return location.getBlockY() == block.getY()
+				&& (Math.abs(location.getX() - adjusted.getX()) < checkDistance)
+				&& (Math.abs(location.getZ() - adjusted.getZ()) < checkDistance);
 	}
 
 	/**
-	 * Deprecated. Use {@link com.projectkorra.projectkorra.util.ChatUtil#sendBrandingMessage(CommandSender, String)}
+	 * Deprecated. Use {@link ChatUtil#sendBrandingMessage(CommandSender, String)}
 	 */
 	@Deprecated
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
@@ -1533,7 +1513,7 @@ public class GeneralMethods {
 	public static double applyModifiers(double value, double... modifiers) {
 		double totalModifier = 0;
 
-		for(double mod : modifiers) {
+		for (double mod : modifiers) {
 			totalModifier += mod - 1;
 		}
 		return value * (1 + totalModifier);

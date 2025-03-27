@@ -100,7 +100,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static Material[] getTransparentMaterials() {
-		return TRANSPARENT.toArray(new Material[TRANSPARENT.size()]);
+		return TRANSPARENT.toArray(new Material[0]);
 	}
 
 	public static HashSet<Material> getTransparentMaterialSet() {
@@ -108,8 +108,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isAir(final Material material) {
-		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR ||
-				(GeneralMethods.getMCVersion() >= 1170 && material == LIGHT);
+		return material.isAir() || (GeneralMethods.getMCVersion() >= 1170 && material == LIGHT);
 	}
 
 	public static boolean isDay(final World world) {
@@ -273,17 +272,14 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isWater(final Block block) {
-		if (block == null) {
+		if (block == null || block.getState() instanceof Container) {
 			return false;
-		} else if (block.getState() instanceof Container) {
-			return false;
-		} else {
-			return isWater(block.getBlockData());
 		}
+		return isWater(block.getBlockData());
 	}
 
 	public static boolean isWater(final BlockData data) {
-		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : isWater(data.getMaterial());
+		return (data instanceof Waterlogged waterlogged) ? waterlogged.isWaterlogged() : isWater(data.getMaterial());
 	}
 
 	public static boolean isWater(final Material material) {
