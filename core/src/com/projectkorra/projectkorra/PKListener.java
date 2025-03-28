@@ -417,35 +417,31 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onElementChange(final PlayerChangeElementEvent event) {
-		OfflinePlayer oPlayer = event.getTarget();
-		if (oPlayer.isOnline()) {
-			final Player player = (Player) oPlayer;
+		Player player = event.getTarget().getPlayer();
+        if (player == null) {
+            return;
+        }
+
+        if (ConfigManager.languageConfig.get().getBoolean("Chat.Enable")) {
+			// TODO: Abstract this as I've definitely seen something like this elsewhere and also the logic is different elsewhere (specifically for avatar that I noticed)
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			PassiveManager.registerPassives(player);
-			final boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-			if (chatEnabled) {
-				final Element element = event.getElement();
-				String prefix = "";
+			final Element element = event.getElement();
+            String prefix;
 
-				if (bPlayer == null) {
-					return;
-				}
+            if (bPlayer != null && bPlayer.getElements().size() > 1) {
+                prefix = Element.AVATAR.getPrefix();
+            } else if (element != null) {
+                prefix = element.getPrefix();
+            } else {
+                prefix = ChatColor.WHITE + ChatUtil.color(ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
+            }
+            player.setDisplayName(prefix + ChatColor.RESET + player.getName());
+        }
 
-				if (bPlayer.getElements().size() > 1) {
-					prefix = Element.AVATAR.getPrefix();
-				} else if (element != null) {
-					prefix = element.getPrefix();
-				} else {
-					prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
-				}
-
-				player.setDisplayName(player.getName());
-				player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
-			}
-			BendingBoardManager.updateAllSlots(player);
-			FirePassive.handle(player);
-		}
-	}
+		BendingBoardManager.updateAllSlots(player);
+		PassiveManager.registerPassives(player);
+        FirePassive.handle(player);
+    }
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityChangeBlockEvent(final EntityChangeBlockEvent event) {
@@ -458,17 +454,15 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		}
 
-		if (event.getEntityType() == EntityType.FALLING_BLOCK) {
-			if (LavaSurge.getAllFallingBlocks().contains(entity)) {
-				LavaSurge.getAllFallingBlocks().remove(entity);
+		if (entity instanceof FallingBlock fallingBlock) {
+			if (LavaSurge.getAllFallingBlocks().remove(fallingBlock)) {
 				event.setCancelled(true);
 			}
 
-			FallingBlock fb = (FallingBlock) event.getEntity();
-			if (TempFallingBlock.isTempFallingBlock(fb)) {
-				TempFallingBlock tfb = TempFallingBlock.get(fb);
-				tfb.tryPlace();
-				tfb.remove();
+			TempFallingBlock tempFallingBlock = TempFallingBlock.get(fallingBlock);
+			if (tempFallingBlock != null) {
+				tempFallingBlock.tryPlace();
+				tempFallingBlock.remove();
 				event.setCancelled(true);
 			}
 		}
