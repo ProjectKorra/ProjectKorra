@@ -30,8 +30,6 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.Bukkit;
@@ -184,12 +182,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
-		} else if (RegionProtection.isRegionProtected(this.player, playerLoc, ability)) {
-			return false;
 		}
-
-		return true;
-	}
+		return !RegionProtection.isRegionProtected(this.player, playerLoc, ability);
+    }
 
 	public boolean canBendIgnoreBinds(final CoreAbility ability) {
 		return this.canBend(ability, true, false);
@@ -239,17 +234,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
-		if (this.getBoundAbility() != null) {
-			final boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
-			final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
-
-			if (hasWeapon) {
-				return !noWeaponElement;
-			}
-			return true;
-		}
-		return false;
-	}
+        if (this.getBoundAbility() == null) {
+            return false;
+        }
+        final boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
+        final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
+		return !hasWeapon || !noWeaponElement;
+    }
 
 	/**
 	 * Checks to see if {@link BendingPlayer} can be slowed.
@@ -291,10 +282,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (!this.hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
 			return false;
-		} else if (ability.getElement() instanceof SubElement) {
-			final SubElement subElement = (SubElement) ability.getElement();
-			if (subElement instanceof MultiSubElement) {
-				for (Element parent : ((MultiSubElement) subElement).getParentElements()) {
+		} else if (ability.getElement() instanceof SubElement subElement) {
+            if (subElement instanceof MultiSubElement multiSubElement) {
+				for (Element parent : multiSubElement.getParentElements()) {
 					if (!this.hasElement(parent)) return false;
 				}
 			} else if (!this.hasElement(subElement.getParentElement())) {
@@ -385,11 +375,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * @see #getBendingPlayer(OfflinePlayer)
 	 */
 	public static OfflineBendingPlayer getOfflineBendingPlayer(final String playerName) {
-		if (playerName == null) {
-			return null;
-		}
-		final OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(playerName);
-		return getBendingPlayer(oPlayer);
+		return playerName != null ? getBendingPlayer(Bukkit.getOfflinePlayer(playerName)) : null;
 	}
 
 	private static FileConfiguration getConfig() {
@@ -583,7 +569,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	@Override
 	public void removeCooldown(final String ability) {
 		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, 0, Result.REMOVED);
-		Bukkit.getServer().getPluginManager().callEvent(event);
+		Bukkit.getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
 
@@ -672,13 +658,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	@Override
-	public void toggleElement(final Element element) {
+	public void toggleElement(@NotNull final Element element) {
 		super.toggleElement(element);
 		PassiveManager.registerPassives(this.player);
 	}
 
 	@Override
-	public void togglePassive(final Element element) {
+	public void togglePassive(@NotNull final Element element) {
 		super.togglePassive(element);
 		PassiveManager.registerPassives(this.player);
 	}
@@ -778,12 +764,12 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			}
 		}
 
-		if (this.tempElements.size() > 0 || this.tempSubElements.size() > 0) {
+		if (!this.tempElements.isEmpty() || !this.tempSubElements.isEmpty()) {
 			Map<Element, Long> tempMap = new HashMap<>(this.tempElements);
 			tempMap.putAll(this.tempSubElements);
 			Optional<Long> shortestTime = tempMap.values().stream().filter(l -> l >= System.currentTimeMillis()).min(Comparator.comparingLong(Long::longValue));
 
-			if (!shortestTime.isPresent()) {
+			if (shortestTime.isEmpty()) {
 				ProjectKorra.log.severe("Failed to find the shortest time for " + this.player.getName() + "'s temp elements!");
 				this.removeUnusableAbilities();
 
@@ -846,8 +832,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		String prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender", "")) + " ";
 		if (this.player.hasPermission("bending.avatar") || (this.hasElement(Element.AIR) && this.hasElement(Element.EARTH) && this.hasElement(Element.FIRE) && this.hasElement(Element.WATER))) {
 			prefix = Element.AVATAR.getPrefix();
-		} else if (this.getElements().size() > 0) {
-			Element element = this.getElements().get(0);
+		} else if (!this.getElements().isEmpty()) {
+			Element element = this.getElements().getFirst();
 			prefix = element.getPrefix();
 		}
 
@@ -888,12 +874,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			//Hide the board if they spawn in a world with bending disabled
 			BendingBoardManager.changeWorld(this.player);
 		}, 1L);
-	}
-
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 	@Override
@@ -939,8 +919,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 			if (expireTime < System.currentTimeMillis()) { //If it still hasn't expired
 				long currentSubs = this.tempElements.keySet().stream()
-						.filter(element -> element instanceof SubElement)
-						.map(element -> (SubElement)element)
+						.filter(SubElement.class::isInstance)
+						.map(SubElement.class::cast)
 						.filter(sub -> sub.getParentElement() == tempElement)
 						.count();
 

@@ -147,6 +147,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.EnchantmentTarget;
@@ -264,7 +265,7 @@ public class PKListener implements Listener {
 				ability = CoreAbility.getAbility(abil);
 			}
 
-			if (ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
+			if (ability instanceof WaterAbility waterAbility && !waterAbility.allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
 				event.setCancelled(true);
 				return;
 			}
@@ -302,22 +303,17 @@ public class PKListener implements Listener {
 	public void onBlockFlowTo(final BlockFromToEvent event) {
 		final Block toblock = event.getToBlock();
 		final Block fromblock = event.getBlock();
-
-		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+		if (BendingPlayer.isWorldDisabled(fromblock.getWorld())) {
+			return;
+		} else if (TempBlock.isTempBlock(fromblock) || TempBlock.isTempBlock(toblock)) {
+			event.setCancelled(true);
 			return;
 		}
 
-		if (TempBlock.isTempBlock(fromblock) || TempBlock.isTempBlock(toblock)) {
-			event.setCancelled(true);
-		} else {
-			if (ElementalAbility.isLava(fromblock)) {
-				event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
-			} else if (ElementalAbility.isWater(fromblock)) {
-				event.setCancelled(WaterBubble.isAir(toblock));
-				if (!event.isCancelled()) {
-					event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
-				}
-			}
+		if (ElementalAbility.isLava(fromblock)) {
+			event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
+		} else if (ElementalAbility.isWater(fromblock)) {
+			event.setCancelled(WaterBubble.isAir(toblock) || !WaterManipulation.canFlowFromTo(fromblock, toblock));
 		}
 	}
 
@@ -336,31 +332,26 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockForm(final BlockFormEvent event) {
-		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
+		Block block = event.getBlock();
+		if (BendingPlayer.isWorldDisabled(block.getWorld())) {
+			return;
+		} else if (TempBlock.isTempBlock(block) || !WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block)) {
+			event.setCancelled(true);
 			return;
 		}
 
-		if (TempBlock.isTempBlock(event.getBlock())) {
-			event.setCancelled(true);
-		}
-
-		if (!WaterManipulation.canPhysicsChange(event.getBlock())) {
-			event.setCancelled(true);
-		}
-
-		if (!EarthPassive.canPhysicsChange(event.getBlock())) {
-			event.setCancelled(true);
-		}
-
-		if (event.getBlock().getType().toString().equals("CONCRETE_POWDER")) {
+		if (Tag.CONCRETE_POWDER.isTagged(block.getType())) {
 			final BlockFace[] faces = new BlockFace[] { BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
 
 			boolean marked = true;
 			for (final BlockFace face : faces) {
-				final Block b = event.getBlock().getRelative(face);
-				if (b.getType() == Material.WATER) {
-					if (!TempBlock.isTempBlock(b)) {
+				final Block relative = block.getRelative(face);
+				if (relative.getType() == Material.WATER && !TempBlock.isTempBlock(relative)) {
+					if (!TempBlock.isTempBlock(relative)) {
 						marked = false; // if there is any normal water around it, prevent it.
+						// TODO: This comment makes me think that maybe this is trying to say if marked == false setCancelled false?
+						// Not sure if that's the case though as it doesn't currently which is why I added the early return above
+						// If there is no case where it sets it to not be cancelled then after cancelling there is no need to do any of the concrete check
 						break;
 					}
 				}
@@ -375,68 +366,37 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockMeltEvent(final BlockFadeEvent event) {
 		final Block block = event.getBlock();
-		if (block.getType() == Material.FIRE) {
-			return;
-		}
-
-		if (!event.isCancelled()) {
-			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
-		}
-
-		if (!event.isCancelled()) {
-			event.setCancelled(!EarthPassive.canPhysicsChange(block));
-		}
-
-		if (!event.isCancelled()) {
-			event.setCancelled(PhaseChange.getFrozenBlocksAsBlock().contains(block));
-		}
-
-		if (!event.isCancelled()) {
-			event.setCancelled(!SurgeWave.canThaw(block));
-		}
-
-		if (!event.isCancelled()) {
-			event.setCancelled(!Torrent.canThaw(block));
+		if (block.getType() != Material.FIRE) {
+			event.setCancelled(!WaterManipulation.canPhysicsChange(block)
+				|| !EarthPassive.canPhysicsChange(block)
+				|| PhaseChange.getFrozenBlocksAsBlock().contains(block)
+				|| !SurgeWave.canThaw(block)
+				|| !Torrent.canThaw(block));
 		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		final Block block = event.getBlock();
-
-		//try (MCTiming timing = TimingPhysicsWaterManipulationCheck.startTiming()) {
-			if (!WaterManipulation.canPhysicsChange(block)) {
-				event.setCancelled(true);
-				return;
-			}
-		//}
-
-		//try (MCTiming timing = TimingPhysicsEarthPassiveCheck.startTiming()) {
-			if (!EarthPassive.canPhysicsChange(block)) {
-				event.setCancelled(true);
-				return;
-			}
-		//}
-
-		//try (MCTiming timing = TimingPhysicsEarthAbilityCheck.startTiming()) {
-			if (EarthAbility.getPreventPhysicsBlocks().contains(block)) {
-				event.setCancelled(true);
-				return;
-			}
-		//}
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+			event.setCancelled(true);
+			return;
+		}
 
 		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
-		//try (MCTiming timing = TimingPhysicsAirTempBlockBelowFallingBlockCheck.startTiming()) {
-			if ((block.getType() == Material.SAND || block.getType() == Material.RED_SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL || block.getType() == Material.DRAGON_EGG) && ElementalAbility.isAir(block.getRelative(BlockFace.DOWN).getType()) && TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN))) {
-				event.setCancelled(true);
-			}
-		//}
+		Material type = block.getType();
+		if (!(type == Material.SAND || type == Material.RED_SAND || type == Material.GRAVEL || type == Material.ANVIL || type == Material.DRAGON_EGG)) {
+			return;
+		}
+		Block below = block.getRelative(BlockFace.DOWN);
+		if (ElementalAbility.isAir(below.getType()) && TempBlock.isTempBlock(below)) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPlace(final BlockPlaceEvent event) {
 		final Player player = event.getPlayer();
-
 		if (MovementHandler.isStopped(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 			return;
@@ -445,17 +405,13 @@ public class PKListener implements Listener {
 		//Stop combos from triggering from placing blocks.
 		//The block place method triggers AFTER interactions, so we have to remove
 		//triggers that have already been added.
-		ComboManager.removeRecentType(event.getPlayer(), ClickType.RIGHT_CLICK_BLOCK);
-
-		//If the event is cancelled, don't bother checking the stuff bellow
-		if (event.isCancelled()) {
-			return;
-		}
+		ComboManager.removeRecentType(player, ClickType.RIGHT_CLICK_BLOCK);
 
 		//When a player places a block that isn't fire, remove the temp block that was there
-		if (TempBlock.isTempBlock(event.getBlock()) && (event.getItemInHand().getType() != Material.FLINT_AND_STEEL
-				&& event.getItemInHand().getType() != Material.FIRE_CHARGE)) {
-			TempBlock.removeBlock(event.getBlock());
+		Block block = event.getBlock();
+		Material heldType = event.getItemInHand().getType();
+		if (TempBlock.isTempBlock(block) && (heldType != Material.FLINT_AND_STEEL && heldType != Material.FIRE_CHARGE)) {
+			TempBlock.removeBlock(block);
 		}
 	}
 
@@ -651,37 +607,20 @@ public class PKListener implements Listener {
 		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
 			final CoreAbility ability = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
 
-			if (FireDamageTimer.isEnflamed(event.getEntity()) || (ability != null && ability instanceof FireAbility)) {
+			if (FireDamageTimer.isEnflamed(event.getEntity()) || (ability instanceof FireAbility)) {
 				final List<ItemStack> drops = event.getDrops();
 				final List<ItemStack> newDrops = new ArrayList<>();
-				for (ItemStack cooked : drops) {
-					final Material material = cooked.getType();
-					switch (material) {
-						case BEEF:
-							cooked = new ItemStack(Material.COOKED_BEEF);
-							break;
-						case SALMON:
-							cooked = new ItemStack(Material.COOKED_SALMON);
-							break;
-						case CHICKEN:
-							cooked = new ItemStack(Material.COOKED_CHICKEN);
-							break;
-						case PORKCHOP:
-							cooked = new ItemStack(Material.COOKED_PORKCHOP);
-							break;
-						case MUTTON:
-							cooked = new ItemStack(Material.COOKED_MUTTON);
-							break;
-						case RABBIT:
-							cooked = new ItemStack(Material.COOKED_RABBIT);
-							break;
-						case COD:
-							cooked = new ItemStack(Material.COOKED_COD);
-							break;
-						default:
-							break;
-					}
-					newDrops.add(cooked);
+				for (ItemStack drop : drops) {
+					newDrops.add(switch(drop.getType()) {
+						case BEEF -> new ItemStack(Material.COOKED_BEEF);
+						case SALMON -> new ItemStack(Material.COOKED_SALMON);
+						case CHICKEN -> new ItemStack(Material.COOKED_CHICKEN);
+						case PORKCHOP -> new ItemStack(Material.COOKED_PORKCHOP);
+						case MUTTON -> new ItemStack(Material.COOKED_MUTTON);
+						case RABBIT -> new ItemStack(Material.COOKED_RABBIT);
+						case COD -> new ItemStack(Material.COOKED_COD);
+						default -> drop;
+					});
 				}
 				event.getDrops().clear();
 				event.getDrops().addAll(newDrops);

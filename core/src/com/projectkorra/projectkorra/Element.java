@@ -140,6 +140,7 @@ public class Element {
 			try {
 				this.color = ChatColor.of(value);
 			} catch (IllegalArgumentException e) {
+				// TODO: Proper logger messsage before stack trace
 				e.printStackTrace();
 				this.color = ChatColor.WHITE;
 			}
@@ -165,6 +166,7 @@ public class Element {
 		try {
 			this.subColor = ChatColor.of(value);
 		} catch (IllegalArgumentException e) {
+			// TODO: Proper logger error before stacktrace
 			e.printStackTrace();
 		}
 		return this.subColor != null ? this.subColor : ChatColor.WHITE;
@@ -331,7 +333,7 @@ public class Element {
 
 		for (Map.Entry<String, Element> entry : ALL_ELEMENTS.entrySet()) {
 			Element other = entry.getValue();
-			if (name.length() <= 1 && other instanceof SubElement) {
+			if (name.length() == 1 && other instanceof SubElement) {
 				continue;
 			}
 			String otherName = entry.getKey();
@@ -395,7 +397,7 @@ public class Element {
 	@Experimental
 	public static class MultiSubElement extends SubElement {
 
-		private Element[] parentElements;
+		private final Element[] parentElements;
 		private final Set<Element> parentElementsSet;
 
 		/**

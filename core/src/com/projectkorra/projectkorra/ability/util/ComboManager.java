@@ -110,15 +110,13 @@ public class ComboManager {
 	 * @param type The type of combo to remove
 	 */
 	public static void removeRecentType(final Player player, ClickType type) {
-		if (RECENTLY_USED.containsKey(player.getName())) {
-			List<AbilityInformation> list = RECENTLY_USED.get(player.getName());
-
-			if (!list.isEmpty()) {
-				AbilityInformation last = list.getLast();
-				if (last.getTime() > System.currentTimeMillis() - 50 && last.getClickType() == type) { //If the ability was within the last tick
-					list.remove(last);
-				}
-			}
+		List<AbilityInformation> list = RECENTLY_USED.get(player.getName());
+		if (list == null || list.isEmpty()) {
+			return;
+		}
+		AbilityInformation last = list.getLast();
+		if (last.getTime() > System.currentTimeMillis() - 50 && last.getClickType() == type) { //If the ability was within the last tick
+			list.remove(last);
 		}
 	}
 
