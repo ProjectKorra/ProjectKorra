@@ -350,7 +350,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Temp.Reduce.SuccessRemove", "Your {element}{bending}&e's expiry time has been reduced and has now expired.");
 			config.addDefault("Commands.Temp.Remove.SuccessOther", "{target}'s {element}{bending} &ehas been removed.");
 			config.addDefault("Commands.Temp.Remove.Success", "Your {element}{bending} &ehas been removed.");
-			config.addDefault("Commands.Temp.Remove.ElementNotFound", "{target} does not have {element} &etemporarily.");
+			config.addDefault("Commands.Temp.Remove.ElementNotFound", "{target} does not have {element} &ctemporarily.");
 			config.addDefault("Commands.Temp.Remove.NoElements", "{target} does not have any temporary elements.");
 			config.addDefault("Commands.Temp.Remove.SuccessAll", "Your temporary elements has been removed.");
 
@@ -1739,10 +1739,14 @@ public class ConfigManager {
 			config.addDefault("LowHealth.BoostHealth.YellowHearts", false);
 			config.addDefault("LowHealth.PreventDeath", false);
 
-			config.addDefault("PotionEffects.Regeneration", 4);
-			config.addDefault("PotionEffects.Speed", 3);
-			config.addDefault("PotionEffects.Resistance", 3);
-			config.addDefault("PotionEffects.Fire_Resistance", 3);
+			//Because the effects are "keys", they are always added back if removed.
+			//We also check "Abilities" instead of PotionEffects in case users remove the entire section
+			if (!config.contains("Abilities")) {
+				config.addDefault("PotionEffects.Regeneration", 4);
+				config.addDefault("PotionEffects.Speed", 3);
+				config.addDefault("PotionEffects.Resistance", 3);
+				config.addDefault("PotionEffects.Fire_Resistance", 3);
+			}
 
 			config.addDefault("Abilities._All.Damage", "x2.0");
 			config.addDefault("Abilities._All.Cooldown", "x0.5");
@@ -1969,16 +1973,16 @@ public class ConfigManager {
 
 		//Migrate potion effects.
 		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled")) {
-			avatarState.set("PotionEffects.regeneration", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Power"));
+			avatarState.set("PotionEffects.Regeneration", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Power"));
 		}
 		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled")) {
-			avatarState.set("PotionEffects.speed", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.Speed.Power"));
+			avatarState.set("PotionEffects.Speed", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.Speed.Power"));
 		}
 		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Enabled")) {
-			avatarState.set("PotionEffects.resistance", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power"));
+			avatarState.set("PotionEffects.Resistance", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power"));
 		}
 		if (config.getBoolean("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled")) {
-			avatarState.set("PotionEffects.fire_resistance", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power"));
+			avatarState.set("PotionEffects.Fire_Resistance", config.getInt("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power"));
 		}
 
 		//Migrate all other ability keys

@@ -1468,6 +1468,10 @@ public class PKListener implements Listener {
 			}
 		}
 
+		if (bPlayer == null) {
+			return;
+		}
+
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
 				() -> {
 					if (ProjectKorra.isDatabaseCooldownsEnabled()) {

@@ -107,21 +107,21 @@ public class Suffocate extends AirAbility {
 			}
 		} else {
 			List<Entity> entities = new ArrayList<Entity>();
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < range; i++) {
 				final Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, .5);
-				if (entities.contains(player)) {
-					entities.remove(player);
-				}
-				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
+
+				entities.remove(player);
+
+				if (!entities.isEmpty()) {
 					break;
 				}
 			}
-			if (entities == null || entities.isEmpty()) {
+			if (entities.isEmpty()) {
 				return;
 			}
 			final Entity target = entities.get(0);
-			if (target != null && target instanceof LivingEntity) {
+			if (target instanceof LivingEntity) {
 				this.targets.add((LivingEntity) target);
 			}
 		}

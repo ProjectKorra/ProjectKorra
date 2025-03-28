@@ -70,6 +70,10 @@ public class AirShield extends AirAbility {
 			return;
 		}
 
+		if (!this.bPlayer.canBend(this)) {
+			return;
+		}
+
 		int angle = 0;
 		final int di = (int) (this.maxRadius * 2 / this.streams);
 		for (int i = -(int) this.maxRadius + di; i < (int) this.maxRadius; i += di) {

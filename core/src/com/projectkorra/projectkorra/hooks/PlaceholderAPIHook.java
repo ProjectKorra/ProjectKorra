@@ -2,9 +2,11 @@ package com.projectkorra.projectkorra.hooks;
 
 import static java.util.stream.Collectors.joining;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -42,20 +44,25 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 				return "";
 			}
 			return coreAbil.getElement().getColor() + coreAbil.getName();
-		} else if (params.equals("element") || params.equals("elementcolor")) {
+		} else if (params.equals("element") || params.equals("elementcolor") || params.equals("element_title") || params.equals("element_prefix")) {
 			String e = "Nonbender";
 			ChatColor c = ChatColor.WHITE;
+			String title = ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender", c + "[Nonbender]");
 			if (player.hasPermission("bending.avatar") || (bPlayer.hasElement(Element.AIR) && bPlayer.hasElement(Element.EARTH) && bPlayer.hasElement(Element.FIRE) && bPlayer.hasElement(Element.WATER))) {
 				c = Element.AVATAR.getColor();
 				e = Element.AVATAR.getName();
+				title = ConfigManager.languageConfig.get().getString("Chat.Prefixes.Avatar", c + "[Avatar]");
 			} else if (bPlayer.getElements().size() > 0) {
 				c = bPlayer.getElements().get(0).getColor();
 				e = bPlayer.getElements().get(0).getName();
+				title = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e, c + "[" + e + "]");
 			}
 			if (params.equals("element")) {
 				return e;
-			} else {
+			} else if (params.equals("elementcolor")) {
 				return c.toString();
+			} else {
+				return title;
 			}
 		} else if (params.equals("elements")) {
 			return bPlayer.getElements().stream().map(item -> item.getColor() + item.getName()).collect(joining(" "));
@@ -91,7 +98,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
 	@Override
 	public boolean canRegister() {
-		return true;
+		return Bukkit.getPluginManager().isPluginEnabled("ProjectKorra");
 	}
 
 	@Override
@@ -112,10 +119,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 	@Override
 	public List<String> getPlaceholders() {
 		return Arrays.asList("slot", "slot1", "slot2", "slot3", "slot4", "slot5", "slot6", "slot7", "slot8", "slot9",
-				"element", "elementcolor", "elements", "subelements", "cooldown_<ability>", "cooldown_slot", "cooldown_slot<1-9>", "cooldown_choose");
-	}
-
-	public void unregister() {
-		PlaceholderAPI.unregisterExpansion(this);
+				"element", "elementcolor", "elements", "subelements", "element_prefix",
+				"cooldown_<ability>", "cooldown_slot", "cooldown_slot<1-9>", "cooldown_choose");
 	}
 }
