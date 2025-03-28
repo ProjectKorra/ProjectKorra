@@ -1,10 +1,8 @@
 package com.projectkorra.projectkorra.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +11,6 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -28,10 +25,8 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Snowable;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 
 import io.papermc.lib.PaperLib;
 
@@ -62,10 +57,10 @@ public class TempBlock {
 		this(block, newtype.createBlockData(), 0);
 	}
 
-	@Deprecated
 	/**
-	 * Deprecated. Using the newType here is pointless.
+	 * @deprecated Using the newType here is pointless.
 	 */
+	@Deprecated
 	public TempBlock(final Block block, final Material newtype, final BlockData newData) {
 		this(block, newData, 0);
 	}
@@ -87,6 +82,7 @@ public class TempBlock {
 		this.block = block;
 		this.newData = newData;
 		this.attachedTempBlocks = new HashSet<>(0);
+		// TODO: address this because suffocate will ALWAYS be false, but don't want to make big functional changes in this PR
 		this.suffocate = ability.isPresent() ? !(ability.get() instanceof WaterAbility) : false;
 
 		//Fire griefing will make the state update on its own, so we don't need to update it ourselves
@@ -99,24 +95,19 @@ public class TempBlock {
 			}
 		}
 
-		if (instances_.containsKey(block)) {
-			final TempBlock temp = instances_.get(block).getFirst();
-			this.state = temp.state; //Set the original blockstate of the tempblock
-			put(block, this);
-			block.setBlockData(newData, applyPhysics(newData.getMaterial()));
-		} else {
+		List<TempBlock> original = getAll(block);
+		if (original != null && !original.isEmpty()) {
+			this.state = original.getFirst().getState();
+        } else {
 			this.state = block.getState();
-
 			if (this.state instanceof Container || this.state.getType() == Material.JUKEBOX) {
 				return;
 			}
+        }
+        put(block, this);
+        block.setBlockData(newData, applyPhysics(newData.getMaterial()));
 
-			put(block, this);
-
-			block.setBlockData(newData, applyPhysics(newData.getMaterial()));
-		}
-		
-		this.setRevertTime(revertTime);
+        this.setRevertTime(revertTime);
 	}
 
 	/**
@@ -213,9 +204,10 @@ public class TempBlock {
 	 * @param tempBlock The TempBlock to remove
 	 */
 	private static void remove(TempBlock tempBlock) {
-		if (instances_.containsKey(tempBlock.block)) {
-			instances_.get(tempBlock.block).remove(tempBlock);
-			if (instances_.get(tempBlock.block).size() == 0) {
+		LinkedList<TempBlock> blocks = instances_.get(tempBlock.block);
+		if (blocks != null) {
+			blocks.remove(tempBlock);
+			if (blocks.isEmpty()) {
 				instances_.remove(tempBlock.block);
 			}
 		}

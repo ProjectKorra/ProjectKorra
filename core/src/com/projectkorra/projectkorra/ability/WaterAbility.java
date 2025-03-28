@@ -251,20 +251,16 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static boolean isIcebendable(final Player player, final Material material, final boolean onlyIce) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
+		return bPlayer != null && isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
 	}
 
 	public static boolean isPlantbendable(final Player player, final Material material, final boolean onlyLeaves) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (onlyLeaves) {
-			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend() && isLeaves(material);
-		} else {
-			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend();
-		}
-	}
+        return bPlayer != null && bPlayer.canPlantbend() && isPlant(material) && (!onlyLeaves || isLeaves(material));
+    }
 
 	public static boolean isLeaves(final Block block) {
-		return block != null ? isLeaves(block.getType()) : false;
+		return block != null && isLeaves(block.getType());
 	}
 
 	public static boolean isLeaves(final Material material) {
@@ -272,23 +268,23 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isSnow(final Block block) {
-		return block != null ? isSnow(block.getType()) : false;
+		return block != null && isSnow(block.getType());
 	}
 
 	public static boolean isSnow(final Material material) {
-		return material == Material.SNOW || material == Material.SNOW_BLOCK;
+		return material == Material.SNOW || material == Material.SNOW_BLOCK; // TODO: Should this include powder snow?
 	}
 	
 	public static boolean isCauldron(final Block block) {
-		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
+		return isCauldron(block.getType());
 	}
 	
 	public static boolean isCauldron(final Material material) {
-		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
+		return material == Material.WATER_CAULDRON || material == Material.POWDER_SNOW_CAULDRON;
 	}
 
 	public static boolean isSponge(final Block block) {
-		return block != null ? isSponge(block.getType()) : false;
+		return block != null && isSponge(block.getType());
 	}
 
 	public static boolean isSponge(final Material material) {

@@ -34,34 +34,23 @@ public abstract class ElementalAbility extends CoreAbility {
 	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
 	private static final Set<Material> TRANSPARENT = new HashSet<>();
 
-	private static final Set<String> EARTH_BLOCKS = new HashSet<String>();
-	private static final Set<String> ICE_BLOCKS = new HashSet<String>();
-	private static final Set<String> METAL_BLOCKS = new HashSet<String>();
-	private static final Set<String> PLANT_BLOCKS = new HashSet<String>();
-	private static final Set<String> SAND_BLOCKS = new HashSet<String>();
-	private static final Set<String> SNOW_BLOCKS = new HashSet<String>();
+	private static final Set<String> EARTH_BLOCKS = new HashSet<>();
+	private static final Set<String> ICE_BLOCKS = new HashSet<>();
+	private static final Set<String> METAL_BLOCKS = new HashSet<>();
+	private static final Set<String> PLANT_BLOCKS = new HashSet<>();
+	private static final Set<String> SAND_BLOCKS = new HashSet<>();
+	private static final Set<String> SNOW_BLOCKS = new HashSet<>();
 
-	// Once 1.16.5 no longer becomes LTS, this becomes obsolete and
-	// we can remove the version check and reference these materials directly instead of doing standard lookups.
-	protected static final Material LIGHT = Material.getMaterial("LIGHT");
-	protected static final Set<Material> MUD_BLOCKS = getMudBlocks();
-	private static Set<Material> getMudBlocks() {
-		Set<Material> mudBlocks = new HashSet<>();
-		mudBlocks.add(Material.getMaterial("MUD"));
-		mudBlocks.add(Material.getMaterial("PACKED_MUD"));
-		mudBlocks.add(Material.getMaterial("MUDDY_MANGROVE_ROOTS"));
-		return mudBlocks;
-	}
+	protected static final Set<Material> MUD_BLOCKS = new HashSet<>();
 
 	static {
-		TRANSPARENT.clear();
-		for (final Material mat : Material.values()) {
+        for (final Material mat : Material.values()) {
 			if (GeneralMethods.isTransparent(mat)) {
 				TRANSPARENT.add(mat);
 			}
 		}
-		clearBendableMaterials();
 		setupBendableMaterials();
+		MUD_BLOCKS.addAll(Set.of(Material.MUD, Material.PACKED_MUD, Material.MUDDY_MANGROVE_ROOTS));
 	}
 
 	public ElementalAbility(final Player player) {
@@ -82,11 +71,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static List<String> getEarthbendableBlocks() {
-		return new ArrayList<String>(EARTH_BLOCKS);
+		return new ArrayList<>(EARTH_BLOCKS);
 	}
 
 	public static void addTags(Set<String> outputSet, List<String> configList) {
-		ListIterator<String> iterator = new ArrayList<String>(configList).listIterator();
+		ListIterator<String> iterator = new ArrayList<>(configList).listIterator();
 		iterator.forEachRemaining(next -> {
 			if (next.startsWith("#")) {
 				NamespacedKey key = NamespacedKey.fromString(next.replaceFirst("#", ""));
@@ -108,7 +97,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isAir(final Material material) {
-		return material.isAir() || (GeneralMethods.getMCVersion() >= 1170 && material == LIGHT);
+		return material.isAir() || material == Material.LIGHT;
 	}
 
 	public static boolean isDay(final World world) {
@@ -208,11 +197,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMud(final Block block) {
-		return block != null ? isMud(block.getType()) : false;
+		return block != null && isMud(block.getType());
 	}
 
 	public static boolean isMud(final Material material) {
-		return GeneralMethods.getMCVersion() >= 1190 && MUD_BLOCKS.contains(material);
+		return MUD_BLOCKS.contains(material);
 	}
 
 	public static boolean isNegativeEffect(final PotionEffectType effect) {
@@ -297,5 +286,6 @@ public abstract class ElementalAbility extends CoreAbility {
 		addTags(PLANT_BLOCKS, getConfig().getStringList("Properties.Water.PlantBlocks"));
 		addTags(SAND_BLOCKS, getConfig().getStringList("Properties.Earth.SandBlocks"));
 		addTags(SNOW_BLOCKS, getConfig().getStringList("Properties.Water.SnowBlocks"));
+		// Should mud blocks be added to this?
 	}
 }

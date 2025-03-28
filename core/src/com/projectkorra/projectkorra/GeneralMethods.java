@@ -39,6 +39,7 @@ import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.ColoredParticle;
 import com.projectkorra.projectkorra.util.LightManager;
@@ -108,7 +109,6 @@ import java.util.function.Predicate;
 import static com.projectkorra.projectkorra.ProjectKorra.plugin;
 
 public class GeneralMethods {
-	private static final Material LIGHT = Material.getMaterial("LIGHT");
 	private static final BlockFace[] CARDINAL_FACES = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
 
 	/**
@@ -1011,7 +1011,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isInteractable(final Material material) {
-		return material != LIGHT && material.isInteractable();
+		return material != Material.LIGHT && material.isInteractable();
 	}
 
 	public static boolean isObstructed(final Location location1, final Location location2) {
@@ -1157,6 +1157,7 @@ public class GeneralMethods {
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
+		BlockSource.loadConfig();
 		PKCommand.reloadCommands();
 		// Stop the previous collision detection task before creating new manager.
 		ProjectKorra.collisionManager.stopCollisionDetection();
