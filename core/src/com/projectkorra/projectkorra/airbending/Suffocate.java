@@ -113,7 +113,7 @@ public class Suffocate extends AirAbility {
 
 				entities.remove(player);
 
-				if (!entities.isEmpty() && !entities.contains(player)) {
+				if (!entities.isEmpty()) {
 					break;
 				}
 			}
