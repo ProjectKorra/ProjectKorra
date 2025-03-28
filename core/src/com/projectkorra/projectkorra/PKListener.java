@@ -154,8 +154,11 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -471,14 +474,20 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityCombust(final EntityCombustEvent event) {
 		final Entity entity = event.getEntity();
+		if (!(entity instanceof LivingEntity)) {
+			return;
+		}
 		final Block block = entity.getLocation().getBlock();
-		if (FireAbility.getSourcePlayers().containsKey(block) && entity instanceof LivingEntity) {
-			new FireDamageTimer(entity, FireAbility.getSourcePlayers().get(block));
+		final Player source = FireAbility.getSourcePlayers().get(block);
+		if (source != null) {
+			new FireDamageTimer(entity, source, null, false);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
+		// TODO: Review if this listener is needed at all, EntityDamageByBlockEvent is also caught by onEntityDamageEvent and that method
+		// has all of the below logic in it already, which makes me think this happens twice now, not that it matters but its wasted tick time
 		final Block block = event.getDamager();
 
 		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
@@ -2017,58 +2026,63 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onTimeChange(WorldTimeEvent event) {
-		for (CoreAbility abil : CoreAbility.getAbilitiesByInstances()) {
-			if (abil instanceof WaterAbility || abil instanceof FireAbility) {
-				abil.recalculateAttributes();
+		for (CoreAbility ability : CoreAbility.getAbilitiesByInstances()) {
+			if (ability instanceof WaterAbility || ability instanceof FireAbility) {
+				ability.recalculateAttributes();
 			}
 		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onAttributeRecalc(AbilityRecalculateAttributeEvent event) {
-		if (event.hasMarker(DayNightFactor.class) && event.getAbility().getLocation() != null) {
-			boolean day = FireAbility.isDay(event.getAbility().getLocation().getWorld());
-			boolean night = WaterAbility.isNight(event.getAbility().getLocation().getWorld());
-			if (event.getAbility() instanceof WaterAbility && night && event.getAbility().getPlayer().hasPermission("bending.water.nightfactor")) {
-				double factor = WaterAbility.getNightFactor();
-
+		CoreAbility ability = event.getAbility();
+		Player player = ability.getPlayer();
+		Location location = ability.getLocation();
+		if (event.hasMarker(DayNightFactor.class) && player != null && location != null) {
+			boolean day = FireAbility.isDay(location.getWorld());
+			boolean night = WaterAbility.isNight(location.getWorld());
+			if (ability instanceof WaterAbility && night && player.hasPermission("bending.water.nightfactor")) {
 				DayNightFactor dayNightFactor = event.getMarker(DayNightFactor.class);
-				if (dayNightFactor.factor() != -1) factor = dayNightFactor.factor(); //If the factor isn't the default, use the one in the annotation
+				double factor = dayNightFactor.factor() != -1 ? dayNightFactor.factor() : WaterAbility.getNightFactor();
+				//If the factor isn't the default, use the one in the annotation
 
 				AttributeModifier modifier = dayNightFactor.invert() ? AttributeModifier.DIVISION : AttributeModifier.MULTIPLICATION;
-				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL,
-						AttributeModification.NIGHT_FACTOR);
+				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.NIGHT_FACTOR);
 				event.addModification(mod);
-			} else if (event.getAbility() instanceof FireAbility && day && event.getAbility().getPlayer().hasPermission("bending.fire.dayfactor")) {
-				double factor = FireAbility.getDayFactor();
-
+			} else if (ability instanceof FireAbility && day && player.hasPermission("bending.fire.dayfactor")) {
 				DayNightFactor dayNightFactor = event.getMarker(DayNightFactor.class);
-				if (dayNightFactor.factor() != -1) factor = dayNightFactor.factor(); //If the factor isn't the default, use the one in the annotation
+				double factor = dayNightFactor.factor() == -1 ? FireAbility.getDayFactor() : dayNightFactor.factor();
+				//If the factor isn't the default, use the one in the annotation
 
 				AttributeModifier modifier = dayNightFactor.invert() ? AttributeModifier.DIVISION : AttributeModifier.MULTIPLICATION;
-				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.PRIORITY_NORMAL, AttributeModification.DAY_FACTOR);
+				AttributeModification mod = AttributeModification.of(modifier, factor, AttributeModification.DAY_FACTOR);
 				event.addModification(mod);
 			}
 		}
 
 		//Blue fire has factors for a few attributes. But only do it for pure fire abilities and not combustion/lightning
-		if ((event.getAbility().getElement() == Element.FIRE || event.getAbility().getElement() == Element.BLUE_FIRE) && event.getAbility().getBendingPlayer().hasElement(Element.BLUE_FIRE) && event.getAbility().getPlayer().hasPermission("bending.fire.bluefirefactor")) {
-			if (event.getAttribute().equals(Attribute.DAMAGE)) {
-				double factor = BlueFireAbility.getDamageFactor();
-				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_DAMAGE));
-			} else if (event.getAttribute().equals(Attribute.COOLDOWN)) {
-				double factor = BlueFireAbility.getCooldownFactor();
-				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_COOLDOWN));
-			} else if (event.getAttribute().equals(Attribute.RANGE)) {
-				double factor = BlueFireAbility.getRangeFactor();
-				event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_RANGE));
-			}
+		Element element = ability.getElement();
+		BendingPlayer bPlayer = ability.getBendingPlayer();
+		if ((element == Element.FIRE || element == Element.BLUE_FIRE) && bPlayer.hasElement(Element.BLUE_FIRE) && player.hasPermission("bending.fire.bluefirefactor")) {
+            switch (event.getAttribute()) {
+                case Attribute.DAMAGE -> {
+                    double factor = BlueFireAbility.getDamageFactor();
+                    event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_DAMAGE));
+                }
+                case Attribute.COOLDOWN -> {
+                    double factor = BlueFireAbility.getCooldownFactor();
+                    event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_COOLDOWN));
+                }
+                case Attribute.RANGE -> {
+                    double factor = BlueFireAbility.getRangeFactor();
+                    event.addModification(AttributeModification.of(AttributeModifier.MULTIPLICATION, factor, AttributeModification.PRIORITY_NORMAL - 50, AttributeModification.BLUE_FIRE_RANGE));
+                }
+            }
 		}
 
 		//AvatarState factors if the avatarstate is active
-		if (event.getAbility().getBendingPlayer().isAvatarState()) {
-			AttributeCache cache = CoreAbility.getAttributeCache(event.getAbility()).get(event.getAttribute());
-
+		if (bPlayer.isAvatarState()) {
+			AttributeCache cache = CoreAbility.getAttributeCache(ability).get(event.getAttribute());
 			if (cache != null && cache.getAvatarStateModifier().isPresent()) { //Check if there is a cached avatarstate modifier for this attribute
 				event.addModification(cache.getAvatarStateModifier().get());
 			}
@@ -2077,12 +2091,16 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onItemMerge(final ItemMergeEvent event) {
-		if (BendingPlayer.isWorldDisabled(event.getEntity().getWorld())) {
+		Item entity = event.getEntity();
+		if (BendingPlayer.isWorldDisabled(entity.getWorld())) {
 			return;
 		}
+
 		for (final MetalClips metalClips : CoreAbility.getAbilities(MetalClips.class)) {
-			if (metalClips.getTrackedIngots().contains(event.getEntity()) || metalClips.getTrackedIngots().contains(event.getTarget())) {
+			List<Item> trackedIngots = metalClips.getTrackedIngots();
+			if (trackedIngots.contains(entity) || trackedIngots.contains(event.getTarget())) {
 				event.setCancelled(true);
+				break;
 			}
 		}
 	}
@@ -2092,8 +2110,8 @@ public class PKListener implements Listener {
 		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
 			return;
 		}
-		for (final Block b : event.getBlocks()) {
-			if (TempBlock.isTempBlock(b)) {
+		for (final Block block : event.getBlocks()) {
+			if (TempBlock.isTempBlock(block)) {
 				event.setCancelled(true);
 				break;
 			}
@@ -2105,48 +2123,41 @@ public class PKListener implements Listener {
 		if (BendingPlayer.isWorldDisabled(event.getBlock().getWorld())) {
 			return;
 		}
-		for (final Block b : event.getBlocks()) {
-			if (TempBlock.isTempBlock(b)) {
+		for (final Block block : event.getBlocks()) {
+			if (TempBlock.isTempBlock(block)) {
 				event.setCancelled(true);
 				break;
 			}
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR) // TODO: shouldn't this ignore cancelled events?
 	public void onBendingSubElementChange(final PlayerChangeSubElementEvent event) {
-		if (!event.isTargetOnline()) return;
-		final Player player = (Player) event.getTarget();
+		Player player = event.getTarget().getPlayer();
+		if (player == null) return;
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) return;
 		BendingBoardManager.updateAllSlots(player);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR) // TODO: shouldn't this ignore cancelled events?
 	public void onBindChange(final PlayerBindChangeEvent event) {
-		if (!event.isOnline()) return;
-		final Player player = (Player) event.getPlayer();
-		if (player == null) return;
-		if (event.isMultiAbility()) {
-			new BukkitRunnable() {
+		Player player = event.getPlayer().getPlayer();
+		if (player == null) {
+			return;
+		}
 
-				@Override
-				public void run() {
-					BendingBoardManager.updateAllSlots(player);
-				}
-				
-			}.runTaskLater(ProjectKorra.plugin, 1);
+		if (event.isMultiAbility()) {
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> BendingBoardManager.updateAllSlots(player), 1L);
 		} else {
-			if (event.isBinding()) {
-				BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());
-			} else {
-				BendingBoardManager.updateBoard(player, "", false, event.getSlot());
-			}
+			BendingBoardManager.updateBoard(player, event.isBinding() ? event.getAbility() : "", false, event.getSlot());
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR) // TODO: shouldn't this ignore cancelled events?
 	public void onPlayerStanceChange(final PlayerStanceChangeEvent event) {
+		// TODO: Potentially make PlayerStanceChangeEvent extend PlayerEvent as player shouldn't be nullable
+		// Correct me if I'm wrong ofc
 		final Player player = event.getPlayer();
 		if (player == null) return;
 		if (!event.getOldStance().isEmpty()) {
@@ -2169,18 +2180,16 @@ public class PKListener implements Listener {
 		TempBlock.removeAllInWorld(event.getWorld());
 	}
 
-	@EventHandler
+	@EventHandler // TODO: mark this as ignore cancelled?
 	private void preventArmorSwap(PlayerInteractEvent event) {
 		//Prevents swapping armor pieces using right click while having TempArmor active, this will prevent Armor pieces from being duped/deleted.
-		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) return;
-		Player player = event.getPlayer();
-
-		if (!EnchantmentTarget.WEARABLE.includes(player.getInventory().getItemInMainHand())
-				&& !EnchantmentTarget.ARMOR.includes(player.getInventory().getItemInMainHand())){
+		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
 			return;
 		}
 
-		if (TempArmor.hasTempArmor(player)){
+		Player player = event.getPlayer();
+		ItemStack mainHand = player.getInventory().getItemInMainHand();
+		if (EnchantmentTarget.WEARABLE.includes(mainHand) && EnchantmentTarget.ARMOR.includes(mainHand) && TempArmor.hasTempArmor(player)) {
 			event.setCancelled(true);
 		}
 	}

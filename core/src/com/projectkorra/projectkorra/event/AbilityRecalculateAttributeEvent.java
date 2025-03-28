@@ -1,22 +1,15 @@
 package com.projectkorra.projectkorra.event;
 
-import com.google.common.primitives.Primitives;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.AttributeModification;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 
-import javax.lang.model.type.PrimitiveType;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 
 public class AbilityRecalculateAttributeEvent extends Event {
