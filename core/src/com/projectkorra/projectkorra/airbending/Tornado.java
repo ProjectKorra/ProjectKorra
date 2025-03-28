@@ -61,6 +61,10 @@ public class Tornado extends AirAbility {
 		this.random = new Random();
 		this.angles = new ConcurrentHashMap<>();
 
+		if (!this.bPlayer.canBend(this)) {
+			return;
+		}
+
 		int angle = 0;
 		for (int i = 0; i <= this.maxHeight; i += (int) this.maxHeight / this.numberOfStreams) {
 			this.angles.put(i, angle);

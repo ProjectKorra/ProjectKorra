@@ -95,8 +95,11 @@ public class FireKick extends FireAbility implements ComboAbility {
 			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_HORSE_JUMP, 0.5f, 0f);
 			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 1f);
 			for (int i = -30; i <= 30; i += 5) {
-				Vector vec = GeneralMethods.getDirection(this.player.getLocation(), this.destination.clone());
-				vec = GeneralMethods.rotateXZ(vec, i);
+				double angle = Math.toRadians(i);
+				final Vector direction = this.player.getEyeLocation().getDirection().clone();
+				Vector xz = GeneralMethods.rotateVectorAroundVector(direction, new Vector(-direction.getZ(), 0, direction.getX()).normalize(), 0);
+				Vector vec = direction.clone().multiply(Math.cos(angle))
+						.add(xz.clone().multiply(Math.sin(angle))).normalize();
 
 				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation(), this.range, this.speed);
 				fs.setSpread(0.2F);

@@ -67,6 +67,11 @@ public class OfflineBendingPlayer {
      */
     protected static final PriorityQueue<Pair<Player, Long>> TEMP_ELEMENTS = new PriorityQueue<>(Comparator.comparingLong(Pair<Player, Long>::getRight));
 
+    /**
+     * Map of all the players that are currently loading
+     */
+    private static final Map<UUID, CompletableFuture<OfflineBendingPlayer>> LOADING = new ConcurrentHashMap<>();
+
     protected final OfflinePlayer player;
     protected final UUID uuid;
     protected boolean permaRemoved;
@@ -82,6 +87,8 @@ public class OfflineBendingPlayer {
     protected final Map<String, Cooldown> cooldowns = new HashMap<>();
     protected final Set<Element> toggledElements = new HashSet<>();
     protected final Set<Element> toggledPassives = new HashSet<>();
+
+
 
     private int currentSlot;
     private long lastAccessed;
@@ -106,6 +113,10 @@ public class OfflineBendingPlayer {
         CompletableFuture<OfflineBendingPlayer> future = new CompletableFuture<>();
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
+        if (LOADING.containsKey(uuid)) { //If it is already loading, return the loading one
+            return LOADING.get(uuid);
+        }
+
         //If we already have the players data cached from an OfflineBendingPlayer instance
         if (PLAYERS.get(uuid) != null) {
             OfflineBendingPlayer oBendingPlayer = PLAYERS.get(uuid); //Get cached instance
@@ -120,6 +131,8 @@ public class OfflineBendingPlayer {
             future.complete(oBendingPlayer);
             return future;
         }
+
+        LOADING.put(uuid, future); //Put the future in the loading map
 
         Runnable loadTask = () -> {
             OfflineBendingPlayer bPlayer = new OfflineBendingPlayer(offlinePlayer);
@@ -154,6 +167,7 @@ public class OfflineBendingPlayer {
                         return true;
                     });
                     future.complete(newPlayer);
+                    LOADING.remove(uuid);
                 } else {
                     // The player has at least played before.
                     final String player2 = rs2.getString("player");
@@ -431,11 +445,13 @@ public class OfflineBendingPlayer {
                     OfflineBendingPlayer finalBPlayer4 = bPlayer;
                     Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> {
                         Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(finalBPlayer4));
+                        LOADING.remove(uuid);
                         future.complete(finalBPlayer4);
                     });
                 }
             } catch (final SQLException | ExecutionException | InterruptedException ex) {
                 ex.printStackTrace();
+                LOADING.remove(uuid);
                 future.cancel(true);
             }
         };
@@ -552,21 +568,26 @@ public class OfflineBendingPlayer {
      * Saves all temporary elements to the database
      */
     public void saveTempElements() {
-        DBConnection.sql.modifyQuery("DELETE FROM pk_temp_elements WHERE uuid = '" + uuid + "'");
-        try {
-            DBConnection.sql.getConnection().setAutoCommit(false);
-            DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
-            DBConnection.sql.getConnection().setAutoCommit(true);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
 
-        for (Element e : this.tempElements.keySet()) {
-            DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempElements.get(e) + ")");
-        }
-        for (Element e : this.tempSubElements.keySet()) {
-            DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempSubElements.get(e) + ")");
-        }
+            try {
+                DBConnection.sql.getConnection().setAutoCommit(false);
+                DBConnection.sql.modifyQuery("DELETE FROM pk_temp_elements WHERE uuid = '" + uuid + "'");
+                DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
+                for (Element e : this.tempElements.keySet()) {
+                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempElements.get(e) + ")");
+                }
+                for (Element e : this.tempSubElements.keySet()) {
+                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempSubElements.get(e) + ")");
+                }
+                DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
+                DBConnection.sql.getConnection().setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        }, 1L);
     }
 
     /**
@@ -976,6 +997,7 @@ public class OfflineBendingPlayer {
 
     /**
      * Gets the time that a temporary element expires. If the element is not temporary, it will return -1.
+     * If the element has already expired but the user isn't online, it will return 0.
      * @param element The element to check
      * @return The time the element expires, or -1 if it is not temporary
      */
@@ -986,6 +1008,7 @@ public class OfflineBendingPlayer {
 
     /**
      * Gets the time that a temporary subelement expires. If the subelement is not temporary, it will return -1.
+     * If the subelement has already expired but the user isn't online, it will return 0.
      * @param sub The subelement to check
      * @return The time the subelement expires, or -1 if it is not temporary
      */
@@ -1255,6 +1278,11 @@ public class OfflineBendingPlayer {
         PLAYERS.put(player.getUniqueId(), bendingPlayer);
         ONLINE_PLAYERS.put(player.getUniqueId(), bendingPlayer);
 
+        Bukkit.getScheduler().callSyncMethod(ProjectKorra.plugin, () -> {
+            Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(bendingPlayer));
+            return true;
+        });
+
         return bendingPlayer;
     }
 
@@ -1304,6 +1332,7 @@ public class OfflineBendingPlayer {
 
         PLAYERS.remove(this.player.getUniqueId());
         ONLINE_PLAYERS.remove(this.player.getUniqueId());
+        LOADING.remove(this.player.getUniqueId());
     }
 
     /**
@@ -1433,7 +1462,7 @@ public class OfflineBendingPlayer {
     }
 
     /**
-     * Removes a temporary element from the player. Does not check for existing temporary elements. Does not send messages.
+     * Removes a temporary element from the player. Does not send messages.
      * @param element The element to remove. Null for all elements.
      * @param sender The sender of the command. Can be null.
      * @return true If the element was removed successfully
@@ -1445,8 +1474,13 @@ public class OfflineBendingPlayer {
                 if (e1.equals(Element.AVATAR)) continue;
                 if (removeTempElement(e1, sender)) removed = true;
             }
+            for (Element e1 : Element.getAllSubElements()) {
+                if (removeTempElement(e1, sender)) removed = true;
+            }
             return removed;
         }
+
+        if (!this.hasTempElement(element)) return false;
 
         SubElement subElement = element instanceof SubElement sub ? sub : null;
         BendingPlayer online = this instanceof BendingPlayer bPlayer ? bPlayer : null;

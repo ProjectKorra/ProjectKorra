@@ -199,7 +199,7 @@ public class Tremorsense extends EarthAbility {
 
 		final Tremorsense this_ = (Tremorsense) getAbility(Tremorsense.class);
 
-		if (bPlayer != null && this_.isEnabled() && bPlayer.canBendPassive(this_) && bPlayer.canUsePassive(this_)) {
+		if (this_ != null && bPlayer != null && this_.isEnabled() && bPlayer.canBendPassive(this_) && bPlayer.canUsePassive(this_)) {
 			return true;
 		}
 
