@@ -19,16 +19,16 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 
 public class TempArmor {
 
-	private static Map<LivingEntity, PriorityQueue<TempArmor>> INSTANCES = new ConcurrentHashMap<>();
-	private static Map<LivingEntity, ItemStack[]> ORIGINAL = new HashMap<>();
-	private static long defaultDuration = 30000L;
+	private static final Map<LivingEntity, PriorityQueue<TempArmor>> INSTANCES = new ConcurrentHashMap<>();
+	private static final Map<LivingEntity, ItemStack[]> ORIGINAL = new HashMap<>();
+	private static final long DEFAULT_DURATION = 30000L;
 
-	private LivingEntity entity;
-	private long startTime;
-	private long duration;
-	private ItemStack[] oldArmor;
+	private final CoreAbility ability;
+	private final LivingEntity entity;
+	private final long startTime;
+	private final long duration;
+	private final ItemStack[] oldArmor;
 	private ItemStack[] newArmor;
-	private CoreAbility ability;
 	private boolean removeAbilOnForceRevert = false;
 
 	/**
@@ -41,7 +41,7 @@ public class TempArmor {
 	 *            - can be set later.
 	 */
 	public TempArmor(final LivingEntity entity, final ItemStack[] armorItems) {
-		this(entity, defaultDuration, null, armorItems);
+		this(entity, DEFAULT_DURATION, null, armorItems);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class TempArmor {
 	 *            - can be set later.
 	 */
 	public TempArmor(final LivingEntity entity, final CoreAbility ability, final ItemStack[] armorItems) {
-		this(entity, defaultDuration, ability, armorItems);
+		this(entity, DEFAULT_DURATION, ability, armorItems);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class TempArmor {
 	 */
 	public TempArmor(final LivingEntity entity, long duration, final CoreAbility ability, final ItemStack[] armorItems) {
 		if (duration <= 0) {
-			duration = defaultDuration;
+			duration = DEFAULT_DURATION;
 		}
 
 		this.entity = entity;
@@ -158,17 +158,12 @@ public class TempArmor {
 	}
 
 	public void setArmor(final ItemStack[] armor) {
-		this.newArmor = armor;
-
 		final ItemStack[] actualArmor = new ItemStack[4];
 		for (int i = 0; i < 4; i++) {
-			if (armor[i] == null) {
-				actualArmor[i] = this.oldArmor[i];
-			} else {
-				actualArmor[i] = armor[i];
-			}
+			ItemStack piece = armor[i];
+			actualArmor[i] = piece != null ? piece : this.oldArmor[i];
 		}
-
+		this.newArmor = armor;
 		this.entity.getEquipment().setArmorContents(actualArmor);
 	}
 
@@ -176,13 +171,9 @@ public class TempArmor {
 		final ItemStack[] armor = next.newArmor;
 		final ItemStack[] actualArmor = new ItemStack[4];
 		for (int i = 0; i < 4; i++) {
-			if (armor[i] == null) {
-				actualArmor[i] = next.oldArmor[i];
-			} else {
-				actualArmor[i] = armor[i];
-			}
+			ItemStack piece = armor[i];
+			actualArmor[i] = piece != null ? piece : next.oldArmor[i];
 		}
-
 		this.entity.getEquipment().setArmorContents(actualArmor);
 	}
 
@@ -190,11 +181,9 @@ public class TempArmor {
 	 * Sets whether the ability that created the TempArmor should be forcefully
 	 * removed if the armor is forced to be reverted. Such cases are things like
 	 * on player death, etc.
-	 *
-	 * @param bool
 	 */
-	public void setRemovesAbilityOnForceRevert(final boolean bool) {
-		this.removeAbilOnForceRevert = bool;
+	public void setRemovesAbilityOnForceRevert(final boolean removeAbilOnForceRevert) {
+		this.removeAbilOnForceRevert = removeAbilOnForceRevert;
 	}
 
 	public void revert() {

@@ -40,12 +40,9 @@ public class ChiPassive {
 
 		if (Math.random() > newChance / 100.0) {
 			return false;
-		} else if (bPlayer.isChiBlocked()) {
-			return false;
 		}
-
-		return true;
-	}
+		return !bPlayer.isChiBlocked();
+    }
 
 	public static void blockChi(final Player player) {
 		if (Suffocate.isChannelingSphere(player)) {

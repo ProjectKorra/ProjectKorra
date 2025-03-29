@@ -1,47 +1,31 @@
 package com.projectkorra.projectkorra.event;
 
-import com.google.common.primitives.Primitives;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.AttributeModification;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 
-import javax.lang.model.type.PrimitiveType;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 
 public class AbilityRecalculateAttributeEvent extends Event {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
 
-    CoreAbility ability;
-    String attribute;
-    Object originalValue;
-
-    Set<AttributeModification> modifications = new TreeSet<>(Comparator.comparingInt(AttributeModification::getPriority));
+    private final CoreAbility ability;
+    private final String attribute;
+    private final Object originalValue;
+    private final Set<AttributeModification> modifications;
 
     public AbilityRecalculateAttributeEvent(final CoreAbility ability, final String attribute, final Object originalValue) {
         this.ability = ability;
         this.attribute = attribute;
         this.originalValue = originalValue;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
+        this.modifications = new TreeSet<>(Comparator.comparingInt(AttributeModification::getPriority));
     }
 
     public Object getOriginalValue() {
@@ -49,7 +33,7 @@ public class AbilityRecalculateAttributeEvent extends Event {
     }
 
     public <T extends Annotation> T getMarker(Class<T> markerClass) {
-        return (T) CoreAbility.getAttributeCache(ability).get(attribute).getMarker(markerClass);
+        return CoreAbility.getAttributeCache(ability).get(attribute).getMarker(markerClass);
     }
 
     public boolean hasMarker(Class<? extends Annotation> markerClass) {
@@ -107,5 +91,14 @@ public class AbilityRecalculateAttributeEvent extends Event {
 
     public Set<AttributeModification> getModifications() {
         return modifications;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return HANDLERS;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 }

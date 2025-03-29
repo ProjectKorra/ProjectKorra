@@ -27,7 +27,8 @@ import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 public class BendingManager implements Runnable {
 
 	private static BendingManager instance;
-	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
+	// TODO: should this be annotated as deprecated? \/
+	public static HashMap<World, String> events = new HashMap<>(); // holds any current event.
 
 	long time;
 	long interval;

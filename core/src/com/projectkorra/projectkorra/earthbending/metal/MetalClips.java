@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending.metal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.command.Commands;
@@ -34,7 +35,7 @@ public class MetalClips extends MetalAbility {
 
 	private static final Map<Entity, Integer> ENTITY_CLIPS_COUNT = new ConcurrentHashMap<>();
 	private static final Map<Entity, MetalClips> TARGET_TO_ABILITY = new ConcurrentHashMap<>();
-	private static final Material[] METAL_ITEMS = { Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, Material.IRON_SWORD, Material.IRON_HOE, Material.IRON_SHOVEL, Material.IRON_DOOR };
+	private static final List<Material> METAL_ITEMS = List.of(Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, Material.IRON_SWORD, Material.IRON_HOE, Material.IRON_SHOVEL, Material.IRON_DOOR);
 
 	private boolean isBeingWorn;
 	private boolean isControlling;
@@ -98,18 +99,9 @@ public class MetalClips extends MetalAbility {
 		this.actionBarMessage = ChatUtil.color(ConfigManager.languageConfig.get().getString("Abilities.Earth.MetalClips.ActionBarMessage", "* MetalClipped *"));
 		this.trackedIngots = new ArrayList<>();
 
-		if (abilityType == 0) {
-			if (!this.bPlayer.canBend(this)) {
-				return;
-			}
-			if (!player.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 1)) {
-				return;
-			}
+		if (abilityType == 0 && this.bPlayer.canBend(this) && player.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 1)) {
 			this.shootMetal();
-		} else if (abilityType == 1) {
-			if (this.bPlayer.isOnCooldown("MetalClips Magnet")) {
-				return;
-			}
+		} else if (abilityType == 1 && !this.bPlayer.isOnCooldown("MetalClips Magnet")) {
 			this.isMagnetized = true;
 		}
 
@@ -121,63 +113,44 @@ public class MetalClips extends MetalAbility {
 			return;
 		}
 		this.bPlayer.addCooldown("MetalClips Shoot", this.shootCooldown);
-		final ItemStack is = new ItemStack(Material.IRON_INGOT, 1);
 
-		if (!this.player.getInventory().containsAtLeast(is, 1)) {
+		final PlayerInventory inventory = player.getInventory();
+		final ItemStack itemStack = new ItemStack(Material.IRON_INGOT);
+		if (!inventory.containsAtLeast(itemStack, 1)) {
 			return;
 		}
 
-		final Item item = this.player.getWorld().dropItemNaturally(this.player.getLocation().add(0, 1, 0), is);
-		Vector vector;
 
-		final Entity targetedEntity = GeneralMethods.getTargetedEntity(this.player, this.range, new ArrayList<Entity>());
-		if (targetedEntity != null) {
-			vector = GeneralMethods.getDirection(this.player.getLocation(), targetedEntity.getLocation());
-		} else {
-			vector = GeneralMethods.getDirection(this.player.getLocation(), GeneralMethods.getTargetedLocation(this.player, this.range));
-		}
+		final Location location = player.getLocation();
+		final Item item = this.player.getWorld().dropItemNaturally(location.clone().add(0, 1, 0), itemStack);
+		final Entity targetedEntity = GeneralMethods.getTargetedEntity(this.player, this.range);
+		final Vector direction = GeneralMethods.getDirection(location, targetedEntity != null
+				? targetedEntity.getLocation()
+				: GeneralMethods.getTargetedLocation(this.player, this.range));
+		GeneralMethods.setVelocity(this, item, direction.normalize().multiply(this.shootSpeed));
 
-		GeneralMethods.setVelocity(this, item, vector.normalize().multiply(this.shootSpeed));
 		this.trackedIngots.add(item);
-		this.player.getInventory().removeItem(is);
+		this.player.getInventory().removeItem(itemStack);
 	}
 
 	public void formArmor() {
-		if (this.metalClipsCount >= 4) {
+		if (this.metalClipsCount >= 4 || (this.metalClipsCount == 3 && !this.canUse4Clips)) {
 			return;
-		} else if (this.metalClipsCount == 3 && !this.canUse4Clips) {
-			return;
-		} else if (this.targetEntity != null && (RegionProtection.isRegionProtected(this, this.targetEntity.getLocation()) || ((targetEntity instanceof Player) && Commands.invincible.contains(((Player) targetEntity).getName())))) {
+		} else if (this.targetEntity != null && (RegionProtection.isRegionProtected(this, this.targetEntity.getLocation()) || ((targetEntity instanceof Player) && Commands.invincible.contains(targetEntity.getName())))) {
 			return;
 		}
 
-		this.metalClipsCount = (this.metalClipsCount < 4) ? this.metalClipsCount + 1 : 4;
-
-		if (this.targetEntity instanceof Player) {
-			final Player target = (Player) this.targetEntity;
-
-			final ItemStack[] metalArmor = new ItemStack[4];
-
-			metalArmor[2] = (this.metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : null;
-			metalArmor[0] = (this.metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : null;
-			metalArmor[1] = (this.metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : null;
-			metalArmor[3] = (this.metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : null;
-			ENTITY_CLIPS_COUNT.put(target, this.metalClipsCount);
-
-			new TempArmor(target, this, metalArmor);
-		} else {
-			final ItemStack[] metalarmor = new ItemStack[4];
-
-			metalarmor[2] = (this.metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : null;
-			metalarmor[0] = (this.metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : null;
-			metalarmor[1] = (this.metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : null;
-			metalarmor[3] = (this.metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : null;
-			ENTITY_CLIPS_COUNT.put(this.targetEntity, this.metalClipsCount);
-
-			new TempArmor(this.targetEntity, this, metalarmor);
-		}
+		this.metalClipsCount = Math.min(this.metalClipsCount + 1, 4);
+		final ItemStack[] armor = new ItemStack[] {
+				(this.metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : null,
+				(this.metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : null,
+				(this.metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : null,
+				(this.metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : null
+		};
+		new TempArmor(this.targetEntity, this, armor);
 		this.armorStartTime = System.currentTimeMillis();
 		this.isBeingWorn = true;
+		ENTITY_CLIPS_COUNT.put(this.targetEntity, this.metalClipsCount);
 	}
 
 	public void resetArmor() {
@@ -185,40 +158,27 @@ public class MetalClips extends MetalAbility {
 			return;
 		}
 
-		for (final TempArmor tarmor : TempArmor.getTempArmorList(targetEntity)) {
-			tarmor.revert();
+		for (final TempArmor tempArmor : TempArmor.getTempArmorList(targetEntity)) {
+			tempArmor.revert();
 		}
 		this.dropIngots(this.targetEntity.getLocation());
 		this.isBeingWorn = false;
 	}
 
 	public void launch() {
-		if (!this.canThrow) {
+		if (!this.canThrow || this.targetEntity == null) {
 			return;
 		}
-
-		if (this.targetEntity == null) {
-			return;
-		}
-
-		final Location location = this.player.getLocation();
-		double dx, dy, dz;
-		final Location target = this.targetEntity.getLocation().clone();
-		dx = target.getX() - location.getX();
-		dy = target.getY() - location.getY();
-		dz = target.getZ() - location.getZ();
-		final Vector vector = new Vector(dx, dy, dz);
-		vector.normalize();
-		GeneralMethods.setVelocity(this, this.targetEntity, vector.multiply(this.metalClipsCount / 2D));
+		Vector direction = this.targetEntity.getLocation().toVector().subtract(this.player.getLocation().toVector()).normalize();
+		GeneralMethods.setVelocity(this, this.targetEntity, direction.multiply(this.metalClipsCount / 2D));
 		this.remove();
 	}
 
 	public void crush() {
-		if (this.bPlayer.isOnCooldown("MetalClips Crush")) {
-			return;
+		if (!this.bPlayer.isOnCooldown("MetalClips Crush")) {
+			this.bPlayer.addCooldown("MetalClips Crush", this.crushCooldown);
+			DamageHandler.damageEntity(this.targetEntity, this.player, this.crushDamage, this);
 		}
-		this.bPlayer.addCooldown("MetalClips Crush", this.crushCooldown);
-		DamageHandler.damageEntity(this.targetEntity, this.player, this.crushDamage, this);
 	}
 
 	@Override
@@ -229,7 +189,7 @@ public class MetalClips extends MetalAbility {
 		}
 
 		if (this.targetEntity != null) {
-			if ((this.targetEntity instanceof Player && !((Player) this.targetEntity).isOnline()) || this.targetEntity.isDead()) {
+			if ((this.targetEntity instanceof Player target && !target.isOnline()) || this.targetEntity.isDead()) {
 				this.remove();
 				return;
 			}
@@ -237,95 +197,69 @@ public class MetalClips extends MetalAbility {
 
 		if (this.player.isSneaking()) {
 			this.hasSnuck = true;
-		}
-
-		if (!this.player.isSneaking()) {
+		} else {
 			if (this.isMagnetized) {
 				this.bPlayer.addCooldown("MetalClips Magnet", this.magnetCooldown);
 				this.remove();
 				return;
 			}
 			this.isControlling = false;
-			this.isMagnetized = false;
 			if (this.metalClipsCount > 0 && this.hasSnuck && this.abilityType == 0) {
 				this.launch();
 			}
 		}
 
+		Location location = player.getLocation();
 		if (this.isMagnetized) {
-			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.magnetRange);
-			if (entities.size() == 0) {
+			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, this.magnetRange);
+			if (entities.isEmpty()) {
 				this.remove();
 				return;
 			}
+
+			final ItemStack itemInHand = this.player.getInventory().getItemInMainHand();
+			final boolean holdingMagnet = itemInHand.getType() == Material.IRON_INGOT && itemInHand.hasItemMeta()
+					&& itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet");
+
 			for (final Entity entity : entities) {
-				final Vector vector = GeneralMethods.getDirection(entity.getLocation(), this.player.getLocation());
-				final ItemStack itemInHand = this.player.getInventory().getItemInMainHand();
+				Location entityLocation = entity.getLocation();
+				final Vector vector = GeneralMethods.getDirection(entityLocation, location);
+				if (holdingMagnet && (entity instanceof Player || entity instanceof Zombie || entity instanceof Skeleton)) {
+					if (entity instanceof Player target) {
+						for (final ItemStack itemStack : target.getInventory().getContents()) {
+							if (itemStack != null && !METAL_ITEMS.contains(itemStack.getType())) {
+								player.getWorld().dropItem(location, itemStack.clone());
+								itemStack.setType(Material.AIR);
+								itemStack.setAmount(0);
+							}
+						}
+					}
 
-				if (entity instanceof Player && this.canLoot && itemInHand.getType() == Material.IRON_INGOT && (itemInHand.hasItemMeta() && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet"))) {
-					final Player targetPlayer = (Player) entity;
-
-					if (targetPlayer.getEntityId() == this.player.getEntityId()) {
+					final LivingEntity livingEntity = (LivingEntity) entity;
+					final EntityEquipment equipment = livingEntity.getEquipment();
+					if (equipment == null) {
 						continue;
 					}
 
-					final ItemStack[] inventory = targetPlayer.getInventory().getContents();
-
-					for (final ItemStack is : inventory) {
-						if (is == null) {
-							continue;
-						}
-						if (Arrays.asList(METAL_ITEMS).contains(is.getType())) {
-							targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), is);
-
-							is.setType(Material.AIR);
-							is.setAmount(0);
+					final ItemStack[] armor = equipment.getArmorContents();
+					for (final ItemStack itemStack : armor) {
+						if (METAL_ITEMS.contains(itemStack.getType())) {
+							livingEntity.getWorld().dropItem(entityLocation, itemStack.clone());
+							itemStack.setType(Material.AIR);
+							itemStack.setAmount(0);
 						}
 					}
+					equipment.setArmorContents(armor);
 
-					targetPlayer.getInventory().setContents(inventory);
-					final ItemStack[] armor = targetPlayer.getInventory().getArmorContents();
-
-					for (final ItemStack is : armor) {
-						if (Arrays.asList(METAL_ITEMS).contains(is.getType())) {
-							targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), is);
-							is.setType(Material.AIR);
-						}
-					}
-
-					targetPlayer.getInventory().setArmorContents(armor);
-					if (Arrays.asList(METAL_ITEMS).contains(targetPlayer.getInventory().getItemInMainHand().getType())) {
-						targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), targetPlayer.getEquipment().getItemInMainHand());
-						targetPlayer.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
+					ItemStack entityMainHand = equipment.getItemInMainHand();
+					if (METAL_ITEMS.contains(entityMainHand.getType())) {
+						livingEntity.getWorld().dropItem(entityLocation, entityMainHand);
+						equipment.setItemInMainHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 
-				if ((entity instanceof Zombie || entity instanceof Skeleton) && this.canLoot && itemInHand.getType() == Material.IRON_INGOT && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet")) {
-					final LivingEntity livingEntity = (LivingEntity) entity;
-
-					final ItemStack[] armor = livingEntity.getEquipment().getArmorContents();
-
-					for (final ItemStack istack : armor) {
-						if (Arrays.asList(METAL_ITEMS).contains(istack.getType())) {
-							livingEntity.getWorld().dropItem(livingEntity.getLocation(), istack);
-							istack.setType(Material.AIR);
-						}
-					}
-
-					livingEntity.getEquipment().setArmorContents(armor);
-
-					if (Arrays.asList(METAL_ITEMS).contains(livingEntity.getEquipment().getItemInMainHand().getType())) {
-						livingEntity.getWorld().dropItem(livingEntity.getLocation(), livingEntity.getEquipment().getItemInMainHand());
-						livingEntity.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
-					}
-				}
-
-				if (entity instanceof Item) {
-					final Item iron = (Item) entity;
-
-					if (Arrays.asList(METAL_ITEMS).contains(iron.getItemStack().getType())) {
-						GeneralMethods.setVelocity(this, iron, vector.normalize().multiply(this.magnetSpeed).add(new Vector(0, 0.2, 0)));
-					}
+				if (entity instanceof Item item && METAL_ITEMS.contains(item.getItemStack().getType())) {
+					GeneralMethods.setVelocity(this, item, vector.normalize().multiply(this.magnetSpeed).add(new Vector(0, 0.2, 0)));
 				}
 			}
 		}
@@ -336,58 +270,19 @@ public class MetalClips extends MetalAbility {
 		}
 
 		if (this.isControlling && this.player.isSneaking()) {
-			if (this.metalClipsCount == 1) {
-				final Location oldLocation = this.targetEntity.getLocation();
-				Location loc = oldLocation;
-				if (this.player.getWorld().equals(oldLocation.getWorld())) {
-					loc = GeneralMethods.getTargetedLocation(this.player, (int) this.player.getLocation().distance(oldLocation));
-				}
-				double distance = 0;
-				if (loc.getWorld().equals(oldLocation.getWorld())) {
-					distance = loc.distance(oldLocation);
-				}
-				final Vector vector = GeneralMethods.getDirection(this.targetEntity.getLocation(), this.player.getLocation());
+			final Location targetLocation = this.targetEntity.getLocation();
+			final Location loc = this.player.getWorld().equals(this.targetEntity.getWorld())
+					? GeneralMethods.getTargetedLocation(this.player, (int) location.distance(targetLocation))
+					: targetLocation;
+			final Vector direction = GeneralMethods.getDirection(targetLocation, GeneralMethods.getTargetedLocation(this.player, 10));
+			double distance = loc.getWorld().equals(targetLocation.getWorld()) ? loc.distance(targetLocation) : 0;
 
-				if (distance > 0.5) {
-					GeneralMethods.setVelocity(this, this.targetEntity, vector.normalize().multiply(0.2));
-				}
-			}
-
-			if (this.metalClipsCount == 2) {
-				final Location oldLocation = this.targetEntity.getLocation();
-				Location loc = oldLocation;
-				if (this.player.getWorld().equals(oldLocation.getWorld())) {
-					loc = GeneralMethods.getTargetedLocation(this.player, (int) this.player.getLocation().distance(oldLocation));
-				}
-				double distance = 0;
-				if (loc.getWorld().equals(oldLocation.getWorld())) {
-					distance = loc.distance(oldLocation);
-				}
-				final Vector vector = GeneralMethods.getDirection(this.targetEntity.getLocation(), GeneralMethods.getTargetedLocation(this.player, 10));
-
-				if (distance > 1.2) {
-					GeneralMethods.setVelocity(this, this.targetEntity, vector.normalize().multiply(0.2));
-				}
-			}
-
-			if (this.metalClipsCount >= 3) {
-				final Location oldLocation = this.targetEntity.getLocation();
-				Location loc = oldLocation;
-				if (this.player.getWorld().equals(oldLocation.getWorld())) {
-					loc = GeneralMethods.getTargetedLocation(this.player, (int) this.player.getLocation().distance(oldLocation));
-				}
-				double distance = 0;
-				if (loc.getWorld().equals(oldLocation.getWorld())) {
-					distance = loc.distance(oldLocation);
-				}
-				final Vector vector = GeneralMethods.getDirection(oldLocation, GeneralMethods.getTargetedLocation(this.player, 10));
-
-				if (distance > 1.2) {
-					GeneralMethods.setVelocity(this, this.targetEntity, vector.normalize().multiply(.5));
-				} else {
-					GeneralMethods.setVelocity(this, this.targetEntity, new Vector(0, 0, 0));
-				}
-
+			if (this.metalClipsCount == 1 && distance > 0.5) {
+				GeneralMethods.setVelocity(this, this.targetEntity, direction.normalize().multiply(0.2));
+			} else if (this.metalClipsCount == 2 && distance > 1.2) {
+				GeneralMethods.setVelocity(this, this.targetEntity, direction.normalize().multiply(0.2));
+			} else if (this.metalClipsCount >= 3) {
+				GeneralMethods.setVelocity(this, this.targetEntity, distance > 1.2 ? direction.normalize().multiply(.5) : new Vector());
 				this.targetEntity.setFallDistance(0);
 			}
 
@@ -396,46 +291,48 @@ public class MetalClips extends MetalAbility {
 			}
 		}
 
-		final Iterator<Item> it = this.trackedIngots.iterator();
-		while (it.hasNext()) {
-			final Item ii = it.next();
-			if (ii.isOnGround()) {
-				it.remove();
+		final Iterator<Item> ingotIterator = this.trackedIngots.iterator();
+		while (ingotIterator.hasNext()) {
+			final Item item = ingotIterator.next();
+			if (item.isOnGround()) {
+				ingotIterator.remove();
 				continue;
 			}
 
-			for (final Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 1.8)) {
-				if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId()) {
-					if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton)) {
-						if (this.targetEntity == null) {
-							this.targetEntity = (LivingEntity) e;
+			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(item.getLocation(), 1.8)) {
+                if (entity == player || !(entity instanceof LivingEntity)) {
+					continue;
+                }
+
+				if (entity instanceof Player || entity instanceof Zombie || entity instanceof Skeleton) {
+					if (this.targetEntity == null) {
+						this.targetEntity = (LivingEntity) entity;
+						TARGET_TO_ABILITY.put(this.targetEntity, this);
+						this.formArmor();
+					} else if (this.targetEntity == entity) {
+						this.formArmor();
+					} else {
+						if (TARGET_TO_ABILITY.get(this.targetEntity) == this) {
+							this.resetArmor();
+							this.metalClipsCount = 0;
+							ENTITY_CLIPS_COUNT.remove(this.targetEntity);
+							TARGET_TO_ABILITY.remove(this.targetEntity);
+
+							this.targetEntity = (LivingEntity) entity;
 							TARGET_TO_ABILITY.put(this.targetEntity, this);
 							this.formArmor();
-						} else if (this.targetEntity == e) {
-							this.formArmor();
 						} else {
-							if (TARGET_TO_ABILITY.get(this.targetEntity) == this) {
-								this.resetArmor();
-								this.metalClipsCount = 0;
-								ENTITY_CLIPS_COUNT.remove(this.targetEntity);
-								TARGET_TO_ABILITY.remove(this.targetEntity);
-
-								this.targetEntity = (LivingEntity) e;
-								TARGET_TO_ABILITY.put(this.targetEntity, this);
-								this.formArmor();
-							} else {
-								TARGET_TO_ABILITY.get(this.targetEntity).remove();
-							}
+							TARGET_TO_ABILITY.get(this.targetEntity).remove();
 						}
-					} else {
-						DamageHandler.damageEntity(e, this.player, this.damage, this);
-						this.dropIngots(e.getLocation(), ii.getItemStack().getAmount());
 					}
-					it.remove();
-					ii.remove();
-					break;
+				} else {
+					DamageHandler.damageEntity(entity, this.player, this.damage, this);
+					this.dropIngots(entity.getLocation(), item.getItemStack().getAmount());
 				}
-			}
+				ingotIterator.remove();
+				item.remove();
+				break;
+            }
 		}
 	}
 

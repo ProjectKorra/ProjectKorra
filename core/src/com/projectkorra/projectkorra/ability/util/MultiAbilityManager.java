@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
 
@@ -24,10 +23,10 @@ public class MultiAbilityManager {
 	public static Map<Player, HashMap<Integer, String>> playerAbilities = new ConcurrentHashMap<>();
 	public static Map<Player, Integer> playerSlot = new ConcurrentHashMap<>();
 	public static Map<Player, String> playerBoundAbility = new ConcurrentHashMap<>();
-	public static ArrayList<MultiAbilityInfo> multiAbilityList = new ArrayList<MultiAbilityInfo>();
+	public static ArrayList<MultiAbilityInfo> multiAbilityList = new ArrayList<>();
 
 	public MultiAbilityManager() {
-		final ArrayList<MultiAbilityInfoSub> waterArms = new ArrayList<MultiAbilityInfoSub>();
+		ArrayList<MultiAbilityInfoSub> waterArms = new ArrayList<>();
 		waterArms.add(new MultiAbilityInfoSub("Pull", Element.WATER));
 		waterArms.add(new MultiAbilityInfoSub("Punch", Element.WATER));
 		waterArms.add(new MultiAbilityInfoSub("Grapple", Element.WATER));
@@ -44,11 +43,13 @@ public class MultiAbilityManager {
 	 * @param multiAbility MultiAbility being bound
 	 */
 	public static void bindMultiAbility(final Player player, final String multiAbility) {
-		if (!player.isOnline()) {
+		MultiAbilityInfo abilityInfo = getMultiAbility(multiAbility);
+		if (!player.isOnline() || abilityInfo == null) {
+			ProjectKorra.log.warning("Failed to bind MultiAbility %s to %s, it doesn't exist!".formatted(multiAbility, player.getName()));
 			return;
 		}
 		
-		final PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, multiAbility, 0, true, true);
+		PlayerBindChangeEvent event = new PlayerBindChangeEvent(player, multiAbility, 0, true, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return;
@@ -58,20 +59,20 @@ public class MultiAbilityManager {
 			unbindMultiAbility(player);
 		}
 		
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		playerSlot.put(player, player.getInventory().getHeldItemSlot());
 		playerBoundAbility.put(player, multiAbility);
-		playerAbilities.put(player, new HashMap<Integer, String>(bPlayer.getAbilities()));
+		playerAbilities.put(player, new HashMap<>(bPlayer.getAbilities()));
 
-		final List<MultiAbilityInfoSub> modes = getMultiAbility(multiAbility).getAbilities();
+		List<MultiAbilityInfoSub> modes = abilityInfo.getAbilities();
 
 		bPlayer.getAbilities().clear();
 		for (int i = 0; i < modes.size(); i++) {
-			if (!player.hasPermission("bending.ability." + multiAbility + "." + modes.get(i).getName())) {
-				bPlayer.getAbilities().put(i + 1, new StringBuilder().append(modes.get(i).getAbilityColor()).append(ChatColor.STRIKETHROUGH).append(modes.get(i).getName()).toString());
+			MultiAbilityInfoSub mode = modes.get(i);
+			if (!player.hasPermission("bending.ability." + multiAbility + "." + mode.getName())) {
+				bPlayer.getAbilities().put(i + 1, mode.getAbilityColor().toString() + ChatColor.STRIKETHROUGH + mode.getName());
 			} else {
-				bPlayer.getAbilities().put(i + 1, modes.get(i).getAbilityColor() + modes.get(i).getName());
+				bPlayer.getAbilities().put(i + 1, mode.getAbilityColor() + mode.getName());
 			}
 		}
 		BendingBoardManager.updateAllSlots(player);
@@ -86,23 +87,24 @@ public class MultiAbilityManager {
 	 * @param player The player to use
 	 * @return name of multi ability bounded
 	 */
-	public static String getBoundMultiAbility(final Player player) {
-		if (playerBoundAbility.containsKey(player)) {
-			return playerBoundAbility.get(player);
-		}
-		return null;
+	public static String getBoundMultiAbility(Player player) {
+		return playerBoundAbility.get(player);
 	}
 
 	/**
 	 * Returns a MultiAbility based on name.
 	 *
-	 * @param multiAbility Name of the multiability
+	 * @param name Name of the multiability
 	 * @return the multiability object or null
 	 */
-	public static MultiAbilityInfo getMultiAbility(final String multiAbility) {
-		for (final MultiAbilityInfo ma : multiAbilityList) {
-			if (ma.getName().equalsIgnoreCase(multiAbility)) {
-				return ma;
+	public static MultiAbilityInfo getMultiAbility(String name) {
+		if (name == null || name.isBlank()) {
+			return null;
+		}
+
+		for (MultiAbilityInfo multiAbility : multiAbilityList) {
+			if (multiAbility.getName().equalsIgnoreCase(name)) {
+				return multiAbility;
 			}
 		}
 		return null;
@@ -128,18 +130,13 @@ public class MultiAbilityManager {
 	 * @return true If player has the specified multiability active
 	 */
 	public static boolean hasMultiAbilityBound(final Player player, final String multiAbility) {
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			return false;
-		}
-
-		return playerAbilities.containsKey(player) && playerBoundAbility.get(player).equals(multiAbility);
+		return BendingPlayer.getBendingPlayer(player) != null
+				&& playerAbilities.containsKey(player)
+				&& playerBoundAbility.get(player).equals(multiAbility);
 	}
 
 	/**
 	 * Clears all MultiAbility data for a player. Called on player quit event.
-	 *
-	 * @param player
 	 */
 	public static void remove(final Player player) {
 		if (playerAbilities.containsKey(player)) {
@@ -167,10 +164,12 @@ public class MultiAbilityManager {
 		if (playerAbilities.isEmpty()) {
 			return true;
 		}
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null) {
-			if (bPlayer.getBoundAbility() == null && multiAbilityList.contains(getMultiAbility(playerBoundAbility.getOrDefault(player, "")))) {
-				return slot < getMultiAbility(playerBoundAbility.get(player)).getAbilities().size();
+			MultiAbilityInfo multiAbility = getMultiAbility(playerBoundAbility.get(player));
+			if (bPlayer.getBoundAbility() == null && multiAbility != null) {
+				return slot < multiAbility.getAbilities().size();
 			}
 		}
 		return true;
@@ -179,8 +178,6 @@ public class MultiAbilityManager {
 	/**
 	 * Reverts a player's binds to a previous state before use of a
 	 * MultiAbility.
-	 *
-	 * @param player
 	 */
 	public static void unbindMultiAbility(final Player player) {
 		playerAbilities.compute(player, MultiAbilityManager::resetBinds);
@@ -199,10 +196,9 @@ public class MultiAbilityManager {
 			return null;
 		}
 
-
-		if (player instanceof Player) {
-			((Player)player).getInventory().setHeldItemSlot(playerSlot.getOrDefault(player, 0));
-			ProjectKorra.plugin.getServer().getPluginManager().callEvent(new PlayerBindChangeEvent((Player) player, playerBoundAbility.get(player), false, true));
+		if (player instanceof Player online) {
+			online.getInventory().setHeldItemSlot(playerSlot.getOrDefault(player, 0));
+			ProjectKorra.plugin.getServer().getPluginManager().callEvent(new PlayerBindChangeEvent(online, playerBoundAbility.get(player), false, true));
 		}
 
 		bPlayer.getAbilities().clear();
@@ -277,12 +273,7 @@ public class MultiAbilityManager {
 			if (this.element == null){
 				return null;
 			}
-
-			if (this.color == null){
-				return this.element.getColor();
-			}else{
-				return this.color;
-			}
+			return this.color != null ? this.color : this.element.getColor();
 		}
 	}
 

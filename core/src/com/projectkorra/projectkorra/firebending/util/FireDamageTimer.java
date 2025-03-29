@@ -44,45 +44,42 @@ public class FireDamageTimer {
 
 		INSTANCES.put(entity, source);
 		ability = abil;
+		// TODO: shouldn't this be a static method? Instantiating here does nothing and is always GC'd
+		// Alternatively if we made this an instanced system which tracked ability per instance (confused rn why we don't)
+		// then it would make sense to keep
 	}
 
 	public static boolean isEnflamed(final Entity entity) {
 		if (INSTANCES.containsKey(entity)) {
-			if (TIMES.containsKey(entity)) {
-				final long time = TIMES.get(entity);
-				if (System.currentTimeMillis() < time + BUFFER) {
-					return false;
-				}
+			final Long time = TIMES.get(entity);
+			if (time != null && System.currentTimeMillis() < time + BUFFER) {
+				return false;
 			}
 			TIMES.put(entity, System.currentTimeMillis());
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	public static void dealFlameDamage(final Entity entity, final double damage) {
-		if (INSTANCES.containsKey(entity) && entity instanceof LivingEntity) {
-			if (entity instanceof Player) {
-				if (!HeatControl.canBurn((Player) entity)) {
-					return;
-				}
-			}
-			final LivingEntity Lentity = (LivingEntity) entity;
-			final Player source = INSTANCES.get(entity);
-			
-			// damages the entity.
-			if (ability == null) {
-				DamageHandler.damageEntity(Lentity, source, damage, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0), false, true);
-			} else {
-				DamageHandler.damageEntity(Lentity, source, damage, ability, false, true);
-			}
-			
-			if (entity.getFireTicks() > MAX_TICKS) {
-				entity.setFireTicks(MAX_TICKS);
-			}
-		}
-	}
+		Player source = INSTANCES.get(entity);
+        if (!(entity instanceof LivingEntity livingEntity) || source == null) {
+            return;
+        } else if (entity instanceof Player player && !HeatControl.canBurn(player)) {
+            return;
+        }
+
+        // damages the entity.
+        if (ability == null) {
+            DamageHandler.damageEntity(livingEntity, source, damage, CoreAbility.getAbilitiesByElement(Element.FIRE).getFirst(), false, true);
+        } else {
+            DamageHandler.damageEntity(livingEntity, source, damage, ability, false, true);
+        }
+
+        if (entity.getFireTicks() > MAX_TICKS) {
+            entity.setFireTicks(MAX_TICKS);
+        }
+    }
 
 	public static void dealFlameDamage(final Entity entity) {
 		dealFlameDamage(entity, DAMAGE);
