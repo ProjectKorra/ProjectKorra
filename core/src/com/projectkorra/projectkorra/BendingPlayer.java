@@ -255,7 +255,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * Check if the {@link BendingPlayer} can bend in the world they are in
 	 */
 	public boolean canBendInWorld() {
-		return !DISABLED_WORLDS.contains(this.getPlayer().getWorld().getName());
+		return !DISABLED_WORLDS.contains(this.player.getWorld().getName());
 	}
 
 	/**
