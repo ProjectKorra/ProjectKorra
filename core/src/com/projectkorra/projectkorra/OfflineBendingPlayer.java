@@ -980,7 +980,7 @@ public class OfflineBendingPlayer {
      * @param sub The subelement to check
      * @return true If the player has the subelement
      */
-    public boolean hasTempSubElementExlucdeParents(@NotNull final SubElement sub) {
+    public boolean hasTempSubElementExcludeParents(@NotNull final SubElement sub) {
         return this.tempSubElements.containsKey(sub) && this.tempSubElements.get(sub) > System.currentTimeMillis();
     }
 
