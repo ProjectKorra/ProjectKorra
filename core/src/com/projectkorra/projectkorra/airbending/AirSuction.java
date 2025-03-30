@@ -2,13 +2,17 @@ package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Door;
@@ -29,6 +33,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction extends AirAbility {
 
+	private static final Set<Material> TO_IGNORE = new HashSet<>();
 	private final List<Block> affectedDoors = new ArrayList<>();
 
 	private boolean progressing;
@@ -103,7 +108,7 @@ public class AirSuction extends AirAbility {
 		final double speedFactor = this.speed * (ProjectKorra.time_step / 1000.);
 		this.location = this.location.add(this.direction.clone().multiply(speedFactor));
 
-		if ((Arrays.asList(AirBlast.DOORS).contains(this.location.getBlock().getType()) || Arrays.asList(AirBlast.TDOORS).contains(this.location.getBlock().getType())) && !this.affectedDoors.contains(this.location.getBlock())) {
+		if ((Tag.WOODEN_DOORS.isTagged(this.location.getBlock().getType()) || Tag.WOODEN_TRAPDOORS.isTagged(this.location.getBlock().getType())) && !this.affectedDoors.contains(this.location.getBlock())) {
 			this.handleDoorMechanics(this.location.getBlock());
 		}
 	}
@@ -112,7 +117,7 @@ public class AirSuction extends AirAbility {
 		boolean tDoor = false;
 		boolean open = false;
 
-		if (Arrays.asList(AirBlast.DOORS).contains(block.getType())) {
+		if (Tag.WOODEN_DOORS.isTagged(block.getType())) {
 			final Door door = (Door) block.getBlockData();
 			final BlockFace face = door.getFacing();
 			final Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
@@ -163,19 +168,12 @@ public class AirSuction extends AirAbility {
 	}
 
 	private Location getTargetLocation() {
-		final Material[] ignore = new Material[getTransparentMaterials().length + AirBlast.DOORS.length + AirBlast.TDOORS.length];
-
-		for (int i = 0; i < ignore.length; i++) {
-			if (i < getTransparentMaterials().length) {
-				ignore[i] = getTransparentMaterials()[i];
-			} else if (i < getTransparentMaterials().length + AirBlast.DOORS.length) {
-				ignore[i] = AirBlast.DOORS[i - getTransparentMaterials().length];
-			} else {
-				ignore[i] = AirBlast.TDOORS[i - getTransparentMaterials().length - AirBlast.DOORS.length];
-			}
+		if (TO_IGNORE.isEmpty()) {
+			TO_IGNORE.addAll(getTransparentMaterialSet());
+			TO_IGNORE.addAll(Tag.WOODEN_DOORS.getValues());
+			TO_IGNORE.addAll(Tag.WOODEN_TRAPDOORS.getValues());
 		}
-
-		return GeneralMethods.getTargetedLocation(this.player, getSelectRange(), ignore);
+		return GeneralMethods.getTargetedLocation(this.player, getSelectRange(), TO_IGNORE.toArray(new Material[0]));
 	}
 
 	@Override

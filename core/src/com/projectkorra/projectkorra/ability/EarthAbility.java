@@ -36,10 +36,10 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class EarthAbility extends ElementalAbility {
 
-	private static final HashSet<Block> PREVENT_EARTHBENDING = new HashSet<Block>();
-	private static final Map<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
-	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
-	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
+	private static final HashSet<Block> PREVENT_EARTHBENDING = new HashSet<>();
+	private static final Map<Block, Information> MOVED_EARTH = new ConcurrentHashMap<>();
+	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<>();
+	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<>();
 
 	protected int noiseReduction = 0;
 

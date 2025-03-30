@@ -1,8 +1,6 @@
 package com.projectkorra.projectkorra.region;
 
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import me.ryanhamshire.GriefPrevention.Claim;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -18,10 +16,6 @@ class GriefPrevention extends RegionProtectionBase {
 
         //final Claim claim = me.ryanhamshire.GriefPrevention.GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
 
-        if (reason != null) {
-            return true;
-        }
-
-        return false;
+        return reason != null;
     }
 }

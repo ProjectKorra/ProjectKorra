@@ -67,7 +67,7 @@ public class Preset {
 	/**
 	 * Unload a Player's Presets from those stored in memory.
 	 *
-	 * @param player The Player who's Presets should be unloaded
+	 * @param player The Player whose Presets should be unloaded
 	 */
 	public static void unloadPreset(final Player player) {
 		final UUID uuid = player.getUniqueId();
@@ -77,24 +77,20 @@ public class Preset {
 	/**
 	 * Load a Player's Presets into memory.
 	 *
-	 * @param player The Player who's Presets should be loaded
+	 * @param player The Player whose Presets should be loaded
 	 */
 	public static void loadPresets(final Player player) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				final UUID uuid = player.getUniqueId();
-				if (uuid == null) {
-					return;
-				}
-				try {
-					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery);
+                try(final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery)) {
 					ps.setString(1, uuid.toString());
 					final ResultSet rs = ps.executeQuery();
 					if (rs.next()) { // Presets exist.
 						int i = 0;
 						do {
-							final HashMap<Integer, String> moves = new HashMap<Integer, String>();
+							final HashMap<Integer, String> moves = new HashMap<>();
 							for (int total = 1; total <= 9; total++) {
 								final String slot = rs.getString("slot" + total);
 								if (slot != null) {
@@ -116,7 +112,7 @@ public class Preset {
 	/**
 	 * Reload a Player's Presets from those stored in memory.
 	 *
-	 * @param player The Player who's Presets should be unloaded
+	 * @param player The Player whose Presets should be unloaded
 	 */
 	public static void reloadPreset(final Player player) {
 		unloadPreset(player);
@@ -139,8 +135,8 @@ public class Preset {
 		final HashMap<Integer, String> abilities = new HashMap<>(preset.abilities);
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
-			final CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
-			if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
+			final CoreAbility ability = CoreAbility.getAbility(abilities.get(i));
+			if (ability != null && !bPlayer.canBind(ability)) {
 				abilities.remove(i);
 				boundAll = false;
 			}
@@ -153,21 +149,21 @@ public class Preset {
 	/**
 	 * Checks if a Preset with a certain name exists for a given Player.
 	 *
-	 * @param player The player who's Presets should be checked
+	 * @param player The player whose Presets should be checked
 	 * @param name The name of the Preset to look for
 	 * @return true if the Preset exists, false otherwise
 	 */
 	public static boolean presetExists(final Player player, final String name) {
-		if (!presets.containsKey(player.getUniqueId())) {
+		List<Preset> playerPresets = presets.get(player.getUniqueId());
+		if (playerPresets == null) {
 			return false;
 		}
-		boolean exists = false;
-		for (final Preset preset : presets.get(player.getUniqueId())) {
-			if (preset.name.equalsIgnoreCase(name)) {
-				exists = true;
-			}
+		for (final Preset preset : playerPresets) {
+            if (preset.name.equalsIgnoreCase(name)) {
+                return true;
+            }
 		}
-		return exists;
+		return false;
 	}
 
 	/**
@@ -178,10 +174,11 @@ public class Preset {
 	 * @return The Preset, if it exists, or null otherwise
 	 */
 	public static Preset getPreset(final Player player, final String name) {
-		if (!presets.containsKey(player.getUniqueId())) {
+		List<Preset> playerPresets = presets.get(player.getUniqueId());
+		if (playerPresets == null) {
 			return null;
 		}
-		for (final Preset preset : presets.get(player.getUniqueId())) {
+		for (final Preset preset : playerPresets) {
 			if (preset.name.equalsIgnoreCase(name)) {
 				return preset;
 			}
@@ -190,7 +187,7 @@ public class Preset {
 	}
 
 	public static void loadExternalPresets() {
-		final HashMap<String, ArrayList<String>> presets = new HashMap<String, ArrayList<String>>();
+		final HashMap<String, ArrayList<String>> presets = new HashMap<>();
 		for (final String name : config.getKeys(false)) {
 			if (!presets.containsKey(name)) {
 				if (!config.getStringList(name).isEmpty() && config.getStringList(name).size() <= 9) {
@@ -214,20 +211,13 @@ public class Preset {
 	 * Gets the contents of a Preset for the specified Player.
 	 *
 	 * @param player The Player who's Preset should be gotten
-	 * @param name The name of the Preset who's contents should be gotten
+	 * @param name The name of the Preset whose contents should be gotten
 	 * @return HashMap of ability names keyed to hotbar slots, if the Preset
 	 *         exists, or null otherwise
 	 */
 	public static HashMap<Integer, String> getPresetContents(final Player player, final String name) {
-		if (!presets.containsKey(player.getUniqueId())) {
-			return null;
-		}
-		for (final Preset preset : presets.get(player.getUniqueId())) {
-			if (preset.name.equalsIgnoreCase(name)) {
-				return preset.abilities;
-			}
-		}
-		return null;
+		Preset preset = getPreset(player, name);
+		return preset != null ? preset.abilities : null;
 	}
 
 	public static boolean bindExternalPreset(final Player player, final String name) {
@@ -238,7 +228,7 @@ public class Preset {
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+		final HashMap<Integer, String> abilities = new HashMap<>();
 
 		if (externalPresetExists(name.toLowerCase())) {
 			for (final String ability : externalPresets.get(name.toLowerCase())) {
@@ -272,8 +262,7 @@ public class Preset {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
-					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
+				try(final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery)) {
 					ps.setString(1, uuid.toString());
 					ps.setString(2, name);
 					ps.execute();
@@ -305,8 +294,7 @@ public class Preset {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
-					PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
+				try(PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(insertQuery)) {
 					ps.setString(1, uuid.toString());
 					ps.setString(2, name);
 					for (int i = 1; i <= 9; i++) {

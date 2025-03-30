@@ -110,7 +110,7 @@ public class TempArmor {
 	 * @return The drop list with the old armor added in place of the temp armor
 	 */
 	public List<ItemStack> filterArmor(final List<ItemStack> drops) {
-		final List<ItemStack> newDrops = new ArrayList<ItemStack>();
+		final List<ItemStack> newDrops = new ArrayList<>();
 
 		for (final ItemStack drop : drops) {
 			boolean match = false;

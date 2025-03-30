@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
  * BlockSource is a class that handles water and earth bending sources. When a
  * Player left clicks or presses shift the update method is called which
  * attempts to update the player's sources.
- *
+ * <br><br>
  * In this class ClickType refers to the way in which the source was selected.
  * For example, Surge has two different ways to select a source, one involving
  * shift and another involving left clicks.
@@ -46,7 +46,7 @@ public class BlockSource {
 	}
 
 	/**
-	 * Updates all of the player's sources.
+	 * Updates all the player's sources.
 	 *
 	 * @param player the player performing the bending.
 	 * @param clickType either {@link ClickType}.SHIFT_DOWN or
@@ -58,9 +58,9 @@ public class BlockSource {
 			return;
 		}
 
-		final CoreAbility coreAbil = bPlayer.getBoundAbility();
-        switch (coreAbil) {
-            case WaterAbility waterAbility -> {
+		final CoreAbility ability = bPlayer.getBoundAbility();
+        switch (ability) {
+            case WaterAbility ignored -> {
                 final Block waterBlock = WaterAbility.getWaterSourceBlock(player, MAX_RANGE, true);
                 if (waterBlock != null) {
                     putSource(player, waterBlock, BlockSourceType.WATER, clickType);
@@ -78,7 +78,7 @@ public class BlockSource {
                     }
                 }
             }
-            case EarthAbility earthAbility -> {
+            case EarthAbility ignored -> {
                 final Block earthBlock = EarthAbility.getEarthSourceBlock(player, null, MAX_RANGE);
                 if (earthBlock != null) {
                     putSource(player, earthBlock, BlockSourceType.EARTH, clickType);
@@ -262,22 +262,19 @@ public class BlockSource {
 		if (allowWaterBottles) {
 			// Check the block in front of the player's eyes, it may have been created by a WaterBottle.
 			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
-			if (sourceBlock == null || (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) > 3)) {
+			if (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) > 3) {
 				sourceBlock = null;
 			}
 		}
 		final boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing");
 		if (dynamic && sourceBlock == null) {
-			if (allowWater && sourceBlock == null) {
+			if (allowWater) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
-			}
-			if (allowIce && sourceBlock == null) {
+			} else if (allowIce) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.ICE, clickType);
-			}
-			if (allowPlant && sourceBlock == null) {
+			} else if (allowPlant) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
-			}
-			if (allowSnow && sourceBlock == null) {
+			} else if (allowSnow) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 			}
 		} else {
@@ -293,7 +290,7 @@ public class BlockSource {
 	}
 
 	/**
-	 * Attempts to access a Earth bendable block that was recently shifted or
+	 * Attempts to access an Earth bendable block that was recently shifted or
 	 * clicked on by the player.
 	 *
 	 * @param player the player that is trying to bend.

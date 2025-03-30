@@ -19,7 +19,7 @@ class Residence extends RegionProtectionBase {
         super("Residence", "Residence.Respect");
 
         this.flag = ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag", "bending");
-        if (this.flag.equals("")) this.flag = "bending";
+        if (this.flag.isEmpty()) this.flag = "bending";
         FlagPermissions.addFlag(this.flag);
 
         if (Flags.getFlag(this.flag.toLowerCase()) == null) { //If they don't just use an existing flag, like "build"
@@ -36,9 +36,7 @@ class Residence extends RegionProtectionBase {
             //If is their residence
             if (perms.hasResidencePermission(player, false)) return false;
             //If the bending flag is turned off
-            if (!perms.playerHas(player, this.flag, false)) {
-                return true;
-            }
+            return !perms.playerHas(player, this.flag, false);
         }
 
         return false;

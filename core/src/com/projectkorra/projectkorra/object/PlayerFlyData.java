@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.object;
 
+@Deprecated(since = "1.13.0", forRemoval = true)
 public class PlayerFlyData {
 
 	private final boolean canFly;
@@ -11,18 +12,14 @@ public class PlayerFlyData {
 	}
 
 	/**
-	 * Does the player have access to fly mode?
-	 *
-	 * @return
+	 * @return Does the player have access to fly mode?
 	 */
 	public boolean canFly() {
 		return this.canFly;
 	}
 
 	/**
-	 * Was the player flying?
-	 *
-	 * @return
+	 * @return Was the player flying?
 	 */
 	public boolean isFlying() {
 		return this.isFlying;

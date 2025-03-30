@@ -23,7 +23,7 @@ public class BlockSourceInformation {
 	 * @param player The player the source belongs to
 	 * @param block The source block
 	 * @param sourceType What {@link BlockSourceType source type} the block is
-	 * @param clickType
+	 * @param clickType The {@link ClickType click type} used to select the source
 	 */
 	public BlockSourceInformation(final Player player, final Block block, final BlockSourceType sourceType, final ClickType clickType) {
 		this.player = player;

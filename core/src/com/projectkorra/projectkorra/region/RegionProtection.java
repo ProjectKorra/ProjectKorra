@@ -42,7 +42,7 @@ public class RegionProtection {
     /**
      * Registered region protections
      */
-    private static Map<JavaPlugin, RegionProtectionHook> PROTECTIONS = new LinkedHashMap<>(); //LinkedHashMap keeps the hashmap order of insertion
+    private static final Map<JavaPlugin, RegionProtectionHook> PROTECTIONS = new LinkedHashMap<>(); //LinkedHashMap keeps the hashmap order of insertion
 
     /**
      * Cached region protection

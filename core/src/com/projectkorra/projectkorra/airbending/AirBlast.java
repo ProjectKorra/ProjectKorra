@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,8 +42,11 @@ public class AirBlast extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
+	@Deprecated(since = "1.13.0")
 	public static final Material[] DOORS = Tag.WOODEN_DOORS.getValues().toArray(new Material[0]);
+	@Deprecated(since = "1.13.0")
 	public static final Material[] TDOORS = Tag.WOODEN_TRAPDOORS.getValues().toArray(new Material[0]);
+	@Deprecated(since = "1.13.0")
 	public static final Material[] BUTTONS = Tag.BUTTONS.getValues().toArray(new Material[0]);
 
 	private boolean canFlickLevers;
@@ -388,10 +390,9 @@ public class AirBlast extends AirAbility {
 			return false;
 		}
 
-		if (Arrays.asList(DOORS).contains(testblock.getType())) {
-			if (testblock.getBlockData() instanceof Door) {
-				final Door door = (Door) testblock.getBlockData();
-				final BlockFace face = door.getFacing();
+		if (Tag.WOODEN_DOORS.isTagged(testblock.getType())) {
+			if (testblock.getBlockData() instanceof Door door) {
+                final BlockFace face = door.getFacing();
 				final Vector toPlayer = GeneralMethods.getDirection(testblock.getLocation(), this.player.getLocation().getBlock().getLocation());
 				final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
 
@@ -418,11 +419,10 @@ public class AirBlast extends AirAbility {
 				testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
 				this.affectedLevers.add(testblock);
 			}
-		} else if (Arrays.asList(TDOORS).contains(testblock.getType())) {
-			if (testblock.getBlockData() instanceof TrapDoor) {
-				final TrapDoor tDoor = (TrapDoor) testblock.getBlockData();
+		} else if (Tag.WOODEN_TRAPDOORS.isTagged(testblock.getType())) {
+			if (testblock.getBlockData() instanceof TrapDoor tDoor) {
 
-				if (this.origin.getY() < testblock.getY()) {
+                if (this.origin.getY() < testblock.getY()) {
 					if (!tDoor.isOpen()) {
 						return false;
 					}
@@ -436,10 +436,9 @@ public class AirBlast extends AirAbility {
 				testblock.setBlockData(tDoor);
 				testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
 			}
-		} else if (Arrays.asList(BUTTONS).contains(testblock.getType())) {
-			if (testblock.getBlockData() instanceof Switch) {
-				final Switch button = (Switch) testblock.getBlockData();
-				if (!button.isPowered()) {
+		} else if (Tag.BUTTONS.isTagged(testblock.getType())) {
+			if (testblock.getBlockData() instanceof Switch button) {
+                if (!button.isPowered()) {
 					button.setPowered(true);
 					testblock.setBlockData(button);
 					this.affectedLevers.add(testblock);
@@ -460,17 +459,15 @@ public class AirBlast extends AirAbility {
 				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
 			}
 		} else if (testblock.getType() == Material.LEVER) {
-			if (testblock.getBlockData() instanceof Switch) {
-				final Switch lever = (Switch) testblock.getBlockData();
-				lever.setPowered(!lever.isPowered());
+			if (testblock.getBlockData() instanceof Switch lever) {
+                lever.setPowered(!lever.isPowered());
 				testblock.setBlockData(lever);
 				this.affectedLevers.add(testblock);
 				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
 			}
 		} else if (testblock.getType().toString().contains("CANDLE") || testblock.getType().toString().contains("CAMPFIRE") || testblock.getType() == Material.REDSTONE_WALL_TORCH) {
-			if (testblock.getBlockData() instanceof Lightable) {
-				final Lightable lightable = (Lightable) testblock.getBlockData();
-				if (lightable.isLit()) {
+			if (testblock.getBlockData() instanceof Lightable lightable) {
+                if (lightable.isLit()) {
 					lightable.setLit(false);
 					testblock.setBlockData(lightable);
 					testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);

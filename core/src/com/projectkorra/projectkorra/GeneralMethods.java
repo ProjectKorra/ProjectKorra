@@ -180,18 +180,6 @@ public class GeneralMethods {
 				hasBlocked = WaterSpout.removeSpouts(loc, radius, player) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirSpout")) {
 				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("Twister")) {
-				// hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("AirStream")) {
-				// hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("AirSweep")) {
-				// hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("FireKick")) {
-				// hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("FireSpin")) {
-				// hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("FireWheel")) {
-				// hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
 			}
 		}
 		return hasBlocked;
@@ -248,7 +236,7 @@ public class GeneralMethods {
 			r = Integer.valueOf(hexVal.substring(0, 2), 16);
 			g = Integer.valueOf(hexVal.substring(2, 4), 16);
 			b = Integer.valueOf(hexVal.substring(4, 6), 16);
-		} else if (hexVal.length() <= 7 && hexVal.charAt(0) == '#') {
+		} else if (hexVal.length() == 7 && hexVal.charAt(0) == '#') {
 			r = Integer.valueOf(hexVal.substring(1, 3), 16);
 			g = Integer.valueOf(hexVal.substring(3, 5), 16);
 			b = Integer.valueOf(hexVal.substring(5, 7), 16);

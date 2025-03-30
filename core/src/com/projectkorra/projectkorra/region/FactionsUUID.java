@@ -25,9 +25,6 @@ class FactionsUUID extends RegionProtectionBase {
         //This cast is important as it lets us use the correct implementation class instead of the version-differing interface
         Relation relation = ((MemoryFaction) faction).getRelationTo(fPlayer.getFaction());
 
-        if (!(faction.isWilderness() || fPlayer.getFaction().equals(faction) || relation == Relation.ALLY)) {
-            return true;
-        }
-        return false;
+        return !(faction.isWilderness() || fPlayer.getFaction().equals(faction) || relation == Relation.ALLY);
     }
 }

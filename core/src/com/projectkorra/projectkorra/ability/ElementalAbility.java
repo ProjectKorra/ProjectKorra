@@ -257,7 +257,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isTransparent(final Player player, final String abilityName, final Block block) {
-		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName));
+		return getTransparentMaterialSet().contains(block.getType()) && !RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName));
 	}
 
 	public static boolean isWater(final Block block) {

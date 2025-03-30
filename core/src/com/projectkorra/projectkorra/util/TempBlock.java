@@ -32,19 +32,18 @@ import io.papermc.lib.PaperLib;
 
 public class TempBlock {
 
-	private static final Map<Block, LinkedList<TempBlock>> instances_ = new HashMap<>();
+	private static final Map<Block, LinkedList<TempBlock>> INSTANCES = new HashMap<>();
 	/**
-	 * Marked for removal. Doesn't do anything right now
+	 * Doesn't do anything right now
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<>();
 	private static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<>(128, (t1, t2) -> (int) (t1.revertTime - t2.revertTime));
-	private static boolean REVERT_TASK_RUNNING;
 
+	private final Set<TempBlock> attachedTempBlocks; //Temp Block states that should be reverted as well when the temp block expires (e.g. double blocks)
 	private final Block block;
 	private BlockData newData;
 	private BlockState state;
-	private Set<TempBlock> attachedTempBlocks; //Temp Block states that should be reverted as well when the temp block expires (e.g. double blocks)
 	private long revertTime;
 	private boolean inRevertQueue;
 	private boolean reverted;
@@ -117,7 +116,7 @@ public class TempBlock {
 	 */
 	public static TempBlock get(final Block block) {
 		if (block != null) {
-			LinkedList<TempBlock> tempBlocks = instances_.get(block);
+			LinkedList<TempBlock> tempBlocks = INSTANCES.get(block);
 			return tempBlocks != null ? tempBlocks.getLast() : null;
 		}
 		return null;
@@ -129,7 +128,7 @@ public class TempBlock {
 	 * @return The list of TempBlocks
 	 */
 	public static LinkedList<TempBlock> getAll(Block block) {
-		return block == null ? null : instances_.get(block);
+		return block == null ? null : INSTANCES.get(block);
 	}
 
 	/**
@@ -138,14 +137,14 @@ public class TempBlock {
 	 * @param tempBlock The TempBlock
 	 */
 	private static void put(Block block, TempBlock tempBlock) {
-		if (!instances_.containsKey(block)) {
-			instances_.put(block, new LinkedList<>());
+		if (!INSTANCES.containsKey(block)) {
+			INSTANCES.put(block, new LinkedList<>());
 		}
-		instances_.get(block).add(tempBlock);
+		INSTANCES.get(block).add(tempBlock);
 	}
 
 	public static boolean isTempBlock(final Block block) {
-		return block != null && instances_.get(block) != null;
+		return block != null && INSTANCES.get(block) != null;
 	}
 
 	/**
@@ -157,7 +156,7 @@ public class TempBlock {
 	public static boolean isTouchingTempBlock(final Block block) {
 		final BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
 		for (final BlockFace face : faces) {
-			if (instances_.containsKey(block.getRelative(face))) {
+			if (INSTANCES.containsKey(block.getRelative(face))) {
 				return true;
 			}
 		}
@@ -168,7 +167,7 @@ public class TempBlock {
 	 * Remove and revert all TempBlocks on the server. Done at server shutdown or PK reload.
 	 */
 	public static void removeAll() {
-		for (final Block block : new HashSet<>(instances_.keySet())) {
+		for (final Block block : new HashSet<>(INSTANCES.keySet())) {
 			revertBlock(block, Material.AIR);
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
@@ -181,7 +180,7 @@ public class TempBlock {
 	}
 
 	public static void removeAllInWorld(World world) {
-		for (final Block block : new HashSet<>(instances_.keySet())) {
+		for (final Block block : new HashSet<>(INSTANCES.keySet())) {
 			if (block.getWorld() == world) {
 				revertBlock(block, Material.AIR);
 			}
@@ -193,7 +192,7 @@ public class TempBlock {
 	 * @param block The block location
 	 */
 	public static void removeBlock(final Block block) {
-		instances_.get(block).forEach(t -> {
+		INSTANCES.get(block).forEach(t -> {
 			REVERT_QUEUE.remove(t);
 			remove(t);
 		});
@@ -204,11 +203,11 @@ public class TempBlock {
 	 * @param tempBlock The TempBlock to remove
 	 */
 	private static void remove(TempBlock tempBlock) {
-		LinkedList<TempBlock> blocks = instances_.get(tempBlock.block);
+		LinkedList<TempBlock> blocks = INSTANCES.get(tempBlock.block);
 		if (blocks != null) {
 			blocks.remove(tempBlock);
 			if (blocks.isEmpty()) {
-				instances_.remove(tempBlock.block);
+				INSTANCES.remove(tempBlock.block);
 			}
 		}
 	}
@@ -219,9 +218,9 @@ public class TempBlock {
 	 * @param defaulttype The default material to revert to if it can't
 	 */
 	public static void revertBlock(final Block block, final Material defaulttype) {
-		if (instances_.containsKey(block)) {
+		if (INSTANCES.containsKey(block)) {
 			//We clone the list first, then remove before reverting. The tempblock list is cloned so we get no concurrent modification exceptions
-			List<TempBlock> tempBlocks = new ArrayList<>(instances_.get(block));
+			List<TempBlock> tempBlocks = new ArrayList<>(INSTANCES.get(block));
 			tempBlocks.forEach((b) -> {
 				TempBlock.remove(b);
 				b.trueRevertBlock();
@@ -328,9 +327,9 @@ public class TempBlock {
 	 */
 	private void trueRevertBlock(boolean removeFromQueue) {
 		this.reverted = true;
-		if (instances_.containsKey(this.block)) {
+		if (INSTANCES.containsKey(this.block)) {
 			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> {
-				TempBlock last = instances_.get(this.block).getLast();
+				TempBlock last = INSTANCES.get(this.block).getLast();
 				this.block.setBlockData(last.newData); //Set the block to the next in line TempBlock
 			});
 		} else { //Set to the original blockstate
