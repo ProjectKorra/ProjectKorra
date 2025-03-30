@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -67,6 +65,7 @@ import com.projectkorra.projectkorra.earthbending.EarthSmash;
 import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.RaiseEarthWall;
+import com.projectkorra.projectkorra.earthbending.Ripple;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.earthbending.combo.EarthPillars;
@@ -852,7 +851,7 @@ public class PKListener implements Listener {
 			);
 			for (CoreAbility ability : damagePrevention) {
 				if (ability != null && ability.isEnabled() && bPlayer.hasElement(ability.getElement()) && bPlayer.canBendPassive(ability) && bPlayer.canUsePassive(ability) && PassiveManager.hasPassive(player, ability)) {
-					event.setCancelled(switch (ability) {
+					boolean cancelled = switch (ability) {
 						case DensityShift ignored -> DensityShift.softenLanding(player);
 						case HydroSink ignored -> HydroSink.applyNoFall(player);
 						case Acrobatics ignored -> {
@@ -863,7 +862,11 @@ public class PKListener implements Listener {
 							yield finalDamage <= 0.4;
 						}
 						default -> true;
-					});
+					};
+					if (cancelled) {
+						event.setCancelled(true);
+						break;
+					}
 				}
 			}
 
@@ -1362,15 +1365,15 @@ public class PKListener implements Listener {
 			case IceSpikePillarField ignored -> new IceSpikeBlast(player);
 			case OctopusForm ignored -> OctopusForm.form(player);
 			case PhaseChange ignored -> {
-				if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
-					new PhaseChange(player, PhaseChangeType.FREEZE);
+				final PhaseChange phaseChange = CoreAbility.getAbility(player, PhaseChange.class);
+				if (phaseChange == null) {
+					new PhaseChange(player, PhaseChangeType.MELT);
 				} else {
-					final PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
-					pc.startNewType(PhaseChangeType.FREEZE);
+					phaseChange.startNewType(PhaseChangeType.MELT);
 				}
 			}
 			case WaterManipulation ignored -> new WaterManipulation(player);
-			case WaterBubble ignored -> new WaterBubble(player, false);
+			case WaterBubble ignored -> new WaterBubble(player, true);
 			case SurgeWall ignored -> SurgeWall.form(player);
 			case SurgeWave ignored -> SurgeWall.form(player);
 			case Torrent ignored -> Torrent.create(player);
@@ -1516,16 +1519,13 @@ public class PKListener implements Listener {
 			return;
 		}
 
-
-		String abil = bPlayer.getBoundAbilityName();
 		final CoreAbility ability = bPlayer.getBoundAbility();
-
 		if (ability == null) {
 			if (MultiAbilityManager.hasMultiAbilityBound(player)) {
-				abil = MultiAbilityManager.getBoundMultiAbility(player);
-				if (abil.equalsIgnoreCase("WaterArms")) {
+				final String multiAbility = MultiAbilityManager.getBoundMultiAbility(player);
+				if (multiAbility.equalsIgnoreCase("WaterArms")) {
 					new WaterArms(player);
-				} else if (abil.equalsIgnoreCase("Flight")) {
+				} else if (multiAbility.equalsIgnoreCase("Flight")) {
 					new FlightMultiAbility(player);
 				}
 			}
@@ -1545,6 +1545,8 @@ public class PKListener implements Listener {
 			case Bloodbending ignored -> Bloodbending.launch(player);
 			case IceBlast ignored -> IceBlast.activate(player);
 			case IceSpikeBlast ignored -> IceSpikeBlast.activate(player);
+			case IceSpikePillar ignored -> IceSpikeBlast.activate(player);
+			case IceSpikePillarField ignored -> IceSpikeBlast.activate(player);
 			case OctopusForm ignored -> new OctopusForm(player);
 			case PhaseChange ignored -> {
 				if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
@@ -1556,14 +1558,20 @@ public class PKListener implements Listener {
 			}
 			case WaterBubble ignored -> new WaterBubble(player, false);
 			case WaterSpout ignored -> new WaterSpout(player);
+			case WaterSpoutWave ignored -> new WaterSpout(player);
 			case WaterManipulation ignored -> WaterManipulation.moveWater(player);
 			case SurgeWall ignored -> new SurgeWall(player);
+			case SurgeWave ignored -> new SurgeWall(player);
 			case Torrent ignored -> new Torrent(player);
+			case TorrentWave ignored -> new Torrent(player);
 			case Catapult ignored -> new Catapult(player, false);
 			case EarthBlast ignored -> EarthBlast.throwEarth(player);
 			case RaiseEarth ignored -> new RaiseEarth(player);
+			case RaiseEarthWall ignored -> new RaiseEarth(player);
 			case Collapse ignored -> new Collapse(player);
+			case CollapseWall ignored -> new Collapse(player);
 			case Shockwave ignored -> Shockwave.coneShockwave(player);
+			case Ripple ignored -> Shockwave.coneShockwave(player);
 			case EarthArmor ignored -> {
 				final EarthArmor armor = CoreAbility.getAbility(player, EarthArmor.class);
 				if (armor != null && armor.isFormed()) {
@@ -1591,7 +1599,10 @@ public class PKListener implements Listener {
 			case EarthSmash ignored -> new EarthSmash(player, ClickType.LEFT_CLICK);
 			case EarthGrab ignored -> new EarthGrab(player, GrabMode.PROJECTING);
 			case Blaze ignored -> new Blaze(player);
+			case BlazeArc ignored -> new Blaze(player);
+			case BlazeRing ignored -> new Blaze(player);
 			case FireBlast ignored -> new FireBlast(player);
+			case FireBlastCharged ignored -> new FireBlast(player);
 			case FireJet ignored -> new FireJet(player);
 			case HeatControl ignored -> new HeatControl(player, HeatControlType.MELT);
 			case Illumination ignored -> {
