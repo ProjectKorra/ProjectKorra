@@ -1,12 +1,10 @@
 package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
