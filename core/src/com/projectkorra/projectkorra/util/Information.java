@@ -6,7 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
-@Deprecated(since = "1.13.0", forRemoval = true)
+@Deprecated(since = "1.13.0")
 public class Information {
 
 	private static int ID = Integer.MIN_VALUE;

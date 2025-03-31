@@ -29,9 +29,9 @@ import com.projectkorra.projectkorra.GeneralMethods;
  * keep CoreAbility from becoming too cluttered.
  */
 public abstract class ElementalAbility extends CoreAbility {
-	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
-	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
-	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
+	private static final Set<PotionEffectType> POSITIVE_EFFECTS = Set.of(PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING);
+	private static final Set<PotionEffectType> NEUTRAL_EFFECTS = Set.of(PotionEffectType.INVISIBILITY);
+	private static final Set<PotionEffectType> NEGATIVE_EFFECTS = Set.of(PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER);
 	private static final Set<Material> TRANSPARENT = new HashSet<>();
 
 	private static final Set<String> EARTH_BLOCKS = new HashSet<>();
@@ -205,26 +205,12 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isNegativeEffect(final PotionEffectType effect) {
-		for (final PotionEffectType effect2 : NEGATIVE_EFFECTS) {
-			if (effect2.equals(effect)) {
-				return true;
-			}
-		}
-
-		return false;
+		return NEGATIVE_EFFECTS.contains(effect);
 	}
 
 	public static boolean isNeutralEffect(final PotionEffectType effect) {
-		for (final PotionEffectType effect2 : NEUTRAL_EFFECTS) {
-			if (effect2.equals(effect)) {
-				return true;
-			}
-		}
-
-		return false;
+		return NEUTRAL_EFFECTS.contains(effect);
 	}
-
-
 
 	public static boolean isPlant(final Block block) {
 		return block != null && isPlant(block.getType());
@@ -235,13 +221,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
-		for (final PotionEffectType effect2 : POSITIVE_EFFECTS) {
-			if (effect2.equals(effect)) {
-				return true;
-			}
-		}
-
-		return false;
+		return POSITIVE_EFFECTS.contains(effect);
 	}
 
 	public static boolean isSand(final Block block) {
@@ -261,10 +241,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isWater(final Block block) {
-		if (block == null || block.getState() instanceof Container) {
-			return false;
-		}
-		return isWater(block.getBlockData());
+		return block != null && !(block.getState() instanceof Container) && isWater(block.getBlockData());
 	}
 
 	public static boolean isWater(final BlockData data) {

@@ -81,19 +81,20 @@ public abstract class FireAbility extends ElementalAbility {
 	 * Creates a fire block meant to replace other blocks but reverts when the
 	 * fire dissipates or is destroyed.
 	 */
-	public void createTempFire(final Location loc) {
-		createTempFire(loc, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
+	public void createTempFire(final Location location) {
+		createTempFire(location, getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks")));
 	}
 
-	public void createTempFire(final Location loc, final long time) {
-		if(isIgnitable(loc.getBlock())) {
-			new TempBlock(loc.getBlock(), createFireState(loc.getBlock(), getFireType() == Material.SOUL_FIRE), time);
-			SOURCE_PLAYERS.put(loc.getBlock(), this.getPlayer());
+	public void createTempFire(final Location location, final long time) {
+		Block block = location.getBlock();
+		if (isIgnitable(block)) {
+			new TempBlock(block, createFireState(block, getFireType() == Material.SOUL_FIRE), time);
+			SOURCE_PLAYERS.put(block, this.getPlayer());
 		}
 	}
 
 	public double getDayFactor(final double value) {
-		return (this.player != null ? value * getDayFactor(player.getWorld()) : value);
+		return this.player != null ? value * getDayFactor(player.getWorld()) : value;
 	}
 
 	public static double getDayFactor() {
@@ -112,10 +113,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 *         value The specified value in the parameters
 	 */
 	public static double getDayFactor(final double value, final World world) {
-		if (isDay(world)) {
-			return value * getDayFactor();
-		}
-		return value;
+		return isDay(world) ? value * getDayFactor() : value;
 	}
 
 	public static double getDayFactor(final World world) {
@@ -152,14 +150,12 @@ public abstract class FireAbility extends ElementalAbility {
 	public static BlockData createFireState(Block position, boolean blue) {
 		Fire fire = (Fire) Material.FIRE.createBlockData();
 		
-		if (isIgnitable(position) && position.getRelative(BlockFace.DOWN).getType().isSolid())
+		if (isIgnitable(position) && position.getRelative(BlockFace.DOWN).getType().isSolid()) {
 			return (blue) ? Material.SOUL_FIRE.createBlockData() : fire; //Default fire for when there is a solid block bellow
+		}
 
 		for (BlockFace face : IGNITE_FACES) {
-			fire.setFace(face, false);
-			if (isIgnitable(position.getRelative(face))) {
-				fire.setFace(face, true);
-			}
+			fire.setFace(face, isIgnitable(position.getRelative(face)));
 		}
 
 		return fire;
@@ -200,26 +196,26 @@ public abstract class FireAbility extends ElementalAbility {
 	 */
 	@Deprecated
 	public static boolean isWithinFireShield(final Location loc) {
-		final List<String> list = new ArrayList<String>();
-		list.add("FireShield");
-		return GeneralMethods.blockAbilities(null, list, loc, 0);
+		return GeneralMethods.blockAbilities(null, List.of("FireShield"), loc, 0);
 	}
 
 	public static void playCombustionSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
+        if (!getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        final float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
+        Sound sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Fire.CombustionSound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	/**
 	 * Emits a dynamic firebending light at the specified location. This light will
@@ -241,17 +237,18 @@ public abstract class FireAbility extends ElementalAbility {
 	 * @throws IllegalArgumentException if the brightness is outside the valid range (1-15)
 	 */
 	public void emitFirebendingLight(final Location location) {
-		if (getConfig().getBoolean("Properties.Fire.DynamicLight.Enabled")) {
-			int brightness = getConfig().getInt("Properties.Fire.DynamicLight.Brightness");
-			long keepAlive = getConfig().getLong("Properties.Fire.DynamicLight.KeepAlive");
+        if (!getConfig().getBoolean("Properties.Fire.DynamicLight.Enabled")) {
+            return;
+        }
 
-			if (brightness < 1 || brightness > 15) {
-				throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
-			}
+        int brightness = getConfig().getInt("Properties.Fire.DynamicLight.Brightness");
+        long keepAlive = getConfig().getLong("Properties.Fire.DynamicLight.KeepAlive");
+        if (brightness < 1 || brightness > 15) {
+            throw new IllegalArgumentException("Properties.Fire.DynamicLight.Brightness must be between 1 and 15.");
+        }
 
-			LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive).emit();
-		}
-	}
+        LightManager.createLight(location).brightness(brightness).timeUntilFadeout(keepAlive).emit();
+    }
 
 	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
@@ -262,20 +259,22 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playFirebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
+        if (!getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.BLOCK_FIRE_AMBIENT;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        final float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
+        Sound sound = Sound.BLOCK_FIRE_AMBIENT;
+
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Fire.FireSound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	public static void playLightningbendingParticle(final Location loc) {
 		playLightningbendingParticle(loc, Math.random(), Math.random(), Math.random());
@@ -286,52 +285,58 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playLightningbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
+        if (!getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.ENTITY_CREEPER_HURT;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        final float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
+        Sound sound = Sound.ENTITY_CREEPER_HURT;
+
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningSound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	public static void playLightningbendingChargingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
+        if (!getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.BLOCK_BEEHIVE_WORK;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        final float volume = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningCharge.Pitch");
+        Sound sound = Sound.BLOCK_BEEHIVE_WORK;
+
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningCharge.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningCharge.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 	
 	public static void playLightningbendingHitSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
+        if (!getConfig().getBoolean("Properties.Fire.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        final float volume = (float) getConfig().getDouble("Properties.Fire.LightningHit.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Fire.LightningHit.Pitch");
+        Sound sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
+
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Fire.LightningHit.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Fire.LightningHit.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	/**
 	 * Apply modifiers to this value. Applies the day factor to it
@@ -381,7 +386,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 */
 	@Deprecated
 	public long applyModifiersCooldown(long value) {
-		return (long) GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? 1 / getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor", 0.9) : 1);
+		return GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0), bPlayer.hasElement(Element.BLUE_FIRE) ? 1 / getConfig().getDouble("Properties.Fire.BlueFire.CooldownFactor", 0.9) : 1);
 	}
 
 	public static void stopBending() {

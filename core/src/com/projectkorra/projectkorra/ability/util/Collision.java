@@ -5,12 +5,11 @@ import org.bukkit.Location;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 
 /**
- * A Collision is used to represent the collision between two CoreAbility
- * objects.
- *
+ * A Collision is used to represent the collision between two CoreAbility objects.
+ * <br><br>
  * To register Collisions Addon developers should use:<br>
- * ProjectKorra.getCollisionInitializer().addCollision(myCoreAbility)
- * ProjectKorra.getCollisionInitializer().addSmallAbility(myCoreAbility)
+ * {@code ProjectKorra.getCollisionInitializer().addCollision(myCoreAbility)}<br>
+ * {@code ProjectKorra.getCollisionInitializer().addSmallAbility(myCoreAbility)}
  *
  * @see CollisionManager
  */

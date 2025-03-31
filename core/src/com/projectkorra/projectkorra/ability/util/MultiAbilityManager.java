@@ -270,7 +270,7 @@ public class MultiAbilityManager {
 		}
 
 		public ChatColor getAbilityColor() {
-			if (this.element == null){
+			if (this.element == null) {
 				return null;
 			}
 			return this.color != null ? this.color : this.element.getColor();
