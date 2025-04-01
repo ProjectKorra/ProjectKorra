@@ -21,7 +21,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Fire;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;

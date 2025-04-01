@@ -1,16 +1,13 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -34,9 +31,8 @@ public class AirScooter extends AirAbility {
 	private double maxHeightFromGround;
 	private Block floorblock;
 	private Random random;
-	private ArrayList<Double> angles;
 	private Slime slime;
-	private Boolean useslime;
+	private boolean useSlime;
 
 	private double phi = 0;
 
@@ -59,9 +55,9 @@ public class AirScooter extends AirAbility {
 		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirScooter.Duration");
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
-		this.useslime = getConfig().getBoolean("Abilities.Air.AirScooter.ShowSitting");
+		this.useSlime = getConfig().getBoolean("Abilities.Air.AirScooter.ShowSitting")
+				&& player.getWorld().getDifficulty() != Difficulty.PEACEFUL;
 		this.random = new Random();
-		this.angles = new ArrayList<>();
 
 		this.flightHandler.createInstance(player, this.getName());
 		player.setAllowFlight(true);
@@ -70,23 +66,14 @@ public class AirScooter extends AirAbility {
 		player.setSprinting(false);
 		player.setSneaking(false);
 
-		for (int i = 0; i < 5; i++) {
-			this.angles.add((double) (60 * i));
-		}
-		if (player.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
-			this.useslime = false;
-		}
-		if (this.useslime) {
-			this.slime = (Slime) player.getWorld().spawnEntity(player.getLocation(), EntityType.SLIME);
-			if (this.slime != null) {
-				this.slime.setSize(1);
-				this.slime.setSilent(true);
-				this.slime.setInvulnerable(true);
-				this.slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
-				this.slime.addPassenger(player);
-			} else {
-				this.useslime = false;
-			}
+		if (this.useSlime) {
+			this.slime = player.getWorld().spawn(player.getLocation(), Slime.class, slime -> {
+				slime.setSize(1);
+				slime.setSilent(true);
+				slime.setInvulnerable(true);
+				slime.setInvisible(true);
+				slime.addPassenger(player);
+			});
 		}
 
 		this.start();
@@ -99,8 +86,9 @@ public class AirScooter extends AirAbility {
 	 * @return false If player doesn't have an instance
 	 */
 	public static boolean check(final Player player) {
-		if (hasAbility(player, AirScooter.class)) {
-			getAbility(player, AirScooter.class).remove();
+		AirScooter existing = getAbility(player, AirScooter.class);
+		if (existing != null) {
+			existing.remove();
 			return true;
 		}
 		return false;
@@ -144,67 +132,54 @@ public class AirScooter extends AirAbility {
 			return;
 		}
 
-		if (this.useslime && (this.slime == null || !this.slime.getPassengers().contains(this.player))) {
+		if (this.useSlime && (this.slime == null || !this.slime.getPassengers().contains(this.player))) {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
 		}
 
-		Vector velocity = this.player.getEyeLocation().getDirection().clone().normalize();
-		velocity = velocity.clone().normalize().multiply(this.speed);
 		/*
 		 * checks the players speed and ends the move if they are going too slow
 		 */
 		if (System.currentTimeMillis() > this.getStartTime() + this.interval) {
-			if (this.useslime) {
-				if (this.slime.getVelocity().length() < this.speed * 0.3) {
-					this.remove();
-					return;
-				}
-			} else {
-				if (this.player.getVelocity().length() < this.speed * 0.3) {
-					this.remove();
-					return;
-				}
+			Vector velocity = this.slime != null ? this.slime.getVelocity() : this.player.getVelocity();
+			if (velocity.length() < this.speed * 0.3) {
+				this.remove();
+				return;
 			}
 			this.spinScooter();
 		}
+
+		if (ElementalAbility.isWater(player.getLocation().add(0, 2, 0).getBlock())) {
+			return;
+		}
+
 		/*
 		 * Checks for how far the ground is away from the player it elevates or
 		 * lowers the player based on their distance from the ground.
 		 */
-		final double distance = this.player.getLocation().getY() - this.floorblock.getY();
-		Math.abs(distance - 2.4);
-		if (distance > 2.75) {
+		Location location = this.player.getLocation();
+		final double yDiff = location.getY() - this.floorblock.getY();
+		final Vector velocity = this.player.getEyeLocation().getDirection().multiply(this.speed);
+		if (yDiff > 2.75) {
 			velocity.setY(-.25);
-		} else if (distance < 2) {
+		} else if (yDiff < 2) {
 			velocity.setY(.25);
 		} else {
 			velocity.setY(0);
 		}
 
-		final Vector v = velocity.clone().setY(0);
-		final Block b = this.floorblock.getLocation().clone().add(v.multiply(1.2)).getBlock();
-		if (!GeneralMethods.isSolid(b) && !ElementalAbility.isWater(b)) {
+		final Vector horizontalVelocity = velocity.clone().setY(0);
+		final Block relativeFloor = this.floorblock.getLocation().add(horizontalVelocity.multiply(1.2)).getBlock();
+		if (!GeneralMethods.isSolid(relativeFloor) && !ElementalAbility.isWater(relativeFloor)) {
 			velocity.add(new Vector(0, -0.1, 0));
-		} else if (GeneralMethods.isSolid(b.getRelative(BlockFace.UP)) || ElementalAbility.isWater(b.getRelative(BlockFace.UP))) {
+		} else if (GeneralMethods.isSolid(relativeFloor.getRelative(BlockFace.UP)) || ElementalAbility.isWater(relativeFloor.getRelative(BlockFace.UP))) {
 			velocity.add(new Vector(0, 0.7, 0));
 		}
 
-		final Location loc = this.player.getLocation();
-		if (!ElementalAbility.isWater(this.player.getLocation().add(0, 2, 0).getBlock())) {
-			loc.setY(this.floorblock.getY() + 1.5);
-		} else {
-			return;
-		}
-
 		this.player.setSprinting(false);
-		this.player.removePotionEffect(PotionEffectType.SPEED);
-		if (this.useslime) {
-			GeneralMethods.setVelocity(this, this.slime, velocity);
-		} else {
-			GeneralMethods.setVelocity(this, this.player, velocity);
-		}
+		this.player.removePotionEffect(PotionEffectType.SPEED); // TODO: Why do we do this, can this be removed?
+		GeneralMethods.setVelocity(this, this.slime != null ? this.slime : this.player, velocity);
 
 		if (this.random.nextInt(4) == 0) {
 			playAirbendingSound(this.player.getLocation());

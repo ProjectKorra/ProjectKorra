@@ -843,11 +843,7 @@ public class OfflineBendingPlayer {
      * @return true if the cooldown map contains the ability
      */
     public boolean isOnCooldown(final String ability) {
-        if (this.cooldowns.containsKey(ability)) {
-            return true;
-        }
-
-        return false;
+        return this.cooldowns.containsKey(ability);
     }
 
     public void addCooldown(final Ability ability, final long cooldown, final boolean database) {
@@ -874,7 +870,7 @@ public class OfflineBendingPlayer {
      * Applies a cooldown for an ability to the current BendingPlayer.
      * @param ability The ability to apply the cooldown to
      * @param cooldown The cooldown time
-     * @param database Whether or not to save the cooldown to the database
+     * @param database Whether to save the cooldown to the database
      */
     public void addCooldown(final String ability, final long cooldown, final boolean database) {
         if (cooldown <= 0) {

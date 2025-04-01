@@ -530,6 +530,14 @@ public class GeneralMethods {
 		return destination.toVector().subtract(location.toVector());
 	}
 
+	public static boolean isFinite(Location location) {
+		return Double.isFinite(location.getX()) && Double.isFinite(location.getY()) && Double.isFinite(location.getZ()) && Float.isFinite(location.getPitch()) && Float.isFinite(location.getYaw());
+	}
+
+	public static boolean isFinite(Vector vector) {
+		return Double.isFinite(vector.getX()) && Double.isFinite(vector.getY()) && Double.isFinite(vector.getZ());
+	}
+
 	public static double getDistanceFromLine(final Vector line, final Location pointonline, final Location point) {
 		final Vector AP = new Vector();
 		double Ax, Ay, Az;

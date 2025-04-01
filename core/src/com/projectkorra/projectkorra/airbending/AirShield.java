@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -16,10 +15,8 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 
 public class AirShield extends AirAbility {
@@ -48,6 +45,10 @@ public class AirShield extends AirAbility {
 	public AirShield(final Player player) {
 		super(player);
 
+		if (!this.bPlayer.canBend(this)) {
+			return;
+		}
+
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.MaxRadius");
 		this.initialRadius = getConfig().getDouble("Abilities.Air.AirShield.InitialRadius");
 		this.isToggledByAvatarState = ConfigManager.avatarStateConfig.get().getBoolean("Abilities.Air.AirShield.IsToggle");
@@ -58,19 +59,14 @@ public class AirShield extends AirAbility {
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirShield.Push");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
 		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
-		this.dynamicCooldown = getConfig().getBoolean("Abilities.Air.AirShield.DynamicCooldown"); //any unused duration from shield is removed from the cooldown
-		if (this.duration == 0) {
-			this.dynamicCooldown = false;
-		}
+		this.dynamicCooldown = getConfig().getBoolean("Abilities.Air.AirShield.DynamicCooldown") && duration  != 0; //any unused duration from shield is removed from the cooldown
+
 		this.random = new Random();
 		this.angles = new HashMap<>();
 
-		if (this.bPlayer.isAvatarState() && hasAbility(player, AirShield.class) && this.isToggledByAvatarState) {
-			getAbility(player, AirShield.class).remove();
-			return;
-		}
-
-		if (!this.bPlayer.canBend(this)) {
+		AirShield existing = getAbility(player, getClass());
+		if (existing != null && this.bPlayer.isAvatarState() && this.isToggledByAvatarState) {
+			existing.remove();
 			return;
 		}
 
@@ -112,7 +108,7 @@ public class AirShield extends AirAbility {
 		} else if (!this.bPlayer.isAvatarState() || !this.isToggledByAvatarState) {
 			if (!this.player.isSneaking() || !this.bPlayer.canBend(this)) {
 				if (this.dynamicCooldown) {
-					Long reducedCooldown = this.cooldown - (this.duration - (System.currentTimeMillis() - this.getStartTime()));
+					long reducedCooldown = this.cooldown - (this.duration - (System.currentTimeMillis() - this.getStartTime()));
 					if (reducedCooldown < 0L) {
 						reducedCooldown = 0L;
 					}
@@ -122,14 +118,11 @@ public class AirShield extends AirAbility {
 				}
 				this.remove();
 				return;
-			} else if (this.duration != 0) {
-				if (this.getStartTime() + this.duration <= System.currentTimeMillis()) {
-					this.bPlayer.addCooldown(this);
-					this.remove();
-					return;
-				}
+			} else if (this.duration != 0 && this.getStartTime() + this.duration <= System.currentTimeMillis()) {
+				this.bPlayer.addCooldown(this);
+				this.remove();
+				return;
 			}
-
 		} else if (!this.bPlayer.canBendIgnoreBinds(this)) {
 			this.remove();
 			return;
@@ -140,60 +133,57 @@ public class AirShield extends AirAbility {
 	private void rotateShield() {
 		final Location origin = this.player.getLocation();
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, this.radius)) {
-			if (RegionProtection.isRegionProtected(this.player, entity.getLocation(), "AirShield")) {
+			Location location = entity.getLocation();
+			if (RegionProtection.isRegionProtected(this.player, location, "AirShield") || origin.distanceSquared(location) <= 4) {
 				continue;
 			}
-			if (origin.distanceSquared(entity.getLocation()) > 4) {
-				double x, z, vx, vz, mag;
-				double angle = 50;
-				angle = Math.toRadians(angle);
 
-				x = entity.getLocation().getX() - origin.getX();
-				z = entity.getLocation().getZ() - origin.getZ();
+			double x, z, vx, vz, mag;
+			double angle = 50;
+			angle = Math.toRadians(angle);
 
-				mag = Math.sqrt(x * x + z * z);
+			x = entity.getLocation().getX() - origin.getX();
+			z = entity.getLocation().getZ() - origin.getZ();
 
-				vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
-				vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
+			mag = Math.sqrt(x * x + z * z);
 
-				final Vector velocity = entity.getVelocity().clone();
+			vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
+			vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
-				velocity.setX(vx);
-				velocity.setZ(vz);
+			final Vector velocity = entity.getVelocity().clone();
 
-				if (entity instanceof Player) {
-					if (Commands.invincible.contains(((Player) entity).getName())) {
-						continue;
-					}
+			velocity.setX(vx);
+			velocity.setZ(vz);
+
+			if (entity instanceof Player) {
+				if (Commands.invincible.contains(((Player) entity).getName())) {
+					continue;
 				}
-
-				velocity.multiply(this.pushFactor);
-				GeneralMethods.setVelocity(this, entity, velocity);
-				entity.setFallDistance(0);
 			}
+
+			velocity.multiply(this.pushFactor);
+			GeneralMethods.setVelocity(this, entity, velocity);
+			entity.setFallDistance(0);
 		}
 
-		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.radius)) {
-			if (FireAbility.isFire(testblock.getType())) {
-				testblock.setType(Material.AIR);
-				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-			}
+		for (final Block block : GeneralMethods.getBlocksAroundPoint(origin, this.radius)) {
+			ElementalAbility.tryExtinguish(block);
 		}
 
 		final Set<Integer> keys = this.angles.keySet();
 		for (final int i : keys) {
-			double x, y, z;
 			final double factor = this.radius / this.maxRadius;
 			double angle = this.angles.get(i);
 			angle = Math.toRadians(angle);
-			y = origin.getY() + factor * i;
+
 			final double f = Math.sqrt(1 - factor * factor * (i / this.radius) * (i / this.radius));
 
-			x = origin.getX() + this.radius * Math.cos(angle) * f;
-			z = origin.getZ() + this.radius * Math.sin(angle) * f;
+			double x = origin.getX() + this.radius * Math.cos(angle) * f;
+			double y = origin.getY() + factor * i;
+			double z = origin.getZ() + this.radius * Math.sin(angle) * f;
 
 			final Location effect = new Location(origin.getWorld(), x, y, z);
-			if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
+			if (!RegionProtection.isRegionProtected(this, effect)) {
 				playAirbendingParticles(effect, this.particles);
 				if (this.random.nextInt(4) == 0) {
 					playAirbendingSound(effect);

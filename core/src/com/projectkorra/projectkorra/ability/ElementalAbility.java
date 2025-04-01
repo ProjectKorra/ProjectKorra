@@ -8,7 +8,9 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -250,6 +252,17 @@ public abstract class ElementalAbility extends CoreAbility {
 
 	public static boolean isWater(final Material material) {
 		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
+	}
+
+	public static boolean tryExtinguish(Block block) {
+		if (isFire(block)) {
+			if (!TempBlock.removeBlock(block)) {
+				block.setType(Material.AIR);
+			}
+			block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
+			return true;
+		}
+		return false;
 	}
 
 	public double applyModifiers(double value) {

@@ -190,12 +190,17 @@ public class TempBlock {
 	/**
 	 * Remove all TempBlocks at this location. Used for when a player places a block inside a TempBlock
 	 * @param block The block location
+	 * @return If any TempBlocks were removed
 	 */
-	public static void removeBlock(final Block block) {
-		INSTANCES.get(block).forEach(t -> {
-			REVERT_QUEUE.remove(t);
-			remove(t);
-		});
+	public static boolean removeBlock(final Block block) {
+		LinkedList<TempBlock> blocks = INSTANCES.remove(block);
+		if (blocks != null) {
+			for (TempBlock tempBlock : blocks) {
+				REVERT_QUEUE.remove(tempBlock);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**

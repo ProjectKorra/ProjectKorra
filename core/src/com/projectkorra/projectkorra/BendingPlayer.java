@@ -138,11 +138,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	private boolean canBend(@NotNull final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
-
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-		final Location playerLoc = this.player.getLocation();
-
-		//Loop through all hooks and test them
+		// Loop through all hooks and test them
 		for (JavaPlugin plugin : BEND_HOOKS.keySet()) {
 			CanBendHook hook = BEND_HOOKS.get(plugin);
 			try {
@@ -154,7 +150,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			}
 		}
 
-		if (!this.player.isOnline() || this.player.isDead()) {
+		if (this.player.isDead() || this.player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		} else if (!this.canBind(ability)) {
 			return false;
@@ -164,11 +160,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
-		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (!canBendInWorld()) {
 			return false;
 		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
-			return false;
-		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		}
 
@@ -183,7 +177,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
 		}
-		return !RegionProtection.isRegionProtected(this.player, playerLoc, ability);
+		return !RegionProtection.isRegionProtected(this.player, player.getLocation(), ability);
     }
 
 	public boolean canBendIgnoreBinds(final CoreAbility ability) {
@@ -491,11 +485,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	@Override
 	public boolean isOnCooldown(final String ability) {
-		if (this.cooldowns.containsKey(ability)) {
-			return System.currentTimeMillis() < this.cooldowns.get(ability).getCooldown();
-		}
-
-		return false;
+		Cooldown cooldown = this.cooldowns.get(ability);
+		return cooldown != null && System.currentTimeMillis() < cooldown.getCooldown();
 	}
 
 	public boolean isParalyzed() {

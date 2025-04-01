@@ -17,8 +17,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AirSpout extends AirAbility {
 
-	private static final Integer[] DIRECTIONS = { 0, 1, 2, 3, 5, 6, 7, 8 };
-
 	private int angle;
 	private long animTime;
 	private long interval;
@@ -36,9 +34,7 @@ public class AirSpout extends AirAbility {
 		if (spout != null) {
 			spout.remove();
 			return;
-		}
-
-		if (!this.bPlayer.canBend(this)) {
+		} else if (!this.bPlayer.canBend(this)) {
 			return;
 		}
 
@@ -86,12 +82,8 @@ public class AirSpout extends AirAbility {
 	}
 
 	private void allowFlight() {
-		if (!this.player.getAllowFlight()) {
-			this.player.setAllowFlight(true);
-		}
-		if (!this.player.isFlying()) {
-			this.player.setFlying(true);
-		}
+		this.player.setAllowFlight(true);
+		this.player.setFlying(true);
 	}
 
 	private void removeFlight() {
@@ -189,10 +181,10 @@ public class AirSpout extends AirAbility {
 
 			int index = this.angle;
 			final double dy = Math.min(playerloc.getY() - block.getY(), this.height);
-			this.angle = this.angle >= DIRECTIONS.length ? 0 : this.angle + 1;
+			this.angle = this.angle >= 9 ? 0 : this.angle + 1;
 
 			for (int i = 1; i <= dy; i++) {
-				index = index >= DIRECTIONS.length ? 0 : index + 1;
+				index = index >= 9 ? 0 : index + 1;
 				final Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
 				playAirbendingParticles(effectloc2, 3, 0.4F, 0.4F, 0.4F);
 			}

@@ -1,11 +1,14 @@
 package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +16,7 @@ import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.type.Door;
@@ -21,7 +25,6 @@ import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -29,7 +32,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
@@ -77,7 +79,7 @@ public class AirBlast extends AirAbility {
 	private Vector direction;
 	private AirBurst source;
 	private Random random;
-	private ArrayList<Block> affectedLevers;
+	private ArrayList<Block> affectedBlocks;
 	private ArrayList<Entity> affectedEntities;
 
 	public AirBlast(final Player player) {
@@ -90,12 +92,10 @@ public class AirBlast extends AirAbility {
 
 		this.setFields();
 
-		if (ORIGINS.containsKey(player)) {
+		this.origin = ORIGINS.remove(player);
+		if (this.origin != null) {
 			final Entity entity = GeneralMethods.getTargetedEntity(player, this.range);
 			this.isFromOtherOrigin = true;
-			this.origin = ORIGINS.get(player);
-			ORIGINS.remove(player);
-
 			if (entity != null) {
 				this.direction = GeneralMethods.getDirection(this.origin, GeneralMethods.getTargetedLocation(player, this.range, false, false)).normalize();
 			} else {
@@ -103,9 +103,9 @@ public class AirBlast extends AirAbility {
 			}
 		} else {
 			this.origin = player.getEyeLocation();
-			this.direction = player.getEyeLocation().getDirection().normalize();
+			this.direction = this.origin.getDirection();
 		}
-		if(!Double.isFinite(this.direction.getX()) || !Double.isFinite(this.direction.getY()) || !Double.isFinite(this.direction.getZ())) {
+		if (!GeneralMethods.isFinite(this.direction)) {
 			return;
 		}
 		this.location = this.origin.clone();
@@ -125,7 +125,7 @@ public class AirBlast extends AirAbility {
 
 		this.setFields();
 
-		this.affectedLevers = new ArrayList<>();
+		this.affectedBlocks = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 
 		// prevent the airburst related airblasts from triggering doors/levers/buttons.
@@ -160,18 +160,18 @@ public class AirBlast extends AirAbility {
 		this.isFromOtherOrigin = false;
 		this.showParticles = true;
 		this.random = new Random();
-		this.affectedLevers = new ArrayList<>();
+		this.affectedBlocks = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 	}
 
 	private static void playOriginEffect(final Player player) {
-		if (!ORIGINS.containsKey(player)) {
+		final Location origin = ORIGINS.get(player);
+		if (origin == null) {
 			return;
 		}
 
-		final Location origin = ORIGINS.get(player);
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || player.isDead() || !player.isOnline()) {
+		if (bPlayer == null || player.isDead()) {
 			return;
 		} else if (!origin.getWorld().equals(player.getWorld())) {
 			ORIGINS.remove(player);
@@ -202,7 +202,6 @@ public class AirBlast extends AirAbility {
 		}
 
 		ORIGINS.put(player, location);
-
 	}
 
 	private void advanceLocation() {
@@ -213,7 +212,7 @@ public class AirBlast extends AirAbility {
 			playAirbendingSound(this.location);
 		}
 
-		BlockIterator blocks = new BlockIterator(this.getLocation().getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
+		BlockIterator blocks = new BlockIterator(this.location.getWorld(), this.location.toVector(), this.direction, 0, (int) Math.ceil(this.direction.clone().multiply(speedFactor).length()));
 
 		while (blocks.hasNext() && checkLocation(blocks.next()));
 		
@@ -221,16 +220,17 @@ public class AirBlast extends AirAbility {
 	}
 
 	public boolean checkLocation(Block block) {
-		if (GeneralMethods.checkDiagonalWall(block.getLocation(), this.direction)) {
+		Location blockLocation = block.getLocation();
+		if (GeneralMethods.checkDiagonalWall(blockLocation, this.direction)) {
 			this.remove();
 			return false;
 		}
 
-		if ((!block.isPassable() || block.isLiquid()) && !this.affectedLevers.contains(block)) {
+		if ((!block.isPassable() || block.isLiquid()) && !this.affectedBlocks.contains(block)) {
 			if (block.getType() == Material.LAVA && this.canCoolLava) {
 				if (LavaFlow.isLavaFlowBlock(block)) {
 					LavaFlow.removeBlock(block); // TODO: Make more generic for future lava generating moves.
-				} else if (block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
+				} else if (block.getBlockData() instanceof Levelled levelled && levelled.getLevel() == 0) {
 					new TempBlock(block, Material.OBSIDIAN);
 				} else {
 					new TempBlock(block, Material.COBBLESTONE);
@@ -239,7 +239,7 @@ public class AirBlast extends AirAbility {
 			this.remove();
 			return false;
 		}
-		if (!processBlock(block.getLocation())) {
+		if (!processBlock(blockLocation)) {
 			remove();
 			return false;
 		}
@@ -248,13 +248,7 @@ public class AirBlast extends AirAbility {
 	}
 
 	private void affect(final Entity entity) {
-		if (entity instanceof Player) {
-			if (Commands.invincible.contains(((Player) entity).getName())) {
-				return;
-			}
-		}
-			
-		final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
+		final boolean isUser = entity == this.player;
 		double knockback = this.pushFactorForOthers;
 
 		if (isUser) {
@@ -285,25 +279,17 @@ public class AirBlast extends AirAbility {
 		}
 		
 		push.normalize().multiply(knockback);
-		
-		if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
-			push.normalize().add(entity.getVelocity()).multiply(knockback);
+
+		Vector velocity = entity.getVelocity();
+		if (Math.abs(velocity.dot(push)) > knockback && velocity.angle(push) > Math.PI / 3) {
+			push.normalize().add(velocity).multiply(knockback);
 		}
 		GeneralMethods.setVelocity(this, entity, push);
-		
-		if (this.source != null) {
-			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
-		} else {
-			new HorizontalVelocityTracker(entity, this.player, 200l, this);
-		}
 
-		if (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(this.player) && !this.affectedEntities.contains(entity)) {
-			if (this.source != null) {
-				DamageHandler.damageEntity(entity, this.damage, this.source);
-			} else {
-				DamageHandler.damageEntity(entity, this.damage, this);
-			}
-			
+        new HorizontalVelocityTracker(entity, this.player, 200L, this.source != null ? this.source : this);
+
+		if (!isUser && this.damage > 0 && entity instanceof LivingEntity && !this.affectedEntities.contains(entity)) {
+			DamageHandler.damageEntity(entity, this.damage, this.source != null ? this.source : this);
 			this.affectedEntities.add(entity);
 		}
 
@@ -317,7 +303,7 @@ public class AirBlast extends AirAbility {
 
 	@Override
 	public void progress() {
-		if (this.player.isDead() || !this.player.isOnline()) {
+		if (this.player.isDead()) {
 			this.remove();
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.location)) {
@@ -332,8 +318,6 @@ public class AirBlast extends AirAbility {
 			this.remove();
 			return;
 		}
-
-		final Block block = this.location.getBlock();
 
 		for (final Block testblock : GeneralMethods.getBlocksAroundPoint(this.location, this.radius)) {
 			if (!processBlock(testblock.getLocation())) {
@@ -358,14 +342,13 @@ public class AirBlast extends AirAbility {
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, this.radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) || ((entity instanceof Player) && Commands.invincible.contains(((Player) entity).getName()))) {
+			if ((entity instanceof Player && Commands.invincible.contains(entity.getName())) || GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
 			this.affect(entity);
 		}
 
 		this.advanceLocation();
-		return;
 	}
 
 	/**
@@ -374,104 +357,76 @@ public class AirBlast extends AirAbility {
 	 * @return False if the ability should be removed
 	 */
 	private boolean processBlock(Location location) {
-		Block testblock = location.getBlock();
-		if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+		Block block = location.getBlock();
+		Material type = block.getType();
+		if (RegionProtection.isRegionProtected(this, location)) {
 			return false;
-		} else if (FireAbility.isFire(testblock.getType())) {
-			if (TempBlock.isTempBlock(testblock)) {
-				TempBlock.removeBlock(testblock);
-			} else {
-				testblock.setType(Material.AIR);
-			}
-			
-			testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+		} else if (ElementalAbility.tryExtinguish(block)) {
 			return false;
-		} else if (this.affectedLevers.contains(testblock)) {
+		} else if (this.affectedBlocks.contains(block)) {
 			return false;
 		}
 
-		if (Tag.WOODEN_DOORS.isTagged(testblock.getType())) {
-			if (testblock.getBlockData() instanceof Door door) {
-                final BlockFace face = door.getFacing();
-				final Vector toPlayer = GeneralMethods.getDirection(testblock.getLocation(), this.player.getLocation().getBlock().getLocation());
-				final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
+		BlockData data = block.getBlockData();
+		if (Tag.WOODEN_DOORS.isTagged(type) && data instanceof Door door) {
+			final BlockFace face = door.getFacing();
+			final Vector toPlayer = GeneralMethods.getDirection(block.getLocation(), this.player.getLocation().getBlock().getLocation());
+			final double[] dims = { toPlayer.getX(), toPlayer.getY(), toPlayer.getZ() };
 
-				for (int i = 0; i < 3; i++) {
-					if (i == 1) {
-						continue;
-					}
-
-					final BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
-
-					if (bf == face) {
-						if (!door.isOpen()) {
-							return false;
-						}
-					} else if (bf.getOppositeFace() == face) {
-						if (door.isOpen()) {
-							return false;
-						}
-					}
+			for (int i = 0; i < 3; i++) {
+				if (i == 1) {
+					continue;
 				}
 
-				door.setOpen(!door.isOpen());
-				testblock.setBlockData(door);
-				testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
-				this.affectedLevers.add(testblock);
-			}
-		} else if (Tag.WOODEN_TRAPDOORS.isTagged(testblock.getType())) {
-			if (testblock.getBlockData() instanceof TrapDoor tDoor) {
-
-                if (this.origin.getY() < testblock.getY()) {
-					if (!tDoor.isOpen()) {
-						return false;
-					}
-				} else {
-					if (tDoor.isOpen()) {
-						return false;
-					}
+				final BlockFace bf = GeneralMethods.getBlockFaceFromValue(i, dims[i]);
+				if (bf == face && !door.isOpen()) {
+					return false;
+				} else if (bf.getOppositeFace() == face && door.isOpen()) {
+					return false;
 				}
-
-				tDoor.setOpen(!tDoor.isOpen());
-				testblock.setBlockData(tDoor);
-				testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
 			}
-		} else if (Tag.BUTTONS.isTagged(testblock.getType())) {
-			if (testblock.getBlockData() instanceof Switch button) {
-                if (!button.isPowered()) {
-					button.setPowered(true);
-					testblock.setBlockData(button);
-					this.affectedLevers.add(testblock);
 
-					new BukkitRunnable() {
-
-						@Override
-						public void run() {
-							button.setPowered(false);
-							testblock.setBlockData(button);
-							AirBlast.this.affectedLevers.remove(testblock);
-							testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
-						}
-
-					}.runTaskLater(ProjectKorra.plugin, 15);
-				}
-
-				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
+			door.setOpen(!door.isOpen());
+			block.setBlockData(door);
+			block.getWorld().playSound(block.getLocation(), door.isOpen() ? Sound.BLOCK_WOODEN_DOOR_OPEN : Sound.BLOCK_WOODEN_DOOR_CLOSE, 0.5f, 0);
+			this.affectedBlocks.add(block);
+		} else if (Tag.WOODEN_TRAPDOORS.isTagged(type) && data instanceof TrapDoor trapDoor) {
+			if (this.origin.getY() < block.getY() && !trapDoor.isOpen()) {
+				return false;
+			} else if (trapDoor.isOpen()) {
+				return false;
 			}
-		} else if (testblock.getType() == Material.LEVER) {
-			if (testblock.getBlockData() instanceof Switch lever) {
-                lever.setPowered(!lever.isPowered());
-				testblock.setBlockData(lever);
-				this.affectedLevers.add(testblock);
-				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
+
+			trapDoor.setOpen(!trapDoor.isOpen());
+			block.setBlockData(trapDoor);
+			block.getWorld().playSound(block.getLocation(), trapDoor.isOpen()
+					? Sound.BLOCK_WOODEN_TRAPDOOR_OPEN
+					: Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE, 0.5f, 0);
+		} else if (Tag.BUTTONS.isTagged(type) && data instanceof Switch button) {
+			if (!button.isPowered()) {
+				button.setPowered(true);
+				block.setBlockData(button);
+				this.affectedBlocks.add(block);
+				Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+					// TODO: test if this will overwrite a block change made before button unpresses
+					button.setPowered(false);
+					block.setBlockData(button);
+					AirBlast.this.affectedBlocks.remove(block);
+					block.getWorld().playSound(block.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
+				}, 15L);
 			}
-		} else if (testblock.getType().toString().contains("CANDLE") || testblock.getType().toString().contains("CAMPFIRE") || testblock.getType() == Material.REDSTONE_WALL_TORCH) {
-			if (testblock.getBlockData() instanceof Lightable lightable) {
-                if (lightable.isLit()) {
-					lightable.setLit(false);
-					testblock.setBlockData(lightable);
-					testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
-				}
+
+			block.getWorld().playSound(block.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
+		} else if (type == Material.LEVER && data instanceof Switch lever) {
+			lever.setPowered(!lever.isPowered());
+			block.setBlockData(lever);
+			this.affectedBlocks.add(block);
+			block.getWorld().playSound(block.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
+		} else if (Tag.CANDLES.isTagged(type) || Tag.CAMPFIRES.isTagged(type) || type == Material.REDSTONE_TORCH || type == Material.REDSTONE_WALL_TORCH) {
+			if (data instanceof Lightable lightable && lightable.isLit()) {
+				lightable.setLit(false);
+				block.setBlockData(lightable);
+				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 			}
 		}
 		return true;
@@ -662,8 +617,16 @@ public class AirBlast extends AirAbility {
 		this.source = source;
 	}
 
+	/**
+	 * @deprecated Use {@link #getAffectedBlocks()}
+	 */
+	@Deprecated(since = "1.13.0")
 	public ArrayList<Block> getAffectedLevers() {
-		return this.affectedLevers;
+		return this.affectedBlocks;
+	}
+
+	public List<Block> getAffectedBlocks() {
+		return this.affectedBlocks;
 	}
 
 	public ArrayList<Entity> getAffectedEntities() {
