@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.waterbending.multiabilities;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
-import com.projectkorra.projectkorra.util.ActionBar;
+import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -109,7 +109,7 @@ public class WaterArmsFreeze extends IceAbility {
 					this.waterArms.setRightArmCooldown(false);
 				}
 				this.waterArms.setMaxIceBlasts(this.waterArms.getMaxIceBlasts() - 1);
-				ActionBar.sendActionBar(Element.WATER.getSubColor() + "Ice Blasts Left: " + this.waterArms.getMaxIceBlasts(), this.player);
+				ChatUtil.sendActionBar(Element.WATER.getSubColor() + "Ice Blasts Left: " + this.waterArms.getMaxIceBlasts(), this.player);
 			}
 		}
 
@@ -166,7 +166,7 @@ public class WaterArmsFreeze extends IceAbility {
 					this.waterArms.setRightArmCooldown(false);
 				}
 				this.waterArms.setMaxIceBlasts(this.waterArms.getMaxIceBlasts() - 1);
-				ActionBar.sendActionBar(Element.WATER.getSubColor() + "Ice Blasts Left: " + this.waterArms.getMaxIceBlasts(), this.player);
+				ChatUtil.sendActionBar(Element.WATER.getSubColor() + "Ice Blasts Left: " + this.waterArms.getMaxIceBlasts(), this.player);
 			}
 		}
 	}

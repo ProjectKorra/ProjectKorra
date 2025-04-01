@@ -17,60 +17,33 @@ public class PassiveHandler {
 	private static final Map<Player, Float> FOOD = new ConcurrentHashMap<>();
 
 	public static float getExhaustion(final Player player, float level, final double factor) {
-		if (!FOOD.keySet().contains(player)) {
-			FOOD.put(player, level);
-			return level;
-		} else {
-			final float oldlevel = FOOD.get(player);
-			if (level < oldlevel) {
-				level = 0;
-			} else {
-				level = (float) ((level - oldlevel) * factor + oldlevel);
-			}
-
-			FOOD.put(player, level);
-			return level;
-		}
-	}
+		final Float oldLevel = FOOD.get(player);
+        if (oldLevel != null) {
+			level = level < oldLevel ? 0 : (float) ((level - oldLevel) * factor + oldLevel);
+        }
+        FOOD.put(player, level);
+        return level;
+    }
 
 	public static void checkExhaustionPassives(final Player player) {
-		CoreAbility airsat = CoreAbility.getAbility(AirSaturation.class);
-		CoreAbility chisat = CoreAbility.getAbility(ChiSaturation.class);
-		
-		if ((airsat == null || !airsat.isEnabled()) && (chisat == null || !chisat.isEnabled())) {
-			return;
-		}
-
-		double air = AirSaturation.getExhaustionFactor();
-		double chi = ChiSaturation.getExhaustionFactor();
-
-		if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
-			return;
-		}
-
-		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
-			return;
-		}
-
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (bPlayer == null) {
+		if (bPlayer == null || !bPlayer.canBendInWorld()) {
+			return;
+		} else if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return;
 		}
 
-		if (!PassiveManager.hasPassive(player, airsat)) {
-			air = 0;
-		}
-
-		if (!PassiveManager.hasPassive(player, chisat)) {
-			chi = 0;
-		}
-
-		final double max = Math.max(air, chi);
-		if (max == 0) {
+		CoreAbility airPassive = CoreAbility.getAbility(AirSaturation.class);
+		CoreAbility chiPassive = CoreAbility.getAbility(ChiSaturation.class);
+		if ((airPassive == null || !airPassive.isEnabled()) && (chiPassive == null || !chiPassive.isEnabled())) {
 			return;
-		} else {
-			player.setExhaustion(getExhaustion(player, player.getExhaustion(), max));
 		}
+
+		double air = PassiveManager.hasPassive(player, airPassive) ? AirSaturation.getExhaustionFactor() : 0;
+		double chi = PassiveManager.hasPassive(player, chiPassive) ? ChiSaturation.getExhaustionFactor() : 0;
+		final double factor = Math.max(air, chi); // Should this not be Math.min instead? That way you get the best exhaustion decrease based on your element
+		if (factor != 0) {
+			player.setExhaustion(getExhaustion(player, player.getExhaustion(), factor));
+        }
 	}
 }

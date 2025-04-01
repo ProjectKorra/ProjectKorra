@@ -3,10 +3,10 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -14,6 +14,8 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AirBurst extends AirAbility {
+
+	private static final double CONE_BURST_ANGLE = Math.toRadians(30);
 
 	private boolean isCharged;
 	private boolean isFallBurst;
@@ -40,10 +42,9 @@ public class AirBurst extends AirAbility {
 			this.remove();
 			return;
 		}
-		if (hasAbility(player, AirBurst.class)) {
-			if (!getAbility(player, AirBurst.class).isCharged()) {
-				return;
-			}
+		AirBurst existing = getAbility(player, getClass());
+		if (existing != null && !existing.isCharged) {
+			return;
 		}
 
 		this.isFallBurst = isFallBurst;
@@ -88,13 +89,9 @@ public class AirBurst extends AirAbility {
 			if (this.isCharged) {
 				this.bPlayer.addCooldown(this);
 				this.sphereBurst();
-				this.remove();
-				return;
-			} else {
-				this.remove();
-				return;
-			}
-		} else if (this.isCharged) {
+            }
+            this.remove();
+        } else if (this.isCharged) {
 			final Location location = this.player.getEyeLocation();
 			playAirbendingParticles(location, this.sneakParticles);
 		}
@@ -106,109 +103,66 @@ public class AirBurst extends AirAbility {
 		}
 
 		final Location location = this.player.getLocation();
-		double x, y, z;
-		final double r = 1;
+		for (Vector direction : burstDirections(75, 104)) {
+			new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this).setDamage(this.damage);
+		}
+	}
 
-		for (double theta = 75; theta < 105; theta += this.blastAngleTheta) {
-			final double dphi = this.blastAnglePhi / Math.sin(Math.toRadians(theta));
-			for (double phi = 0; phi < 360; phi += dphi) {
-				final double rphi = Math.toRadians(phi);
-				final double rtheta = Math.toRadians(theta);
+	public static void coneBurst(final Player player) {
+		final AirBurst airBurst = getAbility(player, AirBurst.class);
+		if (airBurst != null && airBurst.isCharged) {
+			airBurst.bPlayer.addCooldown(airBurst);
+			airBurst.startConeBurst();
+			airBurst.remove();
+		}
+	}
 
-				x = r * Math.cos(rphi) * Math.sin(rtheta);
-				y = r * Math.sin(rphi) * Math.sin(rtheta);
-				z = r * Math.cos(rtheta);
-
-				final Vector direction = new Vector(x, z, y);
+	private void startConeBurst() {
+		final Location location = this.player.getEyeLocation();
+		final Vector vector = location.getDirection();
+		for (Vector direction : burstDirections(0, 180)) {
+			if (direction.angle(vector) <= CONE_BURST_ANGLE) {
 				final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
 				blast.setDamage(this.damage);
 			}
 		}
 	}
 
-	public static void coneBurst(final Player player) {
-		if (hasAbility(player, AirBurst.class)) {
-			final AirBurst airBurst = getAbility(player, AirBurst.class);
-			if (airBurst.isCharged) {
-				airBurst.bPlayer.addCooldown(airBurst);
-				airBurst.startConeBurst();
-				airBurst.remove();
-			}
+	private void sphereBurst() {
+		final Location location = this.player.getEyeLocation();
+		for (Vector direction : burstDirections(0, 180)) {
+			final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
+			blast.setDamage(this.damage);
+			blast.setShowParticles(false);
+			this.blasts.add(blast);
 		}
-	}
-
-	private void startConeBurst() {
-		if (this.isCharged) {
-			final Location location = this.player.getEyeLocation();
-			final Vector vector = location.getDirection();
-			final double angle = Math.toRadians(30);
-			double x, y, z;
-			final double r = 1;
-
-			for (double theta = 0; theta <= 180; theta += this.blastAngleTheta) {
-				final double dphi = this.blastAnglePhi / Math.sin(Math.toRadians(theta));
-				for (double phi = 0; phi < 360; phi += dphi) {
-					final double rphi = Math.toRadians(phi);
-					final double rtheta = Math.toRadians(theta);
-
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
-
-					final Vector direction = new Vector(x, z, y);
-					if (direction.angle(vector) <= angle) {
-						final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
-						blast.setDamage(this.damage);
-					}
-				}
-			}
-		}
+		this.handleSmoothParticles();
 	}
 
 	public void handleSmoothParticles() {
 		for (int i = 0; i < this.blasts.size(); i++) {
 			final AirBlast blast = this.blasts.get(i);
-			int toggleTime = 0;
-
-			if (i % 4 != 0) {
-				toggleTime = (int) (i % (100 / this.particlePercentage)) + 3;
-			}
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					blast.setShowParticles(true);
-				}
-			}.runTaskLater(ProjectKorra.plugin, toggleTime);
+			int toggleTime = i % 4 == 0 ? 0 : (int) (i % (100 / this.particlePercentage)) + 3;
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> blast.setShowParticles(true), toggleTime);
 		}
 	}
 
-	private void sphereBurst() {
-		if (this.isCharged) {
-			final Location location = this.player.getEyeLocation();
-			double x, y, z;
-			final double r = 1;
+	private List<Vector> burstDirections(double startTheta, double maxTheta) {
+		// TODO: Make a cache for this maybe? Might be overkill
+		List<Vector> directions = new ArrayList<>();
+		for (double theta = startTheta; theta <= maxTheta; theta += this.blastAngleTheta) {
+			final double dphi = this.blastAnglePhi / Math.sin(Math.toRadians(theta));
+			for (double phi = 0; phi < 360; phi += dphi) {
+				final double rphi = Math.toRadians(phi);
+				final double rtheta = Math.toRadians(theta);
 
-			for (double theta = 0; theta <= 180; theta += this.blastAngleTheta) {
-				final double dphi = this.blastAnglePhi / Math.sin(Math.toRadians(theta));
-
-				for (double phi = 0; phi < 360; phi += dphi) {
-					final double rphi = Math.toRadians(phi);
-					final double rtheta = Math.toRadians(theta);
-
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
-
-					final Vector direction = new Vector(x, z, y);
-					final AirBlast blast = new AirBlast(this.player, location, direction.normalize(), this.pushFactor, this);
-
-					blast.setDamage(this.damage);
-					blast.setShowParticles(false);
-					this.blasts.add(blast);
-				}
+				double x = Math.cos(rphi) * Math.sin(rtheta);
+				double y = Math.sin(rphi) * Math.sin(rtheta);
+				double z = Math.cos(rtheta);
+				directions.add(new Vector(x, z, y));
 			}
 		}
-		this.handleSmoothParticles();
+		return directions;
 	}
 
 	@Override
@@ -238,7 +192,7 @@ public class AirBurst extends AirAbility {
 
 	@Override
 	public List<Location> getLocations() {
-		final ArrayList<Location> locations = new ArrayList<>();
+		final List<Location> locations = new ArrayList<>();
 		for (final AirBlast blast : this.blasts) {
 			locations.add(blast.getLocation());
 		}

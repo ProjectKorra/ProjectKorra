@@ -6,11 +6,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
+@Deprecated(since = "1.13.0")
 public class Information {
 
 	private static int ID = Integer.MIN_VALUE;
-	private String string;
 	private final int id;
+	private String string;
 	private int integer;
 	private long time;
 	private double value;
@@ -24,9 +25,6 @@ public class Information {
 
 	public Information() {
 		this.id = ID++;
-		if (ID >= Integer.MAX_VALUE) {
-			ID = Integer.MIN_VALUE;
-		}
 	}
 
 	public Block getBlock() {

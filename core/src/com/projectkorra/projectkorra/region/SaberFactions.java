@@ -22,9 +22,6 @@ class SaberFactions extends RegionProtectionBase {
         final Faction faction = com.massivecraft.factions.Board.getInstance().getFactionAt(fLoc);
         final Relation relation = fPlayer.getRelationTo(faction);
 
-        if (!(faction.isWilderness() || fPlayer.getFaction().equals(faction) || relation == Relation.ALLY)) {
-            return true;
-        }
-        return false;
+        return !(faction.isWilderness() || fPlayer.getFaction().equals(faction) || relation == Relation.ALLY);
     }
 }

@@ -145,7 +145,7 @@ public class EarthArmor extends EarthAbility {
 			}
 		}
 		final int level = this.maxGoldHearts / 2 - 1 + (this.maxGoldHearts % 2);
-		this.player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, level, true, false));
+		this.player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, PotionEffect.INFINITE_DURATION, level, true, false));
 
 		this.goldHearts = this.maxGoldHearts * 2;
 		this.player.setAbsorptionAmount(this.goldHearts);

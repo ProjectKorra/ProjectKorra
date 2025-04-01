@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
@@ -35,19 +34,19 @@ public class TimeUtil {
 		final long ms = time % 1000;
 		String formatted = sign;
 		if (days > 0) {
-			formatted += String.valueOf(days) + (longFormat ? " day(s) " : "d ");
+			formatted += days + (longFormat ? " day(s) " : "d ");
 		}
 		if (hours > 0) {
-			formatted += String.valueOf(hours) + (longFormat ? " hour(s) " : "h ");
+			formatted += hours + (longFormat ? " hour(s) " : "h ");
 		}
 		if (minutes > 0) {
-			formatted += String.valueOf(minutes) + (longFormat ? " minute(s) " : "m ");
+			formatted += minutes + (longFormat ? " minute(s) " : "m ");
 		}
 		if (seconds > 0) {
-			formatted += String.valueOf(seconds) + (longFormat ? " second(s) " : "s");
+			formatted += seconds + (longFormat ? " second(s) " : "s");
 		}
-		if (ms > 0 && (formatted.equals("") || formatted.equals("-"))) {
-			formatted += "0." + String.valueOf(ms / 100) + (longFormat ? " second(s) " : "s");;
+		if (ms > 0 && (formatted.isEmpty() || formatted.equals("-"))) {
+			formatted += "0." + ms / 100 + (longFormat ? " second(s) " : "s");;
 		}
 		if (formatted.isEmpty()) return longFormat ? "0 seconds" : "0s";
 		return formatted.trim();
@@ -82,8 +81,9 @@ public class TimeUtil {
 			time += TimeUnit.SECONDS.toMillis(Integer.parseInt(formattedTime.split("s")[0].trim()));
 			formattedTime = formattedTime.split("s", -1)[1].trim();
 		}
-		if (!formattedTime.equals(""))
+		if (!formattedTime.isEmpty()) {
 			time += Long.parseLong(formattedTime.trim());
+		}
 		return time;
 	}
 

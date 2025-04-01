@@ -15,10 +15,10 @@ import java.util.function.Consumer;
 public class TempFallingBlock {
     public static ConcurrentHashMap<FallingBlock, TempFallingBlock> instances = new ConcurrentHashMap<>();
 
-    private FallingBlock fallingblock;
-    private CoreAbility ability;
-    private long creation;
-    private boolean expire;
+    private final FallingBlock fallingblock;
+    private final CoreAbility ability;
+    private final long creation;
+    private final boolean expire;
     private Consumer<TempFallingBlock> onPlace;
 
     public TempFallingBlock(Location location, BlockData data, Vector velocity, CoreAbility ability) {
@@ -38,48 +38,45 @@ public class TempFallingBlock {
     public static void manage() {
         long time = System.currentTimeMillis();
 
-        for (TempFallingBlock tfb : instances.values()) {
-            if (tfb.canExpire() && time > tfb.getCreationTime() + 5000) {
-                tfb.remove();
-            } else if (time > tfb.getCreationTime() + 120000) { // Add a hard timeout for any abilities that misuse this.
-                tfb.remove();
+        for (TempFallingBlock tempFallingBlock : instances.values()) {
+            if (tempFallingBlock.canExpire() && time > tempFallingBlock.getCreationTime() + 5000) {
+                tempFallingBlock.remove();
+            } else if (time > tempFallingBlock.getCreationTime() + 120000) { // Add a hard timeout for any abilities that misuse this.
+                tempFallingBlock.remove();
             }
         }
     }
 
-    public static TempFallingBlock get(FallingBlock fallingblock) {
-        if (isTempFallingBlock(fallingblock)) {
-            return instances.get(fallingblock);
-        }
-        return null;
+    public static TempFallingBlock get(FallingBlock fallingBlock) {
+        return fallingBlock == null ? null : instances.get(fallingBlock);
     }
 
-    public static boolean isTempFallingBlock(FallingBlock fallingblock) {
-        return instances.containsKey(fallingblock);
+    public static boolean isTempFallingBlock(FallingBlock fallingBlock) {
+        return instances.containsKey(fallingBlock);
     }
 
-    public static void removeFallingBlock(FallingBlock fallingblock) {
-        if (isTempFallingBlock(fallingblock)) {
-            fallingblock.remove();
-            instances.remove(fallingblock);
+    public static void removeFallingBlock(FallingBlock fallingBlock) {
+        if (instances.containsKey(fallingBlock)) {
+            fallingBlock.remove();
+            instances.remove(fallingBlock);
         }
     }
 
     public static void removeAllFallingBlocks() {
         for (FallingBlock fallingblock : instances.keySet()) {
             fallingblock.remove();
-            instances.remove(fallingblock);
         }
+        instances.clear();
     }
 
     public static List<TempFallingBlock> getFromAbility(CoreAbility ability) {
-        List<TempFallingBlock> tfbs = new ArrayList<TempFallingBlock>();
-        for (TempFallingBlock tfb : instances.values()) {
-            if (tfb.getAbility().equals(ability)) {
-                tfbs.add(tfb);
+        List<TempFallingBlock> tempFallingBlocks = new ArrayList<>();
+        for (TempFallingBlock tempFallingBlock : instances.values()) {
+            if (tempFallingBlock.getAbility().equals(ability)) {
+                tempFallingBlocks.add(tempFallingBlock);
             }
         }
-        return tfbs;
+        return tempFallingBlocks;
     }
 
     public void remove() {

@@ -15,10 +15,6 @@ class Towny extends RegionProtectionBase {
 
     @Override
     public boolean isRegionProtectedReal(Player player, Location location, CoreAbility ability, boolean igniteAbility, boolean explosiveAbility) {
-        if (!PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, TownyPermission.ActionType.BUILD)) {
-            return true;
-        }
-
-        return false;
+        return !PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, TownyPermission.ActionType.BUILD);
     }
 }

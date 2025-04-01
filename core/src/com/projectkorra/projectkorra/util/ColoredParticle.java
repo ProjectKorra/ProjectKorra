@@ -17,6 +17,7 @@ public class ColoredParticle {
 	}
 
 	public void display(final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
+		// TODO: make this not use deprecated API
 		ParticleEffect.REDSTONE.display(loc, amount, offsetX, offsetY, offsetZ, this.dust);
 	}
 }

@@ -456,11 +456,8 @@ public class WaterManipulation extends WaterAbility {
 			return false;
 		} else if (SurgeWave.isBlockWave(to) || SurgeWave.isBlockWave(from)) {
 			return false;
-		} else if (isAdjacentToFrozenBlock(to) || isAdjacentToFrozenBlock(from)) {
-			return false;
-		}
-		return true;
-	}
+		} else return !isAdjacentToFrozenBlock(to) && !isAdjacentToFrozenBlock(from);
+    }
 
 	public static boolean canPhysicsChange(final Block block) {
 		if (AFFECTED_BLOCKS.containsKey(block)) {
@@ -473,11 +470,8 @@ public class WaterManipulation extends WaterAbility {
 			return false;
 		} else if (SurgeWave.isBlockWave(block)) {
 			return false;
-		} else if (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block)) {
-			return false;
-		}
-		return true;
-	}
+		} else return !TempBlock.isTempBlock(block) || WaterAbility.isBendableWaterTempBlock(block);
+    }
 
 	private static Location getTargetLocation(final Player player, final double range) {
 		Location location;

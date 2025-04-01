@@ -83,22 +83,16 @@ public class FlightHandler extends Manager {
 	 * @param identifier The ability using Flight
 	 */
 	public void createInstance(final Player player, final Player source, final long duration, final String identifier) {
-		if (this.INSTANCES.containsKey(player.getUniqueId())) {
-			final Flight flight = this.INSTANCES.get(player.getUniqueId());
-			final FlightAbility ability = new FlightAbility(player, identifier, duration);
-			if (duration != Flight.PERMANENT) {
-				this.CLEANUP.add(ability);
-			}
-			flight.abilities.put(identifier, ability);
-		} else {
-			final Flight flight = new Flight(player, source);
-			final FlightAbility ability = new FlightAbility(player, identifier, duration);
-			if (duration != Flight.PERMANENT) {
-				this.CLEANUP.add(ability);
-			}
-			flight.abilities.put(identifier, ability);
+		final FlightAbility ability = new FlightAbility(player, identifier, duration);
+		Flight flight = this.INSTANCES.get(player.getUniqueId());
+		if (flight == null) {
+			flight = new Flight(player, source);
 			this.INSTANCES.put(player.getUniqueId(), flight);
 		}
+		if (duration != Flight.PERMANENT) {
+			this.CLEANUP.add(ability);
+		}
+		flight.abilities.put(identifier, ability);
 	}
 
 	/**
@@ -112,11 +106,9 @@ public class FlightHandler extends Manager {
 	 * @param identifier The ability using Flight
 	 */
 	public void removeInstance(final Player player, final String identifier) {
-		if (this.INSTANCES.containsKey(player.getUniqueId())) {
-			final Flight flight = this.INSTANCES.get(player.getUniqueId());
-			if (flight.abilities.containsKey(identifier)) {
-				flight.abilities.remove(identifier);
-			}
+		final Flight flight = this.INSTANCES.get(player.getUniqueId());
+		if (flight != null) {
+            flight.abilities.remove(identifier);
 			if (flight.abilities.isEmpty()) {
 				this.wipeInstance(player);
 			}
@@ -126,8 +118,6 @@ public class FlightHandler extends Manager {
 	/**
 	 * Completely wipe all Flight data for the player. Should only be used if it
 	 * is guaranteed they have a Flight instance.
-	 *
-	 * @param player
 	 */
 	private void wipeInstance(final Player player) {
 		final Flight flight = this.INSTANCES.get(player.getUniqueId());
@@ -143,7 +133,7 @@ public class FlightHandler extends Manager {
 			player.setFlying(flight.wasFlying);
 		}
 
-		flight.abilities.values().forEach(ability -> this.CLEANUP.remove(ability));
+		flight.abilities.values().forEach(this.CLEANUP::remove);
 		this.INSTANCES.remove(player.getUniqueId());
 	}
 
@@ -210,18 +200,9 @@ public class FlightHandler extends Manager {
 		}
 	}
 
-	public static class FlightAbility {
-
-		private final Player player;
-		private final String identifier;
-		private final long duration;
-		private final long startTime;
-
+	public record FlightAbility(Player player, String identifier, long duration, long startTime) {
 		public FlightAbility(final Player player, final String identifier, final long duration) {
-			this.player = player;
-			this.identifier = identifier;
-			this.duration = duration;
-			this.startTime = System.currentTimeMillis();
+			this(player, identifier, duration, System.currentTimeMillis());
 		}
 
 		@Override

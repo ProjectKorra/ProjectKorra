@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Effect;
@@ -183,31 +184,23 @@ public class HeatControl extends FireAbility {
 			this.displayCookParticles();
 
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
-
 			if (!this.player.isSneaking()) {
 				this.bPlayer.addCooldown(this.getName() + "Extinguish", this.extinguishCooldown);
 				this.remove();
 				return;
 			}
 
-			final Set<Material> blocks = new HashSet<>();
-			for (final Material material : getTransparentMaterials()) {
-				blocks.add(material);
-			}
-
 			for (final Block block : GeneralMethods.getBlocksAroundPoint(this.player.getLocation(), this.extinguishRadius)) {
 				final Material material = block.getType();
-				if (isFire(material) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-
-					block.setType(Material.AIR);
-					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
-				} else if (block.getType() == Material.WET_SPONGE) {
-					if (!isWater(block.getRelative(BlockFace.UP)) && !isWater(block.getRelative(BlockFace.DOWN)) && !isWater(block.getRelative(BlockFace.NORTH)) && !isWater(block.getRelative(BlockFace.SOUTH)) && !isWater(block.getRelative(BlockFace.EAST)) && !isWater(block.getRelative(BlockFace.WEST))) {
-						dryWetBlocks(block, this, ThreadLocalRandom.current().nextInt(5) == 0);
-					}
+				if (isFire(material) && !RegionProtection.isRegionProtected(this, block.getLocation())) {
+					ElementalAbility.tryExtinguish(block);
+				} else if (block.getType() == Material.WET_SPONGE && !isWater(block.getRelative(BlockFace.UP))
+						&& !isWater(block.getRelative(BlockFace.DOWN)) && !isWater(block.getRelative(BlockFace.NORTH))
+						&& !isWater(block.getRelative(BlockFace.SOUTH)) && !isWater(block.getRelative(BlockFace.EAST))
+						&& !isWater(block.getRelative(BlockFace.WEST))) {
+					dryWetBlocks(block, this, ThreadLocalRandom.current().nextInt(5) == 0);
 				}
 			}
-
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 
 			if (this.solidifyRadius >= this.solidifyMaxRadius) {

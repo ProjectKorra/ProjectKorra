@@ -46,15 +46,9 @@ class WorldGuard extends RegionProtectionBase {
             if (bendingflagstate == null && !wg.getPlatform().getRegionContainer().createQuery().testState(location, WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
                 return true;
             }
-            if (bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY)) {
-                return true;
-            }
+            return bendingflagstate != null && bendingflagstate.equals(StateFlag.State.DENY);
         } else {
-            if (!wg.getPlatform().getRegionContainer().createQuery().testState(location, WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD)) {
-                return true;
-            }
+            return !wg.getPlatform().getRegionContainer().createQuery().testState(location, WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD);
         }
-
-        return false;
     }
 }
