@@ -1483,7 +1483,7 @@ public class OfflineBendingPlayer {
                 ? new PlayerChangeSubElementEvent(sender, player, subElement, PlayerChangeSubElementEvent.Result.TEMP_REMOVE)
                 : new PlayerChangeElementEvent(sender, player, element, PlayerChangeElementEvent.Result.TEMP_REMOVE);
         Bukkit.getPluginManager().callEvent((Event) event);
-        if (!event.isCancelled()) {
+        if (event.isCancelled()) {
             return false;
         }
 
