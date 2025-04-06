@@ -142,8 +142,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		for (JavaPlugin plugin : BEND_HOOKS.keySet()) {
 			CanBendHook hook = BEND_HOOKS.get(plugin);
 			try {
-				Optional<Boolean> bool = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
-				if (bool.isPresent()) return bool.get(); //If the hook didn't return
+				Optional<Boolean> result = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
+				if (result.isPresent()) return result.get(); //If the hook didn't return
 			} catch (Exception e) {
 				ProjectKorra.log.severe("An error occurred while running CanBendHook registered by " + plugin.getName() + ".");
 				e.printStackTrace();
@@ -201,8 +201,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		}
 
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-
 		if (element == null || this.player == null) {
 			return false;
 		} else if (!this.player.hasPermission("bending." + element.getName() + ".passive")) {
@@ -211,7 +209,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
-		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (!this.canBendInWorld()) {
 			return false;
 		} else return this.player.getGameMode() != GameMode.SPECTATOR;
 	}
@@ -222,9 +220,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
-		} else if (RegionProtection.isRegionProtected(this.player, this.player.getLocation(), ability)) {
+		} else if (!this.isOnCooldown(ability)) {
 			return false;
-		} else return !this.isOnCooldown(ability);
+		} else return RegionProtection.isRegionProtected(this.player, this.player.getLocation(), ability);
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
@@ -262,8 +260,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		for (JavaPlugin plugin : BIND_HOOKS.keySet()) {
 			CanBindHook hook = BIND_HOOKS.get(plugin);
 			try {
-				Optional<Boolean> bool = hook.canBind(this, ability);
-				if (bool.isPresent()) return bool.get(); //If the hook didn't return
+				Optional<Boolean> result = hook.canBind(this, ability);
+				if (result.isPresent()) return result.get(); //If the hook didn't return
 			} catch (Exception e) {
 				ProjectKorra.log.severe("An error occurred while running CanBindHook registered by " + plugin.getName() + ".");
 				e.printStackTrace();
@@ -274,7 +272,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (!this.player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
-		} else if (!this.hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
+		} else if (!this.hasElement(ability.getElement()) && !(ability instanceof AvatarAbility avatarAbility && !avatarAbility.requireAvatar())) {
 			return false;
 		} else if (ability.getElement() instanceof SubElement subElement) {
             if (subElement instanceof MultiSubElement multiSubElement) {
@@ -455,8 +453,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		}
 
-		if (sub instanceof MultiSubElement) {
-			for (Element parent : ((MultiSubElement) sub).getParentElements()) {
+		if (sub instanceof MultiSubElement multiSubElement) {
+			for (Element parent : multiSubElement.getParentElements()) {
 				if (this.player.hasPermission("bending." + parent.getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) return true;
 			}
 			return false;

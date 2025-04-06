@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -48,7 +49,7 @@ public class Tornado extends AirAbility {
 		this.cooldown = getConfig().getLong("Abilities.Air.Tornado.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.Tornado.Duration");
 		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
-		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) this.range).getLocation();
+		this.origin = player.getTargetBlock(null, (int) this.range).getLocation();
 		this.origin.setY(this.origin.getY() - 1.0 / 10.0 * this.currentHeight);
 		this.maxHeight = getConfig().getDouble("Abilities.Air.Tornado.Height");
 		this.playerPushFactor = getConfig().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
@@ -85,7 +86,7 @@ public class Tornado extends AirAbility {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, this.origin)) {
+		} else if (RegionProtection.isRegionProtected(this, this.origin)) {
 			this.remove();
 			return;
 		} else if (this.duration != 0) {
@@ -105,7 +106,7 @@ public class Tornado extends AirAbility {
 	}
 
 	private void rotateTornado() {
-		this.origin = this.player.getTargetBlock((HashSet<Material>) null, (int) this.range).getLocation();
+		this.origin = this.player.getTargetBlock(null, (int) this.range).getLocation();
 		final double timefactor = this.currentHeight / this.maxHeight;
 		this.currentRadius = timefactor * this.radius;
 
@@ -113,7 +114,7 @@ public class Tornado extends AirAbility {
 			this.origin.setY(this.origin.getY() - 1. / 10. * this.currentHeight);
 
 			for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.origin, this.currentHeight)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				if (RegionProtection.isRegionProtected(this, entity.getLocation())) {
 					continue;
 				}
 				final double y = entity.getLocation().getY();
@@ -193,7 +194,7 @@ public class Tornado extends AirAbility {
 				z = this.origin.getZ() + timefactor * factor * this.currentRadius * Math.sin(angle);
 
 				final Location effect = new Location(this.origin.getWorld(), x, y, z);
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
+				if (!RegionProtection.isRegionProtected(this, effect)) {
 					playAirbendingParticles(effect, this.particleCount);
 					if (this.random.nextInt(20) == 0) {
 						playAirbendingSound(effect);
