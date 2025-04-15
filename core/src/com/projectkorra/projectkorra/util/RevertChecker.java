@@ -36,14 +36,15 @@ public class RevertChecker implements Runnable {
 
 	public static void revertAirBlocks() {
 		for (final int ID : airRevertQueue.keySet()) {
-			PaperLib.getChunkAtAsync(EarthAbility.getTempAirLocations().get(ID).getState().getBlock().getLocation()).thenAccept(result -> EarthAbility.revertAirBlock(ID));
+			PaperLib.getChunkAtAsync(EarthAbility.getTempAirLocations().get(ID).getState().getBlock().getLocation())
+					.thenAccept(result -> EarthAbility.revertAirBlock(ID));
 			RevertChecker.airRevertQueue.remove(ID);
 		}
 	}
 
 	public static void revertEarthBlocks() {
 		for (final Block block : earthRevertQueue.keySet()) {
-			PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result -> EarthAbility.revertBlock(block));
+			PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result -> ThreadUtil.ensureLocation(block.getLocation(), () -> EarthAbility.revertBlock(block)));
 			earthRevertQueue.remove(block);
 		}
 	}

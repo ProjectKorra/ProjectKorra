@@ -3,11 +3,20 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
+import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
+import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.event.WorldTimeEvent;
+import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import com.projectkorra.projectkorra.util.ThreadUtil;
+import com.projectkorra.projectkorra.util.TimeUtil;
+import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -39,6 +48,31 @@ public class BendingManager implements Runnable {
 
 		times.clear();
 
+		TempElementsRunnable tempElementsRunnable = new TempElementsRunnable();
+		if (ProjectKorra.isFolia()) {
+
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new AirbendingManager(ProjectKorra.plugin), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new WaterbendingManager(ProjectKorra.plugin), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new EarthbendingManager(ProjectKorra.plugin), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new FirebendingManager(ProjectKorra.plugin), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new ChiblockingManager(ProjectKorra.plugin), 1, 1);
+
+
+			Bukkit.getAsyncScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> {
+				this.tempBlockRevertTask.run();
+				TempArmor.cleanup();
+				TempFallingBlock.manage();
+				this.handleCooldowns();
+				tempElementsRunnable.run();
+				RevertChecker.revertAirBlocks(); //The revert checker class also needs an instance that is run
+					 							 //every tick, but the class needs rewriting to be Folia safe
+			}, 100, 100, TimeUnit.MILLISECONDS); // Every 2 ticks, approx. Exact tick isn't important
+
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> handleDayNight(), 1, 5); //Every 5 ticks
+		} else {
+			Bukkit.getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, tempElementsRunnable, 1, 2);
+		}
+
 		handleDayNight();
 	}
 
@@ -50,7 +84,7 @@ public class BendingManager implements Runnable {
 		for (Map.Entry<UUID, BendingPlayer> entry : BendingPlayer.getPlayers().entrySet()) {
 			BendingPlayer bPlayer = entry.getValue();
 
-			bPlayer.removeOldCooldowns();
+			ThreadUtil.ensureEntity(bPlayer.getPlayer(), bPlayer::removeOldCooldowns);
 		}
 	}
 
@@ -113,17 +147,17 @@ public class BendingManager implements Runnable {
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
 
-		CoreAbility.progressAll();
-		TempPotionEffect.progressAll();
-		this.handleDayNight();
-		RevertChecker.revertAirBlocks();
-		HorizontalVelocityTracker.updateAll();
-		this.handleCooldowns();
-		TempArmor.cleanup();
+		CoreAbility.progressAll(); //Player threads. DONE.
+		TempPotionEffect.progressAll(); //Player threads. DONE.
+		this.handleDayNight(); //Global region
+		RevertChecker.revertAirBlocks(); //Complicated, needs rewriting
+		HorizontalVelocityTracker.updateAll(); //Player threads. DONE
+		this.handleCooldowns(); //Async thread
+		TempArmor.cleanup(); //Async thread
 
-		TempFallingBlock.manage();
+		TempFallingBlock.manage(); //Async.
 
-		tempBlockRevertTask.run();
+		tempBlockRevertTask.run(); //Async thread
 	}
 
 	public static String getSunriseMessage() {
@@ -156,7 +190,8 @@ public class BendingManager implements Runnable {
 
 				if (System.currentTimeMillis() > pair.getRight()) { //Check if the top temp element has expired
 					BendingPlayer.TEMP_ELEMENTS.poll(); //And if it has, remove from the queue, and recalculate temp elements for that player
-					BendingPlayer.getBendingPlayer(pair.getLeft()).recalculateTempElements(false);
+					BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(pair.getLeft());
+					ThreadUtil.ensureEntity(bPlayer.getPlayer(), () -> bPlayer.recalculateTempElements(false));
 				} else {
 					break; //Break the loop if the top element hasn't expired, as all elements below it won't have either
 				}

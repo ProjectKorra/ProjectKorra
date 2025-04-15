@@ -28,7 +28,6 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Snowable;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -177,13 +176,15 @@ public class TempBlock {
 	 */
 	public static void removeAll() {
 		for (final Block block : new HashSet<>(instances_.keySet())) {
-			revertBlock(block, Material.AIR);
+			ThreadUtil.ensureLocation(block.getLocation(), () -> revertBlock(block, Material.AIR));
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
-			tempblock.state.update(true, applyPhysics(tempblock.state.getType()));
-			if (tempblock.revertTask != null) {
-				tempblock.revertTask.run();
-			}
+			ThreadUtil.ensureLocation(tempblock.getLocation(), () -> {
+				tempblock.state.update(true, applyPhysics(tempblock.state.getType()));
+				if (tempblock.revertTask != null) {
+					tempblock.revertTask.run();
+				}
+			});
 		}
 		REVERT_QUEUE.clear();
 	}
@@ -515,7 +516,7 @@ public class TempBlock {
 					REVERT_QUEUE.poll();
 					if (!tempBlock.reverted) {
 						remove(tempBlock);
-						tempBlock.trueRevertBlock(false); //It's already been removed from the poll(), so don't try remove it again
+						ThreadUtil.ensureLocation(tempBlock.getLocation(), () -> tempBlock.trueRevertBlock(false)); //It's already been removed from the poll(), so don't try remove it again
 					}
 				} else {
 					break;

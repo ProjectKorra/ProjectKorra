@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -89,6 +90,8 @@ public class FireDamageTimer {
 	}
 
 	public static void handleFlames() {
+		if (ProjectKorra.isFolia()) return; //TODO REWRITE THIS CLASS TO BE INSTANCE BASED
+
 		for (final Entity entity : INSTANCES.keySet()) {
 			if (entity.getFireTicks() <= 0) {
 				INSTANCES.remove(entity);

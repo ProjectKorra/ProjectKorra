@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import com.djrapitops.plan.extension.ExtensionService;
 import com.projectkorra.projectkorra.hooks.PlanExtension;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
@@ -41,7 +40,9 @@ public class ProjectKorra extends JavaPlugin {
 	public static Logger log;
 	public static CollisionManager collisionManager;
 	public static CollisionInitializer collisionInitializer;
-	public static long time_step = 1;
+	@Deprecated
+	public static long time_step = 50;
+	private static boolean folia;
 	public Updater updater;
 	BukkitTask revertChecker;
 	private static PlaceholderAPIHook papiHook;
@@ -51,6 +52,10 @@ public class ProjectKorra extends JavaPlugin {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
 
+		try {
+			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+			folia = true;
+		} catch (ClassNotFoundException ignored) {}
 
 		new ConfigManager();
 		new GeneralMethods(this);
@@ -78,14 +83,19 @@ public class ProjectKorra extends JavaPlugin {
 		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 
 		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new BendingManager.TempElementsRunnable(), 20, 20);
-		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+		BendingManager bendingManager = new BendingManager();
+		if (!isFolia()) {
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, bendingManager, 0, 1);
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
+
+			this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+
+		}
+
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
@@ -128,7 +138,7 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		this.revertChecker.cancel();
+		if (this.revertChecker != null) this.revertChecker.cancel();
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {
@@ -178,5 +188,12 @@ public class ProjectKorra extends JavaPlugin {
 
 	public static boolean isDatabaseCooldownsEnabled() {
 		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
+	}
+
+	/**
+	 * @return True if the server is running Folia
+	 */
+	public static boolean isFolia() {
+		return folia;
 	}
 }

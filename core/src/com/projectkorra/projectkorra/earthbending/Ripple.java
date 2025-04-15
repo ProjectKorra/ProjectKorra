@@ -302,6 +302,7 @@ public class Ripple extends EarthAbility {
 		return false;
 	}
 
+	@Deprecated
 	public static void progressAllCleanup() {
 		BLOCKS.clear();
 	}

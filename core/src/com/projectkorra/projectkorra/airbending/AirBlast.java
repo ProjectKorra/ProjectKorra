@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,7 +23,6 @@ import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -187,7 +187,7 @@ public class AirBlast extends AirAbility {
 
 	public static void progressOrigins() {
 		for (final Player player : ORIGINS.keySet()) {
-			playOriginEffect(player);
+			ThreadUtil.ensureLocation(player.getLocation(), () -> playOriginEffect(player));
 		}
 	}
 
@@ -444,17 +444,12 @@ public class AirBlast extends AirAbility {
 					testblock.setBlockData(button);
 					this.affectedLevers.add(testblock);
 
-					new BukkitRunnable() {
-
-						@Override
-						public void run() {
-							button.setPowered(false);
-							testblock.setBlockData(button);
-							AirBlast.this.affectedLevers.remove(testblock);
-							testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
-						}
-
-					}.runTaskLater(ProjectKorra.plugin, 15);
+					ThreadUtil.ensureLocationDelay(testblock.getLocation(), () -> {
+						button.setPowered(false);
+						testblock.setBlockData(button);
+						AirBlast.this.affectedLevers.remove(testblock);
+						testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
+					}, 15);
 				}
 
 				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);

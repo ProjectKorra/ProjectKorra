@@ -24,6 +24,8 @@ import java.util.jar.JarFile;
 import com.projectkorra.projectkorra.attribute.*;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.AbilityRecalculateAttributeEvent;
+import com.projectkorra.projectkorra.util.ThreadUtil;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.permissions.Permission;
 
 import org.apache.commons.lang3.Validate;
@@ -97,6 +99,8 @@ public abstract class CoreAbility implements Ability {
 	private int id;
 	private long startTime;
 	private long startTick;
+	private long currentTickFolia;
+	private Object foliaTask;
 	@Deprecated
 	private boolean attributesModified;
 	private boolean recalculatingAttributes;
@@ -196,6 +200,16 @@ public abstract class CoreAbility implements Ability {
 		INSTANCES_BY_PLAYER.get(clazz).get(uuid).put(this.id, this);
 		INSTANCES_BY_CLASS.get(clazz).add(this);
 		INSTANCES.add(this);
+
+		if (ProjectKorra.isFolia()) {
+			//In Folia, we don't call CoreAbility#progressAll(), so instead we make a repeating task
+			//that runs every tick and calls progressSelf()
+
+			this.foliaTask = Bukkit.getRegionScheduler().runAtFixedRate(ProjectKorra.plugin, player.getLocation(), (task) -> {
+				this.currentTickFolia++;
+				this.progressSelf();
+			}, 1L, 1L);
+		}
 	}
 
 	/**
@@ -242,6 +256,10 @@ public abstract class CoreAbility implements Ability {
 
 
 		INSTANCES.remove(this);
+
+		if (ProjectKorra.isFolia()) {
+			((ScheduledTask) this.foliaTask).cancel(); //Cancel the task if it exists
+		}
 	}
 
 	/**
@@ -251,53 +269,50 @@ public abstract class CoreAbility implements Ability {
 	public static void progressAll() {
 		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (final CoreAbility abil : setAbils) {
-				if (abil instanceof PassiveAbility) {
-					if (!((PassiveAbility) abil).isProgressable()) {
-						continue;
-					}
-
-					if (!abil.getPlayer().isOnline()) { // This has to be before isDead as isDead.
-						abil.remove(); // will return true if they are offline.
-						continue;
-					} else if (abil.getPlayer().isDead()) {
-						continue;
-					}
-				} else if (abil.getPlayer().isDead()) {
-					abil.remove();
-					continue;
-				} else if (!abil.getPlayer().isOnline()) {
-					abil.remove();
-					continue;
-				}
-
-				try {
-					/*if (!abil.attributesModified) {
-						abil.modifyAttributes();
-						abil.attributesModified = true;
-					}*/
-
-					//try (MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
-						abil.progress();
-					//}
-
-					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
-				} catch (final Exception e) {
-					e.printStackTrace();
-					Bukkit.getLogger().severe(abil.toString());
-					try {
-						abil.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + abil.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
-					} catch (final Exception me) {
-						Bukkit.getLogger().severe("unable to notify ability user of error");
-					}
-					try {
-						abil.remove();
-					} catch (final Exception re) {
-						Bukkit.getLogger().severe("unable to fully remove ability of above error");
-					}
-				}
+				abil.progressSelf();
 			}
 		}
 		currentTick++;
+	}
+
+	private void progressSelf() {
+		if (this instanceof PassiveAbility) {
+			if (!((PassiveAbility) this).isProgressable()) {
+				return;
+			}
+
+			if (!this.getPlayer().isOnline()) { // This has to be before isDead as isDead
+				this.remove(); 					// will return true if they are offline.
+				return;
+			} else if (this.getPlayer().isDead()) {
+				return;
+			}
+		} else if (this.getPlayer().isDead()) {
+			this.remove();
+			return;
+		} else if (!this.getPlayer().isOnline()) {
+			this.remove();
+			return;
+		}
+
+		try {
+			this.progress();
+
+			Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(this));
+		} catch (final Exception e) {
+			e.printStackTrace();
+			Bukkit.getLogger().severe(this.toString());
+			try {
+				this.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + this.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
+			} catch (final Exception me) {
+				Bukkit.getLogger().severe("unable to notify ability user of error");
+			}
+			try {
+				this.remove();
+			} catch (final Exception re) {
+				Bukkit.getLogger().severe("unable to fully remove ability of above error");
+			}
+		}
 	}
 
 	/**
@@ -308,7 +323,12 @@ public abstract class CoreAbility implements Ability {
 		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (final CoreAbility abil : setAbils) {
 				try {
-					abil.remove();
+					Location location = abil.getPlayer().getLocation();
+
+					if (abil.getLocation() != null) {
+						location = abil.getLocation();
+					}
+					ThreadUtil.ensureLocation(location, abil::remove);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -707,11 +727,11 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public static long getCurrentTick() {
-		return currentTick;
+		return ProjectKorra.isFolia() ? Bukkit.getCurrentTick() : currentTick;
 	}
 
 	public long getRunningTicks() {
-		return currentTick - this.startTick;
+		return ProjectKorra.isFolia() ? (this.currentTickFolia - this.startTick) : currentTick - this.startTick;
 	}
 
 	public boolean isStarted() {

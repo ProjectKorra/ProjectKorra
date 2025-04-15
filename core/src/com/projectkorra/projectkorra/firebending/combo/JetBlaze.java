@@ -30,7 +30,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 	@Attribute(Attribute.FIRE_TICK)
 	private double fireTicks;
 	private ArrayList<LivingEntity> affectedEntities;
-	private ArrayList<FireComboStream> tasks;
+	private ArrayList<ComboStream> tasks;
 	@Attribute(Attribute.DURATION)
 	private long duration;
 
@@ -77,7 +77,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		}
 
 		Vector streamDir = this.player.getVelocity().multiply(-1);
-		final FireComboStream fs = new FireComboStream(this.player, this, streamDir, this.player.getLocation(), 5, 1);
+		final ComboStream fs = new ComboStream(this.player, this, streamDir, this.player.getLocation(), 5, 1);
 		fs.setDensity(8);
 		fs.setSpread(1.0F);
 		fs.setUseNewParticles(true);
@@ -85,7 +85,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		fs.setParticleEffect(ParticleEffect.SMOKE_LARGE);
 		fs.setDamage(this.damage);
 		fs.setFireTicks(this.fireTicks);
-		fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
+		fs.start();
 		this.tasks.add(fs);
 		this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
 	}
@@ -96,7 +96,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 			this.fireJet.remove();
 		}
 
-		for (final FireComboStream task : this.tasks) {
+		for (final ComboStream task : this.tasks) {
 			task.remove();
 		}
 		super.remove();

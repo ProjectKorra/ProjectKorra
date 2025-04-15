@@ -170,7 +170,7 @@ public class LightManager {
         while ((blockChange = blockChangeQueue.poll()) != null) {
             Player player = blockChange.getPlayer();
             BlockChange finalBlockChange = blockChange;
-            Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+            ThreadUtil.runAsync(() -> {
                 player.sendBlockChange(finalBlockChange.getLocation(), finalBlockChange.getBlockData());
             });
         }
