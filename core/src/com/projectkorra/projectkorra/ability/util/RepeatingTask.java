@@ -20,7 +20,7 @@ public abstract class RepeatingTask extends ElementalAbility {
 
     @Override
     public Element getElement() {
-        return parentAbility.getElement();
+        return parentAbility == null ? Element.AVATAR : parentAbility.getElement();
     }
 
     @Override
@@ -35,32 +35,32 @@ public abstract class RepeatingTask extends ElementalAbility {
 
     @Override
     public boolean isIgniteAbility() {
-        return parentAbility.isIgniteAbility();
+        return false;
     }
 
     @Override
     public boolean isHarmlessAbility() {
-        return parentAbility.isHarmlessAbility();
+        return false;
     }
 
     @Override
     public boolean isExplosiveAbility() {
-        return parentAbility.isExplosiveAbility();
+        return false;
     }
 
     @Override
     public String getName() {
-        return parentAbility.getName() + "Task";
+        return parentAbility == null ? "RepeatingTask" : parentAbility.getName() + "Task";
     }
 
     @Override
     public Location getLocation() {
-        return parentAbility.getLocation();
+        return parentAbility == null ? null : parentAbility.getLocation();
     }
 
     @Override
     public boolean isSneakAbility() {
-        return parentAbility.isSneakAbility();
+        return false;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class ComboManager {
 			COMBO_ABILITIES.put("EarthDomeOthers", new ComboAbilityInfo("EarthDomeOthers", earthDomeOthers, EarthDomeOthers.class));
 		}*/
 
-		ThreadUtil.runAsyncLater(ComboManager::registerCombos, 1L);
+		ThreadUtil.runSyncLater(ComboManager::registerCombos, 1L);
 		startCleanupTask();
 	}
 
@@ -66,7 +66,7 @@ public class ComboManager {
 			return;
 		}
 
-		ThreadUtil.runSyncLater(() -> {
+		ThreadUtil.ensureLocation(player.getLocation(), () -> {
 			if (comboAbil.getComboType() instanceof Class) {
 				final Class<?> clazz = (Class<?>) comboAbil.getComboType();
 				try {
@@ -80,7 +80,7 @@ public class ComboManager {
 					return;
 				}
 			}
-		}, 1L);
+		});
 	}
 
 	/**

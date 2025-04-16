@@ -1374,10 +1374,14 @@ public class GeneralMethods {
 		// WaterAbility.setupWaterTransformableBlocks();
 		EarthTunnel.clearBendableMaterials();
 
-		Bukkit.getScheduler().cancelTasks(ProjectKorra.plugin);
+
 		if (ProjectKorra.isFolia()) {
 			Bukkit.getGlobalRegionScheduler().cancelTasks(ProjectKorra.plugin);
 			Bukkit.getAsyncScheduler().cancelTasks(ProjectKorra.plugin);
+		} else {
+			Bukkit.getScheduler().cancelTasks(ProjectKorra.plugin);
+
+			ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
 		}
 
 		new BendingManager();
@@ -1389,7 +1393,6 @@ public class GeneralMethods {
 		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new EarthbendingManager(ProjectKorra.plugin), 0, 1);
 		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
 		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
 
 		EarthTunnel.setupBendableMaterials();
 		Bloodbending.loadBloodlessFromConfig();

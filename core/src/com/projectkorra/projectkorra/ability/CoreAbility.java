@@ -223,7 +223,7 @@ public abstract class CoreAbility implements Ability {
 	 */
 	@Override
 	public void remove() {
-		if (this.player == null) {
+		if (this.player == null || !this.isStarted()) {
 			return;
 		}
 

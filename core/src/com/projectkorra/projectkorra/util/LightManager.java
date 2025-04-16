@@ -136,9 +136,10 @@ public class LightManager {
             public void run() {
                 currentBrightness--;
                 if (currentBrightness > 0) {
-                    sendLightChange(lightData.location, currentBrightness, lightData.observers);
+                    ThreadUtil.ensureLocation(lightData.location,
+                            () -> sendLightChange(lightData.location, currentBrightness, lightData.observers));
                 } else {
-                    revertLight(lightData);
+                    ThreadUtil.ensureLocation(lightData.location, () -> revertLight(lightData));
                     taskHolder.future.cancel(false);
                 }
             }
@@ -170,7 +171,7 @@ public class LightManager {
         while ((blockChange = blockChangeQueue.poll()) != null) {
             Player player = blockChange.getPlayer();
             BlockChange finalBlockChange = blockChange;
-            ThreadUtil.runAsync(() -> {
+            ThreadUtil.ensureLocation(finalBlockChange.location, () -> {
                 player.sendBlockChange(finalBlockChange.getLocation(), finalBlockChange.getBlockData());
             });
         }

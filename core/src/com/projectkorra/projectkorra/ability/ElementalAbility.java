@@ -113,37 +113,37 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isDay(final World world) {
-		final long time = world.getTime();
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
 			return true;
 		}
+		final long time = world.getTime();
 
 		return time >= 23750 || time <= 12250;
 	}
 
 	public static boolean isDawn(final World world) {
-		final long time = world.getTime();
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
 			return false;
 		}
+		final long time = world.getTime();
 
 		return time > 23250 && time < 23750;
 	}
 
 	public static boolean isDusk(final World world) {
-		final long time = world.getTime();
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
 			return false;
 		}
+		final long time = world.getTime();
 
 		return time > 12250 && time < 12750;
 	}
 
 	public static boolean isNight(final World world) {
-		final long time = world.getTime();
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
 			return false;
 		}
+		final long time = world.getTime();
 
 		return time >= 12750 && time <= 23250;
 	}
