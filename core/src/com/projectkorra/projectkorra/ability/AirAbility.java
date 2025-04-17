@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -55,14 +54,8 @@ public abstract class AirAbility extends ElementalAbility {
 	public static void breakBreathbendingHold(final Entity entity) {
 		if (Suffocate.isBreathbent(entity)) {
 			Suffocate.breakSuffocate(entity);
-			return;
-		}
-
-		if (entity instanceof Player) {
-			final Player player = (Player) entity;
-			if (Suffocate.isChannelingSphere(player)) {
-				Suffocate.remove(player);
-			}
+		} else if (entity instanceof Player player && Suffocate.isChannelingSphere(player)) {
+			Suffocate.remove(player);
 		}
 	}
 
@@ -99,9 +92,7 @@ public abstract class AirAbility extends ElementalAbility {
 	 */
 	@Deprecated
 	public static boolean isWithinAirShield(final Location loc) {
-		final List<String> list = new ArrayList<String>();
-		list.add("AirShield");
-		return GeneralMethods.blockAbilities(null, list, loc, 0);
+		return GeneralMethods.blockAbilities(null, List.of("AirShield"), loc, 0);
 	}
 
 	/**
@@ -134,21 +125,23 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param loc The location to play the sound at
 	 */
 	public static void playAirbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Air.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
+        if (!getConfig().getBoolean("Properties.Air.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.ENTITY_CREEPER_HURT;
+        final float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
 
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Air.Sound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        Sound sound = Sound.ENTITY_CREEPER_HURT;
+
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Air.Sound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	/**
 	 * This method was used for the old collision detection system. Please see

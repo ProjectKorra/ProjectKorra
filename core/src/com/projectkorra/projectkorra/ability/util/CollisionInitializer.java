@@ -192,6 +192,7 @@ public class CollisionInitializer {
 		if (smallAbility == null) {
 			return;
 		}
+
 		this.smallAbilities.add(smallAbility);
 		for (final CoreAbility otherSmallAbility : this.smallAbilities) {
 			this.collisionManager.addCollision(new Collision(smallAbility, otherSmallAbility, true, true));
@@ -200,7 +201,6 @@ public class CollisionInitializer {
 		for (final CoreAbility largeAbility : this.largeAbilities) {
 			this.collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
 		}
-
 	}
 
 	/**
@@ -214,6 +214,7 @@ public class CollisionInitializer {
 		if (largeAbility == null) {
 			return;
 		}
+
 		this.largeAbilities.add(largeAbility);
 		for (final CoreAbility otherLargeAbility : this.largeAbilities) {
 			this.collisionManager.addCollision(new Collision(largeAbility, otherLargeAbility, true, true));
@@ -222,7 +223,6 @@ public class CollisionInitializer {
 		for (final CoreAbility smallAbility : this.smallAbilities) {
 			this.collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
 		}
-
 	}
 
 	/**
