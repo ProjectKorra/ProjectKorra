@@ -13,18 +13,17 @@ import com.projectkorra.projectkorra.ProjectKorra;
  * Object to represent an ArmorStand that is not used for normal functionality
  *
  * @author Simplicitee
- *
  */
 public class TempArmorStand {
 
-	private static Set<TempArmorStand> tempStands = new HashSet<>();
+	private static final Set<TempArmorStand> TEMP_STANDS = new HashSet<>();
 
-	private ArmorStand stand;
+	private final ArmorStand stand;
 
-	public TempArmorStand(final Location loc) {
-		this.stand = loc.getWorld().spawn(loc, ArmorStand.class);
+	public TempArmorStand(final Location location) {
+		this.stand = location.getWorld().spawn(location, ArmorStand.class);
 		this.stand.setMetadata("temparmorstand", new FixedMetadataValue(ProjectKorra.plugin, 0));
-		tempStands.add(this);
+		TEMP_STANDS.add(this);
 	}
 
 	public ArmorStand getArmorStand() {
@@ -35,13 +34,13 @@ public class TempArmorStand {
 	 * Removes all instances of TempArmorStands and the associated ArmorStands
 	 */
 	public static void removeAll() {
-		for (final TempArmorStand temp : tempStands) {
-			temp.getArmorStand().remove();
+		for (final TempArmorStand temp : TEMP_STANDS) {
+			temp.stand.remove();
 		}
-		tempStands.clear();
+		TEMP_STANDS.clear();
 	}
 	
 	public static Set<TempArmorStand> getTempStands() {
-		return tempStands;
+		return TEMP_STANDS;
 	}
 }

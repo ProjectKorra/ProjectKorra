@@ -1,10 +1,8 @@
 package com.projectkorra.projectkorra.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +11,6 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -28,28 +25,25 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Snowable;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 
 import io.papermc.lib.PaperLib;
 
 public class TempBlock {
 
-	private static final Map<Block, LinkedList<TempBlock>> instances_ = new HashMap<>();
+	private static final Map<Block, LinkedList<TempBlock>> INSTANCES = new HashMap<>();
 	/**
-	 * Marked for removal. Doesn't do anything right now
+	 * Doesn't do anything right now
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<>();
 	private static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<>(128, (t1, t2) -> (int) (t1.revertTime - t2.revertTime));
-	private static boolean REVERT_TASK_RUNNING;
 
+	private final Set<TempBlock> attachedTempBlocks; //Temp Block states that should be reverted as well when the temp block expires (e.g. double blocks)
 	private final Block block;
 	private BlockData newData;
 	private BlockState state;
-	private Set<TempBlock> attachedTempBlocks; //Temp Block states that should be reverted as well when the temp block expires (e.g. double blocks)
 	private long revertTime;
 	private boolean inRevertQueue;
 	private boolean reverted;
@@ -62,10 +56,10 @@ public class TempBlock {
 		this(block, newtype.createBlockData(), 0);
 	}
 
-	@Deprecated
 	/**
-	 * Deprecated. Using the newType here is pointless.
+	 * @deprecated Using the newType here is pointless.
 	 */
+	@Deprecated
 	public TempBlock(final Block block, final Material newtype, final BlockData newData) {
 		this(block, newData, 0);
 	}
@@ -87,6 +81,7 @@ public class TempBlock {
 		this.block = block;
 		this.newData = newData;
 		this.attachedTempBlocks = new HashSet<>(0);
+		// TODO: address this because suffocate will ALWAYS be false in this case, not sure how to tweak it
 		this.suffocate = ability.isPresent() ? !(ability.get() instanceof WaterAbility) : false;
 
 		//Fire griefing will make the state update on its own, so we don't need to update it ourselves
@@ -99,24 +94,19 @@ public class TempBlock {
 			}
 		}
 
-		if (instances_.containsKey(block)) {
-			final TempBlock temp = instances_.get(block).getFirst();
-			this.state = temp.state; //Set the original blockstate of the tempblock
-			put(block, this);
-			block.setBlockData(newData, applyPhysics(newData.getMaterial()));
-		} else {
+		List<TempBlock> original = getAll(block);
+		if (original != null && !original.isEmpty()) {
+			this.state = original.getFirst().getState();
+        } else {
 			this.state = block.getState();
-
 			if (this.state instanceof Container || this.state.getType() == Material.JUKEBOX) {
 				return;
 			}
+        }
+        put(block, this);
+        block.setBlockData(newData, applyPhysics(newData.getMaterial()));
 
-			put(block, this);
-
-			block.setBlockData(newData, applyPhysics(newData.getMaterial()));
-		}
-		
-		this.setRevertTime(revertTime);
+        this.setRevertTime(revertTime);
 	}
 
 	/**
@@ -125,8 +115,9 @@ public class TempBlock {
 	 * @return The topmost TempBlock
 	 */
 	public static TempBlock get(final Block block) {
-		if (isTempBlock(block)) {
-			return instances_.get(block).getLast();
+		if (block != null) {
+			LinkedList<TempBlock> tempBlocks = INSTANCES.get(block);
+			return tempBlocks != null ? tempBlocks.getLast() : null;
 		}
 		return null;
 	}
@@ -137,7 +128,7 @@ public class TempBlock {
 	 * @return The list of TempBlocks
 	 */
 	public static LinkedList<TempBlock> getAll(Block block) {
-		return instances_.get(block);
+		return block == null ? null : INSTANCES.get(block);
 	}
 
 	/**
@@ -146,14 +137,14 @@ public class TempBlock {
 	 * @param tempBlock The TempBlock
 	 */
 	private static void put(Block block, TempBlock tempBlock) {
-		if (!instances_.containsKey(block)) {
-			instances_.put(block, new LinkedList<>());
+		if (!INSTANCES.containsKey(block)) {
+			INSTANCES.put(block, new LinkedList<>());
 		}
-		instances_.get(block).add(tempBlock);
+		INSTANCES.get(block).add(tempBlock);
 	}
 
 	public static boolean isTempBlock(final Block block) {
-		return block != null && instances_.containsKey(block);
+		return block != null && INSTANCES.get(block) != null;
 	}
 
 	/**
@@ -165,7 +156,7 @@ public class TempBlock {
 	public static boolean isTouchingTempBlock(final Block block) {
 		final BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
 		for (final BlockFace face : faces) {
-			if (instances_.containsKey(block.getRelative(face))) {
+			if (INSTANCES.containsKey(block.getRelative(face))) {
 				return true;
 			}
 		}
@@ -176,7 +167,7 @@ public class TempBlock {
 	 * Remove and revert all TempBlocks on the server. Done at server shutdown or PK reload.
 	 */
 	public static void removeAll() {
-		for (final Block block : new HashSet<>(instances_.keySet())) {
+		for (final Block block : new HashSet<>(INSTANCES.keySet())) {
 			revertBlock(block, Material.AIR);
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
@@ -189,7 +180,7 @@ public class TempBlock {
 	}
 
 	public static void removeAllInWorld(World world) {
-		for (final Block block : new HashSet<>(instances_.keySet())) {
+		for (final Block block : new HashSet<>(INSTANCES.keySet())) {
 			if (block.getWorld() == world) {
 				revertBlock(block, Material.AIR);
 			}
@@ -199,12 +190,17 @@ public class TempBlock {
 	/**
 	 * Remove all TempBlocks at this location. Used for when a player places a block inside a TempBlock
 	 * @param block The block location
+	 * @return If any TempBlocks were removed
 	 */
-	public static void removeBlock(final Block block) {
-		instances_.get(block).forEach(t -> {
-			REVERT_QUEUE.remove(t);
-			remove(t);
-		});
+	public static boolean removeBlock(final Block block) {
+		LinkedList<TempBlock> blocks = INSTANCES.remove(block);
+		if (blocks != null) {
+			for (TempBlock tempBlock : blocks) {
+				REVERT_QUEUE.remove(tempBlock);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -212,10 +208,11 @@ public class TempBlock {
 	 * @param tempBlock The TempBlock to remove
 	 */
 	private static void remove(TempBlock tempBlock) {
-		if (instances_.containsKey(tempBlock.block)) {
-			instances_.get(tempBlock.block).remove(tempBlock);
-			if (instances_.get(tempBlock.block).size() == 0) {
-				instances_.remove(tempBlock.block);
+		LinkedList<TempBlock> blocks = INSTANCES.get(tempBlock.block);
+		if (blocks != null) {
+			blocks.remove(tempBlock);
+			if (blocks.isEmpty()) {
+				INSTANCES.remove(tempBlock.block);
 			}
 		}
 	}
@@ -223,35 +220,35 @@ public class TempBlock {
 	/**
 	 * Revert all TempBlocks at this location
 	 * @param block The block location
-	 * @param defaulttype The default material to revert to if it can't
+	 * @param defaultType The default material to revert to if it can't
 	 */
-	public static void revertBlock(final Block block, final Material defaulttype) {
-		if (instances_.containsKey(block)) {
+	public static void revertBlock(final Block block, final Material defaultType) {
+		if (INSTANCES.containsKey(block)) {
 			//We clone the list first, then remove before reverting. The tempblock list is cloned so we get no concurrent modification exceptions
-			List<TempBlock> tempBlocks = new ArrayList<>(instances_.get(block));
+			List<TempBlock> tempBlocks = new ArrayList<>(INSTANCES.get(block));
 			tempBlocks.forEach((b) -> {
 				TempBlock.remove(b);
 				b.trueRevertBlock();
 			});
 		} else {
-			if ((defaulttype == Material.LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block, true)) {
+			if ((defaultType == Material.LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block, true)) {
 				final BlockData data = Material.LAVA.createBlockData();
 
-				if (data instanceof Levelled) {
-					((Levelled) data).setLevel(0);
+				if (data instanceof Levelled levelled) {
+					levelled.setLevel(0);
 				}
 
 				block.setBlockData(data, applyPhysics(data.getMaterial()));
-			} else if ((defaulttype == Material.WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			} else if ((defaultType == Material.WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				final BlockData data = Material.WATER.createBlockData();
 
-				if (data instanceof Levelled) {
-					((Levelled) data).setLevel(0);
+				if (data instanceof Levelled levelled) {
+					levelled.setLevel(0);
 				}
 
 				block.setBlockData(data, applyPhysics(data.getMaterial()));
 			} else {
-				block.setType(defaulttype, applyPhysics(defaulttype));
+				block.setType(defaultType, applyPhysics(defaultType));
 			}
 		}
 	}
@@ -335,9 +332,9 @@ public class TempBlock {
 	 */
 	private void trueRevertBlock(boolean removeFromQueue) {
 		this.reverted = true;
-		if (instances_.containsKey(this.block)) {
+		if (INSTANCES.containsKey(this.block)) {
 			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> {
-				TempBlock last = instances_.get(this.block).getLast();
+				TempBlock last = INSTANCES.get(this.block).getLast();
 				this.block.setBlockData(last.newData); //Set the block to the next in line TempBlock
 			});
 		} else { //Set to the original blockstate
