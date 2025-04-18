@@ -172,6 +172,17 @@ public abstract class CoreAbility implements Ability {
 		if (this.player == null || !this.isEnabled()) {
 			return;
 		}
+
+		if (ProjectKorra.isFolia() && !Bukkit.isOwnedByCurrentRegion(this.player)) {
+			ProjectKorra.log.warning("Tried to start ability " + this.getName() + " (" + this.getClass().getSimpleName() +
+					".class) on a player that is not owned by the current region. This is not allowed in Folia. Please report " +
+					"this to the ProjectKorra team.");
+			for (int i = 0; i < 6 && i < Thread.currentThread().getStackTrace().length; i++) {
+				ProjectKorra.log.warning(Thread.currentThread().getStackTrace()[i].toString());
+			}
+			return;
+		}
+
 		final AbilityStartEvent event = new AbilityStartEvent(this);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
@@ -204,6 +215,8 @@ public abstract class CoreAbility implements Ability {
 		if (ProjectKorra.isFolia()) {
 			//In Folia, we don't call CoreAbility#progressAll(), so instead we make a repeating task
 			//that runs every tick and calls progressSelf()
+
+			//ProjectKorra.log.info("[Debug] " + this.getName() + " was started on Thread " + Thread.currentThread().getName() + " (#" + Thread.currentThread().getId() + ")");
 
 			this.foliaTask = Bukkit.getRegionScheduler().runAtFixedRate(ProjectKorra.plugin, player.getLocation(), (task) -> {
 				this.currentTickFolia++;
@@ -281,8 +294,12 @@ public abstract class CoreAbility implements Ability {
 				return;
 			}
 
-			if (!this.getPlayer().isOnline()) { // This has to be before isDead as isDead
-				this.remove(); 					// will return true if they are offline.
+			if (ProjectKorra.isFolia() && !Bukkit.isOwnedByCurrentRegion(this.player)) {
+				//player.sendMessage(ChatColor.RED +"[Debug] " + this.getName() + " was killed because you changed regions");
+				this.remove();
+				return;
+			} else if (!this.getPlayer().isOnline()) { 	// This has to be before isDead as isDead
+				this.remove(); 							// will return true if they are offline.
 				return;
 			} else if (this.getPlayer().isDead()) {
 				return;

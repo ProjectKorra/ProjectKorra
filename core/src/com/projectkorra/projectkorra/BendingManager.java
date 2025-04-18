@@ -51,11 +51,17 @@ public class BendingManager implements Runnable {
 		TempElementsRunnable tempElementsRunnable = new TempElementsRunnable();
 		if (ProjectKorra.isFolia()) {
 
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new AirbendingManager(ProjectKorra.plugin), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new WaterbendingManager(ProjectKorra.plugin), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new EarthbendingManager(ProjectKorra.plugin), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new FirebendingManager(ProjectKorra.plugin), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> new ChiblockingManager(ProjectKorra.plugin), 1, 1);
+			AirbendingManager air = new AirbendingManager(ProjectKorra.plugin);
+			ChiblockingManager chiblocking = new ChiblockingManager(ProjectKorra.plugin);
+			EarthbendingManager earth = new EarthbendingManager(ProjectKorra.plugin);
+			FirebendingManager fire = new FirebendingManager(ProjectKorra.plugin);
+			WaterbendingManager water = new WaterbendingManager(ProjectKorra.plugin);
+
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> air.run(), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> water.run(), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> earth.run(), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> fire.run(), 1, 1);
+			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> chiblocking.run(), 1, 1);
 
 
 			Bukkit.getAsyncScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> {

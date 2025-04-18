@@ -5,6 +5,7 @@ import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +27,10 @@ public class ThreadUtil {
      */
     public static void ensureEntity(Entity entity, Runnable runnable) {
         if (ProjectKorra.isFolia()) {
+            if (Bukkit.isOwnedByCurrentRegion(entity)) {
+                runnable.run();
+                return;
+            }
             entity.getScheduler().execute(ProjectKorra.plugin, runnable, null, 1L);
         } else {
             if (Bukkit.isPrimaryThread()) {
@@ -77,6 +82,10 @@ public class ThreadUtil {
      */
     public static void ensureLocation(Location location, Runnable runnable) {
         if (ProjectKorra.isFolia()) {
+            if (Bukkit.isOwnedByCurrentRegion(location)) {
+                runnable.run();
+                return;
+            }
             RegionScheduler scheduler = Bukkit.getRegionScheduler();
             scheduler.execute(ProjectKorra.plugin, location, runnable);
         } else {
@@ -95,7 +104,7 @@ public class ThreadUtil {
      * @param runnable The task to run.
      * @param delay The delay in ticks before running the task.
      */
-    public static void ensureLocationDelay(Location location, Runnable runnable, long delay) {
+    public static void ensureLocationDelay(@NotNull Location location, Runnable runnable, long delay) {
         delay = Math.max(1, delay);
         if (ProjectKorra.isFolia()) {
             RegionScheduler scheduler = Bukkit.getRegionScheduler();
