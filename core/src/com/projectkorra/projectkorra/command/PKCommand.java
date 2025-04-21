@@ -265,7 +265,7 @@ public abstract class PKCommand implements SubCommand {
 	 * @param sender The sender of the command
 	 * */
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
-		return new ArrayList<String>();
+		return List.of();
 	}
 
 	/**
