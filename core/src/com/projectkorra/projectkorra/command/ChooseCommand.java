@@ -99,6 +99,7 @@ public class ChooseCommand extends PKCommand {
 				}
 
 				final Element element = Element.fromString(args.get(0));
+				// TODO: Remove element == Element.AVATAR maybe? Is it intentional that a player with permission can choose avatar for themselves but an admin cannot choose Avatar for someone else?
 				if (element == null || !Arrays.asList(Element.getAllElements()).contains(element) || element == Element.AVATAR) {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.invalidElement);
 					return;
