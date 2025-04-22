@@ -241,12 +241,8 @@ public class AddCommand extends PKCommand {
 			return List.of();
 		}
 
-		final List<String> completion = new ArrayList<>();
 		if (args.size() == 0) {
-			// add tab completion for avatar
-			if (this.hasPermission(sender, Element.AVATAR.getName().toLowerCase())) {
-				completion.add(Element.AVATAR.getName());
-			}
+			final List<String> completion = new ArrayList<>();
 
 			// add tab completion for elements the player has permission to add
 			for (Element element : Element.getAllElements()) {
@@ -261,11 +257,9 @@ public class AddCommand extends PKCommand {
 					completion.add(element.getName());
 				}
 			}
+			return completion;
 		} else {
-			for (final Player player : Bukkit.getOnlinePlayers()) {
-				completion.add(player.getName());
-			}
+			return getOnlinePlayerNames(sender);
 		}
-		return completion;
 	}
 }

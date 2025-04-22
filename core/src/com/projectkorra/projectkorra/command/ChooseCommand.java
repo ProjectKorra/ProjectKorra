@@ -191,16 +191,15 @@ public class ChooseCommand extends PKCommand {
 			return List.of();
 		}
 
-		final List<String> completion = new ArrayList<>();
+
 		if (args.size() == 0) {
+			final List<String> completion = new ArrayList<>();
 			for (Element element : Element.getAllElements()) {
 				completion.add(element.getName());
 			}
+			return completion;
 		} else {
-			for (final Player player : Bukkit.getOnlinePlayers()) {
-				completion.add(player.getName());
-			}
+			return getOnlinePlayerNames(sender);
 		}
-		return completion;
 	}
 }

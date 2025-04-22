@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,8 +23,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
  * Executor for /bending bind. Extends {@link PKCommand}.
  */
 public class BindCommand extends PKCommand {
-
-	private static final List<String> SLOTS = Arrays.asList("123456789".split(""));
 
 	private final String abilityDoesntExist;
 	private final String wrongNumber;
@@ -142,7 +141,7 @@ public class BindCommand extends PKCommand {
 			Collections.sort(abilities);
 			return abilities;
 		} else {
-			return SLOTS;
+			return BendingBoard.SLOTS;
 		}
 	}
 }
