@@ -19,9 +19,8 @@ public class BoardCommand extends PKCommand {
 
 	@Override
 	public void execute(final CommandSender sender, final List<String> args) {
-		if (!this.hasPermission(sender) || !this.isPlayer(sender) || !this.correctLength(sender, args.size(), 0, 0)) {
-			return;
+		if (this.hasPermission(sender) && this.isPlayer(sender) && this.correctLength(sender, args.size(), 0, 0)) {
+			BendingBoardManager.toggleBoard((Player) sender, false);
 		}
-		BendingBoardManager.toggleBoard((Player) sender, false);
 	}
 }

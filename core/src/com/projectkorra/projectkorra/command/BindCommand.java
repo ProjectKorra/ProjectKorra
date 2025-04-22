@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -51,24 +52,25 @@ public class BindCommand extends PKCommand {
 			return;
 		}
 
-		final CoreAbility coreAbil = CoreAbility.getAbility(args.get(0));
+		String ability = args.get(0);
+		final CoreAbility coreAbil = CoreAbility.getAbility(ability);
 		if (coreAbil == null || !coreAbil.isEnabled()) {
-			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.abilityDoesntExist.replace("{ability}", args.get(0)));
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.abilityDoesntExist.replace("{ability}", ability));
 			return;
 		} else if (coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility || coreAbil.isHiddenAbility()) {
-			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.unbindable.replace("{ability}", args.get(0)));
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.unbindable.replace("{ability}", ability));
 			return;
 		}
 
 		// bending bind [Ability].
 		if (args.size() == 1) {
-			this.bind(sender, args.get(0), ((Player) sender).getInventory().getHeldItemSlot() + 1);
+			this.bind(sender, ability, ((Player) sender).getInventory().getHeldItemSlot() + 1);
 		}
 
 		// bending bind [ability] [#].
 		if (args.size() == 2) {
 			try {
-				this.bind(sender, args.get(0), Integer.parseInt(args.get(1)));
+				this.bind(sender, ability, Integer.parseInt(args.get(1)));
 			} catch (final NumberFormatException ex) {
 				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
 			}
@@ -88,50 +90,58 @@ public class BindCommand extends PKCommand {
 		if (bPlayer == null) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.loadingInfo);
 			return;
-		} else if (coreAbil == null || !bPlayer.canBind(coreAbil)) {
-			if (coreAbil != null && coreAbil.getElement() != Element.AVATAR && !bPlayer.hasElement(coreAbil.getElement())) {
-				if (coreAbil.getElement() instanceof SubElement) {
-					final SubElement sub = (SubElement) coreAbil.getElement();
-					if (!bPlayer.hasElement(sub.getParentElement())) {
-						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ("AEIOUaeiou".indexOf(sub.getParentElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
-					} else {
-						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
-					}
-				} else {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ("AEIOUaeiou".indexOf(coreAbil.getElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
-				}
-			} else {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + super.noPermissionMessage);
-			}
+		} else if (coreAbil == null) {
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + super.noPermissionMessage);
 			return;
-		} else if (!bPlayer.isElementToggled(coreAbil.getElement())) {
-			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
 		}
 
+		Element element = coreAbil.getElement();
+		if (!bPlayer.canBind(coreAbil)) {
+			if (element == Element.AVATAR || bPlayer.hasElement(element)) {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + super.noPermissionMessage);
+				return;
+			} else if (element instanceof SubElement sub) {
+				Element parent = sub.getParentElement();
+				if (!bPlayer.hasElement(parent)) {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ChatUtil.indefArticle(parent.getName(), this.noElementAE, this.noElement)
+							.replace("{element}", parent.getName() + parent.getType().getBender()));
+				} else {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noSubElement.replace("{subelement}", element.getName() + element.getType().getBending()));
+				}
+			} else {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ChatUtil.indefArticle(element.getName(), this.noElementAE, this.noElement).replace("{element}", element.getName() + element.getType().getBender()));
+			}
+			return;
+		}
+
+		if (!bPlayer.isElementToggled(coreAbil.getElement())) {
+			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.toggledElementOff);
+		}
 		bPlayer.bindAbility(ability, slot);
 	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
-		if (args.size() >= 2 || !sender.hasPermission("bending.command.bind") || !(sender instanceof Player)) {
-			return new ArrayList<String>();
+		if (args.size() >= 2 || !(sender instanceof Player player) || !hasPermission(sender)) {
+			return List.of();
 		}
 
-		List<String> abilities = new ArrayList<String>();
-		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return List.of();
+		}
+
 		if (args.size() == 0) {
-			if (bPlayer != null) {
-				for (final CoreAbility coreAbil : CoreAbility.getAbilities()) {
-					if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil) && !(coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility) && !abilities.contains(coreAbil.getName())) {
-						abilities.add(coreAbil.getName());
-					}
+			List<String> abilities = new ArrayList<>();
+			for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
+				if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil) && !(coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility) && !abilities.contains(coreAbil.getName())) {
+					abilities.add(coreAbil.getName());
 				}
 			}
+			Collections.sort(abilities);
+			return abilities;
 		} else {
-			abilities = Arrays.asList("123456789".split(""));
+			return BendingBoard.SLOTS;
 		}
-
-		Collections.sort(abilities);
-		return abilities;
 	}
 }
