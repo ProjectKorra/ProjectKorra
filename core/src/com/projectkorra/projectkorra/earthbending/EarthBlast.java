@@ -169,6 +169,12 @@ public class EarthBlast extends EarthAbility {
 			return false;
 		}
 
+		// prevents duplication when using earthblast on blocks moved by other abilities (see bug #1376)
+		if (getMovedEarth().containsKey(block) &&
+				(RaiseEarth.blockInAllAffectedBlocks(block) || Collapse.blockInAllAffectedBlocks(block))) {
+			return false;
+		}
+
 		this.checkForCollision();
 
 		if (block.getLocation().distanceSquared(this.player.getLocation()) > this.selectRange * this.selectRange) {
@@ -352,7 +358,13 @@ public class EarthBlast extends EarthAbility {
 			return;
 		}
 
+		// prevents duplication
 		if (getMovedEarth().containsKey(this.sourceBlock)) {
+			if (RaiseEarth.blockInAllAffectedBlocks(this.sourceBlock) ||
+					Collapse.blockInAllAffectedBlocks(this.sourceBlock)) {
+				return;
+			}
+
 			if (!isEarthRevertOn()) {
 				removeRevertIndex(this.sourceBlock);
 			}
