@@ -299,6 +299,8 @@ public class EarthBlast extends EarthAbility {
 					this.sourceBlock.setType(this.sourceType);
 
 					moveEarthBlock(this.sourceBlock, block);
+					getMovedEarth().remove(this.sourceBlock);
+					getMovedEarth().remove(block);
 
 					if (block.getType() == Material.SAND) {
 						block.setType(Material.SANDSTONE);
