@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -23,16 +24,16 @@ import com.projectkorra.projectkorra.event.AbilityLoadEvent;
 public class AbilityLoader<T> {
 
 	private final Plugin plugin;
-	private ClassLoader loader;
+	private final ClassLoader loader;
+	private final String path;
 	private JarFile jar;
-	private String path;
 
 	public AbilityLoader(final JavaPlugin plugin, final String packageBase) {
 		this.plugin = plugin;
 		this.loader = plugin.getClass().getClassLoader();
 		this.path = packageBase.replace('.', '/');
 
-		if (plugin == null || this.loader == null) {
+		if (this.loader == null) {
 			ProjectKorra.log.severe("Could not find classloader! Will not load abilities from " + packageBase);
 			return;
 		}
@@ -40,12 +41,12 @@ public class AbilityLoader<T> {
 		try {
 			final Enumeration<URL> resources = this.loader.getResources(this.path);
 
-			String jarloc = resources.nextElement().getPath();
-			jarloc = jarloc.substring(5, jarloc.length() - this.path.length() - 2);
+			String jarPath = resources.nextElement().getPath();
+			jarPath = jarPath.substring(5, jarPath.length() - this.path.length() - 2);
 
-			final String s = URLDecoder.decode(jarloc, "UTF-8");
+			final String pathName = URLDecoder.decode(jarPath, StandardCharsets.UTF_8);
 
-			this.jar = new JarFile(new File(s));
+			this.jar = new JarFile(new File(pathName));
 
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -53,16 +54,13 @@ public class AbilityLoader<T> {
 	}
 
 	/**
-	 * Returns a list of loaded objects of the provided classType.
-	 *
 	 * @param classType Type of class to load
 	 * @param parentClass Type of class that the class must extend. Use
-	 *            {@code Object.class} for classes without a type.
-	 * @return
+	 *            {@link Object} for classes without a type.
+	 * @return a list of loaded objects of the provided classType.
 	 */
 	public List<T> load(final Class<?> classType, final Class<?> parentClass) {
 		final ArrayList<T> loadables = new ArrayList<>();
-
 		if (this.loader == null || this.jar == null) {
 			return loadables;
 		}
@@ -70,7 +68,6 @@ public class AbilityLoader<T> {
 		final Enumeration<JarEntry> entries = this.jar.entries();
 
 		while (entries.hasMoreElements()) {
-
 			final JarEntry entry = entries.nextElement();
 			if (!entry.getName().endsWith(".class") || entry.getName().contains("$")) {
 				continue;
@@ -81,10 +78,9 @@ public class AbilityLoader<T> {
 				continue;
 			}
 
-			Class<?> clazz = null;
+			Class<?> clazz;
 			try {
 				clazz = Class.forName(className, true, this.loader);
-
 				if (!classType.isAssignableFrom(clazz) || clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
 					continue;
 				}
@@ -94,15 +90,11 @@ public class AbilityLoader<T> {
 				final Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
 				final T loadable = (T) clazz.cast(intConstr.newInstance());
 
-				if (loadable == null) {
-					continue;
-				}
-
-				loadables.add(loadable);
-				final AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(this.plugin, loadable, this.jar);
+                loadables.add(loadable);
+				final AbilityLoadEvent<T> event = new AbilityLoadEvent<>(this.plugin, loadable, this.jar);
 				this.plugin.getServer().getPluginManager().callEvent(event);
 			} catch (Exception | Error e) {
-				continue;
+				// Should we not log something here?
 			}
 		}
 
