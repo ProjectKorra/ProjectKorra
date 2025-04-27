@@ -145,9 +145,9 @@ public class ChatUtil {
         String displayedMessage = bPlayer.getAbilities().get(slot);
         final CoreAbility ability = CoreAbility.getAbility(displayedMessage);
 
-        if (ability != null && bPlayer != null) {
+        if (ability != null) {
             displayedMessage = ability.getMovePreview(player);
-        } else if (displayedMessage == null || displayedMessage.isEmpty() || displayedMessage.equals("")) {
+        } else if (displayedMessage == null || displayedMessage.isEmpty()) {
             displayedMessage = "";
         }
 
@@ -163,14 +163,14 @@ public class ChatUtil {
     }
 
     /**
-     * Sends an action bar message to the player
+     * Sends an action bar message to the players
      *
      * @param message the message to send
-     * @param player the player to send the message to
+     * @param players the players to send the message to
      */
-    public static void sendActionBar(final String message, final Player... player) {
-        for (Player e : player) {
-            e.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(TextComponent.fromLegacyText(message)));
+    public static void sendActionBar(final String message, final Player... players) {
+        for (Player player : players) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(TextComponent.fromLegacyText(message)));
         }
     }
 }

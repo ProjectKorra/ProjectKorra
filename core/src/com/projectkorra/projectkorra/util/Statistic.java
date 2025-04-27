@@ -6,10 +6,10 @@ public enum Statistic {
 
 	PLAYER_KILLS("PlayerKills", "player kills"), PLAYER_DAMAGE("PlayerDamage", "player damage"), TOTAL_KILLS("TotalKills", "total kills"), TOTAL_DAMAGE("TotalDamage", "total damage");
 
-	private String name;
-	private String displayName;
+	private final String name;
+	private final String displayName;
 
-	private Statistic(final String name, final String displayName) {
+	Statistic(final String name, final String displayName) {
 		this.name = name;
 		this.displayName = displayName;
 	}

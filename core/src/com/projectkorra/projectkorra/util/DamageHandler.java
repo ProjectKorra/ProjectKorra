@@ -7,7 +7,6 @@ import com.projectkorra.projectkorra.versions.IDamageEventPasser;
 import com.projectkorra.projectkorra.versions.legacy.LegacyDamageEventPasser;
 import com.projectkorra.projectkorra.versions.modern.ModernDamageEventPasser;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -15,7 +14,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -63,9 +61,7 @@ public class DamageHandler {
 		double percentage = config.getDouble(IGNORE_ARMOR_PREFIX + "Default", 0.0);
 
 		if (config.isSet(IGNORE_ARMOR_PREFIX + "Ability." + ability.getName())) {
-
 			percentage = config.getDouble(IGNORE_ARMOR_PREFIX + "Ability." + ability.getName(), 0.0);
-
 		} else {
 			if (config.isSet(IGNORE_ARMOR_PREFIX + "Element." + ability.getElement().getName())) {
 				percentage = config.getDouble(IGNORE_ARMOR_PREFIX + "Element." + ability.getElement().getName(), 0.0);
@@ -120,13 +116,12 @@ public class DamageHandler {
 	 * @param event The event we want to modify
 	 */
 	public static void entityDamageCallback(EntityDamageEvent event) {
-		if (!ARMOR_PERCENTAGE_BY_ENTITY_ID.containsKey(event.getEntity().getEntityId())) return;
-		double ignorePercentage = ARMOR_PERCENTAGE_BY_ENTITY_ID.get(event.getEntity().getEntityId());
-		ARMOR_PERCENTAGE_BY_ENTITY_ID.remove(event.getEntity().getEntityId()); // We get rid of the entry, so it doesn't call back future non-ability related damage.
-
-		if (ignorePercentage == 0) return;
-
-		if (event.getEntity() instanceof ArmorStand) return; //ArmorStands produce errors when we modify the armor damage, so ignore them.
+		Entity entity = event.getEntity();
+		int entityId = entity.getEntityId();
+		Double ignorePercentage = ARMOR_PERCENTAGE_BY_ENTITY_ID.remove(entityId); // We get rid of the entry, so it doesn't call back future non-ability related damage.
+		if (entity instanceof ArmorStand || ignorePercentage == null || ignorePercentage == 0) {
+			return; // ArmorStands produce errors when we modify the armor damage, so ignore them.
+		}
 
 		if (ignorePercentage >= 1) {
 			event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0); //Bypass armor points
@@ -154,18 +149,12 @@ public class DamageHandler {
 	 * @param damage The amount of damage to deal
 	 */
 	public static void damageEntity(final Entity entity, Player source, double damage, final Ability ability, boolean ignoreArmor, boolean doSourcelessDamage) {
-		if (ability == null) {
+		if (ability == null || entity.hasMetadata("BendingImmunity")) {
 			return;
-		}
-
-		if (entity.hasMetadata("BendingImmunity")) return;
-		
-		if (entity instanceof LivingEntity) {
-			if (checkTicks((LivingEntity) entity, damage)) {
+		} else if (entity instanceof LivingEntity livingEntity) {
+			if (checkTicks(livingEntity, damage)) {
 				return;
-			}
-			
-			if (TempArmor.hasTempArmor((LivingEntity) entity)) {
+			} else if (TempArmor.hasTempArmor(livingEntity)) {
 				ignoreArmor = true;
 			}
 		}
@@ -184,11 +173,10 @@ public class DamageHandler {
 		
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		
-		if (entity instanceof LivingEntity && !damageEvent.isCancelled()) {
-			LivingEntity lent = (LivingEntity) entity;
+		if (entity instanceof LivingEntity livingEntity && !damageEvent.isCancelled()) {
 			damage = Math.max(0, damageEvent.getDamage());
 
-			if (lent.getHealth() - damage <= 0 && !entity.isDead()) {
+			if (livingEntity.getHealth() - damage <= 0 && !entity.isDead()) {
 				final EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, damage, ability);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
@@ -196,28 +184,26 @@ public class DamageHandler {
 			// Preparing the event call back
 			if (damage > 0) {
 				if (damageEvent.doesIgnoreArmor()) {
-					ignoreArmorDamage(lent);
-				} else {
-					if (percentage == 1d) {
-						ignoreArmorDamage(lent);
-					} else if (percentage != 0d) {
-						ignorePercentageArmorDamage(lent, percentage);
-					}
+					ignoreArmorDamage(livingEntity);
+				} else if (percentage == 1d) {
+					ignoreArmorDamage(livingEntity);
+				} else if (percentage != 0d) {
+					ignorePercentageArmorDamage(livingEntity, percentage);
 				}
 			}
 
 			final EntityDamageByEntityEvent finalEvent = DAMAGE_EVENT_PASSER.createEvent(source, entity, damage);
-			final double prevHealth = lent.getHealth();
-			BEING_DAMAGED.add(lent); //Stops StackOverflows
+			final double prevHealth = livingEntity.getHealth();
+			BEING_DAMAGED.add(livingEntity); //Stops StackOverflows
 
 			if (doSourcelessDamage) {
-				lent.damage(damage);
+				livingEntity.damage(damage);
 			} else {
-				lent.damage(damage, source);
+				livingEntity.damage(damage, source);
 			}
-			BEING_DAMAGED.remove(lent);
+			BEING_DAMAGED.remove(livingEntity);
 
-			final double nextHealth = lent.getHealth();
+			final double nextHealth = livingEntity.getHealth();
 			entity.setLastDamageCause(finalEvent);
 
 			if (prevHealth != nextHealth) {
