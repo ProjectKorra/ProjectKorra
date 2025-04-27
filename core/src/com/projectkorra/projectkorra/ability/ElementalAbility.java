@@ -18,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -107,9 +108,12 @@ public abstract class ElementalAbility extends CoreAbility {
 		return new HashSet<>(TRANSPARENT);
 	}
 
+	public static boolean isAir(final Block block) {
+		return block.getType().isAir() || (block.getBlockData() instanceof Light light && !light.isWaterlogged());
+	}
+
 	public static boolean isAir(final Material material) {
-		return material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR ||
-				(GeneralMethods.getMCVersion() >= 1170 && material == LIGHT);
+		return material.isAir() || material == Material.LIGHT;
 	}
 
 	public static boolean isDay(final World world) {
