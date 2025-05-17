@@ -260,7 +260,7 @@ public class TempArmor {
 			while (!queue.isEmpty()) {
 				final TempArmor tarmor = queue.peek();
 				if (System.currentTimeMillis() >= tarmor.getStartTime() + tarmor.getDuration()) {
-					tarmor.revert();
+					ThreadUtil.ensureEntity(tarmor.getEntity(), tarmor::revert);
 				} else {
 					break;
 				}
@@ -276,7 +276,7 @@ public class TempArmor {
 		for (final LivingEntity entity : INSTANCES.keySet()) {
 			while (!INSTANCES.get(entity).isEmpty()) {
 				final TempArmor armor = INSTANCES.get(entity).poll();
-				armor.revert();
+				ThreadUtil.ensureEntity(armor.getEntity(), armor::revert);
 			}
 		}
 	}

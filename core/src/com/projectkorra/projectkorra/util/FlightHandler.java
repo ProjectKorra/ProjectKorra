@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -161,21 +160,19 @@ public class FlightHandler extends Manager {
 	}
 
 	public void startCleanup() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				final long currentTime = System.currentTimeMillis();
-				while (!FlightHandler.this.CLEANUP.isEmpty()) {
-					final FlightAbility ability = FlightHandler.this.CLEANUP.peek();
-					if (currentTime >= ability.startTime + ability.duration) {
-						FlightHandler.this.CLEANUP.poll();
-						FlightHandler.this.removeInstance(ability.player, ability.identifier);
-					} else {
-						break;
-					}
+		ThreadUtil.runAsyncTimer(() -> {
+
+			final long currentTime = System.currentTimeMillis();
+			while (!FlightHandler.this.CLEANUP.isEmpty()) {
+				final FlightAbility ability = FlightHandler.this.CLEANUP.peek();
+				if (currentTime >= ability.startTime + ability.duration) {
+					FlightHandler.this.CLEANUP.poll();
+					FlightHandler.this.removeInstance(ability.player, ability.identifier);
+				} else {
+					break;
 				}
 			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+		}, 0, 1);
 	}
 
 	public static class Flight {

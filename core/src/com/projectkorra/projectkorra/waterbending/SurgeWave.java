@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -450,12 +451,12 @@ public class SurgeWave extends WaterAbility {
 	public static void removeAllCleanup() {
 		for (final SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			for (final Block block : surgeWave.waveBlocks.keySet()) {
-				block.setType(Material.AIR, false);
+				ThreadUtil.ensureLocation(block.getLocation(), () -> block.setType(Material.AIR, false));
 				surgeWave.waveBlocks.remove(block);
 			}
 			for (final Block block : surgeWave.frozenBlocks.keySet()) {
 				if (TempBlock.isTempBlock(block)) {
-					TempBlock.get(block).revertBlock();
+					ThreadUtil.ensureLocation(block.getLocation(), () -> TempBlock.get(block).revertBlock());
 				}
 			}
 		}

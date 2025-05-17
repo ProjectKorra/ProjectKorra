@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.earthbending.passive;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -85,7 +86,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	public static void revertAllSand() {
 		for (final TempBlock block : SAND_BLOCKS) {
 			block.setRevertTask(null);
-			block.revertBlock();
+			ThreadUtil.ensureLocation(block.getLocation(), block::revertBlock);
 		}
 		SAND_BLOCKS.clear();
 	}
