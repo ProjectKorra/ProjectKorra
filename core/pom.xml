@@ -103,13 +103,12 @@
       <artifactId>core-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- PaperLib -->
     <dependency>
-      <groupId>io.papermc</groupId>
-      <artifactId>paperlib</artifactId>
-      <version>1.0.1</version>
+      <groupId>com.projectkorra</groupId>
+      <artifactId>luminol</artifactId>
+      <version>${project.version}</version>
     </dependency>
-    <!-- Minecraft Timings -->
+    <!-- Folia API -->
     <dependency>
       <groupId>dev.folia</groupId>
       <artifactId>folia-api</artifactId>
@@ -339,10 +338,6 @@
 
           </filters>
           <relocations>
-            <relocation>
-              <pattern>io.papermc.lib</pattern>
-              <shadedPattern>paperlib.projectkorra</shadedPattern>
-            </relocation>
             <relocation>
               <pattern>org.apache.commons</pattern>
               <shadedPattern>commonslang3.projectkorra</shadedPattern>
