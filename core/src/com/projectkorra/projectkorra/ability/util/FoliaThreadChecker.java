@@ -1,18 +1,20 @@
-package com.projectkorra.projectkorra.util;
+package com.projectkorra.projectkorra.ability.util;
 
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-
-public class PlayerThreadMonitor implements Runnable {
+/**
+ * This is a runnable that fixes and restarts passives when a player
+ * changes regions in Folia.
+ */
+public class FoliaThreadChecker implements Runnable {
 
     private Player player;
     private Location oldLocation;
 
-    public PlayerThreadMonitor(Player player) {
+    public FoliaThreadChecker(Player player) {
         this.player = player;
     }
 

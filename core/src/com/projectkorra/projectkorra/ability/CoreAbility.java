@@ -1,11 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,16 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
+import com.projectkorra.projectkorra.ability.util.FoliaCollisionManager;
 import com.projectkorra.projectkorra.attribute.*;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.AbilityRecalculateAttributeEvent;
 import com.projectkorra.projectkorra.util.ThreadUtil;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.permissions.Permission;
-
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -99,12 +93,15 @@ public abstract class CoreAbility implements Ability {
 	private int id;
 	private long startTime;
 	private long startTick;
-	private long currentTickFolia;
-	private Object foliaTask;
 	@Deprecated
 	private boolean attributesModified;
 	private boolean recalculatingAttributes;
 	private boolean attributeValuesCached;
+
+	//The following are only for Folia servers!
+	private long _foliaCurrentTick;
+	private Object _foliaTask;
+	private Location _foliaLastLocation;
 
 	/**
 	 * The default constructor is needed to create a fake instance of each
@@ -218,10 +215,14 @@ public abstract class CoreAbility implements Ability {
 
 			//ProjectKorra.log.info("[Debug] " + this.getName() + " was started on Thread " + Thread.currentThread().getName() + " (#" + Thread.currentThread().getId() + ")");
 
-			this.foliaTask = Bukkit.getRegionScheduler().runAtFixedRate(ProjectKorra.plugin, player.getLocation(), (task) -> {
-				this.currentTickFolia++;
+			this._foliaTask = Bukkit.getRegionScheduler().runAtFixedRate(ProjectKorra.plugin, player.getLocation(), (task) -> {
+				this._foliaCurrentTick++;
 				this.progressSelf();
 			}, 1L, 1L);
+
+			if (ProjectKorra.isLuminol()) { //Luminol is required for collisions right now, until Folia implements API that we can use
+				FoliaCollisionManager.startTracking(this);
+			}
 		}
 	}
 
@@ -271,7 +272,11 @@ public abstract class CoreAbility implements Ability {
 		INSTANCES.remove(this);
 
 		if (ProjectKorra.isFolia()) {
-			((ScheduledTask) this.foliaTask).cancel(); //Cancel the task if it exists
+			((ScheduledTask) this._foliaTask).cancel(); //Cancel the task if it exists
+
+			if (ProjectKorra.isLuminol()) {
+				FoliaCollisionManager.stopTracking(this);
+			}
 		}
 	}
 
@@ -315,19 +320,27 @@ public abstract class CoreAbility implements Ability {
 		try {
 			this.progress();
 
+			if (ProjectKorra.isFolia()) { //Collisions don't work properly on Folia, so we spawn Markers at each location to damage
+				//this._foliaCollisions();
+			}
+
 			Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(this));
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
+			if (e instanceof NoSuchMethodError || e instanceof NoSuchFieldError || e instanceof NoClassDefFoundError) {
+				ProjectKorra.log.severe("The addon ability" + this.getName() + " is not compatible with either your Spigot version or ProjectKorra version.");
+				ProjectKorra.log.severe("Please contact the author of the addon to fix this issue.");
+			}
+
 			e.printStackTrace();
-			Bukkit.getLogger().severe(this.toString());
 			try {
 				this.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + this.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
 			} catch (final Exception me) {
-				Bukkit.getLogger().severe("unable to notify ability user of error");
+				ProjectKorra.log.severe("Unable to notify ability user of error");
 			}
 			try {
 				this.remove();
 			} catch (final Exception re) {
-				Bukkit.getLogger().severe("unable to fully remove ability of above error");
+				ProjectKorra.log.severe("Unable to fully remove ability due to the above error");
 			}
 		}
 	}
@@ -463,6 +476,27 @@ public abstract class CoreAbility implements Ability {
 			return Collections.emptySet();
 		}
 		return (Collection<T>) INSTANCES_BY_PLAYER.get(clazz).get(player.getUniqueId()).values();
+	}
+
+	/**
+	 * Returns a Collection of all of the CoreAbilities that are currently
+	 * active for a specific player.
+	 * @param player the player that created the instances
+	 * @return The abilities
+	 */
+	public static Collection<CoreAbility> getAbilities(final Player player) {
+		if (player == null) {
+			return Collections.emptySet();
+		}
+
+		Set<CoreAbility> abilities = new HashSet<>();
+		for (Map<UUID, Map<Integer, CoreAbility>> map : INSTANCES_BY_PLAYER.values()) {
+			if (map.containsKey(player.getUniqueId())) {
+				abilities.addAll(map.get(player.getUniqueId()).values());
+			}
+		}
+
+		return abilities;
 	}
 
 	/**
@@ -748,7 +782,7 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public long getRunningTicks() {
-		return ProjectKorra.isFolia() ? (this.currentTickFolia - this.startTick) : currentTick - this.startTick;
+		return ProjectKorra.isFolia() ? (this._foliaCurrentTick - this.startTick) : currentTick - this.startTick;
 	}
 
 	public boolean isStarted() {
@@ -994,16 +1028,28 @@ public abstract class CoreAbility implements Ability {
 		return this;//.addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
 	}
 
+	/**
+	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * attributes and call {@link #recalculateAttributes()} to call the event.
+	 */
 	@Deprecated
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority) {
 	    return this;//.addAttributeModifier(attribute, value, modificationType, priority, UUID.randomUUID());
 	}
 
+	/**
+	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * attributes and call {@link #recalculateAttributes()} to call the event.
+	 */
 	@Deprecated
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority, final UUID uuid) {
 		return this;
 	}
 
+	/**
+	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * attributes and call {@link #recalculateAttributes()} to call the event.
+	 */
 	@Deprecated
 	public CoreAbility setAttribute(final String attribute, final Object value) {
 		return this;
@@ -1139,33 +1185,13 @@ public abstract class CoreAbility implements Ability {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
-
-	public static class StoredModifier {
-	    
-	    private final UUID uuid;
-	    private final AttributeModifier type;
-	    private final Number value;
-	    
-	    private StoredModifier(UUID uuid, AttributeModifier type, Number value) {
-	        this.uuid = uuid;
-	        this.type = type;
-	        this.value = value;
-	    }
-	    
-	    @Override
-	    public boolean equals(Object object) {
-	        if (!(object instanceof StoredModifier)) {
-	            return false;
-	        }
-	        
-	        return uuid.equals(((StoredModifier) object).uuid);
-	    }
-	    
-	    @Override
-	    public int hashCode() {
-	        return uuid.hashCode();
-	    }
+		return "CoreAbility{" +
+				"player=" + player +
+				", name=" + getName() +
+				", class=" + getClass().getSimpleName() +
+				", id=" + id +
+				", started=" + started +
+				", removed=" + removed +
+				'}';
 	}
 }

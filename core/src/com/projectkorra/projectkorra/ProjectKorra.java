@@ -6,11 +6,11 @@ import java.util.logging.Logger;
 
 import com.projectkorra.projectkorra.hooks.PlanExtension;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
@@ -43,8 +43,10 @@ public class ProjectKorra extends JavaPlugin {
 	@Deprecated
 	public static long time_step = 50;
 	private static boolean folia;
+	private static boolean paper;
+	private static boolean luminol;
 	public Updater updater;
-	BukkitTask revertChecker;
+	Object revertChecker;
 	private static PlaceholderAPIHook papiHook;
 
 	@Override
@@ -52,10 +54,22 @@ public class ProjectKorra extends JavaPlugin {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
 
+		//Test what server software the server is running on based on avaliable API classes
 		try {
 			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
 			folia = true;
 		} catch (ClassNotFoundException ignored) {}
+
+		try {
+			Class.forName("com.destroystokyo.paper.PaperConfig");
+			paper = true;
+		} catch (ClassNotFoundException ignored) {}
+
+		try {
+			Class.forName("me.earthme.luminol.api.ThreadedRegion");
+			luminol = true;
+		} catch (ClassNotFoundException ignored) {}
+
 
 		new ConfigManager();
 		new GeneralMethods(this);
@@ -91,11 +105,9 @@ public class ProjectKorra extends JavaPlugin {
 			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-
-			this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
-
 		}
 
+		this.revertChecker = ThreadUtil.runAsyncTimer(new RevertChecker(this), 0, 200);
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
@@ -138,7 +150,7 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (this.revertChecker != null) this.revertChecker.cancel();
+		if (this.revertChecker != null) ThreadUtil.cancelTimerTask(this.revertChecker);
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {
@@ -195,5 +207,16 @@ public class ProjectKorra extends JavaPlugin {
 	 */
 	public static boolean isFolia() {
 		return folia;
+	}
+
+	/**
+	 * @return True if the server is running Paper
+	 */
+	public static boolean isPaper() {
+		return paper;
+	}
+
+	public static boolean isLuminol() {
+		return luminol;
 	}
 }

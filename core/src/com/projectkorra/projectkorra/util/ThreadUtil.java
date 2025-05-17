@@ -27,7 +27,7 @@ public class ThreadUtil {
      */
     public static void ensureEntity(Entity entity, Runnable runnable) {
         if (ProjectKorra.isFolia()) {
-            if (Bukkit.isOwnedByCurrentRegion(entity)) {
+            if (Bukkit.isOwnedByCurrentRegion(entity) || Bukkit.isStopping()) {
                 runnable.run();
                 return;
             }
@@ -82,7 +82,7 @@ public class ThreadUtil {
      */
     public static void ensureLocation(Location location, Runnable runnable) {
         if (ProjectKorra.isFolia()) {
-            if (Bukkit.isOwnedByCurrentRegion(location)) {
+            if (Bukkit.isOwnedByCurrentRegion(location) || Bukkit.isStopping()) {
                 runnable.run();
                 return;
             }
@@ -141,6 +141,10 @@ public class ThreadUtil {
      */
     public static void runAsync(Runnable runnable) {
         if (ProjectKorra.isFolia()) {
+            if (Bukkit.isStopping()) {
+                runnable.run();
+                return;
+            }
             Bukkit.getAsyncScheduler().runNow(ProjectKorra.plugin, (task) -> runnable.run());
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, runnable);
@@ -183,6 +187,10 @@ public class ThreadUtil {
      */
     public static void runSync(Runnable runnable) {
         if (ProjectKorra.isFolia()) {
+            if (Bukkit.isStopping()) {
+                runnable.run();
+                return;
+            }
             Bukkit.getGlobalRegionScheduler().run(ProjectKorra.plugin, (task) -> runnable.run());
         } else {
             Bukkit.getScheduler().runTask(ProjectKorra.plugin, runnable);
