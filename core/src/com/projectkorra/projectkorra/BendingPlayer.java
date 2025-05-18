@@ -29,7 +29,7 @@ import com.projectkorra.projectkorra.hooks.CanBindHook;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
-import com.projectkorra.projectkorra.util.PlayerThreadMonitor;
+import com.projectkorra.projectkorra.ability.util.FoliaThreadChecker;
 import com.projectkorra.projectkorra.util.ThreadUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -901,7 +901,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 
 		if (ProjectKorra.isFolia()) {
-			ThreadUtil.ensureEntityTimer(this.player, new PlayerThreadMonitor(this.player), 1L, 1L);
+			ThreadUtil.ensureEntityTimer(this.player, new FoliaThreadChecker(this.player), 1L, 1L);
 			return; //TODO Folia doesn't support scoreboards, ignore it
 		}
 
