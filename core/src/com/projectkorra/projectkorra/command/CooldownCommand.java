@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.Cooldown;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -37,7 +38,7 @@ public class CooldownCommand extends PKCommand {
 
         COOLDOWNS.add("ChooseElement");
 
-        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+        ThreadUtil.runSyncLater(() -> {
             for (CoreAbility ability : CoreAbility.getAbilities()) {
                 if (ability.isHiddenAbility() || ability instanceof PassiveAbility || !ability.isEnabled()) continue;
 

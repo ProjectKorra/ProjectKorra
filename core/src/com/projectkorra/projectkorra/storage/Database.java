@@ -7,9 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 
 public abstract class Database {
 
@@ -97,12 +96,7 @@ public abstract class Database {
 	 */
 	public void modifyQuery(final String query, final boolean async) {
 		if (async) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					Database.this.doQuery(query);
-				}
-			}.runTaskAsynchronously(ProjectKorra.plugin);
+			ThreadUtil.runAsync(() -> Database.this.doQuery(query));
 		} else {
 			this.doQuery(query);
 		}

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -581,7 +582,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static void removeAllEarthbendedBlocks() {
 		for (final Block block : MOVED_EARTH.keySet()) {
-			revertBlock(block);
+			ThreadUtil.ensureLocation(block.getLocation(), () -> revertBlock(block));
 		}
 		for (final Integer i : TEMP_AIR_LOCATIONS.keySet()) {
 			revertAirBlock(i, true);
@@ -622,7 +623,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 			return;
 		} else {
-			info.getState().update(true, false);
+			ThreadUtil.ensureLocation(block.getLocation(), () -> info.getState().update(true, false));
 			TEMP_AIR_LOCATIONS.remove(i);
 		}
 	}
@@ -710,7 +711,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void stopBending() {
-		DensityShift.removeAll();
+		DensityShift.removeAll(); //Now thread safe
 
 		if (isEarthRevertOn()) {
 			removeAllEarthbendedBlocks();

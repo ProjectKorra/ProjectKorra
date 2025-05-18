@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.AttributeCache;
 import com.projectkorra.projectkorra.attribute.AttributeModification;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -139,7 +140,7 @@ public class AvatarState extends AvatarAbility {
 
 				if (boostHealth) {
 					//Delay by 1 tick so the event doesn't override our changes
-					Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+					ThreadUtil.ensureEntityDelay(player.getPlayer(), () -> {
 						if (yellowHearts) {
 							if (willDie) player.getPlayer().setHealth(0.5);
 							player.getPlayer().setAbsorptionAmount(amount);

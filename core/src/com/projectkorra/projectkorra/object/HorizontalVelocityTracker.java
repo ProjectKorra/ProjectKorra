@@ -63,6 +63,18 @@ public class HorizontalVelocityTracker {
 		this.abil = ability;
 		this.update();
 		instances.put(this.entity, this);
+
+		if (ProjectKorra.isFolia()) { //On Folia, there is no global scheduler task, so we need to create one for each entity.
+			this.entity.getScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> {
+				if (!e.isDead() && instances.get(e) != null) {
+					this.update();
+				} else {
+					instances.remove(e);
+					task.cancel();
+				}
+
+			}, () -> {}, 1, 1);
+		}
 	}
 
 	public void update() {
@@ -115,6 +127,10 @@ public class HorizontalVelocityTracker {
 		}
 	}
 
+	/**
+	 * Updates all HorizontalVelocityTrackers. This is called every tick.
+	 * <b>Cannot be called by Folia.</b>
+	 */
 	public static void updateAll() {
 		for (final Entity e : instances.keySet()) {
 			if (e != null && !e.isDead() && instances.get(e) != null) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import io.papermc.lib.PaperLib;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -135,7 +136,7 @@ public class EarthSmash extends EarthAbility {
 		} else if (type == ClickType.RIGHT_CLICK && player.isSneaking()) {
 			final EarthSmash grabbedSmash = this.aimingAtSmashCheck(player, State.GRABBED);
 			if (grabbedSmash != null) {
-				player.teleport(grabbedSmash.location.clone().add(0, 2, 0));
+				PaperLib.teleportAsync(player, grabbedSmash.location.clone().add(0, 2, 0));
 				grabbedSmash.state = State.FLYING;
 				grabbedSmash.player = player;
 				grabbedSmash.setFields();

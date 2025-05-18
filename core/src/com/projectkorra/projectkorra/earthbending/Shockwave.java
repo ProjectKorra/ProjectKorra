@@ -81,6 +81,7 @@ public class Shockwave extends EarthAbility {
 		}
 	}
 
+	@Deprecated
 	public static void progressAll() {
 		Ripple.progressAllCleanup();
 	}
