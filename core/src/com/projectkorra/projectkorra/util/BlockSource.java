@@ -2,11 +2,9 @@ package com.projectkorra.projectkorra.util;
 
 import java.util.HashMap;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -20,7 +18,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
  * BlockSource is a class that handles water and earth bending sources. When a
  * Player left clicks or presses shift the update method is called which
  * attempts to update the player's sources.
- *
+ * <br><br>
  * In this class ClickType refers to the way in which the source was selected.
  * For example, Surge has two different ways to select a source, one involving
  * shift and another involving left clicks.
@@ -32,17 +30,23 @@ public class BlockSource {
 	 *
 	 * @author kingbirdy
 	 */
-	public static enum BlockSourceType {
+	public enum BlockSourceType {
 		WATER, ICE, PLANT, EARTH, METAL, LAVA, SNOW, MUD
 	}
 
-	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
-	private static FileConfiguration config = ConfigManager.defaultConfig.get();
+	private static final HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<>();
 	// The player should never need to grab source blocks from farther than this.
-	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.SelectRange");
+	private static double MAX_RANGE;
+	static {
+		loadConfig();
+	}
+
+	public static void loadConfig() {
+		MAX_RANGE = ConfigManager.getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
+	}
 
 	/**
-	 * Updates all of the player's sources.
+	 * Updates all the player's sources.
 	 *
 	 * @param player the player performing the bending.
 	 * @param clickType either {@link ClickType}.SHIFT_DOWN or
@@ -54,51 +58,51 @@ public class BlockSource {
 			return;
 		}
 
-		final CoreAbility coreAbil = bPlayer.getBoundAbility();
-		if (coreAbil == null) {
-			return;
-		}
+		final CoreAbility ability = bPlayer.getBoundAbility();
+        switch (ability) {
+            case WaterAbility ignored -> {
+                final Block waterBlock = WaterAbility.getWaterSourceBlock(player, MAX_RANGE, true);
+                if (waterBlock != null) {
+                    putSource(player, waterBlock, BlockSourceType.WATER, clickType);
+                    if (ElementalAbility.isPlant(waterBlock)) {
+                        putSource(player, waterBlock, BlockSourceType.PLANT, clickType);
+                    }
+                    if (ElementalAbility.isIce(waterBlock)) {
+                        putSource(player, waterBlock, BlockSourceType.ICE, clickType);
+                    }
+                    if (WaterAbility.isSnow(waterBlock) || waterBlock.getType() == Material.POWDER_SNOW_CAULDRON) {
+                        putSource(player, waterBlock, BlockSourceType.SNOW, clickType);
+                    }
+                    if (ElementalAbility.isMud(waterBlock)) {
+                        putSource(player, waterBlock, BlockSourceType.MUD, clickType);
+                    }
+                }
+            }
+            case EarthAbility ignored -> {
+                final Block earthBlock = EarthAbility.getEarthSourceBlock(player, null, MAX_RANGE);
+                if (earthBlock != null) {
+                    putSource(player, earthBlock, BlockSourceType.EARTH, clickType);
+                    if (ElementalAbility.isMetal(earthBlock)) {
+                        putSource(player, earthBlock, BlockSourceType.METAL, clickType);
+                    }
+                    if (ElementalAbility.isMud(earthBlock)) {
+                        putSource(player, earthBlock, BlockSourceType.MUD, clickType);
+                    }
+                }
 
-		if (coreAbil instanceof WaterAbility) {
-			final Block waterBlock = WaterAbility.getWaterSourceBlock(player, MAX_RANGE, true);
-			if (waterBlock != null) {
-				putSource(player, waterBlock, BlockSourceType.WATER, clickType);
-				if (ElementalAbility.isPlant(waterBlock)) {
-					putSource(player, waterBlock, BlockSourceType.PLANT, clickType);
-				}
-				if (ElementalAbility.isIce(waterBlock)) {
-					putSource(player, waterBlock, BlockSourceType.ICE, clickType);
-				}
-				if (WaterAbility.isSnow(waterBlock) || (WaterAbility.isCauldron(waterBlock.getType()) && waterBlock.getType() == Material.getMaterial("POWDER_SNOW_CAULDRON"))) {
-					putSource(player, waterBlock, BlockSourceType.SNOW, clickType);
-				}
-				if (ElementalAbility.isMud(waterBlock)) {
-					putSource(player, waterBlock, BlockSourceType.MUD, clickType);
-				}
-			}
-		} else if (coreAbil instanceof EarthAbility) {
-			final Block earthBlock = EarthAbility.getEarthSourceBlock(player, null, MAX_RANGE);
-			if (earthBlock != null) {
-				putSource(player, earthBlock, BlockSourceType.EARTH, clickType);
-				if (ElementalAbility.isMetal(earthBlock)) {
-					putSource(player, earthBlock, BlockSourceType.METAL, clickType);
-				}
-				if (ElementalAbility.isMud(earthBlock)) {
-					putSource(player, earthBlock, BlockSourceType.MUD, clickType);
-				}
-			}
-
-			// We need to handle lava differently, since getEarthSourceBlock doesn't account for lava.
-			// We should only select the lava source if it is closer than the earth.
-			final Block lavaBlock = EarthAbility.getLavaSourceBlock(player, MAX_RANGE);
-			final double earthDist = earthBlock != null ? earthBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
-			final double lavaDist = lavaBlock != null ? lavaBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
-			if (lavaBlock != null && lavaDist <= earthDist) {
-				putSource(player, null, BlockSourceType.EARTH, clickType);
-				putSource(player, lavaBlock, BlockSourceType.LAVA, clickType);
-			}
-		}
-	}
+                // We need to handle lava differently, since getEarthSourceBlock doesn't account for lava.
+                // We should only select the lava source if it is closer than the earth.
+                final Block lavaBlock = EarthAbility.getLavaSourceBlock(player, MAX_RANGE);
+                final double earthDist = earthBlock != null ? earthBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
+                final double lavaDist = lavaBlock != null ? lavaBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
+                if (lavaBlock != null && lavaDist <= earthDist) {
+                    putSource(player, null, BlockSourceType.EARTH, clickType);
+                    putSource(player, lavaBlock, BlockSourceType.LAVA, clickType);
+                }
+            }
+            case null, default -> {}
+        }
+    }
 
 	/**
 	 * Helper method to create and update a specific source.
@@ -110,10 +114,10 @@ public class BlockSource {
 	 */
 	private static void putSource(final Player player, final Block block, final BlockSourceType sourceType, final ClickType clickType) {
 		if (!playerSources.containsKey(player)) {
-			playerSources.put(player, new HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>());
+			playerSources.put(player, new HashMap<>());
 		}
 		if (!playerSources.get(player).containsKey(sourceType)) {
-			playerSources.get(player).put(sourceType, new HashMap<ClickType, BlockSourceInformation>());
+			playerSources.get(player).put(sourceType, new HashMap<>());
 		}
 		final BlockSourceInformation info = new BlockSourceInformation(player, block, sourceType, clickType);
 		playerSources.get(player).get(sourceType).put(clickType, info);
@@ -168,14 +172,17 @@ public class BlockSource {
 	 */
 	public static Block getSourceBlock(final Player player, final double range, final BlockSourceType sourceType, final ClickType clickType) {
 		final BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
-		if (info != null) {
-			if (TempBlock.isTempBlock(info.getBlock()) && !WaterAbility.isBendableWaterTempBlock(info.getBlock()) && !EarthAbility.isBendableEarthTempBlock(info.getBlock())) {
-				return null;
-			}
-			return info.getBlock();
-		}
-		return null;
-	}
+        if (info == null) {
+            return null;
+        }
+
+        Block block = info.getBlock();
+        TempBlock tempBlock = TempBlock.get(block);
+        if (tempBlock != null && !WaterAbility.isBendableWaterTempBlock(tempBlock) && !EarthAbility.isBendableEarthTempBlock(tempBlock)) {
+            return null;
+        }
+        return block;
+    }
 
 	/**
 	 * Attempts to access a Water bendable block that was recently shifted or
@@ -255,22 +262,19 @@ public class BlockSource {
 		if (allowWaterBottles) {
 			// Check the block in front of the player's eyes, it may have been created by a WaterBottle.
 			sourceBlock = WaterAbility.getWaterSourceBlock(player, range, allowPlant);
-			if (sourceBlock == null || (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) > 3)) {
+			if (sourceBlock.getWorld().equals(player.getWorld()) && sourceBlock.getLocation().distance(player.getEyeLocation()) > 3) {
 				sourceBlock = null;
 			}
 		}
 		final boolean dynamic = ConfigManager.getConfig().getBoolean("Properties.Water.DynamicSourcing");
 		if (dynamic && sourceBlock == null) {
-			if (allowWater && sourceBlock == null) {
+			if (allowWater) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
-			}
-			if (allowIce && sourceBlock == null) {
+			} else if (allowIce) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.ICE, clickType);
-			}
-			if (allowPlant && sourceBlock == null) {
+			} else if (allowPlant) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
-			}
-			if (allowSnow && sourceBlock == null) {
+			} else if (allowSnow) {
 				sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 			}
 		} else {
@@ -286,7 +290,7 @@ public class BlockSource {
 	}
 
 	/**
-	 * Attempts to access a Earth bendable block that was recently shifted or
+	 * Attempts to access an Earth bendable block that was recently shifted or
 	 * clicked on by the player.
 	 *
 	 * @param player the player that is trying to bend.
