@@ -1061,6 +1061,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBlast.CollisionRadius", 1.0);
 			config.addDefault("Abilities.Water.IceBlast.Interval", 20);
 			config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
+			config.addDefault("Abilities.Water.IceBlast.SlowCooldown", 5000);
 			config.addDefault("Abilities.Water.IceBlast.AllowSnow", false);
 
 			config.addDefault("Abilities.Water.IceSpike.Enabled", true);

@@ -95,21 +95,16 @@ public class IceSpikeBlast extends IceAbility {
 	}
 
 	private void affect(final LivingEntity entity) {
+		DamageHandler.damageEntity(entity, this.damage, this);
 		if (entity instanceof Player) {
-			final BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) entity);
-			if (targetBPlayer == null) {
-				return;
-			}
-			if (targetBPlayer.canBeSlowed()) {
+			if (this.bPlayer.canBeSlowed()) {
 				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPotency);
 				new TempPotionEffect(entity, effect);
-				targetBPlayer.slow(this.slowCooldown);
-				DamageHandler.damageEntity(entity, this.damage, this);
+				this.bPlayer.slow(this.slowCooldown);
 			}
 		} else {
 			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPotency);
 			new TempPotionEffect(entity, effect);
-			DamageHandler.damageEntity(entity, this.damage, this);
 		}
 		AirAbility.breakBreathbendingHold(entity);
 	}

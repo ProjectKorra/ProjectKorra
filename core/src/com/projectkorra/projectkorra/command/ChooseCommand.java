@@ -139,6 +139,9 @@ public class ChooseCommand extends PKCommand {
 				bPlayer.getElements().clear();
 				for (Element e : new Element[] {Element.AIR, Element.EARTH, Element.FIRE, Element.WATER}) {
 					bPlayer.addElement(e);
+					if (online) {
+						addPermittedSubElements(sender, target, e, (BendingPlayer) bPlayer);
+					}
 				}
 			} else {
 				PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE);
@@ -190,7 +193,6 @@ public class ChooseCommand extends PKCommand {
 		if (args.size() >= 2 || !sender.hasPermission("bending.command.choose")) {
 			return List.of();
 		}
-
 
 		if (args.size() == 0) {
 			final List<String> completion = new ArrayList<>();
