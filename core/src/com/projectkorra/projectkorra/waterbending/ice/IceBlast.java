@@ -38,6 +38,8 @@ public class IceBlast extends IceAbility {
 	private long time;
 	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
 	private long cooldown;
+	@Attribute("Slow" + Attribute.COOLDOWN) @DayNightFactor(invert = true)
+	private long slowCooldown;
 	private long interval;
 	@Attribute(Attribute.RANGE) @DayNightFactor
 	private double range;
@@ -63,6 +65,7 @@ public class IceBlast extends IceAbility {
 		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
 		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
 		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
+		this.slowCooldown = getConfig().getLong("Abilities.Water.IceBlast.SlowCooldown");
 		this.allowSnow = getConfig().getBoolean("Abilities.Water.IceBlast.AllowSnow");
 
 		if (!this.bPlayer.canBend(this) || !this.bPlayer.canIcebend()) {
@@ -159,17 +162,16 @@ public class IceBlast extends IceAbility {
 	}
 
 	private void affect(final LivingEntity entity) {
+		DamageHandler.damageEntity(entity, this.damage, this);
 		if (entity instanceof Player) {
 			if (this.bPlayer.canBeSlowed()) {
 				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 				new TempPotionEffect(entity, effect);
-				this.bPlayer.slow(10);
-				DamageHandler.damageEntity(entity, this.damage, this);
+				this.bPlayer.slow(this.slowCooldown);
 			}
 		} else {
 			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 			new TempPotionEffect(entity, effect);
-			DamageHandler.damageEntity(entity, this.damage, this);
 		}
 		AirAbility.breakBreathbendingHold(entity);
 
@@ -487,6 +489,14 @@ public class IceBlast extends IceAbility {
 
 	public void setLocation(final Location location) {
 		this.location = location;
+	}
+	
+	public long getSlowCooldown() {
+		return this.slowCooldown;
+	}
+
+	public void setSlowCooldown(final long slowCooldown) {
+		this.slowCooldown = slowCooldown;
 	}
 
 }
