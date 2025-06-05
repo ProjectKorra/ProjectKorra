@@ -943,7 +943,9 @@ public class PKListener implements Listener {
 				if (bPlayer.getBoundAbilityName().equalsIgnoreCase("Shockwave")) {
 					new Shockwave(player, true);
 				} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("Catapult")) {
-					new EarthPillars(player, true);
+					if (CoreAbility.getAbility(EarthPillars.class).isEnabled()) {
+						new EarthPillars(player, true);
+					}
 				}
 			}
 
