@@ -170,8 +170,7 @@ public class EarthBlast extends EarthAbility {
 		}
 
 		// prevents duplication when using earthblast on blocks moved by other abilities (see bug #1376)
-		if (getMovedEarth().containsKey(block) &&
-				(RaiseEarth.blockInAllAffectedBlocks(block) || Collapse.blockInAllAffectedBlocks(block))) {
+		if (getMovedEarth().containsKey(block) && (RaiseEarth.blockInAllAffectedBlocks(block) || Collapse.blockInAllAffectedBlocks(block))) {
 			return false;
 		}
 
