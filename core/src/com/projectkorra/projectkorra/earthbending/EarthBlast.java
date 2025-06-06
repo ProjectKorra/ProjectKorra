@@ -362,8 +362,7 @@ public class EarthBlast extends EarthAbility {
 
 		// prevents duplication
 		if (getMovedEarth().containsKey(this.sourceBlock)) {
-			if (RaiseEarth.blockInAllAffectedBlocks(this.sourceBlock) ||
-					Collapse.blockInAllAffectedBlocks(this.sourceBlock)) {
+			if (RaiseEarth.blockInAllAffectedBlocks(this.sourceBlock) || Collapse.blockInAllAffectedBlocks(this.sourceBlock)) {
 				return;
 			}
 
