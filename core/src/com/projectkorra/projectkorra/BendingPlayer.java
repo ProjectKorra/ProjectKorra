@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -34,7 +33,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -157,17 +155,17 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 		if (this.player.isDead() || this.player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
+		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
+			return false;
 		} else if (!this.canBind(ability)) {
 			return false;
-		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(this.player.getWorld())) {
+		} else if (ability.getPlayer() != null && ability.getLocation() != null && !this.player.getWorld().equals(ability.getLocation().getWorld())) {
 			return false;
 		} else if (!ignoreCooldowns && this.isOnCooldown(ability.getName())) {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
 		} else if (!canBendInWorld()) {
-			return false;
-		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;
 		}
 
