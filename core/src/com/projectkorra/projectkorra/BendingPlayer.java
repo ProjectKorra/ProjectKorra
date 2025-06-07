@@ -116,7 +116,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	/**
-	 * @deprecated This method does nto have any current functionality and will always return an empty map.
+	 * @deprecated This method does not have any current functionality and will always return an empty map.
 	 */
 	@Deprecated(since = "1.13.0", forRemoval = true)
 	public Map<String, Cooldown> loadCooldowns() {
