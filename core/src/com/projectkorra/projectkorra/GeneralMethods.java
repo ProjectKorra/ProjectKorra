@@ -1161,7 +1161,7 @@ public class GeneralMethods {
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
 		HandlerList.unregisterAll(plugin); //Unregister all listeners registered by addons AND ProjectKorra
-		Bukkit.getPluginManager().registerEvents(new PKListener(plugin), plugin); //Re-register our listener
+		Bukkit.getPluginManager().registerEvents(new PKListener(), plugin); //Re-register our listener
 		CoreAbility.registerAbilities(); //Register all abilities again
 		reloadAddonPlugins();  //Register all addons and addon listeners again
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered.
@@ -1495,7 +1495,7 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Deprecated. Use {@link ChatUtil#sendBrandingMessage(CommandSender, String)}
+	 * @deprecated Use {@link ChatUtil#sendBrandingMessage(CommandSender, String)}
 	 */
 	@Deprecated
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {

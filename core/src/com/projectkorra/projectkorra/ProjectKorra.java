@@ -76,7 +76,7 @@ public class ProjectKorra extends JavaPlugin {
 		BendingBoardManager.setup();
 		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 
-		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
+		this.getServer().getPluginManager().registerEvents(new PKListener(), this);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);

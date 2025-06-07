@@ -218,18 +218,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-public class PKListener implements Listener {
-	ProjectKorra plugin;
+import static com.projectkorra.projectkorra.ProjectKorra.plugin;
 
+public class PKListener implements Listener {
 	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
 	private static final HashMap<Player, Pair<String, Player>> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending. Stores the victim (k), and a pair of the ability and killer (v)
 	private static final Set<UUID> RIGHT_CLICK_INTERACT = new HashSet<>(); // Player right click block.
 	private static final Set<Player> PLAYER_DROPPED_ITEM = new HashSet<>(); // Player dropped an item.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
-
-	public PKListener(final ProjectKorra plugin) {
-		this.plugin = plugin;
-	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(final BlockBreakEvent event) {
@@ -729,8 +725,8 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		final double minimumDistance = this.plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
-		final double maxDamage = this.plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageCap");
+		final double minimumDistance = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
+		final double maxDamage = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageCap");
 		final double damage = ((event.getDistanceTraveled() - minimumDistance) < 0 ? 0 : event.getDistanceTraveled() - minimumDistance) / (event.getDifference().length());
 		if (damage > 0) {
 			DamageHandler.damageEntity(event.getEntity(), Math.min(damage, maxDamage), event.getAbility());
@@ -766,7 +762,7 @@ public class PKListener implements Listener {
 		if (entity instanceof Player player) {
 			if (ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled")) {
 				BENDING_PLAYER_DEATH.put(player, Pair.of(ability.getElement().getColor() + abilityName, attacker));
-				Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> BENDING_PLAYER_DEATH.remove(player), 20L);
+				Bukkit.getScheduler().runTaskLater(plugin, () -> BENDING_PLAYER_DEATH.remove(player), 20L);
 			}
 			if (attacker != null && ProjectKorra.isStatisticsEnabled()) {
 				StatisticsMethods.addStatisticAbility(attacker.getUniqueId(), coreAbility, com.projectkorra.projectkorra.util.Statistic.PLAYER_KILLS, 1);
@@ -1028,7 +1024,7 @@ public class PKListener implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			final UUID uuid = player.getUniqueId();
 			if (RIGHT_CLICK_INTERACT.add(uuid)) { //Add if it isn't already in there. And if it isn't in there...
-				Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
+				Bukkit.getScheduler().runTaskLater(plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
 			}
 
 			if (event.getHand() == EquipmentSlot.HAND && bPlayer.canCurrentlyBendWithWeapons()) {
@@ -1090,7 +1086,7 @@ public class PKListener implements Listener {
 				final FlightMultiAbility flight = CoreAbility.getAbility(player, FlightMultiAbility.class);
 				flight.requestCarry(target);
 				RIGHT_CLICK_INTERACT.add(uuid);
-				Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
+				Bukkit.getScheduler().runTaskLater(plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
 			} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
 				FlightMultiAbility.acceptCarryRequest(player, target);
 			}
@@ -1126,7 +1122,7 @@ public class PKListener implements Listener {
 		}
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			Bukkit.getScheduler().runTaskLater(plugin, () -> {
 				ChatColor color = ChatColor.of(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
 				color = color == null ? ChatColor.GOLD : color;
 				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
@@ -1134,7 +1130,7 @@ public class PKListener implements Listener {
 				if (!topBorder.isEmpty()) {
 					player.sendMessage(ChatUtil.color(topBorder));
 				}
-				player.sendMessage(ChatUtil.multiline(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!"));
+				player.sendMessage(ChatUtil.multiline(color + "This server is running ProjectKorra version " + plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!"));
 				if (!bottomBorder.isEmpty()) {
 					player.sendMessage(ChatUtil.color(bottomBorder));
 				}
@@ -1282,7 +1278,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
+		Bukkit.getScheduler().runTaskLater(plugin, //Run 1 tick later so they actually are offline
 				() -> {
 					if (ProjectKorra.isDatabaseCooldownsEnabled()) {
 						bPlayer.saveCooldowns();
@@ -1444,7 +1440,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> Illumination.slotChange(player), 1L);
+		Bukkit.getScheduler().runTaskLater(plugin, () -> Illumination.slotChange(player), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1856,7 +1852,7 @@ public class PKListener implements Listener {
 		}
 
 		if (event.isMultiAbility()) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> BendingBoardManager.updateAllSlots(player), 1L);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> BendingBoardManager.updateAllSlots(player), 1L);
 		} else {
 			BendingBoardManager.updateBoard(player, event.isBinding() ? event.getAbility() : "", false, event.getSlot());
 		}
