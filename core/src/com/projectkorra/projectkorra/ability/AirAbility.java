@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,7 +77,7 @@ public abstract class AirAbility extends ElementalAbility {
 
 		try {
 			return ParticleEffect.valueOf(particle);
-		}catch (IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			ProjectKorra.log.warning("Your current value for 'Properties.Air.Particles' is not valid. Returning to the default SPELL particle.");
 			return ParticleEffect.SPELL;
 		}
