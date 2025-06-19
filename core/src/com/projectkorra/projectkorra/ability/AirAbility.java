@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -72,19 +73,13 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @return Config specified ParticleEffect
 	 */
 	public static ParticleEffect getAirbendingParticles() {
-		final String particle = getConfig().getString("Properties.Air.Particles");
-		if (particle == null) {
-			return ParticleEffect.CLOUD;
-		} else if (particle.equalsIgnoreCase("spell")) {
+		final String particle = getConfig().getString("Properties.Air.Particles").toUpperCase();
+
+		try {
+			return ParticleEffect.valueOf(particle);
+		} catch (IllegalArgumentException e) {
+			ProjectKorra.log.warning("Your current value for 'Properties.Air.Particles' is not valid. Returning to the default SPELL particle.");
 			return ParticleEffect.SPELL;
-		} else if (particle.equalsIgnoreCase("blacksmoke")) {
-			return ParticleEffect.SMOKE_NORMAL;
-		} else if (particle.equalsIgnoreCase("smoke")) {
-			return ParticleEffect.CLOUD;
-		} else if (particle.equalsIgnoreCase("smallsmoke")) {
-			return ParticleEffect.SNOW_SHOVEL;
-		} else {
-			return ParticleEffect.CLOUD;
 		}
 	}
 
