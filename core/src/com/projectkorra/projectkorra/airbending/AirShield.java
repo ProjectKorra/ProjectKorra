@@ -75,7 +75,7 @@ public class AirShield extends AirAbility {
 		}
 
 		int angle = 0;
-		final int di = (int) (this.maxRadius * 2 / this.streams);
+		final int di = Math.max(1, (int) (this.maxRadius * 2 / this.streams));
 		for (int i = -(int) this.maxRadius + di; i < (int) this.maxRadius; i += di) {
 			this.angles.put(i, angle);
 			angle += 90;
