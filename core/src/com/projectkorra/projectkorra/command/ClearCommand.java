@@ -1,16 +1,15 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import com.projectkorra.projectkorra.board.BendingBoard;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerBindChangeEvent;
@@ -47,33 +46,27 @@ public class ClearCommand extends PKCommand {
 
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		if (args.size() == 0) {
-			for (int i = 1; i <= 9; i++) {
-				if (!bPlayer.getAbilities().containsKey(i)) {
-					continue;
-				}
-
-				PlayerBindChangeEvent event = new PlayerBindChangeEvent(bPlayer.getPlayer(), bPlayer.getAbilities().get(i), i, false, false);
-				ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
-				
+			bPlayer.getAbilities().entrySet().removeIf(entry -> {
+				PlayerBindChangeEvent event = new PlayerBindChangeEvent(bPlayer.getPlayer(), entry.getValue(), entry.getKey(), false, false);
+				Bukkit.getPluginManager().callEvent(event);
 				if (event.isCancelled()) {
-					continue;
+					return false;
 				}
-
-				bPlayer.getAbilities().remove(i);
-				bPlayer.saveAbility(null, i);
-			}
+				bPlayer.saveAbility(null, entry.getKey());
+				return true;
+			});
 			ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.cleared);
 		} else if (args.size() == 1) {
 			try {
 				final int slot = Integer.parseInt(args.get(0));
 				if (slot < 1 || slot > 9) {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.wrongNumber);
+					return;
 				}
 
 				if (bPlayer.getAbilities().get(slot) != null) {
 					PlayerBindChangeEvent event = new PlayerBindChangeEvent(bPlayer.getPlayer(), bPlayer.getAbilities().get(slot), slot, false, false);
-					ProjectKorra.plugin.getServer().getPluginManager().callEvent(event);
-					
+					Bukkit.getPluginManager().callEvent(event);
 					if (event.isCancelled()) {
 						return;
 					}
@@ -92,10 +85,10 @@ public class ClearCommand extends PKCommand {
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.clear")) {
-			return new ArrayList<String>();
+		if (args.size() != 0 || !sender.hasPermission("bending.command.clear")) {
+			return List.of();
 		}
-		return Arrays.asList("123456789".split(""));
+		return BendingBoard.SLOTS;
 	}
 
 }
