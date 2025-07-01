@@ -179,7 +179,6 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.InvalidName", "You must enter a valid name for your preset.");
 			config.addDefault("Commands.Preset.MaxPresets", "You've reached your maximum number of presets.");
 			config.addDefault("Commands.Preset.CantEditBinds", "You can't edit your binds right now!");
-			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
 			config.addDefault("Commands.Preset.UpdatePreset", "Preset '{name}' successfully updated.");
 			config.addDefault("Commands.Preset.BendingPermaRemoved", "You can't bind a preset, due to your bending being permanently removed.");
 			config.addDefault("Commands.Preset.NoAbilitiesBound", "You have no abilities bound.");

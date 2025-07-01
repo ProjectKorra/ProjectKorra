@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.util.ChatUtil;
-import net.kyori.adventure.platform.facet.Facet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -48,7 +47,6 @@ public class PresetCommand extends PKCommand {
 	public static final String INVALID_NAME = ".*[.,;:*'\"?=`<>+\\-\\[\\]{}^@!#$/\\\\%&()].*";
 
 	private final String failedToBindAllOthersMessage;
-	private final String noPresetNameExternalMessage;
 	private final String bendingPermaRemovedMessage;
 	private final String noAbilitiesBoundMessage;
 	private final String failedToBindAllMessage;
@@ -68,13 +66,10 @@ public class PresetCommand extends PKCommand {
 	private final String deletePresetMessage;
 	private final String unableToBind;
 
-	private boolean success;
-
 	public PresetCommand() {
 		super("preset", "/bending preset <Bind/Create/Delete/Update/List>", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
 
 		this.failedToBindAllOthersMessage = ConfigManager.languageConfig.get().getString("Commands.Preset.FailedToBindAllOthers");
-		this.noPresetNameExternalMessage = ConfigManager.languageConfig.get().getString("Commands.Preset.External.NoPresetName");
 		this.bendingPermaRemovedMessage = ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermaRemoved");
 		this.noAbilitiesBoundMessage = ConfigManager.languageConfig.get().getString("Commands.Preset.NoAbilitiesBound");
 		this.failedToBindAllMessage = ConfigManager.languageConfig.get().getString("Commands.Preset.FailedToBindAll");
@@ -103,6 +98,8 @@ public class PresetCommand extends PKCommand {
 			ChatUtil.sendBrandingMessage(sender, this.cantEditBindsMessage);
 			return;
 		}
+
+		if (!hasPermission(sender)) return;
 
 		// CREATE OPTIONAL FROM FIRST ARG [Bind/Create/Delete..]
 		Optional<PresetAction> actionOption = PresetAction.fromInput(args.getFirst());
