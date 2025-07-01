@@ -389,7 +389,7 @@ public class PresetCommand extends PKCommand {
 			return;
 		}
 
-		if (newName == null || newName.isBlank()) {
+		if (newName == null || newName.isBlank() || newName == oldName) {
 			oldPreset.update(new HashMap<>(BendingPlayer.getBendingPlayer(player).getAbilities())).thenAccept(success -> {
 				if (success) {
 					ChatUtil.sendBrandingMessage(player, ChatColor.GREEN + updatedPresetMessage.replace("{name}", ChatColor.YELLOW + oldName + ChatColor.GREEN));
