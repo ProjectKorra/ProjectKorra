@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.region;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 
-//import net.william278.cloplib.operation.OperationType;
 import net.william278.husktowns.libraries.cloplib.operation.OperationType;
 import net.william278.husktowns.api.BukkitHuskTownsAPI;
 import net.william278.husktowns.claim.Position;
