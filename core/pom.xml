@@ -90,6 +90,12 @@
       <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
     </repository>
 
+    <!-- HuskTowns API -->
+    <repository>
+      <id>william278.net</id>
+      <url>https://repo.william278.net/releases</url>
+    </repository>
+
   </repositories>
 
   <dependencies>
@@ -236,6 +242,13 @@
       <groupId>io.lumine</groupId>
       <artifactId>MythicLib-dist</artifactId>
       <version>1.6-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- HuskTowns -->
+    <dependency>
+      <groupId>net.william278.husktowns</groupId>
+      <artifactId>husktowns-bukkit</artifactId>
+      <version>3.1.3</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
