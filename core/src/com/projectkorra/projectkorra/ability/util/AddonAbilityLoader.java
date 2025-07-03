@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -30,17 +31,18 @@ public class AddonAbilityLoader<T> {
 	public AddonAbilityLoader(final Plugin plugin, final File directory) {
 		this.plugin = plugin;
 		this.directory = directory;
-		this.files = new ArrayList<File>();
+		this.files = new ArrayList<>();
 
 		if (plugin == null || directory == null) {
 			return;
 		}
 
-		for (final File f : directory.listFiles((file) -> file.getName().endsWith(".jar"))) {
-			this.files.add(f);
+		File[] jars = directory.listFiles(file -> file.getName().endsWith(".jar"));
+        if (jars != null) {
+			this.files.addAll(Arrays.asList(jars));
 		}
 
-		final List<URL> urls = new ArrayList<URL>();
+		final List<URL> urls = new ArrayList<>();
 		for (final File file : this.files) {
 			try {
 				urls.add(file.toURI().toURL());
@@ -55,7 +57,7 @@ public class AddonAbilityLoader<T> {
 	 * @param classType
 	 * @param parentClass a parent of classType that has a visible default
 	 *            constructor
-	 * @return A list of all of the T objects that were loaded from the jar
+	 * @return A list of all the T objects that were loaded from the jar
 	 *         files within @param directory
 	 */
 	public List<T> load(final Class<?> classType, final Class<?> parentClass) {
@@ -80,7 +82,7 @@ public class AddonAbilityLoader<T> {
 					}
 
 					final String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
-					Class<?> clazz = null;
+					Class<?> clazz;
 					try {
 						clazz = Class.forName(className, true, this.loader);
 					} catch (Exception | Error e) {

@@ -37,12 +37,10 @@ public class ComboUtil {
             if (coreAbility == null) {
                 ProjectKorra.log.warning("Invalid combination for ability \"" + comboName + "\": Ability \"" + ability + "\" not found!");
                 continue;
-            }
-            if (coreAbility instanceof ComboAbility) {
+            } else if (coreAbility instanceof ComboAbility) {
                 ProjectKorra.log.warning("Invalid combination for ability \"" + comboName + "\": Ability \"" + ability + "\" is a combo and can't be used in another combination!");
                 continue;
-            }
-            if (coreAbility instanceof PassiveAbility) {
+            } else if (coreAbility instanceof PassiveAbility) {
                 ProjectKorra.log.warning("Invalid combination for ability \"" + comboName + "\": Ability \"" + ability + "\" is a passive and can't be used in a combination!");
                 continue;
             }
@@ -81,36 +79,16 @@ public class ComboUtil {
             if (type != ClickType.CUSTOM) return type;
         } catch (IllegalArgumentException ignored) {}
 
-        switch (string.toUpperCase().replaceAll("[_ ]", "")) {
-            case "CLICK":
-            case "LEFT":
-            case "LEFTCLICK":
-            case "LEFTCLICKBLOCK":
-                return ClickType.LEFT_CLICK;
-            case "RIGHT":
-            case "RIGHTCLICK":
-                return ClickType.RIGHT_CLICK;
-            case "RIGHTCLICKBLOCK":
-                return ClickType.RIGHT_CLICK_BLOCK;
-            case "RIGHTCLICKENTITY":
-                return ClickType.RIGHT_CLICK_ENTITY;
-            case "HITENTITY":
-            case "HITMOB":
-            case "LEFTCLICKENTITY":
-            case "CLICKENTITY":
-            case "HIT":
-                return ClickType.LEFT_CLICK_ENTITY;
-            case "SNEAKUP":
-            case "SHIFTUP":
-                return ClickType.SHIFT_UP;
-            case "SNEAKDOWN":
-            case "SHIFTDOWN":
-                return ClickType.SHIFT_DOWN;
-            case "OFFHAND":
-            case "OFFHANDTRIGGER":
-                return ClickType.OFFHAND_TRIGGER;
-            default:
-                return null;
-        }
+        return switch (string.toUpperCase().replaceAll("[_ ]", "")) {
+            case "CLICK", "LEFT", "LEFTCLICK", "LEFTCLICKBLOCK" -> ClickType.LEFT_CLICK;
+            case "RIGHT", "RIGHTCLICK" -> ClickType.RIGHT_CLICK;
+            case "RIGHTCLICKBLOCK" -> ClickType.RIGHT_CLICK_BLOCK;
+            case "RIGHTCLICKENTITY" -> ClickType.RIGHT_CLICK_ENTITY;
+            case "HITENTITY", "HITMOB", "LEFTCLICKENTITY", "CLICKENTITY", "HIT" -> ClickType.LEFT_CLICK_ENTITY;
+            case "SNEAKUP", "SHIFTUP" -> ClickType.SHIFT_UP;
+            case "SNEAKDOWN", "SHIFTDOWN" -> ClickType.SHIFT_DOWN;
+            case "OFFHAND", "OFFHANDTRIGGER" -> ClickType.OFFHAND_TRIGGER;
+            default -> null;
+        };
     }
 }
