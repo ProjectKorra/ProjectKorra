@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -20,7 +19,6 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ClickType;
 
 public class FireKick extends FireAbility implements ComboAbility {
 
@@ -35,7 +33,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 	private Location location;
 	private Location destination;
 	private ArrayList<LivingEntity> affectedEntities;
-	private ArrayList<BukkitRunnable> tasks;
+	private ArrayList<ComboStream> tasks;
 
 	public FireKick(final Player player) {
 		super(player);
@@ -68,13 +66,12 @@ public class FireKick extends FireAbility implements ComboAbility {
 	@Override
 	public void progress() {
 		for (int i = 0; i < this.tasks.size(); i++) {
-			final BukkitRunnable br = this.tasks.get(i);
-			if (br instanceof FireComboStream) {
-				final FireComboStream fs = (FireComboStream) br;
-				if (fs.isCancelled()) {
-					this.tasks.remove(fs);
-				}
+			final ComboStream br = this.tasks.get(i);
+
+			if (br.isRemoved()) {
+				this.tasks.remove(br);
 			}
+
 		}
 
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
@@ -101,7 +98,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 				Vector vec = direction.clone().multiply(Math.cos(angle))
 						.add(xz.clone().multiply(Math.sin(angle))).normalize();
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation(), this.range, this.speed);
+				final ComboStream fs = new ComboStream(this.player, this, vec, this.player.getLocation(), this.range, this.speed);
 				fs.setSpread(0.2F);
 				fs.setDensity(5);
 				fs.setUseNewParticles(true);
@@ -109,7 +106,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 				if (this.tasks.size() % 3 != 0) {
 					fs.setCollides(false);
 				}
-				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
+				fs.start();
 				this.tasks.add(fs);
 				this.player.getWorld().playSound(this.player.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 0.5f, 1f);
 			}
@@ -123,7 +120,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		for (final BukkitRunnable task : this.tasks) {
+		for (final ComboStream task : this.tasks) {
 			task.cancel();
 		}
 	}
@@ -131,13 +128,13 @@ public class FireKick extends FireAbility implements ComboAbility {
 	@Override
 	public void handleCollision(final Collision collision) {
 		if (collision.isRemovingFirst()) {
-			final ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
+			final ArrayList<ComboStream> newTasks = new ArrayList<>();
 			final double collisionDistanceSquared = Math.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
 			// Remove all of the streams that are by this specific ourLocation.
 			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with Collision's detection algorithm.
-			for (final BukkitRunnable task : this.getTasks()) {
-				if (task instanceof FireComboStream) {
-					final FireComboStream stream = (FireComboStream) task;
+			for (final ComboStream task : this.getTasks()) {
+				if (task != null) {
+					final ComboStream stream = (ComboStream) task;
 					if (stream.getLocation().distanceSquared(collision.getLocationSecond()) > collisionDistanceSquared) {
 						newTasks.add(stream);
 					} else {
@@ -154,9 +151,9 @@ public class FireKick extends FireAbility implements ComboAbility {
 	@Override
 	public List<Location> getLocations() {
 		final ArrayList<Location> locations = new ArrayList<>();
-		for (final BukkitRunnable task : this.getTasks()) {
-			if (task instanceof FireComboStream) {
-				final FireComboStream stream = (FireComboStream) task;
+		for (final ComboStream task : this.getTasks()) {
+			if (task instanceof ComboStream) {
+				final ComboStream stream = (ComboStream) task;
 				locations.add(stream.getLocation());
 			}
 		}
@@ -197,11 +194,11 @@ public class FireKick extends FireAbility implements ComboAbility {
 		return this.affectedEntities;
 	}
 
-	public ArrayList<BukkitRunnable> getTasks() {
+	public ArrayList<ComboStream> getTasks() {
 		return this.tasks;
 	}
 
-	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
+	public void setTasks(final ArrayList<ComboStream> tasks) {
 		this.tasks = tasks;
 	}
 }

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -103,12 +103,7 @@ public class FireBurst extends FireAbility {
 		for (int i = 0; i < this.blasts.size(); i++) {
 			final FireBlast fblast = this.blasts.get(i);
 			final int toggleTime = (int) (i % (100.0 / this.particlesPercentage));
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					fblast.setShowParticles(true);
-				}
-			}.runTaskLater(ProjectKorra.plugin, toggleTime);
+			ThreadUtil.ensureLocationDelay(fblast.getLocation(), () -> fblast.setShowParticles(true), toggleTime);
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.projectkorra.projectkorra.ProjectKorra;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -84,7 +85,8 @@ public class Updater {
 	}
 
 	private void runAsync(final Plugin plugin, final Runnable run) {
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, run);
+		if (ProjectKorra.isFolia()) Bukkit.getAsyncScheduler().runNow(plugin, (task) -> run.run());
+		else plugin.getServer().getScheduler().runTaskAsynchronously(plugin, run);
 	}
 
 	/**

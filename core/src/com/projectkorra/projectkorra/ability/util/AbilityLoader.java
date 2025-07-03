@@ -72,7 +72,7 @@ public class AbilityLoader<T> {
 		while (entries.hasMoreElements()) {
 
 			final JarEntry entry = entries.nextElement();
-			if (!entry.getName().endsWith(".class") || entry.getName().contains("$")) {
+			if (!entry.getName().endsWith(".class")) {
 				continue;
 			}
 

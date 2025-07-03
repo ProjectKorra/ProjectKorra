@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Sets;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.RepeatingTask;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,7 +30,6 @@ import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
@@ -103,7 +104,7 @@ public class Lightning extends LightningAbility {
 	private Arc currentCopperChainArc;
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<Arc> arcs;
-	private ArrayList<BukkitRunnable> tasks;
+	private ArrayList<LightningParticle> tasks;
 	private ArrayList<Location> locations;
 	private Block[] chargedCopperBlocks;
 	private static final Set<EntityType> LIGHTNING_AFFECTED = Sets.newHashSet(EntityType.CREEPER, EntityType.VILLAGER,
@@ -270,7 +271,7 @@ public class Lightning extends LightningAbility {
 			} else {
 				updateLightningRod(block, true);
 			}
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			ThreadUtil.ensureLocationDelay(block.getLocation(), () -> {
 				if (blocks.isEmpty()) {
 					updateLightningRod(block, false);
 					return;
@@ -520,9 +521,9 @@ public class Lightning extends LightningAbility {
 					}
 					
 					while (iterLoc.distanceSquared(dest) > 0.15 * 0.15) {
-						final BukkitRunnable task = new LightningParticle(arc, iterLoc.clone(), this.selfHitWater, this.waterArcs);
+						final LightningParticle task = new LightningParticle(this, arc, iterLoc.clone(), this.selfHitWater, this.waterArcs);
 						final double timer = this.state == State.CHAIN ? arc.getAnimationLocations().get(j).getAnimCounter() / 8 : arc.getAnimationLocations().get(j).getAnimCounter() / 2;
-						task.runTaskTimer(ProjectKorra.plugin, (long) timer, 1);
+						task.start();
 						this.tasks.add(task);
 						iterLoc.add(GeneralMethods.getDirection(iterLoc, dest).normalize().multiply(0.15));
 					}
@@ -554,7 +555,7 @@ public class Lightning extends LightningAbility {
 	 */
 	public void removeWithTasks() {
 		for (int i = 0; i < this.tasks.size(); i++) {
-			this.tasks.get(i).cancel();
+			this.tasks.get(i).remove();
 			i--;
 		}
 		this.remove();
@@ -629,7 +630,7 @@ public class Lightning extends LightningAbility {
 		 */
 		public void cancel() {
 			for (int i = 0; i < this.particles.size(); i++) {
-				this.particles.get(i).cancel();
+				this.particles.get(i).remove();
 			}
 
 			for (final Arc subArc : this.subArcs) {
@@ -751,14 +752,15 @@ public class Lightning extends LightningAbility {
 	 * handle damaging any entities. These Runnables also check to see if they
 	 * reach water, in which case they will generate subarcs to branch out.
 	 **/
-	public class LightningParticle extends BukkitRunnable {
+	public class LightningParticle extends RepeatingTask {
 		private boolean selfHitWater;
 		private int count = 0;
 		private int waterArcs;
 		private Arc arc;
 		private Location location;
 
-		public LightningParticle(final Arc arc, final Location location, final boolean selfHitWater, final int waterArcs) {
+		public LightningParticle(final Lightning lightning, final Arc arc, final Location location, final boolean selfHitWater, final int waterArcs) {
+			super(lightning);
 			this.arc = arc;
 			this.location = location;
 			this.selfHitWater = selfHitWater;
@@ -768,8 +770,8 @@ public class Lightning extends LightningAbility {
 
 		/** Cancels this Runnable **/
 		@Override
-		public void cancel() {
-			super.cancel();
+		public void remove() {
+			super.remove();
 			Lightning.this.tasks.remove(this);
 		}
 
@@ -778,13 +780,13 @@ public class Lightning extends LightningAbility {
 		 * deals with any chain subarcs.
 		 */
 		@Override
-		public void run() {
+		public void progress() {
 			playLightningbendingParticle(this.location, 0F, 0F, 0F);
 			emitFirebendingLight(this.location);
 
 			this.count++;
 			if (this.count > 5) {
-				this.cancel();
+				this.remove();
 			} else if (this.count == 1) {
 				if (ThreadLocalRandom.current().nextDouble() < .1) {
 					playLightningbendingSound(location);
@@ -875,7 +877,7 @@ public class Lightning extends LightningAbility {
 									final Arc newArc = new Arc(Lightning.this.origin, Lightning.this.destination);
 									newArc.generatePoints(POINT_GENERATION);
 									Lightning.this.arcs.add(newArc);
-									this.cancel();
+									this.remove();
 									return;
 								}
 							}
@@ -1189,7 +1191,7 @@ public class Lightning extends LightningAbility {
 		return this.arcs;
 	}
 
-	public ArrayList<BukkitRunnable> getTasks() {
+	public ArrayList<LightningParticle> getTasks() {
 		return this.tasks;
 	}
 

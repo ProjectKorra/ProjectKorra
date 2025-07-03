@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.hooks.RegionProtectionHook;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -172,7 +173,7 @@ public class RegionProtection {
      * @param period The time, in milliseconds, to clean the cache
      */
     public static void startCleanCacheTask(double period) {
-        Bukkit.getScheduler().runTaskTimer(ProjectKorra.plugin, () -> {
+        ThreadUtil.runSyncTimer(() -> {
             final long currentTime = System.currentTimeMillis();
             for (final String playerName : BLOCK_CACHE.keySet()) {
                 final Map<Block, BlockCacheElement> map = BLOCK_CACHE.get(playerName);

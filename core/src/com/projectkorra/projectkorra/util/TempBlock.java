@@ -1,10 +1,8 @@
 package com.projectkorra.projectkorra.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +11,6 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -28,12 +25,8 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Snowable;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-
-import io.papermc.lib.PaperLib;
 
 public class TempBlock {
 
@@ -177,13 +170,15 @@ public class TempBlock {
 	 */
 	public static void removeAll() {
 		for (final Block block : new HashSet<>(instances_.keySet())) {
-			revertBlock(block, Material.AIR);
+			ThreadUtil.ensureLocation(block.getLocation(), () -> revertBlock(block, Material.AIR));
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
-			tempblock.state.update(true, applyPhysics(tempblock.state.getType()));
-			if (tempblock.revertTask != null) {
-				tempblock.revertTask.run();
-			}
+			ThreadUtil.ensureLocation(tempblock.getLocation(), () -> {
+				tempblock.state.update(true, applyPhysics(tempblock.state.getType()));
+				if (tempblock.revertTask != null) {
+					tempblock.revertTask.run();
+				}
+			});
 		}
 		REVERT_QUEUE.clear();
 	}
@@ -515,7 +510,7 @@ public class TempBlock {
 					REVERT_QUEUE.poll();
 					if (!tempBlock.reverted) {
 						remove(tempBlock);
-						tempBlock.trueRevertBlock(false); //It's already been removed from the poll(), so don't try remove it again
+						ThreadUtil.ensureLocation(tempBlock.getLocation(), () -> tempBlock.trueRevertBlock(false)); //It's already been removed from the poll(), so don't try remove it again
 					}
 				} else {
 					break;

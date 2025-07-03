@@ -153,11 +153,10 @@ public class Combustion extends CombustionAbility {
 			}
 		}
 
-		for (final Entity entity : this.location.getWorld().getEntities()) {
-			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distanceSquared(this.location) <= 4 && !entity.equals(this.player)) {
+
+		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.location, 4)) {
+			if (!entity.equals(this.player)) {
 					this.createExplosion(this.location, this.explosivePower, this.breakBlocks);
-				}
 			}
 		}
 		this.advanceLocation();
