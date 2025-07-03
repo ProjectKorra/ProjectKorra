@@ -39,6 +39,7 @@ permissions:
       bending.command.preset.bind.assign: true
       bending.command.preset.bind.external: true
       bending.command.preset.bind.external.other: true
+      bending.command.preset.list.others: true
       bending.command.copy.assign: true
       bending.admin.debug: true
       bending.command.remove: true
