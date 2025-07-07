@@ -4,9 +4,9 @@ package com.projectkorra.projectkorra.util;
 import org.bukkit.entity.Player;
 
 /**
- * Deprecated for removal. Use {@link ChatUtil#sendActionBar(String, Player...)} instead
+ * @deprecated for removal. Use {@link ChatUtil#sendActionBar(String, Player...)} instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ActionBar {
 
 	/**

@@ -17,7 +17,6 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
  * Current functions include <b>stopping</b>.
  *
  * @author Simplicitee
- *
  */
 public class MovementHandler {
 
@@ -46,11 +45,9 @@ public class MovementHandler {
 	 */
 	public void stopWithDuration(final long duration, final String message) {
 		this.entity.setMetadata("movement:stop", new FixedMetadataValue(ProjectKorra.plugin, this.ability));
-		if (this.entity instanceof Player) {
+		if (this.entity instanceof Player player) {
 			final long start = System.currentTimeMillis();
-			final Player player = (Player) this.entity;
-			this.runnable = new BukkitRunnable() {
-
+            this.runnable = new BukkitRunnable() {
 				@Override
 				public void run() {
 					ChatUtil.sendActionBar(message, player);
@@ -58,20 +55,16 @@ public class MovementHandler {
 						MovementHandler.this.reset();
 					}
 				}
-
 			};
 			this.runnable.runTaskTimer(ProjectKorra.plugin, 0, 1);
 		} else {
 			this.runnable = new BukkitRunnable() {
-
 				@Override
 				public void run() {
 					MovementHandler.this.reset();
 				}
-
 			};
 			new BukkitRunnable() {
-
 				@Override
 				public void run() {
 					if (MovementHandler.this.entity.isOnGround()) {
@@ -80,7 +73,6 @@ public class MovementHandler {
 						MovementHandler.this.runnable.runTaskLater(ProjectKorra.plugin, duration);
 					}
 				}
-
 			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 		}
 	}
@@ -94,20 +86,16 @@ public class MovementHandler {
 	 */
 	public void stop(final String message) {
 		this.entity.setMetadata("movement:stop", new FixedMetadataValue(ProjectKorra.plugin, this.ability));
-		if (this.entity instanceof Player) {
-			final Player player = (Player) this.entity;
-			this.msg = new BukkitRunnable() {
-
+		if (this.entity instanceof Player player) {
+            this.msg = new BukkitRunnable() {
 				@Override
 				public void run() {
 					ChatUtil.sendActionBar(message, player);
 				}
-
 			};
 			this.msg.runTaskTimer(ProjectKorra.plugin, 0, 1);
 		} else {
 			new BukkitRunnable() {
-
 				@Override
 				public void run() {
 					if (MovementHandler.this.entity.isOnGround()) {
@@ -115,7 +103,6 @@ public class MovementHandler {
 						this.cancel();
 					}
 				}
-
 			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 		}
 		this.runnable = null;
@@ -163,10 +150,10 @@ public class MovementHandler {
 	 * therefore "reseting" it's AI
 	 *
 	 * @author Simplicitee
-	 *
 	 */
+	@FunctionalInterface
 	public interface ResetTask {
-		public void run();
+		void run();
 	}
 
 	/**
@@ -199,11 +186,10 @@ public class MovementHandler {
 	 */
 	public static MovementHandler getFromEntityAndAbility(final Entity entity, final CoreAbility ability) {
 		for (final MovementHandler handler : handlers) {
-			if (handler.getEntity().getEntityId() == entity.getEntityId() && handler.getAbility().equals(ability)) {
+			if (handler.getEntity() == entity && handler.getAbility() == ability) {
 				return handler;
 			}
 		}
-
 		return null;
 	}
 }
