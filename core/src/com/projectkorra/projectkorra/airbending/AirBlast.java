@@ -296,11 +296,13 @@ public class AirBlast extends AirAbility {
 
 	private void affect(final Entity entity) {
 		if (entity instanceof Player) {
+			boolean falldamage = getConfig().getBoolean("Abilities.Air.AirBlast.FallDamageOthers");
+			if (entity.getUniqueId() != player.getUniqueId() && !falldamage);
 			if (Commands.invincible.contains(((Player) entity).getName())) {
 				return;
 			}
 		}
-			
+
 		final boolean isUser = entity.getUniqueId() == this.player.getUniqueId();
 		double knockback = this.pushFactorForOthers;
 
@@ -312,7 +314,12 @@ public class AirBlast extends AirAbility {
 			}
 		}
 
-		final double max = this.speed / this.speedFactor;
+		if (source != null) knockback = this.pushFactor;
+
+		if (knockback == 0) return;
+
+		Vector velocity = entity.getVelocity();
+		final double max = 1.0 / pushFactorForOthers;
 
 		final Vector push = this.direction.clone();
 		if (Math.abs(push.getY()) > max && !isUser) {
@@ -326,18 +333,30 @@ public class AirBlast extends AirAbility {
 		if (this.location.getWorld().equals(this.origin.getWorld())) {
 			knockback *= 1 - this.location.distance(this.origin) / (2 * this.range);
 		}
-		
+
 		if (GeneralMethods.isSolid(entity.getLocation().add(0, -0.5, 0).getBlock()) && source == null) {
-			knockback *= 0.85;
+//change to .5 from .85
+			knockback *= 0.5;
 		}
-		
-		push.normalize().multiply(knockback);
-		
-		if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
-			push.normalize().add(entity.getVelocity()).multiply(knockback);
+
+//add double comp and calculations & change factor to knockback
+		double comp = velocity.dot(push.clone().normalize());
+		if (comp > knockback) {
+			velocity.multiply(.5);
+			velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
+		} else if (comp + knockback * .5 > knockback) {
+			velocity.add(push.clone().multiply(knockback - comp));
+		} else {
+			velocity.add(push.clone().multiply(knockback * .5));
 		}
-		GeneralMethods.setVelocity(this, entity, push);
-		
+
+//push.normalize().multiply(knockback);
+//
+//if (Math.abs(entity.getVelocity().dot(push)) > knockback && entity.getVelocity().angle(push) > Math.PI / 3) {
+//push.normalize().add(entity.getVelocity()).multiply(knockback);
+//}
+		GeneralMethods.setVelocity(this, entity, velocity);
+
 		if (this.source != null) {
 			new HorizontalVelocityTracker(entity, this.player, 200l, this.source);
 		} else {
@@ -350,7 +369,7 @@ public class AirBlast extends AirAbility {
 			} else {
 				DamageHandler.damageEntity(entity, this.damage, this);
 			}
-			
+
 			this.affectedEntities.add(entity);
 		}
 
@@ -361,7 +380,6 @@ public class AirBlast extends AirAbility {
 		entity.setFireTicks(0);
 		breakBreathbendingHold(entity);
 	}
-
 	@Override
 	public void progress() {
 		if (this.player.isDead() || !this.player.isOnline()) {

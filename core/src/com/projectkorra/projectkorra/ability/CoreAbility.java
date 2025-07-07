@@ -83,6 +83,7 @@ public abstract class CoreAbility implements Ability {
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
 	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
 	private static final Map<Class<? extends CoreAbility>, Map<String, AttributeCache>> ATTRIBUTE_FIELDS = new HashMap<>();
+	private static final Map<String, CoreAbility> ABILITIES_BY_CLASS_NAME = new ConcurrentSkipListMap<>();
 
 	private static int idCounter;
 	private static long currentTick;
@@ -343,6 +344,10 @@ public abstract class CoreAbility implements Ability {
 			return abils.iterator().next();
 		}
 		return null;
+
+	}
+	public static CoreAbility getAbility(final String className, String nothing) {
+		return className != null ? ABILITIES_BY_CLASS_NAME.get(className) : null;
 	}
 
 	/**
@@ -535,9 +540,11 @@ public abstract class CoreAbility implements Ability {
 	public static void registerAbilities() {
 		ABILITIES_BY_NAME.clear();
 		ABILITIES_BY_CLASS.clear();
+		ABILITIES_BY_CLASS_NAME.clear();
 		registerPluginAbilities(ProjectKorra.plugin, "com.projectkorra");
 		registerAddonAbilities("/Abilities/");
 	}
+
 
 	/**
 	 * Scans a JavaPlugin and registers CoreAbility class files.
@@ -571,6 +578,7 @@ public abstract class CoreAbility implements Ability {
 			}
 
 			try {
+				ABILITIES_BY_CLASS_NAME.put(coreAbil.getClass().getSimpleName(), coreAbil);
 				ABILITIES_BY_NAME.put(name.toLowerCase(), coreAbil);
 				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
 

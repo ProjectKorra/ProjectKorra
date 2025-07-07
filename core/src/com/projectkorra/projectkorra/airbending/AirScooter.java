@@ -58,6 +58,8 @@ public class AirScooter extends AirAbility {
 		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
+		AirBlast blast = CoreAbility.getAbility(player, AirBlast.class);
+		if (blast != null && blast.isFromOtherOrigin()) blast.remove();
 
 		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
 		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");

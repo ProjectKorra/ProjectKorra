@@ -129,8 +129,8 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 		if (this.origin == null) {
 			// AirSweep come from feet instead
-			this.direction = this.player.getEyeLocation().clone().subtract(0, -1, 0).getDirection().normalize();
-			this.origin = player.getLocation().clone().subtract(0, -1, 0).add(this.direction.clone().multiply(10));
+			this.direction = this.player.getEyeLocation().getDirection().normalize();
+			this.origin = this.player.getLocation().add(this.direction.clone().multiply(10));
 		}
 		if (this.progressCounter < 8) {
 			return;
