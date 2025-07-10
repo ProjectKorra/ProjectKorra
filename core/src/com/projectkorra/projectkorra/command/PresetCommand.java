@@ -1,15 +1,14 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -18,294 +17,413 @@ import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.Preset;
 
+import javax.annotation.Nullable;
+
 /**
  * Executor for /bending preset. Extends {@link PKCommand}.
  */
 public class PresetCommand extends PKCommand {
+	public enum PresetAction {
+		CREATE("create", "c", "save"),
+		DELETE("delete", "d", "del"),
+		UPDATE("update", "u", "up"),
+		LIST("list", "l", "li"),
+		BIND("bind", "b");
 
-	private static final String[] createaliases = { "create", "c", "save" };
-	private static final String[] deletealiases = { "delete", "d", "del" };
-	private static final String[] listaliases = { "list", "l" };
-	private static final String[] bindaliases = { "bind", "b" };
+		private final Set<String> aliases;
 
-	public static final String INVALID_NAME = ".*[.,;:*'\"?=`<>+\\-\\[\\]{}^@!#$/\\\\%&()].*";
+		PresetAction(String... aliases) {
+			this.aliases = Arrays.stream(aliases).map(String::toLowerCase).collect(Collectors.toSet());
+		}
 
-	private final String noPresets;
-	private final String noPresetName;
-	private final String deletePreset;
-	private final String noPresetNameExternal;
-	private final String bendingRemoved;
-	private final String bound;
-	private final String failedToBindAll;
-	private final String databaseError;
-	private final String bendingRemovedOther;
-	private final String boundOtherConfirm;
-	private final String succesfullyCopied;
-	private final String reachedMax;
-	private final String alreadyExists;
-	private final String createdNewPreset;
-	private final String cantEditBinds;
-	private final String playerNotFound;
-	private final String invalidName;
+		public boolean matches(String input) {
+			return aliases.contains(input.toLowerCase());
+		}
+
+		public static Optional<PresetAction> fromInput(String input) {
+			return Arrays.stream(values()).filter(action -> action.matches(input)).findFirst();
+		}
+	}
+
+	private static final String INVALID_NAME = ".*[.,;:*'\"?=`<>+\\-\\[\\]{}^@!#$/\\\\%&()].*";
+
+	private final String cantEditBindsMessage;
+	private final String playerNotFoundMessage;
+	private final String noPresetNameDefined;
+	private final String noAbilitiesBoundMessage;
+	private final String noPresetsMessage;
+	private final String failedToBindAllMessage;
+	private final String successfullyBoundMessage;
+	private final String targetSuccessfullyBoundMessage;
+	private final String noSuchPresetMessage;
+	private final String deletePresetMessage;
+	private final String databaseErrorMessage;
+	private final String invalidNameMessage;
+	private final String reachedMaxMessage;
+	private final String alreadyExistsMessage;
+	private final String createdNewPresetMessage;
+	private final String updatedPresetMessage;
+	private final String updatedPresetNewNameMessage;
 
 	public PresetCommand() {
-		super("preset", "/bending preset <Bind/Create/Delete/List> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
+		super("preset", "/bending preset <Bind/Create/Delete/Update/List>", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
 
-		this.noPresets = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresets");
-		this.noPresetName = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresetName");
-		this.deletePreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Delete");
-		this.noPresetNameExternal = ConfigManager.languageConfig.get().getString("Commands.Preset.External.NoPresetName");
-		this.bendingRemoved = ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved");
-		this.bound = ConfigManager.languageConfig.get().getString("Commands.Preset.SuccesfullyBound");
-		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Preset.FailedToBindAll");
-		this.databaseError = ConfigManager.languageConfig.get().getString("Commands.Preset.DatabaseError");
-		this.bendingRemovedOther = ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved");
-		this.boundOtherConfirm = ConfigManager.languageConfig.get().getString("Commands.Preset.Other.SuccesfullyBoundConfirm");
-		this.succesfullyCopied = ConfigManager.languageConfig.get().getString("Commands.Preset.SuccesfullyCopied");
-		this.reachedMax = ConfigManager.languageConfig.get().getString("Commands.Preset.MaxPresets");
-		this.alreadyExists = ConfigManager.languageConfig.get().getString("Commands.Preset.AlreadyExists");
-		this.createdNewPreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Created");
-		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Preset.CantEditBinds");
-		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound");
-		this.invalidName = ConfigManager.languageConfig.get().getString("Commands.Preset.InvalidName");
+		FileConfiguration languageConfig = ConfigManager.languageConfig.get();
+
+		this.cantEditBindsMessage = languageConfig.getString("Commands.Preset.CantEditBinds", "You can't edit your binds right now!");
+		this.playerNotFoundMessage = languageConfig.getString("Commands.Preset.PlayerNotFound", "Player not found.");
+		this.noPresetNameDefined = languageConfig.getString("Commands.Preset.DefineName", "Define the preset.");
+		this.noAbilitiesBoundMessage = languageConfig.getString("Commands.Preset.NoAbilitiesBound", "You don't have any abilities bound!");
+		this.noPresetsMessage = languageConfig.getString("Commands.Preset.NoPresets", "You do not have any presets.");
+		this.failedToBindAllMessage = languageConfig.getString("Commands.Preset.FailedToBindAll", "Some abilities were not bound due to missing elements.");
+		this.successfullyBoundMessage = languageConfig.getString("Commands.Preset.SuccesfullyBound", "Your binds have been set to match the '{name}' preset.");
+		this.targetSuccessfullyBoundMessage = languageConfig.getString("Commands.Preset.Other.SuccesfullyBoundConfirm", "The binds of '{target}' have been set to match the '{name}' preset.");
+		this.noSuchPresetMessage = languageConfig.getString("Commands.Preset.NoSuchPreset", "There is no such preset.");
+		this.deletePresetMessage = languageConfig.getString("Commands.Preset.Delete", "You have deleted your '{name}' preset.");
+		this.databaseErrorMessage = languageConfig.getString("Commands.Preset.DatabaseError", "An error occurred while processing the preset '{name}'.");
+		this.invalidNameMessage = languageConfig.getString("Commands.Preset.InvalidName", "You must enter a valid name for your preset.");
+		this.reachedMaxMessage = languageConfig.getString("Commands.Preset.MaxPresets", "You've reached your maximum number of presets!");
+		this.alreadyExistsMessage = languageConfig.getString("Commands.Preset.AlreadyExists", "A preset with that name already exists.");
+		this.createdNewPresetMessage = languageConfig.getString("Commands.Preset.Created", "Created a new preset named '{name}'.");
+		this.updatedPresetMessage = languageConfig.getString("Commands.Preset.Update", "Successfully updated the '{name}' preset.");
+		this.updatedPresetNewNameMessage = languageConfig.getString("Commands.Preset.Update.NewName", "Successfully updated the '{name}' preset. New name: '{new}'.");
 	}
 
 	@Override
 	public void execute(final CommandSender sender, final List<String> args) {
 		if (!this.correctLength(sender, args.size(), 1, 3)) {
 			return;
-		} else if (sender instanceof Player && MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
-			ChatUtil.sendBrandingMessage(sender, this.cantEditBinds);
+		} else if (sender instanceof Player player && MultiAbilityManager.hasMultiAbilityBound(player)) {
+			ChatUtil.sendBrandingMessage(sender, this.cantEditBindsMessage);
 			return;
 		}
 
-		Player target = null;
+		if (!hasPermission(sender)) return;
 
-		int page = 1;
-		String name = null;
-		if (args.size() == 1 && !Arrays.asList(listaliases).contains(args.get(0))){
+		// CREATE OPTIONAL FROM FIRST ARG [Bind/Create/Delete..]
+		Optional<PresetAction> actionOption = PresetAction.fromInput(args.getFirst());
+
+		if (actionOption.isEmpty()) {
 			this.help(sender, false);
-		} else if (args.size() >= 2) {
-			if (Arrays.asList(listaliases).contains(args.get(0))) {
-				if (args.size() == 3) {
-					target = Bukkit.getPlayer(args.get(1));
-					if (target == null) {
-						ChatUtil.sendBrandingMessage(sender, this.playerNotFound);
-						return;
-					}
-					page = parseInt(args.get(2));
-				} else {
-					page = parseInt(args.get(1));
-				}
-
-			} else {
-				name = args.get(1);
-			}
+			return;
 		}
 
-		// bending preset list.
-		if (Arrays.asList(listaliases).contains(args.get(0)) && this.hasPermission(sender, "list")) {
-			boolean firstMessage = true;
+		switch (actionOption.get()) {
+			case LIST -> {
+				if (!hasPermission(sender, "list") || !(sender instanceof Player player)) return;
 
-			if (target == null) {
-				if (!isPlayer(sender)) return;
+				int page = args.size() >= 2 ? parseInt(args.get(1)) : 1;
+				Player target = player;
 
-				target = (Player) sender;
-			}
-
-			final List<Preset> presets = Preset.presets.get(target.getUniqueId());
-			final List<String> presetNames = new ArrayList<String>();
-
-			if (presets == null || presets.isEmpty()) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPresets);
-				return;
-			}
-
-			for (final Preset preset : presets) {
-				presetNames.add(preset.getName());
-			}
-
-			for (final String s : this.getPage(presetNames, ChatColor.GOLD + "Presets: ", page, false)) {
-				if (firstMessage) {
-					ChatUtil.sendBrandingMessage(sender, s);
-					firstMessage = false;
-				} else {
-					sender.sendMessage(ChatColor.YELLOW + s);
-				}
-			}
-		} else if (Arrays.asList(deletealiases).contains(args.get(0)) && this.hasPermission(sender, "delete")) { // bending preset delete name.
-			if (args.size() >= 3) {
-				target = Bukkit.getPlayer(args.get(1));
-
-				if (target == null) {
-					ChatUtil.sendBrandingMessage(sender, this.playerNotFound);
-					return;
-				}
-			} else {
-				if (!isPlayer(sender)) return;
-
-				target = (Player) sender;
-			}
-
-			if (!Preset.presetExists(target, name)) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPresetName);
-				return;
-			}
-
-			final Preset preset = Preset.getPreset(target, name);
-			preset.delete().thenAccept(b -> {
-				if (b) {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.deletePreset.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));
-				} else {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.databaseError.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.RED));
-				}
-			}).exceptionally(e -> {
-				e.printStackTrace();
-				return null;
-			});
-		} else if (Arrays.asList(bindaliases).contains(args.get(0)) && this.hasPermission(sender, "bind")) { // bending preset bind name.
-			if (args.size() < 3) {
-				if (!isPlayer(sender)) return;
-				Player player = (Player) sender;
-				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-				if (name == null) {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.invalidName);
-				} else if (bPlayer.isPermaRemoved()) {
-					ChatUtil.sendBrandingMessage(player, ChatColor.RED + this.bendingRemoved);
-				} else if (Preset.presetExists(player, name)) {
-					final Preset preset = Preset.getPreset(player, name);
-
-					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.bound.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));
-					boolean boundAll = Preset.bindPreset(player, preset);
-
-					if (!boundAll) {
-						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.failedToBindAll);
+				if (args.size() >= 3 && hasPermission(sender, "list.others")) {
+					Player specified = Bukkit.getPlayerExact(args.get(2));
+					if (specified == null || !specified.isOnline()) {
+						ChatUtil.sendBrandingMessage(sender, playerNotFoundMessage);
+						return;
+					} else {
+						target = specified;
 					}
-				} else if (Preset.externalPresetExists(name) && this.hasPermission(sender, "bind.external")) {
-					Preset.bindExternalPreset(player, name);
-				} else if (!Preset.externalPresetExists(name) && this.hasPermission(sender, "bind.external")) {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPresetNameExternal);
-				} else {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPresetName);
 				}
 
-			} else if (this.hasPermission(sender, "bind.external.assign") && Preset.externalPresetExists(name)) {
-				if (!Preset.externalPresetExists(name)) {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPresetNameExternal);
+				listPresets(page, target, player);
+			}
+
+			case DELETE -> {
+				if (!hasPermission(sender, "delete") || !(sender instanceof Player player)) return;
+
+				if (args.size() <= 1) {
+					ChatUtil.sendBrandingMessage(player, ChatColor.RED + noPresetNameDefined);
 					return;
 				}
 
-				target = Bukkit.getPlayer(args.get(2));
-				if (target != null && target.isOnline()) {
-					BendingPlayer bPlayer2 = BendingPlayer.getBendingPlayer(target);
+				deletePreset(player, args.get(1));
+			}
 
-					if (bPlayer2.isPermaRemoved()) {
-						ChatUtil.sendBrandingMessage(target, ChatColor.RED + this.bendingRemovedOther);
+			case CREATE -> {
+				if (!hasPermission(sender, "create") || !(sender instanceof Player player)) return;
+
+				if (BendingPlayer.getBendingPlayer(player).getAbilities().isEmpty()) {
+					ChatUtil.sendBrandingMessage(player, ChatColor.RED + noAbilitiesBoundMessage);
+					return;
+				}
+
+				if (args.size() <= 1) {
+					ChatUtil.sendBrandingMessage(player, ChatColor.RED + noPresetNameDefined);
+					return;
+				}
+
+				createPreset(player, args.get(1));
+			}
+
+			case UPDATE -> {
+				if (!hasPermission(sender, "update") || !(sender instanceof Player player)) return;
+
+				if (BendingPlayer.getBendingPlayer(player).getAbilities().isEmpty()) {
+					ChatUtil.sendBrandingMessage(player, ChatColor.RED + noAbilitiesBoundMessage);
+					return;
+				}
+
+				if (args.size() < 2) {
+					ChatUtil.sendBrandingMessage(player, ChatColor.RED + noPresetNameDefined);
+					return;
+				}
+
+				String oldName = args.get(1);
+				updatePreset(player, oldName, args.size() > 2 ? args.get(2) : oldName);
+			}
+
+			case BIND -> {
+				if (!hasPermission(sender, "bind")) return;
+
+				String presetName = args.get(1);
+
+				// Admin bind | /bending preset bind [Preset] [Player]
+				if (args.size() >= 3) {
+					if (!hasPermission(sender, "bind.assign")) return;
+
+					Player target = Bukkit.getPlayerExact(args.get(2));
+					if (target == null || !target.isOnline()) {
+						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + playerNotFoundMessage);
 						return;
 					}
-					final boolean boundAll = Preset.bindExternalPreset(target, name);
 
-					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.boundOtherConfirm.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN + ChatColor.YELLOW));
-					ChatUtil.sendBrandingMessage(target, ChatColor.GREEN + this.bound.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN));
-					if (!boundAll) {
-						ChatUtil.sendBrandingMessage(target, ChatColor.RED + this.failedToBindAll);
-					}
-				} else {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
+					bindPreset(target, presetName, sender);
+					return;
 				}
-			} else if (this.hasPermission(sender, "bind.assign")) {
-				target = Bukkit.getPlayer(args.get(2));
 
-				if (target != null && target.isOnline()) {
-					BendingPlayer bPlayer2 = BendingPlayer.getBendingPlayer(target);
-
-					if (bPlayer2.isPermaRemoved()) {
-						ChatUtil.sendBrandingMessage(target, ChatColor.RED + this.bendingRemovedOther);
-						return;
-					}
-					else if (!Preset.presetExists(target, name)) {
-						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPresetName);
-						return;
-					}
-					final Preset preset = Preset.getPreset(target, name);
-					final boolean boundAll = Preset.bindPreset(target, preset);
-
-					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.boundOtherConfirm.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN + ChatColor.YELLOW));
-					ChatUtil.sendBrandingMessage(target, ChatColor.GREEN + this.succesfullyCopied.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN));
-					if (!boundAll) {
-						ChatUtil.sendBrandingMessage(target, ChatColor.RED + this.failedToBindAll);
-					}
-				} else {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
-				}
+				// Self bind | /bending preset bind [Preset]
+				if (!(sender instanceof Player player)) return;
+				bindPreset(player, presetName, player);
 			}
-		} else if (Arrays.asList(createaliases).contains(args.get(0)) && this.hasPermission(sender, "create")) { // bending preset create name.
-			if (!isPlayer(sender)) return;
-			target = (Player) sender;
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
-
-			final int limit = GeneralMethods.getMaxPresets(target);
-			if (name == null || name.matches(INVALID_NAME)) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.invalidName);
-				return;
-			}
-			if (Preset.presets.get(target.getUniqueId()) != null && Preset.presets.get(target.getUniqueId()).size() >= limit) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.reachedMax);
-				return;
-			} else if (Preset.presetExists(target, name)) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyExists);
-				return;
-			}
-
-			if (bPlayer == null) {
-				return;
-			}
-			final HashMap<Integer, String> abilities = (HashMap<Integer, String>) bPlayer.getAbilities().clone();
-
-			final Preset preset = new Preset(target.getUniqueId(), name, abilities);
-			final String finalName = name;
-			preset.save(target).thenAccept(b -> {
-				if (b) {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.createdNewPreset.replace("{name}", ChatColor.YELLOW + finalName + ChatColor.GREEN));
-				} else {
-					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.databaseError.replace("{name}", ChatColor.YELLOW + finalName + ChatColor.RED));
-				}
-			});
-
-		} else {
-			this.help(sender, false);
 		}
 	}
 
-	@Override
-	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
-		if (args.size() >= 3 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player)) {
-			return new ArrayList<>();
+	/**
+	 * Lists all player Presets
+	 *
+	 * @param page {@link Preset} List page
+	 * @param player Player to check for
+	 * @param receiver Player to send the list to
+	 */
+	private void listPresets(int page, Player player, Player receiver) {
+		List<Preset> allPresets = Preset.presets.get(player.getUniqueId());
+
+		if (allPresets == null || allPresets.isEmpty()) {
+			ChatUtil.sendBrandingMessage(receiver, ChatColor.RED + noPresetsMessage);
+			return;
 		}
-		final List<String> l = new ArrayList<>();
-		if (args.size() == 0) {
-			l.add("create");
-			l.add("delete");
-			l.add("list");
-			l.add("bind");
-			return l;
-		} else if (args.size() <= 1 && (Arrays.asList(new String[] { "delete", "d", "del", "bind", "b" }).contains(args.get(0).toLowerCase()))) {
-			final List<Preset> presets = Preset.presets.get(((Player) sender).getUniqueId());
-			final List<String> presetNames = new ArrayList<>();
-			if (presets != null && presets.size() != 0) {
-				presets.stream().map(Preset::getName).forEach(presetNames::add);
+
+		List<String> presetNames = allPresets.stream().map(Preset::getName).toList();
+		List<String> pageLines = getPage(presetNames, ChatColor.GOLD + "Presets: ", page, false);
+
+		if (pageLines.isEmpty()) return;
+
+		ChatUtil.sendBrandingMessage(receiver, pageLines.getFirst());
+		pageLines.stream().skip(1).forEach(line -> receiver.sendMessage(ChatColor.YELLOW + line));
+	}
+
+	/**
+	 * Bind {@link Preset} for Player
+	 *
+	 * @param target Player to bind {@link Preset} for
+	 * @param presetName {@link Preset} to bind
+	 * @param executor Message receiver
+	 */
+	private void bindPreset(Player target, String presetName, CommandSender executor) {
+		boolean isAdmin = !target.getName().equals(executor.getName());
+
+		if (BendingPlayer.getBendingPlayer(target).isPermaRemoved()) {
+			if (isAdmin) {
+				ChatUtil.sendBrandingMessage(executor, failedToBindAllMessage);
+				return;
 			}
-			//Add external presets if they are binding
-			if (sender.hasPermission("bending.command.preset.bind.external")
-					&& Arrays.asList(new String[] { "bind", "b" }).contains(args.get(0).toLowerCase())) {
-				if (Preset.externalPresets.keySet().size() > 0) {
-					presetNames.addAll(Preset.externalPresets.keySet());
+
+			ChatUtil.sendBrandingMessage(target, failedToBindAllMessage);
+			return;
+		}
+
+		if (Preset.presetExists(target, presetName)) {
+			this.bindPlayerPreset(target, presetName, executor, isAdmin);
+			return;
+		}
+
+
+		if (Preset.externalPresetExists(presetName)) {
+			this.bindExternalPreset(target, presetName, executor, isAdmin);
+			return;
+		}
+
+		if (isAdmin) {
+			ChatUtil.sendBrandingMessage(executor, ChatColor.RED + noSuchPresetMessage);
+		} else {
+			ChatUtil.sendBrandingMessage(target, ChatColor.RED + noSuchPresetMessage);
+		}
+	}
+
+	private void bindPlayerPreset(Player target, String presetName, CommandSender executor, boolean admin) {
+		boolean boundAll = Preset.bindPreset(target, Preset.getPreset(target, presetName));
+
+		ChatUtil.sendBrandingMessage(target, ChatColor.GREEN + successfullyBoundMessage.replace("{name}", ChatColor.YELLOW + presetName + ChatColor.GREEN));
+
+		if (admin) {
+			ChatUtil.sendBrandingMessage(executor, ChatColor.GREEN + targetSuccessfullyBoundMessage
+					.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN)
+					.replace("{name}", ChatColor.YELLOW + presetName + ChatColor.GREEN));
+		}
+
+		if (!boundAll) {
+			ChatUtil.sendBrandingMessage(target, ChatColor.RED + failedToBindAllMessage);
+			if (admin) {
+				ChatUtil.sendBrandingMessage(executor, ChatColor.RED + failedToBindAllMessage);
+			}
+		}
+	}
+
+	private void bindExternalPreset(Player target, String presetName, CommandSender executor, boolean admin) {
+		if (!admin && !hasPermission(target, "bind.external")) return;
+		this.bindPlayerPreset(target, presetName, executor, admin);
+	}
+
+	/**
+	 * Delete {@link Preset} for Player
+	 *
+	 * @param player Player to delete {@link Preset} for
+	 * @param presetName {@link Preset} to delete
+	 */
+	private void deletePreset(Player player, String presetName) {
+		Preset preset = Preset.getPreset(player, presetName);
+		if (preset == null || !Preset.presetExists(player, presetName)) {
+			ChatUtil.sendBrandingMessage(player, ChatColor.RED + noSuchPresetMessage);
+			return;
+		}
+
+        preset.delete().thenAccept(success -> {
+			if (success) {
+				ChatUtil.sendBrandingMessage(player, ChatColor.GREEN + deletePresetMessage.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));
+			} else {
+				ChatUtil.sendBrandingMessage(player, ChatColor.RED + databaseErrorMessage.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.RED));
+			}
+		}).exceptionally(e -> {
+			ProjectKorra.log.severe("Failed to delete preset for " + player.getName() + "!" + e.getMessage());
+			return null;
+		});
+	}
+
+	/**
+	 * Create a new {@link Preset}
+	 *
+	 * @param player Creator of {@link Preset}
+	 * @param presetName Name of {@link Preset}
+	 */
+	private void createPreset(Player player, String presetName) {
+		// PRESET NAME VALID CHECK
+		if (presetName == null || presetName.isBlank() || presetName.matches(INVALID_NAME)) {
+			ChatUtil.sendBrandingMessage(player, ChatColor.RED + invalidNameMessage);
+			return;
+		}
+
+		// MAX PRESET LIMIT REACHED CHECK
+		if (Preset.presets.get(player.getUniqueId()) != null && Preset.presets.get(player.getUniqueId()).size() >= GeneralMethods.getMaxPresets(player)) {
+			ChatUtil.sendBrandingMessage(player, ChatColor.RED + reachedMaxMessage);
+			return;
+		}
+
+		// PRESET ALREADY EXISTS CHECK
+		if (Preset.presetExists(player, presetName)) {
+			ChatUtil.sendBrandingMessage(player, ChatColor.RED + alreadyExistsMessage);
+			return;
+		}
+
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null || !bPlayer.isOnline()) {
+			return;
+		}
+
+		// CREATE AND REGISTER PRESET
+		Preset preset = new Preset(player.getUniqueId(), presetName, new HashMap<>(bPlayer.getAbilities()));
+
+		// STORE PRESET IN DATABASE
+		preset.save().thenAccept(b -> {
+			if (b) {
+				ChatUtil.sendBrandingMessage(player, ChatColor.GREEN + createdNewPresetMessage.replace("{name}", ChatColor.YELLOW + presetName + ChatColor.GREEN));
+			} else {
+				ChatUtil.sendBrandingMessage(player, ChatColor.RED + databaseErrorMessage.replace("{name}", ChatColor.YELLOW + presetName + ChatColor.RED));
+			}
+		}).exceptionally(e -> {
+			ProjectKorra.log.severe("Failed to create preset!" + e.getMessage());
+			return null;
+		});
+	}
+
+	/**
+	 * Updates a Players {@link Preset}. Can assign new name or keep old name
+	 * to update binds for existing {@link Preset}
+	 *
+	 * @param player Player to update Preset for
+	 * @param oldName Preset to edit
+	 * @param newName New name for existing Preset
+	 */
+	private void updatePreset(Player player, String oldName, @Nullable String newName) {
+		// PRESET EXISTS CHECK
+		if (!Preset.presetExists(player, oldName)) {
+			ChatUtil.sendBrandingMessage(player, ChatColor.RED + noSuchPresetMessage);
+			return;
+		}
+
+		// BUILD FINAL NAME
+		String finalName = (newName == null || newName.isBlank()) ? oldName : newName;
+
+		// MAKE SURE THE NEW NAME ISN'T AN ALREADY EXISTING PRESET
+		if (!finalName.equalsIgnoreCase(oldName) && Preset.presetExists(player, finalName)) {
+			ChatUtil.sendBrandingMessage(player, ChatColor.RED + alreadyExistsMessage.replace("{name}", ChatColor.YELLOW + finalName + ChatColor.RED));
+			return;
+		}
+
+		// GET PRESET TO UPDATE
+		Preset oldPreset = Preset.getPreset(player, oldName);
+		if (oldPreset == null) {
+			ChatUtil.sendBrandingMessage(player, ChatColor.RED + noSuchPresetMessage);
+			return;
+		}
+
+		if (newName == null || newName.isBlank() || newName.equals(oldName)) {
+			oldPreset.update(new HashMap<>(BendingPlayer.getBendingPlayer(player).getAbilities())).thenAccept(success -> {
+				if (success) {
+					ChatUtil.sendBrandingMessage(player, ChatColor.GREEN + updatedPresetMessage.replace("{name}", ChatColor.YELLOW + oldName + ChatColor.GREEN));
+				} else {
+					ChatUtil.sendBrandingMessage(player, ChatColor.RED + databaseErrorMessage.replace("{name}", ChatColor.YELLOW + oldName + ChatColor.RED));
 				}
-			}
-			return presetNames;
+			}).exceptionally(e -> {
+				ProjectKorra.log.severe("Failed to update Preset!" + e.getMessage());
+				return null;
+			});
+		} else {
+			// DELETE PRESET TO UPDATE FROM MAP AND DB
+			oldPreset.delete().thenAccept(success -> {
+				if (!success) {
+					ChatUtil.sendBrandingMessage(player, ChatColor.RED + databaseErrorMessage.replace("{name}", ChatColor.YELLOW + oldName + ChatColor.RED));
+					return;
+				}
+
+				// CREATE NEW (UPDATED) PRESET AND PUT IN DB
+				Preset newPreset = new Preset(player.getUniqueId(), finalName, new HashMap<>(BendingPlayer.getBendingPlayer(player).getAbilities()));
+				newPreset.save().thenAccept(saved -> {
+					if (saved) {
+						ChatUtil.sendBrandingMessage(player, ChatColor.GREEN + updatedPresetNewNameMessage
+								.replace("{name}", ChatColor.YELLOW + oldName + ChatColor.GREEN)
+								.replace("{new}", ChatColor.YELLOW + newName + ChatColor.GREEN));
+					} else {
+						ChatUtil.sendBrandingMessage(player, ChatColor.RED + databaseErrorMessage.replace("{name}", ChatColor.YELLOW + finalName + ChatColor.RED));
+					}
+				}).exceptionally(e -> {
+					ProjectKorra.log.severe("Failed to Update Preset (SAVE)!" + e.getMessage());
+					return null;
+				});
+			}).exceptionally(e -> {
+				ProjectKorra.log.severe("Failed to Update Preset (DELETE)!" + e.getMessage());
+				return null;
+			});
 		}
-		return l;
 	}
 
 	private int parseInt(String string) {
@@ -314,5 +432,78 @@ public class PresetCommand extends PKCommand {
 		} catch (NumberFormatException e) {
 			return -1;
 		}
+	}
+
+	@Override
+	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
+		if (!hasPermission(sender) || !(sender instanceof Player player)) {
+			return Collections.emptyList();
+		}
+
+		if (args.isEmpty()) {
+			return Arrays.stream(PresetAction.values())
+					.map(action -> action.name().toLowerCase())
+					.toList();
+		}
+
+		Optional<PresetAction> actionOpt = PresetAction.fromInput(args.getFirst().toLowerCase());
+
+		if (args.size() == 1) {
+			if (actionOpt.isEmpty()) {
+				return Arrays.stream(PresetAction.values())
+						.map(action -> action.name().toLowerCase())
+						.filter(s -> s.startsWith(args.getFirst().toLowerCase()))
+						.toList();
+			}
+
+			PresetAction action = actionOpt.get();
+
+			if (action == PresetAction.LIST) {
+				return List.of("<Page>");
+			}
+
+			if (action == PresetAction.CREATE) {
+				return List.of("<Name>");
+			}
+
+			if (action == PresetAction.UPDATE) {
+				return getTabPresetSuggestions(player, false);
+			}
+
+			if (action == PresetAction.DELETE || action == PresetAction.BIND) {
+				boolean includeExternal = (action == PresetAction.BIND && sender.hasPermission("bending.command." + this.getName() + ".bind.external")); // Not using PKCommand.hasPermission() here because it will print a no perms msg when tab completing
+				return getTabPresetSuggestions(player, includeExternal);
+			}
+		}
+
+		if (args.size() == 2) {
+			if (actionOpt.isEmpty()) return Collections.emptyList();
+			PresetAction action = actionOpt.get();
+
+			if (action == PresetAction.BIND || action == PresetAction.LIST) {
+				return getOnlinePlayerNames(sender);
+			}
+
+			if (action == PresetAction.UPDATE) {
+				return List.of("<NewName>");
+			}
+		}
+
+		return Collections.emptyList();
+	}
+
+	private List<String> getTabPresetSuggestions(Player player, boolean includeExternal) {
+		List<String> presets = Preset.presets.getOrDefault(player.getUniqueId(), List.of())
+				.stream()
+				.map(Preset::getName)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toCollection(ArrayList::new));
+
+		if (includeExternal) {
+			presets.addAll(Preset.externalPresets.keySet());
+		}
+
+		return presets;
 	}
 }
