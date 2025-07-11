@@ -281,7 +281,22 @@ public class PresetCommand extends PKCommand {
 
 	private void bindExternalPreset(Player target, String presetName, CommandSender executor, boolean admin) {
 		if (!admin && !hasPermission(target, "bind.external")) return;
-		this.bindPlayerPreset(target, presetName, executor, admin);
+		boolean boundAll = Preset.bindExternalPreset(target, presetName);
+
+		ChatUtil.sendBrandingMessage(target, ChatColor.GREEN + successfullyBoundMessage.replace("{name}", ChatColor.YELLOW + presetName + ChatColor.GREEN));
+
+		if (admin) {
+			ChatUtil.sendBrandingMessage(executor, ChatColor.GREEN + targetSuccessfullyBoundMessage
+					.replace("{target}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN)
+					.replace("{name}", ChatColor.YELLOW + presetName + ChatColor.GREEN));
+		}
+
+		if (!boundAll) {
+			ChatUtil.sendBrandingMessage(target, ChatColor.RED + failedToBindAllMessage);
+			if (admin) {
+				ChatUtil.sendBrandingMessage(executor, ChatColor.RED + failedToBindAllMessage);
+			}
+		}
 	}
 
 	/**
