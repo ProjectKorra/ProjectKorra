@@ -1,23 +1,16 @@
 package com.projectkorra.projectkorra.configuration;
 
-import com.google.common.collect.Sets;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import moss.factions.shade.ninja.leaping.configurate.objectmapping.Setting;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ConfigManager {
 
@@ -173,26 +166,24 @@ public class ConfigManager {
 			config.addDefault("Commands.Reload.Description", "This command will reload the bending config files.");
 			config.addDefault("Commands.Reload.SuccessfullyReloaded", "Bending Config reloaded!");
 
-			config.addDefault("Commands.Preset.Description", "This command manages Presets, which are saved bindings. Use /bending preset list to view your existing presets, use /bending [create|delete] [name] to manage your presets, and use /bending bind [name] to bind an existing preset.");
+			config.addDefault("Commands.Preset.Description", "This command manages Presets, which are saved bindings. Use /bending preset list to view your existing presets, use /bending [create|delete|update] [name] to manage your presets, and use /bending bind [name] to bind an existing preset.");
 			config.addDefault("Commands.Preset.NoPresets", "You do not have any presets.");
-			config.addDefault("Commands.Preset.NoPresetName", "You don't have a preset with that name.");
+			config.addDefault("Commands.Preset.NoSuchPreset", "There is no such preset.");
 			config.addDefault("Commands.Preset.Created", "Created a new preset named '{name}'.");
 			config.addDefault("Commands.Preset.Delete", "You have deleted your '{name}' preset.");
-			config.addDefault("Commands.Preset.Removed", "Your bending has been permanently removed.");
-			config.addDefault("Commands.Preset.RemovedConfirm", "You have permanently removed {target}'s bending.");
+			config.addDefault("Commands.Preset.Update", "Successfully updated the '{name}' preset.");
+			config.addDefault("Commands.Preset.Update.NewName", "Successfully updated the '{name}' preset. New name: '{new}'.");
 			config.addDefault("Commands.Preset.SuccesfullyBound", "Your binds have been set to match the '{name}' preset.");
-			config.addDefault("Commands.Preset.SuccesfullyCopied", "Your binds have been set to match {target}'s binds.");
-			config.addDefault("Commands.Preset.FailedToBindAll", "Some abilities were not bound because you cannot bend the required element.");
+			config.addDefault("Commands.Preset.FailedToBindAll", "Some abilities were not bound due to missing elements.");
 			config.addDefault("Commands.Preset.DatabaseError", "An error occurred while processing the preset '{name}'");
 			config.addDefault("Commands.Preset.AlreadyExists", "A preset with that name already exists.");
-			config.addDefault("Commands.Preset.BendingPermanentlyRemoved", "Your bending was permanently removed.");
 			config.addDefault("Commands.Preset.PlayerNotFound", "Player not found.");
 			config.addDefault("Commands.Preset.InvalidName", "You must enter a valid name for your preset.");
 			config.addDefault("Commands.Preset.MaxPresets", "You've reached your maximum number of presets.");
 			config.addDefault("Commands.Preset.CantEditBinds", "You can't edit your binds right now!");
-			config.addDefault("Commands.Preset.Other.BendingPermanentlyRemoved", "That player's bending was permanently removed.");
 			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
-			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
+			config.addDefault("Commands.Preset.DefineName", "Define the preset.");
+			config.addDefault("Commands.Preset.NoAbilitiesBound", "You don't have any abilities bound!");
 
 			config.addDefault("Commands.Cooldown.Description", "Set, reset or view a cooldown for a player");
 			config.addDefault("Commands.Cooldown.InvalidPlayer", "That player has not played before!");
@@ -763,7 +754,6 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
 			config.addDefault("Properties.RegionProtection.RespectFactions", true);
 			config.addDefault("Properties.RegionProtection.RespectTowny", true);
-			config.addDefault("Properties.RegionProtection.RespectHuskTowns", true);
 			config.addDefault("Properties.RegionProtection.RespectLWC", true);
 			config.addDefault("Properties.RegionProtection.RespectLands", true);
 			config.addDefault("Properties.RegionProtection.Residence.Flag", "bending");
