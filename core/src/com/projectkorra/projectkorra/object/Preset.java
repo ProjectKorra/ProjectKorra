@@ -35,7 +35,7 @@ public class Preset {
 	 * presets}, keyed to their UUID
 	 */
 	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<>();
-	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<>();
+	public static Map<String, ArrayList<String>> externalPresets = new ConcurrentHashMap<>();
 
 	private final UUID uuid;
 	private final HashMap<Integer, String> abilities;
