@@ -1,6 +1,11 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -72,13 +77,13 @@ public class PresetCommand extends PKCommand {
 
 		this.cantEditBindsMessage = languageConfig.getString("Commands.Preset.CantEditBinds", "You can't edit your binds right now!");
 		this.playerNotFoundMessage = languageConfig.getString("Commands.Preset.PlayerNotFound", "Player not found.");
-		this.noPresetNameDefined = languageConfig.getString("Commands.Preset.DefineName", "Define the preset.");
-		this.noAbilitiesBoundMessage = languageConfig.getString("Commands.Preset.NoAbilitiesBound", "You don't have any abilities bound!");
+		this.noPresetNameDefined = languageConfig.getString("Commands.Preset.DefineName", "Define the preset."); // +
+		this.noAbilitiesBoundMessage = languageConfig.getString("Commands.Preset.NoAbilitiesBound", "You don't have any abilities bound!"); // +
 		this.noPresetsMessage = languageConfig.getString("Commands.Preset.NoPresets", "You do not have any presets.");
 		this.failedToBindAllMessage = languageConfig.getString("Commands.Preset.FailedToBindAll", "Some abilities were not bound due to missing elements.");
 		this.successfullyBoundMessage = languageConfig.getString("Commands.Preset.SuccesfullyBound", "Your binds have been set to match the '{name}' preset.");
 		this.targetSuccessfullyBoundMessage = languageConfig.getString("Commands.Preset.Other.SuccesfullyBoundConfirm", "The binds of '{target}' have been set to match the '{name}' preset.");
-		this.noSuchPresetMessage = languageConfig.getString("Commands.Preset.NoSuchPreset", "There is no such preset.");
+		this.noSuchPresetMessage = languageConfig.getString("Commands.Preset.NoSuchPreset", "There is no such preset."); // +
 		this.deletePresetMessage = languageConfig.getString("Commands.Preset.Delete", "You have deleted your '{name}' preset.");
 		this.databaseErrorMessage = languageConfig.getString("Commands.Preset.DatabaseError", "An error occurred while processing the preset '{name}'.");
 		this.invalidNameMessage = languageConfig.getString("Commands.Preset.InvalidName", "You must enter a valid name for your preset.");
@@ -100,7 +105,7 @@ public class PresetCommand extends PKCommand {
 
 		if (!hasPermission(sender)) return;
 
-		// CREATE OPTIONAL FROM FIRST ARG [Bind/Create/Delete..]
+		// CREATE OPTIONAL FROM FIRST ARG [Bind/Create/Delete/Update]
 		Optional<PresetAction> actionOption = PresetAction.fromInput(args.getFirst());
 
 		if (actionOption.isEmpty()) {
@@ -486,7 +491,7 @@ public class PresetCommand extends PKCommand {
 			}
 
 			if (action == PresetAction.DELETE || action == PresetAction.BIND) {
-				boolean includeExternal = (action == PresetAction.BIND && sender.hasPermission("bending.command." + this.getName() + ".bind.external")); // Not using PKCommand.hasPermission() here because it will print a no perms msg when tab completing
+				boolean includeExternal = (action == PresetAction.BIND && sender.hasPermission("bending.command." + this.getName() + ".bind.external")); // Not using PKCommand.hasPermission() here because it will print a no perms msg upon tab completion
 				return getTabPresetSuggestions(player, includeExternal);
 			}
 		}
@@ -513,7 +518,7 @@ public class PresetCommand extends PKCommand {
 				.map(Preset::getName)
 				.distinct()
 				.sorted()
-				.collect(Collectors.toCollection(ArrayList::new));
+				.collect(Collectors.toCollection(java.util.ArrayList::new));
 
 		if (includeExternal) {
 			presets.addAll(Preset.externalPresets.keySet());
