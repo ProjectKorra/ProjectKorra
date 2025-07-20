@@ -87,23 +87,23 @@ public class Combustion extends CombustionAbility implements SubAbility {
 	}
 
 	private void setFields() {
-		cooldown = ConfigManager.getConfig().getLong("Abilities.Fire.Combustionn.Cooldown");
-		chargeDuration = ConfigManager.getConfig().getLong("Abilities.Fire.Combustionn.ChargeDuration");
-		burnTime = ConfigManager.getConfig().getInt("Abilities.Fire.Combustionn.BurnTime");
-		explosionRevertTime = ConfigManager.getConfig().getLong("Abilities.Fire.Combustionn.ExplosionRevertTime");
-		explosionRadius = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustionn.ExplosionRadius");
-		speed = ConfigManager.getConfig().getInt("Abilities.Fire.Combustionn.Speed");
-		weight = ConfigManager.getConfig().getInt("Abilities.Fire.Combustionn.Weight");
-		damage = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustionn.Damage");
-		waterDamage = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustionn.WaterDamage");
-		range = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustionn.Range");
-		forceRelease = ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustionn.ForceRelease");
-		punishPlayer = ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustionn.PunishPlayer");
+		cooldown = ConfigManager.getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
+		chargeDuration = ConfigManager.getConfig().getLong("Abilities.Fire.Combustion.ChargeDuration");
+		burnTime = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.BurnTime");
+		explosionRevertTime = ConfigManager.getConfig().getLong("Abilities.Fire.Combustion.ExplosionRevertTime");
+		explosionRadius = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.ExplosionRadius");
+		speed = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.Speed");
+		weight = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.Weight");
+		damage = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.Damage");
+		waterDamage = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.WaterDamage");
+		range = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.Range");
+		forceRelease = ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustion.ForceRelease");
+		punishPlayer = ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustion.PunishPlayer");
 
-		sonicBoomSpeed = (float) ConfigManager.getConfig().getDouble("Abilities.Fire.Combustionn.SonicBoom.Speed") * 0.2f;
-		sonicBoomParticleCount = ConfigManager.getConfig().getInt("Abilities.Fire.Combustionn.SonicBoom.ParticleCount");
-		sonicBoomFrequency = ConfigManager.getConfig().getInt("Abilities.Fire.Combustionn.SonicBoom.Frequency");
-		sonicBoomRadius = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustionn.SonicBoom.Radius");
+		sonicBoomSpeed = (float) ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.SonicBoom.Speed") * 0.2f;
+		sonicBoomParticleCount = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.SonicBoom.ParticleCount");
+		sonicBoomFrequency = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.SonicBoom.Frequency");
+		sonicBoomRadius = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.SonicBoom.Radius");
 
 		increment = 2 / ((float) chargeDuration / 50);
 		increasing = 0;
@@ -394,7 +394,7 @@ public class Combustion extends CombustionAbility implements SubAbility {
 
 	@Override
 	public boolean isEnabled() {
-		return ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustionn.Enabled");
+		return ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustion.Enabled");
 	}
 
 	@Override
@@ -414,7 +414,7 @@ public class Combustion extends CombustionAbility implements SubAbility {
 
 	@Override
 	public String getName() {
-		return "Combustionn";
+		return "Combustion";
 	}
 
 	@Override
