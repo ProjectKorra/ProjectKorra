@@ -131,6 +131,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
+import com.projectkorra.projectkorra.waterbending.ice.FrostBreath;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
@@ -1615,6 +1616,8 @@ public class PKListener implements Listener {
 //						} else {
 //							new PlantTether(player);
 //						}
+					} else if (abil.equalsIgnoreCase("FrostBreath")) {
+						new FrostBreath(player);
 					}
 				}
 			}
