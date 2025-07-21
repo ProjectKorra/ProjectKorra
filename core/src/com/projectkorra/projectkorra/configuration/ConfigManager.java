@@ -1078,15 +1078,15 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.FrostBreath.Range",8);
 			config.addDefault("Abilities.Water.FrostBreath.Particle.ParticleCount",20);
 			config.addDefault("Abilities.Water.FrostBreath.Particle.ParticleExpansion",1.5);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.FrostEffect.Enabled",true);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.FrostEffect.Damage",0.5);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.Snow.Enabled",true);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.Snow.Bendable",true);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.Snow.Duration",4000);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.Ice.Enabled",true);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.Ice.BlockDuration",3000);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.Ice.Damage",false);
-			config.addDefault("Abilities.Water.FrostBreath.Particle.Ice.BreathTimeRequiredToFreeze",1500);
+			config.addDefault("Abilities.Water.FrostBreath.FrostEffect.Enabled",true);
+			config.addDefault("Abilities.Water.FrostBreath.FrostEffect.Damage",0.5);
+			config.addDefault("Abilities.Water.FrostBreath.Snow.Enabled",true);
+			config.addDefault("Abilities.Water.FrostBreath.Snow.Bendable",true);
+			config.addDefault("Abilities.Water.FrostBreath.Snow.Duration",4000);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.Enabled",true);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.BlockDuration",3000);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.Damage",false);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.BreathTimeRequiredToFreeze",1500);
 			config.addDefault("Abilities.Water.FrostBreath.DisallowedBiomes",dryBiomes);
 
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
