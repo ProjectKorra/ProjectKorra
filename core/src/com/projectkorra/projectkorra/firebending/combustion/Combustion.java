@@ -139,13 +139,10 @@ public class Combustion extends CombustionAbility implements SubAbility {
 			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, (float) increasing, (float) increasing + new Random().nextFloat(-0.2f, 0));
 		} else {
 			location.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, location, 1, 0, 0, 0, 0,null,true);
-			//player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AZALEA_STEP, 1, 0);
 		}
-
-
 	}
 
-	public static String getHexColor(long min, long max) {
+	private static String getHexColor(long min, long max) {
 		if (max <= 0) return "#ffffff";
 		float ratio = Math.max(0f, Math.min(1f, (float) min / max));
 		int value = (int) (255 * ratio);

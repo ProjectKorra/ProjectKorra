@@ -492,8 +492,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Blaze.Description", "Blaze is a basic firebending technique that can be extremely deadly if used right. It's useful to stop people from chasing you or to create space between you and other players..");
 			config.addDefault("Abilities.Fire.Blaze.Instructions", "Left click to send an arc of fire in the direction you're facing that will burn entities in its path. Additionally, you can tap sneak to send a blaze all around you.");
 			config.addDefault("Abilities.Fire.Blaze.DeathMessage", "{victim} was incinerated by {attacker}'s {ability}");
-			config.addDefault("Abilities.Fire.Combustion.Description", "Combustion is a special firebending technique that's extremely deadly. It allows you to create a powerful blast to deal immense damage to players at long range.");
-			config.addDefault("Abilities.Fire.Combustion.Instructions", "Tap sneak to send a combustion out in the direction you're looking. It will explode on impact, or you can left click to manually explode it. This deals damage to players who are in radius of the blast.");
+			config.addDefault("Abilities.Fire.Combustion.Description", "Combustion is a deadly firebending technique that lets the user generate explosions from their foreheads.");
+			config.addDefault("Abilities.Fire.Combustion.Instructions", "Hold sneak to charge combustion, once you start seeing a star located on your forehead you can release sneak to shoot.");
 			config.addDefault("Abilities.Fire.Combustion.DeathMessage", "{victim} was shot down by {attacker}'s {ability}");
 			config.addDefault("Abilities.Fire.FireBlast.Description", "FireBlast is the most fundamental bending technique of a firebender. It allows the firebender to create mass amounts of fire blasts to constantly keep damaging an entity. It's great for rapid fire successions to deal immense damage.");
 			config.addDefault("Abilities.Fire.FireBlast.Instructions", "\n" + "(Ball) Left click to send out a ball of fire that will deal damage and knockback entities it hits. Additionally, this ability can refuel furnace power if the blast connects with a furnace." + "\n" + "(Blast) Hold sneak until you see particles and then release sneak to send out a powerful fire blast outwards. This deals damage and knocks back anyone it hits, while exploding on impact.");
@@ -1486,12 +1486,22 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Fire.Combustion.Enabled", true);
 			config.addDefault("Abilities.Fire.Combustion.Cooldown", 10000);
-			config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
-			config.addDefault("Abilities.Fire.Combustion.ExplosivePower", 2.0);
+			config.addDefault("Abilities.Fire.Combustion.ChargeDuration", 2500);
+			config.addDefault("Abilities.Fire.Combustion.BurnTime", 4000);
 			config.addDefault("Abilities.Fire.Combustion.Damage", 4);
-			config.addDefault("Abilities.Fire.Combustion.Radius", 4);
-			config.addDefault("Abilities.Fire.Combustion.Range", 35);
-			config.addDefault("Abilities.Fire.Combustion.Speed", 25);
+			config.addDefault("Abilities.Fire.Combustion.WaterDamage", 2);
+			config.addDefault("Abilities.Fire.Combustion.ExplosionRadius", 3);
+			config.addDefault("Abilities.Fire.Combustion.ExplosionRevertTime", 5000);
+			config.addDefault("Abilities.Fire.Combustion.Speed", 2);
+			config.addDefault("Abilities.Fire.Combustion.Weight", 3);
+			config.addDefault("Abilities.Fire.Combustion.Range", 85);
+			config.addDefault("Abilities.Fire.Combustion.ForceRelease", false);
+			config.addDefault("Abilities.Fire.Combustion.PunishPlayer", true);
+			config.addDefault("Abilities.Fire.Combustion.SonicBoom.Speed", 1);
+			config.addDefault("Abilities.Fire.Combustion.SonicBoom.ParticleCount", 99);
+			config.addDefault("Abilities.Fire.Combustion.SonicBoom.Frequency", 5);
+			config.addDefault("Abilities.Fire.Combustion.SonicBoom.Radius", 1);
+
 
 			config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.FireBlast.Speed", 20);
