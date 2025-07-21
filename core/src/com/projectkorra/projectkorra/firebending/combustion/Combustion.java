@@ -419,4 +419,8 @@ public class Combustion extends CombustionAbility implements SubAbility {
 		return location;
 	}
 
+	public static void explode(Player player){
+		clicked.put(player,true);
+	}
+
 }
