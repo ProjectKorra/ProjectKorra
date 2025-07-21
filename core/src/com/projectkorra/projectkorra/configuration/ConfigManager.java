@@ -406,6 +406,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.ActionBarMessage", "* Bloodbent *");
 			config.addDefault("Abilities.Water.HealingWaters.Description", "HealingWaters is an advanced waterbender skill that allows the player to heal themselves or others from the damage they've taken. If healing another player, you must continue to look at them to channel the ability.");
 			config.addDefault("Abilities.Water.HealingWaters.Instructions", "Hold sneak to begin healing yourself or right click while sneaking to begin healing another player. You or the player must be in water and damaged for this ability to work, or you need to have water bottles in your inventory.");
+			config.addDefault("Abilities.Water.FrostBreath.Description", "FrostBreath is an ability that lets the user to icebend through their lungs. Breathe out a cold air to freeze your enemies!");
+			config.addDefault("Abilities.Water.FrostBreath.Instructions", "Hold sneak and look at your target to freeze them.");
 			config.addDefault("Abilities.Water.IceBlast.Description", "IceBlast is a powerful ability that deals damage to entities it comes into contact with. Because IceBlast's travel time is pretty quick, it's incredibly useful for finishing off low health targets.");
 			config.addDefault("Abilities.Water.IceBlast.Instructions", "Tap sneak while looking at an ice block and then click in a direction to send an ice blast in that direction.");
 			config.addDefault("Abilities.Water.IceBlast.DeathMessage", "{victim} was shattered by {attacker}'s {ability}");
@@ -677,6 +679,21 @@ public class ConfigManager {
 
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
 			iceBlocks.add("#ice");
+
+			/* Dry biomes for FrostBreath */
+			final ArrayList<String> dryBiomes = new ArrayList<String>();
+			dryBiomes.add("DESERT");
+			dryBiomes.add("BADLANDS");
+			dryBiomes.add("ERODED_BADLANDS");
+			dryBiomes.add("WOODED_BADLANDS");
+			dryBiomes.add("SAVANNA");
+			dryBiomes.add("SAVANNA_PLATEAU");
+			dryBiomes.add("WINDSWEPT_SAVANNA");
+			dryBiomes.add("BASALT_DELTAS");
+			dryBiomes.add("CRIMSON_FOREST");
+			dryBiomes.add("WARPED_FOREST");
+			dryBiomes.add("NETHER_WASTES");
+			dryBiomes.add("SOUL_SAND_VALLEY");
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
 			plantBlocks.add("#bee_growables");
@@ -1054,6 +1071,23 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.HealingWaters.DynamicLight.Enabled", true);
 			config.addDefault("Abilities.Water.HealingWaters.DynamicLight.Brightness", 10);
 			config.addDefault("Abilities.Water.HealingWaters.DynamicLight.KeepAlive", 350);
+
+			config.addDefault("Abilities.Water.FrostBreath.Enabled",true);
+			config.addDefault("Abilities.Water.FrostBreath.BreathDuration",4000);
+			config.addDefault("Abilities.Water.FrostBreath.Cooldown",14000);
+			config.addDefault("Abilities.Water.FrostBreath.Range",8);
+			config.addDefault("Abilities.Water.FrostBreath.Particle.ParticleCount",20);
+			config.addDefault("Abilities.Water.FrostBreath.Particle.ParticleExpansion",1.5);
+			config.addDefault("Abilities.Water.FrostBreath.FrostEffect.Enabled",true);
+			config.addDefault("Abilities.Water.FrostBreath.FrostEffect.Damage",0.5);
+			config.addDefault("Abilities.Water.FrostBreath.Snow.Enabled",true);
+			config.addDefault("Abilities.Water.FrostBreath.Snow.Bendable",true);
+			config.addDefault("Abilities.Water.FrostBreath.Snow.Duration",4000);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.Enabled",true);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.BlockDuration",3000);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.Damage",false);
+			config.addDefault("Abilities.Water.FrostBreath.Ice.BreathTimeRequiredToFreeze",1500);
+			config.addDefault("Abilities.Water.FrostBreath.DisallowedBiomes",dryBiomes);
 
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 			config.addDefault("Abilities.Water.IceBlast.Damage", 3);

@@ -8,7 +8,9 @@ a47a4d04-9f51-44ba-9d35-8de6053e9289/&5ProjectKorra Developer/ AlexTheCoder
 f6c4aac7-9cc2-4da2-9038-e26bb808461d/&5ProjectKorra Developer/ Tyson
 476ca51b-ec04-431b-87da-dd22b20aa8bf/&5ProjectKorra Developer/ JustAHuman_xD
 71d42b35-dd94-408e-941d-88d4a61031c7/&5ProjectKorra Developer/ Dreig_Michihi
-383764b8-5473-43c7-8255-a7304c55746a/&9ProjectKorra Moderator/ Nysseus
+b6bd2ceb-4922-4707-9173-8a02044e9069/&5ProjectKorra Developer/ Dooder07
+383764b8-5473-43c7-8255-a7304c55746a/&5ProjectKorra Jr. Developer/ Nysseus
+606e8422-e4b9-4921-a673-ca85ffb35be6/&5ProjectKorra Jr. Developer/ Kugelbltz
 924d994c-fbc8-4a5e-89b1-31a63ad537ea/&dProjectKorra Discord Helper/ LuxaelNI
 e98a2f7d-d571-4900-a625-483cbe6774fe/&5ProjectKorra Contributor/ Aztl
 dd578a4f-d35e-4fed-94db-9d5a627ff962/&5ProjectKorra Contributor/ Sobki
@@ -17,7 +19,6 @@ dd578a4f-d35e-4fed-94db-9d5a627ff962/&5ProjectKorra Contributor/ Sobki
 7bb267eb-cf0b-4fb9-a697-27c2a913ed92/&5ProjectKorra Contributor/ Finn_Bueno_
 9636d66a-bff8-48e4-993e-68f0e7891c3b/&5ProjectKorra Contributor/ runefist
 4f7cf9cd-ee04-4480-8ca0-7bca9b1db302/&5ProjectKorra Contributor/ plasmarob
-b6bd2ceb-4922-4707-9173-8a02044e9069/&3ProjectKorra Contributor/ Dooder07
 4eb6315e-9dd1-49f7-b582-c1170e497ab0/&3ProjectKorra Contributor/ jedk1
 c364ffe2-de9e-4117-9735-6d14bde038f6/&3ProjectKorra Contributor/ Carbogen
 623df34e-9cd4-438d-b07c-1905e1fc46b6/&3ProjectKorra Contributor/ Loony
@@ -27,5 +28,4 @@ c364ffe2-de9e-4117-9735-6d14bde038f6/&3ProjectKorra Contributor/ Carbogen
 929b14fc-aaf1-4f0f-84c2-f20c55493f53/&3ProjectKorra Contributor/ Vidcom
 dbd59467-7307-4981-8e3e-7dcf36dd569c/&3ProjectKorra Contributor/ Bit
 5e30a511-c9eb-4326-be40-ba4dfc5cd7c1/&3ProjectKorra Contributor/ DomiRusz24
-b6bd2ceb-4922-4707-9173-8a02044e9069/&3ProjectKorra Contributor/ Dooder07
 524f1fdb-28dd-456b-a005-7f61d71fe836/&3ProjectKorra Contributor/ KWilson272
