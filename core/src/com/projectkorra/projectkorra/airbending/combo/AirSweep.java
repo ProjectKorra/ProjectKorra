@@ -144,7 +144,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				}
 				final Vector vec = GeneralMethods.getDirection(feet, endLoc);
 
-				final ComboStream fs = new ComboStream(this.player, this, vec, hand, this.range, this.speed);
+				final ComboStream fs = new ComboStream(this.player, this, vec, feet, this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);

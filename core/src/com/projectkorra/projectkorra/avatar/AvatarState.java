@@ -45,8 +45,6 @@ public class AvatarState extends AvatarAbility {
 
 	// BossBar for tracking duration
 	private BossBar bossBar;
-	@Attribute("DarkAvatar")
-	private boolean darkAvatar = false;
 
 	public AvatarState(final Player player) {
 		super(player);
