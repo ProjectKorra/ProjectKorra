@@ -7,9 +7,9 @@ import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -17,9 +17,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -135,12 +132,7 @@ public class TempCommand extends PKCommand {
 					});
 				} else {
 					BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
-						if (removeElement(element, bPlayer, sender, false)) {
-							if (bPlayer.isOnline())
-								((BendingPlayer)bPlayer).recalculateTempElements(false);
-							else
-								bPlayer.saveTempElements();
-						}
+						removeElement(element, bPlayer, sender, false);
 					});
 				}
 			} else {
@@ -174,17 +166,17 @@ public class TempCommand extends PKCommand {
 
 		if (Arrays.asList(addAliases).contains(args.get(0).toLowerCase())) {
 			if (!hasPermission(sender, "add")) return;
-			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> ThreadUtil.runAsyncLater(() -> {
 				addElement(element, bPlayer, sender, time);
 			}, 1L));
 		} else if (Arrays.asList(extendAliases).contains(args.get(0).toLowerCase())) {
 			if (!hasPermission(sender, "extend")) return;
-			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> ThreadUtil.runAsyncLater(() -> {
 				extendElement(element, bPlayer, sender, time);
 			}, 1L));
 		} else if (Arrays.asList(reduceAliases).contains(args.get(0).toLowerCase())) {
 			if (!hasPermission(sender, "reduce")) return;
-			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () ->{
+			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> ThreadUtil.runAsyncLater(() ->{
 				reduceElement(element, bPlayer, sender, time, false);
 			}, 1L));
 		}
@@ -210,10 +202,10 @@ public class TempCommand extends PKCommand {
 		} else if (sub && bPlayer.getSubElements().contains(element)) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElement.replace("{target}", bPlayer.getName()));
 			return;
-		} else if (!sub && bPlayer.getTempElements().containsKey(element)) {
+		} else if (!sub && bPlayer.getTempElements().containsKey(element) && bPlayer.getTempElementTime(element) > 0) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasTempElement.replace("{target}", bPlayer.getName()));
 			return;
-		} else if (sub && bPlayer.getTempElements().containsKey(element)) {
+		} else if (sub && bPlayer.getTempSubElements().containsKey(element) && bPlayer.getTempElementTime(element) > 0) {
 			ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasTempSubElement.replace("{target}", bPlayer.getName()));
 			return;
 		}
@@ -257,22 +249,22 @@ public class TempCommand extends PKCommand {
 		}
 
 		boolean add;
-		long oldExpiry;
+		long oldTime;
 
 		if (element instanceof SubElement) {
 			//If they don't have it, or they do but it has already expired
 			add = !bPlayer.getTempSubElements().containsKey(element) || (bPlayer.getTempSubElements().get(element) != -1 && bPlayer.getTempSubElements().get(element) < System.currentTimeMillis());
 
-			oldExpiry = bPlayer.getTempSubElements().getOrDefault(element, System.currentTimeMillis());
+			oldTime = bPlayer.getTempSubElementRelativeTime((SubElement) element);
 		} else {
 			//If they don't have it, or they do but it has already expired
 			add = !bPlayer.getTempElements().containsKey(element) || bPlayer.getTempElements().get(element) < System.currentTimeMillis();
 
-			oldExpiry = bPlayer.getTempElements().getOrDefault(element, System.currentTimeMillis());
+			oldTime = bPlayer.getTempElementRelativeTime(element);
 		}
 
-		long newExpiry = time + oldExpiry;
-		String newExpiryString = TimeUtil.formatTime(newExpiry - System.currentTimeMillis());
+		long newExpiry = time + oldTime;
+		String newExpiryString = TimeUtil.formatTime(newExpiry);
 
 		String message = add ? (element == Element.AVATAR ? this.addedSuccessAvatar : this.addedSuccess) : this.extendSuccess;
 		String messageOther = add ? (element == Element.AVATAR ? this.addedSuccessOtherAvatar : this.addedSuccessOther) : this.extendSuccessOther;
@@ -335,13 +327,13 @@ public class TempCommand extends PKCommand {
 
 		if (element instanceof SubElement) {
 			remove = bPlayer.getTempSubElements().get(element) - time < System.currentTimeMillis() && bPlayer.getTempSubElements().get(element) != -1L;
-			newExpiry = remove ? 0 : bPlayer.getTempSubElements().get(element) - time;
+			newExpiry = remove ? 0 : bPlayer.getTempSubElementRelativeTime((SubElement) element) - time;
 		} else {
 			remove = bPlayer.getTempElements().get(element) - time < System.currentTimeMillis();
-			newExpiry = remove ? 0 : bPlayer.getTempElements().get(element) - time;
+			newExpiry = remove ? 0 : bPlayer.getTempElementRelativeTime(element) - time;
 		}
 
-		String newExpiraryString = TimeUtil.formatTime(newExpiry - System.currentTimeMillis());
+		String newExpiraryString = TimeUtil.formatTime(newExpiry);
 
 		String message = remove ? this.reduceSuccessRemove : this.reduceSuccess;
 		String messageOther = remove ? this.reduceSuccessOtherRemove : this.reduceSuccessOther;
@@ -369,10 +361,7 @@ public class TempCommand extends PKCommand {
 	public boolean removeElement(Element element, OfflineBendingPlayer bPlayer, CommandSender sender, boolean all) {
 		//If they don't have it, or they do but it has already expired
 
-		boolean elementCheck = !bPlayer.getTempElements().containsKey(element) || bPlayer.getTempElements().get(element) < System.currentTimeMillis();
-		boolean subElementCheck = !bPlayer.getTempSubElements().containsKey(element) || (bPlayer.getTempSubElements().get(element) < System.currentTimeMillis() && bPlayer.getTempSubElements().get(element) != -1L);
-
-		if (element instanceof SubElement ? subElementCheck : elementCheck) { //or it has already expired
+		if (!bPlayer.hasTempElement(element)) { //or it has already expired
 			if (!all) { //Don't bother the player if we are doing it for all elements
 				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.removeElementNotFound
 						.replace("{element}", element.getColor() + element.getName())

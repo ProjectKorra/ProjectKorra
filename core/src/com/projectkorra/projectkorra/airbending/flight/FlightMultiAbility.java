@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,7 +18,6 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
@@ -62,6 +62,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Vector prevDir;
+	private Object messageTask;
 
 	// Add BossBar for duration tracking
 	private BossBar bossBar;
@@ -193,15 +194,12 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			} else {
 				if (requestTime.get(this.player.getUniqueId()) + 15000 > System.currentTimeMillis()) {
 					final long start = System.currentTimeMillis();
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							ChatUtil.sendActionBar(ChatColor.WHITE + FlightMultiAbility.this.player.getName() + ChatColor.GREEN + " has requested to carry you, right-click them to accept!", p2);
-							if (System.currentTimeMillis() >= start + 300) {
-								this.cancel();
-							}
+					messageTask = ThreadUtil.ensureEntityTimer(player, () -> {
+						ChatUtil.sendActionBar(ChatColor.WHITE + FlightMultiAbility.this.player.getName() + ChatColor.GREEN + " has requested to carry you, right-click them to accept!", p2);
+						if (System.currentTimeMillis() >= start + 300) {
+							ThreadUtil.cancelTimerTask(messageTask);
 						}
-					}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+					}, 0, 1);
 				} else {
 					requestedMap.remove(this.player.getUniqueId());
 					requestTime.remove(this.player.getUniqueId());
@@ -373,29 +371,26 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		final long start = System.currentTimeMillis();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				ChatUtil.sendActionBar(ChatColor.AQUA + "Flight speed: " + FlightMultiAbility.this.speed(), FlightMultiAbility.this.player);
-				if (System.currentTimeMillis() >= start + 1000) {
-					this.cancel();
-				}
+		messageTask = ThreadUtil.ensureEntityTimer(this.player, () -> {
+			ChatUtil.sendActionBar(ChatColor.AQUA + "Flight speed: " + FlightMultiAbility.this.speed(), FlightMultiAbility.this.player);
+			if (System.currentTimeMillis() >= start + 1000) {
+				ThreadUtil.cancelTimerTask(messageTask);
 			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+		}, 0, 1);
 	}
 
 	public void cancel(final String reason) {
 		if (!MovementHandler.isStopped(this.player) && !this.bPlayer.isChiBlocked()) {
 			final long start = System.currentTimeMillis();
-			new BukkitRunnable() {
+			messageTask = ThreadUtil.ensureEntityTimer(this.player, new Runnable() {
 				@Override
 				public void run() {
 					ChatUtil.sendActionBar(ChatColor.RED + "* Flight cancelled due to " + reason + " *", FlightMultiAbility.this.player);
 					if (System.currentTimeMillis() >= start + 1000) {
-						this.cancel();
+						ThreadUtil.cancelTimerTask(messageTask);
 					}
 				}
-			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+			}, 0, 1);
 		}
 
 		this.remove();

@@ -120,6 +120,7 @@ import com.projectkorra.projectkorra.util.StatisticsMethods;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -210,7 +211,6 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class PKListener implements Listener {
@@ -890,12 +890,7 @@ public class PKListener implements Listener {
 				final Player player = (Player) event.getEntity();
 				BENDING_PLAYER_DEATH.put(player, Pair.of(ability.getElement().getColor() + ability.getName(), event.getAttacker()));
 
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						BENDING_PLAYER_DEATH.remove(player);
-					}
-				}.runTaskLater(ProjectKorra.plugin, 20);
+				ThreadUtil.runAsyncLater(() -> BENDING_PLAYER_DEATH.remove(player), 20);
 			}
 			if (event.getAttacker() != null && ProjectKorra.isStatisticsEnabled()) {
 				StatisticsMethods.addStatisticAbility(event.getAttacker().getUniqueId(), CoreAbility.getAbility(event.getAbility().getName()), com.projectkorra.projectkorra.util.Statistic.PLAYER_KILLS, 1);
@@ -1207,7 +1202,7 @@ public class PKListener implements Listener {
 			final UUID uuid = player.getUniqueId();
 
 			if (RIGHT_CLICK_INTERACT.add(uuid)) { //Add if it isn't already in there. And if it isn't in there...
-				Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
+				ThreadUtil.runSyncLater(() -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
 			}
 
 			if (event.getHand() == EquipmentSlot.HAND) {
@@ -1284,7 +1279,7 @@ public class PKListener implements Listener {
 					fma.requestCarry(target);
 					final UUID uuid = player.getUniqueId();
 					if (RIGHT_CLICK_INTERACT.add(uuid)) { //Add if it isn't already in there. And if it isn't in there...
-						Bukkit.getScheduler().runTaskLater(this.plugin, () -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
+						ThreadUtil.runSyncLater(() -> RIGHT_CLICK_INTERACT.remove(uuid), 2L);
 					}
 				} else if (FlightMultiAbility.getFlyingPlayers().contains(target.getUniqueId())) {
 					FlightMultiAbility.acceptCarryRequest(player, target);
@@ -1319,7 +1314,7 @@ public class PKListener implements Listener {
 		}
 
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			ThreadUtil.ensureEntityDelay(player, () -> {
 				ChatColor color = ChatColor.of(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
 				color = color == null ? ChatColor.GOLD : color;
 				final String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
@@ -1488,7 +1483,11 @@ public class PKListener implements Listener {
 			}
 		}
 
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, //Run 1 tick later so they actually are offline
+		if (bPlayer == null) {
+			return;
+		}
+
+		ThreadUtil.runAsyncLater( //Run 1 tick later so they actually are offline
 				() -> {
 					if (ProjectKorra.isDatabaseCooldownsEnabled()) {
 						bPlayer.saveCooldowns();
@@ -1722,7 +1721,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> Illumination.slotChange(player), 1L);
+		ThreadUtil.ensureEntityDelay(player, () -> Illumination.slotChange(player), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -2214,14 +2213,7 @@ public class PKListener implements Listener {
 		final Player player = (Player) event.getPlayer();
 		if (player == null) return;
 		if (event.isMultiAbility()) {
-			new BukkitRunnable() {
-
-				@Override
-				public void run() {
-					BendingBoardManager.updateAllSlots(player);
-				}
-				
-			}.runTaskLater(ProjectKorra.plugin, 1);
+			ThreadUtil.ensureEntityDelay(player, () -> BendingBoardManager.updateAllSlots(player), 1);
 		} else {
 			if (event.isBinding()) {
 				BendingBoardManager.updateBoard(player, event.getAbility(), false, event.getSlot());

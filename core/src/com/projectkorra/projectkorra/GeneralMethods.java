@@ -1432,15 +1432,25 @@ public class GeneralMethods {
 		// WaterAbility.setupWaterTransformableBlocks();
 		EarthTunnel.clearBendableMaterials();
 
-		Bukkit.getScheduler().cancelTasks(ProjectKorra.plugin);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new BendingManager(), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new AirbendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new WaterbendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new EarthbendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new BendingManager.TempElementsRunnable(), 20, 20);
-		ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
+
+		if (ProjectKorra.isFolia()) {
+			Bukkit.getGlobalRegionScheduler().cancelTasks(ProjectKorra.plugin);
+			Bukkit.getAsyncScheduler().cancelTasks(ProjectKorra.plugin);
+		} else {
+			Bukkit.getScheduler().cancelTasks(ProjectKorra.plugin);
+
+			ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
+		}
+
+		new BendingManager();
+
+		//FOLIA TODO
+		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new BendingManager(), 0, 1);
+		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new AirbendingManager(ProjectKorra.plugin), 0, 1);
+		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new WaterbendingManager(ProjectKorra.plugin), 0, 1);
+		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new EarthbendingManager(ProjectKorra.plugin), 0, 1);
+		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
+		//ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
 
 		EarthTunnel.setupBendableMaterials();
 		Bloodbending.loadBloodlessFromConfig();
@@ -1848,17 +1858,17 @@ public class GeneralMethods {
 	}
 
 	public static void stopBending() {
-		CoreAbility.removeAll();
-		EarthAbility.stopBending();
-		WaterAbility.stopBending();
-		FireAbility.stopBending();
+		CoreAbility.removeAll(); //Now Folia safe
+		EarthAbility.stopBending(); //Should be okay?
+		WaterAbility.stopBending(); //Should be fine now
+		FireAbility.stopBending(); //Does nothing lmao
 
-		TempBlock.removeAll();
-		TempArmor.revertAll();
-		TempArmorStand.removeAll();
-		MovementHandler.resetAll();
-		MultiAbilityManager.removeAll();
-		TempFallingBlock.removeAllFallingBlocks();
+		TempBlock.removeAll(); //Now Folia safe
+		TempArmor.revertAll(); //Now folia safe
+		TempArmorStand.removeAll(); //Now folia safe
+		MovementHandler.resetAll(); //Now folia safe
+		MultiAbilityManager.removeAll(); //Doesn't need thread safety
+		TempFallingBlock.removeAllFallingBlocks(); //Folia safe
 	}
 
 	public static void stopPlugin() {

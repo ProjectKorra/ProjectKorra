@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.Cooldown;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,7 +44,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,6 +67,11 @@ public class OfflineBendingPlayer {
      */
     protected static final PriorityQueue<Pair<Player, Long>> TEMP_ELEMENTS = new PriorityQueue(Comparator.comparingLong(Pair<Player, Long>::getRight));
 
+    /**
+     * Map of all the players that are currently loading
+     */
+    private static final Map<UUID, CompletableFuture<OfflineBendingPlayer>> LOADING = new ConcurrentHashMap<>();
+
     protected final OfflinePlayer player;
     protected final UUID uuid;
     protected boolean permaRemoved;
@@ -83,10 +88,12 @@ public class OfflineBendingPlayer {
     protected final Set<Element> toggledElements = new HashSet<>();
     protected final Set<Element> toggledPassives = new HashSet<>();
 
+
+
     private int currentSlot;
     private long lastAccessed;
     private long uncacheTime = 30_000; //This is the default time to unload after when the data is accessed by code, NOT when logging out
-    private BukkitTask uncache;
+    private Object uncache;
 
     public OfflineBendingPlayer(@NotNull OfflinePlayer player) {
         this.player = player;
@@ -106,6 +113,10 @@ public class OfflineBendingPlayer {
         CompletableFuture<OfflineBendingPlayer> future = new CompletableFuture<>();
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
+        if (LOADING.containsKey(uuid)) { //If it is already loading, return the loading one
+            return LOADING.get(uuid);
+        }
+
         //If we already have the players data cached from an OfflineBendingPlayer instance
         if (PLAYERS.get(uuid) != null) {
             OfflineBendingPlayer oBendingPlayer = PLAYERS.get(uuid); //Get cached instance
@@ -120,6 +131,8 @@ public class OfflineBendingPlayer {
             return future;
         }
 
+        LOADING.put(uuid, future); //Put the future in the loading map
+
         Runnable runnable = () -> {
             OfflineBendingPlayer bPlayer = new OfflineBendingPlayer(offlinePlayer);
             if (offlinePlayer.isOnline()) {
@@ -133,26 +146,22 @@ public class OfflineBendingPlayer {
             try {
                 if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
                     DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + uuid.toString() + "', '" + offlinePlayer.getName() + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
-                    Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> ProjectKorra.log.info("Created new BendingPlayer for " + offlinePlayer.getName()));
+                    ProjectKorra.log.info("Created new BendingPlayer for " + offlinePlayer.getName());
                     OfflineBendingPlayer newPlayer;
                     if (offlinePlayer.isOnline()) {
                         newPlayer = new BendingPlayer((Player)offlinePlayer);
                         //Call postLoad() on the main thread and wait for it to complete
-                        Bukkit.getScheduler().callSyncMethod(ProjectKorra.plugin, () -> {
+                        ThreadUtil.runSync(() -> {
                             ((BendingPlayer)newPlayer).postLoad();
-                            return true;
-                        }).get();
-                        ONLINE_PLAYERS.put(uuid, (BendingPlayer) newPlayer);
+                            ONLINE_PLAYERS.put(uuid, (BendingPlayer) newPlayer);
+                        });
                     } else {
                         newPlayer = new OfflineBendingPlayer(offlinePlayer);
                     }
                     PLAYERS.put(uuid, newPlayer);
-                    Bukkit.getScheduler().callSyncMethod(ProjectKorra.plugin, ()
-                            -> {
-                        Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(newPlayer));
-                        return true;
-                    });
+                    ThreadUtil.runSync(() -> Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(newPlayer)));
                     future.complete(newPlayer);
+                    LOADING.remove(uuid);
                 } else {
                     // The player has at least played before.
                     final String player2 = rs2.getString("player");
@@ -221,17 +230,9 @@ public class OfflineBendingPlayer {
                             };
 
                             if (onStartup) { //If we are doing this on startup, addon elements aren't loaded yet. So do this async
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        if (func.test(addonClone)) {
-                                            this.cancel();
-                                        }
-                                    }
-                                }.runTaskTimer(ProjectKorra.plugin, 0, 5);
+                                ThreadUtil.runAsyncLater(() -> func.test(addonClone),500L);
                             } else func.test(addonClone); //Addon elements should be loaded so
                         }
-
                     }
 
                     //Load subelements
@@ -325,14 +326,7 @@ public class OfflineBendingPlayer {
                                 }
                             };
                             if (onStartup) { //If we are doing this on startup, addon elements aren't loaded yet. So do this async
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        if (func.test(addonClone)) {
-                                            this.cancel();
-                                        }
-                                    }
-                                }.runTaskTimer(ProjectKorra.plugin, 0, 5);
+                                ThreadUtil.runAsyncLater(() -> func.test(addonClone), 500L);
                             } else func.test(addonClone); //Addon elements should be loaded by now
                         }
                     }
@@ -369,14 +363,7 @@ public class OfflineBendingPlayer {
                         }
                     };
                     if (onStartup) { //If we are doing this on startup, addon elements aren't loaded yet. So do this async
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (func.test(abilitiesClone)) {
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(ProjectKorra.plugin, 0, 5);
+                        ThreadUtil.runAsyncLater(() -> func.test(abilitiesClone), 500L);
                     } else func.test(abilitiesClone); //Addon elements should be loaded by now
 
                     //Load permaRemove
@@ -419,27 +406,28 @@ public class OfflineBendingPlayer {
                     //Call postLoad() on the main thread and wait for it to complete
                     if (bPlayer instanceof BendingPlayer) {
                         BendingPlayer finalBPlayer3 = (BendingPlayer) bPlayer;
-                        Bukkit.getScheduler().callSyncMethod(ProjectKorra.plugin, () -> {
+                        ThreadUtil.ensureEntity(finalBPlayer3.getPlayer(), () -> {;
                             finalBPlayer3.postLoad();
-                            return true;
-                        }).get();
+                        });
                     } else {
                         bPlayer.uncacheAfter(30_000);
                     }
 
                     OfflineBendingPlayer finalBPlayer4 = bPlayer;
-                    Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> {
+                    ThreadUtil.runSync(() -> {
                         Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(finalBPlayer4));
+                        LOADING.remove(uuid);
                         future.complete(finalBPlayer4);
                     });
                 }
-            } catch (final SQLException | ExecutionException | InterruptedException ex) {
+            } catch (final SQLException ex) {
                 ex.printStackTrace();
+                LOADING.remove(uuid);
                 future.cancel(true);
             }
         };
 
-        Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, runnable);
+        ThreadUtil.runAsync(runnable);
 
         return future;
     }
@@ -448,7 +436,7 @@ public class OfflineBendingPlayer {
      * Saves the subelements of a BendingPlayer to the database.
      */
     public void saveSubElements() {
-        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+        ThreadUtil.runAsyncLater(() -> {
             final StringBuilder subs = new StringBuilder();
             if (this.hasSubElement(Element.METAL)) {
                 subs.append("m");
@@ -510,7 +498,7 @@ public class OfflineBendingPlayer {
      * Saves the elements of a BendingPlayer to the database.
      */
     public void saveElements() {
-        Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+        ThreadUtil.runAsyncLater(() -> {
             final StringBuilder elements = new StringBuilder();
             if (this.hasElement(Element.AIR)) {
                 elements.append("a");
@@ -551,21 +539,26 @@ public class OfflineBendingPlayer {
      * Saves all temporary elements to the database
      */
     public void saveTempElements() {
-        DBConnection.sql.modifyQuery("DELETE FROM pk_temp_elements WHERE uuid = '" + uuid + "'");
-        try {
-            DBConnection.sql.getConnection().setAutoCommit(false);
-            DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
-            DBConnection.sql.getConnection().setAutoCommit(true);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        ThreadUtil.runAsyncLater(() -> {
 
-        for (Element e : this.tempElements.keySet()) {
-            DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempElements.get(e) + ")");
-        }
-        for (Element e : this.tempSubElements.keySet()) {
-            DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempSubElements.get(e) + ")");
-        }
+            try {
+                DBConnection.sql.getConnection().setAutoCommit(false);
+                DBConnection.sql.modifyQuery("DELETE FROM pk_temp_elements WHERE uuid = '" + uuid + "'");
+                DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
+                for (Element e : this.tempElements.keySet()) {
+                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempElements.get(e) + ")");
+                }
+                for (Element e : this.tempSubElements.keySet()) {
+                    DBConnection.sql.modifyQuery("INSERT INTO pk_temp_elements (uuid, element, expiry) VALUES ('" + uuid + "', '" + e.getName() + "', " + this.tempSubElements.get(e) + ")");
+                }
+                DBConnection.sql.getConnection().commit(); //Force the delete statement to go through before the next SQL statement
+                DBConnection.sql.getConnection().setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        }, 1L);
     }
 
     /**
@@ -886,7 +879,7 @@ public class OfflineBendingPlayer {
     }
 
     public void saveCooldowns(boolean async) {
-        if (async) Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, this::saveCooldownsForce);
+        if (async) ThreadUtil.runAsync(this::saveCooldownsForce);
         else this.saveCooldownsForce();
     }
 
@@ -959,7 +952,7 @@ public class OfflineBendingPlayer {
      * @param sub The subelement to check
      * @return true If the player has the subelement
      */
-    public boolean hasTempSubElementExlucdeParents(@NotNull final SubElement sub) {
+    public boolean hasTempSubElementExcludeParents(@NotNull final SubElement sub) {
         return this.tempSubElements.containsKey(sub) && this.tempSubElements.get(sub) > System.currentTimeMillis();
     }
 
@@ -975,6 +968,7 @@ public class OfflineBendingPlayer {
 
     /**
      * Gets the time that a temporary element expires. If the element is not temporary, it will return -1.
+     * If the element has already expired but the user isn't online, it will return 0.
      * @param element The element to check
      * @return The time the element expires, or -1 if it is not temporary
      */
@@ -985,6 +979,7 @@ public class OfflineBendingPlayer {
 
     /**
      * Gets the time that a temporary subelement expires. If the subelement is not temporary, it will return -1.
+     * If the subelement has already expired but the user isn't online, it will return 0.
      * @param sub The subelement to check
      * @return The time the subelement expires, or -1 if it is not temporary
      */
@@ -1259,11 +1254,15 @@ public class OfflineBendingPlayer {
         bendingPlayer.loading = false;
 
         if (offlineBendingPlayer.uncache != null) {
-            offlineBendingPlayer.uncache.cancel();
+            ThreadUtil.cancelTimerTask(offlineBendingPlayer.uncache);
         }
 
         PLAYERS.put(player.getUniqueId(), bendingPlayer);
         ONLINE_PLAYERS.put(player.getUniqueId(), bendingPlayer);
+
+        ThreadUtil.ensureEntity(player, () -> {
+            Bukkit.getPluginManager().callEvent(new BendingPlayerLoadEvent(bendingPlayer));
+        });
 
         return bendingPlayer;
     }
@@ -1303,13 +1302,14 @@ public class OfflineBendingPlayer {
         long remaining = (this.lastAccessed + this.uncacheTime) - System.currentTimeMillis();
 
         if (remaining >= 500) { //If there is at least half a second to go, delay the uncache
-            if (this.uncache != null) this.uncache.cancel(); //Cancel existing task
-            this.uncache = Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, this::uncache, remaining / 50);
+            if (this.uncache != null) ThreadUtil.cancelTimerTask(this.uncache); //Cancel existing task
+            this.uncache = ThreadUtil.runSyncLater(this::uncache, remaining / 50);
             return;
         }
 
         PLAYERS.remove(this.player.getUniqueId());
         ONLINE_PLAYERS.remove(this.player.getUniqueId());
+        LOADING.remove(this.player.getUniqueId());
     }
 
     /**
@@ -1439,7 +1439,7 @@ public class OfflineBendingPlayer {
     }
 
     /**
-     * Removes a temporary element from the player. Does not check for existing temporary elements. Does not send messages.
+     * Removes a temporary element from the player. Does not send messages.
      * @param element The element to remove. Null for all elements.
      * @param sender The sender of the command. Can be null.
      * @return true If the element was removed successfully
@@ -1451,14 +1451,19 @@ public class OfflineBendingPlayer {
                 if (e1.equals(Element.AVATAR)) continue;
                 if (removeTempElement(e1, sender)) removed = true;
             }
+            for (Element e1 : Element.getAllSubElements()) {
+                if (removeTempElement(e1, sender)) removed = true;
+            }
             return removed;
         }
+
+        if (!this.hasTempElement(element)) return false;
 
         //Check the event isn't cancelled
         Cancellable event = element instanceof SubElement ? new PlayerChangeSubElementEvent(sender, this.getPlayer(), (SubElement) element, PlayerChangeSubElementEvent.Result.TEMP_REMOVE) :
                 new PlayerChangeElementEvent(sender, this.getPlayer(), element, PlayerChangeElementEvent.Result.TEMP_REMOVE);
         Bukkit.getPluginManager().callEvent((Event) event);
-        if (!event.isCancelled()) return false;
+        if (event.isCancelled()) return false;
 
         if (element instanceof SubElement) {
             if (this.isOnline()) {

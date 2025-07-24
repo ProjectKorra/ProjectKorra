@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
 
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -57,7 +58,7 @@ public final class BendingBoardManager {
 	}
 
 	private static void initialize() {
-		enabled = ConfigManager.getConfig().getBoolean("Properties.BendingBoard");
+		enabled = ConfigManager.getConfig().getBoolean("Properties.BendingBoard") && !ProjectKorra.isFolia();
 		
 		disabledWorlds.clear();
 		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
@@ -209,7 +210,7 @@ public final class BendingBoardManager {
 	 * Load into memory the list of players who have toggled the bending board off.
 	 */
 	public static void loadDisabledPlayers() {
-		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+		ThreadUtil.runAsync(() -> {
 			Set<UUID> disabled = new HashSet<>();
 			try {
 				final ResultSet rs = DBConnection.sql.readQuery("SELECT uuid FROM pk_board WHERE enabled = 0");
@@ -231,7 +232,7 @@ public final class BendingBoardManager {
 		scoreboardPlayers.remove(player);
 		final UUID uuid = player.getUniqueId();
 		final String updateQuery = "UPDATE pk_board SET enabled = " + (disabledPlayers.contains(uuid) ? 0 : 1) + " WHERE uuid = ?";
-		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
+		ThreadUtil.runAsync(() -> {
 			try {
 				PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement("SELECT enabled FROM pk_board WHERE uuid = ? LIMIT 1");
 				ps.setString(1, uuid.toString());

@@ -29,6 +29,8 @@ import com.projectkorra.projectkorra.hooks.CanBindHook;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.ability.util.FoliaThreadChecker;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -58,7 +60,6 @@ import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -143,6 +144,10 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		final Location playerLoc = this.player.getLocation();
+
+		if (ProjectKorra.isFolia() && !Bukkit.isOwnedByCurrentRegion(this.getPlayer())) {
+			return false;
+		}
 
 		//Loop through all hooks and test them
 		for (JavaPlugin plugin : BEND_HOOKS.keySet()) {
@@ -882,13 +887,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			for (final String str : bound.values()) {
 				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
 					final Player fplayer = this.player;
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							fplayer.setFlying(false);
-							fplayer.setAllowFlight(false);
-						}
-					}.runTaskLater(ProjectKorra.plugin, 2);
+					ThreadUtil.ensureEntityDelay(fplayer, () -> {
+						fplayer.setFlying(false);
+						fplayer.setAllowFlight(false);
+
+					}, 2);
 					break;
 				}
 			}
@@ -901,9 +904,15 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		PassiveManager.registerPassives(this.player);
 		FirePassive.handle(player);
 
+
+		if (ProjectKorra.isFolia()) {
+			ThreadUtil.ensureEntityTimer(this.player, new FoliaThreadChecker(this.player), 1L, 1L);
+			return; //TODO Folia doesn't support scoreboards, ignore it
+		}
+
 		//Show the bending board 1 tick later. We do it 1 tick later because postLoad() is called BEFORE the player is loaded into the map,
 		//and the board needs to see the player in the map to initialize
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+		ThreadUtil.ensureEntityDelay(player, () -> {
 			BendingBoardManager.getBoard(this.player).ifPresent(BendingBoard::show);
 			//Hide the board if they spawn in a world with bending disabled
 			BendingBoardManager.changeWorld(this.player);

@@ -3,10 +3,10 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -129,8 +129,11 @@ public class AirBurst extends AirAbility {
 	public static void coneBurst(final Player player) {
 		if (hasAbility(player, AirBurst.class)) {
 			final AirBurst airBurst = getAbility(player, AirBurst.class);
-			airBurst.startConeBurst();
-			airBurst.remove();
+			if (airBurst.isCharged) {
+				airBurst.bPlayer.addCooldown(airBurst);
+				airBurst.startConeBurst();
+				airBurst.remove();
+			}
 		}
 	}
 
@@ -170,12 +173,7 @@ public class AirBurst extends AirAbility {
 			if (i % 4 != 0) {
 				toggleTime = (int) (i % (100 / this.particlePercentage)) + 3;
 			}
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					blast.setShowParticles(true);
-				}
-			}.runTaskLater(ProjectKorra.plugin, toggleTime);
+			ThreadUtil.ensureLocationDelay(blast.getLocation(), () -> blast.setShowParticles(true), toggleTime);
 		}
 	}
 

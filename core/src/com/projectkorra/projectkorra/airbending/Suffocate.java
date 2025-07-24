@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -10,7 +11,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -59,7 +59,8 @@ public class Suffocate extends AirAbility {
 	private double blindRepeat;
 	private double animationSpeed;
 	private Suffocate ability;
-	private ArrayList<BukkitRunnable> tasks;
+	private ArrayList<Object> tasks;
+	private ArrayList<SuffocateSpiral> spirals;
 	private ArrayList<LivingEntity> targets;
 
 	public Suffocate(final Player player) {
@@ -92,6 +93,7 @@ public class Suffocate extends AirAbility {
 		this.blindRepeat = getConfig().getDouble("Abilities.Air.Suffocate.BlindInterval");
 		this.targets = new ArrayList<>();
 		this.tasks = new ArrayList<>();
+		this.spirals = new ArrayList<>();
 
 		if (this.particleCount < 1) {
 			this.particleCount = 1;
@@ -107,21 +109,21 @@ public class Suffocate extends AirAbility {
 			}
 		} else {
 			List<Entity> entities = new ArrayList<Entity>();
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < range; i++) {
 				final Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterials());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, .5);
-				if (entities.contains(player)) {
-					entities.remove(player);
-				}
-				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
+
+				entities.remove(player);
+
+				if (!entities.isEmpty()) {
 					break;
 				}
 			}
-			if (entities == null || entities.isEmpty()) {
+			if (entities.isEmpty()) {
 				return;
 			}
 			final Entity target = entities.get(0);
-			if (target != null && target instanceof LivingEntity) {
+			if (target instanceof LivingEntity) {
 				this.targets.add((LivingEntity) target);
 			}
 		}
@@ -185,31 +187,14 @@ public class Suffocate extends AirAbility {
 		} else if (!this.started) {
 			this.started = true;
 			for (final LivingEntity target : this.targets) {
-				final BukkitRunnable br1 = new BukkitRunnable() {
-					@Override
-					public void run() {
-						DamageHandler.damageEntity(target, Suffocate.this.damage, Suffocate.this.ability);
-					}
-				};
-				final BukkitRunnable br2 = new BukkitRunnable() {
-					@Override
-					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
-					}
-				};
-				final BukkitRunnable br3 = new BukkitRunnable() {
-					@Override
-					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (Suffocate.this.blindRepeat * 20), (int) Suffocate.this.blind));
-					}
-				};
+				final Runnable br1 = () -> DamageHandler.damageEntity(target, Suffocate.this.damage, Suffocate.this.ability);
+				final Runnable br2 = () -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
+				final Runnable br3 = () -> target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (Suffocate.this.blindRepeat * 20), (int) Suffocate.this.blind));
 
-				this.tasks.add(br1);
-				this.tasks.add(br2);
-				this.tasks.add(br3);
-				br1.runTaskTimer(ProjectKorra.plugin, (long) (this.damageDelay * 20), (long) (this.damageRepeat * 20));
-				br2.runTaskTimer(ProjectKorra.plugin, (long) (this.slowDelay * 20), (long) (this.slowRepeat * 20 / 0.25));
-				br3.runTaskTimer(ProjectKorra.plugin, (long) (this.blindDelay * 20), (long) (this.blindRepeat * 20));
+
+				this.tasks.add(ThreadUtil.ensureEntityTimer(target, br1, (long) (this.damageDelay * 20), (long) (this.damageRepeat * 20)));
+				this.tasks.add(ThreadUtil.ensureEntityTimer(target, br2, (long) (this.slowDelay * 20), (long) (this.slowRepeat * 20 / 0.25)));
+				this.tasks.add(ThreadUtil.ensureEntityTimer(target, br3, (long) (this.blindDelay * 20), (long) (this.blindRepeat * 20)));
 			}
 		}
 
@@ -296,24 +281,24 @@ public class Suffocate extends AirAbility {
 		final long t3 = (long) (5000 * this.animationSpeed);
 		final long t4 = (long) (6000 * this.animationSpeed);
 		if (dt < t1) {
-			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL1);
-			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL2);
+			new SuffocateSpiral(this, target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(this, target, steps, this.radius, delay, 0, 0.25 - (0.25 * dt / t1), 0, SpiralType.HORIZONTAL2);
 		} else if (dt < t2) {
-			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-			new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-			new SuffocateSpiral(target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+			new SuffocateSpiral(this, target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(this, target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(this, target, steps * 2, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
 		} else if (dt < t3) {
-			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-			new SuffocateSpiral(target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+			new SuffocateSpiral(this, target, steps, this.radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(this, target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(this, target, steps, this.radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
 		} else if (dt < t4) {
-			new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-			new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
-			new SuffocateSpiral(target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
+			new SuffocateSpiral(this, target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(this, target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(this, target, steps, this.radius - Math.min(this.radius * 3 / 4, (this.radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
 		} else {
-			new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-			new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
-			new SuffocateSpiral(target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
+			new SuffocateSpiral(this, target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+			new SuffocateSpiral(this, target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
+			new SuffocateSpiral(this, target, steps, this.radius - (this.radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
 		}
 	}
 
@@ -330,7 +315,7 @@ public class Suffocate extends AirAbility {
 		super.remove();
 		this.bPlayer.addCooldown(this);
 		for (int i = 0; i < this.tasks.size(); i++) {
-			this.tasks.get(i).cancel();
+			ThreadUtil.cancelTimerTask(this.tasks.get(i));
 			this.tasks.remove(i);
 			i--;
 		}
@@ -341,7 +326,7 @@ public class Suffocate extends AirAbility {
 	 * entity. The direction of the spiral is determined by SpiralType, and each
 	 * type is calculated independently from one another.
 	 */
-	public class SuffocateSpiral extends BukkitRunnable {
+	public class SuffocateSpiral extends AirAbility {
 		private Location startLoc;
 		private final Location loc;
 		private LivingEntity target;
@@ -361,7 +346,8 @@ public class Suffocate extends AirAbility {
 		 * @param dz z offset
 		 * @param type Spiral animation direction
 		 */
-		public SuffocateSpiral(final LivingEntity lent, final int totalSteps, final double radius, final long interval, final double dx, final double dy, final double dz, final SpiralType type) {
+		public SuffocateSpiral(final Suffocate suffocate, final LivingEntity lent, final int totalSteps, final double radius, final long interval, final double dx, final double dy, final double dz, final SpiralType type) {
+			super(suffocate.player);
 			this.target = lent;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -371,8 +357,8 @@ public class Suffocate extends AirAbility {
 			this.type = type;
 			this.loc = this.target.getEyeLocation();
 			this.i = 0;
-			this.runTaskTimer(ProjectKorra.plugin, 0L, interval);
-			Suffocate.this.tasks.add(this);
+			this.start();
+			Suffocate.this.spirals.add(this);
 		}
 
 		/**
@@ -385,7 +371,8 @@ public class Suffocate extends AirAbility {
 		 * @param dz z offset
 		 * @param type Spiral animation direction
 		 */
-		public SuffocateSpiral(final Location startLoc, final int totalSteps, final double radius, final long interval, final double dx, final double dy, final double dz, final SpiralType type) {
+		public SuffocateSpiral(final Suffocate suffocate, final Location startLoc, final int totalSteps, final double radius, final long interval, final double dx, final double dy, final double dz, final SpiralType type) {
+			super(suffocate.player);
 			this.startLoc = startLoc;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -395,15 +382,15 @@ public class Suffocate extends AirAbility {
 			this.type = type;
 			this.loc = startLoc.clone();
 			this.i = 0;
-			this.runTaskTimer(ProjectKorra.plugin, 0L, interval);
-			Suffocate.this.tasks.add(this);
+			this.start();
+			Suffocate.this.spirals.add(this);
 		}
 
 		/**
 		 * Starts the initial animation, and removes itself when it is finished.
 		 */
 		@Override
-		public void run() {
+		public void progress() {
 			Location tempLoc;
 			if (this.target != null) {
 				tempLoc = this.target.getEyeLocation();
@@ -440,9 +427,44 @@ public class Suffocate extends AirAbility {
 
 			getAirbendingParticles().display(this.loc, 0, 0, 0, 0, 1);
 			if (this.i == this.totalSteps + 1) {
-				this.cancel();
+				this.remove();
 			}
 			this.i++;
+		}
+
+		@Override
+		public String getName() {
+			return "SuffocateSpiral";
+		}
+
+		@Override
+		public boolean isHiddenAbility() {
+			return true;
+		}
+
+		@Override
+		public boolean isSneakAbility() {
+			return false;
+		}
+
+		@Override
+		public boolean isIgniteAbility() {
+			return false;
+		}
+
+		@Override
+		public boolean isHarmlessAbility() {
+			return false;
+		}
+
+		@Override
+		public long getCooldown() {
+			return 0;
+		}
+
+		@Override
+		public Location getLocation() {
+			return loc;
 		}
 	}
 
@@ -628,7 +650,7 @@ public class Suffocate extends AirAbility {
 		this.animationSpeed = animationSpeed;
 	}
 
-	public ArrayList<BukkitRunnable> getTasks() {
+	public ArrayList<Object> getTasks() {
 		return this.tasks;
 	}
 

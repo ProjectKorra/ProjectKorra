@@ -64,7 +64,7 @@ public class ChatUtil {
         final String end = color(ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix", " \u00BB "));
         final String prefix = color + start + main + end;
         if (!(receiver instanceof Player)) {
-            receiver.sendMessage(prefix + message);
+            receiver.sendMessage(prefix + message.toLegacyText());
         } else {
             final TextComponent prefixComponent = new TextComponent(prefix);
             final String hover = multiline(color + ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Hover", color + "Bending brought to you by ProjectKorra | Fork Roku!\n" + color + "Click for more info."));

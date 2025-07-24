@@ -1,11 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,14 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
+import com.projectkorra.projectkorra.ability.util.FoliaCollisionManager;
 import com.projectkorra.projectkorra.attribute.*;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.AbilityRecalculateAttributeEvent;
+import com.projectkorra.projectkorra.util.ThreadUtil;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.permissions.Permission;
-
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -103,6 +99,11 @@ public abstract class CoreAbility implements Ability {
 	private boolean recalculatingAttributes;
 	private boolean attributeValuesCached;
 
+	//The following are only for Folia servers!
+	private long _foliaCurrentTick;
+	private Object _foliaTask;
+	private Location _foliaLastLocation;
+
 	/**
 	 * The default constructor is needed to create a fake instance of each
 	 * CoreAbility via reflection in {@link #registerAbilities()}. More
@@ -169,6 +170,17 @@ public abstract class CoreAbility implements Ability {
 		if (this.player == null || !this.isEnabled()) {
 			return;
 		}
+
+		if (ProjectKorra.isFolia() && !Bukkit.isOwnedByCurrentRegion(this.player)) {
+			ProjectKorra.log.warning("Tried to start ability " + this.getName() + " (" + this.getClass().getSimpleName() +
+					".class) on a player that is not owned by the current region. This is not allowed in Folia. Please report " +
+					"this to the ProjectKorra team.");
+			for (int i = 0; i < 6 && i < Thread.currentThread().getStackTrace().length; i++) {
+				ProjectKorra.log.warning(Thread.currentThread().getStackTrace()[i].toString());
+			}
+			return;
+		}
+
 		final AbilityStartEvent event = new AbilityStartEvent(this);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
@@ -197,6 +209,22 @@ public abstract class CoreAbility implements Ability {
 		INSTANCES_BY_PLAYER.get(clazz).get(uuid).put(this.id, this);
 		INSTANCES_BY_CLASS.get(clazz).add(this);
 		INSTANCES.add(this);
+
+		if (ProjectKorra.isFolia()) {
+			//In Folia, we don't call CoreAbility#progressAll(), so instead we make a repeating task
+			//that runs every tick and calls progressSelf()
+
+			//ProjectKorra.log.info("[Debug] " + this.getName() + " was started on Thread " + Thread.currentThread().getName() + " (#" + Thread.currentThread().getId() + ")");
+
+			this._foliaTask = Bukkit.getRegionScheduler().runAtFixedRate(ProjectKorra.plugin, player.getLocation(), (task) -> {
+				this._foliaCurrentTick++;
+				this.progressSelf();
+			}, 1L, 1L);
+
+			if (ProjectKorra.isLuminol()) { //Luminol is required for collisions right now, until Folia implements API that we can use
+				FoliaCollisionManager.startTracking(this);
+			}
+		}
 	}
 
 	/**
@@ -210,7 +238,7 @@ public abstract class CoreAbility implements Ability {
 	 */
 	@Override
 	public void remove() {
-		if (this.player == null) {
+		if (this.player == null || !this.isStarted()) {
 			return;
 		}
 
@@ -243,6 +271,14 @@ public abstract class CoreAbility implements Ability {
 
 
 		INSTANCES.remove(this);
+
+		if (ProjectKorra.isFolia()) {
+			((ScheduledTask) this._foliaTask).cancel(); //Cancel the task if it exists
+
+			if (ProjectKorra.isLuminol()) {
+				FoliaCollisionManager.stopTracking(this);
+			}
+		}
 	}
 
 	/**
@@ -252,53 +288,62 @@ public abstract class CoreAbility implements Ability {
 	public static void progressAll() {
 		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (final CoreAbility abil : setAbils) {
-				if (abil instanceof PassiveAbility) {
-					if (!((PassiveAbility) abil).isProgressable()) {
-						continue;
-					}
-
-					if (!abil.getPlayer().isOnline()) { // This has to be before isDead as isDead.
-						abil.remove(); // will return true if they are offline.
-						continue;
-					} else if (abil.getPlayer().isDead()) {
-						continue;
-					}
-				} else if (abil.getPlayer().isDead()) {
-					abil.remove();
-					continue;
-				} else if (!abil.getPlayer().isOnline()) {
-					abil.remove();
-					continue;
-				}
-
-				try {
-					/*if (!abil.attributesModified) {
-						abil.modifyAttributes();
-						abil.attributesModified = true;
-					}*/
-
-					//try (MCTiming timing = ProjectKorra.timing(abil.getName()).startTiming()) {
-						abil.progress();
-					//}
-
-					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
-				} catch (final Exception e) {
-					e.printStackTrace();
-					Bukkit.getLogger().severe(abil.toString());
-					try {
-						abil.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + abil.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
-					} catch (final Exception me) {
-						Bukkit.getLogger().severe("unable to notify ability user of error");
-					}
-					try {
-						abil.remove();
-					} catch (final Exception re) {
-						Bukkit.getLogger().severe("unable to fully remove ability of above error");
-					}
-				}
+				abil.progressSelf();
 			}
 		}
 		currentTick++;
+	}
+
+	private void progressSelf() {
+		if (this instanceof PassiveAbility) {
+			if (!((PassiveAbility) this).isProgressable()) {
+				return;
+			}
+
+			if (ProjectKorra.isFolia() && !Bukkit.isOwnedByCurrentRegion(this.player)) {
+				//player.sendMessage(ChatColor.RED +"[Debug] " + this.getName() + " was killed because you changed regions");
+				this.remove();
+				return;
+			} else if (!this.getPlayer().isOnline()) { 	// This has to be before isDead as isDead
+				this.remove(); 							// will return true if they are offline.
+				return;
+			} else if (this.getPlayer().isDead()) {
+				return;
+			}
+		} else if (this.getPlayer().isDead()) {
+			this.remove();
+			return;
+		} else if (!this.getPlayer().isOnline()) {
+			this.remove();
+			return;
+		}
+
+		try {
+			this.progress();
+
+			if (ProjectKorra.isFolia()) { //Collisions don't work properly on Folia, so we spawn Markers at each location to damage
+				//this._foliaCollisions();
+			}
+
+			Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(this));
+		} catch (final Throwable e) {
+			if (e instanceof NoSuchMethodError || e instanceof NoSuchFieldError || e instanceof NoClassDefFoundError) {
+				ProjectKorra.log.severe("The addon ability" + this.getName() + " is not compatible with either your Spigot version or ProjectKorra version.");
+				ProjectKorra.log.severe("Please contact the author of the addon to fix this issue.");
+			}
+
+			e.printStackTrace();
+			try {
+				this.getPlayer().sendMessage(ChatColor.YELLOW + "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()) + "] " + ChatColor.RED + "There was an error running " + this.getName() + ". please notify the server owner describing exactly what you were doing at this moment");
+			} catch (final Exception me) {
+				ProjectKorra.log.severe("Unable to notify ability user of error");
+			}
+			try {
+				this.remove();
+			} catch (final Exception re) {
+				ProjectKorra.log.severe("Unable to fully remove ability due to the above error");
+			}
+		}
 	}
 
 	/**
@@ -309,7 +354,12 @@ public abstract class CoreAbility implements Ability {
 		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (final CoreAbility abil : setAbils) {
 				try {
-					abil.remove();
+					Location location = abil.getPlayer().getLocation();
+
+					if (abil.getLocation() != null) {
+						location = abil.getLocation();
+					}
+					ThreadUtil.ensureLocation(location, abil::remove);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -431,6 +481,27 @@ public abstract class CoreAbility implements Ability {
 			return Collections.emptySet();
 		}
 		return (Collection<T>) INSTANCES_BY_PLAYER.get(clazz).get(player.getUniqueId()).values();
+	}
+
+	/**
+	 * Returns a Collection of all of the CoreAbilities that are currently
+	 * active for a specific player.
+	 * @param player the player that created the instances
+	 * @return The abilities
+	 */
+	public static Collection<CoreAbility> getAbilities(final Player player) {
+		if (player == null) {
+			return Collections.emptySet();
+		}
+
+		Set<CoreAbility> abilities = new HashSet<>();
+		for (Map<UUID, Map<Integer, CoreAbility>> map : INSTANCES_BY_PLAYER.values()) {
+			if (map.containsKey(player.getUniqueId())) {
+				abilities.addAll(map.get(player.getUniqueId()).values());
+			}
+		}
+
+		return abilities;
 	}
 
 	/**
@@ -715,11 +786,11 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public static long getCurrentTick() {
-		return currentTick;
+		return ProjectKorra.isFolia() ? Bukkit.getCurrentTick() : currentTick;
 	}
 
 	public long getRunningTicks() {
-		return currentTick - this.startTick;
+		return ProjectKorra.isFolia() ? (this._foliaCurrentTick - this.startTick) : currentTick - this.startTick;
 	}
 
 	public boolean isStarted() {
@@ -965,16 +1036,28 @@ public abstract class CoreAbility implements Ability {
 		return this;//.addAttributeModifier(attribute, value, modification, AttributePriority.MEDIUM);
 	}
 
+	/**
+	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * attributes and call {@link #recalculateAttributes()} to call the event.
+	 */
 	@Deprecated
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority) {
 	    return this;//.addAttributeModifier(attribute, value, modificationType, priority, UUID.randomUUID());
 	}
 
+	/**
+	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * attributes and call {@link #recalculateAttributes()} to call the event.
+	 */
 	@Deprecated
 	public CoreAbility addAttributeModifier(final String attribute, final Number value, final AttributeModifier modificationType, final AttributePriority priority, final UUID uuid) {
 		return this;
 	}
 
+	/**
+	 * This method no longer works as of 1.12.0. Instead, listen to the {@link AbilityRecalculateAttributeEvent} to modify
+	 * attributes and call {@link #recalculateAttributes()} to call the event.
+	 */
 	@Deprecated
 	public CoreAbility setAttribute(final String attribute, final Object value) {
 		return this;
@@ -1110,33 +1193,13 @@ public abstract class CoreAbility implements Ability {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
-
-	public static class StoredModifier {
-	    
-	    private final UUID uuid;
-	    private final AttributeModifier type;
-	    private final Number value;
-	    
-	    private StoredModifier(UUID uuid, AttributeModifier type, Number value) {
-	        this.uuid = uuid;
-	        this.type = type;
-	        this.value = value;
-	    }
-	    
-	    @Override
-	    public boolean equals(Object object) {
-	        if (!(object instanceof StoredModifier)) {
-	            return false;
-	        }
-	        
-	        return uuid.equals(((StoredModifier) object).uuid);
-	    }
-	    
-	    @Override
-	    public int hashCode() {
-	        return uuid.hashCode();
-	    }
+		return "CoreAbility{" +
+				"player=" + player +
+				", name=" + getName() +
+				", class=" + getClass().getSimpleName() +
+				", id=" + id +
+				", started=" + started +
+				", removed=" + removed +
+				'}';
 	}
 }

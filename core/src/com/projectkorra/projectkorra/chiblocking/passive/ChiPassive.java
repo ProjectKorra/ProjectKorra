@@ -2,9 +2,9 @@ package com.projectkorra.projectkorra.chiblocking.passive;
 
 import com.projectkorra.projectkorra.ability.StanceAbility;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
@@ -16,7 +16,13 @@ import com.projectkorra.projectkorra.chiblocking.QuickStrike;
 import com.projectkorra.projectkorra.chiblocking.SwiftKick;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ChiPassive {
+
+	private static Map<Player, Object> messageTasks = new HashMap<>();
+
 	public static boolean willChiBlock(final Player attacker, final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -61,16 +67,14 @@ public class ChiPassive {
 		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 2, 0);
 
 		final long start = System.currentTimeMillis();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				ChatUtil.sendActionBar(Element.CHI.getColor() + "* Chiblocked *", player);
-				if (System.currentTimeMillis() >= start + getDuration()) {
-					bPlayer.unblockChi();
-					this.cancel();
-				}
+		Runnable runnable = () -> {
+			ChatUtil.sendActionBar(Element.CHI.getColor() + "* Chiblocked *", player);
+			if (System.currentTimeMillis() >= start + getDuration()) {
+				bPlayer.unblockChi();
+				ThreadUtil.cancelTimerTask(ChiPassive.messageTasks.get(player));
 			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+		};
+		messageTasks.put(player, ThreadUtil.ensureEntityTimer(player, runnable, 0, 1));
 	}
 
 	public static double getChance() {

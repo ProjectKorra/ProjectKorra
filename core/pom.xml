@@ -4,7 +4,7 @@
 
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>1.12.0</version>
+  <version>1.12.1</version>
   <packaging>jar</packaging>
 
   <name>ProjectKorra</name>
@@ -68,7 +68,7 @@
     <!-- Placeholder API Repo -->
     <repository>
       <id>placeholderapi</id>
-      <url>https://repo.minebench.de/</url>
+      <url>https://repo.extendedclip.com/releases/</url>
     </repository>
     <!-- GriefDefender API Repo -->
     <repository>
@@ -102,13 +102,18 @@
       <artifactId>core-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- PaperLib -->
     <dependency>
-      <groupId>io.papermc</groupId>
-      <artifactId>paperlib</artifactId>
-      <version>1.0.1</version>
+      <groupId>com.projectkorra</groupId>
+      <artifactId>luminol</artifactId>
+      <version>${project.version}</version>
     </dependency>
-    <!-- Minecraft Timings -->
+    <!-- Folia API -->
+    <dependency>
+      <groupId>dev.folia</groupId>
+      <artifactId>folia-api</artifactId>
+      <version>1.20.1-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>
@@ -116,6 +121,7 @@
       <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <!-- lang3 -->
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -213,7 +219,7 @@
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
-      <version>2.9.2</version>
+      <version>2.11.6</version>
       <scope>provided</scope>
     </dependency>
     <!-- GriefDefender -->
@@ -317,10 +323,6 @@
 
           </filters>
           <relocations>
-            <relocation>
-              <pattern>io.papermc.lib</pattern>
-              <shadedPattern>paperlib.projectkorra</shadedPattern>
-            </relocation>
             <relocation>
               <pattern>org.apache.commons</pattern>
               <shadedPattern>commonslang3.projectkorra</shadedPattern>

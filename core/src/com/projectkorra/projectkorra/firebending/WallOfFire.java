@@ -65,7 +65,7 @@ public class WallOfFire extends FireAbility {
 		this.random = new Random();
 		this.blocks = new ArrayList<>();
 
-		if (hasAbility(player, WallOfFire.class) && !this.bPlayer.isAvatarState()) {
+		if (hasAbility(player, WallOfFire.class)) {
 			return;
 		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
@@ -86,6 +86,7 @@ public class WallOfFire extends FireAbility {
 			return;
 		}
 
+		this.recalculateAttributes();
 		this.initializeBlocks();
 		this.start();
 	}

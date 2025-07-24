@@ -11,11 +11,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -95,15 +95,16 @@ public class StatsCommand extends PKCommand {
 			} catch (IndexOutOfBoundsException | NumberFormatException e) {}
 			final Object o = object;
 			final int p = page;
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					final List<String> messages = StatsCommand.this.getLeaderboard(sender, o, statistic, p);
-					for (final String message : messages) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-					}
+			Runnable runnable = () -> {
+				final List<String> messages = StatsCommand.this.getLeaderboard(sender, o, statistic, p);
+				for (final String message : messages) {
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 				}
-			}.runTaskAsynchronously(ProjectKorra.plugin);
+			};
+
+			if (sender instanceof Player) ThreadUtil.ensureEntity((Player) sender, runnable);
+			else runnable.run();
+
 		}
 	}
 
