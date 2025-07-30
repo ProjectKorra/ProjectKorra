@@ -86,6 +86,10 @@ public abstract class EarthAbility extends ElementalAbility {
 		return false;
 	}
 
+	public Block getSourceBlock() {
+		return null;
+	}
+
 	@Override
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
