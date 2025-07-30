@@ -672,6 +672,7 @@ public class EarthBlast extends EarthAbility {
 		this.firstDestination = firstDestination;
 	}
 
+	@Override
 	public Block getSourceBlock() {
 		return this.sourceBlock;
 	}

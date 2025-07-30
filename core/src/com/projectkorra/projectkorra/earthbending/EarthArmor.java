@@ -692,6 +692,9 @@ public class EarthArmor extends EarthAbility {
 		this.interval = interval;
 	}
 
+	@Override
+	public Block getSourceBlock() { return getHeadBlock(); }
+
 	public Block getHeadBlock() {
 		return this.headBlock;
 	}
