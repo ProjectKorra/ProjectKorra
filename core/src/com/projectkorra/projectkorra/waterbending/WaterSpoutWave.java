@@ -568,6 +568,9 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	@Override
+	public Block getSourceBlock() { return this.sourceBlock; }
+
+	@Override
 	public boolean isEnabled() {
 		return getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
 	}
