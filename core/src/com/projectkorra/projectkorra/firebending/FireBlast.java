@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -149,6 +150,10 @@ public class FireBlast extends FireAbility {
 
 	public boolean checkLocation(Block block) {
 		if (block.isLiquid()) {
+			if (WaterSpout.getAffectedBlocks().containsKey(block))
+			{
+				return true;
+			}
 			this.remove();
 			return false;
 		}
