@@ -2196,6 +2196,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBindChange(final PlayerBindChangeEvent event) {
 		if (!event.isOnline()) return;
+		if (event.isCancelled()) return;
 		final Player player = (Player) event.getPlayer();
 		if (player == null) return;
 		if (event.isMultiAbility()) {
