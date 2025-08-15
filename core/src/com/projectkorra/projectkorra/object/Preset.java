@@ -35,12 +35,7 @@ public class Preset {
 	 * presets}, keyed to their UUID
 	 */
 	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<>();
-	public static FileConfiguration config = ConfigManager.presetConfig.get();
-	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<>();
-	static String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";
-	static String deleteQuery = "DELETE FROM pk_presets WHERE uuid = ? AND name = ?";
-	static String insertQuery = "INSERT INTO pk_presets (uuid, name, slot1, slot2, slot3, slot4, slot5, slot6, slot7, " +
-			"slot8, slot9) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	public static Map<String, ArrayList<String>> externalPresets = new ConcurrentHashMap<>();
 
 	private final UUID uuid;
 	private final HashMap<Integer, String> abilities;
@@ -80,6 +75,8 @@ public class Preset {
 	 * @param player The Player who's Presets should be loaded
 	 */
 	public static void loadPresets(final Player player) {
+		final String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";
+
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -87,14 +84,13 @@ public class Preset {
 				if (uuid == null) {
 					return;
 				}
-				try {
-					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery);
+				try (final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery)) {
 					ps.setString(1, uuid.toString());
 					final ResultSet rs = ps.executeQuery();
 					if (rs.next()) { // Presets exist.
 						int i = 0;
 						do {
-							final HashMap<Integer, String> moves = new HashMap<Integer, String>();
+							final HashMap<Integer, String> moves = new HashMap<>();
 							for (int total = 1; total <= 9; total++) {
 								final String slot = rs.getString("slot" + total);
 								if (slot != null) {
@@ -165,6 +161,7 @@ public class Preset {
 		for (final Preset preset : presets.get(player.getUniqueId())) {
 			if (preset.name.equalsIgnoreCase(name)) {
 				exists = true;
+				break;
 			}
 		}
 		return exists;
@@ -190,7 +187,9 @@ public class Preset {
 	}
 
 	public static void loadExternalPresets() {
-		final HashMap<String, ArrayList<String>> presets = new HashMap<String, ArrayList<String>>();
+		final FileConfiguration config = ConfigManager.presetConfig.get();
+		final HashMap<String, ArrayList<String>> presets = new HashMap<>();
+
 		for (final String name : config.getKeys(false)) {
 			if (!presets.containsKey(name)) {
 				if (!config.getStringList(name).isEmpty() && config.getStringList(name).size() <= 9) {
@@ -238,7 +237,7 @@ public class Preset {
 			return false;
 		}
 
-		final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+		final HashMap<Integer, String> abilities = new HashMap<>();
 
 		if (externalPresetExists(name.toLowerCase())) {
 			for (final String ability : externalPresets.get(name.toLowerCase())) {
@@ -267,13 +266,14 @@ public class Preset {
 	 * Deletes the Preset from the database.
 	 */
 	public CompletableFuture<Boolean> delete() {
+		final String deleteQuery = "DELETE FROM pk_presets WHERE uuid = ? AND name = ?";
+
 		Preset instance = this;
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
-					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
+				try (final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery)) {
 					ps.setString(1, uuid.toString());
 					ps.setString(2, name);
 					ps.execute();
@@ -285,6 +285,7 @@ public class Preset {
 				}
 			}
 		}.runTaskAsynchronously(ProjectKorra.plugin);
+
 		return future;
 	}
 
@@ -300,13 +301,15 @@ public class Preset {
 	/**
 	 * Saves the Preset to the database async
 	 */
-	public CompletableFuture<Boolean> save(final Player player) {
+	public CompletableFuture<Boolean> save() {
+		final String insertQuery = "INSERT INTO pk_presets (uuid, name, slot1, slot2, slot3, slot4, slot5, slot6, slot7, " +
+				"slot8, slot9) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
-					PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
+				try (final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(insertQuery)){
 					ps.setString(1, uuid.toString());
 					ps.setString(2, name);
 					for (int i = 1; i <= 9; i++) {
@@ -320,6 +323,47 @@ public class Preset {
 				}
 			}
 		}.runTaskAsynchronously(ProjectKorra.plugin);
+
+		return future;
+	}
+
+	/**
+	 * Updates existing preset
+	 */
+	public CompletableFuture<Boolean> update(HashMap<Integer, String> newAbilities) {
+		final String updateQuery = "UPDATE pk_presets SET slot1 = ?, slot2 = ?, slot3 = ?, slot4 = ?, " +
+				"slot5 = ?, slot6 = ?, slot7 = ?, slot8 = ?, slot9 = ? WHERE uuid = ? AND name = ?";
+
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try (PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(updateQuery)){
+
+					for (int i = 1; i <= 9; i++) {
+						ps.setString(1 + i, newAbilities.getOrDefault(i, null));
+					}
+
+					ps.setString(10, uuid.toString());
+					ps.setString(11, name);
+
+					if (ps.executeUpdate() > 0) {
+						List<Preset> userPresets = presets.get(uuid);
+						if (userPresets != null) {
+							userPresets.removeIf(preset -> preset.getName().equals(name));
+							userPresets.add(new Preset(uuid, name, newAbilities));
+						}
+						future.complete(true);
+					} else {
+						future.complete(false);
+					}
+				} catch (final SQLException e) {
+					e.printStackTrace();
+					future.complete(false);
+				}
+			}
+		}.runTaskAsynchronously(ProjectKorra.plugin);
+
 		return future;
 	}
 
