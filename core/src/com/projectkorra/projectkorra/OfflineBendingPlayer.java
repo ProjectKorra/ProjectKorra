@@ -1526,7 +1526,7 @@ public class OfflineBendingPlayer {
                 // Remove all subs that are tied to the parent element
                 for (SubElement tempSub : tempSubElements.keySet()) {
                     long expiry = tempSubElements.get(tempSub);
-                    if (tempSub.getParentElement().equals(element) && expiry == -1L) { // If the sub expiry is linked to the parent element
+                    if (tempSub.childOf(element) && expiry == -1L) { // If the sub expiry is linked to the parent element
                         PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, player, tempSub, PlayerChangeSubElementEvent.Result.TEMP_PARENT_REMOVE);
                         Bukkit.getPluginManager().callEvent(subEvent);
                         // Skip sub elements not to be removed due to the event

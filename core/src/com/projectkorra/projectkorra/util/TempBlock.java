@@ -163,8 +163,7 @@ public class TempBlock {
 	 * @return True if there is a TempBlock beside it
 	 */
 	public static boolean isTouchingTempBlock(final Block block) {
-		final BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
-		for (final BlockFace face : faces) {
+		for (final BlockFace face : GeneralMethods.ADJACENT_FACES) {
 			if (instances_.containsKey(block.getRelative(face))) {
 				return true;
 			}

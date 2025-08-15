@@ -140,7 +140,7 @@ public class Element {
 			try {
 				this.color = ChatColor.of(value);
 			} catch (IllegalArgumentException e) {
-				// TODO: Proper logger messsage before stack trace
+				ProjectKorra.log.warning("Failed to parse color for " + this.name + " with value: " + value + ". Defaulting to white.");
 				e.printStackTrace();
 				this.color = ChatColor.WHITE;
 			}
@@ -166,8 +166,9 @@ public class Element {
 		try {
 			this.subColor = ChatColor.of(value);
 		} catch (IllegalArgumentException e) {
-			// TODO: Proper logger error before stacktrace
+			ProjectKorra.log.warning("Failed to parse sub color for " + this.name + " with value: " + value + ". Defaulting to white.");
 			e.printStackTrace();
+			this.subColor = ChatColor.WHITE;
 		}
 		return this.subColor != null ? this.subColor : ChatColor.WHITE;
 	}
@@ -251,6 +252,7 @@ public class Element {
 	public static Element[] getAddonElements() {
 		final List<Element> elements = new ArrayList<>(Arrays.asList(getAllElements()));
 		elements.removeAll(Arrays.asList(MAIN_ELEMENTS));
+		elements.remove(AVATAR);
 		return elements.toArray(new Element[0]);
 	}
 
@@ -287,7 +289,7 @@ public class Element {
 	public static SubElement[] getSubElements(Element element) {
 		final List<SubElement> subElements = new ArrayList<>();
 		for (SubElement sub : getAllSubElements()) {
-			if (sub.getParentElement() == element || (sub instanceof MultiSubElement multi && multi.isParentElement(element))) {
+			if (sub.childOf(element)) {
 				subElements.add(sub);
 			}
 		}
@@ -314,7 +316,7 @@ public class Element {
 	public static SubElement[] getAddonSubElements(Element element) {
 		List<SubElement> subElements = new ArrayList<>();
 		for (SubElement sub : getAddonSubElements()) {
-			if (sub.getParentElement() == element || (sub instanceof MultiSubElement  multi && multi.isParentElement(element))) {
+			if (sub.childOf(element)) {
 				subElements.add(sub);
 			}
 		}
@@ -389,6 +391,10 @@ public class Element {
 			this.parentElement = parentElement;
 		}
 
+		public boolean childOf(Element element) {
+			return this.parentElement == element;
+		}
+
 		public Element getParentElement() {
 			return this.parentElement;
 		}
@@ -441,12 +447,21 @@ public class Element {
 			this.parentElement = parentElements[0];
 		}
 
+		@Override
+		public boolean childOf(Element element) {
+			return this.parentElementsSet.contains(element);
+		}
+
 		public Element[] getParentElements() {
 			return this.parentElements;
 		}
 
+		/**
+		 * @deprecated Use {@link #childOf(Element)} instead.
+		 */
+		@Deprecated
 		public boolean isParentElement(Element element) {
-			return this.parentElementsSet.contains(element);
+			return childOf(element);
 		}
 	}
 }

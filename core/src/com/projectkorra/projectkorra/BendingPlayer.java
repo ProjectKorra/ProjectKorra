@@ -900,7 +900,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 				long currentSubs = this.tempElements.keySet().stream()
 						.filter(SubElement.class::isInstance)
 						.map(SubElement.class::cast)
-						.filter(sub -> sub.getParentElement() == tempElement)
+						.filter(sub -> sub.childOf(tempElement))
 						.count();
 
 				if (currentSubs > 0) continue;

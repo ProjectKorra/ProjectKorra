@@ -69,6 +69,7 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -107,7 +108,9 @@ import java.util.function.Predicate;
 import static com.projectkorra.projectkorra.ProjectKorra.plugin;
 
 public class GeneralMethods {
-	private static final BlockFace[] CARDINAL_FACES = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
+	public static final List<BlockFace> CARDINAL_FACES = List.of(BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
+	public static final List<BlockFace> ADJACENT_FACES = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
+	public static final List<BlockFace> ADJACENT_SIDES = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
 	/**
 	 * Checks to see if an AbilityExists. Uses method
@@ -983,8 +986,7 @@ public class GeneralMethods {
 		}
 
 		int sources = 0;
-		final BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
-		for (final BlockFace face : faces) {
+		for (final BlockFace face : GeneralMethods.ADJACENT_SIDES) {
 			final Block relative = block.getRelative(face);
 			if (lava && (relative.getType() != Material.LAVA || !EarthPassive.canPhysicsChange(relative))) {
 				continue;
@@ -1091,15 +1093,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isUndead(final Entity entity) {
-		if (entity == null) {
-			return false;
-		}
-
-        return switch (entity.getType()) {
-            case SKELETON, STRAY, WITHER_SKELETON, WITHER, ZOMBIE, HUSK, ZOMBIE_VILLAGER, ZOMBIFIED_PIGLIN, ZOGLIN,
-                 DROWNED, ZOMBIE_HORSE, SKELETON_HORSE, PHANTOM -> true;
-            default -> false;
-        };
+        return entity instanceof LivingEntity living && living.getCategory() == EntityCategory.UNDEAD;
 	}
 
 	public static boolean isWeapon(final Material mat) {

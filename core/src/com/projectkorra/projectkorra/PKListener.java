@@ -160,6 +160,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -334,16 +335,11 @@ public class PKListener implements Listener {
 		}
 
 		if (block.getType().name().endsWith("_CONCRETE_POWDER")) {
-			final BlockFace[] faces = new BlockFace[] { BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
-
 			boolean marked = true;
-			for (final BlockFace face : faces) {
+			for (final BlockFace face : GeneralMethods.ADJACENT_FACES) {
 				final Block relative = block.getRelative(face);
 				if (relative.getType() == Material.WATER && !TempBlock.isTempBlock(relative)) {
 					marked = false; // if there is any normal water around it, prevent it.
-					// TODO: This comment makes me think that maybe this is trying to say if marked == false setCancelled false?
-					// Not sure if that's the case though as it doesn't currently which is why I added the early return above
-					// If there is no case where it sets it to not be cancelled then after cancelling there is no need to do any of the concrete check
 					break;
 				}
 			}
@@ -475,8 +471,6 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
-		// TODO: Review if this listener is needed at all, EntityDamageByBlockEvent is also caught by onEntityDamageEvent and that method
-		// has all of the below logic in it already, which makes me think this happens twice now, not that it matters but its wasted tick time
 		final Block block = event.getDamager();
 
 		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
@@ -484,16 +478,17 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (TempBlock.isTempBlock(block)) {
+		TempBlock tempBlock = TempBlock.get(block);
+		if (tempBlock != null) {
 			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
 			} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-				TempBlock.get(block).getAbility().ifPresent(ability -> {
+				tempBlock.getAbility().ifPresent(ability -> {
 					new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
 					event.setCancelled(true);
 					FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
 				});
-			} else if (!TempBlock.get(block).canSuffocate()) {
+			} else if (!tempBlock.canSuffocate()) {
 				event.setCancelled(true);
 			}
 		}
@@ -528,34 +523,35 @@ public class PKListener implements Listener {
 
 		if (event.getCause() == DamageCause.SUFFOCATION) {
 			Block block = event.getEntity().getLocation().getBlock();
-			if (event.getEntity() instanceof LivingEntity) block = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
+			if (event.getEntity() instanceof LivingEntity living) {
+				block = living.getEyeLocation().getBlock();
+			}
 
-			if (TempBlock.isTempBlock(block)) {
+			TempBlock tempBlock = TempBlock.get(block);
+			if (tempBlock != null) {
 				if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 					event.setCancelled(true);
 				} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-					TempBlock.get(block).getAbility().ifPresent(ability -> {
+					tempBlock.getAbility().ifPresent(ability -> {
 						new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
 						event.setCancelled(true);
 						FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
 					});
-				} else if (!TempBlock.get(block).canSuffocate()) {
+				} else if (!tempBlock.canSuffocate()) {
 					event.setCancelled(true);
 				}
 			}
 		}
 
 
-		if (entity instanceof Player) {
-			final Player player = (Player) entity;
-			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (entity instanceof Player player) {
+            final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null || !bPlayer.canBendInWorld()) {
 				return;
 			}
 
 			if (CoreAbility.hasAbility(player, EarthGrab.class)) {
-				final EarthGrab abil = CoreAbility.getAbility(player, EarthGrab.class);
-				abil.remove();
+				CoreAbility.getAbility(player, EarthGrab.class).remove();
 			}
 
 			if (CoreAbility.getAbility(player, FireJet.class) != null && event.getCause() == DamageCause.FLY_INTO_WALL) {
@@ -1835,7 +1831,7 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR) // TODO: shouldn't this ignore cancelled events?
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBendingSubElementChange(final PlayerChangeSubElementEvent event) {
 		Player player = event.getTarget().getPlayer();
 		if (player == null) return;
@@ -1844,7 +1840,7 @@ public class PKListener implements Listener {
 		BendingBoardManager.updateAllSlots(player);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR) // TODO: shouldn't this ignore cancelled events?
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBindChange(final PlayerBindChangeEvent event) {
 		Player player = event.getPlayer().getPlayer();
 		if (player == null) {
@@ -1858,12 +1854,9 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR) // TODO: shouldn't this ignore cancelled events?
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerStanceChange(final PlayerStanceChangeEvent event) {
-		// TODO: Potentially make PlayerStanceChangeEvent extend PlayerEvent as player shouldn't be nullable
-		// Correct me if I'm wrong ofc
 		final Player player = event.getPlayer();
-		if (player == null) return;
 		if (!event.getOldStance().isEmpty()) {
 			BendingBoardManager.updateBoard(player, event.getOldStance(), false, 0);
 		}
@@ -1884,10 +1877,10 @@ public class PKListener implements Listener {
 		TempBlock.removeAllInWorld(event.getWorld());
 	}
 
-	@EventHandler // TODO: mark this as ignore cancelled?
+	@EventHandler
 	private void preventArmorSwap(PlayerInteractEvent event) {
 		//Prevents swapping armor pieces using right click while having TempArmor active, this will prevent Armor pieces from being duped/deleted.
-		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.useItemInHand() == Event.Result.DENY) {
 			return;
 		}
 
