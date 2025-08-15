@@ -680,6 +680,7 @@ public class OctopusForm extends WaterAbility {
 		this.angleIncrement = angleIncrement;
 	}
 
+	@Override
 	public Block getSourceBlock() {
 		return this.sourceBlock;
 	}

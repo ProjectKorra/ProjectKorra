@@ -169,6 +169,11 @@ public class EarthBlast extends EarthAbility {
 			return false;
 		}
 
+		// prevents duplication when using earthblast on blocks moved by other abilities (see bug #1376)
+		if (getMovedEarth().containsKey(block) && (RaiseEarth.blockInAllAffectedBlocks(block) || Collapse.blockInAllAffectedBlocks(block))) {
+			return false;
+		}
+
 		this.checkForCollision();
 
 		if (block.getLocation().distanceSquared(this.player.getLocation()) > this.selectRange * this.selectRange) {
@@ -293,6 +298,8 @@ public class EarthBlast extends EarthAbility {
 					this.sourceBlock.setType(this.sourceType);
 
 					moveEarthBlock(this.sourceBlock, block);
+					getMovedEarth().remove(this.sourceBlock);
+					getMovedEarth().remove(block);
 
 					if (block.getType() == Material.SAND) {
 						block.setType(Material.SANDSTONE);
@@ -352,7 +359,12 @@ public class EarthBlast extends EarthAbility {
 			return;
 		}
 
+		// prevents duplication
 		if (getMovedEarth().containsKey(this.sourceBlock)) {
+			if (RaiseEarth.blockInAllAffectedBlocks(this.sourceBlock) || Collapse.blockInAllAffectedBlocks(this.sourceBlock)) {
+				return;
+			}
+
 			if (!isEarthRevertOn()) {
 				removeRevertIndex(this.sourceBlock);
 			}
@@ -660,6 +672,7 @@ public class EarthBlast extends EarthAbility {
 		this.firstDestination = firstDestination;
 	}
 
+	@Override
 	public Block getSourceBlock() {
 		return this.sourceBlock;
 	}

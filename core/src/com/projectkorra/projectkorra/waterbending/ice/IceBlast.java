@@ -451,6 +451,7 @@ public class IceBlast extends IceAbility {
 		this.deflectRange = deflectRange;
 	}
 
+	@Override
 	public Block getSourceBlock() {
 		return this.sourceBlock;
 	}

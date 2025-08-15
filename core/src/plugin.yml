@@ -3,7 +3,7 @@ author: ProjectKorra
 api-version: 1.16
 version: ${project.version}
 main: com.projectkorra.projectkorra.ProjectKorra
-softdepend: [GriefDefender, WorldGuard, WorldEdit, Factions, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, RedProtect, PlaceholderAPI, Lands, Plan]
+softdepend: [GriefDefender, WorldGuard, WorldEdit, Factions, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, RedProtect, PlaceholderAPI, Lands, Plan, HuskTowns]
 commands:
   projectkorra:
     aliases: [b,bending,mtla,tla,korra,pk,bend]
