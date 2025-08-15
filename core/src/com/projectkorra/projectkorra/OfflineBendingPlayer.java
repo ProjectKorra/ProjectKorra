@@ -1418,8 +1418,9 @@ public class OfflineBendingPlayer {
         if (element == null) { // All elements
             boolean added = false;
             for (Element other : Element.getAllElements()) {
-                if (other.equals(Element.AVATAR)) continue;
-                if (setTempElement(other, sender, time)) added = true;
+                if (other != Element.AVATAR) {
+                    added = setTempElement(other, sender, time) || added;
+                }
             }
             return added;
         }

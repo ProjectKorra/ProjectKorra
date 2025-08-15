@@ -994,7 +994,6 @@ public class PKListener implements Listener {
 					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
 				}
 			}
-			// TODO: pretty sure I'm able to remove that entire branch because isAvatarAbility was always false and we have Element.AVATAR which feeds into the branch before it
 			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", killer.getName()).replace("{ability}", ability);
 			event.setDeathMessage(message);
 		}
@@ -1166,17 +1165,16 @@ public class PKListener implements Listener {
 
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (MovementHandler.isStopped(player)) {
-			if (to.getX() != from.getX() || to.getZ() != from.getZ() || to.getY() > from.getY()) {
-				event.setCancelled(true);
-			}
+			event.setCancelled(true);
 			return;
 		}
 
 		if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class)) {
 			Vector velocity = new Vector(to.getX() - from.getX(), 0, to.getZ() - from.getZ());
-			final double currentSpeed = velocity.length();
+			final double currentSpeedSqr = velocity.lengthSquared();
 			final double maxSpeed = .2;
-			if (currentSpeed > maxSpeed) {
+			final double maxSpeedSqr = maxSpeed * maxSpeed;
+			if (currentSpeedSqr > maxSpeedSqr) {
 				// apply only if moving set a factor
 				velocity = velocity.normalize().multiply(maxSpeed);
 				event.getPlayer().setVelocity(velocity);
@@ -1659,8 +1657,10 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId()) && player.isGliding()) {
-			event.setCancelled(true);
+		if (FlightMultiAbility.getFlyingPlayers().contains(player.getUniqueId())) {
+			if (player.isGliding()) {
+				event.setCancelled(true);
+			}
 		} else if (ConfigManager.getConfig().getBoolean("Abilities.Fire.FireJet.ShowGliding") && CoreAbility.getAbility(player, FireJet.class) != null) {
 			event.setCancelled(true);
 		}

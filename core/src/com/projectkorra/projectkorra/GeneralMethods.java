@@ -400,9 +400,17 @@ public class GeneralMethods {
 	}
 
 	public static List<Block> getBlocksWithinPoints(final Location loc1, final Location loc2, final World world) {
-		return getBlocksWithinPoints(loc1, loc2, world, block -> true);
+		return getBlocksWithinPoints(loc1, loc2, world, null);
 	}
 
+	/**
+	 * Gets a {@link List} of {@link Block blocks} within the specified points.
+	 * @param loc1 the first location
+	 * @param loc2 the second location
+	 * @param world the world in which to get the blocks
+	 * @param filter a {@link Predicate} to filter the blocks or null for no filter
+	 * @return The {@link List} of {@link Block blocks} within the specified points.
+	 */
 	public static List<Block> getBlocksWithinPoints(final Location loc1, final Location loc2, final World world, Predicate<Block> filter) {
 		final int x1 = loc1.getBlockX();
 		final int y1 = loc1.getBlockY();
@@ -423,7 +431,7 @@ public class GeneralMethods {
 			for (int y = yMin; y <= yMax; y++) {
 				for (int z = zMin; z <= zMax; z++) {
 					Block block = world.getBlockAt(x, y, z);
-					if (filter.test(block)) {
+					if (filter == null || filter.test(block)) {
 						blocks.add(block);
 					}
 				}
@@ -842,7 +850,7 @@ public class GeneralMethods {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
 		final Location location = origin.clone();
-		final Vector vec = direction.normalize().multiply(0.2);
+		final Vector vec = direction.multiply(0.2);
 		final Set<Material> ignore = toIgnore == null ? Set.of() : Set.of(toIgnore);
 
 		for (double i = 0; i < range; i += 0.2) {
