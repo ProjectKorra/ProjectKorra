@@ -1,8 +1,10 @@
 package com.projectkorra.projectkorra.board;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 public class BendingBoard {
 
 	protected static final char[] CHAT_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+	public static final List<String> SLOTS = List.copyOf(Arrays.asList("123456789".split("")));
 	
 	public static class BoardSlot {
 		

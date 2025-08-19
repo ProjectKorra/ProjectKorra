@@ -265,7 +265,7 @@ public abstract class PKCommand implements SubCommand {
 	 * @param sender The sender of the command
 	 * */
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
-		return new ArrayList<String>();
+		return List.of();
 	}
 
 	/**
@@ -283,7 +283,7 @@ public abstract class PKCommand implements SubCommand {
 	 * @return A list of online players that the sender can see
 	 */
 	public List<Player> getOnlinePlayers(final CommandSender sender) {
-		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || ((Player) sender).canSee(p)).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player player) || player.canSee(p)).collect(Collectors.toList());
 	}
 
 	/**
@@ -292,7 +292,7 @@ public abstract class PKCommand implements SubCommand {
 	 * @return A list of online player names that the sender can see
 	 */
 	public List<String> getOnlinePlayerNames(final CommandSender sender) {
-		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player) || ((Player) sender).canSee(p)).map(Player::getName).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player player) || player.canSee(p)).map(Player::getName).collect(Collectors.toList());
 	}
 
 	/**

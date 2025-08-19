@@ -19,6 +19,10 @@ import java.util.List;
 
 public class ChatUtil {
 
+    public static String indefArticle(String check, String a, String an) {
+        return "AEIOUaeiou".indexOf(check.charAt(0)) > -1 ? an : a;
+    }
+
     /**
      * Send a message prefixed with the ProjectKorra branding to the provided receiver
      * @param receiver The person to send the message to

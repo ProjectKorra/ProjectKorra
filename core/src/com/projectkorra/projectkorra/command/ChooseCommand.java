@@ -52,56 +52,39 @@ public class ChooseCommand extends PKCommand {
 		if (!this.correctLength(sender, args.size(), 1, 2)) {
 			return;
 		}
-		if (args.size() == 1) {
-			if (!this.hasPermission(sender) || !this.isPlayer(sender)) {
-				return;
-			}
 
+		if (args.size() == 1 && this.hasPermission(sender) && this.isPlayer(sender)) {
 			//Don't need to bother with offline players here because the sender is always online
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			if (bPlayer.isPermaRemoved()) {
 				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 				return;
-			}
-			if (!bPlayer.getElements().isEmpty() && !sender.hasPermission("bending.command.rechoose")) {
+			} else if (!bPlayer.getElements().isEmpty() && !sender.hasPermission("bending.command.rechoose")) {
 				ChatUtil.sendBrandingMessage(sender, super.noPermissionMessage);
 				return;
 			}
-			String element = args.get(0).toLowerCase();
-			if (element.equalsIgnoreCase("a")) {
-				element = "air";
-			} else if (element.equalsIgnoreCase("e")) {
-				element = "earth";
-			} else if (element.equalsIgnoreCase("f")) {
-				element = "fire";
-			} else if (element.equalsIgnoreCase("w")) {
-				element = "water";
-			} else if (element.equalsIgnoreCase("c")) {
-				element = "chi";
-			}
-			final Element targetElement = Element.getElement(element);
-			if (Arrays.asList(Element.getAllElements()).contains(targetElement)) {
-				if (!this.hasPermission(sender, element)) {
-					return;
-				}
-				if (bPlayer.isOnCooldown("ChooseElement")) {
-					if (sender.hasPermission("bending.command.choose.ignorecooldown") || sender.hasPermission("bending.admin.choose")) {
-						bPlayer.removeCooldown("ChooseElement");
-					} else {
-						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.onCooldown.replace("%cooldown%", TimeUtil.formatTime(bPlayer.getCooldown("ChooseElement") - System.currentTimeMillis())));
-						return;
-					}
-				}
 
-				this.add(sender, (Player) sender, targetElement);
-
-				if (sender.hasPermission("bending.command.choose.ignorecooldown") || sender.hasPermission("bending.admin.choose")) {
-					return;
-				}
-
-				bPlayer.addCooldown("ChooseElement", this.cooldown, true);
-			} else {
+			final Element element = Element.fromString(args.get(0));
+			if (element == null || !Arrays.asList(Element.getAllElements()).contains(element)) {
 				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.invalidElement);
+				return;
+			} else if (!this.hasPermission(sender, element.getName().toLowerCase())) {
+				return;
+			}
+
+			boolean bypassCooldown = sender.hasPermission("bending.command.choose.ignorecooldown") || sender.hasPermission("bending.admin.choose");
+			if (bPlayer.isOnCooldown("ChooseElement")) {
+				if (bypassCooldown) {
+					bPlayer.removeCooldown("ChooseElement");
+				} else {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.onCooldown.replace("%cooldown%", TimeUtil.formatTime(bPlayer.getCooldown("ChooseElement") - System.currentTimeMillis())));
+					return;
+				}
+			}
+
+			this.add(sender, (Player) sender, element);
+			if (!bypassCooldown) {
+				bPlayer.addCooldown("ChooseElement", this.cooldown, true);
 			}
 		} else if (args.size() == 2) {
 			if (!sender.hasPermission("bending.admin.choose")) {
@@ -109,44 +92,31 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 
-			this.getPlayer(args.get(1)).thenAccept((target) -> {
+			this.getPlayer(args.get(1)).thenAccept(target -> {
 				if (!target.hasPlayedBefore() && !target.isOnline()) {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
 					return;
 				}
-				String element = args.get(0).toLowerCase();
-				if (element.equalsIgnoreCase("a")) {
-					element = "air";
-				} else if (element.equalsIgnoreCase("e")) {
-					element = "earth";
-				} else if (element.equalsIgnoreCase("f")) {
-					element = "fire";
-				} else if (element.equalsIgnoreCase("w")) {
-					element = "water";
-				} else if (element.equalsIgnoreCase("c")) {
-					element = "chi";
-				}
-				final Element targetElement = Element.getElement(element);
-				if (Arrays.asList(Element.getAllElements()).contains(targetElement) && targetElement != Element.AVATAR) {
-					this.add(sender, target, targetElement);
 
-					if (target.isOnline()) {
-						if (((Player)target).hasPermission("bending.command.choose.ignorecooldown") || ((Player)target).hasPermission("bending.admin.choose")) {
-							return;
-						}
-					}
-
-					BendingPlayer.getOrLoadOfflineAsync(target).thenAccept(bPlayer -> {
-						bPlayer.addCooldown("ChooseElement", this.cooldown, true);
-					});
-				} else {
+				final Element element = Element.fromString(args.get(0));
+				// TODO: Remove element == Element.AVATAR maybe? Is it intentional that a player with permission can choose avatar for themselves but an admin cannot choose Avatar for someone else?
+				if (element == null || !Arrays.asList(Element.getAllElements()).contains(element) || element == Element.AVATAR) {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.invalidElement);
+					return;
 				}
+
+				this.add(sender, target, element);
+				if (target instanceof Player online && (online.hasPermission("bending.command.choose.ignorecooldown") || online.hasPermission("bending.admin.choose"))) {
+					return;
+				}
+
+				BendingPlayer.getOrLoadOfflineAsync(target).thenAccept(bPlayer -> {
+					bPlayer.addCooldown("ChooseElement", this.cooldown, true);
+				});
 			}).exceptionally(e -> {
 				e.printStackTrace();
 				return null;
 			});
-
 		}
 	}
 
@@ -161,84 +131,44 @@ public class ChooseCommand extends PKCommand {
 		BendingPlayer.getOrLoadOfflineAsync(target).thenAccept(bPlayer -> {
 			boolean online = bPlayer instanceof BendingPlayer;
 
-			if (element instanceof SubElement) {
-				final SubElement sub = (SubElement) element;
-				bPlayer.addSubElement(sub);
-				final ChatColor color = sub.getColor();
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					ChatUtil.sendBrandingMessage(sender, color + this.chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
-				} else {
-					if (online) ChatUtil.sendBrandingMessage((Player) target, color + this.chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
-				}
-				bPlayer.saveSubElements();
-				if (online) {
-					((BendingPlayer) bPlayer).removeUnusableAbilities();
-				}
-				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE));
-			} else {
-				if (element == Element.AVATAR) {
+			if (element == Element.AVATAR) {
+				PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if (event.isCancelled()) return; //Do nothing if cancelled
 
-					PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE);
-					Bukkit.getServer().getPluginManager().callEvent(event);
-					if (event.isCancelled()) return; //Do nothing if cancelled
-
-					bPlayer.getElements().clear();
-					for (Element e : new Element[] {Element.AIR, Element.EARTH, Element.FIRE, Element.WATER}) {
-						bPlayer.addElement(e);
-
-						if (online) {
-							for (final SubElement sub : Element.getSubElements(e)) {
-								if (((BendingPlayer) bPlayer).hasSubElementPermission(sub)) {
-									PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE);
-									Bukkit.getServer().getPluginManager().callEvent(subEvent);
-									if (subEvent.isCancelled()) continue; //Do nothing if cancelled
-									bPlayer.addSubElement(sub);
-								}
-							}
-						}
-					}
-				} else {
-					PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE);
-					Bukkit.getServer().getPluginManager().callEvent(event);
-					if (event.isCancelled()) return; //Do nothing if cancelled
-
-					bPlayer.setElement(element);
-					bPlayer.getSubElements().clear();
-
+				bPlayer.getElements().clear();
+				for (Element e : new Element[] {Element.AIR, Element.EARTH, Element.FIRE, Element.WATER}) {
+					bPlayer.addElement(e);
 					if (online) {
-						for (final SubElement sub : Element.getSubElements(element)) {
-							if (((BendingPlayer) bPlayer).hasSubElementPermission(sub)) {
-								PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE);
-
-								Bukkit.getServer().getPluginManager().callEvent(subEvent);
-								if (subEvent.isCancelled()) continue; //Do nothing if cancelled
-
-								bPlayer.addSubElement(sub);
-							}
-						}
+						addPermittedSubElements(sender, target, e, (BendingPlayer) bPlayer);
 					}
 				}
+			} else {
+				PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if (event.isCancelled()) return; //Do nothing if cancelled
 
-				final ChatColor color = element.getColor();
-				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					if (element != Element.AIR && element != Element.EARTH) {
-						ChatUtil.sendBrandingMessage(sender, color + this.chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
-					} else {
-						ChatUtil.sendBrandingMessage(sender, color + this.chosenOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
-					}
-				} else {
-					if (element != Element.AIR && element != Element.EARTH) {
-						if (online) ChatUtil.sendBrandingMessage((Player) target, color + this.chosenCFW.replace("{element}", element.getName() + element.getType().getBender()));
-					} else {
-						if (online) ChatUtil.sendBrandingMessage((Player) target, color + this.chosenAE.replace("{element}", element.getName() + element.getType().getBender()));
-					}
-				}
-				bPlayer.saveElements();
-				bPlayer.saveSubElements();
-				if (online) {
-					((BendingPlayer)bPlayer).removeUnusableAbilities();
-				}
+				bPlayer.setElement(element);
+				bPlayer.getSubElements().clear();
+			}
 
+			if (online) {
+				addPermittedSubElements(sender, target, element, (BendingPlayer) bPlayer);
+			}
+
+			final ChatColor color = element.getColor();
+			final String bender = element.getName() + element.getType().getBender();
+			if (!sender.equals(target)) {
+				String message = ChatUtil.indefArticle(element.getName(), this.chosenOtherAE, this.chosenOtherCFW);
+				ChatUtil.sendBrandingMessage(sender, color + message.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", bender));
+			} else {
+				String message = ChatUtil.indefArticle(element.getName(), this.chosenAE, this.chosenCFW);
+				ChatUtil.sendBrandingMessage(sender, color + message.replace("{element}", bender));
+			}
+			bPlayer.saveElements();
+			bPlayer.saveSubElements();
+			if (online) {
+				((BendingPlayer) bPlayer).removeUnusableAbilities();
 			}
 		}).exceptionally(e -> {
 			e.printStackTrace();
@@ -246,32 +176,32 @@ public class ChooseCommand extends PKCommand {
 		});
 	}
 
-	public static boolean isVowel(final char c) {
-		return "AEIOUaeiou".indexOf(c) != -1;
+	private void addPermittedSubElements(CommandSender sender, OfflinePlayer target, Element element, BendingPlayer bPlayer) {
+		for (final SubElement sub : Element.getSubElements(element)) {
+			if (bPlayer.hasSubElementPermission(sub)) {
+				PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, PlayerChangeSubElementEvent.Result.CHOOSE);
+				Bukkit.getPluginManager().callEvent(subEvent);
+				if (!subEvent.isCancelled()) {
+					bPlayer.addSubElement(sub);
+				}
+			}
+		}
 	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		if (args.size() >= 2 || !sender.hasPermission("bending.command.choose")) {
-			return new ArrayList<>();
+			return List.of();
 		}
 
-		final List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
-
-			l.add("Air");
-			l.add("Earth");
-			l.add("Fire");
-			l.add("Water");
-			l.add("Chi");
-			for (final Element e : Element.getAddonElements()) {
-				l.add(e.getName());
+			final List<String> completion = new ArrayList<>();
+			for (Element element : Element.getAllElements()) {
+				completion.add(element.getName());
 			}
+			return completion;
 		} else {
-			for (final Player p : Bukkit.getOnlinePlayers()) {
-				l.add(p.getName());
-			}
+			return getOnlinePlayerNames(sender);
 		}
-		return l;
 	}
 }
