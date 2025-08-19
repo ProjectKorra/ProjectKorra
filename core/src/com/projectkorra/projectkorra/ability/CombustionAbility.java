@@ -39,7 +39,7 @@ public abstract class CombustionAbility extends FireAbility implements SubAbilit
 
 	@Override
 	public long applyModifiersCooldown(long value) {
-		return (long) GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0));
+		return GeneralMethods.applyInverseModifiers(value, getDayFactor(1.0));
 	}
 
 }
