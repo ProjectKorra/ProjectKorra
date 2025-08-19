@@ -1,291 +1,431 @@
 package com.projectkorra.projectkorra.firebending.combustion;
 
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CombustionAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.SubAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempFallingBlock;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CombustionAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.region.RegionProtection;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
-public class Combustion extends CombustionAbility {
+public class Combustion extends CombustionAbility implements SubAbility {
 
-	private static final int MAX_TICKS = 10000;
+    /* Visual */
+    private float sonicBoomSpeed;
+    private int sonicBoomParticleCount;
+    private int sonicBoomFrequency;
+    private double sonicBoomRadius;
 
-	private boolean breakBlocks;
-	private int ticks;
-	@Attribute(Attribute.COOLDOWN) @DayNightFactor(invert = true)
-	private long cooldown;
-	@Attribute("ExplosivePower") @DayNightFactor
-	private float explosivePower;
-	@Attribute(Attribute.DAMAGE) @DayNightFactor
-	private double damage;
-	@Attribute(Attribute.RADIUS) @DayNightFactor
-	private double radius;
-	@Attribute(Attribute.SPEED) @DayNightFactor
-	private double speed;
-	@Attribute(Attribute.RANGE) @DayNightFactor
-	private double range;
-	private double speedFactor;
-	private Location location;
-	private Location origin;
-	private Vector direction;
+    /* PVP */
+    @Attribute(Attribute.SPEED)
+    @DayNightFactor
+    private int speed;
+    @Attribute("Weight")
+    private int weight;
+    @Attribute(Attribute.COOLDOWN)
+    @DayNightFactor(invert = true)
+    private long cooldown;
+    @Attribute(Attribute.DAMAGE)
+    @DayNightFactor
+    private double damage;
+    @Attribute("WaterDamage")
+    private double waterDamage;
+    @Attribute(Attribute.RADIUS)
+    @DayNightFactor
+    private double explosionRadius;
+    @Attribute(Attribute.RANGE)
+    @DayNightFactor
+    private double range;
+    @Attribute(Attribute.CHARGE_DURATION)
+    @DayNightFactor
+    private long chargeDuration;
+    @Attribute("BurnTime")
+    @DayNightFactor
+    private int burnTime;
+    private boolean punishPlayer;
+    long explosionRevertTime;
 
-	private int explosionCount;
+    /* Non-config variables */
+    int chargeI = 0;
+    private boolean forceRelease;
+    private boolean needCharge, canCharge;
+    private boolean thrown;
+    private double increment;
+    private double increasing;
+    public static HashMap<Player, Boolean> damaged = new HashMap<Player, Boolean>();
+    public static HashMap<Player, Boolean> clicked = new HashMap<Player, Boolean>();
+    Location location;
+    int advancementSteps = 0;
+    private static List<Material> immuneBlocks = new ArrayList<>();
 
-	public Combustion(final Player player) {
-		super(player);
+    public Combustion(Player player) {
+        super(player);
+        if (bPlayer.canBend(this) && !hasAbility(player, Combustion.class)) {
+            setFields();
+            setCollisions();
+            start();
+        }
+    }
 
-		if (hasAbility(player, Combustion.class) || !this.bPlayer.canBend(this)) {
-			return;
-		}
+    private void setFields() {
+        cooldown = ConfigManager.getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
+        chargeDuration = ConfigManager.getConfig().getLong("Abilities.Fire.Combustion.ChargeDuration");
+        burnTime = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.BurnTime");
+        explosionRevertTime = ConfigManager.getConfig().getLong("Abilities.Fire.Combustion.ExplosionRevertTime");
+        explosionRadius = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.ExplosionRadius");
+        speed = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.Speed");
+        weight = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.Weight");
+        damage = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.Damage");
+        waterDamage = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.WaterDamage");
+        range = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.Range");
+        forceRelease = ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustion.ForceRelease");
+        punishPlayer = ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustion.PunishPlayer");
 
-		this.ticks = 0;
-		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-		this.explosivePower = (float) getConfig().getDouble("Abilities.Fire.Combustion.ExplosivePower");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
-		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
-		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
-		this.speed = getConfig().getDouble("Abilities.Fire.Combustion.Speed");
-		this.range = getConfig().getDouble("Abilities.Fire.Combustion.Range");
-		this.origin = player.getEyeLocation();
-		this.direction = player.getEyeLocation().getDirection().normalize();
-		this.location = this.origin.clone();
-		this.explosionCount = 0;
+        sonicBoomSpeed = (float) ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.SonicBoom.Speed") * 0.2f;
+        sonicBoomParticleCount = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.SonicBoom.ParticleCount");
+        sonicBoomFrequency = ConfigManager.getConfig().getInt("Abilities.Fire.Combustion.SonicBoom.Frequency");
+        sonicBoomRadius = ConfigManager.getConfig().getDouble("Abilities.Fire.Combustion.SonicBoom.Radius");
 
-		this.recalculateAttributes();
+        increment = 2 / ((float) chargeDuration / 50);
+        increasing = 0;
+        fillImmuneBlocks();
+        if (damaged.get(player) != null) {
+            damaged.remove(player);
+        }
+        if (clicked.get(player) != null) {
+            clicked.remove(player);
+        }
 
-		if (RegionProtection.isRegionProtected(this, GeneralMethods.getTargetedLocation(player, this.range))) {
-			return;
-		}
+        canCharge = true;
+        needCharge = true;
+        thrown = false;
+    }
 
-		this.start();
-		this.bPlayer.addCooldown(this);
-	}
+    private void fillImmuneBlocks() {
+        immuneBlocks.add(Material.AIR);
+        immuneBlocks.add(Material.LAVA);
+        immuneBlocks.add(Material.WATER);
+        immuneBlocks.add(Material.OBSIDIAN);
+        immuneBlocks.add(Material.CRYING_OBSIDIAN);
+        immuneBlocks.add(Material.STRUCTURE_BLOCK);
+        immuneBlocks.add(Material.BARRIER);
+        immuneBlocks.add(Material.REPEATING_COMMAND_BLOCK);
+        immuneBlocks.add(Material.CHAIN_COMMAND_BLOCK);
+        immuneBlocks.add(Material.COMMAND_BLOCK);
+        immuneBlocks.add(Material.BEDROCK);
+    }
 
-	public static void explode(final Player player) {
-		final Combustion combustion = getAbility(player, Combustion.class);
-		if (combustion != null) {
-			combustion.createExplosion(combustion.location, combustion.explosivePower, combustion.breakBlocks);
-			ParticleEffect.EXPLOSION_NORMAL.display(combustion.location, 3, Math.random(), Math.random(), Math.random(), 0);
-		}
-	}
+    private void setCollisions() {
+        ProjectKorra.collisionManager.addCollision(new Collision(CoreAbility.getAbility("Combustion"), CoreAbility.getAbility("AirShield"), false, true));
+        ProjectKorra.collisionManager.addCollision(new Collision(CoreAbility.getAbility("Combustion"), CoreAbility.getAbility("FireShield"), true, true));
+    }
 
-	/**
-	 * This method was used for the old collision detection system. Please see
-	 * {@link Collision} for the new system.
-	 */
-	@Deprecated
-	public static boolean removeAroundPoint(final Location loc, final double radius) {
-		for (final Combustion combustion : getAbilities(Combustion.class)) {
-			if (combustion.location.getWorld().equals(loc.getWorld())) {
-				if (combustion.location.distanceSquared(loc) <= radius * radius) {
-					explode(combustion.getPlayer());
-					combustion.remove();
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    private void chargeAnimation() {
+        chargeI++;
+        location = player.getEyeLocation().add(player.getEyeLocation().getDirection().multiply(0.3)).add(0, 0.1, 0);
+        long maxDifference = (this.getStartTime() + chargeDuration) - System.currentTimeMillis();
+        long difference = Math.abs(System.currentTimeMillis() - this.getStartTime());
 
-	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(this.location, 2, .001, .001, .001, 0);
-		if(explosionCount % 5 == 0) 
-			ParticleEffect.EXPLOSION_LARGE.display(this.location, 1, .001, .001, .001, 0);
-		playCombustionSound(this.location);
-		emitFirebendingLight(this.location);
-		this.location = this.location.add(this.direction.clone().multiply(this.speedFactor));
-		this.explosionCount++;
-	}
+        if (increasing < 2) {
+            increasing += increment;
+        }
+        if (this.getStartTime() + chargeDuration > System.currentTimeMillis()) {
+            GeneralMethods.displayColoredParticle(getHexColor(difference, maxDifference), location);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, (float) increasing, (float) increasing + new Random().nextFloat(-0.2f, 0));
+        } else {
+            location.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, location, 1, 0, 0, 0, 0, null, true);
+        }
+    }
 
-	private void createExplosion(final Location block, final float power, final boolean canBreakBlocks) {
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block, power)) {
-			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distanceSquared(block) < this.radius * this.radius) { // They are close enough to the explosion.
-					DamageHandler.damageEntity(entity, this.damage, this);
-					AirAbility.breakBreathbendingHold(entity);
-				}
-			}
-		}
+    private static String getHexColor(long min, long max) {
+        if (max <= 0) return "#ffffff";
+        float ratio = Math.max(0f, Math.min(1f, (float) min / max));
+        int value = (int) (255 * ratio);
+        return String.format("#%02X%02X%02X", value, value, value);
+    }
 
-		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, canFireGrief(), canBreakBlocks);
-		
-		this.remove();
-	}
+    private void releaseCombustion() {
+        canCharge = false;
+        thrown = true;
+        advance();
 
-	@Override
-	public void progress() {
-		if (!this.bPlayer.canBendIgnoreCooldowns(this)) {
-			this.remove();
-			return;
-		} else if (RegionProtection.isRegionProtected(this, this.location)) {
-			this.remove();
-			return;
-		}
+        if (advancementSteps % sonicBoomFrequency == 0) {
+            sonicBoom(location, Particle.CLOUD, sonicBoomRadius, sonicBoomSpeed, sonicBoomParticleCount);
+            location.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 4, 0);
+        }
+    }
 
-		this.speedFactor = this.speed * (ProjectKorra.time_step / 1000.0);
-		this.ticks++;
-		if (this.ticks > MAX_TICKS) {
-			this.remove();
-			return;
-		} else if (this.location.distanceSquared(this.origin) > this.range * this.range) {
-			this.remove();
-			return;
-		}
+    private void advance() {
+        for (int i = 0; i <= speed; i++) {
+            advancementSteps++;
+            Vector dir = location.getDirection();
+            dir.setX((location.getDirection().getX() * weight) + player.getEyeLocation().getDirection().getX() / (weight + 1));
+            dir.setY((location.getDirection().getY() * weight) + player.getEyeLocation().getDirection().getY() / (weight + 1));
+            dir.setZ((location.getDirection().getZ() * weight) + player.getEyeLocation().getDirection().getZ() / (weight + 1));
+            location.setDirection(dir);
+            location.add(location.getDirection());
+            if (location.distance(player.getEyeLocation()) > range) {
+                remove();
+                bPlayer.addCooldown(this);
+                return;
+            }
+            if (location.getBlock().getType() == Material.AIR) {
+                new TempBlock(location.getBlock(), Material.LIGHT.createBlockData(), 250);
+            }
 
-		final Block block = this.location.getBlock();
-		if (block != null) {
-			if (!ElementalAbility.isAir(block.getType()) && !isWater(block)) {
-				this.createExplosion(block.getLocation(), this.explosivePower, this.breakBlocks);
-			}
-		}
+            location.getWorld().spawnParticle(Particle.FLAME, location, 3, 0, 0, 0, 0.01, null, true);
 
-		for (final Entity entity : this.location.getWorld().getEntities()) {
-			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distanceSquared(this.location) <= 4 && !entity.equals(this.player)) {
-					this.createExplosion(this.location, this.explosivePower, this.breakBlocks);
-				}
-			}
-		}
-		this.advanceLocation();
-	}
+            for (Location points : spawnCircle(location, location.getDirection(), 0.25, 15)) {
+                points.getWorld().spawnParticle(Particle.SMOKE_NORMAL, points, 1, 0, 0, 0, 0, null, true);
+            }
+            for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
+                if (entity instanceof LivingEntity && entity != player) {
+                    explode(location, false, true, entity);
+                    remove();
+                    bPlayer.addCooldown(this);
+                    return;
+                }
+            }
+            for (Block block : GeneralMethods.getBlocksAroundPoint(location, 1)) {
+                if (block.getType() != Material.WATER) {
+                    if (!block.isPassable()) {
+                        explode(location, false, false, null);
+                        remove();
+                        bPlayer.addCooldown(this);
+                        return;
+                    }
+                } else {
+                    explode(location, true, false, null);
+                    remove();
+                    bPlayer.addCooldown(this);
+                    return;
+                }
+            }
+        }
 
-	@Override
-	public String getName() {
-		return "Combustion";
-	}
+    }
 
-	@Override
-	public Location getLocation() {
-		if (this.location != null) {
-			return this.location;
-		}
-		return this.origin;
-	}
+    private void explode(Location explosion, boolean isWater, boolean isEntity, @Nullable Entity entity) {
+        if (!isWater) {
+            for (Block block : GeneralMethods.getBlocksAroundPoint(explosion, explosionRadius)) {
+                if (block.getType().getBlastResistance() < 10 && block.getType() != Material.AIR) {
+                    if (!block.isPassable()) {
+                        new TempFallingBlock(block.getLocation(), block.getBlockData(), new Vector(new Random().nextDouble(-0.7, 0.7), new Random().nextDouble(0.3, 0.7), new Random().nextDouble(-0.7, 0.7)), this);
+                    }
+                    new TempBlock(block, Material.AIR.createBlockData(), explosionRevertTime, this);
+                    explosion.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, block.getLocation(), 1, 1.5, 1.5, 1.5, 0, null, true);
+                }
+            }
+            explosion.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, explosion.add(0, 1, 0), 1, 0, 0, 0, 0, null, true);
+            explosion.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, explosion, (int) explosionRadius * 2, explosionRadius, explosionRadius, explosionRadius, 0, null, true);
+            explosion.getWorld().playSound(explosion, Sound.ENTITY_GENERIC_EXPLODE, 3, 0);
+        }
 
-	@Override
-	public long getCooldown() {
-		return this.cooldown;
-	}
+        for (Entity entities : GeneralMethods.getEntitiesAroundPoint(explosion, explosionRadius)) {
+            if (entities instanceof LivingEntity) {
+                if (entities.getLocation().getBlock().getType() == Material.WATER) {
+                    DamageHandler.damageEntity(entities, waterDamage, this);
+                } else {
+                    DamageHandler.damageEntity(entities, damage, this);
 
-	@Override
-	public boolean isSneakAbility() {
-		return true;
-	}
+                }
+            }
+        }
 
-	@Override
-	public boolean isHarmlessAbility() {
-		return false;
-	}
+        if (isWater) {
+            explosion.getWorld().spawnParticle(Particle.FALLING_WATER, explosion, (int) explosionRadius * 200, explosionRadius, explosionRadius * 1.5, explosionRadius, 0, null, true);
+            explosion.getWorld().spawnParticle(Particle.FALLING_DRIPSTONE_WATER, explosion, (int) explosionRadius * 200, explosionRadius, explosionRadius * 1.5, explosionRadius, 0, null, true);
+            if (GeneralMethods.getMCVersion() > 1210) {
+                explosion.getWorld().spawnParticle(Particle.valueOf("GUST_EMITTER_LARGE"), explosion.add(0, 1.5, 0), 1, 0, 0, 0, 0, null, true);
+            } else {
+                explosion.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, explosion.add(0, 1.5, 0), 1, 0, 0, 0, 0, null, true);
+            }
 
-	@Override
-	public double getCollisionRadius() {
-		return this.getRadius();
-	}
+            for (int i = 0; i <= explosionRadius * 50; i++) {
+                double randomX = explosion.getX() + new Random().nextDouble(explosionRadius * -1, explosionRadius);
+                double randomY = explosion.getY() + new Random().nextDouble(-1, 1);
+                double randomZ = explosion.getZ() + new Random().nextDouble(explosionRadius * -1, explosionRadius);
+                explosion.getWorld().spawnParticle(Particle.CLOUD, randomX, randomY, randomZ, 0, 0, 1.6 + new Random().nextDouble(0, 1), 0, 0.1, null, true);
+            }
+            explosion.getWorld().playSound(explosion, Sound.ENTITY_FISHING_BOBBER_SPLASH, 3, 0.7F);
+            explosion.getWorld().playSound(explosion, Sound.BLOCK_WATER_AMBIENT, 3, 0.3F);
+            for (Block block : GeneralMethods.getBlocksAroundPoint(explosion, explosionRadius)) {
+                if (block.getType() == Material.WATER) {
+                    block.getWorld().spawnParticle(Particle.BUBBLE_COLUMN_UP, block.getLocation(), 15, 0.5, 0.5, 0.5, 0.2, null, true);
+                }
+            }
+        }
+        if (isEntity) {
+            assert entity != null;
+            entity.setFireTicks(burnTime / 50);
+        }
+    }
 
-	public boolean isBreakBlocks() {
-		return this.breakBlocks;
-	}
+    private void sonicBoom(Location spawn, Particle particle, double radius, float speed, int particleCount) {
+        for (Location circlePoint : spawnCircle(spawn, spawn.getDirection(), radius, particleCount)) {
+            Vector target = circlePoint.toVector().subtract(spawn.toVector());
+            spawn.getWorld().spawnParticle(particle, spawn, 0, target.getX(), target.getY(), target.getZ(), speed, null, true);
+        }
+    }
 
-	public void setBreakBlocks(final boolean breakBlocks) {
-		this.breakBlocks = breakBlocks;
-	}
+    public List<Location> spawnCircle(Location location, Vector direction, double radius, int pointAmount) {
+        List<Location> locations = new ArrayList<>();
 
-	public int getTicks() {
-		return this.ticks;
-	}
+        // Normalize and convert direction to yaw & pitch
+        direction = direction.clone().normalize();
+        float yaw = (float) Math.toDegrees(Math.atan2(-direction.getX(), direction.getZ()));
+        float pitch = (float) Math.toDegrees(-Math.asin(direction.getY()));
 
-	public void setTicks(final int ticks) {
-		this.ticks = ticks;
-	}
+        double yawRad = Math.toRadians(yaw);
+        double pitchRad = Math.toRadians(pitch);
 
-	public float getExplosivePower() {
-		return this.explosivePower;
-	}
+        for (int i = 0; i < pointAmount; i++) {
+            double angle = 2 * Math.PI * i / pointAmount;
+            double x = Math.cos(angle) * radius;
+            double y = Math.sin(angle) * radius;
 
-	public void setExplosivePower(final float explosivePower) {
-		this.explosivePower = explosivePower;
-	}
+            Vector point = new Vector(x, y, 0);
+            // Rotate the 2D circle to match direction
+            point = rotateAroundX(point, pitchRad);
+            point = rotateAroundY(point, -yawRad);
 
-	public double getDamage() {
-		return this.damage;
-	}
+            locations.add(location.clone().add(point));
+        }
 
-	public void setDamage(final double damage) {
-		this.damage = damage;
-	}
+        return locations;
+    }
+    private Vector rotateAroundX(Vector v, double angle) {
+        double y = v.getY() * Math.cos(angle) - v.getZ() * Math.sin(angle);
+        double z = v.getY() * Math.sin(angle) + v.getZ() * Math.cos(angle);
+        return new Vector(v.getX(), y, z);
+    }
+    private Vector rotateAroundY(Vector v, double angle) {
+        double x = v.getX() * Math.cos(angle) + v.getZ() * Math.sin(angle);
+        double z = -v.getX() * Math.sin(angle) + v.getZ() * Math.cos(angle);
+        return new Vector(x, v.getY(), z);
+    }
 
-	public double getRadius() {
-		return this.radius;
-	}
+    @Override
+    public void progress() {
+        needCharge = (this.getStartTime() + chargeDuration) > System.currentTimeMillis();
+        if (!bPlayer.canBendIgnoreCooldowns(this) || !player.isOnline() || player.isDead()) {
+            remove();
+            return;
+        }
+        if (!thrown && punishPlayer) {
+            if (damaged.get(player) != null) {
+                explode(player.getLocation(), false, true, player);
+                remove();
+                bPlayer.addCooldown(this);
+                damaged.remove(player);
+                return;
+            }
+        }
+        if (thrown) {
+            releaseCombustion();
+            setCollisions();
+            if (clicked.get(player) != null) {
 
-	public void setRadius(final double radius) {
-		this.radius = radius;
-	}
+                explode(location, false, false, null);
+                remove();
+                bPlayer.addCooldown(this);
+                damaged.remove(player);
+                return;
+            }
+        } else {
+            if (clicked.get(player) != null) {
+                clicked.remove(player);
+            }
+        }
 
-	public double getSpeed() {
-		return this.speed;
-	}
+        if (needCharge && !player.isSneaking() && !thrown) {
+            remove();
+            return;
+        }
+        if (canCharge && player.isSneaking() && !thrown) {
+            chargeAnimation();
+        }
+        if (!needCharge) {
+            if (forceRelease && !thrown) {
+                thrown = true;
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WARDEN_SONIC_BOOM, 2, 1);
+                sonicBoom(location, Particle.SMALL_FLAME, 0.5, 0.2f, 60);
+            }
 
-	public void setSpeed(final double speed) {
-		this.speed = speed;
-	}
+            if (!player.isSneaking() && !thrown) {
+                thrown = true;
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WARDEN_SONIC_BOOM, 2, 1);
+                sonicBoom(location, Particle.SMALL_FLAME, 0.5, 0.2f, 60);
+            }
 
-	public double getRange() {
-		return this.range;
-	}
+            if (player.isSneaking() && canCharge && !thrown) {
+                chargeAnimation();
+            }
+        }
+    }
 
-	public void setRange(final double range) {
-		this.range = range;
-	}
+    @Override
+    public boolean isSneakAbility() {
+        return true;
+    }
 
-	public double getSpeedFactor() {
-		return this.speedFactor;
-	}
+    @Override
+    public boolean isHarmlessAbility() {
+        return false;
+    }
 
-	public void setSpeedFactor(final double speedFactor) {
-		this.speedFactor = speedFactor;
-	}
+    @Override
+    public boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("Abilities.Fire.Combustion.Enabled");
+    }
 
-	public Location getOrigin() {
-		return this.origin;
-	}
+    @Override
+    public String getDescription() {
+        return ConfigManager.languageConfig.get().getString("Abilities.Fire.Combustion.Description");
+    }
 
-	public void setOrigin(final Location origin) {
-		this.origin = origin;
-	}
+    @Override
+    public String getInstructions() {
+        return ConfigManager.languageConfig.get().getString("Abilities.Fire.Combustion.Instructions");
+    }
 
-	public Vector getDirection() {
-		return this.direction;
-	}
+    @Override
+    public long getCooldown() {
+        return cooldown;
+    }
 
-	public void setDirection(final Vector direction) {
-		this.direction = direction;
-	}
+    @Override
+    public String getName() {
+        return "Combustion";
+    }
 
-	public static long getMaxTicks() {
-		return MAX_TICKS;
-	}
+    @Override
+    public Location getLocation() {
+        return location;
+    }
 
-	public void setCooldown(final long cooldown) {
-		this.cooldown = cooldown;
-	}
-
-	public void setLocation(final Location location) {
-		this.location = location;
-	}
+    public static void explode(Player player) {
+        clicked.put(player, true);
+    }
 
 }
