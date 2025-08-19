@@ -7,7 +7,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -24,8 +23,8 @@ public class MovementHandler {
 	public static Set<MovementHandler> handlers = new HashSet<>();
 
 	private final LivingEntity entity;
-	private BukkitRunnable runnable, msg;
-	private ResetTask reset = null;
+	private Object task;
+	private Runnable reset = null;
 	private final CoreAbility ability;
 
 	public MovementHandler(final LivingEntity entity, final CoreAbility ability) {
@@ -49,39 +48,23 @@ public class MovementHandler {
 		if (this.entity instanceof Player) {
 			final long start = System.currentTimeMillis();
 			final Player player = (Player) this.entity;
-			this.runnable = new BukkitRunnable() {
-
-				@Override
-				public void run() {
-					ChatUtil.sendActionBar(message, player);
-					if (System.currentTimeMillis() >= start + duration / 20 * 1000) {
-						MovementHandler.this.reset();
-					}
-				}
-
-			};
-			this.runnable.runTaskTimer(ProjectKorra.plugin, 0, 1);
-		} else {
-			this.runnable = new BukkitRunnable() {
-
-				@Override
-				public void run() {
+			this.task = ThreadUtil.ensureEntityTimer(this.entity, () -> {
+				ChatUtil.sendActionBar(message, player);
+				if (System.currentTimeMillis() >= start + duration * 50) {
 					MovementHandler.this.reset();
 				}
-
-			};
-			new BukkitRunnable() {
-
-				@Override
-				public void run() {
-					if (MovementHandler.this.entity.isOnGround()) {
-						MovementHandler.this.entity.setAI(false);
-						this.cancel();
-						MovementHandler.this.runnable.runTaskLater(ProjectKorra.plugin, duration);
-					}
+			}, 0, 1);
+		} else {
+			this.task = ThreadUtil.ensureEntityTimer(this.entity, () -> {
+				//This will be a repeating task until the entity hits the ground. Once
+				//they hit the ground, the task repeating task will be cancelled and the entity will
+				//be stopped for the duration.
+				if (MovementHandler.this.entity.isOnGround()) {
+					MovementHandler.this.entity.setAI(false);
+					ThreadUtil.cancelTimerTask(MovementHandler.this.task);
+					ThreadUtil.ensureEntityDelay(MovementHandler.this.entity, MovementHandler.this::reset, duration);
 				}
-
-			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+			}, 0, 1);
 		}
 	}
 
@@ -96,44 +79,28 @@ public class MovementHandler {
 		this.entity.setMetadata("movement:stop", new FixedMetadataValue(ProjectKorra.plugin, this.ability));
 		if (this.entity instanceof Player) {
 			final Player player = (Player) this.entity;
-			this.msg = new BukkitRunnable() {
-
-				@Override
-				public void run() {
-					ChatUtil.sendActionBar(message, player);
-				}
-
-			};
-			this.msg.runTaskTimer(ProjectKorra.plugin, 0, 1);
+			this.task = ThreadUtil.ensureEntityTimer(this.entity,
+					() -> ChatUtil.sendActionBar(message, player)
+			, 0, 1);
 		} else {
-			new BukkitRunnable() {
-
-				@Override
-				public void run() {
-					if (MovementHandler.this.entity.isOnGround()) {
-						MovementHandler.this.entity.setAI(false);
-						this.cancel();
-					}
+			this.task = ThreadUtil.ensureEntityTimer(this.entity, () -> {
+				//This will be a repeating task until the entity hits the ground. Once
+				//they hit the ground, the task repeating task will be cancelled and the entity will
+				//be stopped for the duration.
+				if (MovementHandler.this.entity.isOnGround()) {
+					MovementHandler.this.entity.setAI(false);
+					ThreadUtil.cancelTimerTask(MovementHandler.this.task);
 				}
-
-			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+			}, 0, 1);
 		}
-		this.runnable = null;
 	}
 
 	/**
-	 * Resets any stopped movements and runs the {@link ResetTask} if able.
+	 * Resets any stopped movements and runs the {@link Runnable} if able.
 	 */
 	public void reset() {
-		if (this.runnable != null) {
-			try {
-				this.runnable.cancel();
-			} catch (final IllegalStateException e) { //if a player hasn't landed on the ground yet this runnable wont be scheduled, and will give an error on server shutdown
-				this.runnable = null;
-			}
-		}
-		if (this.msg != null) {
-			this.msg.cancel();
+		if (this.task != null) {
+			ThreadUtil.cancelTimerTask(this.task);
 		}
 		if (!(this.entity instanceof Player)) {
 			this.entity.setAI(true);
@@ -154,19 +121,8 @@ public class MovementHandler {
 		return this.entity;
 	}
 
-	public void setResetTask(final ResetTask reset) {
+	public void setResetTask(final Runnable reset) {
 		this.reset = reset;
-	}
-
-	/**
-	 * Functional interface, called when the entity is allowed to move again,
-	 * therefore "reseting" it's AI
-	 *
-	 * @author Simplicitee
-	 *
-	 */
-	public interface ResetTask {
-		public void run();
 	}
 
 	/**
@@ -180,11 +136,11 @@ public class MovementHandler {
 	}
 
 	/**
-	 * Resets all instances of MovementHandler
+	 * Resets all instances of MovementHandler. Thread safe.
 	 */
 	public static void resetAll() {
 		for (final MovementHandler handler : handlers) {
-			handler.reset();
+			ThreadUtil.ensureEntity(handler.entity, handler::reset);
 		}
 	}
 

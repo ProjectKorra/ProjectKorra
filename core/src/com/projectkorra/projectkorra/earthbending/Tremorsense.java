@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -189,7 +190,7 @@ public class Tremorsense extends EarthAbility {
 		for (final Player player : server.getOnlinePlayers()) {
 
 			if (canTremorSense(player) && !hasAbility(player, Tremorsense.class)) {
-				new Tremorsense(player, false);
+				ThreadUtil.ensureLocation(player.getLocation(), () -> new Tremorsense(player, false));
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 import org.bukkit.Location;
@@ -643,21 +644,19 @@ public class Torrent extends WaterAbility {
 		for (final TempBlock block : FROZEN_BLOCKS.keySet()) {
 			final Player player = FROZEN_BLOCKS.get(block).getLeft();
 			final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer == null) {
-				FROZEN_BLOCKS.remove(block);
-				continue;
-			} else if (block.getBlock().getType() != Material.ICE) {
-				FROZEN_BLOCKS.remove(block);
-				continue;
-			} else if (!player.isOnline()) {
-				thaw(block);
-				continue;
-			} else if (block.getBlock().getWorld() != player.getWorld()) {
-				thaw(block);
-				continue;
-			} else if (block.getLocation().distanceSquared(player.getLocation()) > CLEANUP_RANGE * CLEANUP_RANGE || !bPlayer.canBendIgnoreBindsCooldowns(getAbility("Torrent"))) {
-				thaw(block);
-			}
+			ThreadUtil.ensureLocation(block.getLocation(), () -> {
+				if (bPlayer == null) {
+					FROZEN_BLOCKS.remove(block);
+				} else if (block.getBlock().getType() != Material.ICE) {
+					FROZEN_BLOCKS.remove(block);
+				} else if (!player.isOnline()) {
+					thaw(block);
+				} else if (block.getBlock().getWorld() != player.getWorld()) {
+					thaw(block);
+				} else if (block.getLocation().distanceSquared(player.getLocation()) > CLEANUP_RANGE * CLEANUP_RANGE || !bPlayer.canBendIgnoreBindsCooldowns(getAbility("Torrent"))) {
+					thaw(block);
+				}
+			});
 		}
 	}
 

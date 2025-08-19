@@ -22,13 +22,13 @@ import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.util.ChatUtil;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
@@ -58,36 +58,35 @@ public class WhoCommand extends PKCommand {
 		this.playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
 		this.playerUnknown = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerUnknown");
 
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				final Map<String, String> updatedstaff = new HashMap<String, String>();
-				try {
-					// Create a URL for the desired page.
-					final URLConnection url = new URL("https://raw.githubusercontent.com/ProjectKorra/ProjectKorra/master/core/src/staff.txt").openConnection();
-					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+		Runnable runnable = () -> {
+			final Map<String, String> updatedstaff = new HashMap<String, String>();
+			try {
+				// Create a URL for the desired page.
+				final URLConnection url = new URL("https://raw.githubusercontent.com/ProjectKorra/ProjectKorra/master/core/src/staff.txt").openConnection();
+				url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 
-					// Read all the text returned by the server.
-					final BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), StandardCharsets.UTF_8));
-					String unparsed;
-					while ((unparsed = in.readLine()) != null) {
-						if (unparsed.startsWith("#")) continue; //Skip comment lines
+				// Read all the text returned by the server.
+				final BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), StandardCharsets.UTF_8));
+				String unparsed;
+				while ((unparsed = in.readLine()) != null) {
+					if (unparsed.startsWith("#")) continue; //Skip comment lines
 
-						final String[] staffEntry = unparsed.split("/");
-						if (staffEntry.length >= 2) {
-							updatedstaff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
-						}
+					final String[] staffEntry = unparsed.split("/");
+					if (staffEntry.length >= 2) {
+						updatedstaff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
 					}
-					in.close();
-					WhoCommand.this.staff.clear();
-					WhoCommand.this.staff.putAll(updatedstaff);
-				} catch (final SocketException | FileNotFoundException e) {
-					ProjectKorra.log.info("Could not update staff list.");
-				} catch (final IOException e) {
-					e.printStackTrace();
 				}
+				in.close();
+				WhoCommand.this.staff.clear();
+				WhoCommand.this.staff.putAll(updatedstaff);
+			} catch (final SocketException | FileNotFoundException e) {
+				ProjectKorra.log.info("Could not update staff list.");
+			} catch (final IOException e) {
+				e.printStackTrace();
 			}
-		}.runTaskTimerAsynchronously(ProjectKorra.plugin, 0, 20 * 60 * 60);
+		};
+
+		ThreadUtil.runAsyncTimer(runnable, 0, 20 * 60 * 60);
 	}
 
 	@Override
@@ -180,7 +179,7 @@ public class WhoCommand extends PKCommand {
 		}
 
 		BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> {
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			ThreadUtil.runSyncLater(() -> {
 				if (!(bPlayer instanceof BendingPlayer)) { //Uncache after 30s
 					bPlayer.uncacheAfter(30_000);
 				}

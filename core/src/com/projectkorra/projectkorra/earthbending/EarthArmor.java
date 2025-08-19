@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -18,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -301,24 +301,21 @@ public class EarthArmor extends EarthAbility {
 
 	public void updateAbsorbtion() {
 		final EarthArmor abil = this;
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				abil.goldHearts = EarthArmor.this.player.getAbsorptionAmount();
-				if (abil.formed && abil.goldHearts < 0.9F) {
-					abil.bPlayer.addCooldown(abil);
+		ThreadUtil.ensureLocationDelay(abil.player.getLocation(), () -> {
+			abil.goldHearts = EarthArmor.this.player.getAbsorptionAmount();
+			if (abil.formed && abil.goldHearts < 0.9F) {
+				abil.bPlayer.addCooldown(abil);
 
-					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+				abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+				abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+				abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 
-					ParticleEffect.BLOCK_CRACK.display(abil.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, abil.headMaterial.createBlockData());
-					ParticleEffect.BLOCK_CRACK.display(abil.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, abil.legsMaterial.createBlockData());
+				ParticleEffect.BLOCK_CRACK.display(abil.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, abil.headMaterial.createBlockData());
+				ParticleEffect.BLOCK_CRACK.display(abil.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, abil.legsMaterial.createBlockData());
 
-					abil.remove();
-				}
+				abil.remove();
 			}
-		}.runTaskLater(ProjectKorra.plugin, 1L);
+		}, 1L);
 
 	}
 

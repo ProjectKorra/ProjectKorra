@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.util.RevertChecker;
 
+@Deprecated
 public class EarthbendingManager implements Runnable {
 	public ProjectKorra plugin;
 
@@ -16,8 +17,8 @@ public class EarthbendingManager implements Runnable {
 
 	@Override
 	public void run() {
-		RevertChecker.revertEarthBlocks();
-		Shockwave.progressAll();
-		Tremorsense.manage(Bukkit.getServer());
+		RevertChecker.revertEarthBlocks(); //Folia safe now
+		Shockwave.progressAll(); //Nothing
+		Tremorsense.manage(Bukkit.getServer()); //Folia safe now
 	}
 }

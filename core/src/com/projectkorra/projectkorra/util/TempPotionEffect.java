@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ProjectKorra;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 
@@ -14,6 +16,7 @@ public class TempPotionEffect {
 	private int ID = Integer.MIN_VALUE;
 	private final Map<Integer, PotionInfo> infos = new ConcurrentHashMap<Integer, PotionInfo>();
 	private final LivingEntity entity;
+	private Object foliaTask;
 
 	public TempPotionEffect(final LivingEntity entity, final PotionEffect effect) {
 		this(entity, effect, System.currentTimeMillis());
@@ -28,6 +31,12 @@ public class TempPotionEffect {
 		} else {
 			this.infos.put(this.ID++, new PotionInfo(starttime, effect));
 			instances.put(entity, this);
+		}
+
+		if (ProjectKorra.isFolia()) {
+			this.foliaTask = entity.getScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> {
+				this.progress();
+			}, ()-> {}, 1, 1);
 		}
 	}
 
@@ -78,6 +87,9 @@ public class TempPotionEffect {
 		}
 		if (this.infos.isEmpty() && instances.containsKey(this.entity)) {
 			instances.remove(this.entity);
+			if (ProjectKorra.isFolia()) {
+				((ScheduledTask)this.foliaTask).cancel();
+			}
 		}
 	}
 

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.event;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -39,7 +40,7 @@ public class PlayerChangeElementEvent extends Event implements Cancellable {
 	 *            permaremoved
 	 */
 	public PlayerChangeElementEvent(final CommandSender sender, final OfflinePlayer target, final Element element, final Result result) {
-		super(!Bukkit.isPrimaryThread());
+		super(!Bukkit.isPrimaryThread() && !ProjectKorra.isFolia());
 		this.sender = sender;
 		this.target = target;
 		this.element = element;

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.event;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.OfflineBendingPlayer;
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -23,7 +24,7 @@ public class BendingPlayerLoadEvent extends Event {
 
 
 	public BendingPlayerLoadEvent(final OfflineBendingPlayer bPlayer) {
-		super(!Bukkit.isPrimaryThread());
+		super(!Bukkit.isPrimaryThread() && !ProjectKorra.isFolia());
 		this.bPlayer = bPlayer;
 	}
 
