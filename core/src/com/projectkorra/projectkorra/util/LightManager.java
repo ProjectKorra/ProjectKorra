@@ -1,14 +1,12 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -18,8 +16,6 @@ public class LightManager {
 
     // Our LightManager instance
     private static final LightManager INSTANCE = new LightManager();
-    // If the MC version is pre-LIGHT (< 1.17) this class basically does nothing
-    private final boolean modern;
     // Striped Lock set at number of processors * 2
     private final Object[] locks;
     // A map containing all active lights
@@ -40,18 +36,14 @@ public class LightManager {
      * using a ScheduledThreadPoolExecutor.
      */
     private LightManager() {
-        modern = GeneralMethods.getMCVersion() >= 1170;
-
         int numLocks = Runtime.getRuntime().availableProcessors() * 2;
         locks = new Object[numLocks];
         for (int i = 0; i < numLocks; i++) {
             locks[i] = new Object();
         }
 
-        if (modern) {
-            precomputeLightData();
-            startLightReverter();
-        }
+        precomputeLightData();
+        startLightReverter();
     }
 
     /**
@@ -90,14 +82,14 @@ public class LightManager {
      * respectively. This cuts down on computation time constantly manipulating BlockData.
      */
     private void precomputeLightData() {
-        BlockData lightData = Bukkit.createBlockData(Material.valueOf("LIGHT"));
+        Light lightData = (Light) Material.LIGHT.createBlockData();
 
         for (int level = 1; level <= 15; level++) {
-            ((Levelled) lightData).setLevel(level);
+            lightData.setLevel(level);
             lightDataMap.put(level, lightData.clone());
 
-            BlockData waterloggedLightData = lightData.clone();
-            ((Waterlogged) waterloggedLightData).setWaterlogged(true);
+            Light waterloggedLightData = (Light) lightData.clone();
+            waterloggedLightData.setWaterlogged(true);
             waterloggedLightDataMap.put(level, waterloggedLightData);
         }
     }
@@ -168,10 +160,10 @@ public class LightManager {
     private void processBlockChanges() {
         BlockChange blockChange;
         while ((blockChange = blockChangeQueue.poll()) != null) {
-            Player player = blockChange.getPlayer();
+            Player player = blockChange.player();
             BlockChange finalBlockChange = blockChange;
             Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
-                player.sendBlockChange(finalBlockChange.getLocation(), finalBlockChange.getBlockData());
+                player.sendBlockChange(finalBlockChange.location(), finalBlockChange.blockData());
             });
         }
     }
@@ -236,8 +228,6 @@ public class LightManager {
      * @param observers  the list of players who can see the light
      */
     private void addLight(Location location, int brightness, long expiry, Collection<? extends Player> observers) {
-        if (!modern) return;
-
         location = location.getBlock().getLocation();
         long expiryTime = System.currentTimeMillis() + expiry;
 
@@ -276,8 +266,6 @@ public class LightManager {
      * This does not normally need to be used as it's already called when ProjectKorra is reloaded.
      */
     public void restart() {
-        if (!modern) return;
-
         lightMap.values().forEach(set -> set.forEach(this::revertLight));
         lightMap.clear();
 
@@ -295,63 +283,12 @@ public class LightManager {
         startLightReverter();
     }
 
-    private static class LightData implements Comparable<LightData> {
-        private final Location location;
-        private final int brightness;
-        private final Collection<? extends Player> observers;
-        private final long expiryTime;
-
-        private LightData(Location location, int brightness, Collection<? extends Player> observers, long expiryTime) {
-            this.location = location;
-            this.brightness = brightness;
-            this.observers = observers;
-            this.expiryTime = expiryTime;
-        }
-
-        /**
-         * Calculates the hash code for this object. The hash code is based on the
-         * values of the location, brightness, observers, and expiryTime fields.
-         *
-         * @return the hash code of this object
-         */
-        @Override
-        public int hashCode() {
-            return Objects.hash(location, brightness, observers, expiryTime);
-        }
-
-        /**
-         * Checks if this LightData object is equal to another object. Two LightData objects are considered
-         * equal if they have the same brightness, expiryTime, location, and observers.
-         *
-         * @param obj the object to compare this LightData object to
-         * @return true if the objects are equal, false otherwise
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            LightData that = (LightData) obj;
-            return brightness == that.brightness &&
-                    expiryTime == that.expiryTime &&
-                    location.equals(that.location) &&
-                    observers.equals(that.observers);
-        }
-
-        /**
-         * Returns a string representation of the LightData object.
-         *
-         * @return a string in the format "LightData{location=..., brightness=..., observers=..., expiryTime=...}"
-         */
-        @Override
-        public String toString() {
-            return "LightData{" +
-                    "location=" + location +
-                    ", brightness=" + brightness +
-                    ", observers=" + observers +
-                    ", expiryTime=" + expiryTime +
-                    '}';
-        }
-
+    private record LightData(
+            Location location,
+            int brightness,
+            Collection<? extends Player> observers,
+            long expiryTime
+    ) implements Comparable<LightData> {
         /**
          * Compares this LightData object with another LightData object based on their expiryTime.
          *
@@ -417,27 +354,5 @@ public class LightManager {
         }
     }
 
-    private static class BlockChange {
-        private final Player player;
-        private final Location location;
-        private final BlockData blockData;
-
-        public BlockChange(Player player, Location location, BlockData blockData) {
-            this.player = player;
-            this.location = location;
-            this.blockData = blockData;
-        }
-
-        public Player getPlayer() {
-            return player;
-        }
-
-        public Location getLocation() {
-            return location;
-        }
-
-        public BlockData getBlockData() {
-            return blockData;
-        }
-    }
+    private record BlockChange(Player player, Location location, BlockData blockData) {}
 }
