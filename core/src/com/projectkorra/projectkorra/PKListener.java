@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirBurst;
+import com.projectkorra.projectkorra.airbending.AirPound;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
@@ -1712,6 +1713,20 @@ public class PKListener implements Listener {
 			}
 		}
 
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer != null) {
+			String ability = bPlayer.getAbilities().get(slot);
+			if (ability != null && ability.equalsIgnoreCase("AirPound")) {
+				if (!CoreAbility.hasAbility(player, AirPound.class)) {
+					new AirPound(player);
+				}
+			} else {
+				if (CoreAbility.hasAbility(player, AirPound.class)) {
+					CoreAbility.getAbility(player, AirPound.class).remove();
+				}
+			}
+		}
+
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> Illumination.slotChange(player), 1L);
 	}
 
@@ -1829,6 +1844,12 @@ public class PKListener implements Listener {
 						new AirSpout(player);
 					} else if (abil.equalsIgnoreCase("AirSwipe")) {
 						new AirSwipe(player);
+					} else if (abil.equalsIgnoreCase("AirPound")) {
+						if (CoreAbility.hasAbility(player, AirPound.class)) {
+							AirPound.pound(player);
+						} else {
+							new AirPound(player);
+						}
 					} else if (abil.equalsIgnoreCase("Flight")) {
 						new FlightMultiAbility(player);
 						return;
