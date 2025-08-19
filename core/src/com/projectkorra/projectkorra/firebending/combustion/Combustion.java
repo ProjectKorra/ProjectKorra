@@ -76,6 +76,7 @@ public class Combustion extends CombustionAbility implements SubAbility {
     public static HashMap<Player, Boolean> clicked = new HashMap<Player, Boolean>();
     Location location;
     int advancementSteps = 0;
+    private static List<Material> immuneBlocks = new ArrayList<>();
 
     public Combustion(Player player) {
         super(player);
@@ -107,17 +108,31 @@ public class Combustion extends CombustionAbility implements SubAbility {
 
         increment = 2 / ((float) chargeDuration / 50);
         increasing = 0;
+        fillImmuneBlocks();
         if (damaged.get(player) != null) {
             damaged.remove(player);
         }
         if (clicked.get(player) != null) {
             clicked.remove(player);
-
         }
 
         canCharge = true;
         needCharge = true;
         thrown = false;
+    }
+
+    private void fillImmuneBlocks() {
+        immuneBlocks.add(Material.AIR);
+        immuneBlocks.add(Material.LAVA);
+        immuneBlocks.add(Material.WATER);
+        immuneBlocks.add(Material.OBSIDIAN);
+        immuneBlocks.add(Material.CRYING_OBSIDIAN);
+        immuneBlocks.add(Material.STRUCTURE_BLOCK);
+        immuneBlocks.add(Material.BARRIER);
+        immuneBlocks.add(Material.REPEATING_COMMAND_BLOCK);
+        immuneBlocks.add(Material.CHAIN_COMMAND_BLOCK);
+        immuneBlocks.add(Material.COMMAND_BLOCK);
+        immuneBlocks.add(Material.BEDROCK);
     }
 
     private void setCollisions() {
@@ -158,7 +173,6 @@ public class Combustion extends CombustionAbility implements SubAbility {
             sonicBoom(location, Particle.CLOUD, sonicBoomRadius, sonicBoomSpeed, sonicBoomParticleCount);
             location.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 4, 0);
         }
-
     }
 
     private void advance() {
@@ -178,12 +192,12 @@ public class Combustion extends CombustionAbility implements SubAbility {
             if (location.getBlock().getType() == Material.AIR) {
                 new TempBlock(location.getBlock(), Material.LIGHT.createBlockData(), 250);
             }
+
             location.getWorld().spawnParticle(Particle.FLAME, location, 3, 0, 0, 0, 0.01, null, true);
+
             for (Location points : spawnCircle(location, location.getDirection(), 0.25, 15)) {
                 points.getWorld().spawnParticle(Particle.SMOKE_NORMAL, points, 1, 0, 0, 0, 0, null, true);
             }
-
-
             for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
                 if (entity instanceof LivingEntity && entity != player) {
                     explode(location, false, true, entity);
@@ -192,7 +206,6 @@ public class Combustion extends CombustionAbility implements SubAbility {
                     return;
                 }
             }
-
             for (Block block : GeneralMethods.getBlocksAroundPoint(location, 1)) {
                 if (block.getType() != Material.WATER) {
                     if (!block.isPassable()) {
@@ -201,24 +214,21 @@ public class Combustion extends CombustionAbility implements SubAbility {
                         bPlayer.addCooldown(this);
                         return;
                     }
-
                 } else {
                     explode(location, true, false, null);
                     remove();
                     bPlayer.addCooldown(this);
                     return;
-
                 }
             }
         }
-
 
     }
 
     private void explode(Location explosion, boolean isWater, boolean isEntity, @Nullable Entity entity) {
         if (!isWater) {
             for (Block block : GeneralMethods.getBlocksAroundPoint(explosion, explosionRadius)) {
-                if (block.getType() != Material.WATER || block.getType() != Material.LAVA || block.getType() != Material.AIR) {
+                if (block.getType().getBlastResistance() < 10 && block.getType() != Material.AIR) {
                     if (!block.isPassable()) {
                         new TempFallingBlock(block.getLocation(), block.getBlockData(), new Vector(new Random().nextDouble(-0.7, 0.7), new Random().nextDouble(0.3, 0.7), new Random().nextDouble(-0.7, 0.7)), this);
                     }
@@ -262,7 +272,6 @@ public class Combustion extends CombustionAbility implements SubAbility {
             for (Block block : GeneralMethods.getBlocksAroundPoint(explosion, explosionRadius)) {
                 if (block.getType() == Material.WATER) {
                     block.getWorld().spawnParticle(Particle.BUBBLE_COLUMN_UP, block.getLocation(), 15, 0.5, 0.5, 0.5, 0.2, null, true);
-
                 }
             }
         }
@@ -305,13 +314,11 @@ public class Combustion extends CombustionAbility implements SubAbility {
 
         return locations;
     }
-
     private Vector rotateAroundX(Vector v, double angle) {
         double y = v.getY() * Math.cos(angle) - v.getZ() * Math.sin(angle);
         double z = v.getY() * Math.sin(angle) + v.getZ() * Math.cos(angle);
         return new Vector(v.getX(), y, z);
     }
-
     private Vector rotateAroundY(Vector v, double angle) {
         double x = v.getX() * Math.cos(angle) + v.getZ() * Math.sin(angle);
         double z = -v.getX() * Math.sin(angle) + v.getZ() * Math.cos(angle);
@@ -325,7 +332,6 @@ public class Combustion extends CombustionAbility implements SubAbility {
             remove();
             return;
         }
-
         if (!thrown && punishPlayer) {
             if (damaged.get(player) != null) {
                 explode(player.getLocation(), false, true, player);
@@ -351,6 +357,7 @@ public class Combustion extends CombustionAbility implements SubAbility {
                 clicked.remove(player);
             }
         }
+
         if (needCharge && !player.isSneaking() && !thrown) {
             remove();
             return;
@@ -358,7 +365,6 @@ public class Combustion extends CombustionAbility implements SubAbility {
         if (canCharge && player.isSneaking() && !thrown) {
             chargeAnimation();
         }
-
         if (!needCharge) {
             if (forceRelease && !thrown) {
                 thrown = true;
@@ -375,7 +381,6 @@ public class Combustion extends CombustionAbility implements SubAbility {
             if (player.isSneaking() && canCharge && !thrown) {
                 chargeAnimation();
             }
-
         }
     }
 
