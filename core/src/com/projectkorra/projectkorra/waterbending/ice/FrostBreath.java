@@ -264,11 +264,7 @@ public class FrostBreath extends IceAbility implements SubAbility {
 
     @Override
     public Location getLocation() {
-        if (this.abilLoc != null) {
-            return this.abilLoc;
-        } else {
-            return null;
-        }
+        return abilLoc;
     }
 
     @Override
