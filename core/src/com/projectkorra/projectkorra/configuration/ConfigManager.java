@@ -680,20 +680,6 @@ public class ConfigManager {
 			final ArrayList<String> iceBlocks = new ArrayList<String>();
 			iceBlocks.add("#ice");
 
-			/* Dry biomes for FrostBreath */
-			final ArrayList<String> dryBiomes = new ArrayList<String>();
-			dryBiomes.add("DESERT");
-			dryBiomes.add("BADLANDS");
-			dryBiomes.add("ERODED_BADLANDS");
-			dryBiomes.add("WOODED_BADLANDS");
-			dryBiomes.add("SAVANNA");
-			dryBiomes.add("SAVANNA_PLATEAU");
-			dryBiomes.add("WINDSWEPT_SAVANNA");
-			dryBiomes.add("BASALT_DELTAS");
-			dryBiomes.add("CRIMSON_FOREST");
-			dryBiomes.add("WARPED_FOREST");
-			dryBiomes.add("NETHER_WASTES");
-			dryBiomes.add("SOUL_SAND_VALLEY");
 
 			final ArrayList<String> plantBlocks = new ArrayList<String>();
 			plantBlocks.add("#bee_growables");
@@ -1076,6 +1062,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.FrostBreath.BreathDuration",4000);
 			config.addDefault("Abilities.Water.FrostBreath.Cooldown",14000);
 			config.addDefault("Abilities.Water.FrostBreath.Range",8);
+            config.addDefault("Abilities.Water.FrostBreath.MaximumTemperature",1.1);
 			config.addDefault("Abilities.Water.FrostBreath.Particle.ParticleCount",20);
 			config.addDefault("Abilities.Water.FrostBreath.Particle.ParticleExpansion",1.5);
 			config.addDefault("Abilities.Water.FrostBreath.FrostEffect.Enabled",true);
@@ -1087,7 +1074,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.FrostBreath.Ice.BlockDuration",3000);
 			config.addDefault("Abilities.Water.FrostBreath.Ice.Damage",false);
 			config.addDefault("Abilities.Water.FrostBreath.Ice.BreathTimeRequiredToFreeze",1500);
-			config.addDefault("Abilities.Water.FrostBreath.DisallowedBiomes",dryBiomes);
 
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 			config.addDefault("Abilities.Water.IceBlast.Damage", 3);
