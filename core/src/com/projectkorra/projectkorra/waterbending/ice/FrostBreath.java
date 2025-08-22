@@ -68,8 +68,7 @@ public class FrostBreath extends IceAbility implements SubAbility {
 
         if (bPlayer.canBend(this) && !hasAbility(player, FrostBreath.class)) {
             setFields();
-            if(!biomeList.contains(player.getEyeLocation().getBlock().getBiome().toString().toUpperCase())){
-                setCollisions();
+            if (!biomeList.contains(player.getEyeLocation().getBlock().getBiome().toString().toUpperCase())) {
                 start();
             }
         }
@@ -104,11 +103,6 @@ public class FrostBreath extends IceAbility implements SubAbility {
         for (String s : ConfigManager.getConfig().getStringList("Abilities.Water.FrostBreath.DisallowedBiomes")) {
             biomeList.add(s);
         }
-    }
-
-    private void setCollisions() {
-        ProjectKorra.collisionManager.addCollision(new Collision(CoreAbility.getAbility("FrostBreath"), CoreAbility.getAbility("AirShield"), true, false));
-        ProjectKorra.collisionManager.addCollision(new Collision(CoreAbility.getAbility("FrostBreath"), CoreAbility.getAbility("FireShield"), true, true));
     }
 
     private void breathAnimation() {
@@ -237,7 +231,6 @@ public class FrostBreath extends IceAbility implements SubAbility {
 
         breathAnimation();
         formHitbox();
-        setCollisions();
         if (snow) {
             formSnow();
         }

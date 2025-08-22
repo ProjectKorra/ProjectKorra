@@ -50,6 +50,7 @@ import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
+import com.projectkorra.projectkorra.waterbending.ice.FrostBreath;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 
@@ -122,6 +123,7 @@ public class CollisionInitializer {
 		final CoreAbility iceBullet = CoreAbility.getAbility(IceBullet.class);
 		CoreAbility.getAbility(IceWave.class);
 		final CoreAbility iceSpikeBlast = CoreAbility.getAbility(IceSpikeBlast.class);
+        final CoreAbility frostBreath = CoreAbility.getAbility(FrostBreath.class);
 		CoreAbility.getAbility(OctopusForm.class);
 		CoreAbility.getAbility(SurgeWall.class);
 		CoreAbility.getAbility(SurgeWave.class);
@@ -163,6 +165,7 @@ public class CollisionInitializer {
 		this.collisionManager.addCollision(new Collision(airShield, airSweep, false, false));
 		this.collisionManager.addCollision(new Collision(airShield, fireBlastCharged, false, false));
 		this.collisionManager.addCollision(new Collision(airShield, airStream, false, true));
+        this.collisionManager.addCollision(new Collision(airShield, frostBreath, false, true));
 
 		this.collisionManager.addCollision(new Collision(airSweep, airSweep, false, false));
 
@@ -171,6 +174,7 @@ public class CollisionInitializer {
 		this.collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
 		this.collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
 		this.collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
+        this.collisionManager.addCollision(new Collision(fireShield, frostBreath, true, true));
 
 		this.collisionManager.addCollision(new Collision(fireManipulation, airBlast, false, true));
 		this.collisionManager.addCollision(new Collision(fireManipulation, airSuction, false, true));
