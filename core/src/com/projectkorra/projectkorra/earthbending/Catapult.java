@@ -133,6 +133,13 @@ public class Catapult extends EarthAbility {
 		final Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
 		GeneralMethods.setVelocity(this, this.player, apply);
 		this.moveEarth(apply, direction);
+        this.moveEarth(apply, direction);
+
+        // This checks Firetick for player and then extinguishes them if its above 0
+        if (player.getFireTicks() > 0) {
+            player.setFireTicks(0);
+        }
+
 		this.remove();
 	}
 
