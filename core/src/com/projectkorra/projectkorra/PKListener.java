@@ -133,6 +133,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
+import com.projectkorra.projectkorra.waterbending.ice.FrostBreath;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikePillar;
@@ -1367,6 +1368,7 @@ public class PKListener implements Listener {
 			case TorrentWave ignored -> Torrent.create(player);
 			case WaterArms ignored -> new WaterArms(player);
 			case HealingWaters ignored -> new HealingWaters(player);
+			case FrostBreath ignored -> new FrostBreath(player);
 			case Catapult ignored -> new Catapult(player, true);
 			case EarthBlast ignored -> new EarthBlast(player);
 			case EarthArmor ignored -> new EarthArmor(player);
