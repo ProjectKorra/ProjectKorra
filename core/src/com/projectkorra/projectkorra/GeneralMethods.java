@@ -392,15 +392,15 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * @deprecated Use {@link GeneralMethods#getBlocksWithinPoints(Location, Location, World)} instead
+	 * @deprecated Use {@link GeneralMethods#getBlocksWithinRegion(Location, Location, World)} instead
 	 */
 	@Deprecated
 	public static List<Block> getBlocksAlongLine(final Location ploc, final Location tloc, final World w) {
-		return getBlocksWithinPoints(ploc, tloc, w);
+		return getBlocksWithinRegion(ploc, tloc, w);
 	}
 
-	public static List<Block> getBlocksWithinPoints(final Location loc1, final Location loc2, final World world) {
-		return getBlocksWithinPoints(loc1, loc2, world, null);
+	public static List<Block> getBlocksWithinRegion(final Location loc1, final Location loc2, final World world) {
+		return getBlocksWithinRegion(loc1, loc2, world, null);
 	}
 
 	/**
@@ -411,7 +411,7 @@ public class GeneralMethods {
 	 * @param filter a {@link Predicate} to filter the blocks or null for no filter
 	 * @return The {@link List} of {@link Block blocks} within the specified points.
 	 */
-	public static List<Block> getBlocksWithinPoints(final Location loc1, final Location loc2, final World world, Predicate<Block> filter) {
+	public static List<Block> getBlocksWithinRegion(final Location loc1, final Location loc2, final World world, Predicate<Block> filter) {
 		final int x1 = loc1.getBlockX();
 		final int y1 = loc1.getBlockY();
 		final int z1 = loc1.getBlockZ();
@@ -452,7 +452,7 @@ public class GeneralMethods {
 		final Location min = location.clone().subtract(radius, radius, radius);
 		final Location max = location.clone().add(radius, radius, radius);
 		final double radiusSquared = radius * radius;
-		return getBlocksWithinPoints(min, max, location.getWorld(), block -> block.getLocation().distanceSquared(location) <= radiusSquared);
+		return getBlocksWithinRegion(min, max, location.getWorld(), block -> block.getLocation().distanceSquared(location) <= radiusSquared);
 	}
 
 	public static BlockFace getCardinalDirection(final Vector vector) {

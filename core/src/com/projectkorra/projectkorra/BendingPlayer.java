@@ -75,6 +75,15 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	protected boolean illumination;
 	protected boolean chiBlocked;
 
+	public BendingPlayer(OfflineBendingPlayer player) {
+		super(player);
+
+		this.player = player.player.getPlayer();
+		this.tremorSense = true;
+		this.illumination = true;
+		this.chiBlocked = false;
+	}
+
 	public BendingPlayer(Player player) {
 		super(player);
 

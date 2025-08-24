@@ -105,6 +105,27 @@ public class OfflineBendingPlayer {
         this.lastAccessed = System.currentTimeMillis();
     }
 
+    public OfflineBendingPlayer(@NotNull OfflineBendingPlayer player) {
+        this.player = player.player;
+        this.uuid = player.uuid;
+        this.permaRemoved = player.permaRemoved;
+        this.toggled = player.toggled;
+        this.allPassivesToggled = player.allPassivesToggled;
+        this.loading = false;
+
+        this.elements.addAll(player.elements);
+        this.subelements.addAll(player.subelements);
+        this.tempElements.putAll(player.tempElements);
+        this.tempSubElements.putAll(player.tempSubElements);
+        this.abilities.putAll(player.abilities);
+        this.cooldowns.putAll(player.cooldowns);
+        this.toggledElements.addAll(player.toggledElements);
+        this.toggledPassives.addAll(player.toggledPassives);
+
+        this.currentSlot = player.currentSlot;
+        this.lastAccessed = System.currentTimeMillis();
+    }
+
     public OfflineBendingPlayer(@NotNull UUID playerUUID) {
         this(Bukkit.getOfflinePlayer(playerUUID));
     }
@@ -1260,13 +1281,12 @@ public class OfflineBendingPlayer {
     }
 
     protected static BendingPlayer convertToOnline(@NotNull OfflineBendingPlayer offlineBendingPlayer) {
-        Player player = Bukkit.getPlayer(offlineBendingPlayer.getUUID());
+        Player player = offlineBendingPlayer.player.getPlayer();
         if (player == null) {
             return null;
         }
-        BendingPlayer bendingPlayer = new BendingPlayer(player);
-        loadDataFrom(offlineBendingPlayer, bendingPlayer);
 
+        BendingPlayer bendingPlayer = new BendingPlayer(offlineBendingPlayer);
         if (offlineBendingPlayer.uncache != null) {
             offlineBendingPlayer.uncache.cancel();
         }
@@ -1285,8 +1305,7 @@ public class OfflineBendingPlayer {
     protected static OfflineBendingPlayer convertToOffline(@NotNull BendingPlayer bendingPlayer) {
         if (bendingPlayer.getPlayer() != null && bendingPlayer.getPlayer().isOnline()) return bendingPlayer;
 
-        OfflineBendingPlayer offlineBendingPlayer = new OfflineBendingPlayer(bendingPlayer.getPlayer());
-        loadDataFrom(bendingPlayer, offlineBendingPlayer);
+        OfflineBendingPlayer offlineBendingPlayer = new OfflineBendingPlayer(bendingPlayer);
         offlineBendingPlayer.lastAccessed = System.currentTimeMillis();
 
         if (bendingPlayer.getPlayer() == null || !bendingPlayer.getPlayer().isOnline()) ONLINE_PLAYERS.remove(bendingPlayer.getUUID());
@@ -1295,21 +1314,6 @@ public class OfflineBendingPlayer {
         TEMP_ELEMENTS.removeIf(pair -> pair.getLeft().getUniqueId().equals(bendingPlayer.getUUID()));
 
         return offlineBendingPlayer;
-    }
-
-    protected static void loadDataFrom(OfflineBendingPlayer from, OfflineBendingPlayer to) {
-        to.abilities = from.abilities;
-        to.elements.addAll(from.elements);
-        to.subelements.addAll(from.subelements);
-        to.tempElements.putAll(from.tempElements);
-        to.tempSubElements.putAll(from.tempSubElements);
-        to.toggledElements.addAll(from.toggledElements);
-        to.toggledPassives.addAll(from.toggledPassives);
-        to.toggled = from.toggled;
-        to.allPassivesToggled = from.allPassivesToggled;
-        to.permaRemoved = from.permaRemoved;
-        to.cooldowns.putAll(from.cooldowns);
-        to.loading = false;
     }
 
     /**
