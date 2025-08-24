@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 public class AirSweep extends AirAbility implements ComboAbility {
 
 	private int progressCounter;
+    private int progressSpeed;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DAMAGE)
@@ -61,7 +62,8 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		this.damage = getConfig().getDouble("Abilities.Air.AirSweep.Damage");
 		this.range = getConfig().getDouble("Abilities.Air.AirSweep.Range");
 		this.speed = getConfig().getDouble("Abilities.Air.AirSweep.Speed");
-		this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
+        this.progressSpeed = getConfig().getInt("Abilities.Air.AirSweep.SpawnRate", 8);
+        this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSweep.Cooldown");
 		this.radius = getConfig().getDouble("Abilities.Air.AirSweep.Radius");
 
@@ -130,7 +132,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			this.direction = this.player.getEyeLocation().getDirection().normalize();
 			this.origin = this.player.getLocation().add(this.direction.clone().multiply(10));
 		}
-		if (this.progressCounter < 8) {
+		if (this.progressCounter < progressSpeed) {
 			return;
 		}
 		if (this.destination == null) {
