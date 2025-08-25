@@ -1,0 +1,56 @@
+name: Upload JAR to Discord
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21" # or 17/11 to match your project
+
+      - name: Cache Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+
+      - name: Build (skip tests if desired)
+        run: mvn -B -DskipTests package
+
+      - name: Locate built JAR
+        id: jar
+        shell: bash
+        run: |
+          # pick the main app jar (filter out -sources, -javadoc, -tests)
+          JAR_PATH=$(ls -1t target/*.jar | grep -Ev 'sources|javadoc|tests' | head -n 1)
+          if [ -z "$JAR_PATH" ]; then
+            echo "No JAR found in target/"
+            exit 1
+          fi
+          echo "jar=$JAR_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Upload to Discord (<= 25 MB)
+        if: ${{ always() }}
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          FILE="${{ steps.jar.outputs.jar }}"
+          NAME=$(basename "$FILE")
+          MSG="New build from \`${{ github.ref_name }}\` at $COMMIT_URL"
+          # Send as a file upload via multipart/form-data
+          curl -sS -X POST "$WEBHOOK" \
+            -F "payload_json={\"content\": \"$MSG\"}" \
+            -F "file=@${FILE};filename=${NAME}"
