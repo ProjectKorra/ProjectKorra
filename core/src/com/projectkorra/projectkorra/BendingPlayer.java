@@ -349,6 +349,15 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	/**
+	 * Gets a BendingPlayer instance for the provided player
+	 * @param player The player
+	 * @return The BendingPlayer instance
+	 */
+	public static BendingPlayer getBendingPlayer(@NotNull final Player player) {
+		return getBendingPlayer((OfflinePlayer)player);
+	}
+
+	/**
 	 * Attempts to get a {@link BendingPlayer} from specified player name. this
 	 * method tries to get a {@link Player} object and gets the uuid and then
 	 * calls {@link #getBendingPlayer(OfflinePlayer)}
