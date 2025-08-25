@@ -102,11 +102,6 @@
       <artifactId>core-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>luminol</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <!-- Folia API -->
     <dependency>
       <groupId>dev.folia</groupId>

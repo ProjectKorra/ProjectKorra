@@ -18,12 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.jar.JarFile;
 
-import com.projectkorra.projectkorra.ability.util.FoliaCollisionManager;
 import com.projectkorra.projectkorra.attribute.*;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.AbilityRecalculateAttributeEvent;
 import com.projectkorra.projectkorra.util.ThreadUtil;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.permissions.Permission;
 
 import org.bukkit.Bukkit;
@@ -221,9 +219,6 @@ public abstract class CoreAbility implements Ability {
 				this.progressSelf();
 			}, 1L, 1L);
 
-			if (ProjectKorra.isLuminol()) { //Luminol is required for collisions right now, until Folia implements API that we can use
-				FoliaCollisionManager.startTracking(this);
-			}
 		}
 	}
 
@@ -271,14 +266,6 @@ public abstract class CoreAbility implements Ability {
 
 
 		INSTANCES.remove(this);
-
-		if (ProjectKorra.isFolia()) {
-			((ScheduledTask) this._foliaTask).cancel(); //Cancel the task if it exists
-
-			if (ProjectKorra.isLuminol()) {
-				FoliaCollisionManager.stopTracking(this);
-			}
-		}
 	}
 
 	/**
