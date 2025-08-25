@@ -13,7 +13,6 @@
         <module>core</module>
         <module>core-legacy</module>
         <module>core-modern</module>
-        <module>luminol</module>
     </modules>
 
     <build>
