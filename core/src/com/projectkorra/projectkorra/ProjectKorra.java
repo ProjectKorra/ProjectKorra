@@ -44,7 +44,6 @@ public class ProjectKorra extends JavaPlugin {
 	public static long time_step = 50;
 	private static boolean folia;
 	private static boolean paper;
-	private static boolean luminol;
 	public Updater updater;
 	Object revertChecker;
 	private static PlaceholderAPIHook papiHook;
@@ -63,11 +62,6 @@ public class ProjectKorra extends JavaPlugin {
 		try {
 			Class.forName("com.destroystokyo.paper.PaperConfig");
 			paper = true;
-		} catch (ClassNotFoundException ignored) {}
-
-		try {
-			Class.forName("me.earthme.luminol.api.ThreadedRegion");
-			luminol = true;
 		} catch (ClassNotFoundException ignored) {}
 
 
@@ -216,7 +210,4 @@ public class ProjectKorra extends JavaPlugin {
 		return paper;
 	}
 
-	public static boolean isLuminol() {
-		return luminol;
-	}
 }
