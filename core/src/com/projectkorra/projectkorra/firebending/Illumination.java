@@ -148,7 +148,7 @@ public class Illumination extends FireAbility {
 			Block eyeBlock = this.player.getEyeLocation().getBlock();
 			int level = lightLevel;
 			if (!eyeBlock.getType().isAir() && (this.block == null || !this.block.equals(eyeBlock))) {
-				for (BlockFace face : new BlockFace[] {BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
+				for (BlockFace face : GeneralMethods.ADJACENT_FACES) {
 					if (eyeBlock.getRelative(face).getType().isAir() || (this.block != null && this.block.equals(eyeBlock.getRelative(face)))) {
 						eyeBlock = eyeBlock.getRelative(face);
 						level = lightLevel - 1; //Make the light level 1 less

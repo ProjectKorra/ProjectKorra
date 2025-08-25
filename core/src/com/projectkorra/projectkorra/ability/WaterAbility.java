@@ -243,9 +243,8 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isAdjacentToFrozenBlock(final Block block) {
-		final BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
 		boolean adjacent = false;
-		for (final BlockFace face : faces) {
+		for (final BlockFace face : GeneralMethods.ADJACENT_FACES) {
 			if (PhaseChange.getFrozenBlocksAsBlock().contains((block.getRelative(face)))) {
 				adjacent = true;
 			}

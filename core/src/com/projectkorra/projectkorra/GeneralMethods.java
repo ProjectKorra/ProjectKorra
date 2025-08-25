@@ -69,6 +69,7 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -100,15 +101,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.projectkorra.projectkorra.ProjectKorra.plugin;
+
 public class GeneralMethods {
-
-	private static ProjectKorra plugin;
-
-	public GeneralMethods(final ProjectKorra plugin) {
-		GeneralMethods.plugin = plugin;
-	}
+	public static final List<BlockFace> CARDINAL_FACES = List.of(BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
+	public static final List<BlockFace> ADJACENT_FACES = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
+	public static final List<BlockFace> ADJACENT_SIDES = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
 	/**
 	 * Checks to see if an AbilityExists. Uses method
@@ -179,18 +181,6 @@ public class GeneralMethods {
 				hasBlocked = WaterSpout.removeSpouts(loc, radius, player) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirSpout")) {
 				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("Twister")) {
-				// hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("AirStream")) {
-				// hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("AirSweep")) {
-				// hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("FireKick")) {
-				// hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("FireSpin")) {
-				// hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("FireWheel")) {
-				// hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
 			}
 		}
 		return hasBlocked;
@@ -202,7 +192,9 @@ public class GeneralMethods {
 	 * @param block The block to break
 	 */
 	public static void breakBlock(final Block block) {
-		block.breakNaturally(new ItemStack(Material.AIR));
+		if (!ElementalAbility.isAir(block)) {
+			block.breakNaturally(new ItemStack(Material.AIR));
+		}
 	}
 
 	public static boolean canView(final Player player, final String ability) {
@@ -218,26 +210,20 @@ public class GeneralMethods {
 	 * @return true if diagonal wall is found
 	 */
 	public static boolean checkDiagonalWall(final Location location, final Vector direction) {
-		final boolean[] xyzsolid = { false, false, false };
-		for (int i = 0; i < 3; i++) {
-			double value;
-			if (i == 0) {
-				value = direction.getX();
-			} else if (i == 1) {
-				value = direction.getY();
-			} else {
-				value = direction.getZ();
-			}
-			final BlockFace face = GeneralMethods.getBlockFaceFromValue(i, value);
-			if (face == null) {
-				continue;
-			}
-			xyzsolid[i] = location.getBlock().getRelative(face).getType().isSolid();
+		Block block = location.getBlock();
+		boolean[] xyzSolid = { false, false, false };
+		for (int axis = 0; axis < 3; axis++) {
+			double value = switch(axis) {
+				case 0 -> direction.getX();
+				case 1 -> direction.getY();
+				default -> direction.getZ();
+			};
+			xyzSolid[axis] = block.getRelative(getBlockFaceFromValue(axis, value)).getType().isSolid();
 		}
-		final boolean a = xyzsolid[0] && xyzsolid[2];
-		final boolean b = xyzsolid[0] && xyzsolid[1];
-		final boolean c = xyzsolid[1] && xyzsolid[2];
-		return (a || b || c || (a && b));
+		final boolean xz = xyzSolid[0] && xyzSolid[2];
+		final boolean xy = xyzSolid[0] && xyzSolid[1];
+		final boolean yz = xyzSolid[1] && xyzSolid[2];
+		return xz || xy || yz;
 	}
 
 	public static int compareArmor(Material first, Material second) {
@@ -253,7 +239,7 @@ public class GeneralMethods {
 			r = Integer.valueOf(hexVal.substring(0, 2), 16);
 			g = Integer.valueOf(hexVal.substring(2, 4), 16);
 			b = Integer.valueOf(hexVal.substring(4, 6), 16);
-		} else if (hexVal.length() <= 7 && hexVal.charAt(0) == '#') {
+		} else if (hexVal.length() == 7 && hexVal.charAt(0) == '#') {
 			r = Integer.valueOf(hexVal.substring(1, 3), 16);
 			g = Integer.valueOf(hexVal.substring(3, 5), 16);
 			b = Integer.valueOf(hexVal.substring(5, 7), 16);
@@ -294,9 +280,9 @@ public class GeneralMethods {
 		}
 
 		if (hexVal.length() <= 6) {
-			r = Integer.valueOf(hexVal.substring(0, 2), 16).intValue();
-			g = Integer.valueOf(hexVal.substring(2, 4), 16).intValue();
-			b = Integer.valueOf(hexVal.substring(4, 6), 16).intValue();
+			r = Integer.valueOf(hexVal.substring(0, 2), 16);
+			g = Integer.valueOf(hexVal.substring(2, 4), 16);
+			b = Integer.valueOf(hexVal.substring(4, 6), 16);
 		}
 
 		new ColoredParticle(Color.fromRGB(r, g, b), 1F).display(loc, amount, offsetX, offsetY, offsetZ);
@@ -307,7 +293,7 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Drops a {@code Collection<ItemStack>} of items on a specified block.
+	 * Drops a {@link Collection} of {@link ItemStack ItemStacks} on a specified block.
 	 *
 	 * @param block The block to drop items on.
 	 * @param items The items to drop.
@@ -339,7 +325,7 @@ public class GeneralMethods {
 	/**
 	 * Gets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to get the absorption hearts of.
-	 * @deprecated Use Player#getAbsorptionAmount instead.
+	 * @deprecated Use {@link Player#getAbsorptionAmount} instead.
 	 */
 	@Deprecated
 	public static float getAbsorbationHealth(final Player player) {
@@ -350,7 +336,7 @@ public class GeneralMethods {
 	 * Sets the number of absorption hearts of a specified {@link Player}.
 	 * @param player the {@link Player} to set the absorption hearts of.
 	 * @param hearts a float representing the number of hearts to set.
-	 * @deprecated Use Player#setAbsorbationHealth instead.
+	 * @deprecated Use {@link Player#setAbsorptionAmount} instead.
 	 */
 	@Deprecated
 	public static void setAbsorbationHealth(final Player player, final float hearts) {
@@ -358,198 +344,94 @@ public class GeneralMethods {
 	}
 
 	public static int getArmorTier(Material mat) {
-		switch (mat) {
-			case NETHERITE_HELMET:
-			case NETHERITE_CHESTPLATE:
-			case NETHERITE_LEGGINGS:
-			case NETHERITE_BOOTS:
-				return 7;
-			case DIAMOND_HELMET:
-			case DIAMOND_CHESTPLATE:
-			case DIAMOND_LEGGINGS:
-			case DIAMOND_BOOTS:
-				return 6;
-			case TURTLE_HELMET:
-				return 5;
-			case IRON_HELMET:
-			case IRON_CHESTPLATE:
-			case IRON_LEGGINGS:
-			case IRON_BOOTS:
-				return 4;
-			case CHAINMAIL_HELMET:
-			case CHAINMAIL_CHESTPLATE:
-			case CHAINMAIL_LEGGINGS:
-			case CHAINMAIL_BOOTS:
-				return 3;
-			case GOLDEN_HELMET:
-			case GOLDEN_CHESTPLATE:
-			case GOLDEN_LEGGINGS:
-			case GOLDEN_BOOTS:
-				return 2;
-			case LEATHER_HELMET:
-			case LEATHER_CHESTPLATE:
-			case LEATHER_LEGGINGS:
-			case LEATHER_BOOTS:
-				return 1;
-			default:
-				return 0;
-		}
+        return switch (mat) {
+            case NETHERITE_HELMET, NETHERITE_CHESTPLATE, NETHERITE_LEGGINGS, NETHERITE_BOOTS -> 7;
+            case DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS -> 6;
+            case TURTLE_HELMET -> 5;
+            case IRON_HELMET, IRON_CHESTPLATE, IRON_LEGGINGS, IRON_BOOTS -> 4;
+            case CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS -> 3;
+            case GOLDEN_HELMET, GOLDEN_CHESTPLATE, GOLDEN_LEGGINGS, GOLDEN_BOOTS -> 2;
+            case LEATHER_HELMET, LEATHER_CHESTPLATE, LEATHER_LEGGINGS, LEATHER_BOOTS -> 1;
+            default -> 0;
+        };
 	}
 
 	public static int getArmorIndex(Material mat) {
-		switch (mat) {
-			case NETHERITE_HELMET:
-			case DIAMOND_HELMET:
-			case TURTLE_HELMET:
-			case IRON_HELMET:
-			case CHAINMAIL_HELMET:
-			case GOLDEN_HELMET:
-			case LEATHER_HELMET:
-				return 3;
-			case NETHERITE_CHESTPLATE:
-			case DIAMOND_CHESTPLATE:
-			case IRON_CHESTPLATE:
-			case CHAINMAIL_CHESTPLATE:
-			case GOLDEN_CHESTPLATE:
-			case LEATHER_CHESTPLATE:
-				return 2;
-			case NETHERITE_LEGGINGS:
-			case DIAMOND_LEGGINGS:
-			case IRON_LEGGINGS:
-			case CHAINMAIL_LEGGINGS:
-			case GOLDEN_LEGGINGS:
-			case LEATHER_LEGGINGS:
-				return 1;
-			case NETHERITE_BOOTS:
-			case DIAMOND_BOOTS:
-			case IRON_BOOTS:
-			case CHAINMAIL_BOOTS:
-			case GOLDEN_BOOTS:
-			case LEATHER_BOOTS:
-				return 0;
-			default:
-				return -1;
-		}
+        return switch (mat) {
+            case NETHERITE_HELMET, DIAMOND_HELMET, TURTLE_HELMET, IRON_HELMET, CHAINMAIL_HELMET, GOLDEN_HELMET,
+                 LEATHER_HELMET -> 3;
+            case NETHERITE_CHESTPLATE, DIAMOND_CHESTPLATE, IRON_CHESTPLATE, CHAINMAIL_CHESTPLATE, GOLDEN_CHESTPLATE,
+                 LEATHER_CHESTPLATE -> 2;
+            case NETHERITE_LEGGINGS, DIAMOND_LEGGINGS, IRON_LEGGINGS, CHAINMAIL_LEGGINGS, GOLDEN_LEGGINGS,
+                 LEATHER_LEGGINGS -> 1;
+            case NETHERITE_BOOTS, DIAMOND_BOOTS, IRON_BOOTS, CHAINMAIL_BOOTS, GOLDEN_BOOTS, LEATHER_BOOTS -> 0;
+            default -> -1;
+        };
 	}
 
 	/**
-	 * This gets the BlockFace in the specified dimension of a certain value
+	 * This gets the BlockFace for the specified axis of a certain value
 	 *
-	 * @param xyz 0 for x, 1 for y, 2 for z
-	 * @param value vector value for which direction to check
-	 * @return BlockFace for block in specified dimension and value
+	 * @param axis 0 for x, 1 for y, 2 for z
+	 * @param direction the direction on the axis, positive, negative, or none (0)
+	 * @return {@link BlockFace} for block in specified dimension and value
 	 */
-	public static BlockFace getBlockFaceFromValue(final int xyz, final double value) {
-		switch (xyz) {
-			case 0:
-				if (value > 0) {
-					return BlockFace.EAST;
-				} else if (value < 0) {
-					return BlockFace.WEST;
-				} else {
-					return BlockFace.SELF;
-				}
-			case 1:
-				if (value > 0) {
-					return BlockFace.UP;
-				} else if (value < 0) {
-					return BlockFace.DOWN;
-				} else {
-					return BlockFace.SELF;
-				}
-			case 2:
-				if (value > 0) {
-					return BlockFace.SOUTH;
-				} else if (value < 0) {
-					return BlockFace.NORTH;
-				} else {
-					return BlockFace.SELF;
-				}
-			default:
-				return null;
+	public static BlockFace getBlockFaceFromValue(final int axis, final double direction) {
+		if (axis < 0 || axis > 2) {
+			return null;
+		} else if (direction == 0) {
+			return BlockFace.SELF;
 		}
+
+		BlockFace face = switch(axis) {
+			case 0 -> BlockFace.EAST;
+			case 1 -> BlockFace.UP;
+			default -> BlockFace.SOUTH;
+		};
+		return direction > 0 ? face : face.getOppositeFace();
 	}
 
+	/**
+	 * @deprecated Use {@link GeneralMethods#getBlocksWithinRegion(Location, Location, World)} instead
+	 */
+	@Deprecated
 	public static List<Block> getBlocksAlongLine(final Location ploc, final Location tloc, final World w) {
-		final List<Block> blocks = new ArrayList<Block>();
+		return getBlocksWithinRegion(ploc, tloc, w);
+	}
 
-		// Next we will name each coordinate
-		final int x1 = ploc.getBlockX();
-		final int y1 = ploc.getBlockY();
-		final int z1 = ploc.getBlockZ();
-
-		final int x2 = tloc.getBlockX();
-		final int y2 = tloc.getBlockY();
-		final int z2 = tloc.getBlockZ();
-
-		// Then we create the following integers
-		int xMin, yMin, zMin;
-		int xMax, yMax, zMax;
-		int x, y, z;
-
-		// Now we need to make sure xMin is always lower then xMax
-		if (x1 > x2) { // If x1 is a higher number then x2
-			xMin = x2;
-			xMax = x1;
-		} else {
-			xMin = x1;
-			xMax = x2;
-		}
-		// Same with Y
-		if (y1 > y2) {
-			yMin = y2;
-			yMax = y1;
-		} else {
-			yMin = y1;
-			yMax = y2;
-		}
-
-		// And Z
-		if (z1 > z2) {
-			zMin = z2;
-			zMax = z1;
-		} else {
-			zMin = z1;
-			zMax = z2;
-		}
-
-		// Now it's time for the loop
-		for (x = xMin; x <= xMax; x++) {
-			for (y = yMin; y <= yMax; y++) {
-				for (z = zMin; z <= zMax; z++) {
-					final Block b = new Location(w, x, y, z).getBlock();
-					blocks.add(b);
-				}
-			}
-		}
-
-		// And last but not least, we return with the list
-		return blocks;
+	public static List<Block> getBlocksWithinRegion(final Location loc1, final Location loc2, final World world) {
+		return getBlocksWithinRegion(loc1, loc2, world, null);
 	}
 
 	/**
-	 * Gets a {@code List<Blocks>} within the specified radius around the
-	 * specified location.
-	 *
-	 * @param location The base location
-	 * @param radius The block radius from location to include within the list
-	 *            of blocks
-	 * @return The list of Blocks
+	 * Gets a {@link List} of {@link Block blocks} within the specified points.
+	 * @param loc1 the first location
+	 * @param loc2 the second location
+	 * @param world the world in which to get the blocks
+	 * @param filter a {@link Predicate} to filter the blocks or null for no filter
+	 * @return The {@link List} of {@link Block blocks} within the specified points.
 	 */
-	public static List<Block> getBlocksAroundPoint(final Location location, final double radius) {
-		final List<Block> blocks = new ArrayList<Block>();
+	public static List<Block> getBlocksWithinRegion(final Location loc1, final Location loc2, final World world, Predicate<Block> filter) {
+		final int x1 = loc1.getBlockX();
+		final int y1 = loc1.getBlockY();
+		final int z1 = loc1.getBlockZ();
+		final int x2 = loc2.getBlockX();
+		final int y2 = loc2.getBlockY();
+		final int z2 = loc2.getBlockZ();
 
-		final int xorg = location.getBlockX();
-		final int yorg = location.getBlockY();
-		final int zorg = location.getBlockZ();
+		int xMin = Math.min(x1, x2);
+		int xMax = Math.max(x1, x2);
+		int yMin = Math.min(y1, y2);
+		int yMax = Math.max(y1, y2);
+		int zMin = Math.min(z1, z2);
+		int zMax = Math.max(z1, z2);
 
-		final int r = (int) radius * 4;
-
-		for (int x = xorg - r; x <= xorg + r; x++) {
-			for (int y = yorg - r; y <= yorg + r; y++) {
-				for (int z = zorg - r; z <= zorg + r; z++) {
-					final Block block = location.getWorld().getBlockAt(x, y, z);
-					if (block.getLocation().distanceSquared(location) <= radius * radius) {
+		final List<Block> blocks = new ArrayList<>();
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				for (int z = zMin; z <= zMax; z++) {
+					Block block = world.getBlockAt(x, y, z);
+					if (filter == null || filter.test(block)) {
 						blocks.add(block);
 					}
 				}
@@ -558,34 +440,36 @@ public class GeneralMethods {
 		return blocks;
 	}
 
+	/**
+	 * Gets a {@link List} of {@link Block blocks} within the specified radius around the
+	 * specified location.
+	 *
+	 * @param location The base location
+	 * @param radius The radius around location to get blocks within
+	 * @return The {@link List} of {@link Block blocks}
+	 */
+	public static List<Block> getBlocksAroundPoint(final Location location, final double radius) {
+		final Location min = location.clone().subtract(radius, radius, radius);
+		final Location max = location.clone().add(radius, radius, radius);
+		final double radiusSquared = radius * radius;
+		return getBlocksWithinRegion(min, max, location.getWorld(), block -> block.getLocation().distanceSquared(location) <= radiusSquared);
+	}
+
 	public static BlockFace getCardinalDirection(final Vector vector) {
-		final BlockFace[] faces = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
-		Vector n, ne, e, se, s, sw, w, nw;
-		w = new Vector(-1, 0, 0);
-		n = new Vector(0, 0, -1);
-		s = n.clone().multiply(-1);
-		e = w.clone().multiply(-1);
-		ne = n.clone().add(e.clone()).normalize();
-		se = s.clone().add(e.clone()).normalize();
-		nw = n.clone().add(w.clone()).normalize();
-		sw = s.clone().add(w.clone()).normalize();
-
-		final Vector[] vectors = { n, ne, e, se, s, sw, w, nw };
-
 		double comp = 0;
-		int besti = 0;
-		for (int i = 0; i < vectors.length; i++) {
-			final double dot = vector.dot(vectors[i]);
+		BlockFace bestFace = BlockFace.NORTH;
+		for (BlockFace face : CARDINAL_FACES) {
+			final double dot = vector.dot(face.getDirection());
 			if (dot > comp) {
 				comp = dot;
-				besti = i;
+				bestFace = face;
 			}
 		}
-		return faces[besti];
+		return bestFace;
 	}
 
 	public static List<Location> getCircle(final Location loc, final int radius, final int height, final boolean hollow, final boolean sphere, final int plusY) {
-		final List<Location> circleblocks = new ArrayList<Location>();
+		final List<Location> circleblocks = new ArrayList<>();
 		final int cx = loc.getBlockX();
 		final int cy = loc.getBlockY();
 		final int cz = loc.getBlockZ();
@@ -615,7 +499,7 @@ public class GeneralMethods {
 		Entity found = null;
 		Double distance = null;
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
+		for (Entity entity : getEntitiesAroundPoint(center, radius)) {
 			double check = center.distanceSquared(entity.getLocation());
 
 			if (distance == null || check < distance) {
@@ -637,11 +521,11 @@ public class GeneralMethods {
 		LivingEntity le = null;
 		Double distance = null;
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(center, radius)) {
+		for (Entity entity : getEntitiesAroundPoint(center, radius)) {
 			double check = center.distanceSquared(entity.getLocation());
 
-			if (entity instanceof LivingEntity && (distance == null || check < distance)) {
-				le = (LivingEntity) entity;
+			if (entity instanceof LivingEntity living && (distance == null || check < distance)) {
+				le = living;
 				distance = check;
 			}
 		}
@@ -656,18 +540,15 @@ public class GeneralMethods {
 	}
 
 	public static Vector getDirection(final Location location, final Location destination) {
-		double x1, y1, z1;
-		double x0, y0, z0;
+		return destination.toVector().subtract(location.toVector());
+	}
 
-		x1 = destination.getX();
-		y1 = destination.getY();
-		z1 = destination.getZ();
+	public static boolean isFinite(Location location) {
+		return Double.isFinite(location.getX()) && Double.isFinite(location.getY()) && Double.isFinite(location.getZ()) && Float.isFinite(location.getPitch()) && Float.isFinite(location.getYaw());
+	}
 
-		x0 = location.getX();
-		y0 = location.getY();
-		z0 = location.getZ();
-
-		return new Vector(x1 - x0, y1 - y0, z1 - z0);
+	public static boolean isFinite(Vector vector) {
+		return Double.isFinite(vector.getX()) && Double.isFinite(vector.getY()) && Double.isFinite(vector.getZ());
 	}
 
 	public static double getDistanceFromLine(final Vector line, final Location pointonline, final Location point) {
@@ -695,19 +576,19 @@ public class GeneralMethods {
 	 * @param block The single block
 	 * @param type The Material type to change the block into
 	 * @param data The block data to change the block into
-	 * @return The item drops fromt the specified block
+	 * @return The item drops from the specified block
 	 */
 	public static Collection<ItemStack> getDrops(final Block block, final Material type, final BlockData data) {
-		final BlockState tempstate = block.getState();
+		final BlockState original = block.getState();
 		block.setType(type);
 		block.setBlockData(data);
 		final Collection<ItemStack> item = block.getDrops();
-		tempstate.update(true);
+		original.update(true);
 		return item;
 	}
 
 	/**
-	 * Gets a {@code List<Entity>} of entities around a specified radius from
+	 * Gets a {@link List} of {@link Entity entities} around a specified radius from
 	 * the specified area
 	 *
 	 * @param location The base location
@@ -737,8 +618,8 @@ public class GeneralMethods {
 	 */
 	public static Predicate<Entity> getEntityFilter() {
 		return entity -> !(!entity.isValid() || entity.hasMetadata ("BendingImmunity")
-				|| (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR))
-				|| (entity instanceof ArmorStand && ((ArmorStand) entity).isMarker()));
+				|| (entity instanceof Player player && player.getGameMode() == GameMode.SPECTATOR)
+				|| (entity instanceof ArmorStand stand && stand.isMarker()));
 	}
 
 	public static long getGlobalCooldown() {
@@ -759,27 +640,17 @@ public class GeneralMethods {
 
 	public static int getIntCardinalDirection(final Vector vector) {
 		final BlockFace face = getCardinalDirection(vector);
-
-		switch (face) {
-			case SOUTH:
-				return 7;
-			case SOUTH_WEST:
-				return 6;
-			case WEST:
-				return 3;
-			case NORTH_WEST:
-				return 0;
-			case NORTH:
-				return 1;
-			case NORTH_EAST:
-				return 2;
-			case EAST:
-				return 5;
-			case SOUTH_EAST:
-				return 8;
-			default:
-				return 4;
-		}
+        return switch (face) {
+            case SOUTH -> 7;
+            case SOUTH_WEST -> 6;
+            case WEST -> 3;
+            case NORTH_WEST -> 0;
+            case NORTH -> 1;
+            case NORTH_EAST -> 2;
+            case EAST -> 5;
+            case SOUTH_EAST -> 8;
+            default -> 4;
+        };
 	}
 
 	public static Plugin getItems() {
@@ -802,7 +673,7 @@ public class GeneralMethods {
 			if (ComboManager.checkForValidCombo(player) != null && checkCombos) {
 				return ComboManager.checkForValidCombo(player).getName();
 			} else {
-				return lastUsedAbility.get(0).getAbilityName();
+				return lastUsedAbility.getFirst().getAbilityName();
 			}
 		}
 		return null;
@@ -843,12 +714,10 @@ public class GeneralMethods {
 	}
 
 	public static Collection<Player> getPlayersAroundPoint(final Location location, final double distance) {
-		final Collection<Player> players = new HashSet<Player>();
+		final Collection<Player> players = new HashSet<>();
 		for (final Player player : Bukkit.getOnlinePlayers()) {
-			if (player.getLocation().getWorld().equals(location.getWorld())) {
-				if (player.getLocation().distanceSquared(location) <= distance * distance) {
-					players.add(player);
-				}
+			if (Objects.equals(player.getWorld(), location.getWorld()) && player.getLocation().distanceSquared(location) <= distance * distance) {
+				players.add(player);
 			}
 		}
 		return players;
@@ -872,23 +741,21 @@ public class GeneralMethods {
 	}
 
 	public static Location getMainHandLocation(final Player player) {
-		double y = 1.2 - (player.isSneaking() ? 0.4 : 0);
-		if (player.getMainHand() == MainHand.LEFT) {
-			return GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, y, 0)
-					.add(player.getLocation().getDirection().multiply(0.8));
-		} else {
-			return GeneralMethods.getRightSide(player.getLocation(), .55).add(0, y, 0)
-					.add(player.getLocation().getDirection().multiply(0.8));
-		}
+		return getHandLocation(player, true);
 	}
 
 	public static Location getOffHandLocation(final Player player) {
+		return getHandLocation(player, false);
+	}
+
+	public static Location getHandLocation(Player player, boolean mainHand) {
 		double y = 1.2 - (player.isSneaking() ? 0.4 : 0);
-		if (player.getMainHand() == MainHand.RIGHT) {
-			return GeneralMethods.getLeftSide(player.getLocation(), .55).add(0, y, 0)
+		boolean rightHanded = player.getMainHand() == MainHand.RIGHT;
+		if (rightHanded == mainHand) {
+			return getRightSide(player.getLocation(), .55).add(0, y, 0)
 					.add(player.getLocation().getDirection().multiply(0.8));
 		} else {
-			return GeneralMethods.getRightSide(player.getLocation(), .55).add(0, y, 0)
+			return getLeftSide(player.getLocation(), .55).add(0, y, 0)
 					.add(player.getLocation().getDirection().multiply(0.8));
 		}
 	}
@@ -915,81 +782,76 @@ public class GeneralMethods {
 	}
 
 	public static BlockData getLavaData(final int level) {
-		return Material.LAVA.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
+		return Material.LAVA.createBlockData(data -> {
+			Levelled levelled = (Levelled) data;
+			levelled.setLevel((level < 0 || level > levelled.getMaximumLevel()) ? 0 : level);
+		});
 	}
 
 	public static BlockData getWaterData(final int level) {
-		return Material.WATER.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
+		return Material.WATER.createBlockData(data -> {
+			Levelled levelled = (Levelled) data;
+			levelled.setLevel((level < 0 || level > levelled.getMaximumLevel()) ? 0 : level);
+		});
 	}
 	
 	public static BlockData getCauldronData(final Material material, final int level) {
 		if (!material.name().contains("CAULDRON")) {
 			return null;
 		}
-		return material.createBlockData(d -> ((Levelled) d).setLevel((level > 3 || level > ((Levelled) d).getMaximumLevel()) ? 3 : level < 1 ? 1 : level));
+		return material.createBlockData(data -> {
+			Levelled levelled = (Levelled) data;
+			levelled.setLevel(Math.clamp(level, 1, Math.min(levelled.getMaximumLevel(), 3)));
+		});
 	}
 	
 	public static void setCauldronData(final Block block, final int level) {
-		if (block.getBlockData() instanceof Levelled) {
-			Levelled levelled = (Levelled) block.getBlockData();
-			if (level >= 1 && level < 3) {
-				levelled.setLevel(level);
-				block.setBlockData(levelled);
-			} else if (level < 1) {
-				block.setType(Material.CAULDRON);
-			}
-		}
-		return;
-	}
+        if (!(block.getBlockData() instanceof Levelled levelled)) {
+            return;
+        }
+
+        if (level >= 1 && level < 3) {
+            levelled.setLevel(level);
+            block.setBlockData(levelled);
+        } else if (level < 1) {
+            block.setType(Material.CAULDRON);
+        }
+    }
 
 	public static Entity getTargetedEntity(final Player player, final double range, final List<Entity> avoid) {
-		double longestr = range + 1;
 		Entity target = null;
+		double targetDistanceSquared = Math.pow(range + 1, 2);
 		final Location origin = player.getEyeLocation();
-		final Vector direction = player.getEyeLocation().getDirection().normalize();
-		for (final Entity entity : getEntitiesAroundPoint(origin, range)) {
-			if (entity instanceof Player) {
-				if (((Player) entity).isDead() || ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
-					continue;
-				}
-			}
-			if (avoid.contains(entity)) {
-				continue;
-			}
-			if (entity.getWorld().equals(origin.getWorld())) {
-				if (entity.getLocation().distanceSquared(origin) < longestr * longestr && getDistanceFromLine(direction, origin, entity.getLocation()) < 2 && (entity instanceof LivingEntity) && entity.getEntityId() != player.getEntityId() && entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
-					target = entity;
-					longestr = entity.getLocation().distance(origin);
-				}
-			}
-		}
-		if (target != null) {
-			if (GeneralMethods.isObstructed(origin, target.getLocation())) {
-				target = null;
+		final Vector direction = player.getEyeLocation().getDirection();
+		final Location forward = origin.clone().add(direction);
+		final Location backwards = origin.clone().add(direction.clone().multiply(-1));
+		final Predicate<Entity> filter = getEntityFilter().and(entity -> !avoid.contains(entity)
+				&& entity.getWorld().equals(origin.getWorld())
+				&& entity instanceof LivingEntity);
+		avoid.add(player);
+
+		for (Entity entity : getEntitiesAroundPoint(origin, range, filter)) {
+			Location location = entity.getLocation();
+			double distanceSquared = location.distanceSquared(origin);
+			if (distanceSquared < targetDistanceSquared && getDistanceFromLine(direction, origin, location) < 2 && location.distanceSquared(forward) < location.distanceSquared(backwards)) {
+				target = entity;
+				targetDistanceSquared = distanceSquared;
 			}
 		}
-		return target;
+
+		return target != null && isObstructed(origin, target.getLocation()) ? null : target;
 	}
 
 	public static Entity getTargetedEntity(final Player player, final double range) {
-		return getTargetedEntity(player, range, new ArrayList<Entity>());
+		return getTargetedEntity(player, range, new ArrayList<>());
 	}
 
-	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... nonOpaque2) {
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final boolean checkDiagonals, final Material... toIgnore) {
 		final Location origin = player.getEyeLocation();
 		final Vector direction = origin.getDirection();
-
-		final HashSet<Material> trans = new HashSet<Material>();
-		trans.add(Material.AIR);
-		trans.add(Material.CAVE_AIR);
-		trans.add(Material.VOID_AIR);
-
-		if (nonOpaque2 != null) {
-			Collections.addAll(trans, nonOpaque2);
-		}
-
 		final Location location = origin.clone();
-		final Vector vec = direction.normalize().multiply(0.2);
+		final Vector vec = direction.multiply(0.2);
+		final Set<Material> ignore = toIgnore == null ? Set.of() : Set.of(toIgnore);
 
 		for (double i = 0; i < range; i += 0.2) {
 			location.add(vec);
@@ -999,13 +861,10 @@ public class GeneralMethods {
 				break;
 			}
 
-			final Block block = location.getBlock();
-
-			if (trans.contains(block.getType())) {
-				continue;
-			} else if (ignoreTempBlocks && (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block) && !EarthAbility.isBendableEarthTempBlock(block))) {
-				continue;
-			} else {
+			Block block = location.getBlock();
+			Material type = block.getType();
+			TempBlock temp = TempBlock.get(block);
+			if (!type.isAir() && !ignore.contains(type) && (!ignoreTempBlocks || (temp == null || WaterAbility.isBendableWaterTempBlock(temp) || EarthAbility.isBendableEarthTempBlock(temp)))) {
 				location.subtract(vec);
 				break;
 			}
@@ -1014,12 +873,12 @@ public class GeneralMethods {
 		return location;
 	}
 
-	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... nonOpaque2) {
-		return getTargetedLocation(player, range, ignoreTempBlocks, true, nonOpaque2);
+	public static Location getTargetedLocation(final Player player, final double range, final boolean ignoreTempBlocks, final Material... toIgnore) {
+		return getTargetedLocation(player, range, ignoreTempBlocks, true, toIgnore);
 	}
 
-	public static Location getTargetedLocation(final Player player, final double range, final Material... nonOpaque2) {
-		return getTargetedLocation(player, range, false, nonOpaque2);
+	public static Location getTargetedLocation(final Player player, final double range, final Material... toIgnore) {
+		return getTargetedLocation(player, range, false, toIgnore);
 	}
 
 	public static Location getTargetedLocation(final Player player, final int range) {
@@ -1038,7 +897,7 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			final Block tempBlock = loc.clone().add(0, y, 0).getBlock();
 			if (ElementalAbility.isAir(tempBlock.getType())) {
@@ -1047,10 +906,10 @@ public class GeneralMethods {
 			blockHolder = tempBlock;
 		}
 
-		while (ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
+		while (ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (!ElementalAbility.isAir(blockHolder.getType())) {
+			if (!ElementalAbility.isAir(blockHolder)) {
 				return blockHolder;
 			}
 		}
@@ -1061,20 +920,20 @@ public class GeneralMethods {
 		Block blockHolder = loc.getBlock();
 		int y = 0;
 		// Only one of these while statements will go
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(negativeY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(negativeY)) {
 			y--;
 			final Block tempblock = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(tempblock.getType())) {
+			if (ElementalAbility.isAir(tempblock)) {
 				return blockHolder;
 			}
 
 			blockHolder = tempblock;
 		}
 
-		while (!ElementalAbility.isAir(blockHolder.getType()) && Math.abs(y) < Math.abs(positiveY)) {
+		while (!ElementalAbility.isAir(blockHolder) && Math.abs(y) < Math.abs(positiveY)) {
 			y++;
 			blockHolder = loc.clone().add(0, y, 0).getBlock();
-			if (ElementalAbility.isAir(blockHolder.getType())) {
+			if (ElementalAbility.isAir(blockHolder)) {
 				return blockHolder;
 			}
 		}
@@ -1082,8 +941,8 @@ public class GeneralMethods {
 		return blockHolder;
 	}
 
-	public static ArrayList<Element> getElementsWithNoWeaponBending() {
-		final ArrayList<Element> elements = new ArrayList<Element>();
+	public static List<Element> getElementsWithNoWeaponBending() {
+		final List<Element> elements = new ArrayList<>();
 
 		if (!plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 			elements.add(Element.AIR);
@@ -1121,36 +980,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isArmor(Material mat) {
-		switch (mat) {
-			case NETHERITE_HELMET:
-			case NETHERITE_CHESTPLATE:
-			case NETHERITE_LEGGINGS:
-			case NETHERITE_BOOTS:
-			case DIAMOND_HELMET:
-			case DIAMOND_CHESTPLATE:
-			case DIAMOND_LEGGINGS:
-			case DIAMOND_BOOTS:
-			case TURTLE_HELMET:
-			case IRON_HELMET:
-			case IRON_CHESTPLATE:
-			case IRON_LEGGINGS:
-			case IRON_BOOTS:
-			case CHAINMAIL_HELMET:
-			case CHAINMAIL_CHESTPLATE:
-			case CHAINMAIL_LEGGINGS:
-			case CHAINMAIL_BOOTS:
-			case GOLDEN_HELMET:
-			case GOLDEN_CHESTPLATE:
-			case GOLDEN_LEGGINGS:
-			case GOLDEN_BOOTS:
-			case LEATHER_HELMET:
-			case LEATHER_CHESTPLATE:
-			case LEATHER_LEGGINGS:
-			case LEATHER_BOOTS:
-				return true;
-			default:
-				return false;
-		}
+		return getArmorIndex(mat) != -1;
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
@@ -1158,27 +988,23 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block, final boolean lava) {
-		if (block == null || (TempBlock.isTempBlock(block) && (!lava && !WaterAbility.isBendableWaterTempBlock(block)))) {
+		TempBlock tempBlock = TempBlock.get(block);
+		if (block == null || (tempBlock != null && (!lava && !WaterAbility.isBendableWaterTempBlock(tempBlock)))) {
 			return false;
 		}
+
 		int sources = 0;
-		final BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
-		for (final BlockFace face : faces) {
-			final Block blocki = block.getRelative(face);
-			if (lava) {
-				if (!(blocki.getType() == Material.LAVA && EarthPassive.canPhysicsChange(blocki))) {
-					continue;
-				}
-			} else {
-				if (!((ElementalAbility.isWater(blocki) || ElementalAbility.isIce(blocki)) && WaterManipulation.canPhysicsChange(blocki))) {
-					continue;
-				}
+		for (final BlockFace face : GeneralMethods.ADJACENT_SIDES) {
+			final Block relative = block.getRelative(face);
+			if (lava && (relative.getType() != Material.LAVA || !EarthPassive.canPhysicsChange(relative))) {
+				continue;
+			} else if (!(ElementalAbility.isWater(relative) || ElementalAbility.isIce(relative)) || !WaterManipulation.canPhysicsChange(relative)) {
+				continue;
 			}
 
 			//At this point it should either be water or lava
-			if (blocki.getBlockData() instanceof Levelled) {
-				final Levelled level = (Levelled) blocki.getBlockData();
-				if (level.getLevel() == 0) {
+			if (relative.getBlockData() instanceof Levelled level) {
+                if (level.getLevel() == 0) {
 					sources++;
 				}
 			} else { //ice
@@ -1193,9 +1019,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isInteractable(final Material material) {
-		if (GeneralMethods.getMCVersion() >= 1170 && material == Material.getMaterial("LIGHT")) return false;
-
-		return material.isInteractable();
+		return material != Material.LIGHT && material.isInteractable();
 	}
 
 	public static boolean isObstructed(final Location location1, final Location location2) {
@@ -1205,17 +1029,18 @@ public class GeneralMethods {
 		final Vector direction = loc2.subtract(loc1);
 		direction.normalize();
 
-		Location loc;
 
 		double max = 0;
-		if (location1.getWorld().equals(location2.getWorld())) {
+		final World world = location1.getWorld();
+		if (world != null && world.equals(location2.getWorld())) {
 			max = location1.distance(location2);
 		}
 
 		for (double i = 0; i <= max; i++) {
-			loc = location1.clone().add(direction.clone().multiply(i));
-			final Material type = loc.getBlock().getType();
-			if (type != Material.AIR && !(ElementalAbility.getTransparentMaterialSet().contains(type) || ElementalAbility.isWater(loc.getBlock()))) {
+			Location step = location1.clone().add(direction.clone().multiply(i));
+			final Block block = step.getBlock();
+			final Material type = block.getType();
+			if (!type.isAir() && !(ElementalAbility.getTransparentMaterialSet().contains(type) || ElementalAbility.isWater(block))) {
 				return true;
 			}
 		}
@@ -1247,13 +1072,9 @@ public class GeneralMethods {
 	}
 
 	public static boolean isSameArmor(Material a, Material b) {
-		int ai = getArmorIndex(a), bi = getArmorIndex(b);
-
-		if (ai == -1 || bi == -1) {
-			return false;
-		}
-
-		return ai == bi;
+		int ai = getArmorIndex(a);
+		int bi = getArmorIndex(b);
+		return ai == bi && ai != -1;
 	}
 
 	public static boolean isSolid(final Block block) {
@@ -1279,72 +1100,19 @@ public class GeneralMethods {
 		return false;
 	}
 
-	/** Checks if an entity is Undead **/
 	public static boolean isUndead(final Entity entity) {
-		if (entity == null) {
-			return false;
-		}
-
-		switch (entity.getType()) {
-			case SKELETON:
-			case STRAY:
-			case WITHER_SKELETON:
-			case WITHER:
-			case ZOMBIE:
-			case HUSK:
-			case ZOMBIE_VILLAGER:
-			case ZOMBIFIED_PIGLIN:
-			case ZOGLIN:
-			case DROWNED:
-			case ZOMBIE_HORSE:
-			case SKELETON_HORSE:
-			case PHANTOM:
-				return true;
-			default:
-				return false;
-		}
+        return entity instanceof LivingEntity living && living.getCategory() == EntityCategory.UNDEAD;
 	}
 
 	public static boolean isWeapon(final Material mat) {
-
-		switch(mat) {
-			case BOW:
-			case CROSSBOW:
-			case DIAMOND_AXE:
-			case DIAMOND_HOE:
-			case DIAMOND_PICKAXE:
-			case DIAMOND_SHOVEL:
-			case DIAMOND_SWORD:
-			case GOLDEN_AXE:
-			case GOLDEN_HOE:
-			case GOLDEN_PICKAXE:
-			case GOLDEN_SHOVEL:
-			case GOLDEN_SWORD:
-			case IRON_AXE:
-			case IRON_HOE:
-			case IRON_PICKAXE:
-			case IRON_SHOVEL:
-			case IRON_SWORD:
-			case NETHERITE_AXE:
-			case NETHERITE_HOE:
-			case NETHERITE_PICKAXE:
-			case NETHERITE_SHOVEL:
-			case NETHERITE_SWORD:
-			case STONE_AXE:
-			case STONE_HOE:
-			case STONE_PICKAXE:
-			case STONE_SHOVEL:
-			case STONE_SWORD:
-			case TRIDENT:
-			case WOODEN_AXE:
-			case WOODEN_HOE:
-			case WOODEN_PICKAXE:
-			case WOODEN_SHOVEL:
-			case WOODEN_SWORD:
-				return true;
-			default:
-				return false;
-		}
+        return switch (mat) {
+            case BOW, CROSSBOW, DIAMOND_AXE, DIAMOND_HOE, DIAMOND_PICKAXE, DIAMOND_SHOVEL, DIAMOND_SWORD, GOLDEN_AXE,
+                 GOLDEN_HOE, GOLDEN_PICKAXE, GOLDEN_SHOVEL, GOLDEN_SWORD, IRON_AXE, IRON_HOE, IRON_PICKAXE, IRON_SHOVEL,
+                 IRON_SWORD, NETHERITE_AXE, NETHERITE_HOE, NETHERITE_PICKAXE, NETHERITE_SHOVEL, NETHERITE_SWORD,
+                 STONE_AXE, STONE_HOE, STONE_PICKAXE, STONE_SHOVEL, STONE_SWORD, TRIDENT, WOODEN_AXE, WOODEN_HOE,
+                 WOODEN_PICKAXE, WOODEN_SHOVEL, WOODEN_SWORD -> true;
+            default -> false;
+        };
 	}
 
 	public static void reloadPlugin(final CommandSender sender) {
@@ -1358,7 +1126,7 @@ public class GeneralMethods {
 		if (DBConnection.isOpen()) {
 			DBConnection.sql.close();
 		}
-		GeneralMethods.stopBending();
+		stopBending();
 
 		// Reverts all active lights, then restarts the light revert scheduler
 		LightManager.get().restart();
@@ -1367,22 +1135,22 @@ public class GeneralMethods {
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
 		ConfigManager.avatarStateConfig.reload();
-		Arrays.stream(Element.getElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Load colors from config again
-		Arrays.stream(Element.getSubElements()).forEach(e -> {e.setColor(null); e.setSubColor(null);}); //Same for subs
+		Arrays.stream(Element.getElements()).forEach(Element::resetColors); //Load colors from config again
+		Arrays.stream(Element.getSubElements()).forEach(Element::resetColors); //Same for subs
 		ElementalAbility.clearBendableMaterials(); // Clear and re-cache the material lists on reload.
 		ElementalAbility.setupBendableMaterials();
 		// WaterAbility.setupWaterTransformableBlocks();
 		EarthTunnel.clearBendableMaterials();
 
-		Bukkit.getScheduler().cancelTasks(ProjectKorra.plugin);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new BendingManager(), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new AirbendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new WaterbendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new EarthbendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new FirebendingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new ChiblockingManager(ProjectKorra.plugin), 0, 1);
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(ProjectKorra.plugin, new BendingManager.TempElementsRunnable(), 20, 20);
-		ProjectKorra.plugin.revertChecker = ProjectKorra.plugin.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new RevertChecker(ProjectKorra.plugin), 0, 200);
+		Bukkit.getScheduler().cancelTasks(plugin);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BendingManager(), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new AirbendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new WaterbendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new EarthbendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new FirebendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new ChiblockingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BendingManager.TempElementsRunnable(), 20, 20);
+		plugin.revertChecker = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new RevertChecker(plugin), 0, 200);
 
 		EarthTunnel.setupBendableMaterials();
 		Bloodbending.loadBloodlessFromConfig();
@@ -1394,8 +1162,8 @@ public class GeneralMethods {
 		ProjectKorra.collisionManager.stopCollisionDetection();
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
-		HandlerList.unregisterAll(ProjectKorra.plugin); //Unregister all listeners registered by addons AND ProjectKorra
-		Bukkit.getPluginManager().registerEvents(new PKListener(ProjectKorra.plugin), ProjectKorra.plugin); //Re-register our listener
+		HandlerList.unregisterAll(plugin); //Unregister all listeners registered by addons AND ProjectKorra
+		Bukkit.getPluginManager().registerEvents(new PKListener(), plugin); //Re-register our listener
 		CoreAbility.registerAbilities(); //Register all abilities again
 		reloadAddonPlugins();  //Register all addons and addon listeners again
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered.
@@ -1707,13 +1475,12 @@ public class GeneralMethods {
 	}
 
 	public static boolean playerHeadIsInBlock(final Player player, final Block block, final boolean exact) {
-		double checkDistance;
-		if (exact) {
-			checkDistance = 0.5;
-		} else {
-			checkDistance = 0.75;
-		}
-		return (player.getEyeLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getEyeLocation().getX() - block.getLocation().add(0.5, 0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getEyeLocation().getZ() - block.getLocation().add(0.5, 0.0, 0.5).getZ()) < checkDistance));
+		double checkDistance = exact ? 0.5 : 0.75;
+		Location eyeLocation = player.getEyeLocation();
+		Location adjusted = block.getLocation().add(0.5, 0.0, 0.5);
+		return eyeLocation.getBlockY() == block.getY()
+				&& (Math.abs(eyeLocation.getX() - adjusted.getX()) < checkDistance)
+				&& (Math.abs(eyeLocation.getZ() - adjusted.getZ()) < checkDistance);
 	}
 
 	public static boolean playerFeetIsInBlock(final Player player, final Block block) {
@@ -1721,17 +1488,16 @@ public class GeneralMethods {
 	}
 
 	public static boolean playerFeetIsInBlock(final Player player, final Block block, final boolean exact) {
-		double checkDistance;
-		if (exact) {
-			checkDistance = 0.5;
-		} else {
-			checkDistance = 0.75;
-		}
-		return (player.getLocation().getBlockY() == block.getLocation().getBlockY() && (Math.abs(player.getLocation().getX() - block.getLocation().add(0.5, 0.0, 0.5).getX()) < checkDistance) && (Math.abs(player.getLocation().getZ() - block.getLocation().add(0.5, 0.0, 0.5).getZ()) < checkDistance));
+		double checkDistance = exact ? 0.5 : 0.75;
+		Location location = player.getLocation();
+		Location adjusted = block.getLocation().add(0.5, 0.0, 0.5);
+		return location.getBlockY() == block.getY()
+				&& (Math.abs(location.getX() - adjusted.getX()) < checkDistance)
+				&& (Math.abs(location.getZ() - adjusted.getZ()) < checkDistance);
 	}
 
 	/**
-	 * Deprecated. Use {@link com.projectkorra.projectkorra.util.ChatUtil#sendBrandingMessage(CommandSender, String)}
+	 * @deprecated Use {@link ChatUtil#sendBrandingMessage(CommandSender, String)}
 	 */
 	@Deprecated
 	public static void sendBrandingMessage(final CommandSender sender, final String message) {
@@ -1747,7 +1513,7 @@ public class GeneralMethods {
 	public static double applyModifiers(double value, double... modifiers) {
 		double totalModifier = 0;
 
-		for(double mod : modifiers) {
+		for (double mod : modifiers) {
 			totalModifier += mod - 1;
 		}
 		return value * (1 + totalModifier);
@@ -1808,46 +1574,18 @@ public class GeneralMethods {
 	}
 
 	public static boolean locationEqualsIgnoreDirection(final Location loc1, final Location loc2) {
-		return loc1.getWorld().equals(loc2.getWorld()) && loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
+		return Objects.equals(loc1.getWorld(), loc2.getWorld()) && loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
 	}
 
-	public static boolean isLightEmitting(final Material material) {
-		switch (material.name()) {
-			case "GLOWSTONE":
-			case "TORCH":
-			case "SEA_LANTERN":
-			case "BEACON":
-			case "REDSTONE_LAMP":
-			case "REDSTONE_TORCH":
-			case "MAGMA_BLOCK":
-			case "LAVA":
-			case "JACK_O_LANTERN":
-			case "CRYING_OBSIDIAN":
-			case "SHROOMLIGHT":
-			case "CAMPFIRE":
-			case "SOUL_CAMPFIRE":
-			case "SOUL_TORCH":
-			case "LANTERN":
-			case "SOUL_LANTERN":
-			case "CONDUIT":
-			case "RESPAWN_ANCHOR":
-			case "BROWN_MUSHROOM":
-			case "BREWING_STAND":
-			case "ENDER_CHEST":
-			case "END_PORTAL_FRAME":
-			case "END_ROD":
-			case "LIGHT":
-			case "AMETHYST_CLUSTER":
-			case "CAVE_VINES":
-			case "GLOW_LICHEN":
-			case "OCHRE_FROGLIGHT":
-			case "PEARLESCENT_FROGLIGHT":
-			case "VERDANT_FROGLIGHT":
-			case "SCULK_CATALYST":
-				return true;
-			default:
-				return false;
-		}
+	public static boolean isLightEmitting(Material material) {
+        return switch (material.name()) {
+            case "GLOWSTONE", "TORCH", "SEA_LANTERN", "BEACON", "REDSTONE_LAMP", "REDSTONE_TORCH", "MAGMA_BLOCK",
+                 "LAVA", "JACK_O_LANTERN", "CRYING_OBSIDIAN", "SHROOMLIGHT", "CAMPFIRE", "SOUL_CAMPFIRE", "SOUL_TORCH",
+                 "LANTERN", "SOUL_LANTERN", "CONDUIT", "RESPAWN_ANCHOR", "BROWN_MUSHROOM", "BREWING_STAND",
+                 "ENDER_CHEST", "END_PORTAL_FRAME", "END_ROD", "LIGHT", "AMETHYST_CLUSTER", "CAVE_VINES", "GLOW_LICHEN",
+                 "OCHRE_FROGLIGHT", "PEARLESCENT_FROGLIGHT", "VERDANT_FROGLIGHT", "SCULK_CATALYST" -> true;
+            default -> false;
+        };
 	}
 
 	@Deprecated
@@ -1858,12 +1596,14 @@ public class GeneralMethods {
 	public static void setVelocity(Ability ability, Entity entity, Vector vector) {
 		final AbilityVelocityAffectEntityEvent event = new AbilityVelocityAffectEntityEvent(ability, entity, vector);
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) 
+		if (event.isCancelled()) {
 			return;
+		}
 		
 		Vector velocity = event.getVelocity();
-		if(velocity == null || Double.isNaN(velocity.length()))
-		    return;
+		if (velocity == null || Double.isNaN(velocity.length())) {
+			return;
+		}
 		
 		if (entity instanceof TNTPrimed) {
 			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
@@ -1876,23 +1616,9 @@ public class GeneralMethods {
 		}
 
 		// Attempt to stop velocity from going over the packet cap.
-		if (velocity.getX() > 4) {
-			velocity.setX(4);
-		} else if (velocity.getX() < -4) {
-			velocity.setX(-4);
-		}
-
-		if (velocity.getY() > 4) {
-			velocity.setY(4);
-		} else if (velocity.getY() < -4) {
-			velocity.setY(-4);
-		}
-
-		if (velocity.getZ() > 4) {
-			velocity.setZ(4);
-		} else if (velocity.getZ() < -4) {
-			velocity.setZ(-4);
-		}
+		velocity.setX(Math.clamp(velocity.getX(), -4, 4));
+		velocity.setY(Math.clamp(velocity.getY(), -4, 4));
+		velocity.setZ(Math.clamp(velocity.getZ(), -4, 4));
 		event.getAffected().setVelocity(velocity);
 	}
 
