@@ -190,8 +190,6 @@ public class FrostBreath extends IceAbility implements SubAbility {
         target = origin.clone();
         while (target.distance(origin) < range) {
             target.add(player.getEyeLocation().getDirection());
-            List<Block> snowList = new ArrayList<Block>();
-
             if (!target.getBlock().isPassable()) {
                 break;
             }
@@ -200,22 +198,18 @@ public class FrostBreath extends IceAbility implements SubAbility {
                 if (!block.isPassable()) {
                     Block upperBlock = block.getLocation().add(0, 1, 0).getBlock();
                     if (upperBlock.isPassable() && upperBlock.getType() != Material.WATER && block.getType() != Material.ICE && block.getType() != Material.SNOW) {
-                        snowList.add(block.getLocation().add(0, 1, 0).getBlock());
+                        Block s = block.getLocation().add(0,1,0).getBlock();
+                        TempBlock snow = new TempBlock(s, Material.SNOW.createBlockData(), snowDuration, this);
+                        snow.setBendableSource(bendableSnow);
+
                     }
                 } else if (block.getType() == Material.WATER) {
-                    TempBlock ice = new TempBlock(block, Material.ICE.createBlockData(), snowDuration);
+                    TempBlock ice = new TempBlock(block, Material.ICE.createBlockData(), snowDuration, this);
                     ice.setBendableSource(true);
                     ice.setCanSuffocate(false);
                 }
             }
-
-
-            for (Block block : snowList) {
-                TempBlock snow = new TempBlock(block, Material.SNOW.createBlockData(), snowDuration);
-                snow.setBendableSource(bendableSnow);
-            }
         }
-
     }
 
 
