@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -30,13 +29,10 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -79,6 +75,15 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	protected boolean illumination;
 	protected boolean chiBlocked;
 
+	public BendingPlayer(OfflineBendingPlayer player) {
+		super(player);
+
+		this.player = player.player.getPlayer();
+		this.tremorSense = true;
+		this.illumination = true;
+		this.chiBlocked = false;
+	}
+
 	public BendingPlayer(Player player) {
 		super(player);
 
@@ -101,21 +106,26 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		if (cooldown <= 0) {
 			return;
 		}
+
 		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, cooldown, Result.ADDED);
-		Bukkit.getServer().getPluginManager().callEvent(event);
+		Bukkit.getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, new Cooldown(event.getCooldown() + System.currentTimeMillis(), database));
 
-			if (this.getBoundAbilityName() != null && this.getBoundAbilityName().equalsIgnoreCase(ability)) {
+			if (ability.equalsIgnoreCase(this.getBoundAbilityName())) {
 				ChatUtil.displayMovePreview(this.player);
 			}
 			
-			BendingBoardManager.updateBoard(this.player, event.getAbility(), true, 0);
+			BendingBoardManager.updateBoard(this.player, ability, true, 0);
 			CooldownCommand.addCooldownType(ability);
 		}
 	}
 
+	/**
+	 * @deprecated This method does not have any current functionality and will always return an empty map.
+	 */
+	@Deprecated(since = "1.13.0", forRemoval = true)
 	public Map<String, Cooldown> loadCooldowns() {
 		return new ConcurrentHashMap<>();
 	}
@@ -140,37 +150,31 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	private boolean canBend(@NotNull final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
-
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-		final Location playerLoc = this.player.getLocation();
-
-		//Loop through all hooks and test them
+		// Loop through all hooks and test them
 		for (JavaPlugin plugin : BEND_HOOKS.keySet()) {
 			CanBendHook hook = BEND_HOOKS.get(plugin);
 			try {
-				Optional<Boolean> bool = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
-				if (bool.isPresent()) return bool.get(); //If the hook didn't return
+				Optional<Boolean> result = hook.canBend(this, ability, ignoreBinds, ignoreCooldowns);
+				if (result.isPresent()) return result.get(); //If the hook didn't return
 			} catch (Exception e) {
 				ProjectKorra.log.severe("An error occurred while running CanBendHook registered by " + plugin.getName() + ".");
 				e.printStackTrace();
 			}
 		}
 
-		if (!this.player.isOnline() || this.player.isDead()) {
+		if (this.player.isDead() || this.player.getGameMode() == GameMode.SPECTATOR) {
+			return false;
+		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;
 		} else if (!this.canBind(ability)) {
 			return false;
-		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(this.player.getWorld())) {
+		} else if (ability.getPlayer() != null && ability.getLocation() != null && !this.player.getWorld().equals(ability.getLocation().getWorld())) {
 			return false;
 		} else if (!ignoreCooldowns && this.isOnCooldown(ability.getName())) {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
-		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
-			return false;
-		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
-			return false;
-		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
+		} else if (!canBendInWorld()) {
 			return false;
 		}
 
@@ -184,12 +188,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
-		} else if (RegionProtection.isRegionProtected(this.player, playerLoc, ability)) {
-			return false;
 		}
-
-		return true;
-	}
+		return !RegionProtection.isRegionProtected(this.player, player.getLocation(), ability);
+    }
 
 	public boolean canBendIgnoreBinds(final CoreAbility ability) {
 		return this.canBend(ability, true, false);
@@ -212,8 +213,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		}
 
-		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-
 		if (element == null || this.player == null) {
 			return false;
 		} else if (!this.player.hasPermission("bending." + element.getName() + ".passive")) {
@@ -222,7 +221,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
-		} else if (disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (!this.canBendInWorld()) {
 			return false;
 		} else return this.player.getGameMode() != GameMode.SPECTATOR;
 	}
@@ -233,23 +232,19 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
-		} else if (RegionProtection.isRegionProtected(this.player, this.player.getLocation(), ability)) {
+		} else if (!this.isOnCooldown(ability)) {
 			return false;
-		} else return !this.isOnCooldown(ability);
+		} else return RegionProtection.isRegionProtected(this.player, this.player.getLocation(), ability);
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
-		if (this.getBoundAbility() != null) {
-			final boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
-			final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
-
-			if (hasWeapon) {
-				return !noWeaponElement;
-			}
-			return true;
-		}
-		return false;
-	}
+        if (this.getBoundAbility() == null) {
+            return false;
+        }
+        final boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
+        final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
+		return !hasWeapon || !noWeaponElement;
+    }
 
 	/**
 	 * Checks to see if {@link BendingPlayer} can be slowed.
@@ -264,7 +259,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * Check if the {@link BendingPlayer} can bend in the world they are in
 	 */
 	public boolean canBendInWorld() {
-		return !DISABLED_WORLDS.contains(this.getPlayer().getWorld().getName());
+		return !DISABLED_WORLDS.contains(this.player.getWorld().getName());
 	}
 
 	/**
@@ -277,8 +272,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		for (JavaPlugin plugin : BIND_HOOKS.keySet()) {
 			CanBindHook hook = BIND_HOOKS.get(plugin);
 			try {
-				Optional<Boolean> bool = hook.canBind(this, ability);
-				if (bool.isPresent()) return bool.get(); //If the hook didn't return
+				Optional<Boolean> result = hook.canBind(this, ability);
+				if (result.isPresent()) return result.get(); //If the hook didn't return
 			} catch (Exception e) {
 				ProjectKorra.log.severe("An error occurred while running CanBindHook registered by " + plugin.getName() + ".");
 				e.printStackTrace();
@@ -289,12 +284,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (!this.player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
-		} else if (!this.hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
+		} else if (!this.hasElement(ability.getElement()) && !(ability instanceof AvatarAbility avatarAbility && !avatarAbility.requireAvatar())) {
 			return false;
-		} else if (ability.getElement() instanceof SubElement) {
-			final SubElement subElement = (SubElement) ability.getElement();
-			if (subElement instanceof MultiSubElement) {
-				for (Element parent : ((MultiSubElement) subElement).getParentElements()) {
+		} else if (ability.getElement() instanceof SubElement subElement) {
+            if (subElement instanceof MultiSubElement multiSubElement) {
+				for (Element parent : multiSubElement.getParentElements()) {
 					if (!this.hasElement(parent)) return false;
 				}
 			} else if (!this.hasElement(subElement.getParentElement())) {
@@ -363,7 +357,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		return getBendingPlayer((OfflinePlayer)player);
 	}
 
-
 	/**
 	 * Attempts to get a {@link BendingPlayer} from specified player name. this
 	 * method tries to get a {@link Player} object and gets the uuid and then
@@ -371,7 +364,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 *
 	 * @param playerName The name of the Player
 	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS}
-	 *         contains the player name
+	 *         contains the player name, <b>NOTE: This will always return null for offline players</b>
 	 *
 	 * @see #getBendingPlayer(OfflinePlayer)
 	 */
@@ -379,11 +372,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		if (playerName == null) {
 			return null;
 		}
-
-		final Player player = Bukkit.getPlayer(playerName);
-		final OfflinePlayer oPlayer = player != null ? Bukkit.getOfflinePlayer(player.getUniqueId()) : null;
-
-		return getBendingPlayer(oPlayer);
+		Player player = Bukkit.getPlayer(playerName);
+		return player == null ? null : getBendingPlayer(player);
 	}
 
 	/**
@@ -398,13 +388,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 * @see #getBendingPlayer(OfflinePlayer)
 	 */
 	public static OfflineBendingPlayer getOfflineBendingPlayer(final String playerName) {
-		if (playerName == null) {
-			return null;
-		}
-
-		final OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(playerName);
-
-		return getBendingPlayer(oPlayer);
+		return playerName != null ? getBendingPlayer(Bukkit.getOfflinePlayer(playerName)) : null;
 	}
 
 	private static FileConfiguration getConfig() {
@@ -490,9 +474,11 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		}
 
-		if (sub instanceof MultiSubElement) {
-			for (Element parent : ((MultiSubElement) sub).getParentElements()) {
-				if (this.player.hasPermission("bending." + parent.getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) return true;
+		if (sub instanceof MultiSubElement multiSubElement) {
+			for (Element parent : multiSubElement.getParentElements()) {
+				if (this.player.hasPermission("bending." + parent.getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending())) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -520,11 +506,8 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	 */
 	@Override
 	public boolean isOnCooldown(final String ability) {
-		if (this.cooldowns.containsKey(ability)) {
-			return System.currentTimeMillis() < this.cooldowns.get(ability).getCooldown();
-		}
-
-		return false;
+		Cooldown cooldown = this.cooldowns.get(ability);
+		return cooldown != null && System.currentTimeMillis() < cooldown.getCooldown();
 	}
 
 	public boolean isParalyzed() {
@@ -598,18 +581,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	@Override
 	public void removeCooldown(final String ability) {
 		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, 0, Result.REMOVED);
-		Bukkit.getServer().getPluginManager().callEvent(event);
+		Bukkit.getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
-
-			
-			final String abilityName = event.getAbility();
-
-			if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
+			if (ability.equalsIgnoreCase(this.getBoundAbilityName())) {
 				ChatUtil.displayMovePreview(this.player);
 			}
-
-			BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
+			BendingBoardManager.updateBoard(this.player, ability, false, 0);
 		}
 	}
 
@@ -626,22 +604,21 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		Iterator<Entry<String, Cooldown>> iterator = this.cooldowns.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, Cooldown> entry = iterator.next();
-			if (System.currentTimeMillis() >= entry.getValue().getCooldown()) {
-				final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, entry.getKey(), 0, Result.REMOVED);
-				Bukkit.getServer().getPluginManager().callEvent(event);
-				if (!event.isCancelled()) {
-					iterator.remove();
+			String ability = entry.getKey();
+            if (System.currentTimeMillis() < entry.getValue().getCooldown()) {
+                continue;
+            }
 
-					final String abilityName = event.getAbility();
-
-					if (this.getBoundAbility() != null && this.getBoundAbilityName().equals(abilityName)) {
-						ChatUtil.displayMovePreview(this.player);
-					}
-
-					BendingBoardManager.updateBoard(this.player, event.getAbility(), false, 0);
-				}
-			}
-		}
+            final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(this.player, ability, 0, Result.REMOVED);
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                iterator.remove();
+                if (ability.equalsIgnoreCase(this.getBoundAbilityName())) {
+                    ChatUtil.displayMovePreview(this.player);
+                }
+                BendingBoardManager.updateBoard(this.player, ability, false, 0);
+            }
+        }
 	}
 
 	/**
@@ -654,7 +631,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		final String oldStance = (this.stance == null) ? "" : this.stance.getStanceName();
 		final String newStance = (stance == null) ? "" : stance.getStanceName();
 		final PlayerStanceChangeEvent event = new PlayerStanceChangeEvent(this.player, oldStance, newStance);
-		Bukkit.getServer().getPluginManager().callEvent(event);
+		Bukkit.getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
 			this.stance = stance;
@@ -687,13 +664,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	@Override
-	public void toggleElement(final Element element) {
+	public void toggleElement(@NotNull final Element element) {
 		super.toggleElement(element);
 		PassiveManager.registerPassives(this.player);
 	}
 
 	@Override
-	public void togglePassive(final Element element) {
+	public void togglePassive(@NotNull final Element element) {
 		super.togglePassive(element);
 		PassiveManager.registerPassives(this.player);
 	}
@@ -711,94 +688,85 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		SubElement subElement;
 		while (subIterator.hasNext() && (subElement = subIterator.next()) != null) {
 			long time = tempSubElements.get(subElement);
-
-			if (time == -1L) continue; //The subelement expiry is connected to the parent element, so skip it as it is handled bellow
-
-			String message = expired;
-
-			if (System.currentTimeMillis() >= time) {
-				PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, subElement, PlayerChangeSubElementEvent.Result.TEMP_EXPIRE);
-				Bukkit.getServer().getPluginManager().callEvent(subEvent);
-				if (subEvent.isCancelled()) {
-					continue;
-				}
-
-				ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + message
-						.replace("{element}", subElement.getColor() + subElement.getName())
-						.replace("{bending}", subElement.getType().getBending())
-						.replace("{bender}", subElement.getType().getBender())
-						.replace("{bend}", subElement.getType().getBend())));
-				subIterator.remove();
+			if (time == -1L || System.currentTimeMillis() < time) {
+				// If time is -1, the subelement expiry is connected to the parent element, so skip it as it is handled bellow
+				continue;
 			}
+
+			PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, subElement, PlayerChangeSubElementEvent.Result.TEMP_EXPIRE);
+			Bukkit.getPluginManager().callEvent(subEvent);
+			if (subEvent.isCancelled()) {
+				continue;
+			}
+
+			ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + expired
+					.replace("{element}", subElement.getColor() + subElement.getName())
+					.replace("{bending}", subElement.getType().getBending())
+					.replace("{bender}", subElement.getType().getBender())
+					.replace("{bend}", subElement.getType().getBend())));
+			subIterator.remove();
 		}
 
 		Iterator<Element> elementIterator = tempElements.keySet().iterator();
 		Element element;
 		while (elementIterator.hasNext() && (element = elementIterator.next()) != null) {
 			long time = tempElements.get(element);
-
-			String message = expired;
-			if (element == Element.AVATAR) message = expiredAvatar;
-
-			if (System.currentTimeMillis() >= time) {
-				PlayerChangeElementEvent event = new PlayerChangeElementEvent(null, this.player, element, PlayerChangeElementEvent.Result.TEMP_EXPIRE);
-				Bukkit.getServer().getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					continue;
-				}
-
-				ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + message
-						.replace("{element}", element.getColor() + element.getName())
-						.replace("{bending}", element.getType().getBending())
-						.replace("{bender}", element.getType().getBender())
-						.replace("{bend}", element.getType().getBend())));
-				elementIterator.remove();
-
-				if (element == Element.AVATAR) {
-					//Remove all subelements if the player loses Avatar
-
-					Iterator<SubElement> subIterator1 = this.tempSubElements.keySet().iterator();
-					SubElement s1;
-					while (subIterator1.hasNext() && (s1 = subIterator1.next()) != null) {
-						//Only remove if the subelement is connected to the parent element's time
-						if (this.tempSubElements.get(s1) != -1L || !s1.getParentElement().isAvatarElement()) continue;
-
-						if (!this.hasTempElement(s1.getParentElement())) {
-							PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, s1, PlayerChangeSubElementEvent.Result.TEMP_PARENT_EXPIRE);
-							Bukkit.getServer().getPluginManager().callEvent(subEvent);
-							if (subEvent.isCancelled()) {
-								continue;
-							}
-							subIterator1.remove();
-						}
-					}
-
-				} else {
-					//Remove all subelements if the player loses the element
-					Iterator<SubElement> subIterator1 = this.tempSubElements.keySet().iterator();
-					SubElement s1;
-					while (subIterator1.hasNext() && (s1 = subIterator1.next()) != null) {
-						if (this.tempSubElements.get(s1) != -1L) continue; //Only remove if the subelement is connected to the parent element's time
-
-						if (!this.hasElement(s1.getParentElement())) {
-							PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, s1, PlayerChangeSubElementEvent.Result.TEMP_PARENT_EXPIRE);
-							Bukkit.getServer().getPluginManager().callEvent(subEvent);
-							if (subEvent.isCancelled()) {
-								continue;
-							}
-							subIterator1.remove();
-						}
-					}
-				}
+			if (System.currentTimeMillis() < time) {
+				continue;
 			}
-		}
+
+            PlayerChangeElementEvent event = new PlayerChangeElementEvent(null, this.player, element, PlayerChangeElementEvent.Result.TEMP_EXPIRE);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                continue;
+            }
+
+			String message = element == Element.AVATAR ? expiredAvatar : expired;
+            ChatUtil.sendBrandingMessage(player, ChatUtil.color(ChatColor.YELLOW + message
+                    .replace("{element}", element.getColor() + element.getName())
+                    .replace("{bending}", element.getType().getBending())
+                    .replace("{bender}", element.getType().getBender())
+                    .replace("{bend}", element.getType().getBend())));
+            elementIterator.remove();
+
+            if (element == Element.AVATAR) {
+                //Remove all subelements if the player loses Avatar
+
+                Iterator<SubElement> subIterator1 = this.tempSubElements.keySet().iterator();
+                SubElement s1;
+                while (subIterator1.hasNext() && (s1 = subIterator1.next()) != null) {
+                    //Only remove if the subelement is connected to the parent element's time
+                    if (this.tempSubElements.get(s1) != -1L || !s1.getParentElement().isAvatarElement() || this.hasTempElement(s1.getParentElement())) continue;
+
+					PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, s1, PlayerChangeSubElementEvent.Result.TEMP_PARENT_EXPIRE);
+					Bukkit.getPluginManager().callEvent(subEvent);
+					if (!subEvent.isCancelled()) {
+						subIterator1.remove();
+					}
+                }
+            } else {
+                //Remove all subelements if the player loses the element
+                Iterator<SubElement> subIterator1 = this.tempSubElements.keySet().iterator();
+                SubElement s1;
+                while (subIterator1.hasNext() && (s1 = subIterator1.next()) != null) {
+					//Only remove if the subelement is connected to the parent element's time
+                    if (this.tempSubElements.get(s1) != -1L || this.hasElement(s1.getParentElement())) continue;
+
+					PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(null, this.player, s1, PlayerChangeSubElementEvent.Result.TEMP_PARENT_EXPIRE);
+					Bukkit.getServer().getPluginManager().callEvent(subEvent);
+					if (!subEvent.isCancelled()) {
+						subIterator1.remove();
+					}
+                }
+            }
+        }
 
 		if (this.tempElements.size() > 0 || this.tempSubElements.size() > 0) {
 			Map<Element, Long> tempMap = new HashMap<>(this.tempElements);
 			tempMap.putAll(this.tempSubElements);
 			Optional<Long> shortestTime = tempMap.values().stream().filter(l -> l >= System.currentTimeMillis()).min(Comparator.comparingLong(Long::longValue));
 
-			if (!shortestTime.isPresent()) {
+			if (shortestTime.isEmpty()) {
 				ProjectKorra.log.severe("Failed to find the shortest time for " + this.player.getName() + "'s temp elements!");
 				this.removeUnusableAbilities();
 
@@ -905,12 +873,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		}, 1L);
 	}
 
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
-
 	@Override
 	public void setCurrentSlot(int slot) {
 		this.player.getInventory().setHeldItemSlot(slot % 9);
@@ -954,9 +916,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 			if (expireTime < System.currentTimeMillis()) { //If it still hasn't expired
 				long currentSubs = this.tempElements.keySet().stream()
-						.filter(element -> element instanceof SubElement)
-						.map(element -> (SubElement)element)
-						.filter(sub -> sub.getParentElement() == tempElement)
+						.filter(SubElement.class::isInstance)
+						.map(SubElement.class::cast)
+						.filter(sub -> sub.childOf(tempElement))
 						.count();
 
 				if (currentSubs > 0) continue;
