@@ -171,8 +171,6 @@ public class GeneralMethods {
 				hasBlocked = AirBlast.removeAirBlastsAroundPoint(loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirSuction")) {
 				hasBlocked = AirSuction.removeAirSuctionsAroundPoint(loc, radius) || hasBlocked;
-			} else if (ability.equalsIgnoreCase("Combustion")) {
-				hasBlocked = Combustion.removeAroundPoint(loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireShield")) {
 				hasBlocked = FireShield.isWithinShield(loc) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirShield")) {
