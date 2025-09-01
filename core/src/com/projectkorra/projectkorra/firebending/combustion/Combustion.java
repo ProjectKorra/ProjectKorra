@@ -9,7 +9,9 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
 import org.bukkit.Location;
@@ -24,9 +26,8 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Combustion extends CombustionAbility implements SubAbility {
 
@@ -66,17 +67,15 @@ public class Combustion extends CombustionAbility implements SubAbility {
     long explosionRevertTime;
 
     /* Non-config variables */
-    int chargeI = 0;
     private boolean forceRelease;
     private boolean needCharge, canCharge;
     private boolean thrown;
     private double increment;
     private double increasing;
-    public static HashMap<Player, Boolean> damaged = new HashMap<Player, Boolean>();
-    public static HashMap<Player, Boolean> clicked = new HashMap<Player, Boolean>();
+    private boolean damaged;
+    private boolean clicked;
     Location location;
     int advancementSteps = 0;
-    private static List<Material> immuneBlocks = new ArrayList<>();
 
     public Combustion(Player player) {
         super(player);
@@ -108,31 +107,12 @@ public class Combustion extends CombustionAbility implements SubAbility {
 
         increment = 2 / ((float) chargeDuration / 50);
         increasing = 0;
-        fillImmuneBlocks();
-        if (damaged.get(player) != null) {
-            damaged.remove(player);
-        }
-        if (clicked.get(player) != null) {
-            clicked.remove(player);
-        }
+        damaged = false;
+        clicked = false;
 
         canCharge = true;
         needCharge = true;
         thrown = false;
-    }
-
-    private void fillImmuneBlocks() {
-        immuneBlocks.add(Material.AIR);
-        immuneBlocks.add(Material.LAVA);
-        immuneBlocks.add(Material.WATER);
-        immuneBlocks.add(Material.OBSIDIAN);
-        immuneBlocks.add(Material.CRYING_OBSIDIAN);
-        immuneBlocks.add(Material.STRUCTURE_BLOCK);
-        immuneBlocks.add(Material.BARRIER);
-        immuneBlocks.add(Material.REPEATING_COMMAND_BLOCK);
-        immuneBlocks.add(Material.CHAIN_COMMAND_BLOCK);
-        immuneBlocks.add(Material.COMMAND_BLOCK);
-        immuneBlocks.add(Material.BEDROCK);
     }
 
     private void setCollisions() {
@@ -141,7 +121,6 @@ public class Combustion extends CombustionAbility implements SubAbility {
     }
 
     private void chargeAnimation() {
-        chargeI++;
         location = player.getEyeLocation().add(player.getEyeLocation().getDirection().multiply(0.3)).add(0, 0.1, 0);
         long maxDifference = (this.getStartTime() + chargeDuration) - System.currentTimeMillis();
         long difference = Math.abs(System.currentTimeMillis() - this.getStartTime());
@@ -151,7 +130,7 @@ public class Combustion extends CombustionAbility implements SubAbility {
         }
         if (this.getStartTime() + chargeDuration > System.currentTimeMillis()) {
             GeneralMethods.displayColoredParticle(getHexColor(difference, maxDifference), location);
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, (float) increasing, (float) increasing + new Random().nextFloat(-0.2f, 0));
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, (float) increasing, (float) increasing + ThreadLocalRandom.current().nextFloat(-0.2f, 0));
         } else {
             location.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, location, 1, 0, 0, 0, 0, null, true);
         }
@@ -189,17 +168,14 @@ public class Combustion extends CombustionAbility implements SubAbility {
                 bPlayer.addCooldown(this);
                 return;
             }
-            if (location.getBlock().getType() == Material.AIR) {
-                new TempBlock(location.getBlock(), Material.LIGHT.createBlockData(), 250);
-            }
-
+            LightManager.createLight(location).brightness(15).timeUntilFadeout(500).emit();
             location.getWorld().spawnParticle(Particle.FLAME, location, 3, 0, 0, 0, 0.01, null, true);
-
             for (Location points : spawnCircle(location, location.getDirection(), 0.25, 15)) {
                 points.getWorld().spawnParticle(Particle.SMOKE_NORMAL, points, 1, 0, 0, 0, 0, null, true);
             }
             for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
-                if (entity instanceof LivingEntity && entity != player) {
+
+                if (entity instanceof LivingEntity && entity != player && !RegionProtection.isRegionProtected(player, location, this) && !entity.isInvulnerable()) {
                     explode(location, false, true, entity);
                     remove();
                     bPlayer.addCooldown(this);
@@ -226,11 +202,15 @@ public class Combustion extends CombustionAbility implements SubAbility {
     }
 
     private void explode(Location explosion, boolean isWater, boolean isEntity, @Nullable Entity entity) {
+        if (RegionProtection.isRegionProtected(player, explosion, this)) {
+            return;
+        }
+
         if (!isWater) {
             for (Block block : GeneralMethods.getBlocksAroundPoint(explosion, explosionRadius)) {
                 if (block.getType().getBlastResistance() < 10 && block.getType() != Material.AIR) {
                     if (!block.isPassable()) {
-                        new TempFallingBlock(block.getLocation(), block.getBlockData(), new Vector(new Random().nextDouble(-0.7, 0.7), new Random().nextDouble(0.3, 0.7), new Random().nextDouble(-0.7, 0.7)), this);
+                        new TempFallingBlock(block.getLocation(), block.getBlockData(), new Vector(ThreadLocalRandom.current().nextDouble(-0.7, 0.7), ThreadLocalRandom.current().nextDouble(0.3, 0.7), ThreadLocalRandom.current().nextDouble(-0.7, 0.7)), this);
                     }
                     new TempBlock(block, Material.AIR.createBlockData(), explosionRevertTime, this);
                     explosion.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, block.getLocation(), 1, 1.5, 1.5, 1.5, 0, null, true);
@@ -243,11 +223,12 @@ public class Combustion extends CombustionAbility implements SubAbility {
 
         for (Entity entities : GeneralMethods.getEntitiesAroundPoint(explosion, explosionRadius)) {
             if (entities instanceof LivingEntity) {
-                if (entities.getLocation().getBlock().getType() == Material.WATER) {
-                    DamageHandler.damageEntity(entities, waterDamage, this);
-                } else {
-                    DamageHandler.damageEntity(entities, damage, this);
-
+                if (!entities.isInvulnerable() && !RegionProtection.isRegionProtected(player, entities.getLocation(), this)) {
+                    if (entities.getLocation().getBlock().getType() == Material.WATER) {
+                        DamageHandler.damageEntity(entities, waterDamage, this);
+                    } else {
+                        DamageHandler.damageEntity(entities, damage, this);
+                    }
                 }
             }
         }
@@ -262,10 +243,10 @@ public class Combustion extends CombustionAbility implements SubAbility {
             }
 
             for (int i = 0; i <= explosionRadius * 50; i++) {
-                double randomX = explosion.getX() + new Random().nextDouble(explosionRadius * -1, explosionRadius);
-                double randomY = explosion.getY() + new Random().nextDouble(-1, 1);
-                double randomZ = explosion.getZ() + new Random().nextDouble(explosionRadius * -1, explosionRadius);
-                explosion.getWorld().spawnParticle(Particle.CLOUD, randomX, randomY, randomZ, 0, 0, 1.6 + new Random().nextDouble(0, 1), 0, 0.1, null, true);
+                double randomX = explosion.getX() + ThreadLocalRandom.current().nextDouble(explosionRadius * -1, explosionRadius);
+                double randomY = explosion.getY() + ThreadLocalRandom.current().nextDouble(-1, 1);
+                double randomZ = explosion.getZ() + ThreadLocalRandom.current().nextDouble(explosionRadius * -1, explosionRadius);
+                explosion.getWorld().spawnParticle(Particle.CLOUD, randomX, randomY, randomZ, 0, 0, 1.6 + ThreadLocalRandom.current().nextDouble(0, 1), 0, 0.1, null, true);
             }
             explosion.getWorld().playSound(explosion, Sound.ENTITY_FISHING_BOBBER_SPLASH, 3, 0.7F);
             explosion.getWorld().playSound(explosion, Sound.BLOCK_WATER_AMBIENT, 3, 0.3F);
@@ -276,8 +257,7 @@ public class Combustion extends CombustionAbility implements SubAbility {
             }
         }
         if (isEntity) {
-            assert entity != null;
-            entity.setFireTicks(burnTime / 50);
+            if (entity != null) entity.setFireTicks((burnTime / 1000) * 20);
         }
     }
 
@@ -314,11 +294,13 @@ public class Combustion extends CombustionAbility implements SubAbility {
 
         return locations;
     }
+
     private Vector rotateAroundX(Vector v, double angle) {
         double y = v.getY() * Math.cos(angle) - v.getZ() * Math.sin(angle);
         double z = v.getY() * Math.sin(angle) + v.getZ() * Math.cos(angle);
         return new Vector(v.getX(), y, z);
     }
+
     private Vector rotateAroundY(Vector v, double angle) {
         double x = v.getX() * Math.cos(angle) + v.getZ() * Math.sin(angle);
         double z = -v.getX() * Math.sin(angle) + v.getZ() * Math.cos(angle);
@@ -333,29 +315,26 @@ public class Combustion extends CombustionAbility implements SubAbility {
             return;
         }
         if (!thrown && punishPlayer) {
-            if (damaged.get(player) != null) {
+            if (damaged) {
                 explode(player.getLocation(), false, true, player);
                 remove();
                 bPlayer.addCooldown(this);
-                damaged.remove(player);
+                damaged = false;
                 return;
             }
         }
         if (thrown) {
             releaseCombustion();
             setCollisions();
-            if (clicked.get(player) != null) {
-
+            if (clicked) {
                 explode(location, false, false, null);
                 remove();
                 bPlayer.addCooldown(this);
-                damaged.remove(player);
+                damaged = false;
                 return;
             }
         } else {
-            if (clicked.get(player) != null) {
-                clicked.remove(player);
-            }
+            clicked = false;
         }
 
         if (needCharge && !player.isSneaking() && !thrown) {
@@ -424,8 +403,12 @@ public class Combustion extends CombustionAbility implements SubAbility {
         return location;
     }
 
-    public static void explode(Player player) {
-        clicked.put(player, true);
+    public void click() {
+        clicked = true;
+    }
+
+    public void damage() {
+        damaged = true;
     }
 
 }

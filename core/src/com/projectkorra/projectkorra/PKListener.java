@@ -992,6 +992,10 @@ public class PKListener implements Listener {
 			if (hc != null && bPlayer.hasElement(Element.FIRE) && bPlayer.canBendPassive(hc) && bPlayer.canUsePassive(hc) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 				event.setCancelled(!HeatControl.canBurn(player));
 			}
+            if(CoreAbility.hasAbility(player, Combustion.class)){
+                Combustion combustion = CoreAbility.getAbility(player, Combustion.class);
+                combustion.damage();
+            }
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.SUFFOCATION && TempBlock.isTempBlock(player.getEyeLocation().getBlock())) {
 				event.setDamage(0D);
@@ -1936,7 +1940,9 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("WallOfFire")) {
 						new WallOfFire(player);
 					} else if (abil.equalsIgnoreCase("Combustion")) {
-						Combustion.explode(player);
+                        if(CoreAbility.getAbility(player, Combustion.class) != null){
+                            CoreAbility.getAbility(player, Combustion.class).click();
+                        }
 					} else if (abil.equalsIgnoreCase("FireManipulation")) {
 						if (CoreAbility.hasAbility(player, FireManipulation.class)) {
 							final FireManipulation fireManip = CoreAbility.getAbility(player, FireManipulation.class);
