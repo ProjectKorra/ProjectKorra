@@ -51,11 +51,16 @@ public class PresetCommand extends PKCommand {
 	private final String cantEditBinds;
 	private final String playerNotFound;
 	private final String invalidName;
+	private final String exportFailed;
 	private final String exportSuccess;
 	private final String importSuccess;
 	private final String importFailed;
 	private final String exportHoverCode;
 	private final String exportHoverCommand;
+	private final String exportCommandButton;
+	private final String exportCodeButton;
+	private final String exportNotSpecified;
+	private final String importNotSpecified;
 
 	public PresetCommand() {
 		super("preset", "/bending preset <Bind/Create/Delete/List/Export/Import> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
@@ -78,10 +83,15 @@ public class PresetCommand extends PKCommand {
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound");
 		this.invalidName = ConfigManager.languageConfig.get().getString("Commands.Preset.InvalidName");
 		this.exportSuccess = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportSuccess");
+		this.exportFailed = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportFailed");
 		this.importSuccess = ConfigManager.languageConfig.get().getString("Commands.Preset.ImportSuccess");
 		this.importFailed = ConfigManager.languageConfig.get().getString("Commands.Preset.ImportFailed");
-		this.exportHoverCode = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportHoverCode");
-		this.exportHoverCommand = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportHoverCommand");
+		this.exportHoverCode = ConfigManager.languageConfig.get().getString("Commands.Preset.HoverCode");
+		this.exportHoverCommand = ConfigManager.languageConfig.get().getString("Commands.Preset.HoverCommand");
+		this.exportCommandButton = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportCommandButton");
+		this.exportCodeButton = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportCodeButton");
+		this.exportNotSpecified = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportNotSpecified");
+		this.importNotSpecified = ConfigManager.languageConfig.get().getString("Commands.Preset.ImportNotSpecified");
 	}
 
 	@Override
@@ -291,7 +301,7 @@ public class PresetCommand extends PKCommand {
 			Player player = (Player) sender;
 
 			if (args.size() < 2) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + "Please specify a preset name to export.");
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.exportNotSpecified);
 				return;
 			}
 
@@ -308,7 +318,7 @@ public class PresetCommand extends PKCommand {
 						.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN)
 						.replace("{code}", ChatColor.AQUA + exportCode + ChatColor.GREEN);
 				ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + message);
-				TextComponent copyComponent = new TextComponent("[ Click to Copy Code ]");
+				TextComponent copyComponent = new TextComponent(this.exportCodeButton);
 				copyComponent.setColor(ChatColor.AQUA.asBungee());
 				copyComponent.setClickEvent(new ClickEvent(
 						ClickEvent.Action.COPY_TO_CLIPBOARD, exportCode));
@@ -316,7 +326,7 @@ public class PresetCommand extends PKCommand {
 						HoverEvent.Action.SHOW_TEXT,
 						new ComponentBuilder(this.exportHoverCode.replace("{code}", exportCode)).color(ChatColor.YELLOW.asBungee()).create()));
 				ChatUtil.sendBrandingMessage(sender, copyComponent);
-				TextComponent copyImportComponent = new TextComponent("[ Click to Copy Import Command ]");
+				TextComponent copyImportComponent = new TextComponent(this.exportCommandButton);
 				copyImportComponent.setColor(ChatColor.AQUA.asBungee());
 				copyImportComponent.setClickEvent(new ClickEvent(
 						ClickEvent.Action.COPY_TO_CLIPBOARD, "/bending preset import " + exportCode));
@@ -325,7 +335,7 @@ public class PresetCommand extends PKCommand {
 						new ComponentBuilder(this.exportHoverCommand).color(ChatColor.YELLOW.asBungee()).create()));
 				ChatUtil.sendBrandingMessage(sender, copyImportComponent);
 			} else {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + "Failed to export preset.");
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.exportFailed);
 			}
 		}
 		else if (Arrays.asList(importaliases).contains(args.get(0)) && this.hasPermission(sender, "import")) { // bending preset import key.
@@ -333,7 +343,7 @@ public class PresetCommand extends PKCommand {
 			Player player = (Player) sender;
 
 			if (args.size() < 2) {
-				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + "Please provide an import code.");
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.importNotSpecified);
 				return;
 			}
 
