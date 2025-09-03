@@ -366,6 +366,8 @@ public class PresetCommand extends PKCommand {
 			l.add("delete");
 			l.add("list");
 			l.add("bind");
+			l.add("import");
+			l.add("export");
 			return l;
 		} else if (args.size() <= 1 && (Arrays.asList(new String[] { "delete", "d", "del", "bind", "b" }).contains(args.get(0).toLowerCase()))) {
 			final List<Preset> presets = Preset.presets.get(((Player) sender).getUniqueId());

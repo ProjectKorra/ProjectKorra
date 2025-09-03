@@ -63,6 +63,8 @@ permissions:
       bending.command.preset.create: true
       bending.command.preset.bind: true
       bending.command.preset.delete: true
+      bending.command.preset.export: true
+      bending.command.preset.import: true
       bending.air: true
       bending.water: true
       bending.earth: true
