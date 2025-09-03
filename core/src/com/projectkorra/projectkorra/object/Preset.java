@@ -1,25 +1,31 @@
 package com.projectkorra.projectkorra.object;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.board.BendingBoardManager;
-import com.projectkorra.projectkorra.command.PresetCommand;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.ChatUtil;
-import org.bukkit.ChatColor;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Base64;
+import java.io.UnsupportedEncodingException;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.UnsupportedEncodingException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.board.BendingBoardManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.storage.DBConnection;
+import net.md_5.bungee.api.ChatColor;
+import com.projectkorra.projectkorra.command.PresetCommand;
+import com.projectkorra.projectkorra.util.ChatUtil;
 
 /**
  * A savable association of abilities and hotbar slots, stored per player.
@@ -377,6 +383,11 @@ public class Preset {
 					try {
 						int slot = Integer.parseInt(bindData[0]);
 						if (slot >= 1 && slot <= 9) {
+							final CoreAbility coreAbil = CoreAbility.getAbility(bindData[1]);
+							if (coreAbil == null || !coreAbil.isEnabled()) {
+								ChatUtil.sendBrandingMessage(player, org.bukkit.ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.ImportAbilityNotFound").replace("{ability}", bindData[1]));
+								continue;
+							}
 							abilities.put(slot, bindData[1]);
 						}
 					} catch (NumberFormatException e) {

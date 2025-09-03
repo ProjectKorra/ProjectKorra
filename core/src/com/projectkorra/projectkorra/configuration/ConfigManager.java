@@ -9,7 +9,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ConfigManager {
 
@@ -185,10 +191,13 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Other.BendingPermanentlyRemoved", "That player's bending was permanently removed.");
 			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
 			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
-			config.addDefault("Commands.Preset.External.ExportSuccess", "Preset {name} exported. Copy this code to share: {code}");
-			config.addDefault("Commands.Preset.External.ImportSuccess", "Successfully imported preset {name}");
-			config.addDefault("Commands.Preset.External.ImportFailed", "Failed to import preset. The code may be invalid or corrupted.");
-			config.addDefault("Commands.Preset.External.ImportExists", "A preset with that name already exists. Delete it first or use a different import code.");
+			config.addDefault("Commands.Preset.ExportSuccess", "Preset {name} exported. Copy this code to share: {code}");
+			config.addDefault("Commands.Preset.ImportSuccess", "Successfully imported preset {name}");
+			config.addDefault("Commands.Preset.ImportFailed", "Failed to import preset. The code may be invalid or corrupted.");
+			config.addDefault("Commands.Preset.ImportExists", "A preset with that name already exists. Delete it first or use a different import code.");
+			config.addDefault("Commands.Preset.ImportAbilityNotFound", "{ability} could not be bound, because it is not available on this server, or due to insufficient permissions.");
+			config.addDefault("Commands.Preset.ExportHoverCommand", "Click to copy the command to import your preset to your clipboard!");
+			config.addDefault("Commands.Preset.ExportHoverCode", "Copy code to clipboard;\n Code: {code}");
 
 			config.addDefault("Commands.Cooldown.Description", "Set, reset or view a cooldown for a player");
 			config.addDefault("Commands.Cooldown.InvalidPlayer", "That player has not played before!");

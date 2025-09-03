@@ -54,6 +54,8 @@ public class PresetCommand extends PKCommand {
 	private final String exportSuccess;
 	private final String importSuccess;
 	private final String importFailed;
+	private final String exportHoverCode;
+	private final String exportHoverCommand;
 
 	public PresetCommand() {
 		super("preset", "/bending preset <Bind/Create/Delete/List/Export/Import> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
@@ -78,6 +80,8 @@ public class PresetCommand extends PKCommand {
 		this.exportSuccess = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportSuccess");
 		this.importSuccess = ConfigManager.languageConfig.get().getString("Commands.Preset.ImportSuccess");
 		this.importFailed = ConfigManager.languageConfig.get().getString("Commands.Preset.ImportFailed");
+		this.exportHoverCode = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportHoverCode");
+		this.exportHoverCommand = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportHoverCommand");
 	}
 
 	@Override
@@ -304,15 +308,22 @@ public class PresetCommand extends PKCommand {
 						.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN)
 						.replace("{code}", ChatColor.AQUA + exportCode + ChatColor.GREEN);
 				ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + message);
-				TextComponent copyComponent = new TextComponent("[ Click to Copy ]");
+				TextComponent copyComponent = new TextComponent("[ Click to Copy Code ]");
 				copyComponent.setColor(ChatColor.AQUA.asBungee());
-				copyComponent.setBold(true);
 				copyComponent.setClickEvent(new ClickEvent(
 						ClickEvent.Action.COPY_TO_CLIPBOARD, exportCode));
 				copyComponent.setHoverEvent(new HoverEvent(
 						HoverEvent.Action.SHOW_TEXT,
-						new ComponentBuilder("Copy code to clipboard").color(ChatColor.YELLOW.asBungee()).create()));
+						new ComponentBuilder(this.exportHoverCode.replace("{code}", exportCode)).color(ChatColor.YELLOW.asBungee()).create()));
 				ChatUtil.sendBrandingMessage(sender, copyComponent);
+				TextComponent copyImportComponent = new TextComponent("[ Click to Copy Import Command ]");
+				copyImportComponent.setColor(ChatColor.AQUA.asBungee());
+				copyImportComponent.setClickEvent(new ClickEvent(
+						ClickEvent.Action.COPY_TO_CLIPBOARD, "/bending preset import " + exportCode));
+				copyImportComponent.setHoverEvent(new HoverEvent(
+						HoverEvent.Action.SHOW_TEXT,
+						new ComponentBuilder(this.exportHoverCommand).color(ChatColor.YELLOW.asBungee()).create()));
+				ChatUtil.sendBrandingMessage(sender, copyImportComponent);
 			} else {
 				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + "Failed to export preset.");
 			}
@@ -369,7 +380,7 @@ public class PresetCommand extends PKCommand {
 			l.add("import");
 			l.add("export");
 			return l;
-		} else if (args.size() <= 1 && (Arrays.asList(new String[] { "delete", "d", "del", "bind", "b" }).contains(args.get(0).toLowerCase()))) {
+		} else if (args.size() <= 1 && (Arrays.asList(new String[] { "delete", "d", "del", "bind", "b", "e", "export", "share" }).contains(args.get(0).toLowerCase()))) {
 			final List<Preset> presets = Preset.presets.get(((Player) sender).getUniqueId());
 			final List<String> presetNames = new ArrayList<>();
 			if (presets != null && presets.size() != 0) {
