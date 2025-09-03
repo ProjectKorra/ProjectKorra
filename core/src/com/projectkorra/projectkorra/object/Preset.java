@@ -1,26 +1,25 @@
 package com.projectkorra.projectkorra.object;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.board.BendingBoardManager;
+import com.projectkorra.projectkorra.command.PresetCommand;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.ChatUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.UnsupportedEncodingException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A savable association of abilities and hotbar slots, stored per player.
@@ -321,6 +320,78 @@ public class Preset {
 			}
 		}.runTaskAsynchronously(ProjectKorra.plugin);
 		return future;
+	}
+
+	/**
+	 * Converts a preset to an encoded string that can be shared and imported
+	 * @return Base64 encoded string representation of the preset
+	 */
+	public String exportToString() {
+		StringBuilder data = new StringBuilder();
+		data.append(name).append(":");
+
+		for (int i = 1; i <= 9; i++) {
+			if (abilities.containsKey(i) && abilities.get(i) != null) {
+				data.append(i).append(",").append(abilities.get(i)).append(";");
+			}
+		}
+
+		try {
+			return Base64.getEncoder().encodeToString(data.toString().getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * Creates a preset from an encoded string
+	 * @param player The player who will own this preset
+	 * @param encodedString The encoded preset data
+	 * @return The created Preset or null if invalid
+	 */
+	public static Preset importFromString(Player player, String encodedString) {
+		try {
+			String decodedString = new String(Base64.getDecoder().decode(encodedString), "UTF-8");
+			String[] parts = decodedString.split(":", 2);
+			if (parts.length != 2) {
+				return null;
+			}
+			String presetName = parts[0];
+			if (Preset.presetExists(player, presetName)) {
+				ChatUtil.sendBrandingMessage(player, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.ImportExists"));
+				return null;
+			}
+			if (presetName.matches(PresetCommand.INVALID_NAME) || presetName.isEmpty()) {
+				return null;
+			}
+
+			HashMap<Integer, String> abilities = new HashMap<>();
+			String[] bindParts = parts[1].split(";");
+
+			for (String bindPart : bindParts) {
+				if (bindPart.isEmpty()) continue;
+
+				String[] bindData = bindPart.split(",", 2);
+				if (bindData.length == 2) {
+					try {
+						int slot = Integer.parseInt(bindData[0]);
+						if (slot >= 1 && slot <= 9) {
+							abilities.put(slot, bindData[1]);
+						}
+					} catch (NumberFormatException e) {
+						// Skip invalid slot
+					}
+				}
+			}
+			if (abilities.isEmpty()) {
+				return null;
+			}
+			return new Preset(player.getUniqueId(), presetName, abilities);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public HashMap<Integer, String> getAbilities() {

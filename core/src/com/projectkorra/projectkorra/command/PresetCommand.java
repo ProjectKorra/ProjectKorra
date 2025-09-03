@@ -1,22 +1,24 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import com.projectkorra.projectkorra.util.ChatUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.util.ChatUtil;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Executor for /bending preset. Extends {@link PKCommand}.
@@ -27,6 +29,8 @@ public class PresetCommand extends PKCommand {
 	private static final String[] deletealiases = { "delete", "d", "del" };
 	private static final String[] listaliases = { "list", "l" };
 	private static final String[] bindaliases = { "bind", "b" };
+	private static final String[] exportaliases = { "export", "e", "share" };
+	private static final String[] importaliases = { "import", "i", "load" };
 
 	public static final String INVALID_NAME = ".*[.,;:*'\"?=`<>+\\-\\[\\]{}^@!#$/\\\\%&()].*";
 
@@ -47,9 +51,12 @@ public class PresetCommand extends PKCommand {
 	private final String cantEditBinds;
 	private final String playerNotFound;
 	private final String invalidName;
+	private final String exportSuccess;
+	private final String importSuccess;
+	private final String importFailed;
 
 	public PresetCommand() {
-		super("preset", "/bending preset <Bind/Create/Delete/List> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
+		super("preset", "/bending preset <Bind/Create/Delete/List/Export/Import> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
 
 		this.noPresets = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresets");
 		this.noPresetName = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresetName");
@@ -68,6 +75,9 @@ public class PresetCommand extends PKCommand {
 		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Preset.CantEditBinds");
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound");
 		this.invalidName = ConfigManager.languageConfig.get().getString("Commands.Preset.InvalidName");
+		this.exportSuccess = ConfigManager.languageConfig.get().getString("Commands.Preset.ExportSuccess");
+		this.importSuccess = ConfigManager.languageConfig.get().getString("Commands.Preset.ImportSuccess");
+		this.importFailed = ConfigManager.languageConfig.get().getString("Commands.Preset.ImportFailed");
 	}
 
 	@Override
@@ -272,7 +282,74 @@ public class PresetCommand extends PKCommand {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.databaseError.replace("{name}", ChatColor.YELLOW + finalName + ChatColor.RED));
 				}
 			});
+		} else if (Arrays.asList(exportaliases).contains(args.get(0)) && this.hasPermission(sender, "export")) { // bending preset export name.
+			if (!isPlayer(sender)) return;
+			Player player = (Player) sender;
 
+			if (args.size() < 2) {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + "Please specify a preset name to export.");
+				return;
+			}
+
+			name = args.get(1);
+			if (!Preset.presetExists(player, name)) {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.noPresetName);
+				return;
+			}
+
+			Preset preset = Preset.getPreset(player, name);
+			String exportCode = preset.exportToString();
+			if (exportCode != null) {
+				String message = this.exportSuccess
+						.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN)
+						.replace("{code}", ChatColor.AQUA + exportCode + ChatColor.GREEN);
+				ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + message);
+				TextComponent copyComponent = new TextComponent("[ Click to Copy ]");
+				copyComponent.setColor(ChatColor.AQUA.asBungee());
+				copyComponent.setBold(true);
+				copyComponent.setClickEvent(new ClickEvent(
+						ClickEvent.Action.COPY_TO_CLIPBOARD, exportCode));
+				copyComponent.setHoverEvent(new HoverEvent(
+						HoverEvent.Action.SHOW_TEXT,
+						new ComponentBuilder("Copy code to clipboard").color(ChatColor.YELLOW.asBungee()).create()));
+				ChatUtil.sendBrandingMessage(sender, copyComponent);
+			} else {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + "Failed to export preset.");
+			}
+		}
+		else if (Arrays.asList(importaliases).contains(args.get(0)) && this.hasPermission(sender, "import")) { // bending preset import key.
+			if (!isPlayer(sender)) return;
+			Player player = (Player) sender;
+
+			if (args.size() < 2) {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + "Please provide an import code.");
+				return;
+			}
+
+			String importCode = args.get(1);
+			Preset importedPreset = Preset.importFromString(player, importCode);
+
+			if (importedPreset == null) {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.importFailed);
+				return;
+			}
+
+			int limit = GeneralMethods.getMaxPresets(player);
+			if (Preset.presets.get(player.getUniqueId()) != null &&
+					Preset.presets.get(player.getUniqueId()).size() >= limit) {
+				ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.reachedMax);
+				return;
+			}
+
+			importedPreset.save(player).thenAccept(b -> {
+				if (b) {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.GREEN + this.importSuccess
+							.replace("{name}", ChatColor.YELLOW + importedPreset.getName() + ChatColor.GREEN));
+				} else {
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.databaseError
+							.replace("{name}", ChatColor.YELLOW + importedPreset.getName() + ChatColor.RED));
+				}
+			});
 		} else {
 			this.help(sender, false);
 		}

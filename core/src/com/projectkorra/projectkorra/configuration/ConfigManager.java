@@ -1,23 +1,15 @@
 package com.projectkorra.projectkorra.configuration;
 
-import com.google.common.collect.Sets;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ConfigManager {
 
@@ -193,6 +185,10 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Other.BendingPermanentlyRemoved", "That player's bending was permanently removed.");
 			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
 			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
+			config.addDefault("Commands.Preset.External.ExportSuccess", "Preset {name} exported. Copy this code to share: {code}");
+			config.addDefault("Commands.Preset.External.ImportSuccess", "Successfully imported preset {name}");
+			config.addDefault("Commands.Preset.External.ImportFailed", "Failed to import preset. The code may be invalid or corrupted.");
+			config.addDefault("Commands.Preset.External.ImportExists", "A preset with that name already exists. Delete it first or use a different import code.");
 
 			config.addDefault("Commands.Cooldown.Description", "Set, reset or view a cooldown for a player");
 			config.addDefault("Commands.Cooldown.InvalidPlayer", "That player has not played before!");
