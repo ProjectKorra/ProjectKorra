@@ -624,6 +624,7 @@ public class SurgeWave extends WaterAbility {
 		this.maxFreezeRadius = maxFreezeRadius;
 	}
 
+	@Override
 	public Block getSourceBlock() {
 		return this.sourceBlock;
 	}
