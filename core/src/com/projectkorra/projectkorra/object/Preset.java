@@ -1,5 +1,9 @@
 package com.projectkorra.projectkorra.object;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +15,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Base64;
-import java.io.UnsupportedEncodingException;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -333,8 +338,7 @@ public class Preset {
 	 * @return Base64 encoded string representation of the preset
 	 */
 	public String exportToString() {
-		StringBuilder data = new StringBuilder();
-		data.append(name).append(":");
+		StringBuilder data = new StringBuilder(name).append(":");
 
 		for (int i = 1; i <= 9; i++) {
 			if (abilities.containsKey(i) && abilities.get(i) != null) {
@@ -342,9 +346,14 @@ public class Preset {
 			}
 		}
 
-		try {
-			return Base64.getEncoder().encodeToString(data.toString().getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
+		try (
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				DeflaterOutputStream dos = new DeflaterOutputStream(bos)
+		) {
+			dos.write(data.toString().getBytes(StandardCharsets.UTF_8));
+			dos.close();
+			return Base64.getEncoder().encodeToString(bos.toByteArray());
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -357,8 +366,18 @@ public class Preset {
 	 * @return The created Preset or null if invalid
 	 */
 	public static Preset importFromString(Player player, String encodedString) {
-		try {
-			String decodedString = new String(Base64.getDecoder().decode(encodedString), "UTF-8");
+		try (
+				ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(encodedString));
+				InflaterInputStream iis = new InflaterInputStream(bis);
+				ByteArrayOutputStream bos = new ByteArrayOutputStream()
+		) {
+			byte[] buffer = new byte[1024];
+			int len;
+			while ((len = iis.read(buffer)) != -1) {
+				bos.write(buffer, 0, len);
+			}
+
+			String decodedString = bos.toString(StandardCharsets.UTF_8);
 			String[] parts = decodedString.split(":", 2);
 			if (parts.length != 2) {
 				return null;
