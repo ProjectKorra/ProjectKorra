@@ -378,6 +378,10 @@ public class WaterArmsWhip extends WaterAbility {
 		}
 	}
 
+	public static void checkValidEntities() {
+		GRABBED_ENTITIES.entrySet().removeIf(entry -> entry.getValue().isRemoved() || entry.getValue().grabbedEntity == null);
+	}
+
 	@Override
 	public void remove() {
 		super.remove();
@@ -396,11 +400,10 @@ public class WaterArmsWhip extends WaterAbility {
 
 			this.waterArms.setMaxUses(this.waterArms.getMaxUses() - 1);
 		}
+	}
 
-		if (this.grabbedEntity != null) {
-			GRABBED_ENTITIES.remove(this.grabbedEntity);
-			this.grabbedEntity = null;
-		}
+	public static void progressAllCleanup() {
+		checkValidEntities();
 	}
 
 	public static void removeAllCleanup() {

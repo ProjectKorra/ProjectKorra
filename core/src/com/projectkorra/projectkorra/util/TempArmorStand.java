@@ -36,11 +36,11 @@ public class TempArmorStand {
 	 */
 	public static void removeAll() {
 		for (final TempArmorStand temp : tempStands) {
-			ThreadUtil.ensureEntity(temp.getArmorStand(), () -> temp.getArmorStand().remove());
+			temp.getArmorStand().remove();
 		}
 		tempStands.clear();
 	}
-	
+
 	public static Set<TempArmorStand> getTempStands() {
 		return tempStands;
 	}

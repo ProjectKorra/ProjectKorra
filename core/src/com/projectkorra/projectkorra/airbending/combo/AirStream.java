@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -37,11 +37,13 @@ public class AirStream extends AirAbility implements ComboAbility {
 	private Location destination;
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
+	private ArrayList<BukkitRunnable> tasks;
 
 	public AirStream(final Player player) {
 		super(player);
 
 		this.affectedEntities = new ArrayList<>();
+		this.tasks = new ArrayList<>();
 
 		if (!this.bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
@@ -127,16 +129,20 @@ public class AirStream extends AirAbility implements ComboAbility {
 		}
 
 		for (int i = 0; i < 10; i++) {
-			final Location loc = AirStream.this.currentLoc.clone();
-			final Vector dir = AirStream.this.direction.clone();
-			final Runnable runnable = () -> {
-				if (AirStream.this.isRemoved()) return;
-				for (int angle = -180; angle <= 180; angle += 45) {
-					final Vector orthog = GeneralMethods.getOrthogonalVector(dir.clone(), angle, 0.5);
-					playAirbendingParticles(loc.clone().add(orthog), 1, 0F, 0F, 0F);
+			final BukkitRunnable br = new BukkitRunnable() {
+				final Location loc = AirStream.this.currentLoc.clone();
+				final Vector dir = AirStream.this.direction.clone();
+
+				@Override
+				public void run() {
+					for (int angle = -180; angle <= 180; angle += 45) {
+						final Vector orthog = GeneralMethods.getOrthogonalVector(this.dir.clone(), angle, 0.5);
+						playAirbendingParticles(this.loc.clone().add(orthog), 1, 0F, 0F, 0F);
+					}
 				}
 			};
-			ThreadUtil.ensureLocationDelay(loc, runnable, i * 2);
+			br.runTaskLater(ProjectKorra.plugin, i * 2);
+			this.tasks.add(br);
 		}
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.currentLoc, 2.8)) {
@@ -156,6 +162,14 @@ public class AirStream extends AirAbility implements ComboAbility {
 			final Vector force = GeneralMethods.getDirection(entity.getLocation(), this.currentLoc);
 			GeneralMethods.setVelocity(this, entity, force.clone().normalize().multiply(this.speed));
 			entity.setFallDistance(0F);
+		}
+	}
+
+	@Override
+	public void remove() {
+		super.remove();
+		for (final BukkitRunnable task : this.tasks) {
+			task.cancel();
 		}
 	}
 
@@ -263,6 +277,14 @@ public class AirStream extends AirAbility implements ComboAbility {
 
 	public ArrayList<Entity> getAffectedEntities() {
 		return this.affectedEntities;
+	}
+
+	public ArrayList<BukkitRunnable> getTasks() {
+		return this.tasks;
+	}
+
+	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
+		this.tasks = tasks;
 	}
 
 	public void setCooldown(final long cooldown) {

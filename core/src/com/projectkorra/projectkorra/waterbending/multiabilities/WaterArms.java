@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending.multiabilities;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -15,7 +14,6 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip.Whip;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
@@ -373,7 +371,7 @@ public class WaterArms extends WaterAbility {
 			final long time = WaterArmsSpear.getIceBlocks().get(block);
 			if (System.currentTimeMillis() > time || ignoreTime) {
 				if (TempBlock.isTempBlock(block)) {
-					ThreadUtil.ensureLocation(block.getLocation(), () -> TempBlock.revertBlock(block, Material.AIR));
+					TempBlock.revertBlock(block, Material.AIR);
 				}
 				WaterArmsSpear.getIceBlocks().remove(block);
 			}
@@ -432,18 +430,17 @@ public class WaterArms extends WaterAbility {
 
 	public static void progressAllCleanup() {
 		progressRevert(false);
-
 		/*
 		 * There is currently a bug where waterArms will display the arms and
 		 * then progressRevert will revert the same blocks in the same tick
 		 * before the user is able to see them, thus causing invisible arms.
 		 * Simple fix is just to display the arms again.
 		 */
-		if (ProjectKorra.isFolia()) return; //TODO The following code is NOT thread safe, so don't run it for now.
 		for (final WaterArms waterArms : getAbilities(WaterArms.class)) {
 			waterArms.displayLeftArm();
 			waterArms.displayRightArm();
 		}
+		WaterArmsWhip.progressAllCleanup();
 	}
 
 	public static void removeAllCleanup() {

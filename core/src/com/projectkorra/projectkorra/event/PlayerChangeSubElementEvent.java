@@ -36,7 +36,7 @@ public class PlayerChangeSubElementEvent extends Event implements Cancellable {
 	 *            permaremoved
 	 */
 	public PlayerChangeSubElementEvent(final CommandSender sender, final OfflinePlayer target, final SubElement sub, final Result result) {
-		super(!Bukkit.isPrimaryThread() && !ProjectKorra.isFolia());
+		super(!Bukkit.isPrimaryThread());
 		this.sender = sender;
 		this.target = target;
 		this.sub = sub;

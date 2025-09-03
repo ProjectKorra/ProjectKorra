@@ -11,9 +11,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -80,34 +80,37 @@ public class Preset {
 	 * @param player The Player who's Presets should be loaded
 	 */
 	public static void loadPresets(final Player player) {
-		ThreadUtil.runAsync(() -> {
-			final UUID uuid = player.getUniqueId();
-			if (uuid == null) {
-				return;
-			}
-			try {
-				final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery);
-				ps.setString(1, uuid.toString());
-				final ResultSet rs = ps.executeQuery();
-				if (rs.next()) { // Presets exist.
-					int i = 0;
-					do {
-						final HashMap<Integer, String> moves = new HashMap<Integer, String>();
-						for (int total = 1; total <= 9; total++) {
-							final String slot = rs.getString("slot" + total);
-							if (slot != null) {
-								moves.put(total, slot);
-							}
-						}
-						new Preset(uuid, rs.getString("name"), moves);
-						i++;
-					} while (rs.next());
-					ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				final UUID uuid = player.getUniqueId();
+				if (uuid == null) {
+					return;
 				}
-			} catch (final SQLException ex) {
-				ex.printStackTrace();
+				try {
+					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery);
+					ps.setString(1, uuid.toString());
+					final ResultSet rs = ps.executeQuery();
+					if (rs.next()) { // Presets exist.
+						int i = 0;
+						do {
+							final HashMap<Integer, String> moves = new HashMap<Integer, String>();
+							for (int total = 1; total <= 9; total++) {
+								final String slot = rs.getString("slot" + total);
+								if (slot != null) {
+									moves.put(total, slot);
+								}
+							}
+							new Preset(uuid, rs.getString("name"), moves);
+							i++;
+						} while (rs.next());
+						ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
+					}
+				} catch (final SQLException ex) {
+					ex.printStackTrace();
+				}
 			}
-		});
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
 
 	/**
@@ -266,19 +269,22 @@ public class Preset {
 	public CompletableFuture<Boolean> delete() {
 		Preset instance = this;
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
-		ThreadUtil.runAsync(() -> {
-			try {
-				final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
-				ps.setString(1, uuid.toString());
-				ps.setString(2, name);
-				ps.execute();
-				presets.get(uuid).remove(instance);
-				future.complete(true);
-			} catch (final SQLException e) {
-				e.printStackTrace();
-				future.complete(false);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					final PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
+					ps.setString(1, uuid.toString());
+					ps.setString(2, name);
+					ps.execute();
+					presets.get(uuid).remove(instance);
+					future.complete(true);
+				} catch (final SQLException e) {
+					e.printStackTrace();
+					future.complete(false);
+				}
 			}
-		});
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 		return future;
 	}
 
@@ -296,22 +302,24 @@ public class Preset {
 	 */
 	public CompletableFuture<Boolean> save(final Player player) {
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
-		ThreadUtil.runAsync(() -> {
-			try {
-				PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
-				ps.setString(1, uuid.toString());
-				ps.setString(2, name);
-				for (int i = 1; i <= 9; i++) {
-					ps.setString(2 + i, abilities.get(i));
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
+					ps.setString(1, uuid.toString());
+					ps.setString(2, name);
+					for (int i = 1; i <= 9; i++) {
+						ps.setString(2 + i, abilities.get(i));
+					}
+					ps.execute();
+					future.complete(true);
+				} catch (final SQLException e) {
+					e.printStackTrace();
+					future.complete(false);
 				}
-				ps.execute();
-				future.complete(true);
-			} catch (final SQLException e) {
-				e.printStackTrace();
-				future.complete(false);
 			}
-
-		});
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 		return future;
 	}
 

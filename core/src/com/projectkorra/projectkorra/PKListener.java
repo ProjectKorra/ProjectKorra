@@ -121,7 +121,6 @@ import com.projectkorra.projectkorra.util.StatisticsMethods;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -1345,10 +1344,9 @@ public class PKListener implements Listener {
 		}
 
 		AirScooter.check(player);
-		final CoreAbility coreAbil = bPlayer.getBoundAbility();
-		final String abil = bPlayer.getBoundAbilityName();
+		final CoreAbility ability = bPlayer.getBoundAbility();
 
-		if (coreAbil == null || !coreAbil.isSneakAbility()) {
+		if (ability == null || !ability.isSneakAbility()) {
 			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
 				new FerroControl(player);
 			}
@@ -1543,10 +1541,10 @@ public class PKListener implements Listener {
 				}
 			}
 			return;
-		} else if (bPlayer.canBendIgnoreCooldowns(coreAbil)) {
+		} else if (bPlayer.canBendIgnoreCooldowns(ability)) {
 			AirScooter.check(player);
 
-			if (coreAbil instanceof AddonAbility) {
+			if (ability instanceof AddonAbility) {
 				return;
 			}
 		} else if (ability instanceof AddonAbility || !bPlayer.canBendIgnoreCooldowns(ability) || !bPlayer.canCurrentlyBendWithWeapons() || !bPlayer.isElementToggled(ability.getElement())) {

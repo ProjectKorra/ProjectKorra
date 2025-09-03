@@ -24,7 +24,7 @@ public class BendingPlayerLoadEvent extends Event {
 
 
 	public BendingPlayerLoadEvent(final OfflineBendingPlayer bPlayer) {
-		super(!Bukkit.isPrimaryThread() && !ProjectKorra.isFolia());
+		super(!Bukkit.isPrimaryThread());
 		this.bPlayer = bPlayer;
 	}
 

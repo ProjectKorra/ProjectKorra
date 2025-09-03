@@ -136,10 +136,9 @@ public class LightManager {
             public void run() {
                 currentBrightness--;
                 if (currentBrightness > 0) {
-                    ThreadUtil.ensureLocation(lightData.location,
-                            () -> sendLightChange(lightData.location, currentBrightness, lightData.observers));
+                    sendLightChange(lightData.location, currentBrightness, lightData.observers);
                 } else {
-                    ThreadUtil.ensureLocation(lightData.location, () -> revertLight(lightData));
+                    revertLight(lightData);
                     taskHolder.future.cancel(false);
                 }
             }
@@ -171,7 +170,7 @@ public class LightManager {
         while ((blockChange = blockChangeQueue.poll()) != null) {
             Player player = blockChange.getPlayer();
             BlockChange finalBlockChange = blockChange;
-            ThreadUtil.ensureLocation(finalBlockChange.location, () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
                 player.sendBlockChange(finalBlockChange.getLocation(), finalBlockChange.getBlockData());
             });
         }

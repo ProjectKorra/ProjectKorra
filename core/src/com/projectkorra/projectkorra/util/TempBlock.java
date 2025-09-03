@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -169,15 +170,13 @@ public class TempBlock {
 	 */
 	public static void removeAll() {
 		for (final Block block : new HashSet<>(instances_.keySet())) {
-			ThreadUtil.ensureLocation(block.getLocation(), () -> revertBlock(block, Material.AIR));
+			revertBlock(block, Material.AIR);
 		}
 		for (final TempBlock tempblock : REVERT_QUEUE) {
-			ThreadUtil.ensureLocation(tempblock.getLocation(), () -> {
-				tempblock.state.update(true, applyPhysics(tempblock.state.getType()));
-				if (tempblock.revertTask != null) {
-					tempblock.revertTask.run();
-				}
-			});
+			tempblock.state.update(true, applyPhysics(tempblock.state.getType()));
+			if (tempblock.revertTask != null) {
+				tempblock.revertTask.run();
+			}
 		}
 		REVERT_QUEUE.clear();
 	}
@@ -509,7 +508,7 @@ public class TempBlock {
 					REVERT_QUEUE.poll();
 					if (!tempBlock.reverted) {
 						remove(tempBlock);
-						ThreadUtil.ensureLocation(tempBlock.getLocation(), () -> tempBlock.trueRevertBlock(false)); //It's already been removed from the poll(), so don't try remove it again
+						tempBlock.trueRevertBlock(false); //It's already been removed from the poll(), so don't try remove it again
 					}
 				} else {
 					break;

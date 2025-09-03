@@ -7,7 +7,6 @@ import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.util.TimeUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -166,17 +165,17 @@ public class TempCommand extends PKCommand {
 
 		if (Arrays.asList(addAliases).contains(args.get(0).toLowerCase())) {
 			if (!hasPermission(sender, "add")) return;
-			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> ThreadUtil.runAsyncLater(() -> {
+			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
 				addElement(element, bPlayer, sender, time);
 			}, 1L));
 		} else if (Arrays.asList(extendAliases).contains(args.get(0).toLowerCase())) {
 			if (!hasPermission(sender, "extend")) return;
-			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> ThreadUtil.runAsyncLater(() -> {
+			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
 				extendElement(element, bPlayer, sender, time);
 			}, 1L));
 		} else if (Arrays.asList(reduceAliases).contains(args.get(0).toLowerCase())) {
 			if (!hasPermission(sender, "reduce")) return;
-			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> ThreadUtil.runAsyncLater(() ->{
+			BendingPlayer.getOrLoadOfflineAsync(player).thenAccept(bPlayer -> Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () ->{
 				reduceElement(element, bPlayer, sender, time, false);
 			}, 1L));
 		}

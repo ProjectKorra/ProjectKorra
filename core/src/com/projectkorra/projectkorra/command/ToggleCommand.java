@@ -12,7 +12,6 @@ import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.util.ChatUtil;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -58,10 +57,10 @@ public class ToggleCommand extends PKCommand {
 		this.toggleAllPassivesOnSelf =  c.getString("Commands.Toggle.ToggledPassivesOn");
 
 		//1 tick later because commands are created before abilities are
-		ThreadUtil.runAsyncLater(() ->
-				cachedPassiveElements = CoreAbility.getAbilities().stream().filter(ab -> ab instanceof PassiveAbility)
-						.map(Ability::getElement).collect(Collectors.toSet())
-		, 1L);
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () ->
+						cachedPassiveElements = CoreAbility.getAbilities().stream().filter(ab -> ab instanceof PassiveAbility)
+								.map(Ability::getElement).collect(Collectors.toSet())
+				, 1L);
 	}
 
 	@Override

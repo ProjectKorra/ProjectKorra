@@ -13,7 +13,6 @@ import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
@@ -45,34 +44,7 @@ public class BendingManager implements Runnable {
 		times.clear();
 
 		TempElementsRunnable tempElementsRunnable = new TempElementsRunnable();
-		if (ProjectKorra.isFolia()) {
-
-			AirbendingManager air = new AirbendingManager(ProjectKorra.plugin);
-			ChiblockingManager chiblocking = new ChiblockingManager(ProjectKorra.plugin);
-			EarthbendingManager earth = new EarthbendingManager(ProjectKorra.plugin);
-			FirebendingManager fire = new FirebendingManager(ProjectKorra.plugin);
-			WaterbendingManager water = new WaterbendingManager(ProjectKorra.plugin);
-
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> air.run(), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> water.run(), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> earth.run(), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> fire.run(), 1, 1);
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> chiblocking.run(), 1, 1);
-
-			Bukkit.getAsyncScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> {
-				this.tempBlockRevertTask.run();
-				TempArmor.cleanup();
-				TempFallingBlock.manage();
-				this.handleCooldowns();
-				tempElementsRunnable.run();
-				RevertChecker.revertAirBlocks(); //The revert checker class also needs an instance that is run
-					 							 //every tick, but the class needs rewriting to be Folia safe
-			}, 100, 100, TimeUnit.MILLISECONDS); // Every 2 ticks, approx. Exact tick isn't important
-
-			Bukkit.getGlobalRegionScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> handleDayNight(), 1, 5); //Every 5 ticks
-		} else {
-			Bukkit.getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, tempElementsRunnable, 1, 2);
-		}
+		Bukkit.getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, tempElementsRunnable, 1, 2);
 	}
 
 	public static BendingManager getInstance() {
@@ -83,7 +55,7 @@ public class BendingManager implements Runnable {
 		for (Map.Entry<UUID, BendingPlayer> entry : BendingPlayer.getPlayers().entrySet()) {
 			BendingPlayer bPlayer = entry.getValue();
 
-			ThreadUtil.ensureEntity(bPlayer.getPlayer(), bPlayer::removeOldCooldowns);
+			bPlayer.removeOldCooldowns();
 		}
 	}
 
@@ -183,8 +155,7 @@ public class BendingManager implements Runnable {
 
 				if (System.currentTimeMillis() > pair.getRight()) { //Check if the top temp element has expired
 					BendingPlayer.TEMP_ELEMENTS.poll(); //And if it has, remove from the queue, and recalculate temp elements for that player
-					BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(pair.getLeft());
-					ThreadUtil.ensureEntity(bPlayer.getPlayer(), () -> bPlayer.recalculateTempElements(false));
+					BendingPlayer.getBendingPlayer(pair.getLeft()).recalculateTempElements(false);
 				} else {
 					break; //Break the loop if the top element hasn't expired, as all elements below it won't have either
 				}

@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +11,6 @@ import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -190,7 +188,7 @@ public class Tremorsense extends EarthAbility {
 		for (final Player player : server.getOnlinePlayers()) {
 
 			if (canTremorSense(player) && !hasAbility(player, Tremorsense.class)) {
-				ThreadUtil.ensureLocation(player.getLocation(), () -> new Tremorsense(player, false));
+				new Tremorsense(player, false);
 			}
 		}
 	}

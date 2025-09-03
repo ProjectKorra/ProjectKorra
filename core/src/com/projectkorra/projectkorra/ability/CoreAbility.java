@@ -21,7 +21,6 @@ import java.util.jar.JarFile;
 import com.projectkorra.projectkorra.attribute.*;
 import com.projectkorra.projectkorra.command.CooldownCommand;
 import com.projectkorra.projectkorra.event.AbilityRecalculateAttributeEvent;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.permissions.Permission;
 
 import org.bukkit.Bukkit;
@@ -169,16 +168,6 @@ public abstract class CoreAbility implements Ability {
 			return;
 		}
 
-		if (ProjectKorra.isFolia() && !Bukkit.isOwnedByCurrentRegion(this.player)) {
-			ProjectKorra.log.warning("Tried to start ability " + this.getName() + " (" + this.getClass().getSimpleName() +
-					".class) on a player that is not owned by the current region. This is not allowed in Folia. Please report " +
-					"this to the ProjectKorra team.");
-			for (int i = 0; i < 6 && i < Thread.currentThread().getStackTrace().length; i++) {
-				ProjectKorra.log.warning(Thread.currentThread().getStackTrace()[i].toString());
-			}
-			return;
-		}
-
 		final AbilityStartEvent event = new AbilityStartEvent(this);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
@@ -207,19 +196,6 @@ public abstract class CoreAbility implements Ability {
 		INSTANCES_BY_PLAYER.get(clazz).get(uuid).put(this.id, this);
 		INSTANCES_BY_CLASS.get(clazz).add(this);
 		INSTANCES.add(this);
-
-		if (ProjectKorra.isFolia()) {
-			//In Folia, we don't call CoreAbility#progressAll(), so instead we make a repeating task
-			//that runs every tick and calls progressSelf()
-
-			//ProjectKorra.log.info("[Debug] " + this.getName() + " was started on Thread " + Thread.currentThread().getName() + " (#" + Thread.currentThread().getId() + ")");
-
-			this._foliaTask = Bukkit.getRegionScheduler().runAtFixedRate(ProjectKorra.plugin, player.getLocation(), (task) -> {
-				this._foliaCurrentTick++;
-				this.progressSelf();
-			}, 1L, 1L);
-
-		}
 	}
 
 	/**
@@ -287,11 +263,7 @@ public abstract class CoreAbility implements Ability {
 				return;
 			}
 
-			if (ProjectKorra.isFolia() && !Bukkit.isOwnedByCurrentRegion(this.player)) {
-				//player.sendMessage(ChatColor.RED +"[Debug] " + this.getName() + " was killed because you changed regions");
-				this.remove();
-				return;
-			} else if (!this.getPlayer().isOnline()) { 	// This has to be before isDead as isDead
+			if (!this.getPlayer().isOnline()) { 	// This has to be before isDead as isDead
 				this.remove(); 							// will return true if they are offline.
 				return;
 			} else if (this.getPlayer().isDead()) {
@@ -307,10 +279,6 @@ public abstract class CoreAbility implements Ability {
 
 		try {
 			this.progress();
-
-			if (ProjectKorra.isFolia()) { //Collisions don't work properly on Folia, so we spawn Markers at each location to damage
-				//this._foliaCollisions();
-			}
 
 			Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(this));
 		} catch (final Throwable e) {
@@ -341,12 +309,7 @@ public abstract class CoreAbility implements Ability {
 		for (final Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (final CoreAbility abil : setAbils) {
 				try {
-					Location location = abil.getPlayer().getLocation();
-
-					if (abil.getLocation() != null) {
-						location = abil.getLocation();
-					}
-					ThreadUtil.ensureLocation(location, abil::remove);
+					abil.remove();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -773,11 +736,11 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	public static long getCurrentTick() {
-		return ProjectKorra.isFolia() ? Bukkit.getCurrentTick() : currentTick;
+		return currentTick;
 	}
 
 	public long getRunningTicks() {
-		return ProjectKorra.isFolia() ? (this._foliaCurrentTick - this.startTick) : currentTick - this.startTick;
+		return currentTick - this.startTick;
 	}
 
 	public boolean isStarted() {

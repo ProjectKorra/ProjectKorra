@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -45,7 +44,14 @@ public class PassiveManager {
 					continue;
 				}
 
-				ThreadUtil.ensureLocation(player.getLocation(), () -> startPassive(player, ability.getClass()));
+				try {
+					final Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get(ability);
+					final Constructor<?> constructor = clazz.getConstructor(Player.class);
+					final Object object = constructor.newInstance(player);
+					((CoreAbility) object).start();
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.projectkorra.projectkorra.ProjectKorra;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 
@@ -33,11 +32,6 @@ public class TempPotionEffect {
 			instances.put(entity, this);
 		}
 
-		if (ProjectKorra.isFolia()) {
-			this.foliaTask = entity.getScheduler().runAtFixedRate(ProjectKorra.plugin, (task) -> {
-				this.progress();
-			}, ()-> {}, 1, 1);
-		}
 	}
 
 	public static void progressAll() {
@@ -87,9 +81,6 @@ public class TempPotionEffect {
 		}
 		if (this.infos.isEmpty() && instances.containsKey(this.entity)) {
 			instances.remove(this.entity);
-			if (ProjectKorra.isFolia()) {
-				((ScheduledTask)this.foliaTask).cancel();
-			}
 		}
 	}
 

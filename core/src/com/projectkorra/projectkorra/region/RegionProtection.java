@@ -4,7 +4,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.hooks.RegionProtectionHook;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -102,7 +101,7 @@ public class RegionProtection {
         blockMap.put(block, new BlockCacheElement(player, block, ability, value, System.currentTimeMillis()));
         return value;
     }
-    
+
     /**
      * Checks if a location is protected by region protection plugins. Abilities that damage terrain
      * will not damage the terrain (or progress) if this method returns true
@@ -173,7 +172,7 @@ public class RegionProtection {
      * @param period The time, in milliseconds, to clean the cache
      */
     public static void startCleanCacheTask(double period) {
-        ThreadUtil.runSyncTimer(() -> {
+        Bukkit.getScheduler().runTaskTimer(ProjectKorra.plugin, () -> {
             final long currentTime = System.currentTimeMillis();
             for (final String playerName : BLOCK_CACHE.keySet()) {
                 final Map<Block, BlockCacheElement> map = BLOCK_CACHE.get(playerName);

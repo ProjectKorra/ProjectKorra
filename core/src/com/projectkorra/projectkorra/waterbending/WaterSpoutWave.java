@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,6 +15,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
@@ -83,6 +83,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private Location origin;
 	private Location location;
 	private ArrayList<Entity> affectedEntities;
+	private ArrayList<BukkitRunnable> tasks;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
 
 	public WaterSpoutWave(final Player player, final AbilityType type) {
@@ -109,6 +110,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.trailRevertTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.TrailRevertTime");
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
+		this.tasks = new ArrayList<>();
 
 		if (!this.bPlayer.canBend(this) || bPlayer.isOnCooldown("WaterSpoutWave")) {
 			return;
@@ -312,10 +314,12 @@ public class WaterSpoutWave extends WaterAbility {
 							final Player fplayer = this.player;
 							final Entity fent = entity;
 
-							ThreadUtil.ensureLocationDelay(entity.getLocation(), () -> {
-								if (WaterSpoutWave.this.isRemoved()) return;
-								WaterSpoutWave.this.createIceSphere(fplayer, fent, iceSphereRadius);
-							}, 6);
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									WaterSpoutWave.this.createIceSphere(fplayer, fent, iceSphereRadius);
+								}
+							}.runTaskLater(ProjectKorra.plugin, 6);
 						}
 					}
 					for (final Block block : FROZEN_BLOCKS.keySet()) {
@@ -352,13 +356,20 @@ public class WaterSpoutWave extends WaterAbility {
 			this.bPlayer.addCooldown("WaterSpoutWave", getCooldown());
 		}
 		this.revertBlocks();
+		for (final BukkitRunnable task : this.tasks) {
+			task.cancel();
+		}
 	}
 
 	public void createBlockDelay(final Block block, final Material mat, final long delay) {
-		ThreadUtil.ensureLocationDelay(block.getLocation(), () -> {
-			if (WaterSpoutWave.this.isRemoved()) return;
-			WaterSpoutWave.this.createBlock(block, block.getLocation().distance(player.getLocation()) >= 1.6 ? mat : Material.WATER);
-		}, delay);
+		final BukkitRunnable br = new BukkitRunnable() {
+			@Override
+			public void run() {
+				WaterSpoutWave.this.createBlock(block, block.getLocation().distance(player.getLocation()) >= 1.6 ? mat : Material.WATER);
+			}
+		};
+		br.runTaskLater(ProjectKorra.plugin, delay);
+		this.tasks.add(br);
 	}
 
 	public void createBlock(final Block block, final Material mat) {
@@ -511,7 +522,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -682,6 +693,10 @@ public class WaterSpoutWave extends WaterAbility {
 
 	public ArrayList<Entity> getAffectedEntities() {
 		return this.affectedEntities;
+	}
+
+	public ArrayList<BukkitRunnable> getTasks() {
+		return this.tasks;
 	}
 
 	public ConcurrentHashMap<Block, TempBlock> getAffectedBlocks() {

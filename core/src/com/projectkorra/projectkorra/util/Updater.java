@@ -85,8 +85,7 @@ public class Updater {
 	}
 
 	private void runAsync(final Plugin plugin, final Runnable run) {
-		if (ProjectKorra.isFolia()) Bukkit.getAsyncScheduler().runNow(plugin, (task) -> run.run());
-		else plugin.getServer().getScheduler().runTaskAsynchronously(plugin, run);
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, run);
 	}
 
 	/**

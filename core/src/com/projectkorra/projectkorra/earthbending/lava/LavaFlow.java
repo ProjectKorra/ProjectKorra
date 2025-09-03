@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.util.ThreadUtil;
+import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,7 +15,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
@@ -25,6 +24,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class LavaFlow extends LavaAbility {
 
@@ -76,7 +76,7 @@ public class LavaFlow extends LavaAbility {
 	private AbilityType type;
 	private Location origin;
 	private ArrayList<TempBlock> affectedBlocks;
-	private ArrayList<Object> tasks;
+	private ArrayList<BukkitRunnable> tasks;
 	private Material revertMaterial;
 	private World world;
 
@@ -471,7 +471,14 @@ public class LavaFlow extends LavaAbility {
 	 * automatically clean up over time.
 	 */
 	public void removeOnDelay() {
-		ThreadUtil.ensureLocationDelay(this.getLocation(), this::removeSlowly, (long) (this.shiftRemoveDelay / 1000.0 * 20.0));
+		final BukkitRunnable br = new BukkitRunnable() {
+			@Override
+			public void run() {
+				LavaFlow.this.removeSlowly();
+			}
+		};
+		br.runTaskLater(ProjectKorra.plugin, (long) (this.shiftRemoveDelay / 1000.0 * 20.0));
+		this.tasks.add(br);
 	}
 
 	/**
@@ -482,37 +489,39 @@ public class LavaFlow extends LavaAbility {
 	 * an animation.
 	 */
 	public void removeSlowly() {
-		if (this.isRemoved()) return;
-
 		super.remove();
 		for (int i = this.affectedBlocks.size() - 1; i > -1; i--) {
 			final TempBlock tblock = this.affectedBlocks.get(i);
 			final boolean isTempAir = TEMP_AIR_BLOCKS.values().contains(tblock);
 
-			ThreadUtil.ensureLocationDelay(tblock.getLocation(), () -> {
-				tblock.revertBlock();
+			new BukkitRunnable() {
 
-				if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
-					LavaFlow.this.affectedBlocks.remove(tblock);
-					TEMP_LAVA_BLOCKS.remove(tblock.getBlock());
-				}
-				if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
-					LavaFlow.this.affectedBlocks.remove(tblock);
-					TEMP_LAND_BLOCKS.remove(tblock.getBlock());
-				}
-				if (TEMP_AIR_BLOCKS.values().contains(tblock)) {
-					LavaFlow.this.affectedBlocks.remove(tblock);
-					TEMP_AIR_BLOCKS.remove(tblock.getBlock());
-				}
+				@Override
+				public void run() {
+					tblock.revertBlock();
 
-				if (isTempAir && tblock.getState().getType() == Material.TALL_GRASS) {
-					tblock.getBlock().getRelative(BlockFace.UP).setType(Material.TALL_GRASS);
+					if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
+						LavaFlow.this.affectedBlocks.remove(tblock);
+						TEMP_LAVA_BLOCKS.remove(tblock.getBlock());
+					}
+					if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
+						LavaFlow.this.affectedBlocks.remove(tblock);
+						TEMP_LAND_BLOCKS.remove(tblock.getBlock());
+					}
+					if (TEMP_AIR_BLOCKS.values().contains(tblock)) {
+						LavaFlow.this.affectedBlocks.remove(tblock);
+						TEMP_AIR_BLOCKS.remove(tblock.getBlock());
+					}
+
+					if (isTempAir && tblock.getState().getType() == Material.TALL_GRASS) {
+						tblock.getBlock().getRelative(BlockFace.UP).setType(Material.TALL_GRASS);
+					}
 				}
-			}, (long) (i / this.shiftRemoveSpeed));
+			}.runTaskLater(ProjectKorra.plugin, (long) (i / this.shiftRemoveSpeed));
 		}
 
-		for (final Object task : this.tasks) {
-			ThreadUtil.cancelTimerTask(task);
+		for (final BukkitRunnable task : this.tasks) {
+			task.cancel();
 		}
 	}
 
@@ -536,8 +545,8 @@ public class LavaFlow extends LavaAbility {
 			}
 		}
 
-		for (final Object task : this.tasks) {
-			ThreadUtil.cancelTimerTask(task);
+		for (final BukkitRunnable task : this.tasks) {
+			task.cancel();
 		}
 	}
 
@@ -925,7 +934,7 @@ public class LavaFlow extends LavaAbility {
 		return this.affectedBlocks;
 	}
 
-	public ArrayList<Object> getTasks() {
+	public ArrayList<BukkitRunnable> getTasks() {
 		return this.tasks;
 	}
 

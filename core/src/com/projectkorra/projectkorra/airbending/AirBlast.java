@@ -3,9 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +19,7 @@ import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -233,22 +232,19 @@ public class AirBlast extends AirAbility {
 
 	public static void progressOrigins() {
 		for (final Player player : ORIGINS.keySet()) {
-			ThreadUtil.ensureLocation(player.getLocation(), () -> playOriginEffect(player));
+			playOriginEffect(player);
 		}
 	}
 
-	public static void setOrigin(final BendingPlayer player) {
-		if (player.isOnCooldown("AirBlast")) {
-			return;
-		}
-		final Location location = GeneralMethods.getTargetedLocation(player.getPlayer(), getSelectRange(), getTransparentMaterials());
+	public static void setOrigin(final Player player) {
+		final Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), getTransparentMaterials());
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
-		} else if (RegionProtection.isRegionProtected(player.getPlayer(), location, "AirBlast")) {
+		} else if (RegionProtection.isRegionProtected(player, location, "AirBlast")) {
 			return;
 		}
 
-		ORIGINS.put(player.getPlayer(), location);
+		ORIGINS.put(player, location);
 
 	}
 
@@ -447,7 +443,7 @@ public class AirBlast extends AirAbility {
 			} else {
 				testblock.setType(Material.AIR);
 			}
-			
+
 			testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			return false;
 		} else if (this.affectedLevers.contains(testblock)) {
@@ -510,12 +506,17 @@ public class AirBlast extends AirAbility {
 					testblock.setBlockData(button);
 					this.affectedLevers.add(testblock);
 
-					ThreadUtil.ensureLocationDelay(testblock.getLocation(), () -> {
-						button.setPowered(false);
-						testblock.setBlockData(button);
-						AirBlast.this.affectedLevers.remove(testblock);
-						testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
-					}, 15);
+					new BukkitRunnable() {
+
+						@Override
+						public void run() {
+							button.setPowered(false);
+							testblock.setBlockData(button);
+							AirBlast.this.affectedLevers.remove(testblock);
+							testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
+						}
+
+					}.runTaskLater(ProjectKorra.plugin, 15);
 				}
 
 				testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);

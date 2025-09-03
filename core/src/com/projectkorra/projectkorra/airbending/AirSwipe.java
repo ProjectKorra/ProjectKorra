@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,6 +13,7 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -222,30 +222,34 @@ public class AirSwipe extends AirAbility {
 		for (int i = 0; i < entities.size(); i++) {
 			final Entity entity = entities.get(i);
 			final AirSwipe abil = this;
-			ThreadUtil.ensureLocationDelay(entity.getLocation(), () -> {
-				if (GeneralMethods.isRegionProtectedFromBuild(AirSwipe.this, entity.getLocation())) {
-					return;
-				}
-				if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && entity instanceof LivingEntity) {
-					if (entity instanceof Player) {
-						if (Commands.invincible.contains(((Player) entity).getName())) {
-							return;
-						}
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					if (GeneralMethods.isRegionProtectedFromBuild(AirSwipe.this, entity.getLocation())) {
+						return;
 					}
-					if (entities.size() < MAX_AFFECTABLE_ENTITIES) {
+					if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && entity instanceof LivingEntity) {
+						if (entity instanceof Player) {
+							if (Commands.invincible.contains(((Player) entity).getName())) {
+								return;
+							}
+						}
+						if (entities.size() < MAX_AFFECTABLE_ENTITIES) {
+							GeneralMethods.setVelocity(AirSwipe.this, entity, fDirection.multiply(AirSwipe.this.pushFactor));
+						}
+						if (!AirSwipe.this.affectedEntities.contains(entity)) {
+							if (AirSwipe.this.damage != 0) {
+								DamageHandler.damageEntity(entity, AirSwipe.this.damage, abil);
+							}
+							AirSwipe.this.affectedEntities.add(entity);
+						}
+						breakBreathbendingHold(entity);
+					} else if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && !(entity instanceof LivingEntity)) {
 						GeneralMethods.setVelocity(AirSwipe.this, entity, fDirection.multiply(AirSwipe.this.pushFactor));
 					}
-					if (!AirSwipe.this.affectedEntities.contains(entity)) {
-						if (AirSwipe.this.damage != 0) {
-							DamageHandler.damageEntity(entity, AirSwipe.this.damage, abil);
-						}
-						AirSwipe.this.affectedEntities.add(entity);
-					}
-					breakBreathbendingHold(entity);
-				} else if (entity.getEntityId() != AirSwipe.this.player.getEntityId() && !(entity instanceof LivingEntity)) {
-					GeneralMethods.setVelocity(AirSwipe.this, entity, fDirection.multiply(AirSwipe.this.pushFactor));
 				}
-			}, i / MAX_AFFECTABLE_ENTITIES);
+			}.runTaskLater(ProjectKorra.plugin, i / MAX_AFFECTABLE_ENTITIES);
+
 		}
 	}
 

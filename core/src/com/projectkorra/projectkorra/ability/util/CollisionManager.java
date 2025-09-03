@@ -207,8 +207,6 @@ public class CollisionManager {
 	 */
 	public void startCollisionDetection() {
 		this.stopCollisionDetection();
-		if (ProjectKorra.isFolia()) return; //TODO CollisionManager needs to be figured out, so skip for now
-
 		this.detectionRunnable = new BukkitRunnable() {
 			@Override
 			public void run() {

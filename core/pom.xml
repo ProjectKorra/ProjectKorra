@@ -109,13 +109,6 @@
       <artifactId>core-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- Folia API -->
-    <dependency>
-      <groupId>dev.folia</groupId>
-      <artifactId>folia-api</artifactId>
-      <version>1.20.1-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>

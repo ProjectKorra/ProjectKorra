@@ -11,7 +11,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -514,12 +513,12 @@ public class SurgeWall extends WaterAbility {
 
 	public static void removeAllCleanup() {
 		for (final Block block : AFFECTED_BLOCKS.keySet()) {
-			ThreadUtil.ensureLocation(block.getLocation(), () -> TempBlock.revertBlock(block, Material.AIR));
+			TempBlock.revertBlock(block, Material.AIR);
 			AFFECTED_BLOCKS.remove(block);
 			WALL_BLOCKS.remove(block);
 		}
 		for (final Block block : WALL_BLOCKS.keySet()) {
-			ThreadUtil.ensureLocation(block.getLocation(), () -> TempBlock.revertBlock(block, Material.AIR));
+			TempBlock.revertBlock(block, Material.AIR);
 			AFFECTED_BLOCKS.remove(block);
 			WALL_BLOCKS.remove(block);
 		}

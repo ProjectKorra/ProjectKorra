@@ -11,9 +11,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,12 +23,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
@@ -350,13 +350,16 @@ public class HeatControl extends FireAbility {
 				final TempBlock tb = new TempBlock(block, Material.WATER);
 				MELTED_BLOCKS.put(block, tb);
 
-				ThreadUtil.ensureLocationDelay(block.getLocation(), () -> {
-					final TempBlock melted = MELTED_BLOCKS.get(block);
-					if (melted != null) {
-						melted.revertBlock();
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						final TempBlock melted = MELTED_BLOCKS.get(block);
+						if (melted != null) {
+							melted.revertBlock();
+						}
+						MELTED_BLOCKS.remove(block);
 					}
-					MELTED_BLOCKS.remove(block);
-				}, 5 * 20 * 60);
+				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);
 			}
 		}
 	}
@@ -392,47 +395,53 @@ public class HeatControl extends FireAbility {
 		}
 
 		if (LavaFlow.isLavaFlowBlock(tempBlock.getBlock())) {
-			ThreadUtil.ensureLocationDelay(b.getLocation(), () -> {
-				if (tempBlock != null) {
-					ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
-					if (HeatControl.this.randy.nextInt(3) == 0) {
-						tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
-					}
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					if (tempBlock != null) {
+						ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
+						if (HeatControl.this.randy.nextInt(3) == 0) {
+							tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+						}
 
-					LavaFlow.removeBlock(tempBlock.getBlock());
+						LavaFlow.removeBlock(tempBlock.getBlock());
+					}
 				}
-			}, 20);
+			}.runTaskLater(ProjectKorra.plugin, 20);
 
 			return;
 		}
 
-		ThreadUtil.ensureLocationDelay(b.getLocation(), () -> {
-			if (tempBlock != null) {
-				final boolean bool = Math.random() > .5 ? true : false;
-				if (HeatControl.this.solidifyRevert) {
-					if (bool) {
-						tempBlock.setType(Material.STONE);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (tempBlock != null) {
+					final boolean bool = Math.random() > .5 ? true : false;
+					if (HeatControl.this.solidifyRevert) {
+						if (bool) {
+							tempBlock.setType(Material.STONE);
+						} else {
+							tempBlock.setType(Material.COBBLESTONE);
+						}
+						tempBlock.setRevertTime(HeatControl.this.solidifyRevertTime);
 					} else {
-						tempBlock.setType(Material.COBBLESTONE);
+						tempBlock.revertBlock();
+						if (bool) {
+							tempBlock.getBlock().setType(Material.STONE);
+						} else {
+							tempBlock.getBlock().setType(Material.COBBLESTONE);
+						}
 					}
-					tempBlock.setRevertTime(HeatControl.this.solidifyRevertTime);
-				} else {
-					tempBlock.revertBlock();
-					if (bool) {
-						tempBlock.getBlock().setType(Material.STONE);
-					} else {
-						tempBlock.getBlock().setType(Material.COBBLESTONE);
-					}
-				}
 
-				ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
-				if (HeatControl.this.randy.nextInt(3) == 0) {
-					tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+					ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
+					if (HeatControl.this.randy.nextInt(3) == 0) {
+						tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+					}
 				}
 			}
-
-		}, 20);
+		}.runTaskLater(ProjectKorra.plugin, 20);
 	}
+
 
 	public void resetLocation(final Location loc) {
 		if (this.solidifyLocation == null) {

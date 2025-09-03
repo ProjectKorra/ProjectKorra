@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.util.ChatUtil;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -312,10 +311,9 @@ public abstract class PKCommand implements SubCommand {
 		//If the player is online, return them instantly so it doesn't happen next tick
 		if (Bukkit.getPlayer(name) != null) return CompletableFuture.completedFuture(Bukkit.getPlayer(name));
 
-		ThreadUtil.runAsync(() -> {
+		Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
 			OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-			//TODO FOLIA: THIS MAY NOT RETURN ON THE SAME THREAD IT WAS CALLED FROM. BEWARE.
-			ThreadUtil.runSync(() -> future.complete(player)); //Complete in a sync thread
+			Bukkit.getScheduler().runTask(ProjectKorra.plugin, () -> future.complete(player)); //Complete in a sync thread
 		});
 
 		return future;

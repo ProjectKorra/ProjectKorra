@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import com.projectkorra.projectkorra.hooks.PlanExtension;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -140,7 +139,6 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (this.revertChecker != null) ThreadUtil.cancelTimerTask(this.revertChecker);
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {
@@ -190,13 +188,6 @@ public class ProjectKorra extends JavaPlugin {
 
 	public static boolean isDatabaseCooldownsEnabled() {
 		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
-	}
-
-	/**
-	 * @return True if the server is running Folia
-	 */
-	public static boolean isFolia() {
-		return folia;
 	}
 
 	/**

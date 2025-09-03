@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
 
-import com.projectkorra.projectkorra.util.ThreadUtil;
 import org.bukkit.Bukkit;
 
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -65,7 +64,7 @@ public class LogFilter implements Filter {
 		}
 
 		final String toRecord = recordString;
-		ThreadUtil.runAsyncLater(() -> LogFilter.this.loggedRecords.add(toRecord), 10);
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, (Runnable) () -> LogFilter.this.loggedRecords.add(toRecord), 10);
 		return true;
 	}
 

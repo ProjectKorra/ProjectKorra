@@ -90,8 +90,6 @@ public class FireDamageTimer {
 	}
 
 	public static void handleFlames() {
-		if (ProjectKorra.isFolia()) return; //TODO REWRITE THIS CLASS TO BE INSTANCE BASED
-
 		for (final Entity entity : INSTANCES.keySet()) {
 			if (entity.getFireTicks() <= 0) {
 				INSTANCES.remove(entity);
