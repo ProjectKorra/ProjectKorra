@@ -38,6 +38,7 @@ public class RegionProtection {
         if (enabled("GriefPrevention")) new GriefPrevention();
         if (enabled("Residence")) new Residence();
         if (enabled("Lands")) new Lands();
+        if (enabled("HuskTowns")) new HuskTowns();
     }
 
     /**

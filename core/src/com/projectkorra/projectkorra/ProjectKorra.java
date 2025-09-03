@@ -66,7 +66,6 @@ public class ProjectKorra extends JavaPlugin {
 
 
 		new ConfigManager();
-		new GeneralMethods(this);
 		final boolean checkUpdateOnStartup = ConfigManager.getConfig().getBoolean("Properties.UpdateChecker");
 		this.updater = new Updater(this, "https://projectkorra.com/forum/resources/projectkorra-core.1/", checkUpdateOnStartup);
 		new Commands(this);
@@ -90,18 +89,15 @@ public class ProjectKorra extends JavaPlugin {
 		BendingBoardManager.setup();
 		BendingPlayer.DISABLED_WORLDS = new HashSet<>(ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds"));
 
-		this.getServer().getPluginManager().registerEvents(new PKListener(this), this);
-		BendingManager bendingManager = new BendingManager();
-		if (!isFolia()) {
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, bendingManager, 0, 1);
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		}
-
-		this.revertChecker = ThreadUtil.runAsyncTimer(new RevertChecker(this), 0, 200);
+		this.getServer().getPluginManager().registerEvents(new PKListener(), this);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
+		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new BendingManager.TempElementsRunnable(), 20, 20);
+		this.revertChecker = this.getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));

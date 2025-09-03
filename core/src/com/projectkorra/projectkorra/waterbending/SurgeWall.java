@@ -645,6 +645,7 @@ public class SurgeWall extends WaterAbility {
 		this.range = range;
 	}
 
+	@Override
 	public Block getSourceBlock() {
 		return this.sourceBlock;
 	}

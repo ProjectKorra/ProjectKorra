@@ -311,9 +311,6 @@ public class WaterManipulation extends WaterAbility {
 							final Vector vector = location.getDirection();
 							GeneralMethods.setVelocity(this, entity, vector.normalize().multiply(this.knockback));
 
-							if (this.bPlayer.isAvatarState()) {
-								this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
-							}
 							DamageHandler.damageEntity(entity, this.damage, this);
 							AirAbility.breakBreathbendingHold(entity);
 							this.progressing = false;
@@ -744,6 +741,7 @@ public class WaterManipulation extends WaterAbility {
 		this.deflectRange = deflectRange;
 	}
 
+	@Override
 	public Block getSourceBlock() {
 		return this.sourceBlock;
 	}

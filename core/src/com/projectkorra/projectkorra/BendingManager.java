@@ -31,7 +31,8 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 public class BendingManager implements Runnable {
 
 	private static BendingManager instance;
-	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
+	@Deprecated(since = "1.13.0", forRemoval = true)
+	public static HashMap<World, String> events = new HashMap<>(); // holds any current event.
 
 	long time;
 	long interval;
@@ -117,21 +118,15 @@ public class BendingManager implements Runnable {
 						if (bPlayer == null) continue;
 
 						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage") && to != WorldTimeEvent.Time.NIGHT && from == WorldTimeEvent.Time.NIGHT) {
-							String s = getMoonsetMessage();
-							player.sendMessage(Element.WATER.getColor() + s);
-						}
-						else if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
-							String s = getMoonriseMessage();
-							player.sendMessage(Element.WATER.getColor() + s);
+							player.sendMessage(Element.WATER.getColor() + getMoonsetMessage());
+						} else if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.nightmessage") && to == WorldTimeEvent.Time.NIGHT) {
+							player.sendMessage(Element.WATER.getColor() + getMoonriseMessage());
 						}
 
 						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.nightmessage") && to != WorldTimeEvent.Time.DAY && from == WorldTimeEvent.Time.DAY) {
-							String s = getSunsetMessage();
-							player.sendMessage(Element.FIRE.getColor() + s);
-						}
-						else if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
-							String s = getSunriseMessage();
-							player.sendMessage(Element.FIRE.getColor() + s);
+							player.sendMessage(Element.FIRE.getColor() + getSunsetMessage());
+						} else if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.daymessage") && to == WorldTimeEvent.Time.DAY) {
+							player.sendMessage(Element.FIRE.getColor() + getSunriseMessage());
 						}
 					}
 				}

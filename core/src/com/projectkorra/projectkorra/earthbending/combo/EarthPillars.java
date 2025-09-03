@@ -39,12 +39,12 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 
 	public EarthPillars(final Player player, final boolean fall) {
 		super(player);
-		this.setFields(fall);
 
 		if (!this.bPlayer.canBendIgnoreBinds(this) || !isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
 			return;
 		}
 
+		this.setFields(fall);
 		if (fall) {
 			if (player.getFallDistance() < this.fallThreshold) {
 				return;
