@@ -33,7 +33,6 @@ public class RegionProtection {
         if (enabled("LWC")) new LWC();
         if (enabled("Towny")) new Towny();
         if (enabled("RedProtect")) new RedProtect();
-        if (enabled("GriefDefender")) new GriefDefender();
         if (enabled("GriefPrevention")) new GriefPrevention();
         if (enabled("Residence")) new Residence();
         if (enabled("Lands")) new Lands();

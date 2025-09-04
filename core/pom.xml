@@ -70,11 +70,6 @@
       <id>placeholderapi</id>
       <url>https://repo.extendedclip.com/releases/</url>
     </repository>
-    <!-- GriefDefender API Repo -->
-    <repository>
-      <id>glaremasters</id>
-      <url>https://repo.glaremasters.me/repository/bloodshot</url>
-    </repository>
     <!-- LWC. Disabled for now because the repo is extremely unreliable and times out a lot -->
     <!--<repository>
       <id>ender-zone-repo</id>
@@ -215,13 +210,6 @@
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
       <version>2.11.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- GriefDefender -->
-    <dependency>
-      <groupId>com.griefdefender</groupId>
-      <artifactId>api</artifactId>
-      <version>2.1.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Plan -->
