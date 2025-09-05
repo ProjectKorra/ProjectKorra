@@ -15,7 +15,8 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AcrobatStance extends ChiAbility implements StanceAbility {
 
-	@Attribute(Attribute.COOLDOWN)
+	private int armorNerf; //Once this value is hit the armor debuff will be applied
+    @Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DURATION)
 	private long duration;
@@ -37,7 +38,8 @@ public class AcrobatStance extends ChiAbility implements StanceAbility {
 		this.duration = getConfig().getLong("Abilities.Chi.AcrobatStance.Duration");
 		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") - 1;
 		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") - 1;
-		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
+        this.armorNerf = getConfig().getInt("Abilities.Chi.AcrobatStance.ArmorNerf", 20);
+        this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 
 		final StanceAbility stance = this.bPlayer.getStance();
@@ -66,7 +68,7 @@ public class AcrobatStance extends ChiAbility implements StanceAbility {
 		// Check if the player is wearing any armor
 		int armorPoints = GeneralMethods.getArmorPoints(player);
 
-		boolean shouldApplyNerf = armorPoints > 6;
+		boolean shouldApplyNerf = armorPoints > armorNerf;
 
 		// Set jump and speed values based on armor status
 		int adjustedJumpPower = shouldApplyNerf ? 0 : this.jump;
