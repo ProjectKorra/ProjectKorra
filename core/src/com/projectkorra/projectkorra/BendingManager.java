@@ -3,11 +3,17 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
+import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
+import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.event.WorldTimeEvent;
+import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
+import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -37,7 +43,8 @@ public class BendingManager implements Runnable {
 
 		times.clear();
 
-		handleDayNight();
+		TempElementsRunnable tempElementsRunnable = new TempElementsRunnable();
+		Bukkit.getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, tempElementsRunnable, 1, 2);
 	}
 
 	public static BendingManager getInstance() {
@@ -105,17 +112,17 @@ public class BendingManager implements Runnable {
 		this.time = System.currentTimeMillis();
 		ProjectKorra.time_step = this.interval;
 
-		CoreAbility.progressAll();
-		TempPotionEffect.progressAll();
-		this.handleDayNight();
-		RevertChecker.revertAirBlocks();
-		HorizontalVelocityTracker.updateAll();
-		this.handleCooldowns();
-		TempArmor.cleanup();
+		CoreAbility.progressAll(); //Player threads. DONE.
+		TempPotionEffect.progressAll(); //Player threads. DONE.
+		this.handleDayNight(); //Global region
+		RevertChecker.revertAirBlocks(); //Complicated, needs rewriting
+		HorizontalVelocityTracker.updateAll(); //Player threads. DONE
+		this.handleCooldowns(); //Async thread
+		TempArmor.cleanup(); //Async thread
 
-		TempFallingBlock.manage();
+		TempFallingBlock.manage(); //Async.
 
-		tempBlockRevertTask.run();
+		tempBlockRevertTask.run(); //Async thread
 	}
 
 	public static String getSunriseMessage() {

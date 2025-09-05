@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -40,6 +41,11 @@ public class AirScooter extends AirAbility {
 
 	private double phi = 0;
 
+	@Attribute("DamageThreshold")
+    private double damageThreshold;
+
+	private double totalDamageTaken;
+
 	public AirScooter(final Player player) {
 		super(player);
 
@@ -52,6 +58,8 @@ public class AirScooter extends AirAbility {
 		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
 		}
+		AirBlast blast = CoreAbility.getAbility(player, AirBlast.class);
+		if (blast != null && blast.isFromOtherOrigin()) blast.remove();
 
 		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
 		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");
@@ -59,6 +67,8 @@ public class AirScooter extends AirAbility {
 		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Air.AirScooter.Duration");
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
+		this.damageThreshold = getConfig().getDouble("Abilities.Air.AirScooter.DamageThreshold");
+		this.totalDamageTaken = 0;
 		this.useslime = getConfig().getBoolean("Abilities.Air.AirScooter.ShowSitting");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
@@ -87,6 +97,10 @@ public class AirScooter extends AirAbility {
 			} else {
 				this.useslime = false;
 			}
+		}
+
+		if (CoreAbility.getAbility(this.player, AirBlast.class) != null) {
+			CoreAbility.getAbility(this.player, AirBlast.class).remove();
 		}
 
 		this.start();
@@ -130,6 +144,11 @@ public class AirScooter extends AirAbility {
 			this.bPlayer.addCooldown(this);
 			this.remove();
 			return;
+		}
+
+		if (GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType())
+				|| GeneralMethods.isWeapon(this.player.getInventory().getItemInOffHand().getType())) {
+			this.remove();
 		}
 
 		this.getFloor();
@@ -324,5 +343,21 @@ public class AirScooter extends AirAbility {
 
 	public void setCooldown(final long cooldown) {
 		this.cooldown = cooldown;
+	}
+
+	public double getTotalDamageTaken() {
+		return this.totalDamageTaken;
+	}
+
+	public void addDamageTaken(double damage) {
+		this.totalDamageTaken += damage;
+	}
+
+	public double getDamageThreshold() {
+		return this.damageThreshold;
+	}
+
+	public void setDamageThreshold(double damageThreshold) {
+		this.damageThreshold = damageThreshold;
 	}
 }

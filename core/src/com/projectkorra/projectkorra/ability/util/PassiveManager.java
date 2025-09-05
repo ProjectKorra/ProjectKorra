@@ -56,6 +56,16 @@ public class PassiveManager {
 		}
 	}
 
+	public static void startPassive(Player player, Class<? extends CoreAbility> ability) {
+		try {
+			final Constructor<?> constructor = ability.getConstructor(Player.class);
+			final Object object = constructor.newInstance(player);
+			((CoreAbility) object).start();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static boolean hasPassive(final Player player, final CoreAbility passive) {
 		if (player == null) {
 			return false;
@@ -101,6 +111,8 @@ public class PassiveManager {
 		}
 		return passives;
 	}
+
+
 
 	public static Map<String, CoreAbility> getPassives() {
 		return PASSIVES;

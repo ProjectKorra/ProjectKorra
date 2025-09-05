@@ -40,7 +40,7 @@ public class TempArmorStand {
 		}
 		tempStands.clear();
 	}
-	
+
 	public static Set<TempArmorStand> getTempStands() {
 		return tempStands;
 	}

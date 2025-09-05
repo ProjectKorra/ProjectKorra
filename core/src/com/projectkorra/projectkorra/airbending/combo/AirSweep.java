@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -21,13 +20,13 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
-import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.firebending.combo.ComboStream;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class AirSweep extends AirAbility implements ComboAbility {
 
 	private int progressCounter;
+    private int progressSpeed;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DAMAGE)
@@ -43,7 +42,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	private Location destination;
 	private Vector direction;
 	private ArrayList<Entity> affectedEntities;
-	private ArrayList<BukkitRunnable> tasks;
+	private ArrayList<ComboStream> tasks;
 	private double radius;
 
 	public AirSweep(final Player player) {
@@ -63,7 +62,8 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		this.damage = getConfig().getDouble("Abilities.Air.AirSweep.Damage");
 		this.range = getConfig().getDouble("Abilities.Air.AirSweep.Range");
 		this.speed = getConfig().getDouble("Abilities.Air.AirSweep.Speed");
-		this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
+        this.progressSpeed = getConfig().getInt("Abilities.Air.AirSweep.SpawnRate", 8);
+        this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSweep.Cooldown");
 		this.radius = getConfig().getDouble("Abilities.Air.AirSweep.Radius");
 
@@ -84,13 +84,13 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	@Override
 	public void handleCollision(final Collision collision) {
 		if (collision.isRemovingFirst()) {
-			final ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
+			final ArrayList<ComboStream> newTasks = new ArrayList<>();
 			final double collisionDistanceSquared = Math.pow(this.getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
 			// Remove all of the streams that are by this specific ourLocation.
 			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with Collision's detection algorithm.
-			for (final BukkitRunnable task : this.getTasks()) {
-				if (task instanceof FireComboStream) {
-					final FireComboStream stream = (FireComboStream) task;
+			for (final ComboStream task : this.getTasks()) {
+				if (task instanceof ComboStream) {
+					final ComboStream stream = (ComboStream) task;
 					if (stream.getLocation().distanceSquared(collision.getLocationSecond()) > collisionDistanceSquared) {
 						newTasks.add(stream);
 					} else {
@@ -107,9 +107,9 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	@Override
 	public List<Location> getLocations() {
 		final ArrayList<Location> locations = new ArrayList<>();
-		for (final BukkitRunnable task : this.getTasks()) {
-			if (task instanceof FireComboStream) {
-				final FireComboStream stream = (FireComboStream) task;
+		for (final ComboStream task : this.getTasks()) {
+			if (task instanceof ComboStream) {
+				final ComboStream stream = (ComboStream) task;
 				locations.add(stream.getLocation());
 			}
 		}
@@ -128,30 +128,31 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		}
 
 		if (this.origin == null) {
+			// AirSweep come from feet instead
 			this.direction = this.player.getEyeLocation().getDirection().normalize();
-			this.origin = GeneralMethods.getMainHandLocation(player).add(this.direction.clone().multiply(10));
+			this.origin = this.player.getLocation().add(this.direction.clone().multiply(10));
 		}
-		if (this.progressCounter < 8) {
+		if (this.progressCounter < progressSpeed) {
 			return;
 		}
 		if (this.destination == null) {
 			this.destination = GeneralMethods.getMainHandLocation(player).add(GeneralMethods.getMainHandLocation(player).getDirection().normalize().multiply(10));
 			final Vector origToDest = GeneralMethods.getDirection(this.origin, this.destination);
-			final Location hand = GeneralMethods.getMainHandLocation(player);
+			final Location feet = player.getLocation();
 			for (double i = 0; i < 30; i++) {
 				final Location endLoc = this.origin.clone().add(origToDest.clone().multiply(i / 30));
-				if (GeneralMethods.locationEqualsIgnoreDirection(hand, endLoc)) {
+				if (GeneralMethods.locationEqualsIgnoreDirection(feet, endLoc)) {
 					continue;
 				}
-				final Vector vec = GeneralMethods.getDirection(hand, endLoc);
+				final Vector vec = GeneralMethods.getDirection(feet, endLoc);
 
-				final FireComboStream fs = new FireComboStream(this.player, this, vec, hand, this.range, this.speed);
+				final ComboStream fs = new ComboStream(this.player, this, vec, feet, this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
 				fs.setParticleEffect(getAirbendingParticles());
 				fs.setCollides(false);
-				fs.runTaskTimer(ProjectKorra.plugin, (long) (i / 2.5), 1L);
+				fs.start();
 				this.tasks.add(fs);
 			}
 		}
@@ -160,7 +161,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 
 	public void manageAirVectors() {
 		for (int i = 0; i < this.tasks.size(); i++) {
-			if (((FireComboStream) this.tasks.get(i)).isCancelled()) {
+			if (((ComboStream) this.tasks.get(i)).isRemoved()) {
 				this.tasks.remove(i);
 				i--;
 			}
@@ -170,7 +171,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			return;
 		}
 		for (int i = 0; i < this.tasks.size(); i++) {
-			final FireComboStream fstream = (FireComboStream) this.tasks.get(i);
+			final ComboStream fstream = (ComboStream) this.tasks.get(i);
 			final Location loc = fstream.getLocation();
 
 			if (GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
@@ -214,7 +215,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		for (final BukkitRunnable task : this.tasks) {
+		for (final ComboStream task : this.tasks) {
 			task.cancel();
 		}
 	}
@@ -325,11 +326,11 @@ public class AirSweep extends AirAbility implements ComboAbility {
 		return this.affectedEntities;
 	}
 
-	public ArrayList<BukkitRunnable> getTasks() {
+	public ArrayList<ComboStream> getTasks() {
 		return this.tasks;
 	}
 
-	public void setTasks(final ArrayList<BukkitRunnable> tasks) {
+	public void setTasks(final ArrayList<ComboStream> tasks) {
 		this.tasks = tasks;
 	}
 }

@@ -58,9 +58,9 @@ public class ToggleCommand extends PKCommand {
 
 		//1 tick later because commands are created before abilities are
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () ->
-				cachedPassiveElements = CoreAbility.getAbilities().stream().filter(ab -> ab instanceof PassiveAbility)
-						.map(Ability::getElement).collect(Collectors.toSet())
-		, 1L);
+						cachedPassiveElements = CoreAbility.getAbilities().stream().filter(ab -> ab instanceof PassiveAbility)
+								.map(Ability::getElement).collect(Collectors.toSet())
+				, 1L);
 	}
 
 	@Override

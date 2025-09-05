@@ -25,16 +25,19 @@ public class ConfigManager {
 	public static Config defaultConfig;
 	public static Config languageConfig;
 	public static Config avatarStateConfig;
+	public static Config collisionConfig;
 
 	public ConfigManager() {
 		presetConfig = new Config(new File("presets.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		languageConfig = new Config(new File("language.yml"));
 		avatarStateConfig = new Config(new File("avatarstate.yml"));
+		collisionConfig = new Config(new File("collision.yml"));
 
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.LANGUAGE);
 		configCheck(ConfigType.PRESETS);
+		configCheck(ConfigType.COLLISION);
 		configCheck(ConfigType.AVATAR_STATE);
 	}
 
@@ -57,6 +60,22 @@ public class ConfigManager {
 			config.addDefault("Example", abilities);
 
 			presetConfig.save();
+		} else if (type == ConfigType.COLLISION) {
+			config = collisionConfig.get();
+			String header =
+					"To add a collision copy this line into 'AddCollisions' and replace values:\n" +
+							"- FirstAbility, SecondAbility, RemoveFirst, RemoveSecond\n\n" +
+							"FirstAbility - first ability\n" +
+							"SecondAbility - second ability\n" +
+							"RemoveFirst - if true it removes the first ability on collision\n" +
+							"RemoveSecond - if true it removes the second ability on collision\n\n" +
+							"if ability is not found it will say in console which ability and what line is wrong";
+			config.options().header(header);
+			config.addDefault("AddCollisions", Arrays.asList("FirstAbility, SecondAbility, RemoveFirst, RemoveSecond"));
+			config.addDefault("Collisions", Arrays.asList("FirstAbility, SecondAbility"));
+			config.addDefault("FallingBlockCollisions", Arrays.asList("FallingBlockAbility, VelocityAbility"));
+			collisionConfig.save();
+
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 
@@ -906,6 +925,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.CanOpenDoors", true);
 			config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
 			config.addDefault("Abilities.Air.AirBlast.CanCoolLava", true);
+			config.addDefault("Abilities.Air.AirBlast.MaxChains", 5);
+			config.addDefault("Abilities.Air.AirBlast.LongCooldown", 5000);
 
 			config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 			config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
@@ -926,6 +947,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.Cooldown", 7000);
 			config.addDefault("Abilities.Air.AirScooter.Duration", 0);
 			config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
+			config.addDefault("Abilities.Air.AirScooter.DamageThreshold", 4);
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
@@ -954,6 +976,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSuction.Cooldown", 500);
 			config.addDefault("Abilities.Air.AirSuction.Particles", 6);
 			config.addDefault("Abilities.Air.AirSuction.SelectParticles", 6);
+			config.addDefault("Abilities.Air.AirSuction.MaxChains", 5);
+			config.addDefault("Abilities.Air.AirSuction.LongCooldown", 5000);
 
 			config.addDefault("Abilities.Air.AirSwipe.Enabled", true);
 			config.addDefault("Abilities.Air.AirSwipe.Damage", 2);
@@ -1662,6 +1686,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireSpin.Combination", Arrays.asList("FireBlast:LEFT_CLICK", "FireBlast:LEFT_CLICK", "FireShield:LEFT_CLICK", "FireShield:SNEAK_DOWN", "FireShield:SNEAK_UP"));
 
 			config.addDefault("Abilities.Fire.FireWheel.Enabled", true);
+			config.addDefault("Abilities.Fire.FireWheel.HitboxMultiplier",0.2);
 			config.addDefault("Abilities.Fire.FireWheel.Range", 20.0);
 			config.addDefault("Abilities.Fire.FireWheel.Damage", 4.0);
 			config.addDefault("Abilities.Fire.FireWheel.Speed", 0.55);
@@ -1714,6 +1739,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
 			config.addDefault("Abilities.Chi.Paralyze.Cooldown", 10000);
 			config.addDefault("Abilities.Chi.Paralyze.Duration", 1500);
+			config.addDefault("Abilities.Chi.Paralyze.EntityDamageThreshold", 4);
 
 			config.addDefault("Abilities.Chi.RapidPunch.Enabled", true);
 			config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);

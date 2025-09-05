@@ -74,6 +74,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -983,6 +984,63 @@ public class GeneralMethods {
 		return getArmorIndex(mat) != -1;
 	}
 
+	/**
+	 * Checks if the player is wearing any piece of armor.
+	 *
+	 * @return true if the player is wearing armor, false otherwise
+	 */
+	public static boolean isPlayerWearingArmor(Player player) {
+		return (player.getInventory().getHelmet() != null && GeneralMethods.isArmor(player.getInventory().getHelmet().getType())) ||
+				(player.getInventory().getChestplate() != null && GeneralMethods.isArmor(player.getInventory().getChestplate().getType())) ||
+				(player.getInventory().getLeggings() != null && GeneralMethods.isArmor(player.getInventory().getLeggings().getType())) ||
+				(player.getInventory().getBoots() != null && GeneralMethods.isArmor(player.getInventory().getBoots().getType()));
+	}
+
+	// Method to calculate armor points of a player
+	public static int getArmorPoints(Player player) {
+		int armorPoints = 0;
+
+		// Get player's armor items
+		ItemStack[] armorItems = player.getInventory().getArmorContents();
+
+		for (ItemStack item : armorItems) {
+			if (item == null || item.getType() == Material.AIR) continue;
+
+			switch (item.getType()) {
+				case LEATHER_HELMET -> armorPoints += 1;
+				case LEATHER_CHESTPLATE -> armorPoints += 3;
+				case LEATHER_LEGGINGS -> armorPoints += 2;
+				case LEATHER_BOOTS -> armorPoints += 1;
+
+				case GOLDEN_HELMET -> armorPoints += 2;
+				case GOLDEN_CHESTPLATE -> armorPoints += 5;
+				case GOLDEN_LEGGINGS -> armorPoints += 3;
+				case GOLDEN_BOOTS -> armorPoints += 1;
+
+				case CHAINMAIL_HELMET, IRON_HELMET -> armorPoints += 2;
+				case CHAINMAIL_CHESTPLATE, IRON_CHESTPLATE -> armorPoints += 6;
+				case CHAINMAIL_LEGGINGS, IRON_LEGGINGS -> armorPoints += 5;
+				case CHAINMAIL_BOOTS, IRON_BOOTS -> armorPoints += 2;
+
+				case DIAMOND_HELMET -> armorPoints += 3;
+				case DIAMOND_CHESTPLATE -> armorPoints += 8;
+				case DIAMOND_LEGGINGS -> armorPoints += 6;
+				case DIAMOND_BOOTS -> armorPoints += 3;
+
+				case NETHERITE_HELMET -> armorPoints += 3;
+				case NETHERITE_CHESTPLATE -> armorPoints += 8;
+				case NETHERITE_LEGGINGS -> armorPoints += 6;
+				case NETHERITE_BOOTS -> armorPoints += 3;
+
+				default -> {
+					// Handle other armor types or custom items if needed
+				}
+			}
+		}
+
+		return armorPoints;
+	}
+
 	public static boolean isAdjacentToThreeOrMoreSources(final Block block) {
 		return isAdjacentToThreeOrMoreSources(block, false);
 	}
@@ -1556,17 +1614,17 @@ public class GeneralMethods {
 	}
 
 	public static void stopBending() {
-		CoreAbility.removeAll();
-		EarthAbility.stopBending();
-		WaterAbility.stopBending();
-		FireAbility.stopBending();
+		CoreAbility.removeAll(); //Now Folia safe
+		EarthAbility.stopBending(); //Should be okay?
+		WaterAbility.stopBending(); //Should be fine now
+		FireAbility.stopBending(); //Does nothing lmao
 
-		TempBlock.removeAll();
-		TempArmor.revertAll();
-		TempArmorStand.removeAll();
-		MovementHandler.resetAll();
-		MultiAbilityManager.removeAll();
-		TempFallingBlock.removeAllFallingBlocks();
+		TempBlock.removeAll(); //Now Folia safe
+		TempArmor.revertAll(); //Now folia safe
+		TempArmorStand.removeAll(); //Now folia safe
+		MovementHandler.resetAll(); //Now folia safe
+		MultiAbilityManager.removeAll(); //Doesn't need thread safety
+		TempFallingBlock.removeAllFallingBlocks(); //Folia safe
 	}
 
 	public static void stopPlugin() {

@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -58,10 +57,10 @@ public final class BendingBoardManager {
 
 	private static void initialize() {
 		enabled = ConfigManager.getConfig().getBoolean("Properties.BendingBoard");
-		
+
 		disabledWorlds.clear();
 		disabledWorlds.addAll(ConfigManager.getConfig().getStringList("Properties.DisabledWorlds"));
-		
+
 		if (ConfigManager.languageConfig.get().contains("Board.Extras")) {
 			ConfigurationSection section = ConfigManager.languageConfig.get().getConfigurationSection("Board.Extras");
 			for (String key : section.getKeys(false)) {

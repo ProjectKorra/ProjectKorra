@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.chiblocking;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.StanceAbility;
 import org.bukkit.Location;
@@ -14,7 +15,8 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AcrobatStance extends ChiAbility implements StanceAbility {
 
-	@Attribute(Attribute.COOLDOWN)
+	private int armorNerf; //Once this value is hit the armor debuff will be applied
+    @Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	@Attribute(Attribute.DURATION)
 	private long duration;
@@ -36,7 +38,8 @@ public class AcrobatStance extends ChiAbility implements StanceAbility {
 		this.duration = getConfig().getLong("Abilities.Chi.AcrobatStance.Duration");
 		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") - 1;
 		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") - 1;
-		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
+        this.armorNerf = getConfig().getInt("Abilities.Chi.AcrobatStance.ArmorNerf", 20);
+        this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 
 		final StanceAbility stance = this.bPlayer.getStance();
@@ -62,11 +65,20 @@ public class AcrobatStance extends ChiAbility implements StanceAbility {
 			return;
 		}
 
+		// Check if the player is wearing any armor
+		int armorPoints = GeneralMethods.getArmorPoints(player);
+
+		boolean shouldApplyNerf = armorPoints > armorNerf;
+
+		// Set jump and speed values based on armor status
+		int adjustedJumpPower = shouldApplyNerf ? 0 : this.jump;
+		int adjustedSpeedPower = shouldApplyNerf ? 0 : this.speed;
+
 		if (!this.player.hasPotionEffect(PotionEffectType.SPEED) || this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() < this.speed || (this.player.getPotionEffect(PotionEffectType.SPEED).getAmplifier() == this.speed && this.player.getPotionEffect(PotionEffectType.SPEED).getDuration() == 1)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, this.speed, true, false), true);
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10, adjustedSpeedPower, true, false), true);
 		}
 		if (!this.player.hasPotionEffect(PotionEffectType.JUMP) || this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() < this.jump || (this.player.getPotionEffect(PotionEffectType.JUMP).getAmplifier() == this.jump && this.player.getPotionEffect(PotionEffectType.JUMP).getDuration() == 1)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, this.jump, true, false), true);
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, adjustedJumpPower, true, false), true);
 		}
 	}
 

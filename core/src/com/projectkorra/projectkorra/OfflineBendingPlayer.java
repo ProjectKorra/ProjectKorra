@@ -432,23 +432,23 @@ public class OfflineBendingPlayer {
                     }
 
                     //Load tempelements from the database
-                   try (ResultSet rs3 = DBConnection.sql.readQuery("SELECT * FROM pk_temp_elements WHERE uuid = '" + uuid.toString() + "'")) {
-                       Map<Element, Long> elements = new HashMap<>();
-                       Map<SubElement, Long> subElements = new HashMap<>();
+                    try (ResultSet rs3 = DBConnection.sql.readQuery("SELECT * FROM pk_temp_elements WHERE uuid = '" + uuid.toString() + "'")) {
+                        Map<Element, Long> elements = new HashMap<>();
+                        Map<SubElement, Long> subElements = new HashMap<>();
 
-                       while (rs3.next()) {
+                        while (rs3.next()) {
                             Element element = Element.getElement(rs3.getString("element"));
                             long time = rs3.getLong("expiry");
 
                             if (element instanceof SubElement) subElements.put((SubElement) element, time);
                             else elements.put(element, time);
-                       }
+                        }
 
-                       bPlayer.tempElements = elements;
-                       bPlayer.tempSubElements = subElements;
-                   } catch (SQLException e) {
-                       e.printStackTrace();
-                   }
+                        bPlayer.tempElements = elements;
+                        bPlayer.tempSubElements = subElements;
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
 
 
                     bPlayer.loading = false;
@@ -543,6 +543,7 @@ public class OfflineBendingPlayer {
             DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
         }, 1L);
     }
+
 
     /**
      * Saves the elements of a BendingPlayer to the database.

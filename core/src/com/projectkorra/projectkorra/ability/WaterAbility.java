@@ -534,8 +534,8 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void stopBending() {
-		SurgeWall.removeAllCleanup();
-		SurgeWave.removeAllCleanup();
-		WaterArms.removeAllCleanup();
+		SurgeWall.removeAllCleanup(); //Folia compatible
+		SurgeWave.removeAllCleanup(); //Folia compatible
+		WaterArms.removeAllCleanup(); //Folia compatible
 	}
 }

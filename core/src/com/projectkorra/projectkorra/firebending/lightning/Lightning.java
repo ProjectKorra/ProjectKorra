@@ -155,7 +155,7 @@ public class Lightning extends LightningAbility {
 		this.transformMobs = getConfig().getBoolean("Abilities.Fire.Lightning.TransformMobs");
 		this.chargeCreeper = getConfig().getBoolean("Abilities.Fire.Lightning.ChargeCreeper");
 		this.chainLightningRods = getConfig().getBoolean("Abilities.Fire.Lightning.ChainLightningRods");
-		
+
 		this.chargedCopperBlocks = new Block[this.maxCopperArcs];
 
 		this.start();
@@ -200,7 +200,7 @@ public class Lightning extends LightningAbility {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Transforms mobs as vanilla Minecraft lightning does, considers LIGHTNING_AFFECTED mobs
 	 *
@@ -241,7 +241,7 @@ public class Lightning extends LightningAbility {
 		}
 		return;
 	}
-	
+
 	/**
 	 * Charges lightning rods. If ChainLightningRods is enabled, it will power all lightning rods
 	 * below the block that was hit
@@ -251,17 +251,17 @@ public class Lightning extends LightningAbility {
 	private void powerLightningRods(final Block block) {
 		if (isLightningRod(block)) {
 			block.getWorld().spawnParticle(Particle.valueOf("ELECTRIC_SPARK"), block.getLocation().clone().add(0.5, 0.5, 0.5), 6, 0.125, 0.125, 0.125, 0.05);
-			
+
 			List<Block> blocks = new ArrayList<>();
 			Block down = block.getRelative(BlockFace.DOWN);
-			
+
 			if (this.chainLightningRods) {
 				if (isLightningRod(down)) {
 					while (isLightningRod(down)) {
 						updateLightningRod(down, true);
-						
+
 						blocks.add(down);
-						
+
 						down = down.getRelative(BlockFace.DOWN);
 					}
 				} else {
@@ -281,13 +281,13 @@ public class Lightning extends LightningAbility {
 			}, 8);
 		}
 	}
-	
+
 	private boolean rodIsGrounded(final Block block) {
 		if (!isLightningRod(block)) {
 			return false;
 		}
 		Block down = block.getRelative(BlockFace.DOWN);
-		
+
 		if (GeneralMethods.isSolid(down) && !isLightningRod(down)) {
 			return true;
 		} else if (isLightningRod(down)) {
@@ -300,7 +300,7 @@ public class Lightning extends LightningAbility {
 		}
 		return false;
 	}
-	
+
 	private void updateLightningRod(final Block block, final boolean powered) {
 		Powerable powerable = (Powerable) block.getBlockData();
 		powerable.setPowered(powered);
@@ -317,7 +317,7 @@ public class Lightning extends LightningAbility {
 			}
 		}
 	}
-	
+
 	/**
 	 * Recursively graphs out nearby copper blocks when first hit
 	 * @param hit Block that was hit/block that was detected recursively
@@ -327,14 +327,14 @@ public class Lightning extends LightningAbility {
 			this.chargedCopperBlocks[this.copperArcs] = hit;
 			hit.setMetadata("chargedcopper", new FixedMetadataValue(ProjectKorra.plugin, 0));
 			this.copperArcs++;
-			
+
 			// If a lightning rod is grounded, then our graph will stop at this vertex
 			if (this.rodIsGrounded(hit)) {
 				this.grounded = true;
 				return;
 			}
 			List<Block> rods = GeneralMethods.getBlocksAroundPoint(hit.getLocation(), this.conductivityRange).stream().filter(b -> isLightningRod(b) && !b.hasMetadata("chargedcopper")).collect(Collectors.toList());
-			
+
 			// We will first establish a directed graph between lightning rods first
 			if (rods.size() > 0) {
 				rods.forEach(rod -> this.setupCopperGraph(rod));
@@ -353,7 +353,7 @@ public class Lightning extends LightningAbility {
 			}
 		}
 	}
-	
+
 	/**
 	 * Chains lightning arcs between the mapped out copper blocks
 	 * @param location current location of the arc
@@ -361,15 +361,15 @@ public class Lightning extends LightningAbility {
 	private void chainCopperLightning(final Location location) {
 		if (this.currentCopperChainArc == null && this.copperChains + 1 < this.copperArcs) {
 			Block originBlock = this.chargedCopperBlocks[this.copperChains], destinationBlock = this.chargedCopperBlocks[this.copperChains + 1];
-			
+
 			this.chainOrigin = originBlock.getLocation().clone().add(0.5, 0.65, 0.5);
 			this.chainDestination = destinationBlock.getLocation().clone().add(0.5, 0.8, 0.5);
-			
+
 			Arc arc = new Arc(this.chainOrigin, this.chainDestination);
 			arc.generatePoints(POINT_GENERATION);
-			
+
 			this.arcs.add(arc);
-			
+
 			this.currentCopperChainArc = arc;
 		} else if (this.currentCopperChainArc != null) {
 			if (location.getBlock().equals(this.chargedCopperBlocks[this.copperChains + 1]) || location.distanceSquared(this.chainDestination) <= 0.8 * 0.8) {
@@ -385,7 +385,7 @@ public class Lightning extends LightningAbility {
 			return;
 		}
 	}
-	
+
 	/**
 	 * Checks if a block is of copper (minus lightning rods)
 	 * @param block
@@ -394,7 +394,7 @@ public class Lightning extends LightningAbility {
 	private boolean isCopper(final Block block) {
 		return block.getType().name().contains("COPPER");
 	}
-	
+
 	/**
 	 * Checks if the current version is 1.17 or higher and if the material is a lightning rod
 	 * @param block
@@ -444,7 +444,7 @@ public class Lightning extends LightningAbility {
 					if (ThreadLocalRandom.current().nextDouble() < .2) {
 						playLightningbendingChargingSound(loc);
 					}
-					
+
 				} else {
 					this.state = State.MAINBOLT;
 					this.bPlayer.addCooldown(this);
@@ -456,7 +456,7 @@ public class Lightning extends LightningAbility {
 					} else {
 						Block targetBlock = GeneralMethods.getTargetedLocation(this.player, this.range, false).getBlock();
 						boolean foundCopper = isCopper(targetBlock), foundRod = isLightningRod(targetBlock);
-						
+
 						if (!foundCopper) {
 							if (!foundRod) {
 								for (Block block : GeneralMethods.getBlocksAroundPoint(targetBlock.getLocation(), 1.25)) {
@@ -510,7 +510,7 @@ public class Lightning extends LightningAbility {
 		} else if (this.state == State.STRIKE || this.state == State.CHAIN) {
 			for (int i = 0; i < this.arcs.size(); i++) {
 				final Arc arc = this.arcs.get(i);
-				
+
 				for (int j = 0; j < arc.getAnimationLocations().size() - 1; j++) {
 					final Location iterLoc = arc.getAnimationLocations().get(j).getLocation().clone();
 					final Location dest = arc.getAnimationLocations().get(j + 1).getLocation().clone();
@@ -518,7 +518,7 @@ public class Lightning extends LightningAbility {
 						this.affectedEntities.add(this.player);
 						this.electrocute(this.player);
 					}
-					
+
 					while (iterLoc.distanceSquared(dest) > 0.15 * 0.15) {
 						final BukkitRunnable task = new LightningParticle(arc, iterLoc.clone(), this.selfHitWater, this.waterArcs);
 						final double timer = this.state == State.CHAIN ? arc.getAnimationLocations().get(j).getAnimCounter() / 8 : arc.getAnimationLocations().get(j).getAnimCounter() / 2;
@@ -559,7 +559,7 @@ public class Lightning extends LightningAbility {
 		}
 		this.remove();
 	}
-	
+
 	public void remove() {
 		for (Block block : this.chargedCopperBlocks) {
 			if (block != null) {
@@ -793,7 +793,7 @@ public class Lightning extends LightningAbility {
 					Lightning.this.chainCopperLightning(this.location);
 				}
 				powerLightningRods(this.location.getBlock());
-				
+
 				if (!Lightning.this.isTransparentForLightning(Lightning.this.player, this.location.getBlock()) && !isCopper(this.location.getBlock()) && !isLightningRod(this.location.getBlock())) {
 					this.arc.cancel();
 					return;
@@ -831,7 +831,7 @@ public class Lightning extends LightningAbility {
 					}
 				} else if (!Lightning.this.hitCopper && Lightning.this.arcOnCopper && isCopper(block)) {
 					Lightning.this.hitCopper = true;
-						
+
 					if (Lightning.this.state != State.CHAIN && Lightning.this.arcOnCopper) {
 						Lightning.this.setupCopperGraph(block);
 						Lightning.this.chainCopperLightning(this.location);
@@ -861,7 +861,7 @@ public class Lightning extends LightningAbility {
 								return;
 							}
 						}
-						
+
 						Lightning.this.transformMobs(lent);
 						Lightning.this.electrocute(lent);
 
@@ -984,35 +984,35 @@ public class Lightning extends LightningAbility {
 	public void setHitIce(final boolean hitIce) {
 		this.hitIce = hitIce;
 	}
-	
+
 	public boolean isHitCopper() {
 		return this.hitCopper;
 	}
-	
+
 	public void setHitCopper(final boolean hitCopper) {
 		this.hitCopper = hitCopper;
 	}
-	
+
 	public boolean isTransformMobs() {
 		return this.transformMobs;
 	}
-	
+
 	public void setTransformMobs(final boolean transformMobs) {
 		this.transformMobs = transformMobs;
 	}
-	
+
 	public boolean isChargeCreeper() {
 		return this.chargeCreeper;
 	}
-	
+
 	public void setChargeCreeper(final boolean chargeCreeper) {
 		this.chargeCreeper = chargeCreeper;
 	}
-	
+
 	public boolean isChainLightningRods() {
 		return this.chainLightningRods;
 	}
-	
+
 	public void setChainLightningRods(final boolean chainLightningRods) {
 		this.chainLightningRods = chainLightningRods;
 	}
@@ -1040,11 +1040,11 @@ public class Lightning extends LightningAbility {
 	public void setArcOnIce(final boolean arcOnIce) {
 		this.arcOnIce = arcOnIce;
 	}
-	
+
 	public boolean isArcOnCopper() {
 		return this.arcOnCopper;
 	}
-	
+
 	public void setArcOnCopper(final boolean arcOnCopper) {
 		this.arcOnCopper = arcOnCopper;
 	}

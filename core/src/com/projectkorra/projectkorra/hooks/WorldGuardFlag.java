@@ -19,5 +19,16 @@ public class WorldGuardFlag {
 			Bukkit.getLogger().severe("[ProjectKorra] Unable to register bending WorldGuard flag: " + e);
 			e.printStackTrace();
 		}
+
+		try {
+			if (registry.get("bending-all-off") != null) {
+				Bukkit.getLogger().warning("[ProjectKorra] Bending-all-off flag already exists");
+				return;
+			}
+			registry.register(new StateFlag("bending-all-off", false));
+		} catch (final Exception e) {
+			Bukkit.getLogger().severe("[ProjectKorra] Unable to register Bending-all-off WorldGuard flag: " + e);
+			e.printStackTrace();
+		}
 	}
 }

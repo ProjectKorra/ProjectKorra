@@ -14,6 +14,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -39,6 +42,9 @@ public class AvatarState extends AvatarAbility {
 	@Attribute("DarkAvatar")
 	private boolean darkAvatar = false;
 
+	// BossBar for tracking duration
+	private BossBar bossBar;
+
 	public AvatarState(final Player player) {
 		super(player);
 
@@ -48,6 +54,20 @@ public class AvatarState extends AvatarAbility {
 			return;
 		} else if (this.bPlayer.isOnCooldown(this)) {
 			return;
+		}
+
+		// Initialize BossBar
+		this.bossBar = Bukkit.createBossBar("Avatar State Active", BarColor.BLUE, BarStyle.SOLID);
+		this.bossBar.addPlayer(player);
+
+		for (String key : ConfigManager.avatarStateConfig.get().getConfigurationSection("PotionEffects").getKeys(false)) {
+			final PotionEffectType type = PotionEffectTypeWrapper.getByName(key);
+			if (type == null) {
+				ProjectKorra.log.warning("Invalid PotionEffectType: " + key + " in AvatarState config.");
+				continue;
+			}
+			final int power = ConfigManager.avatarStateConfig.get().getInt("PotionEffects." + key) - 1;
+			this.potionEffects.put(type, power);
 		}
 
 		for (String key : ConfigManager.avatarStateConfig.get().getConfigurationSection("PotionEffects").getKeys(false)) {
@@ -92,12 +112,17 @@ public class AvatarState extends AvatarAbility {
 			return;
 		}
 
-		//Check the duration of the ability
-		if (System.currentTimeMillis() - this.getStartTime() > this.duration) {
+		// Check the duration of the ability
+		long elapsed = System.currentTimeMillis() - this.getStartTime();
+		if (elapsed > this.duration) {
 			player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.5F, 0.1F);
 			this.remove();
 			return;
 		}
+
+		// Update BossBar progress
+		double progress = 1.0 - ((double) elapsed / (double) this.duration);
+		this.bossBar.setProgress(progress);
 
 		if (this.glow && !this.player.isGlowing()) this.player.setGlowing(true);
 
@@ -161,6 +186,12 @@ public class AvatarState extends AvatarAbility {
 	public void remove() {
 		this.bPlayer.addCooldown(this, true);
 		this.player.setGlowing(false);
+
+		// Remove BossBar
+		if (this.bossBar != null) {
+			this.bossBar.removeAll();
+		}
+
 		super.remove();
 	}
 

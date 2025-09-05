@@ -14,6 +14,7 @@ public class ConfigType {
 	public static final ConfigType LANGUAGE = new ConfigType("Language");
 	public static final ConfigType AVATAR_STATE = new ConfigType("AvatarState");
 	public static final ConfigType[] CORE_TYPES = { DEFAULT, PRESETS, LANGUAGE, AVATAR_STATE };
+	public static final ConfigType COLLISION = new ConfigType("Collision");
 
 	private final String string;
 

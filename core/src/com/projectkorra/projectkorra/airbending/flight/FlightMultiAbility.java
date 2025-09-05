@@ -7,10 +7,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -19,7 +23,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FlightAbility;
 import com.projectkorra.projectkorra.ability.MultiAbility;
@@ -59,6 +62,11 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Vector prevDir;
+	private Object messageTask;
+
+	// Add BossBar for duration tracking
+	private BossBar bossBar;
+
 
 	public FlightMultiAbility(final Player player) {
 		super(player);
@@ -125,6 +133,11 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.slowSpeed = this.baseSpeed / 2;
 		this.fastSpeed = this.baseSpeed * 2;
 		this.multiplier = this.baseSpeed;
+
+		// Initialize BossBar
+		this.bossBar = Bukkit.createBossBar("Flight Duration", BarColor.WHITE, BarStyle.SOLID);
+		this.bossBar.addPlayer(player);
+
 		this.start();
 	}
 
@@ -161,10 +174,15 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		if (this.duration > 0) {
-			if (System.currentTimeMillis() >= this.duration + this.getStartTime()) {
+			long elapsed = System.currentTimeMillis() - this.getStartTime();
+			if (elapsed >= this.duration) {
 				this.remove();
 				return;
 			}
+
+			// Update BossBar progress
+			double progress = 1.0 - ((double) elapsed / (double) this.duration);
+			this.bossBar.setProgress(progress);
 		}
 
 		if (requestedMap.containsKey(this.player.getUniqueId())) {
@@ -323,6 +341,12 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.bPlayer.addCooldown(this);
 		MultiAbilityManager.unbindMultiAbility(this.player);
 		flying.remove(this.player.getUniqueId());
+
+		// Remove BossBar
+		if (this.bossBar != null) {
+			this.bossBar.removeAll();
+		}
+
 		if (this.player.isOnline() && !this.player.isDead()) {
 			this.player.eject();
 		}

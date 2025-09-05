@@ -33,7 +33,6 @@ public class RegionProtection {
         if (enabled("LWC")) new LWC();
         if (enabled("Towny")) new Towny();
         if (enabled("RedProtect")) new RedProtect();
-        if (enabled("GriefDefender")) new GriefDefender();
         if (enabled("GriefPrevention")) new GriefPrevention();
         if (enabled("Residence")) new Residence();
         if (enabled("Lands")) new Lands();
@@ -101,7 +100,7 @@ public class RegionProtection {
         blockMap.put(block, new BlockCacheElement(player, block, ability, value, System.currentTimeMillis()));
         return value;
     }
-    
+
     /**
      * Checks if a location is protected by region protection plugins. Abilities that damage terrain
      * will not damage the terrain (or progress) if this method returns true

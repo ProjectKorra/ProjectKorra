@@ -7,10 +7,10 @@ import java.util.UUID;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class FlightHandler extends Manager {
 

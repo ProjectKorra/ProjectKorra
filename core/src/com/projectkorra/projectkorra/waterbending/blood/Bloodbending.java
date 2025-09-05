@@ -64,6 +64,13 @@ public class Bloodbending extends BloodAbility {
 			ability.remove();
 			return;
 		}
+        
+        if (GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType())
+                || GeneralMethods.isWeapon(this.player.getInventory().getItemInOffHand().getType())) {
+            this.remove();
+            return;
+        }
+
 
 		this.canOnlyBeUsedAtNight = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
 		this.canBeUsedOnUndeadMobs = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");

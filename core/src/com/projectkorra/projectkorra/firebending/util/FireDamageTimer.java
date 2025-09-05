@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;

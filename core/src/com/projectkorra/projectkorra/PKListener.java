@@ -559,6 +559,26 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 
+			if (CoreAbility.getAbility(player, AirScooter.class) != null) {
+				final AirScooter abil = CoreAbility.getAbility(player, AirScooter.class);
+				if (abil == null) {
+					return;
+				}
+
+				abil.addDamageTaken(event.getFinalDamage());
+
+				// Check if total damage taken exceeds the threshold
+				if (abil.getTotalDamageTaken() >= abil.getDamageThreshold()) {
+					abil.remove();
+				}
+			}
+
+			// Check if the entity is paralyzed
+			Paralyze.Pair<MovementHandler, Double> entry = Paralyze.getParalyzedEntities().get(player);
+			if (entry != null) {
+				Paralyze.addDamage(player, event.getDamage());
+			}
+
 			if (bPlayer.isElementToggled(Element.FIRE)) {
 				return;
 			}
@@ -1323,7 +1343,9 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
+		AirScooter.check(player);
 		final CoreAbility ability = bPlayer.getBoundAbility();
+
 		if (ability == null || !ability.isSneakAbility()) {
 			if (PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class))) {
 				new FerroControl(player);
@@ -1519,6 +1541,12 @@ public class PKListener implements Listener {
 				}
 			}
 			return;
+		} else if (bPlayer.canBendIgnoreCooldowns(ability)) {
+			AirScooter.check(player);
+
+			if (ability instanceof AddonAbility) {
+				return;
+			}
 		} else if (ability instanceof AddonAbility || !bPlayer.canBendIgnoreCooldowns(ability) || !bPlayer.canCurrentlyBendWithWeapons() || !bPlayer.isElementToggled(ability.getElement())) {
 			return;
 		}

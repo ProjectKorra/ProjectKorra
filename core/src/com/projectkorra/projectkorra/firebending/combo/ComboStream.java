@@ -24,18 +24,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -44,10 +33,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * stream for all their progress methods. If someone else was reliant on that,
  * they can use this ability instead.
  */
-@Deprecated
-public class FireComboStream extends BukkitRunnable {
+public class ComboStream extends ElementalAbility {
 	private boolean useNewParticles;
-	private boolean cancelled;
 	private boolean collides;
 	private boolean singlePoint;
 	private int density;
@@ -68,9 +55,9 @@ public class FireComboStream extends BukkitRunnable {
 	private final Location initialLocation;
 	private final Location location;
 
-	public FireComboStream(final Player player, final CoreAbility coreAbility, final Vector direction, final Location location, final double distance, final double speed) {
-		this.useNewParticles = false;
-		this.cancelled = false;
+	public ComboStream(final Player player, final CoreAbility coreAbility, final Vector direction, final Location location, final double distance, final double speed) {
+        super(player);
+        this.useNewParticles = false;
 		this.collides = true;
 		this.singlePoint = false;
 		this.density = 1;
@@ -90,7 +77,7 @@ public class FireComboStream extends BukkitRunnable {
 	}
 
 	@Override
-	public void run() {
+	public void progress() {
 		final Block block = this.location.getBlock();
 
 		if (RegionProtection.isRegionProtected(this.player, this.location, coreAbility)) {
@@ -195,9 +182,48 @@ public class FireComboStream extends BukkitRunnable {
 		}
 	}
 
-	@Override
 	public void cancel() {
 		this.remove();
+	}
+
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isSneakAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isIgniteAbility() {
+		return false;
+	}
+
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+
+	@Override
+	public Element getElement() {
+		return coreAbility == null ? Element.AVATAR : coreAbility.getElement();
+	}
+
+	@Override
+	public boolean isExplosiveAbility() {
+		return false;
+	}
+
+	@Override
+	public String getName() {
+		return this.coreAbility == null ? "ComboStream" : "ComboStream_" + this.coreAbility.getName();
 	}
 
 	public Vector getDirection() {
@@ -208,18 +234,13 @@ public class FireComboStream extends BukkitRunnable {
 		return this.location;
 	}
 
-	@Override
-	public boolean isCancelled() {
-		return this.cancelled;
-	}
-
-	public void remove() {
-		super.cancel();
-		this.cancelled = true;
-	}
-
 	public CoreAbility getAbility() {
 		return this.coreAbility;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 	public void setCheckCollisionDelay(final int delay) {

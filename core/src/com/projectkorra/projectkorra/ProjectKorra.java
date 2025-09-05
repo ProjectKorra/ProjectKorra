@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import com.djrapitops.plan.extension.ExtensionService;
 import com.projectkorra.projectkorra.hooks.PlanExtension;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
@@ -41,15 +39,29 @@ public class ProjectKorra extends JavaPlugin {
 	public static Logger log;
 	public static CollisionManager collisionManager;
 	public static CollisionInitializer collisionInitializer;
-	public static long time_step = 1;
+	@Deprecated
+	public static long time_step = 50;
+	private static boolean folia;
+	private static boolean paper;
 	public Updater updater;
-	BukkitTask revertChecker;
+	Object revertChecker;
 	private static PlaceholderAPIHook papiHook;
 
 	@Override
 	public void onEnable() {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
+
+		//Test what server software the server is running on based on avaliable API classes
+		try {
+			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+			folia = true;
+		} catch (ClassNotFoundException ignored) {}
+
+		try {
+			Class.forName("com.destroystokyo.paper.PaperConfig");
+			paper = true;
+		} catch (ClassNotFoundException ignored) {}
 
 
 		new ConfigManager();
@@ -127,7 +139,6 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		this.revertChecker.cancel();
 		GeneralMethods.stopBending();
 		for (final Player player : this.getServer().getOnlinePlayers()) {
 			if (isStatisticsEnabled()) {
@@ -178,4 +189,12 @@ public class ProjectKorra extends JavaPlugin {
 	public static boolean isDatabaseCooldownsEnabled() {
 		return ConfigManager.getConfig().getBoolean("Properties.DatabaseCooldowns");
 	}
+
+	/**
+	 * @return True if the server is running Paper
+	 */
+	public static boolean isPaper() {
+		return paper;
+	}
+
 }

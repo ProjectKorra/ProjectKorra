@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.projectkorra.projectkorra.ProjectKorra;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 /**

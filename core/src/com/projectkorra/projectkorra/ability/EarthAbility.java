@@ -714,7 +714,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void stopBending() {
-		DensityShift.removeAll();
+		DensityShift.removeAll(); //Now thread safe
 
 		if (isEarthRevertOn()) {
 			removeAllEarthbendedBlocks();
