@@ -1,12 +1,10 @@
 package com.projectkorra.projectkorra.configuration;
 
-import com.google.common.collect.Sets;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
@@ -193,6 +191,18 @@ public class ConfigManager {
 			config.addDefault("Commands.Preset.Other.BendingPermanentlyRemoved", "That player's bending was permanently removed.");
 			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
 			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
+			config.addDefault("Commands.Preset.ExportNotSpecified", "Please specify a preset name to export.");
+			config.addDefault("Commands.Preset.ImportNotSpecified", "Please provide an import code.");
+			config.addDefault("Commands.Preset.ExportSuccess", "Preset {name} exported. Copy this code to share: {code}");
+			config.addDefault("Commands.Preset.ExportFailed", "Failed to export preset.");
+			config.addDefault("Commands.Preset.ImportSuccess", "Successfully imported preset {name}");
+			config.addDefault("Commands.Preset.ImportFailed", "Failed to import preset. The code may be invalid or corrupted.");
+			config.addDefault("Commands.Preset.ImportExists", "A preset with that name already exists. Delete it first or use a different import code.");
+			config.addDefault("Commands.Preset.ImportAbilityNotFound", "{ability} could not be found and was not imported.");
+			config.addDefault("Commands.Preset.ExportCodeButton", "[ Click to Copy Code ]");
+			config.addDefault("Commands.Preset.ExportCommandButton", "[ Click to Import Code ]");
+			config.addDefault("Commands.Preset.HoverCommand", "Click to copy the command to import your preset to your clipboard!");
+			config.addDefault("Commands.Preset.HoverCode", "Copy code to clipboard;\n Code: {code}");
 
 			config.addDefault("Commands.Cooldown.Description", "Set, reset or view a cooldown for a player");
 			config.addDefault("Commands.Cooldown.InvalidPlayer", "That player has not played before!");
