@@ -75,7 +75,7 @@ public class Commands {
 		final PluginCommand projectkorra = this.plugin.getCommand("projectkorra");
 
 		/**
-		 * Set of all of the Classes which extend Command
+		 * Set of all the Classes which extend Command
 		 */
 		initializeCommands();
 
@@ -91,7 +91,7 @@ public class Commands {
 					}
 				}
 
-				PKCommand.instances.get("help").execute(s, new ArrayList<String>());
+				PKCommand.instances.get("help").execute(s, List.of());
 				return true;
 			}
 

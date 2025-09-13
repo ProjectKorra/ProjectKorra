@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.projectkorra.projectkorra.OfflineBendingPlayer;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
@@ -62,16 +63,11 @@ public class AddCommand extends PKCommand {
 	public void execute(final CommandSender sender, final List<String> args) {
 		if (!this.correctLength(sender, args.size(), 1, 2)) {
 			return;
-		} else if (args.size() == 1) { // bending add element.
-			if (!this.hasPermission(sender) || !this.isPlayer(sender)) {
-				return;
-			}
-			this.add(sender, (Player) sender, args.get(0).toLowerCase());
-		} else if (args.size() == 2) { // bending add element combo.
-			if (!this.hasPermission(sender, "others")) {
-				return;
-			}
+		}
 
+		if (args.size() == 1 && this.hasPermission(sender) && this.isPlayer(sender)) { // bending add element.
+			this.add(sender, (Player) sender, args.get(0).toLowerCase());
+		} else if (args.size() == 2 && this.hasPermission(sender, "others")) { // bending add element combo.
 			this.getPlayer(args.get(1)).thenAccept(player -> {
 				if (player == null || (!player.isOnline() && !player.hasPlayedBefore())) {
 					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.playerNotFound);
@@ -104,175 +100,115 @@ public class AddCommand extends PKCommand {
 			}
 
 			if (element.equalsIgnoreCase("all")) {
-				final StringBuilder elements = new StringBuilder("");
-				boolean elementFound = false;
+				final StringBuilder elements = new StringBuilder();
 				for (final Element e : Element.getAllElements()) {
-					if (!bPlayer.hasElement(e) && e != Element.AVATAR) {
-						if (!this.hasPermission(sender, e.getName().toLowerCase())) {
-							continue;
-						}
+                    if (bPlayer.hasElement(e) || e == Element.AVATAR || !this.hasPermission(sender, e.getName().toLowerCase())) {
+                        continue;
+                    }
 
-						PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, e, Result.ADD);
-						Bukkit.getServer().getPluginManager().callEvent(event);
-						if (event.isCancelled()) continue; // if the event is cancelled, don't add the element.
+                    PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, e, Result.ADD);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (event.isCancelled()) continue; // if the event is cancelled, don't add the element.
 
-						elementFound = true;
-						bPlayer.addElement(e);
+                    bPlayer.addElement(e);
 
-						if (elements.length() > 1) {
-							elements.append(ChatColor.YELLOW + ", ");
-						}
-						elements.append(e.toString());
+                    if (!elements.isEmpty()) {
+                        elements.append(ChatColor.YELLOW).append(", ");
+                    }
+                    elements.append(e);
+                }
 
-						bPlayer.getSubElements().clear();
-						if (online) {
-							for (final SubElement sub : Element.getAllSubElements()) {
-								if (bPlayer.hasElement(sub.getParentElement()) && ((BendingPlayer)bPlayer).hasSubElementPermission(sub)) {
-									PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD);
-									Bukkit.getServer().getPluginManager().callEvent(subEvent);
-									if (subEvent.isCancelled()) continue; // if the event is cancelled, don't add the subelement.
-
-									bPlayer.addSubElement(sub);
-								}
-							}
-							bPlayer.saveSubElements();
-						}
-
-						bPlayer.saveElements();
-					}
-				}
-				if (elementFound) {
-					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+				if (!elements.isEmpty()) {
+					if (!sender.equals(target)) {
 						ChatUtil.sendBrandingMessage(sender, ChatColor.YELLOW + this.addedOtherAll.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.YELLOW) + elements);
-						if (online) ChatUtil.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
-					} else {
-						if (online) ChatUtil.sendBrandingMessage((Player)target, ChatColor.YELLOW + this.addedAll + elements);
+                    }
+                    if (online) {
+						ChatUtil.sendBrandingMessage((Player) target, ChatColor.YELLOW + this.addedAll + elements);
 					}
+                    addPermittedSubElements(sender, target, bPlayer);
+					bPlayer.saveElements();
 				} else {
-					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+					if (!sender.equals(target)) {
 						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElementsOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 					} else {
 						ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasAllElements);
 					}
 				}
 				return;
-			} else {
+			}
 
-				// get the [sub]element.
-				Element e = Element.fromString(element);
-				if (e == null) {
-					e = Element.fromString(element);
+			// Singular Element/SubElement
+			Element e = Element.fromString(element);
+			if (e == Element.AVATAR) {
+				this.add(sender, target, Element.AIR.getName());
+				this.add(sender, target, Element.EARTH.getName());
+				this.add(sender, target, Element.FIRE.getName());
+				this.add(sender, target, Element.WATER.getName());
+				return;
+			}
+
+			if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to.
+				if (!sender.equals(target)) {
+					String message = e instanceof SubElement ? this.alreadyHasSubElementOther : this.alreadyHasElementOther;
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + message.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+				} else {
+					String message = e instanceof SubElement ? this.alreadyHasSubElement : this.alreadyHasElement;
+					ChatUtil.sendBrandingMessage(sender, ChatColor.RED + message);
 				}
+				return;
+			}
 
-				if (e == Element.AVATAR) {
-					this.add(sender, target, Element.AIR.getName());
-					this.add(sender, target, Element.EARTH.getName());
-					this.add(sender, target, Element.FIRE.getName());
-					this.add(sender, target, Element.WATER.getName());
+			// if it's an element:
+			if (Arrays.asList(Element.getAllElements()).contains(e)) {
+				if (!sender.hasPermission("bending.command.add." + Element.AVATAR.getName().toLowerCase())
+						&& !this.hasPermission(sender, e.getName().toLowerCase())) {
 					return;
 				}
 
-				// if it's an element:
-				if (Arrays.asList(Element.getAllElements()).contains(e)) {
-					boolean hasPermission = sender.hasPermission("bending.command.add." + Element.AVATAR.getName().toLowerCase()) || this.hasPermission(sender, e.getName().toLowerCase());
+				PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, e, Result.ADD);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if (event.isCancelled()) return; // if the event is cancelled, don't add the element.
 
-					if (!hasPermission) {
-						return;
+				bPlayer.addElement(e);
+
+				// send the message.
+				final ChatColor color = e.getColor();
+				final String bender = e + e.getType().getBender();
+				if (!sender.equals(target)) {
+					String message = ChatUtil.indefArticle(e.getName(), this.addedOtherAE, this.addedOtherCFW);
+					String targetMessage = ChatUtil.indefArticle(e.getName(), this.addedAE, this.addedCFW);
+					ChatUtil.sendBrandingMessage(sender, color + message.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", bender));
+					if (online) {
+						ChatUtil.sendBrandingMessage((Player) target, color + targetMessage.replace("{element}", bender));
 					}
-
-					if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to.
-						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
-						} else {
-							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasElement);
-						}
-						return;
-					}
-
-					PlayerChangeElementEvent event = new PlayerChangeElementEvent(sender, target, e, Result.ADD);
-					Bukkit.getServer().getPluginManager().callEvent(event);
-					if (event.isCancelled()) return; // if the event is cancelled, don't add the element.
-
-					bPlayer.addElement(e);
-					bPlayer.getSubElements().clear();
-					if (online) { //Add all subs they have permission for
-						for (final SubElement sub : Element.getAllSubElements()) {
-							if (bPlayer.hasElement(sub.getParentElement()) && ((BendingPlayer)bPlayer).hasSubElementPermission(sub)) {
-								PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD);
-								Bukkit.getServer().getPluginManager().callEvent(subEvent);
-								if (subEvent.isCancelled()) continue; // if the event is cancelled, don't add the subelement.
-
-								bPlayer.addSubElement(sub);
-							}
-						}
-					}
-
-					// send the message.
-					final ChatColor color = e.getColor();
-					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-						if (e != Element.AIR && e != Element.EARTH && e != Element.BLUE_FIRE) {
-							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
-							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
-						} else {
-							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.toString() + e.getType().getBender()));
-							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
-						}
-					} else {
-						if (e != Element.AIR && e != Element.EARTH) {
-							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", e.toString() + e.getType().getBender()));
-						} else {
-							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", e.toString() + e.getType().getBender()));
-						}
-
-					}
-					bPlayer.saveElements();
-					bPlayer.saveSubElements();
-					return;
-
-					// if it's a sub element:
-				} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
-					final SubElement sub = (SubElement) e;
-
-					if (!this.hasPermission(sender, sub.getName().toLowerCase())) {
-						return;
-					}
-
-					if (bPlayer.hasSubElement(sub)) { // if already had, determine  who to send the error message to.
-						if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
-						} else {
-							ChatUtil.sendBrandingMessage(sender, ChatColor.RED + this.alreadyHasSubElement);
-						}
-						return;
-					}
-
-					PlayerChangeSubElementEvent event = new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD);
-					Bukkit.getServer().getPluginManager().callEvent(event);
-					if (event.isCancelled()) return; // if the event is cancelled, don't add the subelement.
-
-					bPlayer.addSubElement(sub);
-					final ChatColor color = e.getColor();
-
-					if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-						if (e != Element.AIR && e != Element.EARTH) {
-							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
-						} else {
-							ChatUtil.sendBrandingMessage(sender, color + this.addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.toString() + sub.getType().getBender()));
-						}
-
-					} else {
-						if (e != Element.AIR && e != Element.EARTH) {
-							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedCFW.replace("{element}", sub.toString() + sub.getType().getBender()));
-						} else {
-							if (online) ChatUtil.sendBrandingMessage((Player)target, color + this.addedAE.replace("{element}", sub.toString() + sub.getType().getBender()));
-						}
-					}
-					bPlayer.saveSubElements();
-					return;
-
-				} else { // bad element.
-					sender.sendMessage(ChatColor.RED + this.invalidElement);
+				} else {
+					ChatUtil.sendBrandingMessage(sender, color + ChatUtil.indefArticle(e.getName(), addedAE, addedCFW).replace("{element}", bender));
 				}
+				addPermittedSubElements(sender, target, bPlayer);
+				bPlayer.saveElements();
+
+				// if it's a sub element:
+			} else if (e instanceof SubElement sub && Arrays.asList(Element.getAllSubElements()).contains(sub)) {
+				if (!this.hasPermission(sender, sub.getName().toLowerCase())) {
+					return;
+				}
+
+				PlayerChangeSubElementEvent event = new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if (event.isCancelled()) return; // if the event is cancelled, don't add the subelement.
+
+				bPlayer.addSubElement(sub);
+
+				final ChatColor color = e.getColor();
+				final String bender = e + e.getType().getBender();
+				if (!sender.equals(target)) {
+					ChatUtil.sendBrandingMessage(sender, color + this.addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", bender));
+				} else {
+					ChatUtil.sendBrandingMessage(sender, color + this.addedCFW.replace("{element}", bender));
+				}
+				bPlayer.saveSubElements();
+			} else { // bad element.
+				sender.sendMessage(ChatColor.RED + this.invalidElement);
 			}
 		}).exceptionally(e -> {
 			e.printStackTrace();
@@ -281,62 +217,49 @@ public class AddCommand extends PKCommand {
 
 	}
 
-	public static boolean isVowel(final char c) {
-		return "AEIOUaeiou".indexOf(c) != -1;
+	private void addPermittedSubElements(CommandSender sender, OfflinePlayer target, OfflineBendingPlayer offlineBPlayer) {
+		offlineBPlayer.getSubElements().clear();
+		if (offlineBPlayer instanceof  BendingPlayer bPlayer) {
+			for (SubElement subElement : Element.getAllSubElements()) {
+				if (!bPlayer.hasElement(subElement.getParentElement()) || !bPlayer.hasSubElementPermission(subElement)) {
+					continue;
+				}
+
+				PlayerChangeSubElementEvent subEvent = new PlayerChangeSubElementEvent(sender, target, subElement, PlayerChangeSubElementEvent.Result.ADD);
+				Bukkit.getPluginManager().callEvent(subEvent);
+				if (subEvent.isCancelled()) continue; // if the event is cancelled, don't add the subelement.
+
+				bPlayer.addSubElement(subElement);
+			}
+		}
+		offlineBPlayer.saveSubElements();
 	}
 
 	@Override
 	protected List<String> getTabCompletion(final CommandSender sender, final List<String> args) {
 		if (args.size() >= 2 || !sender.hasPermission("bending.command.add")) {
-			return new ArrayList<String>();
+			return List.of();
 		}
-		final List<String> l = new ArrayList<String>();
+
 		if (args.size() == 0) {
-			// add tab completion for avatar
-			if (sender.hasPermission("bending.command.add." + Element.AVATAR.getName().toLowerCase())) {
-				l.add(Element.AVATAR.getName());
-			}
+			final List<String> completion = new ArrayList<>();
 
 			// add tab completion for elements the player has permission to add
-			List<String> elementNames = Arrays.asList("Air", "Earth", "Fire", "Water", "Chi");
-
-			for (final String elementName : elementNames) {
-				final String commandPermission = "bending.command.add." + elementName.toLowerCase();
-				if (!sender.hasPermission(commandPermission)) continue;
-
-				l.add(elementName);
-			}
-
-			// add tab completion for addon elements the player has permission to add
-			for (final Element e : Element.getAddonElements()) {
-				final String commandPermission = "bending.command.add." + e.getName().toLowerCase();
-				if (!sender.hasPermission(commandPermission)) continue;
-
-				l.add(e.getName());
+			for (Element element : Element.getAllElements()) {
+				if (this.hasPermission(sender, element.getName().toLowerCase())) {
+					completion.add(element.getName());
+				}
 			}
 
 			// add tab completion for sub-elements the player has permission to add
-			List<String> subelementNames = Arrays.asList("Blood", "Combustion", "Flight", "Healing", "Ice", "Lava", "Lightning", "Metal", "Plant", "Sand", "Spiritual", "BlueFire");
-
-			for (final String subelementName : subelementNames) {
-				final String commandPermission = "bending.command.add." + subelementName.toLowerCase();
-				if (!sender.hasPermission(commandPermission)) continue;
-
-				l.add(subelementName);
+			for (Element element : Element.getAllSubElements()) {
+				if (this.hasPermission(sender, element.getName().toLowerCase())) {
+					completion.add(element.getName());
+				}
 			}
-
-			// add tab completion for addon sub-elements the player has permission to add
-			for (final SubElement e : Element.getAddonSubElements()) {
-				final String commandPermission = "bending.command.add." + e.getName().toLowerCase();
-				if (!sender.hasPermission(commandPermission)) continue;
-
-				l.add(e.getName());
-			}
+			return completion;
 		} else {
-			for (final Player p : Bukkit.getOnlinePlayers()) {
-				l.add(p.getName());
-			}
+			return getOnlinePlayerNames(sender);
 		}
-		return l;
 	}
 }
