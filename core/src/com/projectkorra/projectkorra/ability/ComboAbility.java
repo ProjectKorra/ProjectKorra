@@ -14,12 +14,12 @@ public interface ComboAbility {
 	 * @return The steps for the combo.
 	 */
 
-	public abstract Object createNewComboInstance(Player player);
+	Object createNewComboInstance(Player player);
 
 	/**
 	 * Returns the list of abilities which constitute the combo.
 	 *
 	 * @return An ArrayList containing the combo's steps.
 	 */
-	public abstract ArrayList<AbilityInformation> getCombination();
+	ArrayList<AbilityInformation> getCombination();
 }

@@ -92,7 +92,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		return this.player != null ? value * getNightFactor(player.getWorld()) : 1;
 	}
 
-	public static boolean isBendableWaterTempBlock(final Block block) { // TODO: Will need to be done for earth as well.
+	public static boolean isBendableWaterTempBlock(final Block block) {
 		return isBendableWaterTempBlock(TempBlock.get(block));
 	}
 
@@ -143,10 +143,11 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static Block getIceSourceBlock(final Player player, final double range) {
 		final Location location = player.getEyeLocation();
-		final Vector vector = location.getDirection().clone().normalize();
-		for (double i = 0; i <= range; i++) {
+		final Vector vector = location.getDirection();
+		for (int i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (RegionProtection.isRegionProtected(player, location,"IceBlast")) {
+			// Is this change correct? (player location -> block location) This condition makes no sense to be in the loop unless this is what it's supposed to be.
+			if (RegionProtection.isRegionProtected(player, block.getLocation(),"IceBlast")) {
 				continue;
 			}
 			if (isIcebendable(player, block.getType(), false)) {
@@ -164,11 +165,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static double getNightFactor(final double value, final World world) {
-		if (isNight(world)) {
-			return value * getNightFactor();
-		}
-
-		return value;
+		return isNight(world) ? value * getNightFactor() : value;
 	}
 
 	public static double getNightFactor(final World world) {
@@ -181,10 +178,12 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (RegionProtection.isRegionProtected(player, location, "PlantDisc")) {
+			if (RegionProtection.isRegionProtected(player, block.getLocation(), "PlantDisc")) { // Same Question as L145
 				continue;
-			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
-				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+			}
+			if (isPlantbendable(player, block.getType(), onlyLeaves)) {
+				TempBlock tempBlock = TempBlock.get(block);
+				if (tempBlock != null && !isBendableWaterTempBlock(tempBlock)) {
 					continue;
 				}
 				return block;
@@ -206,22 +205,16 @@ public abstract class WaterAbility extends ElementalAbility {
 	 */
 	public static Block getWaterSourceBlock(final Player player, final double range, final boolean plantbending) {
 		final Location location = player.getEyeLocation();
-		final Vector vector = location.getDirection().clone().normalize();
+		final Vector direction = location.getDirection();
 
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		final Set<Material> trans = getTransparentMaterialSet();
+		final Set<Material> transparent = getTransparentMaterialSet();
 
 		if (plantbending) {
-			final Set<Material> remove = new HashSet<>();
-			for (final Material m : trans) {
-				if (isPlant(m)) {
-					remove.add(m);
-				}
-			}
-			trans.removeAll(remove);
+			transparent.removeIf(ElementalAbility::isPlant);
 		}
 
-		final Block testBlock = player.getTargetBlock(trans, Math.max(1, Math.min(3, (int)range)));
+		final Block testBlock = player.getTargetBlock(transparent, Math.max(1, Math.min(3, (int) range)));
 		if (bPlayer == null) {
 			return null;
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
@@ -229,11 +222,13 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 
 		for (double i = 0; i <= range; i++) {
-			final Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block) && !isCauldron(block) && !isMud(block) && !isSponge(block)) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
+			final Block block = location.clone().add(direction.clone().multiply(i)).getBlock();
+			if ((!isTransparent(player, block) && !isWaterbendable(block.getType())) || RegionProtection.isRegionProtected(player, location, "WaterManipulation")) {
 				continue;
-			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
-				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+			}
+			if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
+				TempBlock tempBlock = TempBlock.get(block);
+				if (tempBlock != null && !isBendableWaterTempBlock(tempBlock)) {
 					continue;
 				}
 				return block;
@@ -254,20 +249,16 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static boolean isIcebendable(final Player player, final Material material, final boolean onlyIce) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
+		return bPlayer != null && isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
 	}
 
 	public static boolean isPlantbendable(final Player player, final Material material, final boolean onlyLeaves) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (onlyLeaves) {
-			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend() && isLeaves(material);
-		} else {
-			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend();
-		}
-	}
+        return bPlayer != null && bPlayer.canPlantbend() && isPlant(material) && (!onlyLeaves || isLeaves(material));
+    }
 
 	public static boolean isLeaves(final Block block) {
-		return block != null ? isLeaves(block.getType()) : false;
+		return block != null && isLeaves(block.getType());
 	}
 
 	public static boolean isLeaves(final Material material) {
@@ -275,23 +266,23 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isSnow(final Block block) {
-		return block != null ? isSnow(block.getType()) : false;
+		return block != null && isSnow(block.getType());
 	}
 
 	public static boolean isSnow(final Material material) {
-		return material == Material.SNOW || material == Material.SNOW_BLOCK;
+		return material == Material.SNOW || material == Material.SNOW_BLOCK; // TODO: Should this include powder snow?
 	}
 	
 	public static boolean isCauldron(final Block block) {
-		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
+		return isCauldron(block.getType());
 	}
 	
 	public static boolean isCauldron(final Material material) {
-		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
+		return material == Material.WATER_CAULDRON || material == Material.POWDER_SNOW_CAULDRON;
 	}
 
 	public static boolean isSponge(final Block block) {
-		return block != null ? isSponge(block.getType()) : false;
+		return block != null && isSponge(block.getType());
 	}
 
 	public static boolean isSponge(final Material material) {
@@ -299,9 +290,6 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	/**
-	 * Checks if a source block is a transformable source.
-	 *
-	 * @param block
 	 * @return True if the block is a non-transparent source, False otherwise.
 	 */
 	public static boolean isTransformableBlock(final Block block) {
@@ -317,16 +305,14 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (bPlayer == null || !isWaterbendable(block.getType())) {
 			return false;
 		}
-		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
-			return false;
-		} else if (isWater(block) && block.getBlockData() instanceof Levelled && ((Levelled) block.getBlockData()).getLevel() == 0) {
-			return true;
-		} else if (isIce(block) && !bPlayer.canIcebend()) {
-			return false;
-		} else if (isPlant(block) && !bPlayer.canPlantbend()) {
-			return false;
-		}
-		return true;
+		TempBlock tempBlock = TempBlock.get(block);
+		return (tempBlock == null || isBendableWaterTempBlock(tempBlock))
+				&& (bPlayer.canIcebend() || !isIce(block))
+				&& (bPlayer.canPlantbend() || !isPlant(block))
+				&& (!isWater(block) || !(block.getBlockData() instanceof Levelled levelled) || levelled.getLevel() == 0);
+		// LMK if this levelled check is now correct, previously NO MATTER the water level, this would return true, but the check
+		// of levelled existing (even if it didn't actually do anything) looked like it was supposed to actually prevent this
+		// from returning true if the level isn't 0. If that is not the case, I will simply remove the levelled check
 	}
 
 	public static Map<Material, Material> getWaterTransformableBlocks() {
@@ -351,16 +337,12 @@ public abstract class WaterAbility extends ElementalAbility {
 			transformables.put(from, to);
 		}
 		 */
-		Map<Material, Material> transformables = new HashMap<>();
-		if (GeneralMethods.getMCVersion() >= 1170) {
-			transformables.put(Material.getMaterial("MUD"), Material.DIRT);
-			transformables.put(Material.getMaterial("PACKED_MUD"), Material.DIRT);
-		}
-		if (GeneralMethods.getMCVersion() >= 1190) {
-			transformables.put(Material.getMaterial("MUDDY_MANGROVE_ROOTS"), Material.getMaterial("MANGROVE_ROOTS"));
-		}
-		transformables.put(Material.WET_SPONGE, Material.SPONGE);
-		return transformables;
+		return new HashMap<>(Map.of(
+				Material.MUD, Material.DIRT,
+				Material.PACKED_MUD, Material.DIRT,
+				Material.MUDDY_MANGROVE_ROOTS, Material.MANGROVE_ROOTS,
+				Material.WET_SPONGE, Material.SPONGE
+		));
 	}
 
 	/*
@@ -377,87 +359,92 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playIcebendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
+        if (!getConfig().getBoolean("Properties.Water.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
+        final float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
+        Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
 
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Water.IceSound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	public static void playMudbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.MudSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.MudSound.Pitch");
+        if (!getConfig().getBoolean("Properties.Water.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.BLOCK_WET_GRASS_STEP;
-			if (GeneralMethods.getMCVersion() >= 1190) {
-				sound = Sound.valueOf("BLOCK_MUD_STEP");
-			}
+        final float volume = (float) getConfig().getDouble("Properties.Water.MudSound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Water.MudSound.Pitch");
+        Sound sound = Sound.BLOCK_MUD_STEP;
 
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.MudSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.MudSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Water.MudSound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Water.MudSound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	public static void playPlantbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
+        if (!getConfig().getBoolean("Properties.Water.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.BLOCK_GRASS_STEP;
+        final float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
+        Sound sound = Sound.BLOCK_GRASS_STEP;
 
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Water.PlantSound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	public static void playWaterbendingSound(final Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			final float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
-			final float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
+        if (!getConfig().getBoolean("Properties.Water.PlaySound")) {
+            return;
+        }
 
-			Sound sound = Sound.BLOCK_WATER_AMBIENT;
+        final float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
+        final float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
+        Sound sound = Sound.BLOCK_WATER_AMBIENT;
 
-			try {
-				sound = Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound"));
-			} catch (final IllegalArgumentException exception) {
-				ProjectKorra.log.warning("Your current value for 'Properties.Water.WaterSound.Sound' is not valid.");
-			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
-			}
-		}
-	}
+        try {
+            sound = Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound"));
+        } catch (final IllegalArgumentException exception) {
+            ProjectKorra.log.warning("Your current value for 'Properties.Water.WaterSound.Sound' is not valid.");
+        } finally {
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        }
+    }
 
 	public static boolean updateSourceBlock(final Block sourceBlock) {
 		if (isCauldron(sourceBlock)) {
 			GeneralMethods.setCauldronData(sourceBlock, ((Levelled) sourceBlock.getBlockData()).getLevel() - 1);
 			return true;
-		} else if (isTransformableBlock(sourceBlock)) {
-			if (isMud(sourceBlock)) {
+		}
+		Material type = sourceBlock.getType();
+		Material transformed = WATER_TRANSFORMABLE_BLOCKS.get(type);
+		if (transformed != null) {
+			if (isMud(type)) {
 				playMudbendingSound(sourceBlock.getLocation());
-			} else if (isSponge(sourceBlock)) {
+			} else if (isSponge(type)) {
+				// TODO: Make this configurable
 				sourceBlock.getWorld().playSound(sourceBlock.getLocation(), Sound.BLOCK_SLIME_BLOCK_BREAK, 1, 1);
 			}
-			sourceBlock.setType(WATER_TRANSFORMABLE_BLOCKS.get(sourceBlock.getType()));
+			sourceBlock.setType(transformed);
 			return true;
 		}
 		return false;

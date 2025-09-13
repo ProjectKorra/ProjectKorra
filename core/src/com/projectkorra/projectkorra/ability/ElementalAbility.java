@@ -1,14 +1,15 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -30,39 +31,28 @@ import com.projectkorra.projectkorra.GeneralMethods;
  * keep CoreAbility from becoming too cluttered.
  */
 public abstract class ElementalAbility extends CoreAbility {
-	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
-	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
-	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
+	private static final Set<PotionEffectType> POSITIVE_EFFECTS = Set.of(PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING);
+	private static final Set<PotionEffectType> NEUTRAL_EFFECTS = Set.of(PotionEffectType.INVISIBILITY);
+	private static final Set<PotionEffectType> NEGATIVE_EFFECTS = Set.of(PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER);
 	private static final Set<Material> TRANSPARENT = new HashSet<>();
 
-	private static final Set<String> EARTH_BLOCKS = new HashSet<String>();
-	private static final Set<String> ICE_BLOCKS = new HashSet<String>();
-	private static final Set<String> METAL_BLOCKS = new HashSet<String>();
-	private static final Set<String> PLANT_BLOCKS = new HashSet<String>();
-	private static final Set<String> SAND_BLOCKS = new HashSet<String>();
-	private static final Set<String> SNOW_BLOCKS = new HashSet<String>();
+	private static final Set<String> EARTH_BLOCKS = new HashSet<>();
+	private static final Set<String> ICE_BLOCKS = new HashSet<>();
+	private static final Set<String> METAL_BLOCKS = new HashSet<>();
+	private static final Set<String> PLANT_BLOCKS = new HashSet<>();
+	private static final Set<String> SAND_BLOCKS = new HashSet<>();
+	private static final Set<String> SNOW_BLOCKS = new HashSet<>();
 
-	// Once 1.16.5 no longer becomes LTS, this becomes obsolete and
-	// we can remove the version check and reference these materials directly instead of doing standard lookups.
-	protected static final Material LIGHT = Material.getMaterial("LIGHT");
-	protected static final Set<Material> MUD_BLOCKS = getMudBlocks();
-	private static Set<Material> getMudBlocks() {
-		Set<Material> mudBlocks = new HashSet<>();
-		mudBlocks.add(Material.getMaterial("MUD"));
-		mudBlocks.add(Material.getMaterial("PACKED_MUD"));
-		mudBlocks.add(Material.getMaterial("MUDDY_MANGROVE_ROOTS"));
-		return mudBlocks;
-	}
+	protected static final Set<Material> MUD_BLOCKS = new HashSet<>();
 
 	static {
-		TRANSPARENT.clear();
-		for (final Material mat : Material.values()) {
+        for (final Material mat : Material.values()) {
 			if (GeneralMethods.isTransparent(mat)) {
 				TRANSPARENT.add(mat);
 			}
 		}
-		clearBendableMaterials();
 		setupBendableMaterials();
+		MUD_BLOCKS.addAll(Set.of(Material.MUD, Material.PACKED_MUD, Material.MUDDY_MANGROVE_ROOTS));
 	}
 
 	public ElementalAbility(final Player player) {
@@ -83,11 +73,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static List<String> getEarthbendableBlocks() {
-		return new ArrayList<String>(EARTH_BLOCKS);
+		return new ArrayList<>(EARTH_BLOCKS);
 	}
 
 	public static void addTags(Set<String> outputSet, List<String> configList) {
-		ListIterator<String> iterator = new ArrayList<String>(configList).listIterator();
+		ListIterator<String> iterator = new ArrayList<>(configList).listIterator();
 		iterator.forEachRemaining(next -> {
 			if (next.startsWith("#")) {
 				NamespacedKey key = NamespacedKey.fromString(next.replaceFirst("#", ""));
@@ -101,7 +91,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static Material[] getTransparentMaterials() {
-		return TRANSPARENT.toArray(new Material[TRANSPARENT.size()]);
+		return TRANSPARENT.toArray(new Material[0]);
 	}
 
 	public static HashSet<Material> getTransparentMaterialSet() {
@@ -213,34 +203,20 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMud(final Block block) {
-		return block != null ? isMud(block.getType()) : false;
+		return block != null && isMud(block.getType());
 	}
 
 	public static boolean isMud(final Material material) {
-		return GeneralMethods.getMCVersion() >= 1190 && MUD_BLOCKS.contains(material);
+		return MUD_BLOCKS.contains(material);
 	}
 
 	public static boolean isNegativeEffect(final PotionEffectType effect) {
-		for (final PotionEffectType effect2 : NEGATIVE_EFFECTS) {
-			if (effect2.equals(effect)) {
-				return true;
-			}
-		}
-
-		return false;
+		return NEGATIVE_EFFECTS.contains(effect);
 	}
 
 	public static boolean isNeutralEffect(final PotionEffectType effect) {
-		for (final PotionEffectType effect2 : NEUTRAL_EFFECTS) {
-			if (effect2.equals(effect)) {
-				return true;
-			}
-		}
-
-		return false;
+		return NEUTRAL_EFFECTS.contains(effect);
 	}
-
-
 
 	public static boolean isPlant(final Block block) {
 		return block != null && isPlant(block.getType());
@@ -251,13 +227,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isPositiveEffect(final PotionEffectType effect) {
-		for (final PotionEffectType effect2 : POSITIVE_EFFECTS) {
-			if (effect2.equals(effect)) {
-				return true;
-			}
-		}
-
-		return false;
+		return POSITIVE_EFFECTS.contains(effect);
 	}
 
 	public static boolean isSand(final Block block) {
@@ -273,25 +243,30 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isTransparent(final Player player, final String abilityName, final Block block) {
-		return Arrays.asList(getTransparentMaterials()).contains(block.getType()) && !RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName));
+		return getTransparentMaterialSet().contains(block.getType()) && !RegionProtection.isRegionProtected(player, block.getLocation(), CoreAbility.getAbility(abilityName));
 	}
 
 	public static boolean isWater(final Block block) {
-		if (block == null) {
-			return false;
-		} else if (block.getState() instanceof Container) {
-			return false;
-		} else {
-			return isWater(block.getBlockData());
-		}
+		return block != null && !(block.getState() instanceof Container) && isWater(block.getBlockData());
 	}
 
 	public static boolean isWater(final BlockData data) {
-		return (data instanceof Waterlogged) ? ((Waterlogged) data).isWaterlogged() : isWater(data.getMaterial());
+		return (data instanceof Waterlogged waterlogged) ? waterlogged.isWaterlogged() : isWater(data.getMaterial());
 	}
 
 	public static boolean isWater(final Material material) {
 		return material == Material.WATER || material == Material.SEAGRASS || material == Material.TALL_SEAGRASS || material == Material.KELP_PLANT || material == Material.KELP || material == Material.BUBBLE_COLUMN;
+	}
+
+	public static boolean tryExtinguish(Block block) {
+		if (isFire(block)) {
+			if (!TempBlock.removeBlock(block)) {
+				block.setType(Material.AIR);
+			}
+			block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
+			return true;
+		}
+		return false;
 	}
 
 	public double applyModifiers(double value) {
@@ -305,5 +280,6 @@ public abstract class ElementalAbility extends CoreAbility {
 		addTags(PLANT_BLOCKS, getConfig().getStringList("Properties.Water.PlantBlocks"));
 		addTags(SAND_BLOCKS, getConfig().getStringList("Properties.Earth.SandBlocks"));
 		addTags(SNOW_BLOCKS, getConfig().getStringList("Properties.Water.SnowBlocks"));
+		// Should mud blocks be added to this?
 	}
 }

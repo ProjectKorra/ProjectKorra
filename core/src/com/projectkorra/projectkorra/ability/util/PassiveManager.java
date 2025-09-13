@@ -26,65 +26,49 @@ public class PassiveManager {
 		if (bPlayer == null) {
 			return;
 		}
+
 		for (final CoreAbility ability : PASSIVES.values()) {
-			if (ability instanceof PassiveAbility) {
-				if (!hasPassive(player, ability)) {
-					continue;
-				} else if (CoreAbility.hasAbility(player, ability.getClass())) {
-					continue;
-					/*
-					 * Passive's such as not taking fall damage are managed in
-					 * PKListener, so we do not want to create instances of them
-					 * here. This just enables the passive to be displayed in /b
-					 * d [element]passive
-					 */
-				}
-
-				if (!((PassiveAbility) ability).isInstantiable()) {
-					continue;
-				}
-
-				try {
-					final Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get(ability);
-					final Constructor<?> constructor = clazz.getConstructor(Player.class);
-					final Object object = constructor.newInstance(player);
-					((CoreAbility) object).start();
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-					e.printStackTrace();
-				}
+            if (!(ability instanceof PassiveAbility passive)) {
+            	continue;
+			} else if (!hasPassive(player, ability) || CoreAbility.hasAbility(player, ability.getClass())) {
+				continue;
+			} else if (!passive.isInstantiable()) {
+				/*
+				 * Passive's such as not taking fall damage are managed in
+				 * PKListener, so we do not want to create instances of them
+				 * here. This just enables the passive to be displayed in /b
+				 * d [element]passive
+				 */
+				continue;
 			}
-		}
+
+			try {
+				final Class<? extends CoreAbility> clazz = PASSIVE_CLASSES.get(ability);
+				final Constructor<?> constructor = clazz.getConstructor(Player.class);
+				final Object object = constructor.newInstance(player);
+				((CoreAbility) object).start();
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
+        }
 	}
 
 	public static boolean hasPassive(final Player player, final CoreAbility passive) {
-		if (player == null) {
-			return false;
-		} else if (passive == null) {
+		if (player == null || passive == null) {
 			return false;
 		}
+
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null || (!bPlayer.isToggled() && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending"))) {
+			return false;
+		}
+
 		Element element = passive.getElement();
-		if (passive.getElement() instanceof SubElement) {
-			element = ((SubElement) passive.getElement()).getParentElement();
+		if (passive.getElement() instanceof SubElement subElement) {
+			element = subElement.getParentElement();
 		}
-		if (bPlayer == null) {
-			return false;
-		} else if (!(passive instanceof PassiveAbility)) {
-			return false;
-		} else if (!passive.isEnabled()) {
-			return false;
-		} else if (!bPlayer.canBendPassive(passive)) {
-			return false;
-		} else if (!bPlayer.isToggled() && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
-			return false;
-		} else if (!bPlayer.isElementToggled(element)) {
-			return false;
-		} else if (!bPlayer.isPassiveToggled(element)) {
-			return false;
-		} else if (!bPlayer.isToggledPassives()) {
-			return false;
-		}
-		return true;
+		return passive instanceof PassiveAbility && passive.isEnabled() && bPlayer.canBendPassive(passive)
+				&& bPlayer.isElementToggled(element) && bPlayer.isPassiveToggled(element) && bPlayer.isToggledPassives();
 	}
 
 	public static Set<String> getPassivesForElement(final Element element) {
@@ -92,8 +76,8 @@ public class PassiveManager {
 		for (final CoreAbility passive : PASSIVES.values()) {
 			if (passive.getElement() == element) {
 				passives.add(passive.getName());
-			} else if (passive.getElement() instanceof SubElement) {
-				final Element check = ((SubElement) passive.getElement()).getParentElement();
+			} else if (passive.getElement() instanceof SubElement subElement) {
+				final Element check = subElement.getParentElement();
 				if (check == element) {
 					passives.add(passive.getName());
 				}
