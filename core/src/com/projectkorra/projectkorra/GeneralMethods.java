@@ -921,14 +921,14 @@ public class GeneralMethods {
 	public static BlockData getWaterData(final int level) {
 		return Material.WATER.createBlockData(d -> ((Levelled) d).setLevel((level < 0 || level > ((Levelled) d).getMaximumLevel()) ? 0 : level));
 	}
-	
+
 	public static BlockData getCauldronData(final Material material, final int level) {
 		if (!material.name().contains("CAULDRON")) {
 			return null;
 		}
 		return material.createBlockData(d -> ((Levelled) d).setLevel((level > 3 || level > ((Levelled) d).getMaximumLevel()) ? 3 : level < 1 ? 1 : level));
 	}
-	
+
 	public static void setCauldronData(final Block block, final int level) {
 		if (block.getBlockData() instanceof Levelled) {
 			Levelled levelled = (Levelled) block.getBlockData();
@@ -1854,17 +1854,17 @@ public class GeneralMethods {
 	public static void setVelocity(Entity entity, Vector vector) {
 		setVelocity(null,entity,vector);
 	}
-	
+
 	public static void setVelocity(Ability ability, Entity entity, Vector vector) {
 		final AbilityVelocityAffectEntityEvent event = new AbilityVelocityAffectEntityEvent(ability, entity, vector);
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) 
+		if (event.isCancelled())
 			return;
-		
+
 		Vector velocity = event.getVelocity();
 		if(velocity == null || Double.isNaN(velocity.length()))
 		    return;
-		
+
 		if (entity instanceof TNTPrimed) {
 			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
 				velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier"));
@@ -1927,6 +1927,6 @@ public class GeneralMethods {
      * @return true if the block is bendable, false if not
      */
     public static boolean isBendableTempBlock(TempBlock tempBlock, List<Element> allowedElements) {
-        return tempBlock.getAbility().isPresent() && allowedElements.contains(tempBlock.getAbility().get().getElement());
+		return tempBlock.getAbility().isPresent() && tempBlock.isBendableSource() && allowedElements.contains(tempBlock.getAbility().get().getElement());
     }
 }
