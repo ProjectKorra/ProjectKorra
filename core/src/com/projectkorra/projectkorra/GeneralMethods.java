@@ -1644,4 +1644,15 @@ public class GeneralMethods {
 		}
 		return major * 1000 + minor * 10 + fix; //1.16.4 -> 1164; 1.18 -> 1180
 	}
+
+
+    /**
+     * Checks whether a given TempBlock is bendable
+     * @param tempBlock The TempBlock to check
+     * @param allowedElements The list of Elements the given TempBlock is bendable for
+     * @return true if the block is bendable, false if not
+     */
+    public static boolean isBendableTempBlock(TempBlock tempBlock, List<Element> allowedElements) {
+        return tempBlock.getAbility().isPresent() && allowedElements.contains(tempBlock.getAbility().get().getElement());
+    }
 }

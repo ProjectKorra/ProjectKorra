@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -103,7 +104,8 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 	
 	public static boolean isBendableEarthTempBlock(final TempBlock tempBlock) {
-		return DensityShift.getSandBlocks().contains(tempBlock);
+        boolean legacyDetection = DensityShift.getSandBlocks().contains(tempBlock);
+        return GeneralMethods.isBendableTempBlock(tempBlock, Arrays.asList(Element.EARTH, Element.SAND, Element.METAL)) || legacyDetection;
 	}
 
 	public static boolean isEarthbendable(final Material material, final boolean metal, final boolean sand, final boolean lava, final boolean mud) {
