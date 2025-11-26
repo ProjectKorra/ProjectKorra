@@ -1,10 +1,6 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
@@ -97,10 +93,9 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
-        boolean isBendable = !tempBlock.getAbility().isEmpty() && (tempBlock.getAbility().get().getElement().equals(Element.WATER) || tempBlock.getAbility().get().getElement().equals(Element.ICE)) && tempBlock.isBendableSource();
         boolean legacyDetection = PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock)
                 || SurgeWall.SOURCE_BLOCKS.contains(tempBlock) || Torrent.getFrozenBlocks().containsKey(tempBlock);
-        return isBendable || legacyDetection;
+        return GeneralMethods.isBendableTempBlock(tempBlock, Arrays.asList(Element.WATER, Element.ICE)) || legacyDetection;
     }
 
 	public boolean isIcebendable(final Block block) {
