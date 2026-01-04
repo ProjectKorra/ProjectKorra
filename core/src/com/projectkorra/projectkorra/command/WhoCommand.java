@@ -74,25 +74,25 @@ public class WhoCommand extends PKCommand {
         this.elementSpaces = "    ";
 
         //Air
-        this.canFly = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanFly");
-        this.canUseSpiritualProjection = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanUseSpiritualProjection");
+        this.canFly = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Air.CanFly");
+        this.canUseSpiritualProjection = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Air.CanUseSpiritualProjection");
 
         //Water
-        this.canPlantbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanPlantbend");
-        this.canBloodbendAnytime = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanBloodbendAnytime");
-        this.canBloodbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanBloodbend");
-        this.canIcebend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanIcebend");
-        this.canHeal = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanHeal");
+        this.canPlantbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Water.CanPlantbend");
+        this.canBloodbendAnytime = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Water.CanBloodbendAnytime");
+        this.canBloodbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Water.CanBloodbend");
+        this.canIcebend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Water.CanIcebend");
+        this.canHeal = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Water.CanHeal");
 
         //Earth
-        this.canMetalbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanMetalbend");
-        this.canLavabend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanLavabend");
-        this.canSandbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanSandbend");
+        this.canMetalbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Earth.CanMetalbend");
+        this.canLavabend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Earth.CanLavabend");
+        this.canSandbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Earth.CanSandbend");
 
         //Fire
-        this.canCombustionbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanCombustionbend");
-        this.canLightningbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanLightningbend");
-        this.canUseBlueFire = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanUseBlueFire");
+        this.canCombustionbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Fire.CanCombustionbend");
+        this.canLightningbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Fire.CanLightningbend");
+        this.canUseBlueFire = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.Fire.CanUseBlueFire");
 
 		new BukkitRunnable() {
 			@Override
