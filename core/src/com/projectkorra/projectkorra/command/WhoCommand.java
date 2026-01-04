@@ -48,7 +48,19 @@ public class WhoCommand extends PKCommand {
 	 */
 	final Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
 
-	private final String databaseOverload, noPlayersOnline, playerOffline, playerUnknown;
+	private final String databaseOverload, noPlayersOnline, playerOffline, playerUnknown, subelementsWithoutParentElements, elementSpaces;
+
+    //Air
+    private final String canFly, canUseSpiritualProjection;
+
+    //Water
+    private final String canPlantbend, canBloodbendAnytime, canBloodbend, canIcebend, canHeal;
+
+    //Earth
+    private final String canMetalbend, canLavabend, canSandbend;
+
+    //Fire
+    private final String canCombustionbend, canLightningbend, canUseBlueFire;
 
 	public WhoCommand() {
 		super("who", "/bending who [Page/Player]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
@@ -57,6 +69,30 @@ public class WhoCommand extends PKCommand {
 		this.noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
 		this.playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
 		this.playerUnknown = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerUnknown");
+        this.subelementsWithoutParentElements = ConfigManager.languageConfig.get().getString("Commands.Who.SubElementWithoutParentElement");
+
+        this.elementSpaces = "    ";
+
+        //Air
+        this.canFly = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanFly");
+        this.canUseSpiritualProjection = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanUseSpiritualProjection");
+
+        //Water
+        this.canPlantbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanPlantbend");
+        this.canBloodbendAnytime = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanBloodbendAnytime");
+        this.canBloodbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanBloodbend");
+        this.canIcebend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanIcebend");
+        this.canHeal = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanHeal");
+
+        //Earth
+        this.canMetalbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanMetalbend");
+        this.canLavabend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanLavabend");
+        this.canSandbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanSandbend");
+
+        //Fire
+        this.canCombustionbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanCombustionbend");
+        this.canLightningbend = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanLightningbend");
+        this.canUseBlueFire = this.elementSpaces + ConfigManager.languageConfig.get().getString("Commands.Who.CanUseBlueFire");
 
 		new BukkitRunnable() {
 			@Override
