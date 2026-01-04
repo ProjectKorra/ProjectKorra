@@ -230,10 +230,10 @@ public class WhoCommand extends PKCommand {
 					}
 
 					if (bPlayer.canUseFlight()) {
-						sender.sendMessage(Element.FLIGHT.getColor() + "    Can Fly" + this.getTime(Element.FLIGHT, bPlayer));
+						sender.sendMessage(Element.FLIGHT.getColor() + this.canFly + this.getTime(Element.FLIGHT, bPlayer));
 					}
 					if (bPlayer.canUseSpiritualProjection()) {
-						sender.sendMessage(Element.SPIRITUAL.getColor() + "    Can use Spiritual Projection" + this.getTime(Element.SPIRITUAL, bPlayer));
+						sender.sendMessage(Element.SPIRITUAL.getColor() + this.canUseSpiritualProjection + this.getTime(Element.SPIRITUAL, bPlayer));
 					}
 					for (final SubElement se : Element.getAddonSubElements(Element.AIR)) {
 						if (bPlayer.canUseSubElement(se)) {
@@ -250,20 +250,20 @@ public class WhoCommand extends PKCommand {
 					}
 
 					if (bPlayer.canPlantbend()) {
-						sender.sendMessage(Element.PLANT.getColor() + "    Can Plantbend" + this.getTime(Element.PLANT, bPlayer));
+						sender.sendMessage(Element.PLANT.getColor() + this.canPlantbend + this.getTime(Element.PLANT, bPlayer));
 					}
 					if (bPlayer.canBloodbend()) {
 						if (bPlayer.canBloodbendAtAnytime()) {
-							sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend anytime, on any day" + this.getTime(Element.BLOOD, bPlayer));
+							sender.sendMessage(Element.BLOOD.getColor() + this.canBloodbendAnytime + this.getTime(Element.BLOOD, bPlayer));
 						} else {
-							sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend" + this.getTime(Element.BLOOD, bPlayer));
+							sender.sendMessage(Element.BLOOD.getColor() + this.canBloodbend + this.getTime(Element.BLOOD, bPlayer));
 						}
 					}
 					if (bPlayer.canIcebend()) {
-						sender.sendMessage(Element.ICE.getColor() + "    Can Icebend" + this.getTime(Element.ICE, bPlayer));
+						sender.sendMessage(Element.ICE.getColor() + this.canIcebend + this.getTime(Element.ICE, bPlayer));
 					}
 					if (bPlayer.canWaterHeal()) {
-						sender.sendMessage(Element.HEALING.getColor() + "    Can Heal" + this.getTime(Element.HEALING, bPlayer));
+						sender.sendMessage(Element.HEALING.getColor() + this.canHeal + this.getTime(Element.HEALING, bPlayer));
 					}
 					for (final SubElement se : Element.getAddonSubElements(Element.WATER)) {
 						if (bPlayer.canUseSubElement(se)) {
@@ -280,13 +280,13 @@ public class WhoCommand extends PKCommand {
 					}
 
 					if (bPlayer.canMetalbend()) {
-						sender.sendMessage(Element.METAL.getColor() + "    Can Metalbend" + this.getTime(Element.METAL, bPlayer));
+						sender.sendMessage(Element.METAL.getColor() + this.canMetalbend + this.getTime(Element.METAL, bPlayer));
 					}
 					if (bPlayer.canLavabend()) {
-						sender.sendMessage(Element.LAVA.getColor() + "    Can Lavabend" + this.getTime(Element.LAVA, bPlayer));
+						sender.sendMessage(Element.LAVA.getColor() + this.canLavabend + this.getTime(Element.LAVA, bPlayer));
 					}
 					if (bPlayer.canSandbend()) {
-						sender.sendMessage(Element.SAND.getColor() + "    Can Sandbend" + this.getTime(Element.SAND, bPlayer));
+						sender.sendMessage(Element.SAND.getColor() +this.canSandbend + this.getTime(Element.SAND, bPlayer));
 					}
 					for (final SubElement se : Element.getAddonSubElements(Element.EARTH)) {
 						if (bPlayer.canUseSubElement(se)) {
@@ -303,13 +303,13 @@ public class WhoCommand extends PKCommand {
 					}
 
 					if (bPlayer.canCombustionbend()) {
-						sender.sendMessage(Element.COMBUSTION.getColor() + "    Can Combustionbend" + this.getTime(Element.COMBUSTION, bPlayer));
+						sender.sendMessage(Element.COMBUSTION.getColor() + this.canCombustionbend + this.getTime(Element.COMBUSTION, bPlayer));
 					}
 					if (bPlayer.canLightningbend()) {
-						sender.sendMessage(Element.LIGHTNING.getColor() + "    Can Lightningbend" + this.getTime(Element.LIGHTNING, bPlayer));
+						sender.sendMessage(Element.LIGHTNING.getColor() + this.canLightningbend + this.getTime(Element.LIGHTNING, bPlayer));
 					}
 					if (bPlayer.hasSubElement(Element.BLUE_FIRE)) {
-						sender.sendMessage(Element.BLUE_FIRE.getColor() + "    Can use Blue Fire" + this.getTime(Element.BLUE_FIRE, bPlayer));
+						sender.sendMessage(Element.BLUE_FIRE.getColor() + this.canUseBlueFire + this.getTime(Element.BLUE_FIRE, bPlayer));
 					}
 					for (final SubElement se : Element.getAddonSubElements(Element.FIRE)) {
 						if (bPlayer.canUseSubElement(se)) {
@@ -351,7 +351,7 @@ public class WhoCommand extends PKCommand {
 						.collect(Collectors.toSet());
 
 				if (!blockedSubs.isEmpty()) {
-					sender.sendMessage(ChatColor.DARK_GRAY + "Subelements without parent elements:");
+					sender.sendMessage(ChatColor.DARK_GRAY + this.subelementsWithoutParentElements);
 					for (SubElement sub : blockedSubs) {
 						sender.sendMessage(sub.getColor() + " - " + sub.getName() + this.getTime(sub, bPlayer));
 					}
