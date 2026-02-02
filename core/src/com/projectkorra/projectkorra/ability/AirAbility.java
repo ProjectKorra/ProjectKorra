@@ -3,10 +3,7 @@ package com.projectkorra.projectkorra.ability;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -16,6 +13,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import org.bukkit.inventory.ItemStack;
 
 public abstract class AirAbility extends ElementalAbility {
 
@@ -119,7 +117,20 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param zOffset The zOffset to use
 	 */
 	public static void playAirbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		loc.getWorld().spawnParticle(getAirbendingParticles(), loc, amount, xOffset, yOffset, zOffset, 0, null, true);
+		Object particleData = switch (getAirbendingParticles().getDataType().getSimpleName()) {
+			case "Color" -> Color.WHITE;
+			case "BlockData" -> Material.WHITE_WOOL.createBlockData();
+			case "DustOptions" -> new Particle.DustOptions(Color.WHITE, 1.0f);
+			case "DustTransition" -> new Particle.DustTransition(Color.WHITE, Color.WHITE, 1.0f);
+			case "Float" -> 1.0f;
+			case "Integer" -> 1;
+			case "ItemStack" -> new ItemStack(Material.WHITE_WOOL);
+			case "Spell" -> new Particle.Spell(Color.WHITE, 1.0f);
+			case "Trail" -> new Particle.Trail(loc, Color.WHITE, 1);
+			case "Vibration" -> new Vibration(loc, new Vibration.Destination.BlockDestination(loc.getBlock()), 0);
+			default -> null;
+		};
+		loc.getWorld().spawnParticle(getAirbendingParticles(), loc, amount, xOffset, yOffset, zOffset, 0, particleData, true);
 	}
 
 	/**

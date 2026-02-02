@@ -6,10 +6,11 @@ import java.util.List;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -144,11 +145,25 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				}
 				final Vector vec = GeneralMethods.getDirection(hand, endLoc);
 
+				final Object particleData = switch (getAirbendingParticles().getDataType().getSimpleName()) {
+					case "Color" -> Color.WHITE;
+					case "BlockData" -> Material.WHITE_WOOL.createBlockData();
+					case "DustOptions" -> new Particle.DustOptions(Color.WHITE, 1.0f);
+					case "DustTransition" -> new Particle.DustTransition(Color.WHITE, Color.WHITE, 1.0f);
+					case "Float" -> 1.0f;
+					case "Integer" -> 1;
+					case "ItemStack" -> new ItemStack(Material.WHITE_WOOL);
+					case "Spell" -> new Particle.Spell(Color.WHITE, 1.0f);
+					case "Trail" -> new Particle.Trail(endLoc, Color.WHITE, 1);
+					case "Vibration" -> new Vibration(endLoc, new Vibration.Destination.BlockDestination(endLoc.getBlock()), 0);
+					default -> null;
+				};
+
 				final FireComboStream fs = new FireComboStream(this.player, this, vec, hand, this.range, this.speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
-				fs.setParticle(getAirbendingParticles());
+				fs.setParticle(getAirbendingParticles(), particleData);
 				fs.setCollides(false);
 				fs.runTaskTimer(ProjectKorra.plugin, (long) (i / 2.5), 1L);
 				this.tasks.add(fs);
