@@ -22,7 +22,6 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class AirSweep extends AirAbility implements ComboAbility {
@@ -149,7 +148,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
-				fs.setParticleEffect(getAirbendingParticles());
+				fs.setParticle(getAirbendingParticles());
 				fs.setCollides(false);
 				fs.runTaskTimer(ProjectKorra.plugin, (long) (i / 2.5), 1L);
 				this.tasks.add(fs);

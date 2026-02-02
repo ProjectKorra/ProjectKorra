@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Levelled;
@@ -30,7 +31,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
@@ -292,7 +292,7 @@ public class Torrent extends WaterAbility {
 					final double dz = Math.sin(phi) * this.radius;
 					loc.add(dx, dy, dz);
 					if (isWater(loc.getBlock()) && GeneralMethods.isAdjacentToThreeOrMoreSources(loc.getBlock())) {
-						ParticleEffect.WATER_BUBBLE.display(loc.getBlock().getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
+						loc.getWorld().spawnParticle(Particle.BUBBLE, loc.getBlock().getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0, null, true);
 					}
 					loc.subtract(dx, dy, dz);
 				}
@@ -430,7 +430,7 @@ public class Torrent extends WaterAbility {
 			}
 			if (locBlock.getLocation().distanceSquared(targetLoc) > 1) {
 				if (isWater(locBlock)) {
-					ParticleEffect.WATER_BUBBLE.display(locBlock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
+					locBlock.getWorld().spawnParticle(Particle.BUBBLE, locBlock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0, null, true);
 				}
 				newBlocks.add(new TempBlock(locBlock, Material.WATER));
 			} else {

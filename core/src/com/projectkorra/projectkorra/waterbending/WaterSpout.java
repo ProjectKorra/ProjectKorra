@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -18,7 +19,6 @@ import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.util.Vector;
 
@@ -263,7 +263,7 @@ public class WaterSpout extends WaterAbility {
 				}
 
 				final Location effectLoc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
-				ParticleEffect.WATER_SPLASH.display(effectLoc2, 5, directions[index], directions[index], directions[index]);
+				effectLoc2.getWorld().spawnParticle(Particle.SPLASH, effectLoc2, 5, directions[index], directions[index], directions[index], 0, null, true);
 			}
 		}
 	}

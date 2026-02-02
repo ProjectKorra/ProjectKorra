@@ -107,7 +107,7 @@ public class Lightning extends LightningAbility {
 	private ArrayList<Location> locations;
 	private Block[] chargedCopperBlocks;
 	private static final Set<EntityType> LIGHTNING_AFFECTED = Sets.newHashSet(EntityType.CREEPER, EntityType.VILLAGER,
-			EntityType.PIG, EntityType.MUSHROOM_COW, EntityType.TURTLE, EntityType.SKELETON_HORSE
+			EntityType.PIG, EntityType.MOOSHROOM, EntityType.TURTLE, EntityType.SKELETON_HORSE
 	);
 
 	public Lightning(final Player player) {
@@ -227,7 +227,7 @@ public class Lightning extends LightningAbility {
 					entity.getWorld().spawnEntity(entity.getLocation(), EntityType.ZOMBIFIED_PIGLIN);
 					entity.remove();
 					break;
-				case MUSHROOM_COW:
+				case MOOSHROOM:
 					MushroomCow cow = (MushroomCow) entity;
 					cow.setVariant(cow.getVariant() == MushroomCow.Variant.RED ? MushroomCow.Variant.BROWN : MushroomCow.Variant.RED);
 					break;
@@ -396,12 +396,12 @@ public class Lightning extends LightningAbility {
 	}
 	
 	/**
-	 * Checks if the current version is 1.17 or higher and if the material is a lightning rod
+	 * Checks if the material is a lightning rod
 	 * @param block
-	 * @return True if found. False if not or if the game is 1.16 or lower
+	 * @return True if found. False if not
 	 */
 	private boolean isLightningRod(final Block block) {
-		return GeneralMethods.getMCVersion() >= 1170 && block.getType() == Material.valueOf("LIGHTNING_ROD");
+		return block.getType() == Material.LIGHTNING_ROD;
 	}
 
 	/**

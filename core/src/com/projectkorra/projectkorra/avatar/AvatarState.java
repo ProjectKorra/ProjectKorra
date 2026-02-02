@@ -76,7 +76,7 @@ public class AvatarState extends AvatarAbility {
 
 			Random rand = new Random();
 			for (int i = 0; i < 60; i++) {
-				Particle particle = i % 2 == 0 ? Particle.END_ROD : (darkAvatar ? Particle.SPELL_WITCH : Particle.FIREWORKS_SPARK);
+				Particle particle = i % 2 == 0 ? Particle.END_ROD : (darkAvatar ? Particle.WITCH : Particle.FIREWORK);
 
 				player.getWorld().spawnParticle(particle, player.getLocation().add(0, 1, 0), 0, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, 0.3);
 			}
@@ -113,7 +113,7 @@ public class AvatarState extends AvatarAbility {
 			}
 			if (this.getRunningTicks() % 6 == 0) {
 				final Location loc = this.player.getEyeLocation();
-				loc.getWorld().spawnParticle((darkAvatar ? Particle.SPELL_WITCH : Particle.FIREWORKS_SPARK), loc, 1, 0.3, 0.3, 0.3, 0);
+				loc.getWorld().spawnParticle((darkAvatar ? Particle.WITCH : Particle.FIREWORK), loc, 1, 0.3, 0.3, 0.3, 0);
 			}
 
 		}

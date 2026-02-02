@@ -120,11 +120,7 @@ public class FrostBreath extends IceAbility implements SubAbility {
         origin.setZ(origin.getZ() + new Random().nextDouble(-0.03, 0.03));
 
         target = player.getEyeLocation().add(player.getEyeLocation().getDirection().multiply(range));
-        if (GeneralMethods.getMCVersion() > 1203) {
-            origin.getWorld().playSound(origin, Sound.valueOf("ENTITY_BREEZE_IDLE_GROUND"), 0.33f, 1);
-        } else {
-            origin.getWorld().playSound(origin, Sound.ENTITY_HORSE_BREATHE, 0.33f, 1);
-        }
+        origin.getWorld().playSound(origin, Sound.ENTITY_BREEZE_IDLE_GROUND, 0.33f, 1);
         double vX = target.toVector().subtract(origin.toVector()).getX();
         double vY = target.toVector().subtract(origin.toVector()).getY();
         double vZ = target.toVector().subtract(origin.toVector()).getZ();

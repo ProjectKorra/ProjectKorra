@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,8 +17,6 @@ public class LightManager {
 
     // Our LightManager instance
     private static final LightManager INSTANCE = new LightManager();
-    // If the MC version is pre-LIGHT (< 1.17) this class basically does nothing
-    private final boolean modern;
     // Striped Lock set at number of processors * 2
     private final Object[] locks;
     // A map containing all active lights
@@ -40,18 +37,14 @@ public class LightManager {
      * using a ScheduledThreadPoolExecutor.
      */
     private LightManager() {
-        modern = GeneralMethods.getMCVersion() >= 1170;
-
         int numLocks = Runtime.getRuntime().availableProcessors() * 2;
         locks = new Object[numLocks];
         for (int i = 0; i < numLocks; i++) {
             locks[i] = new Object();
         }
 
-        if (modern) {
-            precomputeLightData();
-            startLightReverter();
-        }
+        precomputeLightData();
+        startLightReverter();
     }
 
     /**
@@ -236,8 +229,6 @@ public class LightManager {
      * @param observers  the list of players who can see the light
      */
     private void addLight(Location location, int brightness, long expiry, Collection<? extends Player> observers) {
-        if (!modern) return;
-
         location = location.getBlock().getLocation();
         long expiryTime = System.currentTimeMillis() + expiry;
 
@@ -276,8 +267,6 @@ public class LightManager {
      * This does not normally need to be used as it's already called when ProjectKorra is reloaded.
      */
     public void restart() {
-        if (!modern) return;
-
         lightMap.values().forEach(set -> set.forEach(this::revertLight));
         lightMap.clear();
 

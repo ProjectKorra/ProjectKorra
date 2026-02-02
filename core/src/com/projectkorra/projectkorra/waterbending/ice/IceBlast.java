@@ -6,6 +6,7 @@ import java.util.Random;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -24,7 +25,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
@@ -165,18 +165,18 @@ public class IceBlast extends IceAbility {
 		DamageHandler.damageEntity(entity, this.damage, this);
 		if (entity instanceof Player) {
 			if (this.bPlayer.canBeSlowed()) {
-				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
+				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOWNESS, 70, 2);
 				new TempPotionEffect(entity, effect);
 				this.bPlayer.slow(this.slowCooldown);
 			}
 		} else {
-			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
+			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOWNESS, 70, 2);
 			new TempPotionEffect(entity, effect);
 		}
 		AirAbility.breakBreathbendingHold(entity);
 
 		for (int x = 0; x < 30; x++) {
-			ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random() / 4, Math.random() / 4, Math.random() / 4, new ItemStack(Material.ICE));
+			this.location.getWorld().spawnParticle(Particle.ITEM, this.location, 5, Math.random() / 4, Math.random() / 4, Math.random() / 4, 0, new ItemStack(Material.ICE), true);
 		}
 	}
 
@@ -315,8 +315,8 @@ public class IceBlast extends IceAbility {
 			}
 
 			for (int x = 0; x < 10; x++) {
-				ParticleEffect.ITEM_CRACK.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, new ItemStack(Material.ICE));
-				ParticleEffect.SNOW_SHOVEL.display(this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
+				this.location.getWorld().spawnParticle(Particle.ITEM, this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0, new ItemStack(Material.ICE), true);
+				this.location.getWorld().spawnParticle(Particle.ITEM_SNOWBALL, this.location, 5, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0, null, true);
 			}
 			if ((new Random()).nextInt(4) == 0) {
 				playIcebendingSound(this.location);
@@ -329,8 +329,8 @@ public class IceBlast extends IceAbility {
 
 	public void breakParticles(final int amount) {
 		for (int x = 0; x < amount; x++) {
-			ParticleEffect.ITEM_CRACK.display(this.location, 2, Math.random(), Math.random(), Math.random(), new ItemStack(Material.ICE));
-			ParticleEffect.SNOW_SHOVEL.display(this.location, 2, Math.random(), Math.random(), Math.random(), 0);
+			this.location.getWorld().spawnParticle(Particle.ITEM, this.location, 2, Math.random(), Math.random(), Math.random(), 0, new ItemStack(Material.ICE), true);
+			this.location.getWorld().spawnParticle(Particle.ITEM_SNOWBALL, this.location, 2, Math.random(), Math.random(), Math.random(), 0, null, true);
 		}
 		this.location.getWorld().playSound(this.location, Sound.BLOCK_GLASS_BREAK, 5, 1.3f);
 	}

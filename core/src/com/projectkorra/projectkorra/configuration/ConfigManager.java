@@ -1,10 +1,12 @@
 package com.projectkorra.projectkorra.configuration;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
@@ -12,10 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ConfigManager {
 
@@ -60,35 +60,35 @@ public class ConfigManager {
 
 			config.addDefault("Chat.Enable", !hasChatPlugin());
 			config.addDefault("Chat.Format", "<name>: <message>");
-			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
-			config.addDefault("Chat.Colors.Air", "GRAY");
-			config.addDefault("Chat.Colors.AirSub", "DARK_GRAY");
+			config.addDefault("Chat.Colors.Avatar", ChatColor.DARK_PURPLE.getName());
+			config.addDefault("Chat.Colors.Air", ChatColor.GRAY.getName());
+			config.addDefault("Chat.Colors.AirSub", ChatColor.DARK_GRAY.getName());
 			config.addDefault("Chat.Colors.Spiritual", "#cab0ff");
 			config.addDefault("Chat.Colors.Flight", "#dbf5ff");
-			config.addDefault("Chat.Colors.Water", "AQUA");
-			config.addDefault("Chat.Colors.WaterSub", "DARK_AQUA");
+			config.addDefault("Chat.Colors.Water", ChatColor.AQUA.getName());
+			config.addDefault("Chat.Colors.WaterSub", ChatColor.DARK_AQUA.getName());
 			config.addDefault("Chat.Colors.Blood", "#a30010");
 			config.addDefault("Chat.Colors.Ice", "#99f5ff");
 			config.addDefault("Chat.Colors.Plant", "#008048");
 			config.addDefault("Chat.Colors.Healing", "#36d2e3");
-			config.addDefault("Chat.Colors.Earth", "GREEN");
-			config.addDefault("Chat.Colors.EarthSub", "DARK_GREEN");
+			config.addDefault("Chat.Colors.Earth", ChatColor.GREEN.getName());
+			config.addDefault("Chat.Colors.EarthSub", ChatColor.DARK_GREEN.getName());
 			config.addDefault("Chat.Colors.Lava", "#c73800");
 			config.addDefault("Chat.Colors.Metal", "#c7c5c5");
 			config.addDefault("Chat.Colors.Sand", "#ffdc82");
-			config.addDefault("Chat.Colors.Fire", "RED");
-			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
+			config.addDefault("Chat.Colors.Fire", ChatColor.RED.getName());
+			config.addDefault("Chat.Colors.FireSub", ChatColor.DARK_RED.getName());
 			config.addDefault("Chat.Colors.BlueFire", "#1ac5fd");
 			config.addDefault("Chat.Colors.Combustion", "#690213");
 			config.addDefault("Chat.Colors.Lightning", "#820d0d");
-			config.addDefault("Chat.Colors.Chi", "GOLD");
-			config.addDefault("Chat.Colors.ChiSub", "YELLOW");
+			config.addDefault("Chat.Colors.Chi", ChatColor.GOLD.getName());
+			config.addDefault("Chat.Colors.ChiSub", ChatColor.YELLOW.getName());
 			config.addDefault("Chat.Branding.JoinMessage.Enabled", true);
-			config.addDefault("Chat.Branding.Color", "GOLD");
+			config.addDefault("Chat.Branding.Color", ChatColor.GOLD.getName());
 			config.addDefault("Chat.Branding.Borders.TopBorder", "");
 			config.addDefault("Chat.Branding.Borders.BottomBorder", "");
 			config.addDefault("Chat.Branding.ChatPrefix.Prefix", "");
-			config.addDefault("Chat.Branding.ChatPrefix.Suffix", " \u00BB ");
+			config.addDefault("Chat.Branding.ChatPrefix.Suffix", " » ");
 			config.addDefault("Chat.Branding.ChatPrefix.Main", "ProjectKorra");
 			config.addDefault("Chat.Branding.ChatPrefix.Hover", "Bending brought to you by ProjectKorra!\\nClick for more info.");
 			config.addDefault("Chat.Branding.ChatPrefix.Click", "https://projectkorra.com");
@@ -578,181 +578,160 @@ public class ConfigManager {
 		} else if (type == ConfigType.DEFAULT) {
 			config = defaultConfig.get();
 
-			final int mcVersion = GeneralMethods.getMCVersion();
-			final ArrayList<String> earthBlocks = new ArrayList<String>();
+			final List<String> earthBlocks = new ArrayList<>();
 
 			earthBlocks.add("#base_stone_nether"); // added in 1.16.2
 			earthBlocks.add("#base_stone_overworld"); // added in 1.16.2
 
-			if (mcVersion >= 1190) { //1.19
-				earthBlocks.add("MUD");
-				earthBlocks.add("MUDDY_MANGROVE_ROOTS");
-			}
-			if (mcVersion >= 1180) { //1.18
-				earthBlocks.add("#terracotta");
-			}
-			if (mcVersion >= 1170) { //1.17
-				earthBlocks.add("#coal_ores"); //These tags were only added in 1.17 and above
-				earthBlocks.add("#diamond_ores");
-				earthBlocks.add("#emerald_ores");
-				earthBlocks.add("#lapis_ores");
-				earthBlocks.add("#redstone_ores");
-				earthBlocks.add("CALCITE");
-				earthBlocks.add("DRIPSTONE_BLOCK");
-				earthBlocks.add("LARGE_AMETHYST_BUD");
-				earthBlocks.add("MEDIUM_AMETHYST_BUD");
-				earthBlocks.add("SMALL_AMETHYST_BUD");
-				earthBlocks.add("DIRT_PATH"); // renamed from grass_path in 1.17
-				earthBlocks.add("ROOTED_DIRT");
-			} else { //They are in 1.16
-				earthBlocks.add("COAL_ORE");
-				earthBlocks.add("DIAMOND_ORE");
-				earthBlocks.add("EMERALD_ORE");
-				earthBlocks.add("LAPIS_ORE");
-				earthBlocks.add("REDSTONE_ORE");
-				earthBlocks.add("GRASS_PATH");
-			}
+			earthBlocks.add(Material.MUD.name());
+			earthBlocks.add(Material.MUDDY_MANGROVE_ROOTS.name());
+			earthBlocks.add("#terracotta");
+			earthBlocks.add("#coal_ores");
+			earthBlocks.add("#diamond_ores");
+			earthBlocks.add("#emerald_ores");
+			earthBlocks.add("#lapis_ores");
+			earthBlocks.add("#redstone_ores");
+			earthBlocks.add(Material.CALCITE.name());
+			earthBlocks.add(Material.DRIPSTONE_BLOCK.name());
+			earthBlocks.add(Material.LARGE_AMETHYST_BUD.name());
+			earthBlocks.add(Material.MEDIUM_AMETHYST_BUD.name());
+			earthBlocks.add(Material.SMALL_AMETHYST_BUD.name());
+			earthBlocks.add(Material.DIRT_PATH.name());
+			earthBlocks.add(Material.ROOTED_DIRT.name());
 
-			earthBlocks.add("ANCIENT_DEBRIS");
-			earthBlocks.add("CLAY");
-			earthBlocks.add("COARSE_DIRT");
-			earthBlocks.add("COAL_BLOCK");
-			earthBlocks.add("COBBLESTONE");
-			earthBlocks.add("COBBLESTONE_SLAB");
-			earthBlocks.add("DIRT");
-			earthBlocks.add("GRASS_BLOCK");
-			earthBlocks.add("GRAVEL");
-			earthBlocks.add("MYCELIUM");
-			earthBlocks.add("PODZOL");
-			earthBlocks.add("STONE_SLAB");
+			earthBlocks.add(Material.ANCIENT_DEBRIS.name());
+			earthBlocks.add(Material.CLAY.name());
+			earthBlocks.add(Material.COARSE_DIRT.name());
+			earthBlocks.add(Material.COAL_BLOCK.name());
+			earthBlocks.add(Material.COBBLESTONE.name());
+			earthBlocks.add(Material.COBBLESTONE_SLAB.name());
+			earthBlocks.add(Material.DIRT.name());
+			earthBlocks.add(Material.GRASS_BLOCK.name());
+			earthBlocks.add(Material.GRAVEL.name());
+			earthBlocks.add(Material.MYCELIUM.name());
+			earthBlocks.add(Material.PODZOL.name());
+			earthBlocks.add(Material.STONE_SLAB.name());
 
-			final ArrayList<String> metalBlocks = new ArrayList<String>();
+			final List<String> metalBlocks = new ArrayList<>();
 
-			if (mcVersion >= 1170) { //1.17
-				metalBlocks.add("#copper_ores");
-				metalBlocks.add("#gold_ores");
-				metalBlocks.add("#iron_ores");
-				metalBlocks.add("COPPER_BLOCK");
-				metalBlocks.add("CUT_COPPER");
-				metalBlocks.add("CUT_COPPER_SLAB");
-				metalBlocks.add("CUT_COPPER_STAIRS");
-				metalBlocks.add("EXPOSED_COPPER");
-				metalBlocks.add("EXPOSED_CUT_COPPER");
-				metalBlocks.add("EXPOSED_CUT_COPPER_SLAB");
-				metalBlocks.add("EXPOSED_CUT_COPPER_STAIRS");
-				metalBlocks.add("OXIDIZED_COPPER");
-				metalBlocks.add("OXIDIZED_CUT_COPPER");
-				metalBlocks.add("OXIDIZED_CUT_COPPER_SLAB");
-				metalBlocks.add("OXIDIZED_CUT_COPPER_STAIRS");
-				metalBlocks.add("RAW_COPPER_BLOCK");
-				metalBlocks.add("RAW_GOLD_BLOCK");
-				metalBlocks.add("RAW_IRON_BLOCK");
-				metalBlocks.add("WAXED_COPPER_BLOCK");
-				metalBlocks.add("WAXED_CUT_COPPER");
-				metalBlocks.add("WAXED_CUT_COPPER_SLAB");
-				metalBlocks.add("WAXED_CUT_COPPER_STAIRS");
-				metalBlocks.add("WAXED_EXPOSED_COPPER");
-				metalBlocks.add("WAXED_EXPOSED_CUT_COPPER");
-				metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_SLAB");
-				metalBlocks.add("WAXED_EXPOSED_CUT_COPPER_STAIRS");
-				metalBlocks.add("WAXED_OXIDIZED_COPPER");
-				metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER");
-				metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_SLAB");
-				metalBlocks.add("WAXED_OXIDIZED_CUT_COPPER_STAIRS");
-				metalBlocks.add("WAXED_WEATHERED_COPPER");
-				metalBlocks.add("WAXED_WEATHERED_CUT_COPPER");
-				metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_SLAB");
-				metalBlocks.add("WAXED_WEATHERED_CUT_COPPER_STAIRS");
-				metalBlocks.add("WEATHERED_COPPER");
-				metalBlocks.add("WEATHERED_CUT_COPPER");
-				metalBlocks.add("WEATHERED_CUT_COPPER_SLAB");
-				metalBlocks.add("WEATHERED_CUT_COPPER_STAIRS");
-			} else {
-				metalBlocks.add("IRON_ORE");
-				metalBlocks.add("GOLD_ORE");
-			}
+			metalBlocks.add("#copper_ores");
+			metalBlocks.add("#gold_ores");
+			metalBlocks.add("#iron_ores");
+			metalBlocks.add(Material.COPPER_BLOCK.name());
+			metalBlocks.add(Material.CUT_COPPER.name());
+			metalBlocks.add(Material.CUT_COPPER_SLAB.name());
+			metalBlocks.add(Material.CUT_COPPER_STAIRS.name());
+			metalBlocks.add(Material.EXPOSED_COPPER.name());
+			metalBlocks.add(Material.EXPOSED_CUT_COPPER.name());
+			metalBlocks.add(Material.EXPOSED_CUT_COPPER_SLAB.name());
+			metalBlocks.add(Material.EXPOSED_CUT_COPPER_STAIRS.name());
+			metalBlocks.add(Material.OXIDIZED_COPPER.name());
+			metalBlocks.add(Material.OXIDIZED_CUT_COPPER.name());
+			metalBlocks.add(Material.OXIDIZED_CUT_COPPER_SLAB.name());
+			metalBlocks.add(Material.OXIDIZED_CUT_COPPER_STAIRS.name());
+			metalBlocks.add(Material.RAW_COPPER_BLOCK.name());
+			metalBlocks.add(Material.RAW_GOLD_BLOCK.name());
+			metalBlocks.add(Material.RAW_IRON_BLOCK.name());
+			metalBlocks.add(Material.WAXED_COPPER_BLOCK.name());
+			metalBlocks.add(Material.WAXED_CUT_COPPER.name());
+			metalBlocks.add(Material.WAXED_CUT_COPPER_SLAB.name());
+			metalBlocks.add(Material.WAXED_CUT_COPPER_STAIRS.name());
+			metalBlocks.add(Material.WAXED_EXPOSED_COPPER.name());
+			metalBlocks.add(Material.WAXED_EXPOSED_CUT_COPPER.name());
+			metalBlocks.add(Material.WAXED_EXPOSED_CUT_COPPER_SLAB.name());
+			metalBlocks.add(Material.WAXED_EXPOSED_CUT_COPPER_STAIRS.name());
+			metalBlocks.add(Material.WAXED_OXIDIZED_COPPER.name());
+			metalBlocks.add(Material.WAXED_OXIDIZED_CUT_COPPER.name());
+			metalBlocks.add(Material.WAXED_OXIDIZED_CUT_COPPER_SLAB.name());
+			metalBlocks.add(Material.WAXED_OXIDIZED_CUT_COPPER_STAIRS.name());
+			metalBlocks.add(Material.WAXED_WEATHERED_COPPER.name());
+			metalBlocks.add(Material.WAXED_WEATHERED_CUT_COPPER.name());
+			metalBlocks.add(Material.WAXED_WEATHERED_CUT_COPPER_SLAB.name());
+			metalBlocks.add(Material.WAXED_WEATHERED_CUT_COPPER_STAIRS.name());
 
-			metalBlocks.add("CHAIN");
-			metalBlocks.add("GILDED_BLACKSTONE");
-			metalBlocks.add("GOLD_BLOCK");
-			metalBlocks.add("IRON_BLOCK");
-			metalBlocks.add("NETHERITE_BLOCK");
-			metalBlocks.add("NETHER_QUARTZ_ORE");
-			metalBlocks.add("QUARTZ_BLOCK");
+			metalBlocks.add(Material.IRON_CHAIN.name());
+			metalBlocks.add(Material.COPPER_CHAIN.name());
+			metalBlocks.add(Material.EXPOSED_COPPER_CHAIN.name());
+			metalBlocks.add(Material.WEATHERED_COPPER_CHAIN.name());
+			metalBlocks.add(Material.OXIDIZED_COPPER_CHAIN.name());
+			metalBlocks.add(Material.WAXED_COPPER_CHAIN.name());
+			metalBlocks.add(Material.WAXED_EXPOSED_COPPER_CHAIN.name());
+			metalBlocks.add(Material.WAXED_WEATHERED_COPPER_CHAIN.name());
+			metalBlocks.add(Material.WAXED_OXIDIZED_COPPER_CHAIN.name());
+			metalBlocks.add(Material.GILDED_BLACKSTONE.name());
+			metalBlocks.add(Material.GOLD_BLOCK.name());
+			metalBlocks.add(Material.IRON_BLOCK.name());
+			metalBlocks.add(Material.NETHERITE_BLOCK.name());
+			metalBlocks.add(Material.NETHER_QUARTZ_ORE.name());
+			metalBlocks.add(Material.QUARTZ_BLOCK.name());
 
-			final ArrayList<String> sandBlocks = new ArrayList<String>();
+			final List<String> sandBlocks = new ArrayList<>();
 			sandBlocks.add("#sand");
-			sandBlocks.add("RED_SANDSTONE");
-			sandBlocks.add("RED_SANDSTONE_SLAB");
-			sandBlocks.add("SANDSTONE");
-			sandBlocks.add("SANDSTONE_SLAB");
+			sandBlocks.add(Material.RED_SANDSTONE.name());
+			sandBlocks.add(Material.RED_SANDSTONE_SLAB.name());
+			sandBlocks.add(Material.SANDSTONE.name());
+			sandBlocks.add(Material.SANDSTONE_SLAB.name());
 
-			final ArrayList<String> iceBlocks = new ArrayList<String>();
+			final List<String> iceBlocks = new ArrayList<>();
 			iceBlocks.add("#ice");
 
 			/* Dry biomes for FrostBreath */
-			final ArrayList<String> dryBiomes = new ArrayList<String>();
-			dryBiomes.add("DESERT");
-			dryBiomes.add("BADLANDS");
-			dryBiomes.add("ERODED_BADLANDS");
-			dryBiomes.add("WOODED_BADLANDS");
-			dryBiomes.add("SAVANNA");
-			dryBiomes.add("SAVANNA_PLATEAU");
-			dryBiomes.add("WINDSWEPT_SAVANNA");
-			dryBiomes.add("BASALT_DELTAS");
-			dryBiomes.add("CRIMSON_FOREST");
-			dryBiomes.add("WARPED_FOREST");
-			dryBiomes.add("NETHER_WASTES");
-			dryBiomes.add("SOUL_SAND_VALLEY");
+			final List<String> dryBiomes = new ArrayList<>();
+			dryBiomes.add(Biome.DESERT.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.BADLANDS.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.ERODED_BADLANDS.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.WOODED_BADLANDS.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.SAVANNA.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.SAVANNA_PLATEAU.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.WINDSWEPT_SAVANNA.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.BASALT_DELTAS.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.CRIMSON_FOREST.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.WARPED_FOREST.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.NETHER_WASTES.getKeyOrThrow().getKey());
+			dryBiomes.add(Biome.SOUL_SAND_VALLEY.getKeyOrThrow().getKey());
 
-			final ArrayList<String> plantBlocks = new ArrayList<String>();
+			final List<String> plantBlocks = new ArrayList<>();
 			plantBlocks.add("#bee_growables");
 			plantBlocks.add("#flowers");
 			plantBlocks.add("#leaves");
 			plantBlocks.add("#saplings");
 
-			plantBlocks.add("BROWN_MUSHROOM");
-			plantBlocks.add("BROWN_MUSHROOM_BLOCK");
-			plantBlocks.add("BAMBOO");
-			plantBlocks.add("BAMBOO_SAPLING");
-			plantBlocks.add("CACTUS");
-			plantBlocks.add("CRIMSON_FUNGUS");
-			plantBlocks.add("CRIMSON_ROOTS");
-			plantBlocks.add("FERN");
-			if (mcVersion < 1203) { //1.20.3 changed GRASS to SHORT_GRASS
-				plantBlocks.add("GRASS");
-			} else {
-				plantBlocks.add("SHORT_GRASS");
-			}
-			plantBlocks.add("LARGE_FERN");
-			plantBlocks.add("LILY_PAD");
-			plantBlocks.add("MELON");
-			plantBlocks.add("MELON_STEM");
-			plantBlocks.add("MUSHROOM_STEM");
-			plantBlocks.add("NETHER_SPROUTS");
-			plantBlocks.add("PUMPKIN");
-			plantBlocks.add("PUMPKIN_STEM");
-			plantBlocks.add("RED_MUSHROOM");
-			plantBlocks.add("RED_MUSHROOM_BLOCK");
-			plantBlocks.add("SUGAR_CANE");
-			plantBlocks.add("TALL_GRASS");
-			plantBlocks.add("TWISTING_VINES_PLANT");
-			plantBlocks.add("VINE");
-			plantBlocks.add("WARPED_FUNGUS");
-			plantBlocks.add("WARPED_ROOTS");
-			plantBlocks.add("WEEPING_VINES_PLANT");
+			plantBlocks.add(Material.BROWN_MUSHROOM.name());
+			plantBlocks.add(Material.BROWN_MUSHROOM_BLOCK.name());
+			plantBlocks.add(Material.BAMBOO.name());
+			plantBlocks.add(Material.BAMBOO_SAPLING.name());
+			plantBlocks.add(Material.CACTUS.name());
+			plantBlocks.add(Material.CRIMSON_FUNGUS.name());
+			plantBlocks.add(Material.CRIMSON_ROOTS.name());
+			plantBlocks.add(Material.FERN.name());
+			plantBlocks.add(Material.SHORT_GRASS.name());
+			plantBlocks.add(Material.LARGE_FERN.name());
+			plantBlocks.add(Material.LILY_PAD.name());
+			plantBlocks.add(Material.MELON.name());
+			plantBlocks.add(Material.MELON_STEM.name());
+			plantBlocks.add(Material.MUSHROOM_STEM.name());
+			plantBlocks.add(Material.NETHER_SPROUTS.name());
+			plantBlocks.add(Material.PUMPKIN.name());
+			plantBlocks.add(Material.PUMPKIN_STEM.name());
+			plantBlocks.add(Material.RED_MUSHROOM.name());
+			plantBlocks.add(Material.RED_MUSHROOM_BLOCK.name());
+			plantBlocks.add(Material.SUGAR_CANE.name());
+			plantBlocks.add(Material.TALL_GRASS.name());
+			plantBlocks.add(Material.TWISTING_VINES_PLANT.name());
+			plantBlocks.add(Material.VINE.name());
+			plantBlocks.add(Material.WARPED_FUNGUS.name());
+			plantBlocks.add(Material.WARPED_ROOTS.name());
+			plantBlocks.add(Material.WEEPING_VINES_PLANT.name());
 
-			if (mcVersion >= 1170) {
-				plantBlocks.add("BIG_DRIPLEAF");
-				plantBlocks.add("HANGING_ROOTS");
-				plantBlocks.add("MOSS_BLOCK");
-				plantBlocks.add("MOSS_CARPET");
-				plantBlocks.add("SMALL_DRIPLEAF");
-				plantBlocks.add("SPORE_BLOSSOM");
-			}
+			plantBlocks.add(Material.BIG_DRIPLEAF.name());
+			plantBlocks.add(Material.HANGING_ROOTS.name());
+			plantBlocks.add(Material.MOSS_BLOCK.name());
+			plantBlocks.add(Material.MOSS_CARPET.name());
+			plantBlocks.add(Material.SMALL_DRIPLEAF.name());
+			plantBlocks.add(Material.SPORE_BLOSSOM.name());
 
-			final ArrayList<String> snowBlocks = new ArrayList<>();
-			snowBlocks.add("#snow"); // added in 1.17
+			final List<String> snowBlocks = new ArrayList<>();
+			snowBlocks.add("#snow");
 
 			/*
 			final ArrayList<String> waterTransformableBlocks = new ArrayList<>();
@@ -802,9 +781,9 @@ public class ConfigManager {
 			config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
 
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
-			config.addDefault("Properties.Air.Particles", "spell");
+			config.addDefault("Properties.Air.Particles", Particle.EFFECT.name());
 			config.addDefault("Properties.Air.PlaySound", true);
-			config.addDefault("Properties.Air.Sound.Sound", "ENTITY_CREEPER_HURT");
+			config.addDefault("Properties.Air.Sound.Sound", Sound.ENTITY_CREEPER_HURT.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Air.Sound.Volume", 1);
 			config.addDefault("Properties.Air.Sound.Pitch", 2);
 
@@ -818,16 +797,16 @@ public class ConfigManager {
 			// config.addDefault("Properties.Water.TransformableBlocks", waterTransformableBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.25);
 			config.addDefault("Properties.Water.PlaySound", true);
-			config.addDefault("Properties.Water.WaterSound.Sound", "BLOCK_WATER_AMBIENT");
+			config.addDefault("Properties.Water.WaterSound.Sound", Sound.BLOCK_WATER_AMBIENT.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Water.WaterSound.Volume", 1);
 			config.addDefault("Properties.Water.WaterSound.Pitch", 1);
-			config.addDefault("Properties.Water.IceSound.Sound", "ITEM_FLINTANDSTEEL_USE");
+			config.addDefault("Properties.Water.IceSound.Sound", Sound.ITEM_FLINTANDSTEEL_USE.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Water.IceSound.Volume", 1);
 			config.addDefault("Properties.Water.IceSound.Pitch", 1);
-			config.addDefault("Properties.Water.PlantSound.Sound", "BLOCK_GRASS_STEP");
+			config.addDefault("Properties.Water.PlantSound.Sound", Sound.BLOCK_GRASS_STEP.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Water.IceSound.Volume", 1);
 			config.addDefault("Properties.Water.IceSound.Pitch", 1);
-			config.addDefault("Properties.Water.MudSound.Sound", "BLOCK_MUD_STEP");
+			config.addDefault("Properties.Water.MudSound.Sound", Sound.BLOCK_MUD_STEP.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Water.MudSound.Volume", 1);
 			config.addDefault("Properties.Water.MudSound.Pitch", 1);
 
@@ -841,19 +820,19 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);
-			config.addDefault("Properties.Earth.EarthSound.Sound", "ENTITY_GHAST_SHOOT");
+			config.addDefault("Properties.Earth.EarthSound.Sound", Sound.ENTITY_GHAST_SHOOT.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Earth.EarthSound.Volume", 1);
 			config.addDefault("Properties.Earth.EarthSound.Pitch", 1);
-			config.addDefault("Properties.Earth.MetalSound.Sound", "ENTITY_IRON_GOLEM_HURT");
+			config.addDefault("Properties.Earth.MetalSound.Sound", Sound.ENTITY_IRON_GOLEM_HURT.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Earth.MetalSound.Volume", 1);
 			config.addDefault("Properties.Earth.MetalSound.Pitch", 1.25);
-			config.addDefault("Properties.Earth.SandSound.Sound", "BLOCK_SAND_BREAK");
+			config.addDefault("Properties.Earth.SandSound.Sound", Sound.BLOCK_SAND_BREAK.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Earth.SandSound.Volume", 1);
 			config.addDefault("Properties.Earth.SandSound.Pitch", 1);
-			config.addDefault("Properties.Earth.LavaSound.Sound", "BLOCK_LAVA_AMBIENT");
+			config.addDefault("Properties.Earth.LavaSound.Sound", Sound.BLOCK_LAVA_AMBIENT.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Earth.LavaSound.Volume", 1);
 			config.addDefault("Properties.Earth.LavaSound.Pitch", 1);
-			config.addDefault("Properties.Earth.MudSound.Sound", "BLOCK_MUD_PLACE");
+			config.addDefault("Properties.Earth.MudSound.Sound", Sound.BLOCK_MUD_PLACE.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Earth.MudSound.Volume", 1);
 			config.addDefault("Properties.Earth.MudSound.Pitch", 1);
 
@@ -862,19 +841,19 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.PlaySound", true);
 			config.addDefault("Properties.Fire.FireGriefing", false);
 			config.addDefault("Properties.Fire.RevertTicks", 12000L);
-			config.addDefault("Properties.Fire.FireSound.Sound", "BLOCK_FIRE_AMBIENT");
+			config.addDefault("Properties.Fire.FireSound.Sound", Sound.BLOCK_FIRE_AMBIENT.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Fire.FireSound.Volume", 1);
 			config.addDefault("Properties.Fire.FireSound.Pitch", 1);
-			config.addDefault("Properties.Fire.CombustionSound.Sound", "ENTITY_FIREWORK_ROCKET_BLAST");
+			config.addDefault("Properties.Fire.CombustionSound.Sound", Sound.ENTITY_FIREWORK_ROCKET_BLAST.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Fire.CombustionSound.Volume", 1);
 			config.addDefault("Properties.Fire.CombustionSound.Pitch", 0);
-			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
+			config.addDefault("Properties.Fire.LightningSound.Sound", Sound.ENTITY_CREEPER_HURT.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Fire.LightningSound.Volume", 1);
 			config.addDefault("Properties.Fire.LightningSound.Pitch", 0);
-			config.addDefault("Properties.Fire.LightningCharge.Sound", "BLOCK_BEEHIVE_WORK");
+			config.addDefault("Properties.Fire.LightningCharge.Sound", Sound.BLOCK_BEEHIVE_WORK.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Fire.LightningCharge.Volume", 2);
 			config.addDefault("Properties.Fire.LightningCharge.Pitch", .5);
-			config.addDefault("Properties.Fire.LightningHit.Sound", "ENTITY_LIGHTNING_BOLT_THUNDER");
+			config.addDefault("Properties.Fire.LightningHit.Sound", Sound.ENTITY_LIGHTNING_BOLT_THUNDER.getKeyOrThrow().getKey());
 			config.addDefault("Properties.Fire.LightningHit.Volume", 1);
 			config.addDefault("Properties.Fire.LightningHit.Pitch", 2);
 			config.addDefault("Properties.Fire.BlueFire.DamageFactor", 1.1);
@@ -1215,7 +1194,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Arms.AllowPlantSource", true);
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Enabled", true);
-			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Damage", Double.valueOf(10.0));
+			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Damage", 10.0d);
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.KillUser", false);
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown.Enabled", false);
@@ -1390,24 +1369,18 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
 
-			final ArrayList<String> earthTunnelIgnored = new ArrayList<String>();
-			earthTunnelIgnored.add(Material.COAL_ORE.toString()); // no longer needed in 1.17
-			earthTunnelIgnored.add(Material.IRON_ORE.toString()); // no longer needed in 1.17
-			earthTunnelIgnored.add(Material.REDSTONE_ORE.toString()); // no longer needed in 1.17
-			earthTunnelIgnored.add(Material.LAPIS_ORE.toString()); // no longer needed in 1.17
-			earthTunnelIgnored.add(Material.DIAMOND_ORE.toString()); // no longer needed in 1.17
-			earthTunnelIgnored.add(Material.EMERALD_ORE.toString()); // no longer needed in 1.17
-			earthTunnelIgnored.add("#coal_ores"); // added in 1.17
-			earthTunnelIgnored.add("#iron_ores"); // added in 1.17
-			earthTunnelIgnored.add("#gold_ores"); // added in 1.16.1
-			earthTunnelIgnored.add("#copper_ores"); // added in 1.17
-			earthTunnelIgnored.add("#redstone_ores"); // added in 1.17
-			earthTunnelIgnored.add("#lapis_ores"); // added in 1.17
-			earthTunnelIgnored.add("#diamond_ores"); // added in 1.17
-			earthTunnelIgnored.add("#emerald_ores"); // added in 1.17
-			earthTunnelIgnored.add(Material.ANCIENT_DEBRIS.toString());
-			earthTunnelIgnored.add(Material.GILDED_BLACKSTONE.toString());
-			earthTunnelIgnored.add(Material.NETHER_QUARTZ_ORE.toString());
+			final List<String> earthTunnelIgnored = new ArrayList<>();
+			earthTunnelIgnored.add("#coal_ores");
+			earthTunnelIgnored.add("#iron_ores");
+			earthTunnelIgnored.add("#gold_ores");
+			earthTunnelIgnored.add("#copper_ores");
+			earthTunnelIgnored.add("#redstone_ores");
+			earthTunnelIgnored.add("#lapis_ores");
+			earthTunnelIgnored.add("#diamond_ores");
+			earthTunnelIgnored.add("#emerald_ores");
+			earthTunnelIgnored.add(Material.ANCIENT_DEBRIS.name());
+			earthTunnelIgnored.add(Material.GILDED_BLACKSTONE.name());
+			earthTunnelIgnored.add(Material.NETHER_QUARTZ_ORE.name());
 
 			config.addDefault("Abilities.Earth.EarthTunnel.IgnoredBlocks", earthTunnelIgnored);
 
@@ -1615,9 +1588,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Illumination.Range", 5);
 			config.addDefault("Abilities.Fire.Illumination.Cooldown", 500);
 			config.addDefault("Abilities.Fire.Illumination.LightThreshold", 7);
-			if (mcVersion >= 1170) { //Only add this for 1.17 and above
-				config.addDefault("Abilities.Fire.Illumination.LightLevel", 13);
-			}
+			config.addDefault("Abilities.Fire.Illumination.LightLevel", 13);
 
 			config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 			config.addDefault("Abilities.Fire.Lightning.Damage", 4.0);
@@ -1773,7 +1744,7 @@ public class ConfigManager {
 			config.addDefault("AvatarState.PlaySound", true);
 			config.addDefault("AvatarState.ShowParticles", true);
 			config.addDefault("AvatarState.GlowEnabled", false);
-			config.addDefault("AvatarState.Sound.Sound", "BLOCK_BEACON_ACTIVATE");
+			config.addDefault("AvatarState.Sound.Sound", Sound.BLOCK_BEACON_ACTIVATE.getKeyOrThrow().getKey());
 			config.addDefault("AvatarState.Sound.Volume", 1);
 			config.addDefault("AvatarState.Sound.Pitch", 1.5);
 			config.addDefault("AvatarState.CanBeChiblocked", false);

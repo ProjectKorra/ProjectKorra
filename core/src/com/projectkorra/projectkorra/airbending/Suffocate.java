@@ -194,7 +194,7 @@ public class Suffocate extends AirAbility {
 				final BukkitRunnable br2 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
+						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
 					}
 				};
 				final BukkitRunnable br3 = new BukkitRunnable() {
@@ -438,7 +438,7 @@ public class Suffocate extends AirAbility {
 				this.loc.setZ(tempLoc.getZ() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			}
 
-			getAirbendingParticles().display(this.loc, 0, 0, 0, 0, 1);
+			this.loc.getWorld().spawnParticle(getAirbendingParticles(), this.loc, 0, 0, 0, 0, 1, null, true);
 			if (this.i == this.totalSteps + 1) {
 				this.cancel();
 			}

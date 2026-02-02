@@ -11,7 +11,6 @@ import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -19,10 +18,8 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.inventory.ItemStack;
 
 public class Illumination extends FireAbility {
@@ -38,9 +35,6 @@ public class Illumination extends FireAbility {
 	private Block block;
 	private int oldLevel;
 
-	private static boolean MODERN = GeneralMethods.getMCVersion() >= 1170;
-	private static Material LIGHT;
-
 	public Illumination(final Player player) {
 		super(player);
 
@@ -50,13 +44,7 @@ public class Illumination extends FireAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
 		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
 
-		if (MODERN) { //If we are in 1.17 and can use light blocks instead of torches
-			this.lightLevel = getConfig().getInt("Abilities.Fire.Illumination.LightLevel");
-
-			if (LIGHT == null) {
-				LIGHT = Material.getMaterial("LIGHT");
-			}
-		}
+		this.lightLevel = getConfig().getInt("Abilities.Fire.Illumination.LightLevel");
 
 		final Illumination oldIllumination = getAbility(player, Illumination.class);
 		if (oldIllumination != null) {
@@ -68,7 +56,7 @@ public class Illumination extends FireAbility {
 			return;
 		}
 
-		if (player.getLocation().getBlock().getLightLevel() < this.lightThreshold && (!MODERN || slotsFree(player)) && !isTremorsensing()) {
+		if (player.getLocation().getBlock().getLightLevel() < this.lightThreshold && slotsFree(player) && !isTremorsensing()) {
 			this.oldLevel = player.getLocation().getBlock().getLightLevel();
 			this.bPlayer.addCooldown(this);
 			this.set();
@@ -107,20 +95,17 @@ public class Illumination extends FireAbility {
 			return;
 		}
 
-		//If light blocks are supported
-		if (MODERN) {
-			ItemStack main = player.getInventory().getItemInMainHand();
-			if (!slotsFree(player)) {
-				this.remove();
-				return;
-			}
-
-			Location hand = GeneralMethods.getMainHandLocation(player);
-			if (main.getType() != Material.AIR) hand = GeneralMethods.getOffHandLocation(player);
-
-			//Only display every 5 ticks
-			if (getRunningTicks() % 3 == 0) playFirebendingParticles(hand, 1, 0, 0, 0);
+		ItemStack main = player.getInventory().getItemInMainHand();
+		if (!slotsFree(player)) {
+			this.remove();
+			return;
 		}
+
+		Location hand = GeneralMethods.getMainHandLocation(player);
+		if (main.getType() != Material.AIR) hand = GeneralMethods.getOffHandLocation(player);
+
+		//Only display every 5 ticks
+		if (getRunningTicks() % 3 == 0) playFirebendingParticles(hand, 1, 0, 0, 0);
 
 		this.set();
 	}
@@ -144,78 +129,42 @@ public class Illumination extends FireAbility {
 	}
 
 	private void set() {
-		if (MODERN) { //Light block implementation
-			Block eyeBlock = this.player.getEyeLocation().getBlock();
-			int level = lightLevel;
-			if (!eyeBlock.getType().isAir() && (this.block == null || !this.block.equals(eyeBlock))) {
-				for (BlockFace face : GeneralMethods.ADJACENT_FACES) {
-					if (eyeBlock.getRelative(face).getType().isAir() || (this.block != null && this.block.equals(eyeBlock.getRelative(face)))) {
-						eyeBlock = eyeBlock.getRelative(face);
-						level = lightLevel - 1; //Make the light level 1 less
-						break;
-					}
+		Block eyeBlock = this.player.getEyeLocation().getBlock();
+		int level = lightLevel;
+		if (!eyeBlock.getType().isAir() && (this.block == null || !this.block.equals(eyeBlock))) {
+			for (BlockFace face : GeneralMethods.ADJACENT_FACES) {
+				if (eyeBlock.getRelative(face).getType().isAir() || (this.block != null && this.block.equals(eyeBlock.getRelative(face)))) {
+					eyeBlock = eyeBlock.getRelative(face);
+					level = lightLevel - 1; //Make the light level 1 less
+					break;
 				}
-
-				if (!eyeBlock.getType().isAir()) return; //Could not find suitable block
 			}
 
-			BlockData clonedData = LIGHT.createBlockData();
-			((Levelled)clonedData).setLevel(level);
+			if (!eyeBlock.getType().isAir()) return; //Could not find suitable block
+		}
 
-			if ((!eyeBlock.equals(this.block))) { //On block change
-				this.revert();
+		BlockData clonedData = Material.LIGHT.createBlockData();
+		((Levelled)clonedData).setLevel(level);
 
-				this.oldLevel = player.getLocation().getBlock().getLightLevel();
+		if ((!eyeBlock.equals(this.block))) { //On block change
+			this.revert();
 
-				if (this.oldLevel > this.lightThreshold) {
-					remove();
-					return;
-				}
+			this.oldLevel = player.getLocation().getBlock().getLightLevel();
 
-				this.block = eyeBlock;
-				this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), clonedData));
-			} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
-				//We have to set the block back to the actual one because if they couldn't render the initial block change,
-				//(due to it not being in render distance) then no further packets will modify the block either.
-				this.block.getWorld().getPlayers().forEach(p -> {
-					p.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
-					p.sendBlockChange(this.block.getLocation(), clonedData);
-				});
-			}
-		} else { //Legacy 1.16 illumination
-			final Block standingBlock = this.player.getLocation().getBlock();
-			final Block bellowBlock = standingBlock.getRelative(BlockFace.DOWN);
-			if (!isIgnitable(standingBlock)) {
-				return;
-			} else if (standingBlock.equals(this.block)) {
-				return;
-			} else if (Tag.LEAVES.isTagged(bellowBlock.getType())) {
-				return;
-			} else if (standingBlock.getType().name().endsWith("_FENCE") || standingBlock.getType().name().endsWith("_FENCE_GATE") || standingBlock.getType().name().endsWith("_WALL") || standingBlock.getType() == Material.IRON_BARS || standingBlock.getType().name().endsWith("_PANE")) {
+			if (this.oldLevel > this.lightThreshold) {
+				remove();
 				return;
 			}
 
-			Material torch = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Material.SOUL_TORCH : Material.TORCH;
-
-			if (!standingBlock.equals(this.block)) { //On block change
-				this.revert();
-
-				this.oldLevel = player.getLocation().getBlock().getLightLevel();
-				if (this.oldLevel > this.lightThreshold) {
-					remove();
-					return;
-				}
-
-				this.block = standingBlock;
-				this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), torch.createBlockData()));
-			} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
-				//We have to set the block back to the actual one because if they couldn't render the initial block change,
-				//(due to it not being in render distance) then no further packets will modify the block either.
-				this.block.getWorld().getPlayers().forEach(p -> {
-					p.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
-					p.sendBlockChange(this.block.getLocation(), torch.createBlockData());
-				});
-			}
+			this.block = eyeBlock;
+			this.block.getWorld().getPlayers().forEach(p -> p.sendBlockChange(this.block.getLocation(), clonedData));
+		} else if (getCurrentTick() % 10 == 0) { //Update to all players in the area every half a second anyway
+			//We have to set the block back to the actual one because if they couldn't render the initial block change,
+			//(due to it not being in render distance) then no further packets will modify the block either.
+			this.block.getWorld().getPlayers().forEach(p -> {
+				p.sendBlockChange(this.block.getLocation(), this.block.getBlockData());
+				p.sendBlockChange(this.block.getLocation(), clonedData);
+			});
 		}
 
 		BLOCKS.put(this.block, this.player);
@@ -228,7 +177,7 @@ public class Illumination extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return this.player != null ? (MODERN ? this.player.getEyeLocation() : this.player.getLocation()) : null;
+		return this.player != null ? this.player.getEyeLocation() : null;
 	}
 
 	@Override
@@ -254,10 +203,6 @@ public class Illumination extends FireAbility {
 		this.range = range;
 	}
 
-	public static boolean isModern() {
-		return MODERN;
-	}
-
 	public Block getBlock() {
 		return this.block;
 	}
@@ -268,17 +213,6 @@ public class Illumination extends FireAbility {
 
 	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
-	}
-
-	/**
-	 * <b>Deprecated. Current Illumination uses fake Blocks, so this will always return false</b>
-	 * Returns whether the block provided is a torch created by Illumination
-	 *
-	 * @param block The block being tested
-	 */
-	@Deprecated
-	public static boolean isIlluminationTorch(final Block block) {
-		return false;
 	}
 
 	public void setCooldown(final long cooldown) {
@@ -292,7 +226,6 @@ public class Illumination extends FireAbility {
 	}
 
 	public static void slotChange(Player player) {
-		if (!MODERN) return;
 		if (CoreAbility.hasAbility(player, Illumination.class)) return;
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Illumination dummy = (Illumination) CoreAbility.getAbility(Illumination.class);

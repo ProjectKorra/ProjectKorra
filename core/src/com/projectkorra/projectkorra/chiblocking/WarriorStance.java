@@ -56,11 +56,11 @@ public class WarriorStance extends ChiAbility implements StanceAbility {
 			return;
 		}
 
-		if (!this.player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) || this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() > this.resistance || (this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getAmplifier() == this.resistance && this.player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE).getDuration() == 1)) { //special case for negative resistance
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, this.resistance, true, false), true);
+		if (!this.player.hasPotionEffect(PotionEffectType.RESISTANCE) || this.player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier() > this.resistance || (this.player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier() == this.resistance && this.player.getPotionEffect(PotionEffectType.RESISTANCE).getDuration() == 1)) { //special case for negative resistance
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 10, this.resistance, true, false), true);
 		}
-		if (!this.player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) || this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() < this.strength || (this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() == this.strength && this.player.getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() == 1)) {
-			this.player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 10, this.strength, true, false), true);
+		if (!this.player.hasPotionEffect(PotionEffectType.STRENGTH) || this.player.getPotionEffect(PotionEffectType.STRENGTH).getAmplifier() < this.strength || (this.player.getPotionEffect(PotionEffectType.STRENGTH).getAmplifier() == this.strength && this.player.getPotionEffect(PotionEffectType.STRENGTH).getDuration() == 1)) {
+			this.player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 10, this.strength, true, false), true);
 		}
 	}
 
@@ -71,8 +71,8 @@ public class WarriorStance extends ChiAbility implements StanceAbility {
 		this.bPlayer.setStance(null);
 		if (this.player != null) {
 			this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 0.5F, 2F);
-			this.player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-			this.player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+			this.player.removePotionEffect(PotionEffectType.RESISTANCE);
+			this.player.removePotionEffect(PotionEffectType.STRENGTH);
 		}
 	}
 

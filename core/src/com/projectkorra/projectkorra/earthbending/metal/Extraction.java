@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,15 +29,7 @@ public class Extraction extends MetalAbility {
 	private long cooldown;
 	private int ironGolemDrops;
 	private double ironGolemDamage;
-	private Material ironGolemDropMaterial;
 	private Block originBlock;
-
-	//Whether the server is on at least 1.17 or not. Used to change between raw iron and iron ingots
-	private final boolean is117;
-	private final Material iron;
-	private final Material gold;
-	private final Material copper;
-	private final Material deepslate;
 
 	public Extraction(final Player player) {
 		super(player);
@@ -49,13 +40,6 @@ public class Extraction extends MetalAbility {
 		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
 		this.ironGolemDrops = getConfig().getInt("Abilities.Earth.Extraction.IronGolem.Drops");
 		this.ironGolemDamage = getConfig().getDouble("Abilities.Earth.Extraction.IronGolem.Damage");
-		this.ironGolemDropMaterial = Material.IRON_NUGGET;
-
-		this.is117 = GeneralMethods.getMCVersion() >= 1170;
-		this.iron = is117 ? Material.getMaterial("RAW_IRON") : Material.IRON_INGOT;
-		this.gold = is117 ? Material.getMaterial("RAW_GOLD") : Material.GOLD_INGOT;
-		this.copper = Material.getMaterial("RAW_COPPER");
-		this.deepslate = Material.getMaterial("DEEPSLATE");
 
 		if (!this.bPlayer.canBend(this)) {
 			return;
@@ -92,7 +76,7 @@ public class Extraction extends MetalAbility {
 		Entity entity = GeneralMethods.getTargetedEntity(this.player, this.selectRange);
 
 		if (entity != null && entity.getType() == EntityType.IRON_GOLEM) {
-			player.getWorld().dropItem(player.getLocation(), new ItemStack(this.ironGolemDropMaterial, this.ironGolemDrops));
+			player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_NUGGET, this.ironGolemDrops));
 			DamageHandler.damageEntity(entity, this.ironGolemDamage, this);
 
 			playMetalbendingSound(this.originBlock.getLocation());
@@ -101,42 +85,42 @@ public class Extraction extends MetalAbility {
 			return;
 		}
 
-		switch (this.originBlock.getType().name()) {
-		case "IRON_ORE":
+		switch (this.originBlock.getType()) {
+		case IRON_ORE:
 			type = Material.STONE;
-			item = new ItemStack(iron, this.getAmount(is117 ? 2 : 1 ));
+			item = new ItemStack(Material.RAW_IRON, this.getAmount(2));
 			break;
-		case "DEEPSLATE_IRON_ORE":
-			type = deepslate;
-			item = new ItemStack(iron, this.getAmount(2));
+		case DEEPSLATE_IRON_ORE:
+			type = Material.DEEPSLATE;
+			item = new ItemStack(Material.RAW_IRON, this.getAmount(2));
 			break;
-		case "GOLD_ORE":
+		case GOLD_ORE:
 			type = Material.STONE;
-			item = new ItemStack(gold, this.getAmount( is117 ? 2 : 1 ));
+			item = new ItemStack(Material.RAW_GOLD, this.getAmount(2));
 			break;
-		case "DEEPSLATE_GOLD_ORE":
-			type = deepslate;
-			item = new ItemStack(gold, this.getAmount(2));
+		case DEEPSLATE_GOLD_ORE:
+			type = Material.DEEPSLATE;
+			item = new ItemStack(Material.RAW_GOLD, this.getAmount(2));
 			break;
-		case "NETHER_QUARTZ_ORE":
+		case NETHER_QUARTZ_ORE:
 			type = Material.NETHERRACK;
 			item = new ItemStack(Material.QUARTZ, this.getAmount());
 			break;
-		case "NETHER_GOLD_ORE":
+		case NETHER_GOLD_ORE:
 			type = Material.NETHERRACK;
 			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount(6));
 			break;
-		case "GILDED_BLACKSTONE":
+		case GILDED_BLACKSTONE:
 			type = Material.BLACKSTONE;
 			item = new ItemStack(Material.GOLD_NUGGET, this.getAmount(5));
 			break;
-		case "COPPER_ORE":
+		case COPPER_ORE:
 			type = Material.STONE;
-			item = new ItemStack(copper, this.getAmount(2));
+			item = new ItemStack(Material.RAW_COPPER, this.getAmount(2));
 			break;
-		case "DEEPSLATE_COPPER_ORE":
-			type = deepslate;
-			item = new ItemStack(copper, this.getAmount(2));
+		case DEEPSLATE_COPPER_ORE:
+			type = Material.DEEPSLATE;
+			item = new ItemStack(Material.RAW_COPPER, this.getAmount(2));
 			break;
 		default:
 			return;

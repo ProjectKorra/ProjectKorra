@@ -13,6 +13,7 @@ import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -29,7 +30,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
@@ -267,7 +267,7 @@ public class SurgeWall extends WaterAbility {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
-				ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 1);
+				this.sourceBlock.getWorld().spawnParticle(Particle.SMOKE, this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 1, 0, 0, 0, 0, null, true);
 				return;
 			}
 
@@ -296,7 +296,7 @@ public class SurgeWall extends WaterAbility {
 								WALL_BLOCKS.put(block, this.player);
 								this.addWallBlock(block);
 							} else if (isWater(block) && !frozen) {
-								ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 1, ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), 0);
+								block.getWorld().spawnParticle(Particle.BUBBLE, block.getLocation().clone().add(.5, .5, .5), 1, ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), ThreadLocalRandom.current().nextDouble(0, 0.5), 0, null, true);
 							}
 							blocks.add(block);
 							this.locations.add(block.getLocation());
