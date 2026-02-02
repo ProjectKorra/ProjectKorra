@@ -45,16 +45,16 @@ public class DBConnection {
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table");
 				final String query = "CREATE TABLE `pk_players` (" + "`uuid` varchar(36) NOT NULL," + "`player` varchar(16) NOT NULL," + "`element` varchar(255)," + "`subelement` varchar(255)," + "`permaremoved` varchar(5)," + "`slot1` varchar(255)," + "`slot2` varchar(255)," + "`slot3` varchar(255)," + "`slot4` varchar(255)," + "`slot5` varchar(255)," + "`slot6` varchar(255)," + "`slot7` varchar(255)," + "`slot8` varchar(255)," + "`slot9` varchar(255)," + " PRIMARY KEY (uuid));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			} else {
 				try {
 					final DatabaseMetaData md = sql.connection.getMetaData();
 					if (!md.getColumns(null, null, "pk_players", "subelement").next()) {
 						ProjectKorra.log.info("Updating Database with subelements...");
 						sql.getConnection().setAutoCommit(false);
-						sql.modifyQuery("ALTER TABLE `pk_players` ADD subelement varchar(255);", false);
+						sql.modifyQuerySync("ALTER TABLE `pk_players` ADD subelement varchar(255);");
 						sql.getConnection().commit();
-						sql.modifyQuery("UPDATE pk_players SET subelement = '-';", false);
+						sql.modifyQuerySync("UPDATE pk_players SET subelement = '-';");
 						sql.getConnection().setAutoCommit(true);
 						ProjectKorra.log.info("Database Updated.");
 					}
@@ -65,23 +65,23 @@ public class DBConnection {
 			if (!sql.tableExists("pk_presets")) {
 				ProjectKorra.log.info("Creating pk_presets table");
 				final String query = "CREATE TABLE `pk_presets` (" + "`uuid` varchar(36) NOT NULL," + "`name` varchar(255) NOT NULL," + "`slot1` varchar(255)," + "`slot2` varchar(255)," + "`slot3` varchar(255)," + "`slot4` varchar(255)," + "`slot5` varchar(255)," + "`slot6` varchar(255)," + "`slot7` varchar(255)," + "`slot8` varchar(255)," + "`slot9` varchar(255)," + " PRIMARY KEY (uuid, name));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 			if (!sql.tableExists("pk_cooldowns")) {
 				ProjectKorra.log.info("Creating pk_cooldowns table");
 				final String query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown VARCHAR(255) NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 			if (!sql.tableExists("pk_board")) {
 				ProjectKorra.log.info("Creating pk_board table");
 				final String query = "CREATE TABLE `pk_board` (uuid VARCHAR(36) NOT NULL, enabled BOOLEAN NOT NULL, PRIMARY KEY (uuid));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 			//Table for temp elements
 			if (!sql.tableExists("pk_temp_elements")) {
 				ProjectKorra.log.info("Creating pk_temp_elements table");
 				final String query = "CREATE TABLE `pk_temp_elements` (uuid VARCHAR(36) NOT NULL, element VARCHAR(255) NOT NULL, expiry BIGINT);";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 		} else {
 			sql = new SQLite(ProjectKorra.log, "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
@@ -97,16 +97,16 @@ public class DBConnection {
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table.");
 				final String query = "CREATE TABLE `pk_players` (" + "`uuid` TEXT(36) PRIMARY KEY," + "`player` TEXT(16)," + "`element` TEXT(255)," + "`subelement` TEXT(255)," + "`permaremoved` TEXT(5)," + "`slot1` TEXT(255)," + "`slot2` TEXT(255)," + "`slot3` TEXT(255)," + "`slot4` TEXT(255)," + "`slot5` TEXT(255)," + "`slot6` TEXT(255)," + "`slot7` TEXT(255)," + "`slot8` TEXT(255)," + "`slot9` TEXT(255));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			} else {
 				try {
 					final DatabaseMetaData md = sql.connection.getMetaData();
 					if (!md.getColumns(null, null, "pk_players", "subelement").next()) {
 						ProjectKorra.log.info("Updating Database with subelements...");
 						sql.getConnection().setAutoCommit(false);
-						sql.modifyQuery("ALTER TABLE `pk_players` ADD subelement TEXT(255);", false);
+						sql.modifyQuerySync("ALTER TABLE `pk_players` ADD subelement TEXT(255);");
 						sql.getConnection().commit();
-						sql.modifyQuery("UPDATE pk_players SET subelement = '-';", false);
+						sql.modifyQuerySync("UPDATE pk_players SET subelement = '-';");
 						sql.getConnection().setAutoCommit(true);
 						ProjectKorra.log.info("Database Updated.");
 					}
@@ -118,23 +118,23 @@ public class DBConnection {
 			if (!sql.tableExists("pk_presets")) {
 				ProjectKorra.log.info("Creating pk_presets table");
 				final String query = "CREATE TABLE `pk_presets` (" + "`uuid` TEXT(36)," + "`name` TEXT(255)," + "`slot1` TEXT(255)," + "`slot2` TEXT(255)," + "`slot3` TEXT(255)," + "`slot4` TEXT(255)," + "`slot5` TEXT(255)," + "`slot6` TEXT(255)," + "`slot7` TEXT(255)," + "`slot8` TEXT(255)," + "`slot9` TEXT(255)," + "PRIMARY KEY (uuid, name));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 			if (!sql.tableExists("pk_cooldowns")) {
 				ProjectKorra.log.info("Creating pk_cooldowns table");
 				final String query = "CREATE TABLE `pk_cooldowns` (uuid TEXT(36) NOT NULL, cooldown TEXT(255) NOT NULL, value BIGINT, PRIMARY KEY (uuid, cooldown));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 			if (!sql.tableExists("pk_board")) {
 				ProjectKorra.log.info("Creating pk_board table");
 				final String query = "CREATE TABLE `pk_board` (uuid TEXT(36) NOT NULL, enabled INTEGER NOT NULL, PRIMARY KEY (uuid));";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 			//Table for temp elements
 			if (!sql.tableExists("pk_temp_elements")) {
 				ProjectKorra.log.info("Creating pk_temp_elements table");
 				final String query = "CREATE TABLE `pk_temp_elements` (uuid TEXT(36) NOT NULL, element TEXT(255) NOT NULL, expiry BIGINT);";
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 			}
 		}
 	}
@@ -190,8 +190,8 @@ public class DBConnection {
 				sql.open(); // Reconnect to the database.
 
 				// Delete old cooldowns table.
-				sql.modifyQuery("DROP TABLE pk_cooldowns", false);
-				sql.modifyQuery("DROP TABLE pk_cooldown_ids", false);
+				sql.modifyQuerySync("DROP TABLE pk_cooldowns");
+				sql.modifyQuerySync("DROP TABLE pk_cooldown_ids");
 
 				sql.close(); // Close the connection again
 				sql.open(); // Reconnect to the database.
@@ -201,13 +201,13 @@ public class DBConnection {
 				if (sql instanceof MySQL) {
 					query = "CREATE TABLE `pk_cooldowns` (uuid VARCHAR(36) NOT NULL, cooldown VARCHAR(255) NOT NULL, value BIGINT NOT NULL, PRIMARY KEY (uuid, cooldown));";
 				}
-				sql.modifyQuery(query, false);
+				sql.modifyQuerySync(query);
 
 				// Insert all cooldowns into the new table.
 				for (final String uuid : oldTable.keySet()) {
 					for (final String cooldown : oldTable.get(uuid).keySet()) {
 						final long cooldownTime = oldTable.get(uuid).get(cooldown);
-						DBConnection.sql.modifyQuery("INSERT INTO pk_cooldowns (uuid, cooldown, value) VALUES ('" + uuid + "', '" + cooldown + "', " + cooldownTime + ")", false);
+						DBConnection.sql.modifyQuerySync("INSERT INTO pk_cooldowns (uuid, cooldown, value) VALUES (?, ?, ?)", uuid, cooldown, cooldownTime);
 					}
 				}
 				sql.getConnection().setAutoCommit(true);
