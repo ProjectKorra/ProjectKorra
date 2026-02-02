@@ -37,6 +37,16 @@ import io.papermc.lib.PaperLib;
 
 public class TempBlock {
 
+	private static boolean USE_PAPERLIB;
+
+	static {
+		try {
+			USE_PAPERLIB = Class.forName("io.papermc.lib.PaperLib") != null;
+		} catch (final Exception e) {
+			USE_PAPERLIB = false;
+		}
+	}
+
 	private static final Map<Block, LinkedList<TempBlock>> instances_ = new HashMap<>();
 	/**
 	 * Marked for removal. Doesn't do anything right now
@@ -200,10 +210,12 @@ public class TempBlock {
 	 * @param block The block location
 	 */
 	public static void removeBlock(final Block block) {
-		instances_.get(block).forEach(t -> {
-			REVERT_QUEUE.remove(t);
-			remove(t);
-		});
+		if (instances_.containsKey(block)) {
+			instances_.get(block).forEach(t -> {
+				REVERT_QUEUE.remove(t);
+				remove(t);
+			});
+		}
 	}
 
 	/**
@@ -335,12 +347,23 @@ public class TempBlock {
 	private void trueRevertBlock(boolean removeFromQueue) {
 		this.reverted = true;
 		if (instances_.containsKey(this.block)) {
-			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> {
+			if (USE_PAPERLIB) {
+				PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> {
+					TempBlock last = instances_.get(this.block).getLast();
+					this.block.setBlockData(last.newData); //Set the block to the next in line TempBlock
+				});
+			} else {
+				this.block.getChunk().load();
 				TempBlock last = instances_.get(this.block).getLast();
 				this.block.setBlockData(last.newData); //Set the block to the next in line TempBlock
-			});
+			}
 		} else { //Set to the original blockstate
-			PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> revertState());
+			if (USE_PAPERLIB) {
+				PaperLib.getChunkAtAsync(this.block.getLocation()).thenAccept(result -> revertState());
+			} else {
+				this.block.getChunk().load();
+				revertState();
+			}
 		}
 
 		if (removeFromQueue) { //Remove from the queue if it's in there. We only do this when required because it is an intensive action due to the collection type
