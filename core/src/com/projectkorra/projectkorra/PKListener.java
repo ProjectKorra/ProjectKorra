@@ -980,7 +980,7 @@ public class PKListener implements Listener {
 			final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
 			String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
 			Element element = coreAbil != null ? coreAbil.getElement() : null;
-			
+
 			if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(player) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
 				if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
 					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
@@ -995,7 +995,8 @@ public class PKListener implements Listener {
 					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
 				}
 			}
-			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", killer.getName()).replace("{ability}", ability);
+			if (killer != null) message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", killer.getName()).replace("{ability}", ability);
+			else message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", "unknown").replace("{ability}", ability);
 			event.setDeathMessage(message);
 		}
 	}
