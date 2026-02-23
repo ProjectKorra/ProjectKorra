@@ -759,8 +759,7 @@ public class PKListener implements Listener {
 		if (entity instanceof Player player) {
 			if (ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled")) {
 				BENDING_PLAYER_DEATH.put(player, Pair.of(ability.getElement().getColor() + abilityName, attacker));
-				//Edge case where killer is null for death messages. Increased the removal time from 20L to 200L to decrease the amount of such cases where the killer is null.
-				Bukkit.getScheduler().runTaskLater(plugin, () -> BENDING_PLAYER_DEATH.remove(player), 200L);
+				Bukkit.getScheduler().runTaskLater(plugin, () -> BENDING_PLAYER_DEATH.remove(player), 20L);
 			}
 			if (attacker != null && ProjectKorra.isStatisticsEnabled()) {
 				StatisticsMethods.addStatisticAbility(attacker.getUniqueId(), coreAbility, com.projectkorra.projectkorra.util.Statistic.PLAYER_KILLS, 1);
