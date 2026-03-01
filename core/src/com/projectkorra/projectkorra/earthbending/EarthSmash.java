@@ -214,7 +214,7 @@ public class EarthSmash extends EarthAbility {
 			} else if (System.currentTimeMillis() - this.getStartTime() > this.chargeTime) {
 				final Location tempLoc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
 				tempLoc.add(0, 0.3, 0);
-				ParticleEffect.SMOKE_NORMAL.display(tempLoc, 4, 0.3, 0.1, 0.3, 0);
+				EarthAbility.playFocusEarthEffect(tempLoc, 0.3f);
 			}
 		} else if (this.state == State.LIFTING) {
 			if (System.currentTimeMillis() - this.delay >= this.liftAnimationInterval) {
