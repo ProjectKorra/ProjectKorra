@@ -173,7 +173,7 @@ public class WaterArms extends WaterAbility {
 				updateSourceBlock(sourceBlock);
 			}
 
-			ParticleEffect.SMOKE_LARGE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
+			playFocusWaterEffect(sourceBlock, 1F);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(this.player)) {
 			WaterReturn.emptyWaterBottle(this.player);
