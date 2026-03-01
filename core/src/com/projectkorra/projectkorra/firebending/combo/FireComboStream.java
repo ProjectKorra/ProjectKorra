@@ -57,6 +57,7 @@ public class FireComboStream extends BukkitRunnable {
 	private double collisionRadius;
 	private final double speed;
 	private final double distance;
+	private double particleSpeed;
 	private double damage;
 	private double fireTicks;
 	private double knockback;
@@ -78,6 +79,7 @@ public class FireComboStream extends BukkitRunnable {
 		this.checkCollisionCounter = 0;
 		this.spread = 0;
 		this.collisionRadius = 2;
+		this.particleSpeed = 0;
 		this.player = player;
 		this.bPlayer = BendingPlayer.getBendingPlayer(player);
 		this.particleEffect = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? ParticleEffect.SOUL_FIRE_FLAME : ParticleEffect.FLAME;
@@ -105,7 +107,8 @@ public class FireComboStream extends BukkitRunnable {
 
 		for (int i = 0; i < this.density; i++) {
 			if (this.useNewParticles) {
-				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
+				location.getWorld().spawnParticle(this.particleEffect.getParticle(), this.location, 1, this.spread, this.spread, this.spread, this.particleSpeed);
+				//this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
@@ -121,7 +124,7 @@ public class FireComboStream extends BukkitRunnable {
 		}
 
 		this.location.add(this.direction.normalize().multiply(this.speed));
-		
+
 		try {
 			this.location.checkFinite();
 		} catch (IllegalArgumentException e) {
@@ -260,6 +263,10 @@ public class FireComboStream extends BukkitRunnable {
 
 	public void setSpread(final float spread) {
 		this.spread = spread;
+	}
+
+	public void setParticleSpeed(final float particleSpeed) {
+		this.particleSpeed = particleSpeed;
 	}
 
 	public void setUseNewParticles(final boolean b) {

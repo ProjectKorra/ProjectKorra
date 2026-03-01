@@ -94,8 +94,9 @@ public class FireSpin extends FireAbility implements ComboAbility {
 				vec.setY(0);
 
 				final FireComboStream fs = new FireComboStream(this.player, this, vec, this.player.getLocation().clone().add(0, 1, 0), this.range, this.speed);
-				fs.setSpread(0.0F);
-				fs.setDensity(1);
+				fs.setSpread(0.08F);
+				fs.setParticleSpeed(0.04F);
+				fs.setDensity(2);
 				fs.setUseNewParticles(true);
 				fs.setDamage(this.damage);
 				fs.setKnockback(this.knockback);
