@@ -62,12 +62,18 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.ElderGuardian;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Ravager;
+import org.bukkit.entity.Sniffer;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Warden;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -1540,6 +1546,16 @@ public class GeneralMethods {
                  "OCHRE_FROGLIGHT", "PEARLESCENT_FROGLIGHT", "VERDANT_FROGLIGHT", "SCULK_CATALYST" -> true;
             default -> false;
         };
+	}
+
+	public static boolean isHeavyEntity(Entity entity) {
+        return entity instanceof IronGolem
+                || entity instanceof Sniffer
+                || entity instanceof Ravager
+                || entity instanceof Warden
+                || entity instanceof EnderDragon
+                || entity instanceof Wither
+                || entity instanceof ElderGuardian;
 	}
 
 	@Deprecated
