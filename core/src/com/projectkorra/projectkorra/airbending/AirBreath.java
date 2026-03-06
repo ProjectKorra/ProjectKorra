@@ -35,7 +35,12 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+/**
+ * @author Manu585
+ */
 public class AirBreath extends AirAbility {
+
+    private static final String CONFIG_ROOT_PATH = "Abilities.Air.AirBreath.";
 
     private static final double MOUTH_Y_OFFSET = 0.2;
     private static final double PARTICLE_STEP = 0.5;
@@ -45,8 +50,6 @@ public class AirBreath extends AirAbility {
     private static final double KNOCKBACK_VERTICAL_LIFT = 0.04;
     private static final double EXIT_BURST_FACTOR = 0.4;
     private static final long TEMP_BLOCK_DURATION = 10000L;
-
-    private static final String CONFIG_ROOT_PATH = "Abilities.Air.AirBreath.";
 
     @Attribute(Attribute.SELF_PUSH) // Maximum velocity the player can reach from self-push recoil
     private double selfPushFactor;
@@ -64,7 +67,6 @@ public class AirBreath extends AirAbility {
     private long cooldown;
     @Attribute(Attribute.CHARGE_DURATION)
     private long growTime;
-
     private boolean canExcavateSuspiciousBlocks;
 
     // The currently running lava-freeze wave, or null when no wave is active
@@ -76,8 +78,7 @@ public class AirBreath extends AirAbility {
     public AirBreath(Player player) {
         super(player);
 
-        if (player.getEyeLocation().getBlock().isLiquid()) return;
-        if (bPlayer.isOnCooldown(this)) return;
+        if (getMouthLocation().getBlock().isLiquid()) return;
         if (!bPlayer.canBend(this)) return;
         if (CoreAbility.getAbility(player, AirBreath.class) != null) return;
 
