@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra;
 
+import com.bekvon.bukkit.residence.commands.message;
+import com.projectkorra.projectkorra.airbending.AirBreath;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -978,25 +980,29 @@ public class PKListener implements Listener {
 			final Player killer = deathInfo.getRight();
 			final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
 			final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
-			String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
+			String deathMessage = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
 			Element element = coreAbil != null ? coreAbil.getElement() : null;
 			
 			if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(player) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
 				if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
-					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
+					deathMessage = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
 				}
 			} else if (element != null) {
 				if (element instanceof SubElement subElement) {
 					element = subElement.getParentElement();
 				}
 				if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage")) {
-					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
+					deathMessage = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
 				} else if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage")) {
-					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
+					deathMessage = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
 				}
 			}
-			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", killer.getName()).replace("{ability}", ability);
-			event.setDeathMessage(message);
+			deathMessage = deathMessage
+							.replace("{victim}", event.getEntity().getName())
+							.replace("{attacker}", killer.getName())
+							.replace("{ability}", ability);
+
+			event.setDeathMessage(deathMessage);
 		}
 	}
 
@@ -1345,6 +1351,7 @@ public class PKListener implements Listener {
 			case AirSuction ignored -> new AirSuction(player);
 			case AirSwipe ignored -> new AirSwipe(player, true);
 			case AirShield ignored -> new AirShield(player);
+			case AirBreath ignored -> new AirBreath(player);
 			case Suffocate ignored -> new Suffocate(player);
 			case Bloodbending ignored -> new Bloodbending(player);
 			case IceBlast ignored -> new IceBlast(player);
