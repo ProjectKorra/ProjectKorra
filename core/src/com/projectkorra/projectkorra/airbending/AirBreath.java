@@ -40,6 +40,9 @@ import org.bukkit.util.Vector;
  */
 public class AirBreath extends AirAbility {
 
+    private record BreathContext(Location mouthLocation, Vector lookDirection, double reach) {}
+    private record ConeBasis(Vector perpendicular1, Vector perpendicular2) {}
+
     private static final String CONFIG_ROOT_PATH = "Abilities.Air.AirBreath.";
 
     private static final double MOUTH_Y_OFFSET = 0.2;
@@ -423,14 +426,14 @@ public class AirBreath extends AirAbility {
             entitiesInCone.add(entity);
 
             // Add to existing velocity each tick, slight Y lift so entities arc upward
-            Vector push = breathContext.lookDirection().clone().multiply(strength);
-            push.setY(push.getY() + KNOCKBACK_VERTICAL_LIFT);
+             Vector push = breathContext.lookDirection().clone().multiply(strength);
+             push.setY(push.getY() + KNOCKBACK_VERTICAL_LIFT);
 
-            Vector newVelocity = entity.getVelocity().add(push);
-            if (newVelocity.length() > knockback) {
-                newVelocity = newVelocity.normalize().multiply(knockback);
-            }
-            GeneralMethods.setVelocity(this, entity, newVelocity);
+             Vector newVelocity = entity.getVelocity().add(push);
+             if (newVelocity.length() > knockback) {
+                 newVelocity = newVelocity.normalize().multiply(knockback);
+             }
+             GeneralMethods.setVelocity(this, entity, newVelocity);
         }
 
         // Entities that just left the cone get a final burst so they fly past the range boundary (makes it seem more like a wind burst)
@@ -635,8 +638,13 @@ public class AirBreath extends AirAbility {
 
     // How far the breath currently reaches, grows linearly from 0 to range over given growtime
     private double currentReach() {
+        if (growTime <= 0) {
+            return range;
+        }
         double elapsed = System.currentTimeMillis() - getStartTime();
-        return Math.min(range, range * elapsed / growTime);
+        double progress = elapsed / growTime;
+
+        return Math.min(range, range * progress);
     }
 
     public double getSelfPushFactor() {
@@ -678,10 +686,5 @@ public class AirBreath extends AirAbility {
     public static String getConfigRootPath() {
         return CONFIG_ROOT_PATH;
     }
-
-    // DATA HOLDING RECORDS FOR BETTER READABILITY
-    private record BreathContext(Location mouthLocation, Vector lookDirection, double reach) {}
-
-    private record ConeBasis(Vector perpendicular1, Vector perpendicular2) {}
 
 }

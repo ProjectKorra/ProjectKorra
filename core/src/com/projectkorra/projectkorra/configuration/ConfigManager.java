@@ -920,13 +920,13 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.AirBreath.Enabled", true);
 			config.addDefault("Abilities.Air.AirBreath.Cooldown", 8000);
-			config.addDefault("Abilities.Air.AirBreath.Duration", 3000);
-			config.addDefault("Abilities.Air.AirBreath.Range", 7.0);
-			config.addDefault("Abilities.Air.AirBreath.Radius", 2.5);
-			config.addDefault("Abilities.Air.AirBreath.Knockback", 1.6);
-			config.addDefault("Abilities.Air.AirBreath.SelfPushFactor", 2.5);
-			config.addDefault("Abilities.Air.AirBreath.SelfPushStrength", 0.06);
-			config.addDefault("Abilities.Air.AirBreath.GrowTime", 350);
+			config.addDefault("Abilities.Air.AirBreath.Duration", 3500);
+			config.addDefault("Abilities.Air.AirBreath.Range", 8.0);
+			config.addDefault("Abilities.Air.AirBreath.Radius", 3.0);
+			config.addDefault("Abilities.Air.AirBreath.Knockback", 2.0);
+			config.addDefault("Abilities.Air.AirBreath.SelfPushFactor", 3.0);
+			config.addDefault("Abilities.Air.AirBreath.SelfPushStrength", 0.2);
+			config.addDefault("Abilities.Air.AirBreath.GrowTime", 0);
 			config.addDefault("Abilities.Air.AirBreath.CanExcavateSuspiciousBlocks", false);
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
