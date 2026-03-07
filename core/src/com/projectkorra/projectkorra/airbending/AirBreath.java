@@ -417,7 +417,7 @@ public class AirBreath extends AirAbility {
             if (Commands.invincible.contains(entity.getName())) continue;
             if (RegionProtection.isRegionProtected(this, entity.getLocation())) continue;
             if (GeneralMethods.isHeavyEntity(entity) && !bPlayer.isAvatarState()) continue;
-            if (isInsideBreathCone(breathContext.mouthLocation(), breathContext.lookDirection(), entity.getLocation())) continue;
+            if (isOutsideBreathCone(breathContext.mouthLocation(), breathContext.lookDirection(), entity.getBoundingBox().getCenter().toLocation(entity.getWorld()))) continue;
 
             double distance = entity.getLocation().distance(breathContext.mouthLocation());
             double strength = getDistanceScaledKnockback(distance);
@@ -510,7 +510,7 @@ public class AirBreath extends AirAbility {
             if (!(entity instanceof Projectile projectile)) continue;
             if (player.equals(projectile.getShooter())) continue;
             if (RegionProtection.isRegionProtected(this, entity.getLocation())) continue;
-            if (isInsideBreathCone(breathContext.mouthLocation(), breathContext.lookDirection(), entity.getLocation())) continue;
+            if (isOutsideBreathCone(breathContext.mouthLocation(), breathContext.lookDirection(), entity.getBoundingBox().getCenter().toLocation(entity.getWorld()))) continue;
 
             double distance = entity.getLocation().distance(breathContext.mouthLocation());
             double strength = getDistanceScaledKnockback(distance);
@@ -580,7 +580,7 @@ public class AirBreath extends AirAbility {
         return location.getWorld() == null || RegionProtection.isRegionProtected(this, location);
     }
 
-    private boolean isInsideBreathCone(Location origin, Vector direction, Location target) {
+    private boolean isOutsideBreathCone(Location origin, Vector direction, Location target) {
         Vector toTarget = target.toVector().subtract(origin.toVector());
         double distance = toTarget.length();
 
