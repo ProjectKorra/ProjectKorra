@@ -40,9 +40,6 @@ import org.bukkit.util.Vector;
  */
 public class AirBreath extends AirAbility {
 
-    private record BreathContext(Location mouthLocation, Vector lookDirection, double reach) {}
-    private record ConeBasis(Vector perpendicular1, Vector perpendicular2) {}
-
     private static final String CONFIG_ROOT_PATH = "Abilities.Air.AirBreath.";
 
     private static final double MOUTH_Y_OFFSET = 0.2;
@@ -53,6 +50,10 @@ public class AirBreath extends AirAbility {
     private static final double KNOCKBACK_VERTICAL_LIFT = 0.04;
     private static final double EXIT_BURST_FACTOR = 0.4;
     private static final long TEMP_BLOCK_DURATION = 10000L;
+
+    private record BreathContext(Location mouthLocation, Vector lookDirection, double reach) {}
+
+    private record ConeBasis(Vector perpendicular1, Vector perpendicular2) {}
 
     @Attribute(Attribute.SELF_PUSH) // Maximum velocity the player can reach from self-push recoil
     private double selfPushFactor;
@@ -110,14 +111,7 @@ public class AirBreath extends AirAbility {
             return;
         }
 
-        Location mouthLocation = getMouthLocation();
-
-        if (mouthLocation.getBlock().isLiquid()) {
-            removeWithCooldown();
-            return;
-        }
-
-        if (isInvalidEffectLocation(mouthLocation)) {
+        if (isInvalidEffectLocation(getMouthLocation())) {
             removeWithCooldown();
             return;
         }
@@ -577,7 +571,7 @@ public class AirBreath extends AirAbility {
     }
 
     private boolean isInvalidEffectLocation(Location location) {
-        return location.getWorld() == null || RegionProtection.isRegionProtected(this, location);
+        return location.getWorld() == null || RegionProtection.isRegionProtected(this, location) || location.getBlock().isLiquid();
     }
 
     private boolean isOutsideBreathCone(Location origin, Vector direction, Location target) {
