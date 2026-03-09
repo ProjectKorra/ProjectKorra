@@ -259,7 +259,7 @@ public class AirBreath extends AirAbility {
     }
 
     private void handleLavaSplash(Location location, double hitDistance) {
-        if (isInvalidEffectLocation(location)) return;
+        if (location.getWorld() == null || RegionProtection.isRegionProtected(this, location)) return;
 
         location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(0, .2, 0), 8, 0.3, 0.3, 0.3, 0);
         location.getWorld().spawnParticle(Particle.ASH, location, 12, 0.3, 0.5, 0.3, 0.04);
@@ -479,6 +479,9 @@ public class AirBreath extends AirAbility {
         }
 
         if (hitDistance > breathContext.reach()) return;
+
+        // Skip self-push when entities are being knocked back by the breath
+        if (!previouslyInCone.isEmpty()) return;
 
         double strength = selfPushStrength * (1.0 + (range - hitDistance) / range);
         Vector recoil = breathContext.lookDirection.clone().multiply(-strength);
