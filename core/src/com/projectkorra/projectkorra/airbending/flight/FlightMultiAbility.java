@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -172,14 +173,14 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			if (p2 == null) {
 				requestedMap.remove(this.player.getUniqueId());
 				requestTime.remove(this.player.getUniqueId());
-				this.player.sendMessage(ChatColor.RED + "Requested player no longer found, cancelling request!");
+				this.player.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.RequestedPlayerNoLongerFound"));
 			} else {
 				if (requestTime.get(this.player.getUniqueId()) + 15000 > System.currentTimeMillis()) {
 					final long start = System.currentTimeMillis();
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							ChatUtil.sendActionBar(ChatColor.WHITE + FlightMultiAbility.this.player.getName() + ChatColor.GREEN + " has requested to carry you, right-click them to accept!", p2);
+							ChatUtil.sendActionBar(ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.PlayerRequest").replace("{target}", ChatColor.WHITE + FlightMultiAbility.this.player.getName() + ChatColor.GREEN), p2);
 							if (System.currentTimeMillis() >= start + 300) {
 								this.cancel();
 							}
@@ -295,26 +296,26 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 
 	public void requestCarry(final Player p2) {
 		if (this.mode != FlightMode.LEVITATE) {
-			this.player.sendMessage(ChatColor.RED + "Can only request to carry when levitating!");
+			this.player.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.OnlyRequestLevitating"));
 			return;
 		}
 		if (!this.player.getPassengers().isEmpty()) {
-			this.player.sendMessage(ChatColor.RED + "You already have a passenger!");
+			this.player.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.AlreadyHavePassenger"));
 			return;
 		}
 		if (flying.contains(p2.getUniqueId())) {
-			this.player.sendMessage(ChatColor.RED + "Cannot request to carry an already flying player!");
+			this.player.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.CannotRequestAlreadyFlyingPlayer"));
 			return;
 		}
 		if (requestedMap.containsKey(this.player.getUniqueId())) {
 			if (requestedMap.get(this.player.getUniqueId()).equals(p2.getUniqueId())) {
-				this.player.sendMessage(ChatColor.RED + "Already requested to carry that player!");
+				this.player.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.CarryAlreadyRequest"));
 				return;
 			}
 		}
 		requestedMap.put(this.player.getUniqueId(), p2.getUniqueId());
 		requestTime.put(this.player.getUniqueId(), System.currentTimeMillis());
-		this.player.sendMessage(ChatColor.GREEN + "Requested to carry " + ChatColor.WHITE + p2.getName());
+		this.player.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.PassengerRequest").replace("{target}", ChatColor.WHITE + p2.getName()));
 	}
 
 	@Override
@@ -367,7 +368,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					ChatUtil.sendActionBar(ChatColor.RED + "* Flight cancelled due to " + reason + " *", FlightMultiAbility.this.player);
+					ChatUtil.sendActionBar(ChatColor.RED + ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.FlightCancelledReason").replace("{reason}", reason), FlightMultiAbility.this.player);
 					if (System.currentTimeMillis() >= start + 1000) {
 						this.cancel();
 					}
@@ -386,7 +387,7 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		if (!requestedCarry(requested, requester)) {
 			return;
 		}
-		requester.sendMessage(ChatColor.WHITE + requested.getName() + ChatColor.GREEN + " has accepted your carry request!");
+		requester.sendMessage(ConfigManager.languageConfig.get().getString("Abilities.Air.Flight.CarryRequestAccepted").replace("{target}", ChatColor.WHITE + requested.getName() + ChatColor.GREEN));
 		requestedMap.remove(requester.getUniqueId());
 		requestTime.remove(requester.getUniqueId());
 		requester.addPassenger(requested);

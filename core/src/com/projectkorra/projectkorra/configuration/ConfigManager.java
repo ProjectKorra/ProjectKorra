@@ -394,7 +394,16 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSwipe.DeathMessage", "{victim} was struck by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.Flight.Description", "Fly through the air as Zaheer and Guru Laghima did! This multiability allows for three modes of flight: soaring, gliding, and levitating. You can also right-click another player while flying to have them become your passenger! When flying at fast speeds, flying past nearby enemies will damage them for half your speed and knock them in the direction you're heading!");
 			config.addDefault("Abilities.Air.Flight.Instructions", "\n- (To start flying, jump and left-click)\n- (Soar) Left-Click to change flying speeds.\n- (Glide) Normal minecraft gliding. Slowing down or speeding up in this mode will affect the Soar speed.\n- (Levitate) Basically minecraft flying, allowing players to fly around for building purposes or a more controlled 'hovering'.\n- (Ending) Being in this mode sets any gliding and flight back the the state they were before using the ability.");
-			config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. Although it is difficult to perform, it's extremely deadly once the ability starts, making it difficult for enemies to escape.");
+            config.addDefault("Abilities.Air.Flight.OnlyRequestLevitating", "Can only request to carry when levitating!");
+            config.addDefault("Abilities.Air.Flight.AlreadyHavePassenger", "You already have a passenger!");
+            config.addDefault("Abilities.Air.Flight.CannotRequestAlreadyFlyingPlayer", "Cannot request to carry an already flying player!");
+            config.addDefault("Abilities.Air.Flight.CarryAlreadyRequest", "Already requested to carry that player!");
+            config.addDefault("Abilities.Air.Flight.PassengerRequest", "Requested to carry {target}");
+            config.addDefault("Abilities.Air.Flight.RequestedPlayerNoLongerFound", "Requested player no longer found, cancelling request!");
+            config.addDefault("Abilities.Air.Flight.PlayerRequest", "{target} has requested to carry you, right-click them to accept!");
+            config.addDefault("Abilities.Air.Flight.CarryRequestAccepted", "{target} has accepted your carry request!");
+            config.addDefault("Abilities.Air.Flight.FlightCancelledReason", "* Flight cancelled due to {reason} *");
+            config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. Although it is difficult to perform, it's extremely deadly once the ability starts, making it difficult for enemies to escape.");
 			config.addDefault("Abilities.Air.Suffocate.Instructions", "Hold sneak while looking at a target to begin suffocating them. If the target goes out of range, you get damaged, or you release sneak, the ability will cancel.");
 			config.addDefault("Abilities.Air.Suffocate.DeathMessage", "{victim} was asphyxiated by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.Combo.Twister.Description", "Create a cyclone of air that travels along the ground grabbing nearby entities.");
