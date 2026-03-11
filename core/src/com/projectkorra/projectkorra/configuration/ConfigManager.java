@@ -129,6 +129,20 @@ public class ConfigManager {
 			config.addDefault("Commands.Who.DatabaseOverload", "The database appears to be overloaded. Please try again later.");
 			config.addDefault("Commands.Who.PlayerOffline", "{target} is currently offline. Please wait a moment...");
 			config.addDefault("Commands.Who.PlayerUnknown", "{target} has not played on this server before");
+            config.addDefault("Commands.Who.SubElementWithoutParentElement", "Subelements without parent elements:");
+            config.addDefault("Commands.Who.Air.CanFly", "Can Fly");
+            config.addDefault("Commands.Who.Air.CanUseSpiritualProjection", "Can use Spiritual Projection");
+            config.addDefault("Commands.Who.Water.CanPlantbend", "Can Plantbend");
+            config.addDefault("Commands.Who.Water.CanBloodbendAnytime", "Can Bloodbend anytime, on any day");
+            config.addDefault("Commands.Who.Water.CanBloodbend", "Can Bloodbend");
+            config.addDefault("Commands.Who.Water.CanIcebend", "Can Icebend");
+            config.addDefault("Commands.Who.Water.CanHeal", "Can Heal");
+            config.addDefault("Commands.Who.Earth.CanMetalbend", "Can Metalbend");
+            config.addDefault("Commands.Who.Earth.CanLavabend", "Can Lavabend");
+            config.addDefault("Commands.Who.Earth.CanSandbend", "Can Sandbend");
+            config.addDefault("Commands.Who.Fire.CanCombustionbend", "Can Combustionbend");
+            config.addDefault("Commands.Who.Fire.CanLightningbend", "Can Lightningbend");
+            config.addDefault("Commands.Who.Fire.CanUseBlueFire", "Can use Blue Fire");
 
 			config.addDefault("Commands.Version.Description", "Displays the installed version of ProjectKorra.");
 
