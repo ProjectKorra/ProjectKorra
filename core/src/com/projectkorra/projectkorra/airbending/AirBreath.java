@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
@@ -19,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrushableBlock;
 import org.bukkit.block.data.BlockData;
@@ -30,8 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootContext;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
@@ -51,9 +49,22 @@ public class AirBreath extends AirAbility {
     private static final double EXIT_BURST_FACTOR = 0.4;
     private static final long TEMP_BLOCK_DURATION = 10000L;
 
+    private static final double MIN_SPLASH_RADIUS = 1.0;
+    private static final double LAVA_WAVE_STEP = 0.5;
+    private static final int LAVA_WAVE_TICK_PERIOD = 2;
+    private static final double BREATH_SOUND_CHANCE = 0.4;
+
     private record BreathContext(Location mouthLocation, Vector lookDirection, double reach) {}
 
     private record ConeBasis(Vector perpendicular1, Vector perpendicular2) {}
+
+    private record BreathTraceResult(double hitDistance, HitType hitType, Location hitLocation) {}
+
+    private enum HitType {
+        NONE,
+        LAVA,
+        SOLID
+    }
 
     @Attribute(Attribute.SELF_PUSH) // Maximum velocity the player can reach from self-push recoil
     private double selfPushFactor;
@@ -73,11 +84,15 @@ public class AirBreath extends AirAbility {
     private long growTime;
     private boolean canExcavateSuspiciousBlocks;
 
-    // The currently running lava-freeze wave, or null when no wave is active
-    private BukkitTask lavaSplashTask = null;
-
     // Entities that were inside the breath cone last tick
     private final Set<Entity> previouslyInCone = new HashSet<>();
+
+    // Lava solidifying fields
+    private Location lavaWaveCenter;
+    private double lavaWaveRadius;
+    private double lavaWaveMaxRadius;
+    private int lavaWaveTickCounter;
+    private boolean lavaWaveActive;
 
     public AirBreath(Player player) {
         super(player);
@@ -101,98 +116,115 @@ public class AirBreath extends AirAbility {
 
     @Override
     public void progress() {
-        if (!player.isOnline() || player.isDead()) {
+        if (shouldRemoveImmediately()) {
             remove();
             return;
         }
 
-        if (!bPlayer.canBend(this) || !player.isSneaking() || hasExpired()) {
+        if (shouldRemoveWithCooldown()) {
             removeWithCooldown();
             return;
         }
 
-        if (isInvalidEffectLocation(getMouthLocation())) {
-            removeWithCooldown();
-            return;
-        }
+        BreathContext breathContext = createBreathContext();
+        BreathTraceResult breathTraceResult = traceBreathPath(breathContext);
 
-        playBreathAnimation();
-        handleKnockback();
-        handleProjectileRedirect();
-        handleSelfPush();
+        playBreathAnimation(breathContext, breathTraceResult);
+        applyBreathImpact(breathTraceResult);
+        advanceLavaWave();
+
+        handleKnockback(breathContext);
+        handleProjectileRedirect(breathContext);
+        handleSelfPush(breathContext);
     }
 
     @Override
     public void remove() {
-        if (lavaSplashTask != null) {
-            lavaSplashTask.cancel();
-            lavaSplashTask = null;
-        }
+        clearLavaWave();
+        previouslyInCone.clear();
         super.remove();
     }
 
-    /**
-     * Marches along the player's look lookDirection spawning cone-shaped air particles.
-     * Particles are placed randomly within a circle that widens with distance, forming a cone.
-     * Stops at the first solid block.
-     */
-    private void playBreathAnimation() {
-        BreathContext breathContext = createBreathContext();
+    private boolean shouldRemoveImmediately() {
+        return !player.isOnline() || player.isDead();
+    }
 
-        if (ThreadLocalRandom.current().nextDouble() < 0.4) {
+    private boolean shouldRemoveWithCooldown() {
+        return !bPlayer.canBend(this)
+                || !player.isSneaking()
+                || hasExpired()
+                || isInvalidEffectLocation(getMouthLocation());
+    }
+
+    /**
+     * Traces the breath forward and returns the first impactful hit.
+     * Any environmental interactions that are not purely visual are handled here.
+     *
+     * @return BreathTraceResult.
+     */
+    private BreathTraceResult traceBreathPath(BreathContext breathContext) {
+        double hitDistance = breathContext.reach();
+        HitType hitType = HitType.NONE;
+
+        for (double distance = PARTICLE_STEP; distance <= breathContext.reach(); distance += PARTICLE_STEP) {
+            Location center = breathContext.mouthLocation().clone().add(breathContext.lookDirection().clone().multiply(distance));
+            Block block = center.getBlock();
+
+            if (block.isLiquid()) {
+                hitDistance = distance;
+                hitType = block.getType() == Material.LAVA ? HitType.LAVA : HitType.NONE;
+                break;
+            }
+
+            if (isLitCandle(block)) {
+                extinguishCandleInCone(center, distance);
+                hitDistance = distance;
+                hitType = HitType.SOLID;
+                break;
+            }
+
+            if (canExcavateSuspiciousBlocks && isSuspiciousBlock(block)) {
+                excavateSuspiciousBlocksInCone(center, distance);
+                hitDistance = distance;
+                hitType = HitType.SOLID;
+                break;
+            }
+
+            if (!block.isPassable()) {
+                hitDistance = distance;
+                hitType = HitType.SOLID;
+                break;
+            }
+
+            if (isFireBlock(block)) {
+                extinguishFireInCone(center, distance);
+            }
+        }
+
+        Location hitLocation = breathContext.mouthLocation().clone().add(breathContext.lookDirection().clone().multiply(hitDistance));
+        return new BreathTraceResult(hitDistance, hitType, hitLocation);
+    }
+
+    /**
+     * Purely visual / audio breath rendering.
+     */
+    private void playBreathAnimation(BreathContext breathContext, BreathTraceResult breathTraceResult) {
+        if (ThreadLocalRandom.current().nextDouble() < BREATH_SOUND_CHANCE) {
             playAirbendingSound(breathContext.mouthLocation());
         }
 
         ConeBasis coneBasis = createConeBasis(breathContext.lookDirection());
 
-        double hitRange = breathContext.reach();
-        boolean hitWater = false;
-        boolean hitLava = false;
-
-        for (double dist = PARTICLE_STEP; dist <= breathContext.reach(); dist += PARTICLE_STEP) {
-            Location center = breathContext.mouthLocation().clone().add(breathContext.lookDirection().clone().multiply(dist));
-            Block block = center.getBlock();
-
-            if (block.isLiquid()) {
-                hitRange = dist;
-                hitWater = block.getType() == Material.WATER;
-                hitLava = !hitWater;
-                break;
-            }
-
-            // Candles extinguishing check
-            if (isLitCandle(block)) {
-                extinguishCandleInCone(center, dist);
-                hitRange = dist;
-                break;
-            }
-
-            // Suspicious sand / gravel, excavate it
-            if (isSuspiciousBlock(block) && canExcavateSuspiciousBlocks) {
-                excavateSuspiciousBlocksInCone(center, dist);
-                hitRange = dist;
-                break;
-            }
-
-            // Not further up due to candle and suspicious blocks checks
-            if (!block.isPassable()) {
-                hitRange = dist;
-                break;
-            }
-
-            // Extinguish fire blocks inside the cone cross-section at this distance
-            if (isFireBlock(block)) {
-                extinguishFireInCone(center, dist);
-            }
-
-            spawnBreathParticles(center, breathContext.lookDirection(), coneBasis, dist, breathContext.reach());
+        for (double distance = PARTICLE_STEP; distance <= breathTraceResult.hitDistance(); distance += PARTICLE_STEP) {
+            Location center = breathContext.mouthLocation().clone().add(breathContext.lookDirection().clone().multiply(distance));
+            spawnBreathParticles(center, breathContext.lookDirection(), coneBasis, distance, breathContext.reach());
         }
+    }
 
-        Location hitLocation = breathContext.mouthLocation().clone().add(breathContext.lookDirection().clone().multiply(hitRange));
-        if (hitWater) {
-            handleWaterSplash(hitLocation);
-        } else if (hitLava) {
-            handleLavaSplash(hitLocation, hitRange);
+    private void applyBreathImpact(BreathTraceResult breathTraceResult) {
+        switch (breathTraceResult.hitType()) {
+            case LAVA -> handleLavaSplash(breathTraceResult.hitLocation(), breathTraceResult.hitDistance());
+            case NONE, SOLID -> {}
         }
     }
 
@@ -212,12 +244,12 @@ public class AirBreath extends AirAbility {
 
             double angle = random.nextDouble(Math.PI * 2);
             // sqrt distribution biases toward the outer edge while still filling the interior
-            double r = coneRadius * Math.sqrt(random.nextDouble());
+            double radialDistance = coneRadius * Math.sqrt(random.nextDouble());
             // small forward jitter breaks up the uniform slice look
             double forwardJitter = random.nextDouble(-0.15, 0.15);
 
-            Vector offset = coneBasis.perpendicular1().clone().multiply(Math.cos(angle) * r)
-                    .add(coneBasis.perpendicular2().clone().multiply(Math.sin(angle) * r))
+            Vector offset = coneBasis.perpendicular1().clone().multiply(Math.cos(angle) * radialDistance)
+                    .add(coneBasis.perpendicular2().clone().multiply(Math.sin(angle) * radialDistance))
                     .add(lookDirection.clone().multiply(forwardJitter));
 
             playAirbendingParticles(center.clone().add(offset), 1, 0.02, 0.02, 0.02);
@@ -244,70 +276,87 @@ public class AirBreath extends AirAbility {
         return new ConeBasis(perpendicular1, perpendicular2);
     }
 
-    private void handleWaterSplash(Location location) {
-        if (isInvalidEffectLocation(location)) return;
-
-        if (ThreadLocalRandom.current().nextDouble() < 0.3) {
-            location.getWorld().spawnParticle(Particle.SPLASH, location.clone().add(0, .2, 0), 20, 0.35, 0.35, 0.35, 0.15);
-            location.getWorld().playSound(location, Sound.ENTITY_GENERIC_SPLASH, 0.4f, 1.3f);
-        }
-
-        Block block = location.getBlock();
-        if (block.isLiquid() && TempBlock.isTempBlock(block)) {
-            TempBlock.removeBlock(block);
-        }
-    }
-
     private void handleLavaSplash(Location location, double hitDistance) {
-        if (location.getWorld() == null || RegionProtection.isRegionProtected(this, location)) return;
+        World world = location.getWorld();
+        if (world == null || RegionProtection.isRegionProtected(this, location)) return;
 
-        location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(0, .2, 0), 8, 0.3, 0.3, 0.3, 0);
-        location.getWorld().spawnParticle(Particle.ASH, location, 12, 0.3, 0.5, 0.3, 0.04);
-
-        if (ThreadLocalRandom.current().nextDouble() < 0.6) {
-            location.getWorld().playSound(location, Sound.BLOCK_LAVA_EXTINGUISH, 1.0f, 1.0f);
-        }
+        playLavaSplashEffects(world, location);
 
         // Always harden the exact hit block immediately, regardless of any running wave.
         hardenLavaBlock(location.getBlock());
 
-        // Only start a new outward ripple if no wave is already expanding.
-        if (lavaSplashTask != null && !lavaSplashTask.isCancelled()) return;
+        if (!lavaWaveActive) {
+            startLavaFreezeWave(location, computeSplashRadius(hitDistance));
+        }
+    }
 
-        final double splashRadius = Math.max(1.0, radius * (hitDistance / range));
-        final Location frozen = location.clone();
-        final double[] waveRadius = { 0 };
+    /**
+     * Effects for lava hardening.
+     */
+    private void playLavaSplashEffects(World world, Location location) {
+        world.spawnParticle(Particle.LAVA, location.clone().add(0, .2, 0), 8, 0.3, 0.3, 0.3, 0);
+        world.spawnParticle(Particle.ASH, location, 12, 0.3, 0.5, 0.3, 0.04);
 
-        // A single repeating task expands the freeze wave outward every 3 ticks.
-        // Makes the Lava hardening feel more natural.
-        lavaSplashTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                double previousRadius = waveRadius[0];
-                waveRadius[0] += 0.5;
+        if (ThreadLocalRandom.current().nextDouble() < BREATH_SOUND_CHANCE) {
+            world.playSound(location, Sound.BLOCK_LAVA_EXTINGUISH, 1.0f, 1.0f);
+        }
+    }
 
-                if (waveRadius[0] > splashRadius) {
-                    lavaSplashTask = null;
-                    cancel();
-                    return;
-                }
+    private void startLavaFreezeWave(Location center, double maxRadius) {
+        lavaWaveCenter = center.clone();
+        lavaWaveRadius = 0.0;
+        lavaWaveMaxRadius = maxRadius;
+        lavaWaveTickCounter = 0;
+        lavaWaveActive = true;
+    }
 
-                forEachBlockInRadius(
-                        frozen,
-                        waveRadius[0],
-                        block -> block.getLocation().add(0.5, 0.5, 0.5).distance(frozen) > previousRadius,
-                        AirBreath.this::hardenLavaBlock);
-            }
-        }.runTaskTimer(ProjectKorra.plugin, 0L, 2L);
+    private void advanceLavaWave() {
+        if (!lavaWaveActive || lavaWaveCenter == null) return;
+
+        lavaWaveTickCounter++;
+        if (lavaWaveTickCounter < LAVA_WAVE_TICK_PERIOD) return;
+
+        lavaWaveTickCounter = 0;
+
+        double previousRadius = lavaWaveRadius;
+        lavaWaveRadius += LAVA_WAVE_STEP;
+
+        if (lavaWaveRadius > lavaWaveMaxRadius) {
+            clearLavaWave();
+            return;
+        }
+
+        forEachBlockInRadius(
+                lavaWaveCenter,
+                lavaWaveRadius,
+                block -> isInNewWaveRing(block, lavaWaveCenter, previousRadius),
+                this::hardenLavaBlock);
+    }
+
+    private void clearLavaWave() {
+        lavaWaveCenter = null;
+        lavaWaveRadius = 0.0;
+        lavaWaveMaxRadius = 0.0;
+        lavaWaveTickCounter = 0;
+        lavaWaveActive = false;
+    }
+
+    private boolean isInNewWaveRing(Block block, Location center, double previousRadius) {
+        Location blockCenter = block.getLocation().add(0.5, 0.5, 0.5);
+        return blockCenter.distance(center) > previousRadius;
+    }
+
+    private double computeSplashRadius(double hitDistance) {
+        return Math.max(MIN_SPLASH_RADIUS, radius * (hitDistance / range));
     }
 
     private void hardenLavaBlock(Block block) {
-        if (block.getType() == Material.LAVA) {
-            if (block.getBlockData() instanceof Levelled levelled && levelled.getLevel() == 0) {
-                new TempBlock(block, Material.OBSIDIAN.createBlockData(), TEMP_BLOCK_DURATION, this);
-            } else {
-                new TempBlock(block, Material.COBBLESTONE.createBlockData(), TEMP_BLOCK_DURATION, this);
-            }
+        if (block.getType() != Material.LAVA) return;
+
+        if (block.getBlockData() instanceof Levelled levelled && levelled.getLevel() == 0) {
+            new TempBlock(block, Material.OBSIDIAN.createBlockData(), TEMP_BLOCK_DURATION, this);
+        } else {
+            new TempBlock(block, Material.COBBLESTONE.createBlockData(), TEMP_BLOCK_DURATION, this);
         }
     }
 
@@ -323,8 +372,11 @@ public class AirBreath extends AirAbility {
             }
         });
 
-        center.getWorld().playSound(center, Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 1.0f);
-        center.getWorld().spawnParticle(Particle.SMOKE, center, 4, 0.15, 0.15, 0.15, 0.01);
+        World world = center.getWorld();
+        if (world == null) return;
+
+        world.playSound(center, Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 1.0f);
+        world.spawnParticle(Particle.SMOKE, center, 4, 0.15, 0.15, 0.15, 0.01);
     }
 
     private void extinguishCandleInCone(Location center, double distance) {
@@ -342,8 +394,11 @@ public class AirBreath extends AirAbility {
             new TempBlock(block, unlitData, TEMP_BLOCK_DURATION, this);
         });
 
-        center.getWorld().playSound(center, Sound.BLOCK_CANDLE_EXTINGUISH, 1.0f, 1.0f);
-        center.getWorld().spawnParticle(Particle.SMOKE, center, 2, 0.1, 0.1, 0.1, 0.01);
+        World world = center.getWorld();
+        if (world == null) return;
+
+        world.playSound(center, Sound.BLOCK_CANDLE_EXTINGUISH, 1.0f, 1.0f);
+        world.spawnParticle(Particle.SMOKE, center, 2, 0.1, 0.1, 0.1, 0.01);
     }
 
     private boolean isLitCandle(Block block) {
@@ -402,8 +457,7 @@ public class AirBreath extends AirAbility {
      * Continuously accelerates entities inside the cone, then gives them a final burst
      * the moment they leave, carrying them well past the breath range like a wind gust.
      */
-    private void handleKnockback() {
-        BreathContext breathContext = createBreathContext();
+    private void handleKnockback(BreathContext breathContext) {
         Set<Entity> entitiesInCone = new HashSet<>();
 
         for (Entity entity : GeneralMethods.getEntitiesAroundPoint(breathContext.mouthLocation(), breathContext.reach())) {
@@ -427,6 +481,7 @@ public class AirBreath extends AirAbility {
              if (newVelocity.length() > knockback) {
                  newVelocity = newVelocity.normalize().multiply(knockback);
              }
+
              GeneralMethods.setVelocity(this, entity, newVelocity);
         }
 
@@ -447,36 +502,8 @@ public class AirBreath extends AirAbility {
      * entity (iron golem, sniffer, warden, ravager). Heavy entities act as walls
      * unless the player is in avatar state.
      */
-    private void handleSelfPush() {
-        BreathContext breathContext = createBreathContext();
-
-        RayTraceResult blockResult = player.getWorld().rayTraceBlocks(
-                breathContext.mouthLocation(),
-                breathContext.lookDirection(),
-                breathContext.reach(),
-                FluidCollisionMode.NEVER,
-                true);
-
-        double hitDistance = blockResult != null && blockResult.getHitBlock() != null
-                ? blockResult.getHitPosition().distance(breathContext.mouthLocation().toVector())
-                : breathContext.reach() + 1;
-
-        // Heavy entities act as a wall for recoil, but only when not in avatar state
-        if (!bPlayer.isAvatarState()) {
-            RayTraceResult entityRayTraceResult = player.getWorld().rayTraceEntities(
-                    breathContext.mouthLocation(),
-                    breathContext.lookDirection(),
-                    breathContext.reach(),
-                    0.5,
-                    entity -> !entity.equals(player) && GeneralMethods.isHeavyEntity(entity));
-
-            if (entityRayTraceResult != null && entityRayTraceResult.getHitEntity() != null) {
-                double entityDistance = entityRayTraceResult.getHitPosition().distance(breathContext.mouthLocation().toVector());
-                if (entityDistance < hitDistance) {
-                    hitDistance = entityDistance;
-                }
-            }
-        }
+    private void handleSelfPush(BreathContext breathContext) {
+        double hitDistance = findSelfPushHitDistance(breathContext);
 
         if (hitDistance > breathContext.reach()) return;
 
@@ -494,15 +521,44 @@ public class AirBreath extends AirAbility {
         GeneralMethods.setVelocity(this, player, playerVelocity);
     }
 
+    private double findSelfPushHitDistance(BreathContext breathContext) {
+        RayTraceResult blockResult = player.getWorld().rayTraceBlocks(
+                breathContext.mouthLocation(),
+                breathContext.lookDirection(),
+                breathContext.reach(),
+                FluidCollisionMode.NEVER,
+                true);
+
+        double hitDistance = blockResult != null && blockResult.getHitBlock() != null
+                ? blockResult.getHitPosition().distance(breathContext.mouthLocation().toVector())
+                : breathContext.reach() + 1;
+
+        if (bPlayer.isAvatarState()) {
+            return hitDistance;
+        }
+
+        RayTraceResult entityResult = player.getWorld().rayTraceEntities(
+                breathContext.mouthLocation(),
+                breathContext.lookDirection(),
+                breathContext.reach(),
+                0.5,
+                entity -> !entity.equals(player) && GeneralMethods.isHeavyEntity(entity));
+
+        if (entityResult != null && entityResult.getHitEntity() != null) {
+            double entityDistance = entityResult.getHitPosition().distance(breathContext.mouthLocation().toVector());
+            hitDistance = Math.min(hitDistance, entityDistance);
+        }
+
+        return hitDistance;
+    }
+
     /**
      * Deflects projectiles inside the breath cone.
      * The breath force is added to each projectile's current velocity so faster projectiles are
      * bent less than slow ones, which feels physically natural.
      * Projectiles fired by the bender themselves are ignored.
      */
-    private void handleProjectileRedirect() {
-        BreathContext breathContext = createBreathContext();
-
+    private void handleProjectileRedirect(BreathContext breathContext) {
         for (Entity entity : GeneralMethods.getEntitiesAroundPoint(breathContext.mouthLocation(), breathContext.reach())) {
             if (!(entity instanceof Projectile projectile)) continue;
             if (player.equals(projectile.getShooter())) continue;
@@ -549,7 +605,7 @@ public class AirBreath extends AirAbility {
 
     @Override
     public Location getLocation() {
-        return player != null ? player.getEyeLocation().subtract(0, .2, 0) : null;
+        return player != null ? player.getEyeLocation().subtract(0, MOUTH_Y_OFFSET, 0) : null;
     }
 
     private BreathContext createBreathContext() {
@@ -574,7 +630,9 @@ public class AirBreath extends AirAbility {
     }
 
     private boolean isInvalidEffectLocation(Location location) {
-        return location.getWorld() == null || RegionProtection.isRegionProtected(this, location) || location.getBlock().isLiquid();
+        return location.getWorld() == null
+                || RegionProtection.isRegionProtected(this, location)
+                || location.getBlock().isLiquid();
     }
 
     private boolean isOutsideBreathCone(Location origin, Vector direction, Location target) {
@@ -585,7 +643,7 @@ public class AirBreath extends AirAbility {
             return true;
         }
 
-        return !(toTarget.normalize().angle(direction) <= getConeHalfAngle(distance));
+        return toTarget.normalize().angle(direction) > getConeHalfAngle(distance);
     }
 
     private boolean isFireBlock(Block block) {
@@ -638,9 +696,9 @@ public class AirBreath extends AirAbility {
         if (growTime <= 0) {
             return range;
         }
+
         double elapsed = System.currentTimeMillis() - getStartTime();
         double progress = elapsed / growTime;
-
         return Math.min(range, range * progress);
     }
 
@@ -670,10 +728,6 @@ public class AirBreath extends AirAbility {
 
     public long getGrowTime() {
         return growTime;
-    }
-
-    public BukkitTask getLavaSplashTask() {
-        return lavaSplashTask;
     }
 
     public Set<Entity> getPreviouslyInCone() {
