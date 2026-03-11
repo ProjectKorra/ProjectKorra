@@ -90,7 +90,7 @@ public class Shockwave extends EarthAbility {
 		for (double theta = 0; theta < 360; theta += dtheta) {
 			final double rtheta = Math.toRadians(theta);
 			final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
-			new Ripple(this.player, vector.normalize());
+			new Ripple(this.player, vector);
 		}
 		this.bPlayer.addCooldown(this);
 	}
@@ -101,11 +101,12 @@ public class Shockwave extends EarthAbility {
 			if (shockWave.charged) {
 				final double dtheta = 360.0 / (2 * Math.PI * shockWave.range) - 1;
 
+				final Vector facing = player.getEyeLocation().getDirection();
 				for (double theta = 0; theta < 360; theta += dtheta) {
 					final double rtheta = Math.toRadians(theta);
 					final Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
-					if (vector.angle(player.getEyeLocation().getDirection()) < shockWave.angle) {
-						new Ripple(player, vector.normalize());
+					if (vector.angle(facing) < shockWave.angle) {
+						new Ripple(player, vector);
 					}
 				}
 				shockWave.bPlayer.addCooldown(shockWave);
