@@ -97,9 +97,15 @@ public class AirBreath extends AirAbility {
     public AirBreath(Player player) {
         super(player);
 
-        if (getMouthLocation().getBlock().isLiquid()) return;
-        if (!bPlayer.canBend(this)) return;
-        if (CoreAbility.getAbility(player, AirBreath.class) != null) return;
+        if (getMouthLocation().getBlock().isLiquid()) {
+            return;
+        }
+        if (!bPlayer.canBend(this)) {
+            return;
+        }
+        if (CoreAbility.getAbility(player, AirBreath.class) != null) {
+            return;
+        }
 
         this.selfPushFactor = getConfig().getDouble(CONFIG_ROOT_PATH + "SelfPushFactor");
         this.selfPushStrength = getConfig().getDouble(CONFIG_ROOT_PATH + "SelfPushStrength");
@@ -177,6 +183,7 @@ public class AirBreath extends AirAbility {
             }
 
             if (isLitCandle(block)) {
+                extinguishCandle(block);
                 extinguishCandleInCone(center, distance);
                 hitDistance = distance;
                 hitType = HitType.SOLID;
@@ -379,23 +386,25 @@ public class AirBreath extends AirAbility {
         world.spawnParticle(Particle.SMOKE, center, 4, 0.15, 0.15, 0.15, 0.01);
     }
 
+    private void extinguishCandle(Block block) {
+        if (!isLitCandle(block) || RegionProtection.isRegionProtected(this, block.getLocation())) {
+            return;
+        }
+
+        BlockData unlitData = block.getBlockData();
+        if (unlitData instanceof Candle candle) {
+            candle.setLit(false);
+            new TempBlock(block, unlitData, TEMP_BLOCK_DURATION, this);
+        }
+    }
+
     /**
      * Extinguish all candles in given parameters.
      */
     private void extinguishCandleInCone(Location center, double distance) {
         if (isInvalidEffectLocation(center)) return;
 
-        forEachBlockInRadius(center, getConeRadius(distance), block -> {
-            if (!isLitCandle(block)) return;
-
-            // Copy the existing block data and switch lit to false so the candle keeps its
-            // state and reverts fully when the TempBlock expires.
-            BlockData unlitData = block.getBlockData();
-            if (unlitData instanceof Candle candle) {
-                candle.setLit(false);
-            }
-            new TempBlock(block, unlitData, TEMP_BLOCK_DURATION, this);
-        });
+        forEachBlockInRadius(center, getConeRadius(distance), this::isLitCandle, this::extinguishCandle);
 
         World world = center.getWorld();
         if (world == null) return;
@@ -532,9 +541,11 @@ public class AirBreath extends AirAbility {
                 FluidCollisionMode.NEVER,
                 true);
 
-        double hitDistance = blockResult != null && blockResult.getHitBlock() != null
-                ? blockResult.getHitPosition().distance(breathContext.mouthLocation().toVector())
-                : breathContext.reach() + 1;
+        double hitDistance = breathContext.reach() + 1;
+
+        if (blockResult != null && blockResult.getHitBlock() != null && isSolidRecoilSurface(blockResult.getHitBlock())) {
+            hitDistance = blockResult.getHitPosition().distance(breathContext.mouthLocation().toVector());
+        }
 
         if (bPlayer.isAvatarState()) {
             return hitDistance;
@@ -553,6 +564,24 @@ public class AirBreath extends AirAbility {
         }
 
         return hitDistance;
+    }
+
+    private boolean isSolidRecoilSurface(Block block) {
+        Material type = block.getType();
+
+        if (type.isAir()) {
+            return false;
+        }
+
+        if (isFireBlock(block)) {
+            return false;
+        }
+
+        if (isLitCandle(block) || block.getBlockData() instanceof Candle) {
+            return false;
+        }
+
+        return !block.isPassable();
     }
 
     /**
@@ -633,9 +662,7 @@ public class AirBreath extends AirAbility {
     }
 
     private boolean isInvalidEffectLocation(Location location) {
-        return location.getWorld() == null
-                || RegionProtection.isRegionProtected(this, location)
-                || location.getBlock().isLiquid();
+        return location.getWorld() == null || RegionProtection.isRegionProtected(this, location);
     }
 
     private boolean isOutsideBreathCone(Location origin, Vector direction, Location target) {
