@@ -379,6 +379,9 @@ public class AirBreath extends AirAbility {
         world.spawnParticle(Particle.SMOKE, center, 4, 0.15, 0.15, 0.15, 0.01);
     }
 
+    /**
+     * Extinguish all candles in given parameters.
+     */
     private void extinguishCandleInCone(Location center, double distance) {
         if (isInvalidEffectLocation(center)) return;
 
