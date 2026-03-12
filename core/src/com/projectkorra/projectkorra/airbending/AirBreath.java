@@ -54,17 +54,15 @@ public class AirBreath extends AirAbility {
     private static final int LAVA_WAVE_TICK_PERIOD = 2;
     private static final double BREATH_SOUND_CHANCE = 0.4;
 
-    private record BreathContext(Location mouthLocation, Vector lookDirection, double reach) {}
-
-    private record ConeBasis(Vector perpendicular1, Vector perpendicular2) {}
-
-    private record BreathTraceResult(double hitDistance, HitType hitType, Location hitLocation) {}
-
     private enum HitType {
         NONE,
         LAVA,
         SOLID
     }
+
+    private record BreathContext(Location mouthLocation, Vector lookDirection, double reach) {}
+    private record ConeBasis(Vector perpendicular1, Vector perpendicular2) {}
+    private record BreathTraceResult(double hitDistance, HitType hitType, Location hitLocation) {}
 
     @Attribute(Attribute.SELF_PUSH) // Maximum velocity the player can reach from self-push recoil
     private double selfPushFactor;
