@@ -4,7 +4,7 @@
 
   <groupId>com.projectkorra</groupId>
   <artifactId>projectkorra</artifactId>
-  <version>1.12.0</version>
+  <version>1.13.0</version>
   <packaging>jar</packaging>
 
   <name>ProjectKorra</name>
@@ -99,16 +99,6 @@
   </repositories>
 
   <dependencies>
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>core-modern</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.projectkorra</groupId>
-      <artifactId>core-legacy</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <!-- PaperLib -->
     <dependency>
       <groupId>io.papermc</groupId>
@@ -120,7 +110,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.20-R0.1-SNAPSHOT</version>
+      <version>1.21.11-R0.2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- lang3 -->

@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
@@ -29,7 +30,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -235,7 +235,7 @@ public class WaterManipulation extends WaterAbility {
 						this.remove();
 						return;
 					}
-					ParticleEffect.SMOKE_NORMAL.display(this.sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0);
+					this.sourceBlock.getWorld().spawnParticle(Particle.SMOKE, this.sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0, 0, null, true);
 					return;
 				}
 
@@ -392,7 +392,7 @@ public class WaterManipulation extends WaterAbility {
 			this.source = new TempBlock(block, WATER, this);
 		} else {
 			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
-				ParticleEffect.WATER_BUBBLE.display(block.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
+				block.getWorld().spawnParticle(Particle.BUBBLE, block.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0, null, true);
 			}
 		}
 

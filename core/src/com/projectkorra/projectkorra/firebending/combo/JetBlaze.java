@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,7 +18,6 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireJet;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class JetBlaze extends FireAbility implements ComboAbility {
 
@@ -82,7 +82,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		fs.setSpread(1.0F);
 		fs.setUseNewParticles(true);
 		fs.setCollisionRadius(2);
-		fs.setParticleEffect(ParticleEffect.SMOKE_LARGE);
+		fs.setParticle(Particle.LARGE_SMOKE);
 		fs.setDamage(this.damage);
 		fs.setFireTicks(this.fireTicks);
 		fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);

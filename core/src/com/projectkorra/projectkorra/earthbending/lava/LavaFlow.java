@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -23,7 +24,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Information;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class LavaFlow extends LavaAbility {
@@ -248,14 +248,14 @@ public class LavaFlow extends LavaAbility {
 
 							}
 						} else if (Math.random() < this.particleDensity && dSquared < Math.pow(this.currentRadius + this.particleDensity, 2) && this.currentRadius + this.particleDensity < this.shiftMaxRadius && random.nextInt(3) == 0) {
-							ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random());
+							loc.getWorld().spawnParticle(Particle.LAVA, loc, 1, Math.random(), Math.random(), Math.random(), 0, null, true);
 						}
 					}
 				}
 
 				if (!this.shiftIsFinished) {
 					if (random.nextInt(10) == 0) {
-						ParticleEffect.LAVA.display(this.player.getLocation(), 1, Math.random(), Math.random(), Math.random());
+						this.player.getWorld().spawnParticle(Particle.LAVA, this.player.getLocation(), 1, Math.random(), Math.random(), Math.random(), 0, null, true);
 					}
 				}
 
@@ -295,7 +295,7 @@ public class LavaFlow extends LavaAbility {
 						if (!isWater(tempBlock)) {
 							if (tempBlock != null && !isLava(tempBlock) && Math.random() < this.particleDensity && tempBlock.getLocation().distanceSquared(this.origin) <= Math.pow(this.clickLavaRadius, 2)) {
 								if (random.nextInt(5) == 0) {
-									ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random());
+									loc.getWorld().spawnParticle(Particle.LAVA, loc, 1, Math.random(), Math.random(), Math.random(), 0, null, true);
 								}
 							}
 						}
@@ -351,7 +351,7 @@ public class LavaFlow extends LavaAbility {
 										final Block above = block.getRelative(BlockFace.UP);
 
 										if ((isEarth(block) || isSand(block) || isMetal(block)) && !isWater(above)) {
-											ParticleEffect.LAVA.display(loc, 1, Math.random(), Math.random(), Math.random(), 0);
+											loc.getWorld().spawnParticle(Particle.LAVA, loc, 1, Math.random(), Math.random(), Math.random(), 0, null, true);
 										}
 									}
 								}

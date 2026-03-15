@@ -13,12 +13,9 @@ import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.LightManager;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -26,16 +23,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -60,7 +47,8 @@ public class FireComboStream extends BukkitRunnable {
 	private double damage;
 	private double fireTicks;
 	private double knockback;
-	ParticleEffect particleEffect;
+	Particle particle;
+	Object particleData;
 	private final Player player;
 	private final BendingPlayer bPlayer;
 	private final CoreAbility coreAbility;
@@ -80,7 +68,8 @@ public class FireComboStream extends BukkitRunnable {
 		this.collisionRadius = 2;
 		this.player = player;
 		this.bPlayer = BendingPlayer.getBendingPlayer(player);
-		this.particleEffect = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? ParticleEffect.SOUL_FIRE_FLAME : ParticleEffect.FLAME;
+		this.particle = bPlayer.canUseSubElement(SubElement.BLUE_FIRE) ? Particle.SOUL_FIRE_FLAME : Particle.FLAME;
+		this.particleData = null;
 		this.coreAbility = coreAbility;
 		this.direction = direction;
 		this.speed = speed;
@@ -105,7 +94,11 @@ public class FireComboStream extends BukkitRunnable {
 
 		for (int i = 0; i < this.density; i++) {
 			if (this.useNewParticles) {
-				this.particleEffect.display(this.location, 1, this.spread, this.spread, this.spread);
+				if (this.particle == Particle.EFFECT || this.particle == Particle.INSTANT_EFFECT) {
+					this.location.getWorld().spawnParticle(this.particle, this.location, 1, this.spread, this.spread, this.spread, 0, new Particle.Spell(Color.WHITE, 1.0f), true);
+				} else {
+					this.location.getWorld().spawnParticle(this.particle, this.location, 1, this.spread, this.spread, this.spread, 0, null, true);
+				}
 			} else {
 				this.location.getWorld().playEffect(this.location, Effect.MOBSPAWNER_FLAMES, 0, 15);
 			}
@@ -250,8 +243,14 @@ public class FireComboStream extends BukkitRunnable {
 		this.fireTicks = fireTicks;
 	}
 
-	public void setParticleEffect(final ParticleEffect effect) {
-		this.particleEffect = effect;
+	public void setParticle(final Particle effect) {
+		this.particle = effect;
+		this.particleData = null;
+	}
+
+	public void setParticle(final Particle effect, final Object data) {
+		this.particle = effect;
+		this.particleData = data;
 	}
 
 	public void setSinglePoint(final boolean b) {

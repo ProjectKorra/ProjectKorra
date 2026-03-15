@@ -25,7 +25,7 @@ public abstract class PlantAbility extends WaterAbility implements SubAbility {
 
 	// Because Plantbending deserves particles too!
 	public void playPlantbendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
-		loc.getWorld().spawnParticle(Particle.BLOCK_CRACK, loc.clone().add(0.5, 0, 0.5), amount, xOffset, yOffset, zOffset, Material.OAK_LEAVES.createBlockData());
+		loc.getWorld().spawnParticle(Particle.BLOCK, loc.clone().add(0.5, 0, 0.5), amount, xOffset, yOffset, zOffset, 0, Material.OAK_LEAVES.createBlockData(), true);
 	}
 
 }

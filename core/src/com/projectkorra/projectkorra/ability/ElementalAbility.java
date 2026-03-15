@@ -30,27 +30,24 @@ import com.projectkorra.projectkorra.GeneralMethods;
  * keep CoreAbility from becoming too cluttered.
  */
 public abstract class ElementalAbility extends CoreAbility {
-	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING };
-	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY };
-	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS, PotionEffectType.WITHER };
+	private static final PotionEffectType[] POSITIVE_EFFECTS = { PotionEffectType.ABSORPTION, PotionEffectType.RESISTANCE, PotionEffectType.HASTE, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.INSTANT_HEALTH, PotionEffectType.HEALTH_BOOST, PotionEffectType.STRENGTH, PotionEffectType.JUMP_BOOST, PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING, PotionEffectType.BREATH_OF_THE_NAUTILUS, PotionEffectType.DOLPHINS_GRACE, PotionEffectType.LUCK, PotionEffectType.CONDUIT_POWER, PotionEffectType.HERO_OF_THE_VILLAGE };
+	private static final PotionEffectType[] NEUTRAL_EFFECTS = { PotionEffectType.INVISIBILITY, PotionEffectType.GLOWING, PotionEffectType.LEVITATION, PotionEffectType.SLOW_FALLING, PotionEffectType.INFESTED, PotionEffectType.OOZING, PotionEffectType.WEAVING, PotionEffectType.WIND_CHARGED, PotionEffectType.TRIAL_OMEN, PotionEffectType.RAID_OMEN, PotionEffectType.BAD_OMEN };
+	private static final PotionEffectType[] NEGATIVE_EFFECTS = { PotionEffectType.POISON, PotionEffectType.BLINDNESS, PotionEffectType.NAUSEA, PotionEffectType.INSTANT_DAMAGE, PotionEffectType.HUNGER, PotionEffectType.SLOWNESS, PotionEffectType.MINING_FATIGUE, PotionEffectType.WEAKNESS, PotionEffectType.WITHER, PotionEffectType.UNLUCK, PotionEffectType.DARKNESS };
 	private static final Set<Material> TRANSPARENT = new HashSet<>();
 
-	private static final Set<String> EARTH_BLOCKS = new HashSet<String>();
-	private static final Set<String> ICE_BLOCKS = new HashSet<String>();
-	private static final Set<String> METAL_BLOCKS = new HashSet<String>();
-	private static final Set<String> PLANT_BLOCKS = new HashSet<String>();
-	private static final Set<String> SAND_BLOCKS = new HashSet<String>();
-	private static final Set<String> SNOW_BLOCKS = new HashSet<String>();
+	private static final Set<String> EARTH_BLOCKS = new HashSet<>();
+	private static final Set<String> ICE_BLOCKS = new HashSet<>();
+	private static final Set<String> METAL_BLOCKS = new HashSet<>();
+	private static final Set<String> PLANT_BLOCKS = new HashSet<>();
+	private static final Set<String> SAND_BLOCKS = new HashSet<>();
+	private static final Set<String> SNOW_BLOCKS = new HashSet<>();
 
-	// Once 1.16.5 no longer becomes LTS, this becomes obsolete and
-	// we can remove the version check and reference these materials directly instead of doing standard lookups.
-	protected static final Material LIGHT = Material.getMaterial("LIGHT");
 	protected static final Set<Material> MUD_BLOCKS = getMudBlocks();
 	private static Set<Material> getMudBlocks() {
 		Set<Material> mudBlocks = new HashSet<>();
-		mudBlocks.add(Material.getMaterial("MUD"));
-		mudBlocks.add(Material.getMaterial("PACKED_MUD"));
-		mudBlocks.add(Material.getMaterial("MUDDY_MANGROVE_ROOTS"));
+		mudBlocks.add(Material.MUD);
+		mudBlocks.add(Material.PACKED_MUD);
+		mudBlocks.add(Material.MUDDY_MANGROVE_ROOTS);
 		return mudBlocks;
 	}
 
@@ -83,7 +80,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static List<String> getEarthbendableBlocks() {
-		return new ArrayList<String>(EARTH_BLOCKS);
+		return new ArrayList<>(EARTH_BLOCKS);
 	}
 
 	public static void addTags(Set<String> outputSet, List<String> configList) {
@@ -213,11 +210,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isMud(final Block block) {
-		return block != null ? isMud(block.getType()) : false;
+		return block != null && isMud(block.getType());
 	}
 
 	public static boolean isMud(final Material material) {
-		return GeneralMethods.getMCVersion() >= 1190 && MUD_BLOCKS.contains(material);
+		return MUD_BLOCKS.contains(material);
 	}
 
 	public static boolean isNegativeEffect(final PotionEffectType effect) {

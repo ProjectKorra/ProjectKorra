@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -24,7 +25,6 @@ import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class LavaSurge extends LavaAbility {
@@ -199,11 +199,11 @@ public class LavaSurge extends LavaAbility {
 
 		if (!this.hasSurgeStarted && this.sourceBlock != null && curTime > this.lastTime + this.particleInterval) {
 			this.lastTime = curTime;
-			ParticleEffect.LAVA.display(this.sourceBlock.getLocation(), 0, 0, 0, 0, 1);
+			this.sourceBlock.getWorld().spawnParticle(Particle.LAVA, this.sourceBlock.getLocation(), 0, 0, 0, 0, 1, null, true);
 		} else if (this.hasSurgeStarted && curTime > this.lastTime + this.particleInterval) {
 			this.lastTime = curTime;
 			for (final FallingBlock fblock : this.fallingBlocks) {
-				ParticleEffect.LAVA.display(fblock.getLocation(), 0, 0, 0, 0, 1);
+				fblock.getWorld().spawnParticle(Particle.LAVA, fblock.getLocation(), 0, 0, 0, 0, 1, null, true);
 			}
 		}
 
