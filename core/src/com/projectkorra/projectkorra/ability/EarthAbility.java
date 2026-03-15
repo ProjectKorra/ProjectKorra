@@ -66,7 +66,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			playLegacyFocusEarthEffect(location, offsetRadius);
 			return;
 		}
-		if (bentBlock != null && isEarthbendable(bentBlock.getType(), true, true, false)) { //and is earthbendable, to ignore stuff like air etc.
+		if (bentBlock != null && isEarthbendable(bentBlock.getType(), true, true, false)) {
 			location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 2, offsetRadius, offsetRadius, offsetRadius, bentBlock.getBlockData());
 		} else {
 			location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 2, offsetRadius, offsetRadius, offsetRadius, Material.GREEN_CONCRETE.createBlockData());
