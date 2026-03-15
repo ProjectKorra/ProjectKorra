@@ -78,8 +78,9 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 
 		Vector streamDir = this.player.getVelocity().multiply(-1);
 		final FireComboStream fs = new FireComboStream(this.player, this, streamDir, this.player.getLocation(), 5, 1);
-		fs.setDensity(8);
-		fs.setSpread(1.0F);
+		fs.setDensity(5);
+		fs.setSpread(0.4F);
+		fs.setParticleSpeed(0.1F);
 		fs.setUseNewParticles(true);
 		fs.setCollisionRadius(2);
 		fs.setParticleEffect(ParticleEffect.SMOKE_LARGE);
