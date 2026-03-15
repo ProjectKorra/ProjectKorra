@@ -808,6 +808,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.Sound.Volume", 1);
 			config.addDefault("Properties.Air.Sound.Pitch", 2);
 
+			config.addDefault("Properties.Water.LegacyFocusParticles", false);
 			config.addDefault("Properties.Water.DynamicSourcing", true);
 			config.addDefault("Properties.Water.FreezePlayerHead", true);
 			config.addDefault("Properties.Water.FreezePlayerFeet", true);
@@ -831,6 +832,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.MudSound.Volume", 1);
 			config.addDefault("Properties.Water.MudSound.Pitch", 1);
 
+			config.addDefault("Properties.Earth.LegacyFocusParticles", false);
 			config.addDefault("Properties.Earth.DynamicSourcing", true);
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);

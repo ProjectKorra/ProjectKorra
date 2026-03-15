@@ -373,8 +373,17 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static void playFocusWaterEffect(final Block block, float offsetRadius) {
 		Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
+		if (getConfig().getBoolean("Properties.Water.LegacyFocusParticles")) {
+			playLegacyFocusWaterEffect(particleLocation);
+			return;
+		}
+
 		block.getWorld().spawnParticle(Particle.FALLING_DUST, particleLocation, 2, offsetRadius, offsetRadius, offsetRadius, Material.BLUE_CONCRETE.createBlockData());
 		GeneralMethods.displayColoredParticle("4275f5", particleLocation, 2, offsetRadius, offsetRadius, offsetRadius);
+	}
+
+	public static void playLegacyFocusWaterEffect(final Location location) {
+		location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 1, 0, 0, 0, 0);
 	}
 
 	public static void playIcebendingSound(final Location loc) {

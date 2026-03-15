@@ -30,6 +30,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class EarthAbility extends ElementalAbility {
 
@@ -57,12 +58,23 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void playFocusEarthEffect(final Location location) {
-		playFocusEarthEffect(location, 0.15F);
+		playFocusEarthEffect(location, 0.15F, null);
 	}
 
-	public static void playFocusEarthEffect(final Location location, final float offsetRadius) {
-		location.getWorld().spawnParticle(Particle.FALLING_DUST, location, 2, offsetRadius, offsetRadius, offsetRadius, Material.GREEN_CONCRETE.createBlockData());
-		GeneralMethods.displayColoredParticle("75431b", location, 2, offsetRadius, offsetRadius, offsetRadius);
+	public static void playFocusEarthEffect(final Location location, final float offsetRadius, @Nullable final Block bentBlock) {
+		if (getConfig().getBoolean("Properties.Earth.LegacyFocusParticles")) {
+			playLegacyFocusEarthEffect(location, offsetRadius);
+			return;
+		}
+		if (bentBlock != null && isEarthbendable(bentBlock.getType(), true, true, false)) { //and is earthbendable, to ignore stuff like air etc.
+			location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 2, offsetRadius, offsetRadius, offsetRadius, bentBlock.getBlockData());
+		} else {
+			location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 2, offsetRadius, offsetRadius, offsetRadius, Material.GREEN_CONCRETE.createBlockData());
+		}
+	}
+
+	public static void playLegacyFocusEarthEffect(final Location location, final float offsetRadius) {
+		location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 2, offsetRadius, offsetRadius, offsetRadius, 0);
 	}
 
 	public Block getEarthSourceBlock(final double range) {
