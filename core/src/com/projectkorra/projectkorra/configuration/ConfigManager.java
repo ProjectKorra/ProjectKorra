@@ -384,6 +384,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Tornado.Instructions", "Hold sneak and a tornado will form gradually wherever you look.");
 			config.addDefault("Abilities.Air.AirShield.Description", "AirShield is one of the most powerful defensive techniques in existence. This ability is mainly used when you are low health and need protection. It's also useful when you're surrounded by mobs.");
 			config.addDefault("Abilities.Air.AirShield.Instructions", "Hold sneak and a shield of air will form around you, blocking projectiles and pushing entities back.");
+			config.addDefault("Abilities.Air.AirBreath.Description", "An airbender can channel their breath into a powerful swirling current of air, pushing all entities caught in its path. Directing the breath downward or at a surface propels the bender skyward. Water is scattered with a splash on contact, and lava is rapidly cooled by the force of the breath.");
+			config.addDefault("Abilities.Air.AirBreath.Instructions", "Hold sneak to exhale a swirling vortex of air that blows away nearby entities. Aim at the ground or a wall to launch yourself into the air. The breath scatters water on contact and rapidly cools lava.");
 			config.addDefault("Abilities.Air.AirSpout.Description", "This ability gives the airbender limited sustained levitation. It allows an airbender to gain a height advantage to escape from mobs, players or just to dodge from attacks. This ability is also useful for building as it allows you to reach great heights.");
 			config.addDefault("Abilities.Air.AirSpout.Instructions", "Left click to activate a spout beneath you and hold spacebar to go higher. If you wish to go lower, simply hold sneak. To disable this ability, left click once again.");
 			config.addDefault("Abilities.Air.AirSuction.Description", "AirSuction is a basic ability that allows you to manipulation an entity's movement. It can be used to bring someone back to you when they're running away, or even to get yourself to great heights.");
@@ -915,6 +917,17 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.Cooldown", 7000);
 			config.addDefault("Abilities.Air.AirScooter.Duration", 0);
 			config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
+
+			config.addDefault("Abilities.Air.AirBreath.Enabled", true);
+			config.addDefault("Abilities.Air.AirBreath.Cooldown", 8000);
+			config.addDefault("Abilities.Air.AirBreath.Duration", 3500);
+			config.addDefault("Abilities.Air.AirBreath.Range", 8.0);
+			config.addDefault("Abilities.Air.AirBreath.Radius", 3.0);
+			config.addDefault("Abilities.Air.AirBreath.Knockback", 2.0);
+			config.addDefault("Abilities.Air.AirBreath.SelfPushFactor", 3.0);
+			config.addDefault("Abilities.Air.AirBreath.SelfPushStrength", 0.2);
+			config.addDefault("Abilities.Air.AirBreath.GrowTime", 0);
+			config.addDefault("Abilities.Air.AirBreath.CanExcavateSuspiciousBlocks", false);
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
