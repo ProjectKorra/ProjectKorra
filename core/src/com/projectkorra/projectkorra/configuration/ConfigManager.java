@@ -1603,6 +1603,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.HeatControl.Cook.Interval", 1000);
 			config.addDefault("Abilities.Fire.HeatControl.Extinguish.Cooldown", 5000);
 			config.addDefault("Abilities.Fire.HeatControl.Extinguish.Radius", 6);
+			config.addDefault("Abilities.Fire.HeatControl.Extinguish.MobTargetingRadius", 6);
 			config.addDefault("Abilities.Fire.HeatControl.Melt.Range", 15);
 			config.addDefault("Abilities.Fire.HeatControl.Melt.Radius", 5);
 			config.addDefault("Abilities.Fire.HeatControl.Solidify.MaxRadius", 10);

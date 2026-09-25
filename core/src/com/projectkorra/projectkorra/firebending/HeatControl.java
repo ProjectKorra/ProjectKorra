@@ -20,6 +20,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -63,6 +64,9 @@ public class HeatControl extends FireAbility {
 	private long extinguishCooldown;
 	@Attribute("Extinguish" + Attribute.RADIUS) @DayNightFactor
 	private double extinguishRadius;
+
+	@Attribute("Extinguish" + Attribute.RADIUS) @DayNightFactor
+	private double mobextinguishRadius;
 
 	// HeatControl Melt variables.
 	@Attribute("Melt" + Attribute.RANGE) @DayNightFactor
@@ -139,6 +143,7 @@ public class HeatControl extends FireAbility {
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
 			this.extinguishCooldown = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
 			this.extinguishRadius = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius");
+			this.mobextinguishRadius = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.MobTargetingRadius");
 		} else if (this.heatControlType == HeatControlType.MELT) {
 			this.meltRange = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Range");
 			this.meltRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Radius");
@@ -207,6 +212,18 @@ public class HeatControl extends FireAbility {
 					}
 				}
 			}
+
+
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), mobextinguishRadius)) {
+
+				if (entity.getFireTicks() > 0) {
+
+					entity.setFireTicks(0);
+
+				}
+			}
+
+
 
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 
