@@ -56,6 +56,7 @@ import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class that presents a player and stores all bending information about the
@@ -149,7 +150,13 @@ public class BendingPlayer extends OfflineBendingPlayer {
 		return this.canBend(ability, false, false);
 	}
 
-	private boolean canBend(@NotNull final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
+	private boolean canBend(@Nullable final CoreAbility ability, final boolean ignoreBinds, final boolean ignoreCooldowns) {
+		// CoreAbility.getAbility(name) returns null for an unknown or disabled ability (e.g. canBeBloodbent() when
+		// Bloodbending is disabled in the config, or an addon asking about another addon's ability): it cannot be bent
+		if (ability == null) {
+			return false;
+		}
+
 		// Loop through all hooks and test them
 		for (JavaPlugin plugin : BEND_HOOKS.keySet()) {
 			CanBendHook hook = BEND_HOOKS.get(plugin);
