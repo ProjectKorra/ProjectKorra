@@ -474,26 +474,36 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
-		final Block block = event.getDamager();
+		handleTempBlockDamage(event, event.getDamager(), event.getDamage());
+	}
 
+	private static void handleTempBlockDamage(final EntityDamageEvent event, final Block block, final double damage) {
 		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
 		if (block == null || BendingPlayer.isWorldDisabled(block.getWorld()) || GeneralMethods.isFakeEvent(event)) {
 			return;
 		}
 
-		TempBlock tempBlock = TempBlock.get(block);
-		if (tempBlock != null) {
-			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
+		final TempBlock tempBlock = TempBlock.get(block);
+		if (tempBlock == null) {
+			return;
+		}
+
+		if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
+			tempBlock.getAbility().ifPresent(ability -> {
+				new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
 				event.setCancelled(true);
-			} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-				tempBlock.getAbility().ifPresent(ability -> {
-					new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
-					event.setCancelled(true);
-					FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
-				});
-			} else if (!tempBlock.canSuffocate()) {
-				event.setCancelled(true);
-			}
+				FireDamageTimer.dealFlameDamage(event.getEntity(), damage);
+			});
+			return;
+		}
+
+		if (!tempBlock.canSuffocate()) {
+			event.setCancelled(true);
 		}
 	}
 
@@ -524,26 +534,9 @@ public class PKListener implements Listener {
 			FireDamageTimer.dealFlameDamage(entity, damage);
 		}
 
-		if (event.getCause() == DamageCause.SUFFOCATION) {
-			Block block = event.getEntity().getLocation().getBlock();
-			if (event.getEntity() instanceof LivingEntity living) {
-				block = living.getEyeLocation().getBlock();
-			}
-
-			TempBlock tempBlock = TempBlock.get(block);
-			if (tempBlock != null) {
-				if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
-					event.setCancelled(true);
-				} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-					tempBlock.getAbility().ifPresent(ability -> {
-						new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
-						event.setCancelled(true);
-						FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
-					});
-				} else if (!tempBlock.canSuffocate()) {
-					event.setCancelled(true);
-				}
-			}
+		if (event.getCause() == DamageCause.LAVA && !event.isCancelled()) {
+			final Block block = entity instanceof LivingEntity living ? living.getEyeLocation().getBlock() : entity.getLocation().getBlock();
+			handleTempBlockDamage(event, block, damage);
 		}
 
 

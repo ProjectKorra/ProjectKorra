@@ -85,17 +85,21 @@ public class TempBlock {
 	}
 	
 	public TempBlock(final Block block, final BlockData newData, final long revertTime, final CoreAbility ability) {
-		this(block, newData, revertTime);
-		this.ability = Optional.of(ability);
+		this(block, newData, revertTime, Optional.of(ability));
 	}
-	
+
 	public TempBlock(final Block block, final BlockData newData, final CoreAbility ability) {
 		this(block, newData, 0, ability);
 	}
 
 	public TempBlock(final Block block, BlockData newData, final long revertTime) {
+		this(block, newData, revertTime, Optional.empty());
+	}
+
+	private TempBlock(final Block block, BlockData newData, final long revertTime, final Optional<CoreAbility> ability) {
 		this.block = block;
 		this.newData = newData;
+		this.ability = ability;
 		this.attachedTempBlocks = new HashSet<>(0);
 		this.suffocate = ability.isPresent() ? !(ability.get() instanceof WaterAbility) : false;
 
