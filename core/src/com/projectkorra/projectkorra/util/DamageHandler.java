@@ -200,15 +200,24 @@ public class DamageHandler {
 				}
 			}
 
-			DamageSource.Builder damageSourceBuilder = DamageSource.builder(DamageType.GENERIC)
-					.withCausingEntity(source);
-			if (!doSourcelessDamage) {
-				damageSourceBuilder = damageSourceBuilder.withDirectEntity(source);
+			final DamageSource damageSource;
+			if (doSourcelessDamage) {
+				damageSource = null;
+			} else {
+				damageSource = DamageSource.builder(DamageType.GENERIC)
+						.withCausingEntity(source)
+						.withDirectEntity(source)
+						.build();
 			}
 
 			final double prevHealth = lent.getHealth();
 			BEING_DAMAGED.add(lent); //Stops StackOverflows
-			lent.damage(damage, damageSourceBuilder.build());
+			if (damageSource == null) {
+				lent.damage(damage);
+				entity.setLastDamageCause(new EntityDamageByEntityEvent(source, entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage));
+			} else {
+				lent.damage(damage, damageSource);
+			}
 			BEING_DAMAGED.remove(lent);
 			final double nextHealth = lent.getHealth();
 
