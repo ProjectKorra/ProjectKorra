@@ -494,6 +494,10 @@ public class PKListener implements Listener {
 		}
 
 		if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
+			if (!(event.getEntity() instanceof LivingEntity)) {
+				return;
+			}
+
 			tempBlock.getAbility().ifPresent(ability -> {
 				new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
 				event.setCancelled(true);
@@ -534,7 +538,7 @@ public class PKListener implements Listener {
 			FireDamageTimer.dealFlameDamage(entity, damage);
 		}
 
-		if (event.getCause() == DamageCause.LAVA && !event.isCancelled()) {
+		if ((event.getCause() == DamageCause.LAVA || event.getCause() == DamageCause.SUFFOCATION) && !event.isCancelled()) {
 			final Block block = entity instanceof LivingEntity living ? living.getEyeLocation().getBlock() : entity.getLocation().getBlock();
 			handleTempBlockDamage(event, block, damage);
 		}
