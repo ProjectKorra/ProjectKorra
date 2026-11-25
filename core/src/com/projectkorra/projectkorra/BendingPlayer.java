@@ -232,9 +232,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
-		} else if (!this.isOnCooldown(ability)) {
+		} else if (this.isOnCooldown(ability)) {
 			return false;
-		} else return RegionProtection.isRegionProtected(this.player, this.player.getLocation(), ability);
+		} else return !RegionProtection.isRegionProtected(this.player, this.player.getLocation(), ability);
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
