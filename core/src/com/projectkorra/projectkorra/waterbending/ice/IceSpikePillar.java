@@ -248,12 +248,12 @@ public class IceSpikePillar extends IceAbility {
 
 		if (entity instanceof Player) {
 			if (this.bPlayer.canBeSlowed()) {
-				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPower);
+				final PotionEffect effect = new PotionEffect(PotionEffectType.SLOWNESS, this.slowDuration, this.slowPower);
 				new TempPotionEffect(entity, effect);
 				this.bPlayer.slow(this.slowCooldown);
 			}
 		} else {
-			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowPower);
+			final PotionEffect effect = new PotionEffect(PotionEffectType.SLOWNESS, this.slowDuration, this.slowPower);
 			new TempPotionEffect(entity, effect);
 		}
 		AirAbility.breakBreathbendingHold(entity);

@@ -85,27 +85,31 @@ public abstract class Database {
 	 *
 	 * @param query Query to run
 	 */
-	public void modifyQuery(final String query) {
-		this.modifyQuery(query, true);
+	public void modifyQuery(final String query, final Object... args) {
+		this.modifyQueryAsync(query, args);
 	}
 
 	/**
-	 * Queries the Databases, for queries which modify data.
+	 * Queries the Databases, for queries which modify data. Run asynchronously.
 	 *
 	 * @param query Query to run
-	 * @param async If to run asynchronously
 	 */
-	public void modifyQuery(final String query, final boolean async) {
-		if (async) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					Database.this.doQuery(query);
-				}
-			}.runTaskAsynchronously(ProjectKorra.plugin);
-		} else {
-			this.doQuery(query);
-		}
+	public void modifyQueryAsync(final String query, final Object... args) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				Database.this.doQuery(query, args);
+			}
+		}.runTaskAsynchronously(ProjectKorra.plugin);
+	}
+
+	/**
+	 * Queries the Databases, for queries which modify data. Run synchronously.
+	 *
+	 * @param query Query to run
+	 */
+	public void modifyQuerySync(final String query, final Object... args) {
+		this.doQuery(query, args);
 	}
 
 	/**
@@ -114,12 +118,29 @@ public abstract class Database {
 	 * @param query Query to run
 	 * @return Result set of ran query
 	 */
-	public ResultSet readQuery(final String query) {
+	public ResultSet readQuery(final String query, final Object... args) {
 		try {
 			if (this.connection == null || this.connection.isClosed()) {
 				this.open();
 			}
 			final PreparedStatement stmt = this.connection.prepareStatement(query);
+			if (args != null && args.length > 0) {
+				for (int i = 0; i < args.length; i++) {
+					if (args[i] != null) {
+						switch (args[i]) {
+							case String s -> stmt.setString(i + 1, s);
+							case Integer integer -> stmt.setInt(i + 1, integer);
+							case Long l -> stmt.setLong(i + 1, l);
+							case Float v -> stmt.setFloat(i + 1, v);
+							case Double v -> stmt.setDouble(i + 1, v);
+							case Boolean b -> stmt.setBoolean(i + 1, b);
+							case null, default -> stmt.setObject(i + 1, args[i]);
+						}
+					} else {
+						stmt.setNull(i + 1, java.sql.Types.NULL);
+					}
+				}
+			}
 			final ResultSet rs = stmt.executeQuery();
 
 			return rs;
@@ -171,12 +192,29 @@ public abstract class Database {
 		}
 	}
 
-	private synchronized void doQuery(final String query) {
+	private synchronized void doQuery(final String query, final Object... args) {
 		try {
 			if (this.connection == null || this.connection.isClosed()) {
 				this.open();
 			}
 			final PreparedStatement stmt = this.connection.prepareStatement(query);
+			if (args != null && args.length > 0) {
+				for (int i = 0; i < args.length; i++) {
+					if (args[i] != null) {
+                        switch (args[i]) {
+                            case String s -> stmt.setString(i + 1, s);
+                            case Integer integer -> stmt.setInt(i + 1, integer);
+                            case Long l -> stmt.setLong(i + 1, l);
+                            case Float v -> stmt.setFloat(i + 1, v);
+                            case Double v -> stmt.setDouble(i + 1, v);
+							case Boolean b -> stmt.setBoolean(i + 1, b);
+                            case null, default -> stmt.setObject(i + 1, args[i]);
+                        }
+					} else {
+						stmt.setNull(i + 1, java.sql.Types.NULL);
+					}
+				}
+			}
 			stmt.execute();
 			stmt.close();
 		} catch (final SQLException e) {

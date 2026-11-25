@@ -20,7 +20,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -79,7 +78,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, collision.getLocationFirst().getBlock().getBlockData());
+			collision.getLocationFirst().getWorld().spawnParticle(Particle.BLOCK, collision.getLocationFirst(), 10, 1, 1, 1, 0.1, collision.getLocationFirst().getBlock().getBlockData(), true);
 		}
 	}
 
@@ -92,8 +91,9 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isBendableWaterTempBlock(final TempBlock tempBlock) {
-		return PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock)
+		boolean legacyDetection = PhaseChange.getFrozenBlocksMap().containsKey(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock)
 				|| SurgeWall.SOURCE_BLOCKS.contains(tempBlock) || Torrent.getFrozenBlocks().containsKey(tempBlock);
+		return (tempBlock.isBendableSource() && isWaterbendable(tempBlock.getBlock().getType())) || legacyDetection;
 	}
 
 	public boolean isIcebendable(final Block block) {
@@ -249,20 +249,20 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static boolean isIcebendable(final Player player, final Material material, final boolean onlyIce) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
+		return bPlayer != null && isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
 	}
 
 	public static boolean isPlantbendable(final Player player, final Material material, final boolean onlyLeaves) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (onlyLeaves) {
-			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend() && isLeaves(material);
+			return bPlayer != null && isPlant(material) && bPlayer.canPlantbend() && isLeaves(material);
 		} else {
-			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend();
+			return bPlayer != null && isPlant(material) && bPlayer.canPlantbend();
 		}
 	}
 
 	public static boolean isLeaves(final Block block) {
-		return block != null ? isLeaves(block.getType()) : false;
+		return block != null && isLeaves(block.getType());
 	}
 
 	public static boolean isLeaves(final Material material) {
@@ -270,7 +270,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isSnow(final Block block) {
-		return block != null ? isSnow(block.getType()) : false;
+		return block != null && isSnow(block.getType());
 	}
 
 	public static boolean isSnow(final Material material) {
@@ -278,15 +278,15 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 	
 	public static boolean isCauldron(final Block block) {
-		return isCauldron(block.getType()) ? isCauldron(block.getType()) : GeneralMethods.getMCVersion() < 1170 && block.getType() == Material.CAULDRON && ((Levelled) block.getBlockData()).getLevel() >= 1;
+		return isCauldron(block.getType());
 	}
 	
 	public static boolean isCauldron(final Material material) {
-		return GeneralMethods.getMCVersion() >= 1170 && (material == Material.getMaterial("WATER_CAULDRON") || material == Material.getMaterial("POWDER_SNOW_CAULDRON"));
+		return material == Material.WATER_CAULDRON || material == Material.POWDER_SNOW_CAULDRON;
 	}
 
 	public static boolean isSponge(final Block block) {
-		return block != null ? isSponge(block.getType()) : false;
+		return block != null && isSponge(block.getType());
 	}
 
 	public static boolean isSponge(final Material material) {
@@ -347,13 +347,9 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 		 */
 		Map<Material, Material> transformables = new HashMap<>();
-		if (GeneralMethods.getMCVersion() >= 1170) {
-			transformables.put(Material.getMaterial("MUD"), Material.DIRT);
-			transformables.put(Material.getMaterial("PACKED_MUD"), Material.DIRT);
-		}
-		if (GeneralMethods.getMCVersion() >= 1190) {
-			transformables.put(Material.getMaterial("MUDDY_MANGROVE_ROOTS"), Material.getMaterial("MANGROVE_ROOTS"));
-		}
+		transformables.put(Material.MUD, Material.DIRT);
+		transformables.put(Material.PACKED_MUD, Material.DIRT);
+		transformables.put(Material.MUDDY_MANGROVE_ROOTS, Material.MANGROVE_ROOTS);
 		transformables.put(Material.WET_SPONGE, Material.SPONGE);
 		return transformables;
 	}
@@ -383,7 +379,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playLegacyFocusWaterEffect(final Location location) {
-		location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 1, 0, 0, 0, 0);
+		location.getWorld().spawnParticle(Particle.SMOKE, location, 1, 0, 0, 0, 0);
 	}
 
 	public static void playIcebendingSound(final Location loc) {
@@ -408,10 +404,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			final float volume = (float) getConfig().getDouble("Properties.Water.MudSound.Volume");
 			final float pitch = (float) getConfig().getDouble("Properties.Water.MudSound.Pitch");
 
-			Sound sound = Sound.BLOCK_WET_GRASS_STEP;
-			if (GeneralMethods.getMCVersion() >= 1190) {
-				sound = Sound.valueOf("BLOCK_MUD_STEP");
-			}
+			Sound sound = Sound.BLOCK_MUD_STEP;
 
 			try {
 				sound = Sound.valueOf(getConfig().getString("Properties.Water.MudSound.Sound"));

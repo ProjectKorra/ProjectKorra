@@ -182,7 +182,7 @@ public class Bloodbending extends BloodAbility {
 
 	@Override
 	public void progress() {
-		final PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 60, 1);
+		final PotionEffect effect = new PotionEffect(PotionEffectType.SLOWNESS, 60, 1);
 
 		if (!this.player.isSneaking()) {
 			bPlayer.addCooldown(this);

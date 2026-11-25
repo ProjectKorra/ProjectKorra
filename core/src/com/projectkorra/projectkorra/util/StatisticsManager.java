@@ -65,7 +65,7 @@ public class StatisticsManager extends Manager implements Runnable {
 			} else if (DBConnection.sql instanceof SQLite) {
 				query = "CREATE TABLE `pk_statKeys` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `statName` TEXT(64));";
 			}
-			DBConnection.sql.modifyQuery(query, false);
+			DBConnection.sql.modifyQuerySync(query);
 		}
 		// Create pk_stats table.
 		if (!DBConnection.sql.tableExists("pk_stats")) {
@@ -76,7 +76,7 @@ public class StatisticsManager extends Manager implements Runnable {
 			} else if (DBConnection.sql instanceof SQLite) {
 				query = "CREATE TABLE `pk_stats` (`statId` INTEGER, `uuid` TEXT(36), `statValue` BIGINT, PRIMARY KEY (statId, uuid));";
 			}
-			DBConnection.sql.modifyQuery(query, false);
+			DBConnection.sql.modifyQuerySync(query);
 		}
 		// Insert all abilities into pk_statKeys for all statistics.
 		for (final CoreAbility ability : CoreAbility.getAbilitiesByName()) {
@@ -85,10 +85,10 @@ public class StatisticsManager extends Manager implements Runnable {
 			}
 			for (final Statistic statistic : Statistic.values()) {
 				final String statName = statistic.getStatisticName(ability);
-				final ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'");
+				final ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = ?", statName);
 				try {
 					if (!rs.next()) {
-						DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
+						DBConnection.sql.modifyQuerySync("INSERT INTO pk_statKeys (statName) VALUES (?)", statName);
 					}
 				} catch (final SQLException e) {
 					e.printStackTrace();
@@ -110,7 +110,7 @@ public class StatisticsManager extends Manager implements Runnable {
 	public void load(final UUID uuid) {
 		this.STATISTICS.put(uuid, new HashMap<>());
 		this.DELTA.put(uuid, new HashMap<>());
-		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = '" + uuid.toString() + "'")) {
+		try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = ?", uuid.toString())) {
 			while (rs.next()) {
 				this.STATISTICS.get(uuid).put(rs.getInt("statId"), rs.getLong("statValue"));
 				this.DELTA.get(uuid).put(rs.getInt("statId"), 0L);
@@ -128,11 +128,19 @@ public class StatisticsManager extends Manager implements Runnable {
 		for (final Entry<Integer, Long> entry : stats.entrySet()) {
 			final int statId = entry.getKey();
 			final long statValue = entry.getValue();
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = '" + uuid.toString() + "' AND statId = " + statId)) {
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = ? AND statId = ?", uuid.toString(), statId)) {
 				if (!rs.next()) {
-					DBConnection.sql.modifyQuery("INSERT INTO pk_stats (statId, uuid, statValue) VALUES (" + statId + ", '" + uuid.toString() + "', " + statValue + ")", async);
+					if (async) {
+						DBConnection.sql.modifyQueryAsync("INSERT INTO pk_stats (statId, uuid, statValue) VALUES (?, ?, ?)", statId, uuid.toString(), statValue);
+					} else {
+						DBConnection.sql.modifyQuerySync("INSERT INTO pk_stats (statId, uuid, statValue) VALUES (?, ?, ?)", statId, uuid.toString(), statValue);
+					}
 				} else {
-					DBConnection.sql.modifyQuery("UPDATE pk_stats SET statValue = statValue + " + statValue + " WHERE uuid = '" + uuid.toString() + "' AND statId = " + statId + ";", async);
+					if (async) {
+						DBConnection.sql.modifyQueryAsync("UPDATE pk_stats SET statValue = statValue + ? WHERE uuid = ? AND statId = ?;", statValue, uuid.toString(), statId);
+					} else {
+						DBConnection.sql.modifyQuerySync("UPDATE pk_stats SET statValue = statValue + ? WHERE uuid = ? AND statId = ?;", statValue, uuid.toString(), statId);
+					}
 				}
 			} catch (final SQLException e) {
 				e.printStackTrace();
@@ -153,7 +161,7 @@ public class StatisticsManager extends Manager implements Runnable {
 	public long getStatisticCurrent(final UUID uuid, final int statId) {
 		// If the player is offline, pull value from database.
 		if (!this.STATISTICS.containsKey(uuid)) {
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT statValue FROM pk_stats WHERE uuid = '" + uuid.toString() + "' AND statId = " + statId + ";")) {
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT statValue FROM pk_stats WHERE uuid = ? AND statId = ?;", uuid.toString(), statId)) {
 				if (rs.next()) {
 					return rs.getLong("statValue");
 				}
@@ -180,7 +188,7 @@ public class StatisticsManager extends Manager implements Runnable {
 		final Map<Integer, Long> map = new HashMap<>();
 		// If the player is offline, create a new temporary Map from the database.
 		if (!this.STATISTICS.containsKey(uuid)) {
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = '" + uuid.toString() + "'")) {
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_stats WHERE uuid = ?", uuid.toString())) {
 				while (rs.next()) {
 					final int statId = rs.getInt("statId");
 					final long statValue = rs.getLong("statValue");

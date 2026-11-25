@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra;
 
+import com.bekvon.bukkit.residence.commands.message;
+import com.projectkorra.projectkorra.airbending.AirBreath;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -472,26 +474,36 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(final EntityDamageByBlockEvent event) {
-		final Block block = event.getDamager();
+		handleTempBlockDamage(event, event.getDamager(), event.getDamage());
+	}
 
+	private static void handleTempBlockDamage(final EntityDamageEvent event, final Block block, final double damage) {
 		//Fix for MythicLib firing false EntityDamageEvents to test its own stuff
 		if (block == null || BendingPlayer.isWorldDisabled(block.getWorld()) || GeneralMethods.isFakeEvent(event)) {
 			return;
 		}
 
-		TempBlock tempBlock = TempBlock.get(block);
-		if (tempBlock != null) {
-			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
+		final TempBlock tempBlock = TempBlock.get(block);
+		if (tempBlock == null) {
+			return;
+		}
+
+		if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
+			tempBlock.getAbility().ifPresent(ability -> {
+				new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
 				event.setCancelled(true);
-			} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-				tempBlock.getAbility().ifPresent(ability -> {
-					new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
-					event.setCancelled(true);
-					FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
-				});
-			} else if (!tempBlock.canSuffocate()) {
-				event.setCancelled(true);
-			}
+				FireDamageTimer.dealFlameDamage(event.getEntity(), damage);
+			});
+			return;
+		}
+
+		if (!tempBlock.canSuffocate()) {
+			event.setCancelled(true);
 		}
 	}
 
@@ -522,26 +534,9 @@ public class PKListener implements Listener {
 			FireDamageTimer.dealFlameDamage(entity, damage);
 		}
 
-		if (event.getCause() == DamageCause.SUFFOCATION) {
-			Block block = event.getEntity().getLocation().getBlock();
-			if (event.getEntity() instanceof LivingEntity living) {
-				block = living.getEyeLocation().getBlock();
-			}
-
-			TempBlock tempBlock = TempBlock.get(block);
-			if (tempBlock != null) {
-				if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
-					event.setCancelled(true);
-				} else if (event.getCause() == DamageCause.LAVA && EarthAbility.isLava(block)) {
-					tempBlock.getAbility().ifPresent(ability -> {
-						new FireDamageTimer(event.getEntity(), ability.getPlayer(), ability, true);
-						event.setCancelled(true);
-						FireDamageTimer.dealFlameDamage(event.getEntity(), event.getDamage());
-					});
-				} else if (!tempBlock.canSuffocate()) {
-					event.setCancelled(true);
-				}
-			}
+		if (event.getCause() == DamageCause.LAVA && !event.isCancelled()) {
+			final Block block = entity instanceof LivingEntity living ? living.getEyeLocation().getBlock() : entity.getLocation().getBlock();
+			handleTempBlockDamage(event, block, damage);
 		}
 
 
@@ -978,25 +973,29 @@ public class PKListener implements Listener {
 			final Player killer = deathInfo.getRight();
 			final String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
 			final CoreAbility coreAbil = CoreAbility.getAbility(tempAbility);
-			String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
+			String deathMessage = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
 			Element element = coreAbil != null ? coreAbil.getElement() : null;
 			
 			if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(player) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
 				if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
-					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
+					deathMessage = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
 				}
 			} else if (element != null) {
 				if (element instanceof SubElement subElement) {
 					element = subElement.getParentElement();
 				}
 				if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage")) {
-					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
+					deathMessage = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
 				} else if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage")) {
-					message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
+					deathMessage = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
 				}
 			}
-			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", killer.getName()).replace("{ability}", ability);
-			event.setDeathMessage(message);
+			deathMessage = deathMessage
+							.replace("{victim}", event.getEntity().getName())
+							.replace("{attacker}", killer.getName())
+							.replace("{ability}", ability);
+
+			event.setDeathMessage(deathMessage);
 		}
 	}
 
@@ -1345,6 +1344,7 @@ public class PKListener implements Listener {
 			case AirSuction ignored -> new AirSuction(player);
 			case AirSwipe ignored -> new AirSwipe(player, true);
 			case AirShield ignored -> new AirShield(player);
+			case AirBreath ignored -> new AirBreath(player);
 			case Suffocate ignored -> new Suffocate(player);
 			case Bloodbending ignored -> new Bloodbending(player);
 			case IceBlast ignored -> new IceBlast(player);

@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-api-version: 1.16
+api-version: 1.21.11
 version: ${project.version}
 main: com.projectkorra.projectkorra.ProjectKorra
 softdepend: [GriefDefender, WorldGuard, WorldEdit, Factions, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, RedProtect, PlaceholderAPI, Lands, Plan, HuskTowns]

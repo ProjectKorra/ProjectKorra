@@ -7,7 +7,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.LightManager;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -58,7 +57,7 @@ public abstract class FireAbility extends ElementalAbility {
 	public void handleCollision(final Collision collision) {
 		super.handleCollision(collision);
 		if (collision.isRemovingFirst()) {
-			ParticleEffect.BLOCK_CRACK.display(collision.getLocationFirst(), 10, 1, 1, 1, 0.1, getFireType().createBlockData());
+			collision.getLocationFirst().getWorld().spawnParticle(Particle.BLOCK, collision.getLocationFirst(), 10, 1, 1, 1, 0.1, getFireType().createBlockData(), true);
 		}
 	}
 	/**
@@ -176,7 +175,7 @@ public abstract class FireAbility extends ElementalAbility {
 				block.getWorld().playSound(block.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
 			}
 		} else if (isSnow(block)) {
-			block.getWorld().spawnParticle(Particle.BLOCK_DUST, block.getLocation().add(0.5, 0.5, 0.5), 2, 0.5, 0.5, 0.5, 0.1, Material.SNOW_BLOCK.createBlockData());
+			block.getWorld().spawnParticle(Particle.BLOCK, block.getLocation().add(0.5, 0.5, 0.5), 2, 0.5, 0.5, 0.5, 0.1, Material.SNOW_BLOCK.createBlockData());
 			block.setType(Material.AIR);
 
 			if (playSound) {
@@ -255,9 +254,9 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public void playFirebendingParticles(final Location loc, final int amount, final double xOffset, final double yOffset, final double zOffset) {
 		if (this.getBendingPlayer().canUseSubElement(SubElement.BLUE_FIRE)) {
-			ParticleEffect.SOUL_FIRE_FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+			loc.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, loc, amount, xOffset, yOffset, zOffset, 0, null, true);
 		} else {
-			ParticleEffect.FLAME.display(loc, amount, xOffset, yOffset, zOffset);
+			loc.getWorld().spawnParticle(Particle.FLAME, loc, amount, xOffset, yOffset, zOffset, 0, null, true);
 		}
 	}
 

@@ -11,8 +11,6 @@
 
     <modules>
         <module>core</module>
-        <module>core-legacy</module>
-        <module>core-modern</module>
     </modules>
 
     <build>

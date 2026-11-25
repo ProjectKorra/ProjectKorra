@@ -8,6 +8,7 @@ import java.util.Map;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -20,9 +21,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class EarthPillars extends EarthAbility implements ComboAbility {
 
@@ -82,7 +81,7 @@ public class EarthPillars extends EarthAbility implements ComboAbility {
 		if (this.firstTime) {
 			for (final Entity e : GeneralMethods.getEntitiesAroundPoint(this.player.getLocation(), this.radius)) {
 				if (e instanceof LivingEntity && e.getEntityId() != this.player.getEntityId() && isEarthbendable(e.getLocation().getBlock().getRelative(BlockFace.DOWN).getType(), true, true, false)) {
-					ParticleEffect.BLOCK_DUST.display(e.getLocation(), 10, 1, 0.1, 1, e.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData());
+					e.getLocation().getWorld().spawnParticle(Particle.BLOCK, e.getLocation(), 10, 1, 0.1, 1, 0, e.getLocation().getBlock().getRelative(BlockFace.DOWN).getBlockData(), true);
 					this.affect((LivingEntity) e);
 				}
 			}

@@ -43,7 +43,6 @@ import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.ColoredParticle;
 import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.MovementHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempArmorStand;
@@ -55,12 +54,7 @@ import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
 import io.lumine.mythic.lib.UtilityMethods;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -68,12 +62,18 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.ElderGuardian;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Ravager;
+import org.bukkit.entity.Sniffer;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Warden;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -228,46 +228,6 @@ public class GeneralMethods {
 
 	public static int compareArmor(Material first, Material second) {
 		return getArmorTier(first) - getArmorTier(second);
-	}
-
-	@Deprecated
-	public static void displayColoredParticle(final Location loc, ParticleEffect type, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
-		int r = 0;
-		int g = 0;
-		int b = 0;
-		if (hexVal.length() <= 6) {
-			r = Integer.valueOf(hexVal.substring(0, 2), 16);
-			g = Integer.valueOf(hexVal.substring(2, 4), 16);
-			b = Integer.valueOf(hexVal.substring(4, 6), 16);
-		} else if (hexVal.length() == 7 && hexVal.charAt(0) == '#') {
-			r = Integer.valueOf(hexVal.substring(1, 3), 16);
-			g = Integer.valueOf(hexVal.substring(3, 5), 16);
-			b = Integer.valueOf(hexVal.substring(5, 7), 16);
-		}
-		float red = r / 255.0F;
-		final float green = g / 255.0F;
-		final float blue = b / 255.0F;
-		if (red <= 0) {
-			red = 1 / 255.0F;
-		}
-		loc.setX(loc.getX() + (Math.random() * 2 - 1) * xOffset);
-		loc.setY(loc.getY() + (Math.random() * 2 - 1) * yOffset);
-		loc.setZ(loc.getZ() + (Math.random() * 2 - 1) * zOffset);
-
-		if (type != ParticleEffect.RED_DUST && type != ParticleEffect.REDSTONE && type != ParticleEffect.SPELL_MOB && type != ParticleEffect.MOB_SPELL && type != ParticleEffect.SPELL_MOB_AMBIENT && type != ParticleEffect.MOB_SPELL_AMBIENT) {
-			type = ParticleEffect.RED_DUST;
-		}
-		type.display(loc, 0, red, green, blue);
-	}
-
-	@Deprecated
-	public static void displayColoredParticle(final Location loc, final String hexVal) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, 0, 0, 0);
-	}
-
-	@Deprecated
-	public static void displayColoredParticle(final Location loc, final String hexVal, final float xOffset, final float yOffset, final float zOffset) {
-		displayColoredParticle(loc, ParticleEffect.RED_DUST, hexVal, xOffset, yOffset, zOffset);
 	}
 
 	public static void displayColoredParticle(String hexVal, final Location loc, final int amount, final double offsetX, final double offsetY, final double offsetZ) {
@@ -1101,7 +1061,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isUndead(final Entity entity) {
-        return entity instanceof LivingEntity living && living.getCategory() == EntityCategory.UNDEAD;
+		return Tag.ENTITY_TYPES_UNDEAD.isTagged(entity.getType());
 	}
 
 	public static boolean isWeapon(final Material mat) {
@@ -1588,6 +1548,16 @@ public class GeneralMethods {
         };
 	}
 
+	public static boolean isHeavyEntity(Entity entity) {
+        return entity instanceof IronGolem
+                || entity instanceof Sniffer
+                || entity instanceof Ravager
+                || entity instanceof Warden
+                || entity instanceof EnderDragon
+                || entity instanceof Wither
+                || entity instanceof ElderGuardian;
+	}
+
 	@Deprecated
 	public static void setVelocity(Entity entity, Vector vector) {
 		setVelocity(null,entity,vector);
@@ -1622,26 +1592,20 @@ public class GeneralMethods {
 		event.getAffected().setVelocity(velocity);
 	}
 
+	// no longer used, but updated to match the 26.x pattern anyways
 	public static int getMCVersion() {
 		String version = Bukkit.getBukkitVersion().split("-", 2)[0];
+
 		if (!version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
 			ProjectKorra.log.warning("Version not valid! Cannot parse version \"" + version + "\"");
-			return 1164; //1.16.4
+			return 1164;
 		}
 
-		String[] split = version.split("\\.", 3);
-
+		String[] split = version.split("\\.");
 		int major = Integer.parseInt(split[0]);
-		int minor = 0;
-		int fix = 0;
+		int minor = Integer.parseInt(split[1]);
+		int fix = (split.length == 3) ? Integer.parseInt(split[2]) : 0;
 
-		if (split.length > 1) {
-			minor = Integer.parseInt(split[1]);
-
-			if (split.length > 2) {
-				fix = Integer.parseInt(split[2]);
-			}
-		}
-		return major * 1000 + minor * 10 + fix; //1.16.4 -> 1164; 1.18 -> 1180
+		return major * 1000 + minor * 10 + fix;
 	}
 }

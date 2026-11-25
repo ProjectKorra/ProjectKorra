@@ -21,6 +21,16 @@ import io.papermc.lib.PaperLib;
 
 public class RevertChecker implements Runnable {
 
+	private static boolean USE_PAPERLIB;
+
+	static {
+		try {
+			USE_PAPERLIB = Class.forName("io.papermc.lib.PaperLib") != null;
+		} catch (final Exception e) {
+			USE_PAPERLIB = false;
+		}
+	}
+
 	private final ProjectKorra plugin;
 
 	private static final FileConfiguration config = ConfigManager.defaultConfig.get();
@@ -36,14 +46,24 @@ public class RevertChecker implements Runnable {
 
 	public static void revertAirBlocks() {
 		for (final int ID : airRevertQueue.keySet()) {
-			PaperLib.getChunkAtAsync(EarthAbility.getTempAirLocations().get(ID).getState().getBlock().getLocation()).thenAccept(result -> EarthAbility.revertAirBlock(ID));
+			if (USE_PAPERLIB) {
+				PaperLib.getChunkAtAsync(EarthAbility.getTempAirLocations().get(ID).getState().getBlock().getLocation()).thenAccept(result -> EarthAbility.revertAirBlock(ID));
+			} else {
+				EarthAbility.getTempAirLocations().get(ID).getState().getBlock().getLocation().getChunk().load();
+				EarthAbility.revertAirBlock(ID);
+			}
 			RevertChecker.airRevertQueue.remove(ID);
 		}
 	}
 
 	public static void revertEarthBlocks() {
 		for (final Block block : earthRevertQueue.keySet()) {
-			PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result -> EarthAbility.revertBlock(block));
+			if (USE_PAPERLIB) {
+				PaperLib.getChunkAtAsync(block.getLocation()).thenAccept(result -> EarthAbility.revertBlock(block));
+			} else {
+				block.getChunk().load();
+				EarthAbility.revertBlock(block);
+			}
 			earthRevertQueue.remove(block);
 		}
 	}

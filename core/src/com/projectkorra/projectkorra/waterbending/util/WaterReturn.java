@@ -4,23 +4,19 @@ import java.util.HashMap;
 
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.markers.DayNightFactor;
-import com.projectkorra.projectkorra.versions.IBottleFinder;
-import com.projectkorra.projectkorra.versions.legacy.LegacyBottleFinder;
-import com.projectkorra.projectkorra.versions.modern.ModernBottleFinder;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
@@ -28,8 +24,6 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 
 public class WaterReturn extends WaterAbility {
-
-	public static final IBottleFinder BOTTLE_FINDER = GeneralMethods.getMCVersion() >= 1204 ? new ModernBottleFinder() : new LegacyBottleFinder();
 
 	private long time;
 	private long interval;
@@ -93,7 +87,7 @@ public class WaterReturn extends WaterAbility {
 			this.block = new TempBlock(newblock, Material.WATER);
 		} else if (isTransparent(this.player, newblock)) {
 			if (isWater(newblock)) {
-				ParticleEffect.WATER_BUBBLE.display(newblock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0);
+				newblock.getWorld().spawnParticle(Particle.BUBBLE, newblock.getLocation().clone().add(.5, .5, .5), 5, Math.random(), Math.random(), Math.random(), 0, null, true);
 			}
 		} else {
 			this.remove();
@@ -153,7 +147,24 @@ public class WaterReturn extends WaterAbility {
 	}
 
 	public static int firstWaterBottle(final PlayerInventory inventory) {
-		return BOTTLE_FINDER.findWaterBottle(inventory);
+		int index = inventory.first(Material.POTION);
+
+		// Check that the first one found is actually a WATER bottle. We aren't implementing potion bending just yet.
+		if (index != -1) {
+			int aux = index;
+			index = -1;
+			for (int i = aux; i < inventory.getSize(); i++) {
+				if (inventory.getItem(i) != null && inventory.getItem(i).getType() == Material.POTION && inventory.getItem(i).hasItemMeta()) {
+					final PotionMeta meta = (PotionMeta) inventory.getItem(i).getItemMeta();
+					if (meta.getBasePotionType().equals(PotionType.WATER)) {
+						index = i;
+						break;
+					}
+				}
+			}
+		}
+
+		return index;
 	}
 
 	public static boolean hasWaterBottle(final Player player) {
@@ -186,7 +197,13 @@ public class WaterReturn extends WaterAbility {
 	}
 
 	public static ItemStack waterBottleItem() {
-		return BOTTLE_FINDER.createWaterBottle();
+		final ItemStack water = new ItemStack(Material.POTION);
+		final PotionMeta meta = (PotionMeta) water.getItemMeta();
+
+		meta.setBasePotionType(PotionType.WATER);
+		water.setItemMeta(meta);
+
+		return water;
 	}
 
 	public long getTime() {

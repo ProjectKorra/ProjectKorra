@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -18,7 +19,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.EarthDome;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import java.util.ArrayList;
 
@@ -85,8 +85,8 @@ public class EarthDomeOthers extends EarthAbility implements ComboAbility {
 
 		this.loc.setY(top.getY() + 1);
 
-		ParticleEffect.CRIT.display(this.loc, 9, 0.4, 0, 0.4, 0.001);
-		ParticleEffect.BLOCK_DUST.display(this.loc, 7, 0.2, 0.1, 0.2, 0.001, this.loc.getBlock().getRelative(BlockFace.DOWN).getBlockData());
+		this.loc.getWorld().spawnParticle(Particle.CRIT, this.loc, 9, 0.4, 0, 0.4, 0.001, null, true);
+		this.loc.getWorld().spawnParticle(Particle.BLOCK, this.loc, 7, 0.2, 0.1, 0.2, 0.001, this.loc.getBlock().getRelative(BlockFace.DOWN).getBlockData(), true);
 
 		for (final Entity entity : GeneralMethods.getEntitiesAroundPoint(this.loc, 2)) {
 			if (!(entity instanceof LivingEntity) || entity.getEntityId() == this.player.getEntityId()) {

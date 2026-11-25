@@ -3,11 +3,12 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -194,7 +195,7 @@ public class Suffocate extends AirAbility {
 				final BukkitRunnable br2 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
+						target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) (Suffocate.this.slowRepeat * 20), (int) Suffocate.this.slow));
 					}
 				};
 				final BukkitRunnable br3 = new BukkitRunnable() {
@@ -438,7 +439,22 @@ public class Suffocate extends AirAbility {
 				this.loc.setZ(tempLoc.getZ() + this.radius * Math.cos(Math.toRadians((double) this.i / (double) this.totalSteps * 360)));
 			}
 
-			getAirbendingParticles().display(this.loc, 0, 0, 0, 0, 1);
+			final Object particleData = switch (getAirbendingParticles().getDataType().getSimpleName()) {
+				case "Color" -> Color.WHITE;
+				case "BlockData" -> Material.WHITE_WOOL.createBlockData();
+				case "DustOptions" -> new Particle.DustOptions(Color.WHITE, 1.0f);
+				case "DustTransition" -> new Particle.DustTransition(Color.WHITE, Color.WHITE, 1.0f);
+				case "Float" -> 1.0f;
+				case "Integer" -> 1;
+				case "ItemStack" -> new ItemStack(Material.WHITE_WOOL);
+				case "Spell" -> new Particle.Spell(Color.WHITE, 1.0f);
+				case "Trail" -> new Particle.Trail(loc, Color.WHITE, 1);
+				case "Vibration" -> new Vibration(loc, new Vibration.Destination.BlockDestination(loc.getBlock()), 0);
+				default -> null;
+			};
+
+			this.loc.getWorld().spawnParticle(getAirbendingParticles(), this.loc, 0, 0, 0, 0, 1, particleData, true);
+
 			if (this.i == this.totalSteps + 1) {
 				this.cancel();
 			}

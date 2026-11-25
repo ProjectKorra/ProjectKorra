@@ -120,11 +120,7 @@ public class FrostBreath extends IceAbility implements SubAbility {
         origin.setZ(origin.getZ() + new Random().nextDouble(-0.03, 0.03));
 
         target = player.getEyeLocation().add(player.getEyeLocation().getDirection().multiply(range));
-        if (GeneralMethods.getMCVersion() > 1203) {
-            origin.getWorld().playSound(origin, Sound.valueOf("ENTITY_BREEZE_IDLE_GROUND"), 0.33f, 1);
-        } else {
-            origin.getWorld().playSound(origin, Sound.ENTITY_HORSE_BREATHE, 0.33f, 1);
-        }
+        origin.getWorld().playSound(origin, Sound.ENTITY_BREEZE_IDLE_GROUND, 0.33f, 1);
         double vX = target.toVector().subtract(origin.toVector()).getX();
         double vY = target.toVector().subtract(origin.toVector()).getY();
         double vZ = target.toVector().subtract(origin.toVector()).getZ();
@@ -207,11 +203,11 @@ public class FrostBreath extends IceAbility implements SubAbility {
             for (Block block : GeneralMethods.getBlocksAroundPoint(target.clone().add(0, -1, 0), 1 + ((target.distance(origin) / range) * particleExpansion))) {
                 if (!block.isPassable()) {
                     Block upperBlock = block.getLocation().add(0, 1, 0).getBlock();
-                    if (upperBlock.isPassable() && upperBlock.getType() != Material.WATER && block.getType() != Material.ICE && block.getType() != Material.SNOW) {
+                    if (upperBlock.isPassable() && upperBlock.getType() != Material.WATER && upperBlock.getType() != Material.ICE && upperBlock.getType() != Material.SNOW) {
                         snowList.add(block.getLocation().add(0, 1, 0).getBlock());
                     }
                 } else if (block.getType() == Material.WATER) {
-                    TempBlock ice = new TempBlock(block, Material.ICE.createBlockData(), snowDuration);
+                    TempBlock ice = new TempBlock(block, Material.ICE.createBlockData(), snowDuration, this);
                     ice.setBendableSource(true);
                     ice.setCanSuffocate(false);
                 }
@@ -219,7 +215,7 @@ public class FrostBreath extends IceAbility implements SubAbility {
 
 
             for (Block block : snowList) {
-                TempBlock snow = new TempBlock(block, Material.SNOW.createBlockData(), snowDuration);
+                TempBlock snow = new TempBlock(block, Material.SNOW.createBlockData(), snowDuration, this);
                 snow.setBendableSource(bendableSnow);
             }
         }

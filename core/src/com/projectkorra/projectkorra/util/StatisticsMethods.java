@@ -171,8 +171,8 @@ public class StatisticsMethods {
 			return 0;
 		}
 		if (!Manager.getManager(StatisticsManager.class).getKeysByName().containsKey(statName)) {
-			DBConnection.sql.modifyQuery("INSERT INTO pk_statKeys (statName) VALUES ('" + statName + "')", false);
-			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = '" + statName + "'")) {
+			DBConnection.sql.modifyQuerySync("INSERT INTO pk_statKeys (statName) VALUES (?)", statName);
+			try (ResultSet rs = DBConnection.sql.readQuery("SELECT * FROM pk_statKeys WHERE statName = ?", statName)) {
 				if (rs.next()) {
 					Manager.getManager(StatisticsManager.class).getKeysByName().put(rs.getString("statName"), rs.getInt("id"));
 					Manager.getManager(StatisticsManager.class).getKeysById().put(rs.getInt("id"), rs.getString("statName"));

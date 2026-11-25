@@ -191,7 +191,7 @@ public class HealingWaters extends HealingAbility {
 	}
 
 	private void giveHP(final Player player) {
-		if (!player.isDead() && player.getHealth() < player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue()) {
+		if (!player.isDead() && player.getHealth() < player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue()) {
 			this.applyHealing(player);
 		} else {
 			this.healing = false;
@@ -208,7 +208,7 @@ public class HealingWaters extends HealingAbility {
 	}
 
 	private void giveHP(final LivingEntity livingEntity) {
-		if (!livingEntity.isDead() && livingEntity.getHealth() < livingEntity.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue()) {
+		if (!livingEntity.isDead() && livingEntity.getHealth() < livingEntity.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue()) {
 			this.applyHealing(livingEntity);
 		} else {
 			this.healing = false;
@@ -231,7 +231,7 @@ public class HealingWaters extends HealingAbility {
 	}
 
 	private void applyHealing(final LivingEntity livingEntity) {
-		if (livingEntity.getHealth() < livingEntity.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue()) {
+		if (livingEntity.getHealth() < livingEntity.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue()) {
 			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 30, this.potionPotency));
 			AirAbility.breakBreathbendingHold(livingEntity);
 			this.healing = true;
