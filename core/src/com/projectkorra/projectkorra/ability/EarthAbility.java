@@ -5,10 +5,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.BlockState;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
-import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -68,14 +72,14 @@ public abstract class EarthAbility extends ElementalAbility {
 			return;
 		}
 		if (bentBlock != null && isEarthbendable(bentBlock.getType(), true, true, false)) {
-			location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 2, offsetRadius, offsetRadius, offsetRadius, bentBlock.getBlockData());
+			location.getWorld().spawnParticle(Particle.BLOCK, location, 2, offsetRadius, offsetRadius, offsetRadius, bentBlock.getBlockData());
 		} else {
-			location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 2, offsetRadius, offsetRadius, offsetRadius, Material.GREEN_CONCRETE.createBlockData());
+			location.getWorld().spawnParticle(Particle.BLOCK, location, 2, offsetRadius, offsetRadius, offsetRadius, Material.GREEN_CONCRETE.createBlockData());
 		}
 	}
 
 	public static void playLegacyFocusEarthEffect(final Location location, final float offsetRadius) {
-		location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 2, offsetRadius, offsetRadius, offsetRadius, 0);
+		location.getWorld().spawnParticle(Particle.SMOKE, location, 2, offsetRadius, offsetRadius, offsetRadius, 0);
 	}
 
 	public Block getEarthSourceBlock(final double range) {
