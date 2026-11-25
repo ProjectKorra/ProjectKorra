@@ -12,9 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -235,7 +233,7 @@ public class WaterManipulation extends WaterAbility {
 						this.remove();
 						return;
 					}
-					this.sourceBlock.getWorld().spawnParticle(Particle.SMOKE, this.sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 4, 0, 0, 0, 0, null, true);
+					WaterAbility.playFocusWaterEffect(sourceBlock);
 					return;
 				}
 

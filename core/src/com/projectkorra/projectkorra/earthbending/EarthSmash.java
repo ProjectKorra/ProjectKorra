@@ -7,7 +7,6 @@ import java.util.Random;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
@@ -213,8 +212,9 @@ public class EarthSmash extends EarthAbility {
 				}
 			} else if (System.currentTimeMillis() - this.getStartTime() > this.chargeTime) {
 				final Location tempLoc = this.player.getEyeLocation().add(this.player.getEyeLocation().getDirection().normalize().multiply(1.2));
+				final Block toBend = GeneralMethods.getTargetedLocation(player, this.grabRange).add(player.getEyeLocation().getDirection().multiply(0.5)).getBlock();
 				tempLoc.add(0, 0.3, 0);
-				tempLoc.getWorld().spawnParticle(Particle.SMOKE, tempLoc, 4, 0.3, 0.1, 0.3, 0, null, true);
+				EarthAbility.playFocusEarthEffect(tempLoc, 0.3f, toBend);
 			}
 		} else if (this.state == State.LIFTING) {
 			if (System.currentTimeMillis() - this.delay >= this.liftAnimationInterval) {

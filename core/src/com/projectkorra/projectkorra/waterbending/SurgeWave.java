@@ -22,7 +22,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -277,7 +276,7 @@ public class SurgeWave extends WaterAbility {
 				this.remove();
 				return;
 			} else if (!this.progressing) {
-				this.sourceBlock.getWorld().spawnParticle(Particle.SMOKE, this.sourceBlock.getLocation().add(0.5, 0.5, 0.5), 4, 0, 0, 0, 0, null, true);
+				playFocusWaterEffect(this.sourceBlock);
 				return;
 			}
 

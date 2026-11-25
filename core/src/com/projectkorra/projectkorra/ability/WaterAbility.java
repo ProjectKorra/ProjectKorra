@@ -6,7 +6,12 @@ import java.util.Map;
 import java.util.Set;
 
 import com.projectkorra.projectkorra.region.RegionProtection;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -364,7 +369,22 @@ public abstract class WaterAbility extends ElementalAbility {
 	 */
 
 	public static void playFocusWaterEffect(final Block block) {
-		block.getLocation().getWorld().spawnParticle(Particle.SMOKE, block.getLocation().add(0.5, 0.5, 0.5), 4, 0, 0, 0, 0, null, true);
+		playFocusWaterEffect(block, 0.15F);
+	}
+
+	public static void playFocusWaterEffect(final Block block, float offsetRadius) {
+		Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
+		if (getConfig().getBoolean("Properties.Water.LegacyFocusParticles")) {
+			playLegacyFocusWaterEffect(particleLocation);
+			return;
+		}
+
+		block.getWorld().spawnParticle(Particle.FALLING_DUST, particleLocation, 2, offsetRadius, offsetRadius, offsetRadius, Material.BLUE_CONCRETE.createBlockData());
+		GeneralMethods.displayColoredParticle("4275f5", particleLocation, 2, offsetRadius, offsetRadius, offsetRadius);
+	}
+
+	public static void playLegacyFocusWaterEffect(final Location location) {
+		location.getWorld().spawnParticle(Particle.SMOKE, location, 1, 0, 0, 0, 0);
 	}
 
 	public static void playIcebendingSound(final Location loc) {
