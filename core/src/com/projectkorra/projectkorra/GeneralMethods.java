@@ -93,16 +93,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.projectkorra.projectkorra.ProjectKorra.plugin;
@@ -111,6 +102,35 @@ public class GeneralMethods {
 	public static final List<BlockFace> CARDINAL_FACES = List.of(BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
 	public static final List<BlockFace> ADJACENT_FACES = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 	public static final List<BlockFace> ADJACENT_SIDES = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+	private static final Map<Object, Map<String, Long>> abilityToggledOffMessageCooldowns = new HashMap<Object, Map<String, Long>>();
+    private static final long TOGGLE_MESSAGE_COOLDOWN_MS = 10000L;
+
+	private static long getAbilityToggledOffMessageCooldown(final Player player, final String abilityName) {
+		final Map<String, Long> playerCooldowns = abilityToggledOffMessageCooldowns.get(player.getUniqueId());
+		if (playerCooldowns == null) {
+			return 0L;
+		}
+
+		return playerCooldowns.getOrDefault(abilityName, 0L);
+	}
+
+	private static void setAbilityToggledOffMessageCooldown(final Player player, final String abilityName, final long cooldown) {
+		abilityToggledOffMessageCooldowns
+			.computeIfAbsent(player.getUniqueId(), uuid -> new HashMap<>())
+			.put(abilityName, cooldown);
+	}
+
+	private static void clearAbilityToggledOffMessageCooldown(final Player player, final String abilityName) {
+		final Map<String, Long> playerCooldowns = abilityToggledOffMessageCooldowns.get(player.getUniqueId());
+		if (playerCooldowns == null) {
+			return;
+		}
+
+		playerCooldowns.remove(abilityName);
+		if (playerCooldowns.isEmpty()) {
+			abilityToggledOffMessageCooldowns.remove(player.getUniqueId());
+		}
+	}
 
 	/**
 	 * Checks to see if an AbilityExists. Uses method
@@ -225,6 +245,40 @@ public class GeneralMethods {
 		final boolean yz = xyzSolid[1] && xyzSolid[2];
 		return xz || xy || yz;
 	}
+
+    /**
+     * Sends a message to the player confirming an ability has been toggled off.
+     * Utilizes a nested map tracker to ensure cooldowns are isolated per-player.
+     *
+     * @param player  The player receiving the message.
+     * @param ability The ability that was toggled off.
+     * @return true if the message was successfully sent; false if suppressed by the cooldown.
+     */
+    public static boolean sendAbilityToggledOffMessage(Player player, CoreAbility ability) {
+        String message = ConfigManager.languageConfig.get().getString("Commands.Toggle.AbilityToggledOff");
+        if (message == null) {
+            return false;
+        }
+
+        UUID playerUUID = player.getUniqueId();
+        String abilityName = ability.getName();
+        long currentTime = System.currentTimeMillis();
+
+        // Get or create the inner map for this specific player
+        Map<String, Long> playerCooldowns = abilityToggledOffMessageCooldowns.computeIfAbsent(playerUUID, k -> new HashMap<>());
+
+        // Check the player's personal cooldown for this specific ability
+        long lastSent = playerCooldowns.getOrDefault(abilityName, 0L);
+        if (lastSent + TOGGLE_MESSAGE_COOLDOWN_MS > currentTime) {
+            return false;
+        }
+
+        // Send message and update their specific map
+        ChatUtil.sendBrandingMessage(player, ChatUtil.color(message.replace("{ability}", abilityName)));
+        playerCooldowns.put(abilityName, currentTime);
+
+        return true;
+    }
 
 	public static int compareArmor(Material first, Material second) {
 		return getArmorTier(first) - getArmorTier(second);

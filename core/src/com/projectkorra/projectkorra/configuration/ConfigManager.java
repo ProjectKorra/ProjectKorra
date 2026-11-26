@@ -149,6 +149,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Toggle.Description", "This command will toggle a player's own bending on or off. If toggled off, all abilities should stop working until it is toggled back on. Logging off will automatically toggle your Bending back on. If you run the command /bending toggle all, Bending will be turned off for all players and cannot be turned back on until the command is run again.");
 			config.addDefault("Commands.Toggle.ToggledOn", "You have turned your bending back on.");
 			config.addDefault("Commands.Toggle.ToggledOff", "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
+			config.addDefault("Commands.Toggle.AbilityToggledOff", "Your {ability} has been toggled off.");
 			config.addDefault("Commands.Toggle.ToggledPassivesOn", "You have turned your passives back on.");
 			config.addDefault("Commands.Toggle.ToggledPassivesOff", "Your passives has been toggled off.");
 

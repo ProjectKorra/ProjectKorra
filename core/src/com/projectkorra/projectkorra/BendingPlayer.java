@@ -70,7 +70,6 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	private long slowTime;
 	private final Player player;
 	private StanceAbility stance;
-
 	protected boolean tremorSense;
 	protected boolean illumination;
 	protected boolean chiBlocked;
@@ -166,6 +165,9 @@ public class BendingPlayer extends OfflineBendingPlayer {
 			return false;
 		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;
+		} else if (!this.isAbilityToggled(ability)) {
+            GeneralMethods.sendAbilityToggledOffMessage(this.player, ability);
+			return false;
 		} else if (!this.canBind(ability)) {
 			return false;
 		} else if (ability.getPlayer() != null && ability.getLocation() != null && !this.player.getWorld().equals(ability.getLocation().getWorld())) {
@@ -205,7 +207,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 	}
 
 	public boolean canBendPassive(final CoreAbility ability) {
-		if (ability == null || !this.isPassiveToggled(ability.getElement()) || !this.isToggledPassives()) {
+		if (ability == null || !this.isPassiveToggled(ability.getElement()) || !this.isToggledPassives() || !this.isAbilityToggled(ability)) {
 			return false; // If the passive is disabled.
 		}
 		final Element element = ability.getElement();
@@ -228,7 +230,7 @@ public class BendingPlayer extends OfflineBendingPlayer {
 
 	public boolean canUsePassive(final CoreAbility ability) {
 		final Element element = ability.getElement();
-		if ((!this.isToggled() && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) || !this.isElementToggled(element) || !this.isPassiveToggled(element) || !this.isToggledPassives()) {
+		if ((!this.isToggled() && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) || !this.isElementToggled(element) || !this.isPassiveToggled(element) || !this.isToggledPassives() || !this.isAbilityToggled(ability)) {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;

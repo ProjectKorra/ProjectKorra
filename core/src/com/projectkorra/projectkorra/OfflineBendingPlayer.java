@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -87,6 +88,7 @@ public class OfflineBendingPlayer {
     protected final Map<String, Cooldown> cooldowns = new HashMap<>();
     protected final Set<Element> toggledElements = new HashSet<>();
     protected final Set<Element> toggledPassives = new HashSet<>();
+    protected final Set<String> toggledAbilities = new HashSet<>();
 
 
 
@@ -121,6 +123,7 @@ public class OfflineBendingPlayer {
         this.cooldowns.putAll(player.cooldowns);
         this.toggledElements.addAll(player.toggledElements);
         this.toggledPassives.addAll(player.toggledPassives);
+        this.toggledAbilities.addAll(player.toggledAbilities);
 
         this.currentSlot = player.currentSlot;
         this.lastAccessed = System.currentTimeMillis();
@@ -141,10 +144,25 @@ public class OfflineBendingPlayer {
         //If we already have the players data cached from an OfflineBendingPlayer instance
         if (PLAYERS.get(uuid) != null) {
             OfflineBendingPlayer oBendingPlayer = PLAYERS.get(uuid); //Get cached instance
-            if (offlinePlayer.isOnline() && !(oBendingPlayer instanceof BendingPlayer)) {
-                BendingPlayer bendingPlayer = convertToOnline(oBendingPlayer);
-                oBendingPlayer = bendingPlayer;
-                bendingPlayer.postLoad();
+            if (offlinePlayer.isOnline()) {
+                if (!(oBendingPlayer instanceof BendingPlayer)) {
+                    BendingPlayer bendingPlayer = convertToOnline(oBendingPlayer);
+                    if (bendingPlayer != null) {
+                        oBendingPlayer = bendingPlayer;
+                        bendingPlayer.postLoad();
+                    }
+                } else {
+                    // Player rejoined but cache still points to an old Player session; rebuild the online wrapper.
+                    Player currentPlayer = offlinePlayer.getPlayer();
+                    BendingPlayer cachedOnline = (BendingPlayer) oBendingPlayer;
+                    if (currentPlayer != null && cachedOnline.getPlayer() != currentPlayer) {
+                        BendingPlayer refreshed = new BendingPlayer(cachedOnline);
+                        PLAYERS.put(uuid, refreshed);
+                        ONLINE_PLAYERS.put(uuid, refreshed);
+                        oBendingPlayer = refreshed;
+                        refreshed.postLoad();
+                    }
+                }
             }
             if (!(oBendingPlayer instanceof BendingPlayer)) {
                 oBendingPlayer.lastAccessed = System.currentTimeMillis();
@@ -1095,6 +1113,16 @@ public class OfflineBendingPlayer {
     }
 
     /**
+     * Checks if the {@link BendingPlayer} has the specified ability toggled on.
+     *
+     * @param ability The ability to check
+     * @return true if the ability is toggled on
+     */
+    public boolean isAbilityToggled(@NotNull final CoreAbility ability) {
+        return !this.toggledAbilities.contains(ability.getName().toLowerCase(Locale.ROOT));
+    }
+
+    /**
      * Checks if the {@link BendingPlayer} is permaremoved.
      *
      * @return true If the player is permaremoved
@@ -1179,6 +1207,15 @@ public class OfflineBendingPlayer {
             this.toggledPassives.remove(element);
         } else {
             this.toggledPassives.add(element);
+        }
+    }
+
+    public void toggleAbility(@NotNull final CoreAbility ability) {
+        final String abilityName = ability.getName().toLowerCase(Locale.ROOT);
+        if (this.toggledAbilities.contains(abilityName)) {
+            this.toggledAbilities.remove(abilityName);
+        } else {
+            this.toggledAbilities.add(abilityName);
         }
     }
 
@@ -1281,9 +1318,9 @@ public class OfflineBendingPlayer {
     }
 
     protected static BendingPlayer convertToOnline(@NotNull OfflineBendingPlayer offlineBendingPlayer) {
-        Player player = offlineBendingPlayer.player.getPlayer();
+        Player player = Bukkit.getPlayer(offlineBendingPlayer.getUUID());
         if (player == null) {
-            return null;
+            player = offlineBendingPlayer.player.getPlayer();
         }
 
         BendingPlayer bendingPlayer = new BendingPlayer(offlineBendingPlayer);
