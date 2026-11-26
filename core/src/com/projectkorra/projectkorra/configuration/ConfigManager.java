@@ -998,6 +998,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Flight.Cooldown", 0);
 			config.addDefault("Abilities.Air.Flight.BaseSpeed", 1.2);
 			config.addDefault("Abilities.Air.Flight.Duration", 0);
+			config.addDefault("Abilities.Air.Flight.BossBarEnabled", true);
 
 			config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 500);
@@ -1784,6 +1785,7 @@ public class ConfigManager {
 			config.addDefault("AvatarState.Sound.Sound", ((org.bukkit.Keyed) Sound.BLOCK_BEACON_ACTIVATE).getKey().getKey());
 			config.addDefault("AvatarState.Sound.Volume", 1);
 			config.addDefault("AvatarState.Sound.Pitch", 1.5);
+      config.addDefault("AvatarState.BossBarEnabled", true);
 			config.addDefault("AvatarState.CanBeChiblocked", false);
 
 			config.addDefault("LowHealth.Enabled", true);

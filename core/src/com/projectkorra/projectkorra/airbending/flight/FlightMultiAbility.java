@@ -12,6 +12,9 @@ import com.projectkorra.projectkorra.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -60,6 +63,9 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Vector prevDir;
+
+	private BossBar bossBar;
+	private boolean enableBossBar;
 
 	public FlightMultiAbility(final Player player) {
 		super(player);
@@ -121,6 +127,12 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.duration = getConfig().getLong("Abilities.Air.Flight.Duration");
 		this.cooldown = getConfig().getLong("Abilities.Air.Flight.Cooldown");
 		this.baseSpeed = getConfig().getDouble("Abilities.Air.Flight.BaseSpeed");
+		this.enableBossBar = getConfig().getBoolean("Abilities.Air.Flight.BossBarEnabled");
+
+		if (enableBossBar) {
+			this.bossBar = Bukkit.createBossBar("Flight Duration", BarColor.WHITE, BarStyle.SOLID);
+			this.bossBar.addPlayer(player);
+		}
 
 		this.speed = 1;
 		this.slowSpeed = this.baseSpeed / 2;
@@ -162,9 +174,15 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		}
 
 		if (this.duration > 0) {
-			if (System.currentTimeMillis() >= this.duration + this.getStartTime()) {
+			long elapsed = System.currentTimeMillis() - this.getStartTime();
+			if (elapsed >= this.duration) {
 				this.remove();
 				return;
+			}
+
+			if (enableBossBar) {
+				double progress = 1.0 - ((double) elapsed / (double) this.duration);
+				this.bossBar.setProgress(progress);
 			}
 		}
 
@@ -324,6 +342,12 @@ public class FlightMultiAbility extends FlightAbility implements MultiAbility {
 		this.bPlayer.addCooldown(this);
 		MultiAbilityManager.unbindMultiAbility(this.player);
 		flying.remove(this.player.getUniqueId());
+
+		// Remove BossBar
+		if (enableBossBar && this.bossBar != null) {
+			this.bossBar.removeAll();
+		}
+
 		if (this.player.isOnline() && !this.player.isDead()) {
 			this.player.eject();
 		}

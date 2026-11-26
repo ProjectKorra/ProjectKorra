@@ -1,24 +1,28 @@
 package com.projectkorra.projectkorra.avatar;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.attribute.AttributeCache;
-import com.projectkorra.projectkorra.attribute.AttributeModification;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionEffectTypeWrapper;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import org.bukkit.potion.PotionEffectTypeWrapper;
+import com.projectkorra.projectkorra.attribute.AttributeCache;
+import com.projectkorra.projectkorra.attribute.AttributeModification;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+
 import org.jetbrains.annotations.NotNull;
 
 public class AvatarState extends AvatarAbility {
@@ -37,6 +41,9 @@ public class AvatarState extends AvatarAbility {
 	@Attribute("DarkAvatar")
 	private boolean darkAvatar = false;
 
+	private BossBar bossBar;
+	private boolean enableBossBar;
+
 	public AvatarState(final Player player) {
 		super(player);
 
@@ -48,6 +55,24 @@ public class AvatarState extends AvatarAbility {
 			return;
 		}
 
+		this.regenEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled");
+		this.speedEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled");
+		this.resistanceEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Enabled");
+		this.fireResistanceEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled");
+		this.regenPower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Power") - 1;
+		this.speedPower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.Speed.Power") - 1;
+		this.resistancePower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power") - 1;
+		this.fireResistancePower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power") - 1;
+		this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Duration");
+		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");
+		this.factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
+		this.enableBossBar = getConfig().getBoolean("Abilities.Avatar.AvatarState.BossBarEnabled");
+
+		if (enableBossBar) {
+			this.bossBar = Bukkit.createBossBar("Avatar State Active", BarColor.PINK, BarStyle.SOLID);
+			this.bossBar.addPlayer(player);
+    }
+    
 		for (String key : ConfigManager.avatarStateConfig.get().getConfigurationSection("PotionEffects").getKeys(false)) {
 			final PotionEffectType type = PotionEffectTypeWrapper.getByName(key);
 			if (type == null) {
@@ -95,6 +120,12 @@ public class AvatarState extends AvatarAbility {
 			return;
 		}
 
+		if (enableBossBar) {
+			long elapsed = System.currentTimeMillis() - this.getStartTime();
+			double progress = 1.0 - ((double) elapsed / (double) this.duration);
+			this.bossBar.setProgress(progress);
+		}
+    
 		if (this.glow && !this.player.isGlowing()) this.player.setGlowing(true);
 
 		this.addPotionEffects();
@@ -156,6 +187,12 @@ public class AvatarState extends AvatarAbility {
 	@Override
 	public void remove() {
 		this.bPlayer.addCooldown(this, true);
+
+		// Remove BossBar
+		if (enableBossBar && this.bossBar != null) {
+			this.bossBar.removeAll();
+		}
+
 		this.player.setGlowing(false);
 		super.remove();
 	}
